@@ -3,8 +3,8 @@ package testutil
 import (
 	"context"
 
-	"github.com/89luca89/distrobox/pkg/containermanager"
-	"github.com/89luca89/distrobox/pkg/ui"
+	"github.com/ferret-linux/otter/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 // ContainerManagerSpy records all calls made to each method.
