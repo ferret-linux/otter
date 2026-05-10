@@ -13,7 +13,7 @@ import (
 
 	"gopkg.in/ini.v1"
 
-	"github.com/89luca89/distrobox/internal/userenv"
+	"github.com/ferret-linux/otter/internal/userenv"
 )
 
 // Item represents a single section in the manifest file.

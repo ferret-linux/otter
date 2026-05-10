@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/89luca89/distrobox/pkg/manifest"
+	"github.com/ferret-linux/otter/pkg/manifest"
 )
 
 func TestParse_Simple(t *testing.T) {
