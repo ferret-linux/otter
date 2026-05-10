@@ -4,7 +4,7 @@ import (
 	"errors"
 	"os/exec"
 
-	"github.com/89luca89/distrobox/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/containermanager"
 )
 
 // ErrNoContainerManager is returned when no supported container runtime is found.

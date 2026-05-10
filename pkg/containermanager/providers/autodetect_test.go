@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/89luca89/distrobox/pkg/containermanager/providers"
+	"github.com/ferret-linux/otter/pkg/containermanager/providers"
 )
 
 func TestNewAutoDetect(t *testing.T) {

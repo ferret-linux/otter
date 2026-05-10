@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/89luca89/distrobox/pkg/ui"
+	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 const (

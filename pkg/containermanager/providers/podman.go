@@ -14,10 +14,10 @@ import (
 	"strings"
 	"time"
 
-	insidedistrobox "github.com/89luca89/distrobox/internal/inside-distrobox"
-	"github.com/89luca89/distrobox/internal/userenv"
-	"github.com/89luca89/distrobox/pkg/containermanager"
-	"github.com/89luca89/distrobox/pkg/ui"
+	insidedistrobox "github.com/ferret-linux/otter/internal/inside-container"
+	"github.com/ferret-linux/otter/internal/userenv"
+	"github.com/ferret-linux/otter/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 type Podman struct {
