@@ -9,10 +9,10 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/89luca89/distrobox/internal/userenv"
-	"github.com/89luca89/distrobox/pkg/config"
-	"github.com/89luca89/distrobox/pkg/containermanager"
-	"github.com/89luca89/distrobox/pkg/ui"
+	"github.com/ferret-linux/otter/internal/userenv"
+	"github.com/ferret-linux/otter/pkg/config"
+	"github.com/ferret-linux/otter/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 type RmResult struct {

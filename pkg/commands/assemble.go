@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/89luca89/distrobox/pkg/config"
-	"github.com/89luca89/distrobox/pkg/containermanager"
-	"github.com/89luca89/distrobox/pkg/manifest"
-	"github.com/89luca89/distrobox/pkg/ui"
+	"github.com/ferret-linux/otter/pkg/config"
+	"github.com/ferret-linux/otter/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/manifest"
+	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 const assembleCleanupTimeout = 30 * time.Second

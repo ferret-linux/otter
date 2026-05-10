@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/89luca89/distrobox/internal/userenv"
-	pkgconfig "github.com/89luca89/distrobox/pkg/config"
+	"github.com/ferret-linux/otter/internal/userenv"
+	pkgconfig "github.com/ferret-linux/otter/pkg/config"
 )
 
 //go:embed assets/desktop_entry.toml.tmpl

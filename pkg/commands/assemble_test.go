@@ -10,12 +10,12 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/89luca89/distrobox/pkg/commands"
-	"github.com/89luca89/distrobox/pkg/config"
-	"github.com/89luca89/distrobox/pkg/containermanager"
-	"github.com/89luca89/distrobox/pkg/internal/testutil"
-	"github.com/89luca89/distrobox/pkg/manifest"
-	"github.com/89luca89/distrobox/pkg/ui"
+	"github.com/ferret-linux/otter/pkg/commands"
+	"github.com/ferret-linux/otter/pkg/config"
+	"github.com/ferret-linux/otter/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/internal/testutil"
+	"github.com/ferret-linux/otter/pkg/manifest"
+	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 func newTestAssembleCommand(mock *testutil.MockContainerManager) *commands.AssembleCommand {
