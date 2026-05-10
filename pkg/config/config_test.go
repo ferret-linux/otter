@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/89luca89/distrobox/pkg/config"
+	"github.com/ferret-linux/otter/pkg/config"
 )
 
 func TestDefaultConfigValues(t *testing.T) {
