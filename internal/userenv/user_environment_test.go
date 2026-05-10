@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/89luca89/distrobox/internal/userenv"
+	"github.com/ferret-linux/otter/internal/userenv"
 )
 
 func TestLoadUserEnvironment_EnvironmentVariables(t *testing.T) {

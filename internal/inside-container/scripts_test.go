@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	insidedistrobox "github.com/89luca89/distrobox/internal/inside-distrobox"
+	insidedistrobox "github.com/ferret-linux/otter/internal/inside-container"
 )
 
 func TestProvisionScripts_CustomDir(t *testing.T) {
