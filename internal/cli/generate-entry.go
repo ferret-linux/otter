@@ -8,9 +8,9 @@ import (
 
 	"github.com/urfave/cli/v3"
 
-	"github.com/89luca89/distrobox/pkg/commands"
-	"github.com/89luca89/distrobox/pkg/config"
-	"github.com/89luca89/distrobox/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/commands"
+	"github.com/ferret-linux/otter/pkg/config"
+	"github.com/ferret-linux/otter/pkg/containermanager"
 )
 
 func newGenerateEntryCommand(cfg *config.Values) *cli.Command {

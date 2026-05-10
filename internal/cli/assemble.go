@@ -9,12 +9,12 @@ import (
 
 	"github.com/urfave/cli/v3"
 
-	"github.com/89luca89/distrobox/internal/rootful"
-	"github.com/89luca89/distrobox/pkg/commands"
-	"github.com/89luca89/distrobox/pkg/config"
-	"github.com/89luca89/distrobox/pkg/containermanager"
-	"github.com/89luca89/distrobox/pkg/manifest"
-	"github.com/89luca89/distrobox/pkg/ui"
+	"github.com/ferret-linux/otter/internal/rootful"
+	"github.com/ferret-linux/otter/pkg/commands"
+	"github.com/ferret-linux/otter/pkg/config"
+	"github.com/ferret-linux/otter/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/manifest"
+	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 func newAssembleCommand(cfg *config.Values) *cli.Command {
