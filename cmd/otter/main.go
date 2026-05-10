@@ -7,8 +7,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/89luca89/distrobox/internal/cli"
-	"github.com/89luca89/distrobox/pkg/config"
+	"github.com/ferret-linux/otter/internal/cli"
+	"github.com/ferret-linux/otter/pkg/config"
 )
 
 func main() {
