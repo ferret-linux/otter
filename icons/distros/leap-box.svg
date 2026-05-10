@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg height="128px" viewBox="0 0 128 128" width="128px" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="a" gradientUnits="userSpaceOnUse" x1="11.999989" x2="115.999989" y1="64" y2="64">
+            <stop offset="0" stop-color="#0a2008"/>
+            <stop offset="0.05" stop-color="#1e6b18"/>
+            <stop offset="0.1" stop-color="#195813"/>
+            <stop offset="0.899999" stop-color="#154a10"/>
+            <stop offset="0.95" stop-color="#1e6b18"/>
+            <stop offset="1" stop-color="#0a2008"/>
+        </linearGradient>
+        <linearGradient id="b" gradientUnits="userSpaceOnUse" x1="12" x2="112.041023" y1="60" y2="80.988281">
+            <stop offset="0" stop-color="#1e6b18"/>
+            <stop offset="0.384443" stop-color="#7de870"/>
+            <stop offset="0.720567" stop-color="#1e6b18"/>
+            <stop offset="1" stop-color="#0d3e0a"/>
+        </linearGradient>
+        <linearGradient id="leapgrad" gradientUnits="userSpaceOnUse" x1="76" y1="74" x2="124" y2="122">
+            <stop offset="0" stop-color="#6ed463"/>
+            <stop offset="0.4" stop-color="#49bf3d"/>
+            <stop offset="1" stop-color="#0d3e0a"/>
+        </linearGradient>
+        <linearGradient id="shadowgrad" gradientUnits="userSpaceOnUse" x1="76" y1="102" x2="124" y2="102">
+            <stop offset="0" stop-color="#081c08"/>
+            <stop offset="0.15" stop-color="#134a10"/>
+            <stop offset="0.5" stop-color="#267020"/>
+            <stop offset="0.85" stop-color="#134a10"/>
+            <stop offset="1" stop-color="#081c08"/>
+        </linearGradient>
+    </defs>
+
+    <path d="m 20 22 h 88 c 4.417969 0 8 3.582031 8 8 v 78 c 0 4.417969 -3.582031 8 -8 8 h -88 c -4.417969 0 -8 -3.582031 -8 -8 v -78 c 0 -4.417969 3.582031 -8 8 -8 z m 0 0" fill="url(#a)"/>
+    <path d="m 20 12 h 88 c 4.417969 0 8 3.582031 8 8 v 80 c 0 4.417969 -3.582031 8 -8 8 h -88 c -4.417969 0 -8 -3.582031 -8 -8 v -80 c 0 -4.417969 3.582031 -8 8 -8 z m 0 0" fill="url(#b)"/>
+    <path d="m 20 14 h 88 c 3.3125 0 6 2.6875 6 6 v 80 c 0 3.3125 -2.6875 6 -6 6 h -88 c -3.3125 0 -6 -2.6875 -6 -6 v -80 c 0 -3.3125 2.6875 -6 6 -6 z m 0 0" fill="#051208"/>
+
+    <path d="m 46.011719 40.886719 l -14.011719 -7.613281 v 4.726562 l 9.710938 4.628906 v 0.144532 l -9.710938 5.226562 v 4.726562 l 14.011719 -8.210937 z m 0 0" fill="#49bf3d"/>
+    <path d="m 50 56 v 4 h 16 v -4 z m 0 0" fill="#49bf3d"/>
+
+    <!-- Circle badge -->
+    <circle cx="100" cy="102" r="24" fill="url(#shadowgrad)"/>
+    <circle cx="100" cy="98" r="24" fill="url(#leapgrad)"/>
+
+    <!-- Leap logo (two chevron layers) scaled into badge, centered at 100,98 -->
+    <svg x="79" y="77" width="42" height="42" viewBox="0 0 512 512">
+        <path d="m253.9 332.5 185-144.1-184-141.1L70 191.5z" fill="#fff"/>
+        <path d="M0 268l257 196.6 255-198.3-52.2-39.8-205.9 159.9L49 229.5z" fill="#ffffffcc"/>
+    </svg>
+</svg>

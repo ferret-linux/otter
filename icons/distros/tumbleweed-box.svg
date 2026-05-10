@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg height="128px" viewBox="0 0 128 128" width="128px" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="a" gradientUnits="userSpaceOnUse" x1="11.999989" x2="115.999989" y1="64" y2="64">
+            <stop offset="0" stop-color="#0a2e2b"/>
+            <stop offset="0.05" stop-color="#1a6e66"/>
+            <stop offset="0.1" stop-color="#155c55"/>
+            <stop offset="0.899999" stop-color="#124e47"/>
+            <stop offset="0.95" stop-color="#1a6e66"/>
+            <stop offset="1" stop-color="#0a2e2b"/>
+        </linearGradient>
+        <linearGradient id="b" gradientUnits="userSpaceOnUse" x1="12" x2="112.041023" y1="60" y2="80.988281">
+            <stop offset="0" stop-color="#1a6e66"/>
+            <stop offset="0.384443" stop-color="#5de8d8"/>
+            <stop offset="0.720567" stop-color="#1a6e66"/>
+            <stop offset="1" stop-color="#0d4540"/>
+        </linearGradient>
+        <linearGradient id="twgrad" gradientUnits="userSpaceOnUse" x1="76" y1="74" x2="124" y2="122">
+            <stop offset="0" stop-color="#4dd4c5"/>
+            <stop offset="0.4" stop-color="#35b9ab"/>
+            <stop offset="1" stop-color="#0d4540"/>
+        </linearGradient>
+        <linearGradient id="shadowgrad" gradientUnits="userSpaceOnUse" x1="76" y1="102" x2="124" y2="102">
+            <stop offset="0" stop-color="#081e1c"/>
+            <stop offset="0.15" stop-color="#0e3e3a"/>
+            <stop offset="0.5" stop-color="#1a6a64"/>
+            <stop offset="0.85" stop-color="#0e3e3a"/>
+            <stop offset="1" stop-color="#081e1c"/>
+        </linearGradient>
+    </defs>
+
+    <path d="m 20 22 h 88 c 4.417969 0 8 3.582031 8 8 v 78 c 0 4.417969 -3.582031 8 -8 8 h -88 c -4.417969 0 -8 -3.582031 -8 -8 v -78 c 0 -4.417969 3.582031 -8 8 -8 z m 0 0" fill="url(#a)"/>
+    <path d="m 20 12 h 88 c 4.417969 0 8 3.582031 8 8 v 80 c 0 4.417969 -3.582031 8 -8 8 h -88 c -4.417969 0 -8 -3.582031 -8 -8 v -80 c 0 -4.417969 3.582031 -8 8 -8 z m 0 0" fill="url(#b)"/>
+    <path d="m 20 14 h 88 c 3.3125 0 6 2.6875 6 6 v 80 c 0 3.3125 -2.6875 6 -6 6 h -88 c -3.3125 0 -6 -2.6875 -6 -6 v -80 c 0 -3.3125 2.6875 -6 6 -6 z m 0 0" fill="#051a18"/>
+
+    <path d="m 46.011719 40.886719 l -14.011719 -7.613281 v 4.726562 l 9.710938 4.628906 v 0.144532 l -9.710938 5.226562 v 4.726562 l 14.011719 -8.210937 z m 0 0" fill="#35b9ab"/>
+    <path d="m 50 56 v 4 h 16 v -4 z m 0 0" fill="#35b9ab"/>
+
+    <circle cx="100" cy="102" r="24" fill="url(#shadowgrad)"/>
+    <circle cx="100" cy="98" r="24" fill="url(#twgrad)"/>
+
+    <svg x="69.5" y="67.5" width="61" height="61" viewBox="0 0 16.933 16.933">
+        <path fill="#fff" fill-rule="evenodd" d="M6.476 4.233a2.24 2.24 0 0 0-2.243 2.243 2.26 2.26 0 0 0 2.251 2.25l.557.002h-.002.001l1.163.003.003 1.718a2.26 2.26 0 0 0 2.251 2.25 2.24 2.24 0 0 0 2.243-2.242 2.26 2.26 0 0 0-2.251-2.25l-.525-.002-1.193-.002-.004-1.719a2.26 2.26 0 0 0-2.251-2.25m-.001.53q.109 0 .215.014v1.906H4.776a1.7 1.7 0 0 1 1.698-1.92m.744.17c.578.278.977.868.978 1.552L8.2 8.202l-1.715-.004a1.73 1.73 0 0 1-1.556-.984h2.29zm1.513 3.799 1.716.004a1.73 1.73 0 0 1 1.566 1.008h-2.28v2.266a1.73 1.73 0 0 1-.998-1.562zm1.531 1.54h1.897q.01.093.01.186a1.7 1.7 0 0 1-1.907 1.7z" color="#000" style="-inkscape-stroke:none"/>
+    </svg>
+</svg>

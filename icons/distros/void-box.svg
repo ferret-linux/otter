@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg height="128px" viewBox="0 0 128 128" width="128px" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="a" gradientUnits="userSpaceOnUse" x1="11.999989" x2="115.999989" y1="64" y2="64">
+            <stop offset="0" stop-color="#0a1e0a"/>
+            <stop offset="0.05" stop-color="#1a4a1a"/>
+            <stop offset="0.1" stop-color="#103d10"/>
+            <stop offset="0.899999" stop-color="#0a3210"/>
+            <stop offset="0.95" stop-color="#1a4a1a"/>
+            <stop offset="1" stop-color="#0a1e0a"/>
+        </linearGradient>
+        <linearGradient id="b" gradientUnits="userSpaceOnUse" x1="12" x2="112.041023" y1="60" y2="80.988281">
+            <stop offset="0" stop-color="#1a4a1a"/>
+            <stop offset="0.384443" stop-color="#66c98a"/>
+            <stop offset="0.720567" stop-color="#1a4a1a"/>
+            <stop offset="1" stop-color="#0a2d10"/>
+        </linearGradient>
+        <linearGradient id="voidgrad" gradientUnits="userSpaceOnUse" x1="76" y1="74" x2="124" y2="122">
+            <stop offset="0" stop-color="#91cd91"/>
+            <stop offset="0.4" stop-color="#33855a"/>
+            <stop offset="1" stop-color="#0a3210"/>
+        </linearGradient>
+        <linearGradient id="shadowgrad" gradientUnits="userSpaceOnUse" x1="76" y1="102" x2="124" y2="102">
+            <stop offset="0" stop-color="#081808"/>
+            <stop offset="0.15" stop-color="#103010"/>
+            <stop offset="0.5" stop-color="#1e5828"/>
+            <stop offset="0.85" stop-color="#103010"/>
+            <stop offset="1" stop-color="#081808"/>
+        </linearGradient>
+    </defs>
+
+    <!-- Box layers -->
+    <path d="m 20 22 h 88 c 4.417969 0 8 3.582031 8 8 v 78 c 0 4.417969 -3.582031 8 -8 8 h -88 c -4.417969 0 -8 -3.582031 -8 -8 v -78 c 0 -4.417969 3.582031 -8 8 -8 z m 0 0" fill="url(#a)"/>
+    <path d="m 20 12 h 88 c 4.417969 0 8 3.582031 8 8 v 80 c 0 4.417969 -3.582031 8 -8 8 h -88 c -4.417969 0 -8 -3.582031 -8 -8 v -80 c 0 -4.417969 3.582031 -8 8 -8 z m 0 0" fill="url(#b)"/>
+    <path d="m 20 14 h 88 c 3.3125 0 6 2.6875 6 6 v 80 c 0 3.3125 -2.6875 6 -6 6 h -88 c -3.3125 0 -6 -2.6875 -6 -6 v -80 c 0 -3.3125 2.6875 -6 6 -6 z m 0 0" fill="#051405"/>
+
+    <!-- Top-left accent marks -->
+    <path d="m 46.011719 40.886719 l -14.011719 -7.613281 v 4.726562 l 9.710938 4.628906 v 0.144532 l -9.710938 5.226562 v 4.726562 l 14.011719 -8.210937 z m 0 0" fill="#33855a"/>
+    <path d="m 50 56 v 4 h 16 v -4 z m 0 0" fill="#33855a"/>
+
+    <!-- Circle badge shadow -->
+    <circle cx="100" cy="102" r="24" fill="url(#shadowgrad)"/>
+    <!-- Circle badge face -->
+    <circle cx="100" cy="98" r="24" fill="url(#voidgrad)"/>
+
+    <!-- Void logo inside circle, exact paths from source scaled to fit -->
+    <svg x="72" y="70" width="56" height="56" viewBox="0 0 64 64">
+        <g transform="translate(2 2)scale(0.9375)">
+            <path fill="#91cd91" d="M32 10a22 22 0 0 0-12.92 4.219l4.941 4.941a15.1 15.1 0 0 1 7.98-2.285A15.125 15.125 0 0 1 47.124 32a15.1 15.1 0 0 1-2.293 7.97l4.944 4.945A22 22 0 0 0 54 32a22 22 0 0 0-22-22"/>
+            <path fill="#0e2619" d="M14.224 19.085A22 22 0 0 0 10 32a22 22 0 0 0 22 22 22 22 0 0 0 12.92-4.219l-4.942-4.941A15.1 15.1 0 0 1 32 47.125 15.125 15.125 0 0 1 16.874 32a15.1 15.1 0 0 1 2.294-7.97z"/>
+            <circle cx="32" cy="32" r="8" fill="#91cd91"/>
+        </g>
+    </svg>
+</svg>
