@@ -7,13 +7,13 @@ import (
 	"path/filepath"
 )
 
-//go:embed assets/distrobox-host-exec
+//go:embed assets/otter-host-exec
 var hostExecScript string
 
-//go:embed assets/distrobox-init
+//go:embed assets/otter-init
 var initScript string
 
-//go:embed assets/distrobox-export
+//go:embed assets/otter-export
 var exportScripts string
 
 // ProvisionScripts ensures that all necessary scripts are created in the host directory.
@@ -29,9 +29,9 @@ func ProvisionScripts() (string, error) {
 		name    string
 		content string
 	}{
-		{"distrobox-host-exec", hostExecScript},
-		{"distrobox-init", initScript},
-		{"distrobox-export", exportScripts},
+		{"otter-host-exec", hostExecScript},
+		{"otter-init", initScript},
+		{"otter-export", exportScripts},
 	}
 
 	for _, script := range scripts {
@@ -56,9 +56,9 @@ func hostDir() string {
 	// Then, check HOME env var
 	// v2 is added to avoid collisions with v1 installations
 	if home := os.Getenv("HOME"); home != "" {
-		return filepath.Join(home, ".local", "share", "distrobox", "v2")
+		return filepath.Join(home, ".local", "share", "otter", "v2")
 	}
 
 	// Fallback to default path
-	return "/var/lib/distrobox/v2"
+	return "/var/lib/otter/v2"
 }

@@ -13,7 +13,7 @@ import (
 
 func TestProvisionScripts_CustomDir(t *testing.T) {
 	tmpDir := t.TempDir()
-	t.Setenv("DBX_SCRIPTS_DIR", tmpDir)
+	t.Setenv("OTR_SCRIPTS_DIR", tmpDir)
 
 	scriptsDir, err := insidedistrobox.ProvisionScripts()
 	require.NoError(t, err, "ProvisionScripts failed")
@@ -22,9 +22,9 @@ func TestProvisionScripts_CustomDir(t *testing.T) {
 	require.Equal(t, tmpDir, scriptsDir)
 
 	expectedScripts := []string{
-		"distrobox-host-exec",
-		"distrobox-init",
-		"distrobox-export",
+		"otter-host-exec",
+		"otter-init",
+		"otter-export",
 	}
 
 	for _, scriptName := range expectedScripts {
@@ -41,13 +41,13 @@ func TestProvisionScripts_HomeDir(t *testing.T) {
 	require.NoError(t, err, "ProvisionScripts failed")
 	defer os.RemoveAll(scriptsDir)
 
-	expected := filepath.Join(tmpDir, ".local", "share", "distrobox", "v2")
+	expected := filepath.Join(tmpDir, ".local", "share", "otter", "v2")
 	require.Equal(t, expected, scriptsDir)
 
 	expectedScripts := []string{
-		"distrobox-host-exec",
-		"distrobox-init",
-		"distrobox-export",
+		"otter-host-exec",
+		"otter-init",
+		"otter-export",
 	}
 
 	for _, scriptName := range expectedScripts {
