@@ -1352,6 +1352,8 @@ setup_pacman()
 	# So, let's enable them.
 	sed -i "s|NoExtract.*||g" /etc/pacman.conf
 	sed -i "s|NoProgressBar.*||g" /etc/pacman.conf
+	sed -i '/^\s*#\?\s*ILoveCandy/d; /^\s*#\?\s*Color/d' /etc/pacman.conf
+    sed -i '0,/^\[options\]/s/^\[options\]/\[options\]\nColor\nILoveCandy/' /etc/pacman.conf
 
 	pacman -S -u --noconfirm
 	# Check if shell_pkg is available in distro's repo. If not we
@@ -2016,7 +2018,8 @@ if [ "${nvidia}" -eq 1 ]; then
 
 	# First we find all generic config files we might need
 	NVIDIA_FILES="$(find /run/host/etc/ -not -type d \
-		-wholename "*nvidia*" || :)"
+		-wholename "*nvidia*" \
+		-not -wholename "*/systemd/*" || :)"
 	for nvidia_file in ${NVIDIA_FILES}; do
 		dest_file="$(printf "%s" "${nvidia_file}" | sed 's|/run/host||g')"
 
@@ -2050,19 +2053,20 @@ if [ "${nvidia}" -eq 1 ]; then
 	#       - icd files
 	#       - doc files
 	#       - src files
-	NVIDIA_CONFS="$(find /run/host/usr/ -not -type d \
+	NVIDIA_CONFS="$(find /run/host/usr/ -not -type d \( \
 		-wholename "*glvnd/egl_vendor.d/10_nvidia.json" \
 		-o -wholename "*X11/xorg.conf.d/10-nvidia.conf" \
 		-o -wholename "*X11/xorg.conf.d/nvidia-drm-outputclass.conf" \
-		-o -wholename "*egl/egl_external_platform.d/10_nvidia_wayland.json" \
-		-o -wholename "*egl/egl_external_platform.d/15_nvidia_gbm.json" \
+		-o -wholename "*egl/egl_external_platform.d/*nvidia*" \
 		-o -wholename "*nvidia/nvoptix.bin" \
 		-o -wholename "*vulkan/icd.d/nvidia_icd*.json" \
 		-o -wholename "*vulkan/icd.d/nvidia_layers.json" \
 		-o -wholename "*vulkan/implicit_layer.d/nvidia_layers.json" \
+		-o -wholename "*vulkansc/icd.d/nvidia_icd*.json" \
 		-o -wholename "*nvidia.icd" \
 		-o -wholename "*nvidia.yaml" \
-		-o -wholename "*nvidia.json" || :)"
+		-o -wholename "*nvidia.json" \
+		\) || :)"
 	for nvidia_file in ${NVIDIA_CONFS}; do
 		dest_file="$(printf "%s" "${nvidia_file}" | sed 's|/run/host||g')"
 
@@ -2085,7 +2089,12 @@ if [ "${nvidia}" -eq 1 ]; then
 	# Then we find all the CLI utilities
 	NVIDIA_BINARIES="$(find /run/host/bin/ /run/host/sbin/ /run/host/usr/bin/ /run/host/usr/sbin/ -not -type d \
 		-iname "*nvidia*" || :)"
-	for nvidia_file in ${NVIDIA_BINARIES}; do
+
+	# Wine/DXVK NVIDIA runtime components
+	NVIDIA_WINE="$(find /run/host/usr/lib*/ -not -type d \( \
+		-iname "*nvngx*" \
+		\) || :)"
+	for nvidia_file in ${NVIDIA_BINARIES} ${NVIDIA_WINE}; do
 		dest_file="$(printf "%s" "${nvidia_file}" | sed 's|/run/host||g')"
 
 		if [ ! -e "$(dirname "${dest_file}")" ]; then
@@ -2132,12 +2141,14 @@ if [ "${nvidia}" -eq 1 ]; then
 	#
 	# /usr/lib64 is common in Arch or RPM based distros, while /usr/lib/x86_64-linux-gnu is
 	# common on Debian derivatives, so we need to adapt between the two nomenclatures.
-	NVIDIA_LIBS="$(find /run/host/usr/lib*/ -not -type d \
+	NVIDIA_LIBS="$(find /run/host/usr/lib*/ -not -type d \( \
 		-iname "*lib*nvidia*.so*" \
 		-o -iname "*nvidia*.so*" \
 		-o -iname "libcuda*.so*" \
 		-o -iname "libnvcuvid*" \
-		-o -iname "libnvoptix*" || :)"
+		-o -iname "libnvoptix*" \
+		-o -iname "libgstnvcodec*" \
+		\) || :)"
 	for nvidia_lib in ${NVIDIA_LIBS}; do
 		dest_file="$(printf "%s" "${nvidia_lib}" |
 			sed "s|/run/host/usr/lib/x86_64-linux-gnu/|${lib64_dir}|g" |
@@ -2759,10 +2770,10 @@ rm -f /run/systemd/io.system.ManagedOOM
 rm -f /run/systemd/notify
 rm -f /run/systemd/private
 
-# Restore the symlink if it's an empty file
-if [ -f /etc/localtime ]; then
+# Restore the symlink to host's timezone
+if [ -f /run/host/etc/localtime ]; then
 	rm -f /etc/localtime
-	ln -sf /usr/share/zoneinfo/UCT /etc/localtime
+	ln -sf /run/host/etc/localtime /etc/localtime
 fi
 
 # Remove /dev/console when using init systems, this will confuse host system if
