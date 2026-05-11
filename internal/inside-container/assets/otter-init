@@ -83,7 +83,7 @@ version="1.8.2.4"
 # Arguments:
 #   None
 # Expected global variables:
-#   version: distrobox version
+#   version: otter version
 # Expected env variables:
 #   USER
 #   HOME
@@ -92,27 +92,29 @@ version="1.8.2.4"
 show_help()
 {
 	cat << EOF
-distrobox version: ${version}
-
-Usage:
-
-	distrobox-init --name ${USER} --user $(id -ru) --group $(id -rg) --home ${HOME}
-
-Options:
-
-	--name/-n:		user name
-	--user/-u:		uid of the user
-	--group/-g:		gid of the user
-	--home/-d:		path/to/home of the user
-	--help/-h:		show this message
-	--additional-packages:	packages to install in addition
-	--init/-I:		whether to use or not init
-	--pre-init-hooks:	commands to execute prior to init
-	--nvidia:		try to integrate host's nVidia drivers in the guest
-	--upgrade/-U:		run init in upgrade mode
-	--verbose/-v:		show more verbosity
-	--version/-V:		show version
-	--:			end arguments execute the rest as command to execute during init
+╭────────────────────────────────────────────────────────────────╮
+│▸ Options:                                                      │
+│ --                    ┆ -e   Command to execute during init    │
+│ --name                ┆ -n   User name                         │
+│ --user                ┆ -u   UID of the user                   │
+│ --home                ┆ -d   Path to the user's home directory │
+│ --init                ┆ -I   Whether to use init or not        │
+│ --group               ┆ -g   GID of the user                   │
+│ --nvidia                     Integrate host's Nvidia drivers   │
+│ --upgrade             ┆ -U   Run init in upgrade mode          │
+│ --pre-init-hooks             Commands to execute in pre-setup  │
+│ --additional-packages        Extra packages to install         │
+├────────────────────────────────────────────────────────────────┤
+│▸ Extras:                                                       │
+│ --help    ┆ -h  Show this help message                         │
+│ --verbose ┆ -v  Show more verbose output                       │
+│ --version ┆ -V  Show version information                       │
+├────────────────────────────────────────────────────────────────┤
+│▸ See also:                                                     │
+│  otter-init is intended for internal use only, never           │
+│  meant to be called directly. Its purpose is to set            │
+│  up containers & handle upgrades.                              │
+╰────────────────────────────────────────────────────────────────╯
 EOF
 }
 
@@ -129,7 +131,7 @@ while :; do
 			verbose=1
 			;;
 		-V | --version)
-			printf "distrobox: %s\n" "${version}"
+			printf "otter: %s\n" "${version}"
 			exit 0
 			;;
 		-U | --upgrade)
@@ -210,8 +212,8 @@ done
 # Check we're running inside a container and not on the host
 if [ ! -f /run/.containerenv ] && [ ! -f /.dockerenv ] && [ -z "${container:-}" ]; then
 	printf >&2 "You must run %s inside a container!\n" " $(basename "$0")"
-	printf >&2 "distrobox-init should only be used as an entrypoint for a distrobox!\n\n"
-	printf >&2 "This is not intended to be used manually, but instead used by distrobox-enter\n"
+	printf >&2 "otter-init should only be used as an entrypoint for a otter!\n\n"
+	printf >&2 "This is not intended to be used manually, but instead used by otter-enter\n"
 	printf >&2 "to set up the container's entrypoint.\n"
 	exit 126
 fi
@@ -237,11 +239,11 @@ fi
 # if /run/.nopasswd is present, let's treat the init as rootless, this is not
 # a good thing, users behold!
 #
-# if /run/.distrobox.rootless is present, the container was explicitly created
-# without --root (distrobox-create mounts this marker for rootless containers).
+# if /run/.otter.rootless is present, the container was explicitly created
+# without --root (otter-create mounts this marker for rootless containers).
 # Trust it over the shadow heuristic, which gives false positives on Docker
 # Desktop (macOS) where the container always has root access to the VM's fs.
-if [ ! -e /run/.distrobox.rootless ] &&
+if [ ! -e /run/.otter.rootless ] &&
 	stat /run/host/etc/shadow > /dev/null &&
 	{
 		[ "$(stat -c "%u" /run/host/etc/shadow)" = "0" ] || [ "$(stat -f "%u" /run/host/etc/shadow 2> /dev/null)" = "0" ]
@@ -418,14 +420,14 @@ mount_bind()
 }
 
 if [ -n "${pre_init_hook}" ]; then
-	printf "distrobox: Executing pre-init hooks...\n"
+	printf "otter: Executing pre-init hooks...\n"
 	# execute pre-init hooks if specified
 	# shellcheck disable=SC2086
 	eval ${pre_init_hook}
 fi
 
 ###############################################################################
-printf "distrobox: Installing basic packages...\n"
+printf "otter: Installing basic packages...\n"
 # Extract shell name from the $SHELL environment variable
 # If not present as package in the container, we want to install it.
 shell_pkg="$(basename "${SHELL:-"bash"}")"
@@ -451,7 +453,7 @@ setup_pkg_manager_hooks()
 	if {
 		[ -d "/etc/dpkg/dpkg.cfg.d/" ] || [ -d "/usr/share/libalpm/scripts" ]
 	} && [ "${init}" -eq 0 ]; then
-		cat << EOF > /etc/distrobox-pre-hook.sh
+		cat << EOF > /etc/otter-pre-hook.sh
 #!/bin/sh
 mounts="${HOST_MOUNTS_RO_INIT}"
 for mount in \$mounts; do
@@ -460,7 +462,7 @@ for mount in \$mounts; do
 	fi
 done
 EOF
-		cat << EOF > /etc/distrobox-post-hook.sh
+		cat << EOF > /etc/otter-post-hook.sh
 #!/bin/sh
 mounts="${HOST_MOUNTS_RO_INIT}"
 for mount in \$mounts; do
@@ -474,7 +476,7 @@ for mount in \$mounts; do
 	fi
 done
 EOF
-		chmod +x /etc/distrobox-pre-hook.sh /etc/distrobox-post-hook.sh
+		chmod +x /etc/otter-pre-hook.sh /etc/otter-post-hook.sh
 	fi
 }
 
@@ -499,16 +501,16 @@ setup_deb_exceptions()
 		# Loop through all the environment vars
 		# and export them to the container.
 		mkdir -p /etc/dpkg/dpkg.cfg.d/
-		printf "" > /etc/dpkg/dpkg.cfg.d/00_distrobox
+		printf "" > /etc/dpkg/dpkg.cfg.d/00_otter
 		for net_mount in ${HOST_MOUNTS_RO} ${HOST_MOUNTS}; do
-			printf "path-exclude %s/*\n" "${net_mount}" >> /etc/dpkg/dpkg.cfg.d/00_distrobox
+			printf "path-exclude %s/*\n" "${net_mount}" >> /etc/dpkg/dpkg.cfg.d/00_otter
 		done
 
 		# Also we put a hook to clear some critical paths that do not play well
 		# with read only filesystems, like Systemd.
 		if [ -d "/etc/apt/apt.conf.d/" ]; then
-			printf 'DPkg::Pre-Invoke {/etc/distrobox-pre-hook.sh};\n' > /etc/apt/apt.conf.d/00_distrobox
-			printf 'DPkg::Post-Invoke {/etc/distrobox-post-hook.sh};\n' >> /etc/apt/apt.conf.d/00_distrobox
+			printf 'DPkg::Pre-Invoke {/etc/otter-pre-hook.sh};\n' > /etc/apt/apt.conf.d/00_otter
+			printf 'DPkg::Post-Invoke {/etc/otter-post-hook.sh};\n' >> /etc/apt/apt.conf.d/00_otter
 		fi
 	fi
 }
@@ -533,15 +535,15 @@ setup_pacman_exceptions()
 		# in case we're not using an init image, neutralize systemd post installation hooks
 		# so that we do not encounter problems along the way.
 		# This will be removed if we're using --init.
-		cat << EOF > /usr/share/libalpm/scripts/distrobox_post_hook.sh
+		cat << EOF > /usr/share/libalpm/scripts/otter_post_hook.sh
 #!/bin/sh
 echo -e '#!/bin/sh\nexit 0' > /usr/share/libalpm/scripts/systemd-hook;
 EOF
-		chmod +x /usr/share/libalpm/scripts/distrobox_post_hook.sh
+		chmod +x /usr/share/libalpm/scripts/otter_post_hook.sh
 
 		# create hooks files for them
-		find /usr/share/libalpm/hooks/*distrobox* -delete || :
-		for hook in /etc/distrobox-pre-hook.sh /etc/distrobox-post-hook.sh /usr/share/libalpm/scripts/distrobox_post_hook.sh; do
+		find /usr/share/libalpm/hooks/*otter* -delete || :
+		for hook in /etc/otter-pre-hook.sh /etc/otter-post-hook.sh /usr/share/libalpm/scripts/otter_post_hook.sh; do
 			when="PostTransaction"
 			[ -z "${hook##*pre*}" ] && when="PreTransaction"
 			cat << EOF > "/usr/share/libalpm/hooks/$(basename "${hook}").hook"
@@ -551,7 +553,7 @@ Operation = Upgrade
 Type = Package
 Target = *
 [Action]
-Description = Distrobox hook ${hook}...
+Description = Otter hook ${hook}...
 When = ${when}
 Exec = ${hook}
 EOF
@@ -588,7 +590,7 @@ setup_rpm_exceptions()
 			net_mounts="${net_mount}:${net_mounts}"
 		done
 		net_mounts=${net_mounts%?}
-		cat << EOF > /usr/lib/rpm/macros.d/macros.distrobox
+		cat << EOF > /usr/lib/rpm/macros.d/macros.otter
 %_netsharedpath ${net_mounts}
 EOF
 	fi
@@ -605,9 +607,9 @@ EOF
 #   None
 setup_xbps_exceptions()
 {
-	# We have to lock this paths from xbps extraction, as it's incompatible with distrobox's
+	# We have to lock this paths from xbps extraction, as it's incompatible with otter's
 	# mount process.
-	cat << EOF > /etc/xbps.d/distrobox-ignore.conf
+	cat << EOF > /etc/xbps.d/otter-ignore.conf
 noextract=/etc/passwd
 noextract=/etc/hosts
 noextract=/etc/host.conf
@@ -758,7 +760,7 @@ setup_apk()
 		apk add tzdata
 	fi
 
-	# Install additional packages passed at distrbox-create time
+	# Install additional packages passed at otter-create time
 	if [ -n "${container_additional_packages}" ]; then
 		# shellcheck disable=SC2086
 		apk add --force-overwrite ${container_additional_packages}
@@ -877,7 +879,7 @@ setup_apt()
 		apt-get --reinstall install tzdata
 	fi
 
-	# Install additional packages passed at distrbox-create time
+	# Install additional packages passed at otter-create time
 	if [ -n "${container_additional_packages}" ]; then
 		# shellcheck disable=SC2086
 		apt-get install -y ${container_additional_packages}
@@ -984,7 +986,7 @@ setup_aptrpm()
 		sed -i 's/*//g' /etc/passwd
 
 		# ALT Linux ships its own su incompatible with util-linux su flags.
-		# distrobox-enter passes flags like -m, --pty, -s, -c which ALT su rejects.
+		# otter-enter passes flags like -m, --pty, -s, -c which ALT su rejects.
 		# runuser (from util-linux, always present) accepts the same flags.
 		# Place the wrapper in /usr/local/bin so it is found before /bin/su.
 		mkdir -p /usr/local/bin
@@ -1011,7 +1013,7 @@ EOF
 		apt-get --reinstall install -y tzdata
 	fi
 
-	# Install additional packages passed at distrbox-create time
+	# Install additional packages passed at otter-create time
 	if [ -n "${container_additional_packages}" ]; then
 		# shellcheck disable=SC2086
 		apt-get install -y ${container_additional_packages}
@@ -1132,7 +1134,7 @@ setup_dnf()
 		${manager} reinstall -y tzdata
 	fi
 
-	# Install additional packages passed at distrbox-create time
+	# Install additional packages passed at otter-create time
 	if [ -n "${container_additional_packages}" ]; then
 		# shellcheck disable=SC2086
 		${manager} install -y ${container_additional_packages}
@@ -1208,7 +1210,7 @@ LC_CTYPE=${HOST_LOCALE}
 EOF
 	fi
 
-	# Install additional packages passed at distrbox-create time
+	# Install additional packages passed at otter-create time
 	if [ -n "${container_additional_packages}" ]; then
 		# shellcheck disable=SC2086
 		emerge --ask=n --autounmask-continue --noreplace --quiet-build \
@@ -1318,7 +1320,7 @@ setup_microdnf()
 		microdnf reinstall -y tzdata || microdnf install -y tzdata
 	fi
 
-	# Install additional packages passed at distrbox-create time
+	# Install additional packages passed at otter-create time
 	if [ -n "${container_additional_packages}" ]; then
 		# shellcheck disable=SC2086
 		microdnf install -y ${container_additional_packages}
@@ -1424,7 +1426,7 @@ setup_pacman()
 		locale-gen -a
 	fi
 
-	# Install additional packages passed at distrbox-create time
+	# Install additional packages passed at otter-create time
 	if [ -n "${container_additional_packages}" ]; then
 		# shellcheck disable=SC2086
 		pacman -S --needed --noconfirm ${container_additional_packages}
@@ -1516,7 +1518,7 @@ setup_slackpkg()
 	# shellcheck disable=SC2086
 	yes | slackpkg install -default_answer=yes -batch=yes ${install_pkg}
 
-	# Install additional packages passed at distrbox-create time
+	# Install additional packages passed at otter-create time
 	if [ -n "${container_additional_packages}" ]; then
 		# shellcheck disable=SC2086
 		yes | slackpkg install -default_answer=yes -batch=yes \
@@ -1612,7 +1614,7 @@ setup_xbps()
 		xbps-install --force -y tzdata
 	fi
 
-	# Install additional packages passed at distrbox-create time
+	# Install additional packages passed at otter-create time
 	if [ -n "${container_additional_packages}" ]; then
 		# shellcheck disable=SC2086
 		xbps-install -Sy ${container_additional_packages}
@@ -1646,7 +1648,7 @@ setup_zypper()
 	# So, let's enable them. For the same reason, we make sure we install
 	# docs.
 	if [ -d /etc/zypp/zypp.conf.d ]; then
-		cat << EOF > /etc/zypp/zypp.conf.d/99-distrobox.conf
+		cat << EOF > /etc/zypp/zypp.conf.d/99-otter.conf
 [main]
 solver.onlyRequires = false
 rpm.install.excludedocs = no
@@ -1728,7 +1730,7 @@ EOF
 		zypper install -f -y timezone
 	fi
 
-	# Install additional packages passed at distrbox-create time
+	# Install additional packages passed at otter-create time
 	if [ -n "${container_additional_packages}" ]; then
 		# shellcheck disable=SC2086
 		zypper install -y ${container_additional_packages}
@@ -1859,14 +1861,14 @@ SHELL="$(command -v "${shell_pkg}")"
 
 # Attempt to download host-spawn during init, we don't care if it fails, so let's
 # continue in that case
-/usr/bin/distrobox-host-exec -Y test 2> /dev/null > /dev/null || :
+/usr/bin/otter-host-exec -Y test 2> /dev/null > /dev/null || :
 
 # If xdg-open is not present and we don't have an init system, do a link of it.
 # This is handy to handle opening of links, files and apps from inside the container
 # into the host.
 if [ "${init}" -eq 0 ] && ! command -v xdg-open; then
 	mkdir -p /usr/local/bin/
-	ln -sf /usr/bin/distrobox-host-exec /usr/local/bin/xdg-open
+	ln -sf /usr/bin/otter-host-exec /usr/local/bin/xdg-open
 fi
 
 # If flatpak is not present, do a link of it. This is handy to handle opening of
@@ -1874,7 +1876,7 @@ fi
 # Note: we're using /usr/bin instead of /usr/local/bin because xdg-open will read
 # the desktopfile, which will contain an absolute path of /usr/bin/flatpak
 if ! command -v flatpak; then
-	ln -sf /usr/bin/distrobox-host-exec /usr/bin/flatpak
+	ln -sf /usr/bin/otter-host-exec /usr/bin/flatpak
 fi
 
 ###############################################################################
@@ -1903,7 +1905,7 @@ EOF
 fi
 
 ###############################################################################
-printf "distrobox: Setting up devpts mounts...\n"
+printf "otter: Setting up devpts mounts...\n"
 
 # First we need to ensure we have a tty group to assign /dev/pts to
 if ! grep -q tty /etc/group; then
@@ -1924,7 +1926,7 @@ mount --make-rshared /
 ###############################################################################
 
 ###############################################################################
-printf "distrobox: Setting up read-only mounts...\n"
+printf "otter: Setting up read-only mounts...\n"
 
 for host_mount_ro in ${HOST_MOUNTS_RO}; do
 	# Mounting read-only in a user namespace will trigger a check to see if certain
@@ -1943,7 +1945,7 @@ done
 ###############################################################################
 
 ###############################################################################
-printf "distrobox: Setting up read-write mounts...\n"
+printf "otter: Setting up read-write mounts...\n"
 
 # On some ostree systems, home is in /var/home, but most of the software expects
 # it to be in /home. In the hosts systems this is fixed by using a symlink.
@@ -1962,7 +1964,7 @@ done
 ###############################################################################
 
 ###############################################################################
-printf "distrobox: Setting up host's sockets integration...\n"
+printf "otter: Setting up host's sockets integration...\n"
 # Find all the user's socket and mount them inside the container
 # this will allow for continuity of functionality between host and container
 #
@@ -2002,7 +2004,7 @@ done
 
 # If --nvidia, we try to integrate host's nvidia drivers in to the guest
 if [ "${nvidia}" -eq 1 ]; then
-	printf "distrobox: Setting up host's nvidia integration...\n"
+	printf "otter: Setting up host's nvidia integration...\n"
 
 	# Refresh ldconfig cache, also detect if there are empty files remaining
 	# and clean them.
@@ -2184,7 +2186,7 @@ if [ "${nvidia}" -eq 1 ]; then
 fi
 
 ###############################################################################
-printf "distrobox: Integrating host's themes, icons, fonts...\n"
+printf "otter: Integrating host's themes, icons, fonts...\n"
 # Themes and icons integration works using a bind mount inside the container
 # of the host's themes and icons directory. This ensures that the host's home will
 # not be littered with files and directories and broken symlinks.
@@ -2202,9 +2204,9 @@ if ! mount_bind "/run/host/usr/share/fonts" "/usr/local/share/fonts"; then
 fi
 ###############################################################################
 
-printf "distrobox: Setting up distrobox profile...\n"
+printf "otter: Setting up container profile...\n"
 
-# This ensures compatibility with prompts and tools between toolbx and distrobox
+# This ensures compatibility with prompts and tools between toolbx and otter
 touch /run/.toolboxenv
 
 # Ensure we have some basic env variables and prompt as base if /etc/profile.d is missing
@@ -2216,13 +2218,13 @@ if [ ! -d /etc/profile.d ]; then
 		/etc/zshrc
 	"
 	for rcfile in ${rcfiles}; do
-		if [ -e "${rcfile}" ] && ! grep -q 'distrobox_profile.sh' "${rcfile}"; then
-			echo "[ -e /etc/profile.d/distrobox_profile.sh ] && . /etc/profile.d/distrobox_profile.sh" >> "${rcfile}"
+		if [ -e "${rcfile}" ] && ! grep -q 'otter_profile.sh' "${rcfile}"; then
+			echo "[ -e /etc/profile.d/otter_profile.sh ] && . /etc/profile.d/otter_profile.sh" >> "${rcfile}"
 		fi
 	done
 	mkdir -p /etc/profile.d
 fi
-cat << EOF > /etc/profile.d/distrobox_profile.sh
+cat << EOF > /etc/profile.d/otter_profile.sh
 test -z "\$USER" && export USER="\$(id -un 2> /dev/null)"
 test -z "\$UID"  && readonly UID="\$(id -ur 2> /dev/null)"
 test -z "\$EUID" && readonly EUID="\$(id -u  2> /dev/null)"
@@ -2272,7 +2274,7 @@ EOF
 # It's also importanto to keep this working on fish shells
 if [ -e "/etc/fish/config.fish" ]; then
 	mkdir -p /etc/fish/conf.d
-	cat << EOF > /etc/fish/conf.d/distrobox_config.fish
+	cat << EOF > /etc/fish/conf.d/otter_config.fish
 if status --is-interactive
 	test -z "\$USER" && set -gx USER (id -un 2> /dev/null)
 	test -z "\$UID"  && set -gx UID (id -ur 2> /dev/null)
@@ -2323,7 +2325,7 @@ fi
 ###############################################################################
 
 ###############################################################################
-printf "distrobox: Setting up sudo...\n"
+printf "otter: Setting up sudo...\n"
 mkdir -p /etc/sudoers.d
 # Ensure we're using the user's password for sudo, not root
 if [ -e /etc/sudoers ]; then
@@ -2388,7 +2390,7 @@ fi
 ###############################################################################
 # If not existing, ensure we have a group for our user.
 if ! grep -q "^${container_user_name}:" /etc/group; then
-	printf "distrobox: Setting up user groups...\n"
+	printf "otter: Setting up user groups...\n"
 
 	if ! groupadd --force --gid "${container_user_gid}" "${container_user_name}"; then
 		# It may occur that we have users with unsupported user name (eg. on LDAP or AD)
@@ -2405,7 +2407,7 @@ if [ -d "/run/host/var/kerberos" ] &&
 	[ -d "/etc/krb5.conf.d" ] &&
 	[ ! -e "/etc/krb5.conf.d/kcm_default_ccache" ]; then
 
-	printf "distrobox: Setting up kerberos integration...\n"
+	printf "otter: Setting up kerberos integration...\n"
 
 	cat << EOF > /etc/krb5.conf.d/kcm_default_ccache
 # # To disable the KCM credential cache, comment out the following lines.
@@ -2414,7 +2416,7 @@ if [ -d "/run/host/var/kerberos" ] &&
 EOF
 fi
 
-printf "distrobox: Setting up user's group list...\n"
+printf "otter: Setting up user's group list...\n"
 # If we have sudo/wheel groups, let's add the user to them.
 # and ensure that user's in those groups can effectively sudo
 additional_groups=""
@@ -2443,7 +2445,7 @@ fi
 # shellcheck disable=SC1003
 if ! grep -q "^$(printf '%s' "${container_user_name}" | tr '\\' '.'):" /etc/passwd &&
 	! getent passwd "${container_user_uid}"; then
-	printf "distrobox: Adding user...\n"
+	printf "otter: Adding user...\n"
 	if ! useradd \
 		--home-dir "${container_user_home}" \
 		--no-create-home \
@@ -2478,7 +2480,7 @@ elif [ ! -e /etc/passwd.done ]; then
 
 	# Modify username if needed
 	if [ "${current_user_name}" != "${container_user_name}" ]; then
-		printf "distrobox: Setting up existing user - username...\n"
+		printf "otter: Setting up existing user - username...\n"
 		if ! usermod --login "${container_user_name}" "${current_user_name}"; then
 			printf "Warning: usermod --login failed, trying manual modification\n"
 			sed -i "s|^${current_user_name}:|${container_user_name}:|g" /etc/passwd
@@ -2493,7 +2495,7 @@ elif [ ! -e /etc/passwd.done ]; then
 
 	# Modify shell if needed
 	if [ "${current_shell}" != "${SHELL:-"/bin/bash"}" ]; then
-		printf "distrobox: Setting up existing user - shell...\n"
+		printf "otter: Setting up existing user - shell...\n"
 		if ! usermod --shell "${SHELL:-"/bin/bash"}" "${current_user_name}"; then
 			printf "Warning: usermod --shell failed, trying manual modification\n"
 			# sed to update shell field (7th field) in /etc/passwd
@@ -2503,7 +2505,7 @@ elif [ ! -e /etc/passwd.done ]; then
 
 	# Modify GID if needed
 	if [ "${current_gid}" != "${container_user_gid}" ]; then
-		printf "distrobox: Setting up existing user - GID...\n"
+		printf "otter: Setting up existing user - GID...\n"
 		if ! usermod --gid "${container_user_gid}" "${current_user_name}"; then
 			printf "Warning: usermod --gid failed, trying manual modification\n"
 			# sed to update gid field (4th field) in /etc/passwd
@@ -2520,7 +2522,7 @@ elif [ ! -e /etc/passwd.done ]; then
 		fi
 	done
 	if [ "${groups_need_modification}" -eq 1 ]; then
-		printf "distrobox: Setting up existing user - groups...\n"
+		printf "otter: Setting up existing user - groups...\n"
 		# Workaround: usermod --groups fails if an /etc/group file does not end with
 		# a newline, so we preemptively add one just in case.
 		printf '\n' >> /etc/group
@@ -2542,7 +2544,7 @@ elif [ ! -e /etc/passwd.done ]; then
 	# Modify UID if needed
 	current_uid=$(getent passwd "${current_user_name}" | cut -d: -f3)
 	if [ "${current_uid}" != "${container_user_uid}" ]; then
-		printf "distrobox: UID...\n"
+		printf "otter: UID...\n"
 		if ! usermod --uid "${container_user_uid}" "${current_user_name}"; then
 			printf "Warning: usermod --uid failed, trying manual modification\n"
 			sed -i "s|^\(${current_user_name}:[^:]*:\)[^:]*|\1${container_user_uid}|g" /etc/passwd
@@ -2552,7 +2554,7 @@ fi
 
 # Ensure we have our home correctly set, in case of cloned containers or whatnot
 if [ "$(getent passwd "${container_user_name}" | cut -d: -f6)" != "${container_user_home}" ]; then
-	printf "distrobox: Setting up user home...\n"
+	printf "otter: Setting up user home...\n"
 
 	if ! usermod -d "${container_user_home}" "${container_user_name}"; then
 		sed -i "s|^${container_user_name}.*|${container_user_name}:x:${container_user_uid}:${container_user_gid}::${container_user_home}:${SHELL:-"/bin/bash"}|g" /etc/passwd
@@ -2561,7 +2563,7 @@ fi
 
 # If we're rootless, delete password for root and user
 if [ ! -e /etc/passwd.done ]; then
-	printf "distrobox: Ensuring user's access...\n"
+	printf "otter: Ensuring user's access...\n"
 
 	temporary_password="$(md5sum < /proc/sys/kernel/random/uuid | cut -d' ' -f1)"
 	# We generate a random password to initialize the entry for the user.
@@ -2636,8 +2638,8 @@ chmod 0400 /etc/gshadow 2> /dev/null || :
 ###############################################################################
 
 ###############################################################################
-if [ -n "${DISTROBOX_HOST_HOME-}" ] && [ -d "/etc/skel" ]; then
-	printf "distrobox: Setting up skel...\n"
+if [ -n "${OTTER_HOST_HOME-}" ] && [ -d "/etc/skel" ]; then
+	printf "otter: Setting up skel...\n"
 
 	# If we do not have profile files in the home, we should copy the
 	# skeleton files, if present.
@@ -2666,7 +2668,7 @@ fi
 
 ###############################################################################
 if [ -n "${init_hook}" ]; then
-	printf "distrobox: Executing init hooks...\n"
+	printf "otter: Executing init hooks...\n"
 	# execute eventual init hooks if specified
 	# shellcheck disable=SC2086
 	eval ${init_hook}
@@ -2742,7 +2744,7 @@ fi
 
 ###############################################################################
 # If we're here, the init support has been enabled.
-printf "distrobox: Setting up init system...\n"
+printf "otter: Setting up init system...\n"
 
 # some of this directories are needed by
 # the init system. If they're mounts, there might
@@ -2885,7 +2887,7 @@ EOF
 fi
 
 # Now we can launch init
-printf "distrobox: Firing up init system...\n"
+printf "otter: Firing up init system...\n"
 
 if [ -e /usr/lib/systemd/systemd ] || [ -e /lib/systemd/systemd ]; then
 	# Start user Systemd unit, this will attempt until Systemd is ready
