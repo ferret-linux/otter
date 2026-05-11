@@ -1861,6 +1861,13 @@ fi
 # Set SHELL to the install path inside the container
 SHELL="$(command -v "${shell_pkg}")"
 
+# Fix broken prompt for zsh shell (debian, ubuntu... need it)
+if [ "${shell_pkg}" = "zsh" ]; then
+	mkdir -p /etc/zsh
+	printf 'emulate sh -c '\''source /etc/profile'\''\n' > /etc/zsh/zprofile
+	printf 'emulate sh -c '\''source /etc/profile'\''\n' > /etc/zshenv
+fi
+
 # Attempt to download host-spawn during init, we don't care if it fails, so let's
 # continue in that case
 /usr/bin/otter-host-exec -Y test 2> /dev/null > /dev/null || :
