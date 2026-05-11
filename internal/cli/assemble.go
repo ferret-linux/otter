@@ -18,7 +18,7 @@ import (
 )
 
 func newAssembleCommand(cfg *config.Values) *cli.Command {
-	fileFlag := &cli.StringFlag{Name: "file", Usage: "path or URL to the distrobox manifest/ini file"}
+	fileFlag := &cli.StringFlag{Name: "file", Usage: "path or URL to otter manifest/ini file"}
 	nameFlag := &cli.StringFlag{
 		Name:    "name",
 		Aliases: []string{"n"},
@@ -33,17 +33,17 @@ func newAssembleCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
 		Name: "assemble",
 		UsageText: `
-	distrobox assemble create
-	distrobox assemble rm
-	distrobox assemble create --file /path/to/file.ini
-	distrobox assemble rm --file /path/to/file.ini
-	distrobox assemble create --replace --file /path/to/file.ini
+	otter assemble create
+	otter assemble rm
+	otter assemble create --file /path/to/file.ini
+	otter assemble rm --file /path/to/file.ini
+	otter assemble create --replace --file /path/to/file.ini
 
 Options:
 
-	--file:			path or URL to the distrobox manifest/ini file
+	--file:			path or URL to the otter manifest/ini file
 	--name/-n:		run against a single entry in the manifest/ini file
-	--replace/-R:		replace already existing distroboxes with matching names
+	--replace/-R:		replace already existing containers with matching names
 	--dry-run/-d:		only print the container manager command generated
 	--verbose/-v:		show more verbosity
 	--version/-V:		show version
@@ -57,7 +57,7 @@ Options:
 					&cli.BoolFlag{
 						Name:    "replace",
 						Aliases: []string{"R"},
-						Usage:   "replace already existing distroboxes with matching names",
+						Usage:   "replace already existing containers with matching names",
 					},
 					dryRunFlag,
 				},
@@ -87,11 +87,11 @@ func assembleAction(ctx context.Context, cmd *cli.Command, cfg *config.Values, d
 	}
 
 	// TODO: handle file name as a positional argument
-	// https://github.com/89luca89/distrobox-next/blob/07b3abf2015effafc5596b9dc7f02c35a17eb8a7/distrobox-assemble#L205
+	// https://github.com/89luca89/otter-next/blob/07b3abf2015effafc5596b9dc7f02c35a17eb8a7/otter-assemble#L205
 
 	manifestFilePath := cmd.String("file")
 	if manifestFilePath == "" {
-		manifestFilePath = "./distrobox.ini"
+		manifestFilePath = "./otter.ini"
 	}
 
 	manifest, err := manifest.Parse(ctx, manifestFilePath)

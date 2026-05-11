@@ -17,12 +17,12 @@ import (
 func newEnterCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:  "enter",
-		Usage: "Enter a distrobox",
+		Usage: "Enter a otter container",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "name",
 				Aliases: []string{"n"},
-				Usage:   "name for the distrobox",
+				Usage:   "name for the container",
 			},
 			&cli.BoolFlag{
 				Name:    "dry-run",

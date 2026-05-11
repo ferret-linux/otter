@@ -20,22 +20,22 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
 
 		Name:  "create",
-		Usage: "create a new distrobox container",
-		UsageText: `distrobox create [options] [container_name]
+		Usage: "create a new otter container",
+		UsageText: `otter create [options] [container_name]
 
 Examples:
-    distrobox create --image alpine:latest --name test --init-hooks "touch /var/tmp/test1 && touch /var/tmp/test2"
-    distrobox create --image fedora:39 --name test --additional-flags "--env MY_VAR=value"
-    distrobox create --image fedora:39 --name test --volume /opt/my-dir:/usr/local/my-dir:rw --additional-flags "--pids-limit 100"
-    distrobox create -i docker.io/almalinux/8-init --init --name test --pre-init-hooks "dnf config-manager --enable powertools && dnf -y install epel-release"
-    distrobox create --clone fedora-39 --name fedora-39-copy
-    distrobox create --image alpine my-alpine-container
-    distrobox create --image registry.fedoraproject.org/fedora-toolbox:latest --name fedora-toolbox-latest
-    distrobox create --pull --image centos:stream9 --home ~/distrobox/centos9
-    distrobox create --image alpine:latest --name test2 --additional-packages "git tmux vim"
-    distrobox create --image ubuntu:22.04 --name ubuntu-nvidia --nvidia
+    otter create --image alpine:latest --name test --init-hooks "touch /var/tmp/test1 && touch /var/tmp/test2"
+    otter create --image fedora:39 --name test --additional-flags "--env MY_VAR=value"
+    otter create --image fedora:39 --name test --volume /opt/my-dir:/usr/local/my-dir:rw --additional-flags "--pids-limit 100"
+    otter create -i docker.io/almalinux/8-init --init --name test --pre-init-hooks "dnf config-manager --enable powertools && dnf -y install epel-release"
+    otter create --clone fedora-39 --name fedora-39-copy
+    otter create --image alpine my-alpine-container
+    otter create --image registry.fedoraproject.org/fedora-toolbox:latest --name fedora-toolbox-latest
+    otter create --pull --image centos:stream9 --home ~/otter/centos9
+    otter create --image alpine:latest --name test2 --additional-packages "git tmux vim"
+    otter create --image ubuntu:22.04 --name ubuntu-nvidia --nvidia
 
-    DBX_NON_INTERACTIVE=1 DBX_CONTAINER_NAME=test-alpine DBX_CONTAINER_IMAGE=alpine distrobox-create`,
+    DBX_NON_INTERACTIVE=1 DBX_CONTAINER_NAME=test-alpine DBX_CONTAINER_IMAGE=alpine otter-create`,
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "image",
@@ -49,11 +49,11 @@ Examples:
 			&cli.StringFlag{
 				Name:    "name",
 				Aliases: []string{"n"},
-				Usage:   fmt.Sprintf("name for the distrobox (default: %s)", cfg.DefaultContainerName),
+				Usage:   fmt.Sprintf("name for the container (default: %s)", cfg.DefaultContainerName),
 			},
 			&cli.StringFlag{
 				Name:  "hostname",
-				Usage: "hostname for the distrobox",
+				Usage: "hostname for the container",
 			},
 			&cli.BoolFlag{
 				Name:    "pull",
@@ -68,8 +68,8 @@ Examples:
 			&cli.StringFlag{
 				Name:    "clone",
 				Aliases: []string{"c"},
-				Usage: `name of the distrobox container to use as base for a new container
-this will be useful to either rename an existing distrobox or have multiple copies
+				Usage: `name of the otter container to use as base for a new container
+this will be useful to either rename an existing otter container or have multiple copies
 of the same environment.`,
 			},
 			&cli.StringFlag{
@@ -154,7 +154,7 @@ may require additional packages depending on the container image: https://github
 			},
 			&cli.BoolFlag{
 				Name:  "absolutely-disable-root-password-i-am-really-positively-sure",
-				Usage: `⚠️ ⚠️ when setting up a rootful distrobox, this will skip user password setup, leaving it blank. ⚠️ ⚠️`,
+				Usage: `⚠️ ⚠️ when setting up a rootful container, this will skip user password setup, leaving it blank. ⚠️ ⚠️`,
 			},
 			&cli.BoolFlag{
 				Name:    "compatibility",
@@ -248,7 +248,7 @@ func printCreateCompleted(progress *ui.Progress, containerName string, rootful b
 		rootFlag = "--root "
 	}
 
-	msg := "Distrobox '%s' successfully created.\nTo enter, run:\n\ndistrobox enter %s%s\n\n"
+	msg := "Distrobox '%s' successfully created.\nTo enter, run:\n\notter enter %s%s\n\n"
 
 	progress.Finalize(msg, containerName, rootFlag, containerName)
 }
@@ -262,7 +262,7 @@ func printContainerAlreadyExists(progress *ui.Progress, containerName string, ro
 	msg := `Distrobox named '%s' already exists.
 To enter, run:
 
-distrobox enter %s%s
+otter enter %s%s
 
 `
 

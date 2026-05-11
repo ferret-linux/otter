@@ -18,12 +18,12 @@ import (
 func newRmCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:  "rm",
-		Usage: "Remove distroboxes",
+		Usage: "Remove otter containers",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
-				Usage:   "delete all distroboxes",
+				Usage:   "delete all otter containers",
 			},
 			&cli.BoolFlag{
 				Name:    "force",

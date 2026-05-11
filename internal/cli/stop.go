@@ -18,19 +18,19 @@ import (
 func newStopCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:  "stop",
-		Usage: "stop running distrobox containers",
-		UsageText: `distrobox stop [options] [container-name...]
+		Usage: "stop running otter containers",
+		UsageText: `otter stop [options] [container-name...]
 
 Examples:
-    distrobox stop container-name
-    distrobox stop container1 container2
-    distrobox stop --all
-    distrobox stop --yes container-name`,
+    otter stop container-name
+    otter stop container1 container2
+    otter stop --all
+    otter stop --yes container-name`,
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
-				Usage:   "stop all distroboxes",
+				Usage:   "stop all otter containers",
 			},
 			&cli.BoolFlag{
 				Name:    "yes",

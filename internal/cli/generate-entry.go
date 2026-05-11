@@ -16,7 +16,7 @@ import (
 func newGenerateEntryCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:  "generate-entry",
-		Usage: "Generate or delete distrobox entries",
+		Usage: "Generate or delete container entries",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "delete",
@@ -32,7 +32,7 @@ func newGenerateEntryCommand(cfg *config.Values) *cli.Command {
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
-				Usage:   "perform for all distroboxes",
+				Usage:   "perform for all otter containers",
 			},
 		},
 		ArgsUsage: "container-name",
@@ -43,10 +43,10 @@ func newGenerateEntryCommand(cfg *config.Values) *cli.Command {
 }
 
 func generateEntryAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
-	// The current executable is used as distrobox path
+	// The current executable is used as otter path
 	distroboxPath, err := os.Executable()
 	if err != nil {
-		return fmt.Errorf("failed to get distrobox executable path: %w", err)
+		return fmt.Errorf("failed to get otter executable path: %w", err)
 	}
 
 	containerManager, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)

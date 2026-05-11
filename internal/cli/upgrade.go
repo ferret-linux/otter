@@ -18,24 +18,24 @@ import (
 func newUpgradeCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:  "upgrade",
-		Usage: "upgrade packages inside distrobox containers",
-		UsageText: `distrobox upgrade [options] [container-name...]
+		Usage: "upgrade packages inside otter containers",
+		UsageText: `otter upgrade [options] [container-name...]
 
 Examples:
-    distrobox upgrade container-name
-    distrobox upgrade container1 container2
-    distrobox upgrade --all
-    distrobox upgrade --all --running
-    distrobox upgrade --yes container-name`,
+    otter upgrade container-name
+    otter upgrade container1 container2
+    otter upgrade --all
+    otter upgrade --all --running
+    otter upgrade --yes container-name`,
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
-				Usage:   "upgrade all distroboxes",
+				Usage:   "upgrade all otter containers",
 			},
 			&cli.BoolFlag{
 				Name:  "running",
-				Usage: "upgrade only running distroboxes (requires --all)",
+				Usage: "upgrade only running otter containers (requires --all)",
 			},
 			&cli.BoolFlag{
 				Name:    "yes",

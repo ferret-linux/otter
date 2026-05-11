@@ -22,7 +22,7 @@ const containerManagerKey contextKey = "containerManager"
 
 func NewRootCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
-		Name:    "distrobox",
+		Name:    "otter",
 		Usage:   "Use any Linux distribution inside your terminal",
 		Version: version.Version,
 		Flags: []cli.Flag{
@@ -47,7 +47,7 @@ func printMissingContainerManager(p *ui.Printer) {
 	p.Println("Missing dependency: we need a container manager.")
 	p.Println("Please install one of podman, podman-launcher, or docker.")
 	p.Println("You can follow the documentation on:")
-	p.Println("\tman distrobox-compatibility")
+	p.Println("\tman otter-compatibility")
 	p.Println("or:")
 	p.Println("\thttps://github.com/89luca89/distrobox/blob/main/docs/compatibility.md")
 }
@@ -134,8 +134,8 @@ func withRoot(_ *config.Values, cmd *cli.Command) *cli.Command {
 		Name:    "root",
 		Aliases: []string{"r"},
 		Usage: "launch podman/docker/lilipod with root privileges. Note that if you need root this is the preferred\n" +
-			"way over \"sudo distrobox\" (note: if using a program other than 'sudo' for root privileges is necessary,\n" +
-			"specify it through the DBX_SUDO_PROGRAM env variable, or 'distrobox_sudo_program' config variable)",
+			"way over \"sudo otter\" (note: if using a program other than 'sudo' for root privileges is necessary,\n" +
+			"specify it through the DBX_SUDO_PROGRAM env variable, or 'otter_sudo_program' config variable)",
 	})
 
 	prev := cmd.Before
