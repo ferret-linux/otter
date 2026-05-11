@@ -18,7 +18,7 @@ import (
 )
 
 func newAssembleCommand(cfg *config.Values) *cli.Command {
-	fileFlag := &cli.StringFlag{Name: "file", Usage: "path or URL to the manifest/ini file"}
+	fileFlag := &cli.StringFlag{Name: "file", Usage: "path or URL to the distrobox manifest/ini file"}
 	nameFlag := &cli.StringFlag{
 		Name:    "name",
 		Aliases: []string{"n"},
@@ -33,24 +33,20 @@ func newAssembleCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
 		Name: "assemble",
 		UsageText: `
-╭───────────────────────────────────────────────────────────╮
-│▸ Usage:                                                   │
-│  otter assemble create                                    │
-│  otter assemble remove                                    │
-│  otter assemble create --file /path/to/file.ini           │
-│  otter assemble remove --file /path/to/file.ini           │
-│  otter assemble create --replace --file /path/to/file.ini │
-├───────────────────────────────────────────────────────────┤
-│▸ Options:                                                 │
-│ --file    ┆ -f Path or URL to the manifest/ini file       │
-│ --name    ┆ -n Run against a single entry in the manifest │
-│ --replace ┆ -R Replace containers with matching names     │
-├───────────────────────────────────────────────────────────┤
-│▸ Extras:                                                  │
-│ --verbose ┆ -v Show more verbose output                   │
-│ --version ┆ -V Show version information                   │
-│ --dry-run ┆ -d Print generated command without running it │
-╰───────────────────────────────────────────────────────────╯
+	distrobox assemble create
+	distrobox assemble rm
+	distrobox assemble create --file /path/to/file.ini
+	distrobox assemble rm --file /path/to/file.ini
+	distrobox assemble create --replace --file /path/to/file.ini
+
+Options:
+
+	--file:			path or URL to the distrobox manifest/ini file
+	--name/-n:		run against a single entry in the manifest/ini file
+	--replace/-R:		replace already existing distroboxes with matching names
+	--dry-run/-d:		only print the container manager command generated
+	--verbose/-v:		show more verbosity
+	--version/-V:		show version
 `,
 		Commands: []*cli.Command{
 			{
@@ -61,7 +57,7 @@ func newAssembleCommand(cfg *config.Values) *cli.Command {
 					&cli.BoolFlag{
 						Name:    "replace",
 						Aliases: []string{"R"},
-						Usage:   "replace already existing containers with matching names",
+						Usage:   "replace already existing distroboxes with matching names",
 					},
 					dryRunFlag,
 				},
@@ -95,7 +91,7 @@ func assembleAction(ctx context.Context, cmd *cli.Command, cfg *config.Values, d
 
 	manifestFilePath := cmd.String("file")
 	if manifestFilePath == "" {
-		manifestFilePath = "./otter.ini"
+		manifestFilePath = "./distrobox.ini"
 	}
 
 	manifest, err := manifest.Parse(ctx, manifestFilePath)
