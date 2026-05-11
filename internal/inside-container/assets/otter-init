@@ -2275,8 +2275,8 @@ fi
 # toolbx prompt: https://github.com/containers/toolbox/blob/main/profile.d/toolbox.sh#L47
 # this will ensure greater compatibility between the two implementations
 if [ -f /run/.toolboxenv ]; then
-    [ "\${BASH_VERSION:-}" != "" ] && export PS1="📦[\u@\$CONTAINER_ID \W]\$ "
-    [ "\${ZSH_VERSION:-}" != "" ] && export PS1="📦[%n@\$CONTAINER_ID]%~%# "
+    [ "\${BASH_VERSION:-}" != "" ] && export PS1="╭⟮⬢⟯─⟮\u@\$CONTAINER_ID⟯─⟮\W⟯─⟮\$(date +%H:%M)⟯\n╰─▶ "
+    [ "\${ZSH_VERSION:-}" != "" ] && export PS1="╭⟮⬢⟯─⟮%n@\$CONTAINER_ID⟯─⟮%1~⟯─⟮%D{%H:%M}⟯"$'\n'"╰─▶ "
 fi
 
 # This will ensure we have a first-shell password setup for an user if needed.
@@ -2335,8 +2335,10 @@ EOF
 	mkdir -p /etc/fish/functions
 	cat << EOF > /etc/fish/functions/fish_prompt.fish
 function fish_prompt
-	set current_dir (basename (pwd))
-	echo "📦[\$USER@\$CONTAINER_ID \$current_dir]> "
+	set t (date +%H:%M)
+	set dir (basename \$PWD)
+	echo "╭⟮⬢⟯─⟮\$USER@\$CONTAINER_ID⟯─⟮\$dir⟯─⟮\$t⟯"
+	echo "╰─▶ "
 end
 EOF
 fi
