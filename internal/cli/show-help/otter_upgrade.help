@@ -1,0 +1,22 @@
+╭───────────────────────────────────────────────────╮
+│▸ Usage:                                           │
+│  otter upgrade my-box                             │
+│  otter upgrade --all                              │
+│  otter upgrade --running                          │
+├───────────────────────────────────────────────────┤
+│▸ Options:                                         │
+│ --all     ┆ -a  Perform for all otters            │
+│ --root    ┆ -r  Upgrade rootful containers        │
+│ --running       Only upgrade running containers   │
+├───────────────────────────────────────────────────┤
+│▸ Extras:                                          │
+│ --help    ┆ -h  Show this help message            │
+│ --verbose ┆ -v  Show more verbose output          │
+├───────────────────────────────────────────────────┤
+│▸ Notes:                                           │
+│ --root  Prefer over 'sudo otter'.                 │
+│         Set OTR_SUDO_PROGRAM to use different app.│
+├───────────────────────────────────────────────────┤
+│▸ See also:                                        │
+│  Rootful containers need '--root' for 'upgrade'.  │
+╰───────────────────────────────────────────────────╯

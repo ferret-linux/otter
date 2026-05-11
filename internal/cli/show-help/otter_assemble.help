@@ -1,0 +1,22 @@
+╭───────────────────────────────────────────────────────────╮
+│▸ Usage:                                                   │
+│  otter assemble create                                    │
+│  otter assemble remove                                    │
+│  otter assemble create --file /path/to/file.ini           │
+│  otter assemble remove --file /path/to/file.ini           │
+│  otter assemble create --replace --file /path/to/file.ini │
+├───────────────────────────────────────────────────────────┤
+│▸ Commands:                                                │
+│  create        Create Container defined in manifest       │
+│  remove   ┆ rm Remove container defined in manifest       │
+├───────────────────────────────────────────────────────────┤
+│▸ Options:                                                 │
+│ --file    ┆ -f Path or URL to the manifest/ini file       │
+│ --name    ┆ -n Run against a single entry in the manifest │
+│ --replace ┆ -R Replace containers with matching names     │
+├───────────────────────────────────────────────────────────┤
+│▸ Extras:                                                  │
+│ --help    ┆ -h Show this help message                     │
+│ --verbose ┆ -v Show more verbose output                   │
+│ --dry-run ┆ -d Print generated command without running it │
+╰───────────────────────────────────────────────────────────╯

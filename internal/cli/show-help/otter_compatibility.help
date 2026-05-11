@@ -1,0 +1,11 @@
+╭───────────────────────────────────────────╮
+│▸ Usage:                                   │
+│  otter compatibility [options]            │
+├───────────────────────────────────────────┤
+│▸ Options:                                 │
+│ --images       List compatible images     │
+│ --system       Check system compatibility │
+├───────────────────────────────────────────┤
+│▸ Extras:                                  │
+│ --help    ┆ -h  Show this help message    │
+╰───────────────────────────────────────────╯

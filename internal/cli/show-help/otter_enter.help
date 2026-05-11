@@ -1,0 +1,28 @@
+╭─────────────────────────────────────────────────────────────────────────╮
+│▸ Usage:                                                                 │
+│  otter enter my-box                                                     │
+│  otter enter my-ubuntu --root                                           │
+│  otter enter my-alpine -- sh -l                                         │
+│  otter enter --name fedora-44 -- bash -l                                │
+│  otter enter --additional-flags "--env MY_VAR=value" --n b1 -- bash -l  │
+│  otter enter --additional-flags "--preserve-fds" --name test -- bash -l │
+├─────────────────────────────────────────────────────────────────────────┤
+│▸ Options:                                                               │
+│ --                        Command to execute into the container         │
+│ --name             ┆ -n   Name of the container to enter                │
+│ --root             ┆ -r   Launch container manager with root privileges │
+│ --no-tty           ┆ -T   Do not instantiate a tty                      │
+│ --clean-path              Reset PATH inside container to FHS standard   │
+│ --no-workdir       ┆ -nw  Always start from container's home directory  │
+│ --additional-flags ┆ -a   Additional flags to pass to container manager │
+├─────────────────────────────────────────────────────────────────────────┤
+│▸ Extras:                                                                │
+│ --help    ┆ -h  Show this help message                                  │
+│ --verbose ┆ -v  Show more verbose output                                │
+│ --dry-run ┆ -d   Print the generated container manager command          │
+├─────────────────────────────────────────────────────────────────────────┤
+│▸ Notes:                                                                 │
+│ --root  Preferred over 'sudo otter' when root is needed. To use a       │
+│         program other than sudo, set OTR_SUDO_PROGRAM or the            │
+│         'otter_sudo_program' config variable.                           │
+╰─────────────────────────────────────────────────────────────────────────╯

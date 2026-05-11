@@ -1,0 +1,24 @@
+╭──────────────────────────────────────────────╮
+│▸ Usage:                                      │
+│  otter ephemeral -i fedora -- rpm -qa        │
+│  otter ephemeral --nvidia --init --root      │
+├──────────────────────────────────────────────┤
+│▸ Options:                                    │
+│ --     ┆ -e  Command to execute at login     │
+│ --root ┆ -r  rootful ephemeral container     │
+├──────────────────────────────────────────────┤
+│▸ Extras:                                     │
+│ --help    ┆ -h  Show this help message       │
+│ --verbose ┆ -v  Show more verbose output     │
+├──────────────────────────────────────────────┤
+│▸ Notes:                                      │
+│ --root  Preferred over 'sudo otter'.         │
+│         To use a different sudo program,     │
+│         set OTR_SUDO_PROGRAM or the          │
+│         'otter_sudo_program' config variable.│
+├──────────────────────────────────────────────┤
+│▸ See also:                                   │
+│  Ephemeral containers are removed on exit,   │
+│  wraps create, enter & remove under the hood │
+│  and inherits all flags from 'otter create'. │
+╰──────────────────────────────────────────────╯

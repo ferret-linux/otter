@@ -1,0 +1,23 @@
+╭──────────────────────────────────────────────────────────╮
+│▸ Usage:                                                  │
+│  otter rm --all --force                                  │
+│  otter rm --force my-box                                 │
+│  otter rm my-box my-box2 my-box3                         │
+├──────────────────────────────────────────────────────────┤
+│▸ Options:                                                │
+│ --all     ┆ -a  Delete all otters                        │
+│ --root    ┆ -r  Launch container with root privileges    │
+│ --force   ┆ -f  Force deletion of problematic containers │
+│ --rm-home       Remove container home,preserves host     │
+├──────────────────────────────────────────────────────────┤
+│▸ Extras:                                                 │
+│ --help    ┆ -h  Show this help message                   │
+│ --verbose ┆ -v  Show more verbose output                 │
+├──────────────────────────────────────────────────────────┤
+│▸ Notes:                                                  │
+│ --root  Prefer over 'sudo otte                           │
+│         Set OTR_SUDO_PROGRAM to use a different program. │
+├──────────────────────────────────────────────────────────┤
+│▸ See also:                                               │
+│ Rootful containers need '--root' to work with 'remove' . │
+╰──────────────────────────────────────────────────────────╯

@@ -1,0 +1,17 @@
+╭───────────────────────────────────────────╮
+│▸ Usage:                                   │
+│  otter generate-entry --all               │
+│  otter generate-entry my-box              │
+│  otter generate-entry debian --delete     │
+│  otter generate-entry --i /path/to/icon   │
+├───────────────────────────────────────────┤
+│▸ Options:                                 │
+│ --all    ┆ -a  Perform for all otters     │
+│ --root   ┆ -r  Perform on rootful otters  │
+│ --icon   ┆ -i  Specify a custom icon path │
+│ --delete ┆ -d  Delete the entry           │
+├───────────────────────────────────────────┤
+│▸ Extras:                                  │
+│ --help    ┆ -h  Show this help message    │
+│ --verbose ┆ -v  Show more verbose output  │
+╰───────────────────────────────────────────╯

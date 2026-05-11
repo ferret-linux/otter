@@ -1,0 +1,25 @@
+╭───────────────────────────────────────────╮
+│▸ Usage:                                   │
+│  otter ls                                 │
+│  otter ls --root                          │
+│  otter list --no-color                    │
+├───────────────────────────────────────────┤
+│▸ Options:                                 │
+│ --root     ┆ -r  list rootful containers  │
+│ --no-color       Disable color formatting │
+├───────────────────────────────────────────┤
+│▸ Extras:                                  │
+│ --help    ┆ -h  Show this help message    │
+│ --verbose ┆ -v  Show more verbose output  │
+├───────────────────────────────────────────┤
+│▸ Notes:                                   │
+│ --root  Prefer over 'sudo otter'.         │
+│         Set OTR_SUDO_PROGRAM to use a     │
+│          different sudo program. you can  │
+│		  also use otter.conf and set       │
+│         'otter_sudo_program' variable.    │
+├───────────────────────────────────────────┤
+│▸ See also:                                │
+│ Rootful containers are hidden by default. │
+│ Pass '--root' to include them in the list.│
+╰───────────────────────────────────────────╯
