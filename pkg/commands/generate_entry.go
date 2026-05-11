@@ -17,8 +17,8 @@ import (
 var desktopEntryTmpl string
 
 const (
-	defaultContainerName = "my-distrobox"
-	defaultEntryIcon     = "https://raw.githubusercontent.com/89luca89/distrobox/main/icons/terminal-distrobox-icon.svg"
+	defaultContainerName = "my-box"
+	defaultEntryIcon     = "https://github.com/ferret-project/otter/raw/refs/heads/main/icons/terminal-otter-icon.svg"
 )
 
 type GenerateEntryOptions struct {
@@ -97,7 +97,7 @@ func (c *GenerateEntryCommand) Execute(
 	if distroboxPath == "" {
 		p, err := os.Executable()
 		if err != nil {
-			return fmt.Errorf("cannot read distrobox path, %w", err)
+			return fmt.Errorf("cannot read otter path, %w", err)
 		}
 		distroboxPath = p
 	}

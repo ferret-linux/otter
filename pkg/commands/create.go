@@ -39,11 +39,11 @@ type CreateCommand struct {
 }
 
 type CreateOptions struct {
-	// ContainerClone name of the distrobox container to use as base for a new container
+	// ContainerClone name of the otter container to use as base for a new container
 	ContainerClone string
 	// ContainerImage image to use for the container
 	ContainerImage string
-	// ContainerName name of the distrobox
+	// ContainerName name of the otter container
 	ContainerName string
 	// ContainerHostname hostname to set inside the container
 	ContainerHostname string
@@ -184,7 +184,7 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 //
 // If no name is specified and we're using the default container_image, then let's
 // set a default name for the container, that is distinguishable from the default
-// toolbx one. This will avoid problems when using both toolbx and distrobox on
+// toolbx one. This will avoid problems when using both toolbx and otter on
 // the same system.
 func (c *CreateCommand) makeContainerImage(opts *CreateOptions) string {
 	containerImage := opts.ContainerImage
@@ -202,7 +202,7 @@ func (c *CreateCommand) makeContainerImage(opts *CreateOptions) string {
 //
 // If no name is specified and no image is specified, then let's
 // set a default name for the container, that is distinguishable from the default
-// toolbx one. This will avoid problems when using both toolbx and distrobox on
+// toolbx one. This will avoid problems when using both toolbx and otter on
 // the same system.
 //
 // If no container_name is declared, we build our container name starting from the

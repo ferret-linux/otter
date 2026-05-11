@@ -96,5 +96,5 @@ func makeRandomName() string {
 		b[i] = charset[rand.IntN(l)] //nolint:gosec // cryptographic security not needed
 	}
 	// FIXME: avoid collisions
-	return fmt.Sprintf("distrobox-%s", string(b))
+	return fmt.Sprintf("otter-%s", string(b))
 }

@@ -80,7 +80,7 @@ func TestAssembleCommand_SetupBox_ExportedApps_Valid(t *testing.T) {
 			require.Len(t, mock.Spy.Enter, len(apps))
 			for i, a := range apps {
 				opts := getEnterOptions(mock.Spy, i)
-				expectedCmd := []string{"distrobox-export", "--app", a}
+				expectedCmd := []string{"otter-export", "--app", a}
 				assert.Equal(t, "test-box", opts.ContainerName, "call %d", i)
 				assert.Equal(t, expectedCmd, opts.CustomCommand, "call %d", i)
 			}
@@ -150,7 +150,7 @@ func TestAssembleCommand_SetupBox_ExportedBins_Valid(t *testing.T) {
 			require.Len(t, mock.Spy.Enter, len(bins))
 			for i, b := range bins {
 				opts := getEnterOptions(mock.Spy, i)
-				expectedCmd := []string{"distrobox-export", "--bin", b, "--export-path", "/home/user/.local/bin"}
+				expectedCmd := []string{"otter-export", "--bin", b, "--export-path", "/home/user/.local/bin"}
 				assert.Equal(t, "test-box", opts.ContainerName, "call %d", i)
 				assert.Equal(t, expectedCmd, opts.CustomCommand, "call %d", i)
 			}
@@ -240,8 +240,8 @@ func TestAssembleCommand_RootlessOnlyManifest_DoesNotInvokeRootMock(t *testing.T
 func TestAssembleCommand_CreateUsesItemNameWhenImageEmpty(t *testing.T) {
 	mock := &testutil.MockContainerManager{}
 	cfg := &config.Values{
-		DefaultContainerName:  "my-distrobox",
-		DefaultContainerImage: "registry.fedoraproject.org/fedora-toolbox:latest",
+		DefaultContainerName:  "my-box",
+		DefaultContainerImage: "docker.io/library/ubuntu:26.04",
 	}
 	progress := ui.NewDevNullProgress()
 	prompter := ui.NewPrompter(*bufio.NewReader(strings.NewReader("")), io.Discard)
@@ -261,13 +261,13 @@ func TestAssembleCommand_CreateUsesItemNameWhenImageEmpty(t *testing.T) {
 }
 
 func TestAssembleCommand_ExampleManifest(t *testing.T) {
-	items, err := manifest.Parse(context.Background(), "../../extras/distrobox-example-manifest.ini")
+	items, err := manifest.Parse(context.Background(), "../../extras/otter-example-manifest.ini")
 	require.NoError(t, err)
 
 	mock := &testutil.MockContainerManager{}
 	cfg := &config.Values{
-		DefaultContainerName:  "my-distrobox",
-		DefaultContainerImage: "registry.fedoraproject.org/fedora-toolbox:latest",
+		DefaultContainerName:  "my-box",
+		DefaultContainerImage: "docker.io/library/ubuntu:26.04",
 	}
 	progress := ui.NewDevNullProgress()
 	prompter := ui.NewPrompter(*bufio.NewReader(strings.NewReader("")), io.Discard)
@@ -286,7 +286,7 @@ func TestAssembleCommand_ExampleManifest(t *testing.T) {
 		got[i] = call[0].(containermanager.CreateOptions).ContainerName
 	}
 	assert.Equal(t,
-		[]string{"generic1", "generic2", "generic3", "arch", "tumbleweed_distrobox"},
+		[]string{"generic1", "generic2", "generic3", "arch", "tumbleweed_box"},
 		got,
 	)
 }

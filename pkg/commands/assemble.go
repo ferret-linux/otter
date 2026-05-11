@@ -250,7 +250,7 @@ func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) err
 		_, err := enterCmd.Execute(ctx, EnterOptions{
 			ContainerName: item.Name,
 			NoTTY:         true,
-			CustomCommand: []string{"distrobox-export", "--app", app},
+			CustomCommand: []string{"otter-export", "--app", app},
 			DryRun:        false,
 		})
 		if err != nil {
@@ -273,7 +273,7 @@ func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) err
 		_, err := enterCmd.Execute(ctx, EnterOptions{
 			ContainerName: item.Name,
 			NoTTY:         true,
-			CustomCommand: []string{"distrobox-export", "--bin", bin, "--export-path", item.ExportedBinsPath},
+			CustomCommand: []string{"otter-export", "--bin", bin, "--export-path", item.ExportedBinsPath},
 			DryRun:        false,
 		})
 		if err != nil {

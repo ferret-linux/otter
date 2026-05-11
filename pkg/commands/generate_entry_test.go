@@ -34,10 +34,10 @@ func TestGenerateEntryCommand_Execute(t *testing.T) {
 		ContainerName:       "test-container",
 		Verbose:             true,
 		Delete:              false,
-		Icon:                "https://raw.githubusercontent.com/89luca89/distrobox/main/icons/terminal-distrobox-icon.svg",
+		Icon:                "https://github.com/ferret-project/otter/raw/refs/heads/main/icons/terminal-otter-icon.svg",
 		Root:                false,
 		DesktopEntryBaseDir: fmt.Sprintf("%s/.local/share/", tempDir),
-		DistroboxPath:       "/usr/bin/distrobox",
+		DistroboxPath:       "/usr/bin/otter",
 	}
 
 	err := generateEntryCmd.Execute(ctx, opts)
@@ -50,19 +50,19 @@ func TestGenerateEntryCommand_Execute(t *testing.T) {
 Name=Test-container
 GenericName=Terminal entering Test-container
 Comment=Terminal entering Test-container
-Categories=Distrobox;System;Utility
-Exec=/usr/bin/distrobox enter test-container
-Icon=https://raw.githubusercontent.com/89luca89/distrobox/main/icons/terminal-distrobox-icon.svg
-Keywords=distrobox;
+Categories=Otter;System;Utility
+Exec=/usr/bin/otter enter test-container
+Icon=https://github.com/ferret-project/otter/raw/refs/heads/main/icons/terminal-otter-icon.svg
+Keywords=otter;
 NoDisplay=false
 Terminal=true
-TryExec=/usr/bin/distrobox
+TryExec=/usr/bin/otter
 Type=Application
 Actions=Remove;
 
 [Desktop Action Remove]
 Name=Remove Test-container from system
-Exec=/usr/bin/distrobox rm test-container
+Exec=/usr/bin/otter rm test-container
 `
 
 	content, err := os.ReadFile(expectedEntryPath)
@@ -96,10 +96,10 @@ func TestGenerateEntryCommand_Execute_Root(t *testing.T) {
 		ContainerName:       "test-container",
 		Verbose:             true,
 		Delete:              false,
-		Icon:                "https://raw.githubusercontent.com/89luca89/distrobox/main/icons/terminal-distrobox-icon.svg",
+		Icon:                "https://github.com/ferret-project/otter/raw/refs/heads/main/icons/terminal-otter-icon.svg",
 		Root:                true,
 		DesktopEntryBaseDir: fmt.Sprintf("%s/.local/share/", tempDir),
-		DistroboxPath:       "/usr/bin/distrobox",
+		DistroboxPath:       "/usr/bin/otter",
 	}
 
 	err := generateEntryCmd.Execute(ctx, opts)
@@ -112,19 +112,19 @@ func TestGenerateEntryCommand_Execute_Root(t *testing.T) {
 Name=Test-container
 GenericName=Terminal entering Test-container
 Comment=Terminal entering Test-container
-Categories=Distrobox;System;Utility
-Exec=/usr/bin/distrobox enter --root test-container
-Icon=https://raw.githubusercontent.com/89luca89/distrobox/main/icons/terminal-distrobox-icon.svg
-Keywords=distrobox;
+Categories=Otter;System;Utility
+Exec=/usr/bin/otter enter --root test-container
+Icon=https://github.com/ferret-project/otter/raw/refs/heads/main/icons/terminal-otter-icon.svg
+Keywords=otter;
 NoDisplay=false
 Terminal=true
-TryExec=/usr/bin/distrobox
+TryExec=/usr/bin/otter
 Type=Application
 Actions=Remove;
 
 [Desktop Action Remove]
 Name=Remove Test-container from system
-Exec=/usr/bin/distrobox rm --root test-container
+Exec=/usr/bin/otter rm --root test-container
 `
 
 	content, err := os.ReadFile(expectedEntryPath)
@@ -155,7 +155,7 @@ func TestGenerateAllEntriesCommand_Execute(t *testing.T) {
 		Verbose:             false,
 		Delete:              false,
 		DesktopEntryBaseDir: fmt.Sprintf("%s/.local/share/", tempDir),
-		DistroboxPath:       "/usr/bin/distrobox",
+		DistroboxPath:       "/usr/bin/otter",
 	}
 	err := genAllEntriesCmd.Execute(ctx, opts)
 	require.NoError(t, err, "GenerateAllEntriesCommand.Execute()")

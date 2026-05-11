@@ -198,7 +198,7 @@ func findExportedBinaries(userHome, containerName string) []string {
 		}
 
 		content := string(data)
-		if strings.Contains(content, "# distrobox_binary") &&
+		if strings.Contains(content, "# otter_binary") &&
 			strings.Contains(content, "# name: "+containerName+"\n") {
 			absPath, err := filepath.Abs(path)
 			if err != nil {
