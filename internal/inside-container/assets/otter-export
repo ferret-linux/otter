@@ -5,6 +5,10 @@
 #    https://github.com/ferret-project/otter
 # Copyright (C) 2026 otter contributors
 #
+# This file is based on distrobox:
+#    https://github.com/89luca89/distrobox
+# Copyright (C) 2021 distrobox contributors
+#
 # otter is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License version 3
 # as published by the Free Software Foundation.
@@ -21,8 +25,8 @@
 # Expected env variables:
 #	HOME
 #	USER
-#	DISTROBOX_PATH
-#	DISTROBOX_HOST_HOME
+#	OTTER_PATH
+#	OTTER_HOST_HOME
 
 # Ensure we have our env variables correctly set
 [ -z "${USER}" ] && USER="$(id -run)"
@@ -39,18 +43,18 @@ exported_bin=""
 exported_delete=0
 extra_flags=""
 enter_flags=""
-# Use DBX_HOST_HOME if defined, else fallback to HOME
-#	DBX_HOST_HOME is set in case container is created
+# Use OTR_HOST_HOME if defined, else fallback to HOME
+#	OTR_HOST_HOME is set in case container is created
 #	with custom --home directory
-host_home="${DISTROBOX_HOST_HOME:-"${HOME}"}"
-dest_path="${DISTROBOX_EXPORT_PATH:-${host_home}/.local/bin}"
+host_home="${OTTER_HOST_HOME:-"${HOME}"}"
+dest_path="${OTTER_EXPORT_PATH:-${host_home}/.local/bin}"
 is_sudo=0
 rootful=""
 sudo_prefix=""
 verbose=0
-version="1.8.2.4"
+version="0.0.0"
 
-sudo_askpass_path="${dest_path}/distrobox_sudo_askpass"
+sudo_askpass_path="${dest_path}/otter_sudo_askpass"
 sudo_askpass_script="#!/bin/sh
 if command -v zenity 2>&1 > /dev/null; then
 	zenity --password
@@ -73,7 +77,7 @@ done
 # Arguments:
 #   None
 # Expected global variables:
-#   version: distrobox version
+#   version: otter version
 # Expected env variables:
 #   None
 # Outputs:
@@ -81,30 +85,41 @@ done
 show_help()
 {
 	cat << EOF
-distrobox version: ${version}
-
-Usage:
-
-	distrobox-export --app mpv [--extra-flags "flags"] [--enter-flags "flags"] [--delete] [--sudo]
-	distrobox-export --bin /path/to/bin [--export-path ~/.local/bin] [--extra-flags "flags"] [--enter-flags "flags"] [--delete] [--sudo]
-
-Options:
-
-	--app/-a:		name of the application to export or absolute path to desktopfile to export
-	--bin/-b:		absolute path of the binary to export
-	--list-apps:		list applications exported from this container
-	--list-binaries:	list binaries exported from this container, use -ep to specify custom paths to search
-	--delete/-d:		delete exported application or binary
-	--export-label/-el:	label to add to exported application name.
-				Use "none" to disable.
-				Defaults to (on \$container_name)
-	--export-path/-ep:	path where to export the binary
-	--extra-flags/-ef:	extra flags to add to the command
-	--enter-flags/-nf:	flags to add to distrobox-enter
-	--sudo/-S:		specify if the exported item should be run as sudo
-	--help/-h:		show this message
-	--verbose/-v:		show more verbosity
-	--version/-V:		show version
+╭─────────────────────────────────────────────────────────────────╮
+│▸ Usage:                                                         │
+│  otter-export --app firefox                                     │
+│  otter-export --bin docker --sudo                               │
+│  otter-export --bin /usr/bin/zeditor                            │
+├─────────────────────────────────────────────────────────────────┤
+│▸ Options:                                                       │
+│ --app          ┆ -a   Name of the application to export         │
+│ --bin          ┆ -b   Absolute path of the binary to export     │
+│ --sudo         ┆ -S   Run the exported item as sudo             │
+│ --delete       ┆ -d   Delete an exported application or binary  │
+│ --list-apps           List applications exported from container │
+│ --enter-flags  ┆ -nf  Flags to pass to otter-enter              │
+│ --export-path  ┆ -ep  Path where to export the binary           │
+│ --extra-flags  ┆ -ef  Extra flags to append to the command      │
+│ --export-label ┆ -el  Label to append to exported application   │
+│ --list-binaries	    List binaries exported from container     │
+├─────────────────────────────────────────────────────────────────┤
+│▸ Extras:                                                        │
+│ --help    ┆ -h  Show this help message                          │
+│ --verbose ┆ -v  Show more verbose output                        │
+│ --version ┆ -V  Show version information                        │
+├─────────────────────────────────────────────────────────────────┤
+│▸ Notes:                                                         │
+│ --export-label  Defaults to "my-box" . Use "none" to disable.   │
+│ --list-apps     List apps exported from this container,         │
+│                 Use -ep for custom search paths.                │
+│ --list-binaries List binaries exported from container,          │
+│                 Use -ep for custom search paths.                │
+├─────────────────────────────────────────────────────────────────┤
+│▸ See also:                                                      │
+│ --app  You can also provide a path to the desktop file directly.│
+│        Useful when export fails — desktop files are usually at  │
+│        '/usr/share/applications' inside the container.          │
+╰─────────────────────────────────────────────────────────────────╯
 EOF
 }
 
@@ -121,7 +136,7 @@ while :; do
 			verbose=1
 			;;
 		-V | --version)
-			printf "distrobox: %s\n" "${version}"
+			printf "otter: %s\n" "${version}"
 			exit 0
 			;;
 		-a | --app)
@@ -287,10 +302,10 @@ if [ "${is_sudo}" -ne 0 ]; then
 fi
 
 # Prefix to add to an existing command to work through the container
-container_command_prefix="${DISTROBOX_PATH:-"distrobox"} enter${rootful:+ ${rootful}} -n ${container_name}${enter_flags:+ ${enter_flags}} --${sudo_prefix:+ ${sudo_prefix}} "
+container_command_prefix="${OTTER_PATH:-"otter"} enter${rootful:+ ${rootful}} -n ${container_name}${enter_flags:+ ${enter_flags}} --${sudo_prefix:+ ${sudo_prefix}} "
 
 if [ -n "${rootful}" ]; then
-	container_command_prefix="env SUDO_ASKPASS=\"${sudo_askpass_path}\" DBX_SUDO_PROGRAM=\"sudo --askpass\" ${container_command_prefix}"
+	container_command_prefix="env SUDO_ASKPASS=\"${sudo_askpass_path}\" OTR_SUDO_PROGRAM=\"sudo --askpass\" ${container_command_prefix}"
 fi
 
 if [ -z "${exported_app_label}" ]; then
@@ -311,7 +326,7 @@ fi
 #   container_command_suffix: string to postpone to the command to launch
 #   container_name:  string name of this container
 #   dest_path: string path where to export the binary
-#   enter_flags:  string extra flags to append to the distrobox enter command
+#   enter_flags:  string extra flags to append to the otter enter command
 #   exported_bin: string path to the binary to export
 #   exported_delete: bool delete the binary exported
 #   extra_flags:  string extra flags to append to the exported app command
@@ -325,12 +340,12 @@ generate_script()
 {
 	cat << EOF
 #!/bin/sh
-# distrobox_binary
+# otter_binary
 # name: ${container_name}
 if [ -z "\${CONTAINER_ID}" ]; then
-	exec "${DISTROBOX_PATH:-"distrobox"}" enter ${rootful} -n ${container_name} ${enter_flags} -- ${sudo_prefix} ${container_command_suffix}
+	exec "${OTTER_PATH:-"otter"}" enter ${rootful} -n ${container_name} ${enter_flags} -- ${sudo_prefix} ${container_command_suffix}
 elif [ -n "\${CONTAINER_ID}" ] && [ "\${CONTAINER_ID}" != "${container_name}" ]; then
-	exec distrobox-host-exec '${dest_path}/$(basename "${exported_bin}")' "\$@"
+	exec otter-host-exec '${dest_path}/$(basename "${exported_bin}")' "\$@"
 else
 	exec ${sudo_prefix} '${exported_bin}' "\$@"
 fi
@@ -340,7 +355,7 @@ EOF
 
 # export_binary will export selected binary to destination directory.
 # the following function will use generate_script to create a shell script in
-# dest_path that will execute the exported binary in the selected distrobox.
+# dest_path that will execute the exported binary in the selected otter.
 #
 # Arguments:
 #	None
@@ -370,8 +385,8 @@ export_binary()
 
 	# If we're deleting it, just do it and exit
 	if [ "${exported_delete}" -ne 0 ]; then
-		# ensure it's a distrobox exported binary
-		if ! grep -q "distrobox_binary" "${dest_file}"; then
+		# ensure it's a otter exported binary
+		if ! grep -q "otter_binary" "${dest_file}"; then
 			printf >&2 "Error: %s is not exported.\n" "${exported_bin}"
 			return 1
 		fi
@@ -402,10 +417,10 @@ export_binary()
 }
 
 # export_application will export input graphical application to the host.
-# the following function will scan the distrobox for desktop and icon files for
+# the following function will scan the otter for desktop and icon files for
 # the selected application. It will then put the needed icons in the host's icons
 # directory and create a new .desktop file that will execute the selected application
-# in the distrobox.
+# in the otter.
 #
 # Arguments:
 #	None
@@ -452,7 +467,7 @@ export_application()
 		# In this phase we search for applications to export.
 		# First find command will grep through all files in the canonical directories
 		# and only list files that contain the $exported_app, excluding those that
-		# already contains a distrobox-enter command. So skipping already exported apps.
+		# already contains a otter-enter command. So skipping already exported apps.
 		# Second find will list all files that contain the name specified, so that
 		# it is possible to export an app not only by its executable name but also
 		# by its launcher name.
@@ -460,7 +475,7 @@ export_application()
 			# shellcheck disable=SC2086
 			find ${canon_dirs} -type f -print -o -type l -print | sed 's/./\\&/g' |
 				xargs -I{} grep -l -e "Exec=.*${exported_app}.*" -e "Name=.*${exported_app}.*" "{}" | sed 's/./\\&/g' |
-				xargs -I{} grep -L -e "Exec=.*${DISTROBOX_PATH:-"distrobox"}.*enter.*" "{}" | sed 's/./\\&/g' |
+				xargs -I{} grep -L -e "Exec=.*${OTTER_PATH:-"otter"}.*enter.*" "{}" | sed 's/./\\&/g' |
 				xargs -I{} printf "%s¤" "{}"
 		)
 	fi
@@ -540,7 +555,7 @@ export_application()
 		fi
 	done
 
-	# create desktop files for the distrobox
+	# create desktop files for the otter
 	IFS="¤"
 	for desktop_file in ${desktop_files}; do
 		if [ -z "${desktop_file}" ]; then
@@ -595,7 +610,7 @@ export_application()
 	# Update the desktop files database to ensure exported applications will
 	# show up in the taskbar/desktop menu/whatnot right after running this
 	# script.
-	/usr/bin/distrobox-host-exec --yes update-desktop-database "${host_home}/.local/share/applications" > /dev/null 2>&1 || :
+	/usr/bin/otter-host-exec --yes update-desktop-database "${host_home}/.local/share/applications" > /dev/null 2>&1 || :
 
 	if [ "${exported_delete}" -ne 0 ]; then
 		printf "Application %s successfully un-exported.\nOK!\n" "${exported_app}"
@@ -623,11 +638,11 @@ list_exported_applications()
 {
 	# In this phase we search for applications exported.
 	# First find command will grep through all files in the canonical directories
-	# and only list files that contain the $DISTROBOX_PATH.
+	# and only list files that contain the $OTTER_PATH.
 	desktop_files=$(
 		# shellcheck disable=SC2086
 		find "/run/host${host_home}/.local/share/applications" -type f -print -o -type l -print 2> /dev/null | sed 's/./\\&/g' |
-			xargs -I{} grep -l -e "Exec=.*${DISTROBOX_PATH:-"distrobox"}.*enter.*" "{}" | sed 's/./\\&/g' |
+			xargs -I{} grep -l -e "Exec=.*${OTTER_PATH:-"otter"}.*enter.*" "{}" | sed 's/./\\&/g' |
 			xargs -I{} printf "%s¤" "{}"
 	)
 
@@ -665,10 +680,10 @@ list_exported_binaries()
 {
 	# In this phase we search for binaries exported.
 	# First find command will grep through all files in the canonical directories
-	# and only list files that contain the comment "# distrobox_binary".
+	# and only list files that contain the comment "# otter_binary".
 	binary_files=$(
 		find "${dest_path}" -type f -print 2> /dev/null | sed 's/./\\&/g' |
-			xargs -I{} grep -l -e "^# distrobox_binary" "{}" | sed 's/./\\&/g' |
+			xargs -I{} grep -l -e "^# otter_binary" "{}" | sed 's/./\\&/g' |
 			xargs -I{} printf "%s¤" "{}"
 	)
 

@@ -5,6 +5,10 @@
 #    https://github.com/ferret-project/otter
 # Copyright (C) 2026 otter contributors
 #
+# This file is based on distrobox:
+#    https://github.com/89luca89/distrobox
+# Copyright (C) 2021 distrobox contributors
+#
 # otter is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License version 3
 # as published by the Free Software Foundation.
