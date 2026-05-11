@@ -553,6 +553,7 @@ export_application()
 		if [ ! -e "${icon_home_directory}/$(basename "${icon_file}")" ] && [ -e "$(realpath "${icon_file}")" ]; then
 			cp -rf "$(realpath "${icon_file}")" "${icon_home_directory}"
 		fi
+		icons_to_remove="${icons_to_remove:+${icons_to_remove} }$(echo "${icon_home_directory}/$(basename "${icon_file}")" | sed 's|/run/host||g;s|//|/|g')"
 	done
 
 	# create desktop files for the otter
@@ -590,6 +591,12 @@ export_application()
 			printf "StartupWMClass=%s\n" "${exported_app}" >> "\
 /run/host${host_home}/.local/share/applications/${desktop_home_file}"
 		fi
+
+		printf "\nActions=Remove;\n\n[Desktop Action Remove]\nName=Remove %s\nExec=sh -c 'rm -f %s %s && update-desktop-database %s/.local/share/applications'\n" \
+			"${exported_app}" \
+			"${host_home}/.local/share/applications/${desktop_home_file}" \
+			"${icons_to_remove:-}" \
+			"${host_home}" >> "/run/host${host_home}/.local/share/applications/${desktop_home_file}"
 		# In case of an icon in a non canonical path, we need to replace the path
 		# in the desktop file.
 		if [ -n "${icon_file_absolute_path}" ]; then
