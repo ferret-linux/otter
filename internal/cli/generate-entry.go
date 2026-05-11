@@ -44,7 +44,7 @@ func newGenerateEntryCommand(cfg *config.Values) *cli.Command {
 
 func generateEntryAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
 	// The current executable is used as otter path
-	distroboxPath, err := os.Executable()
+	otterPath, err := os.Executable()
 	if err != nil {
 		return fmt.Errorf("failed to get otter executable path: %w", err)
 	}
@@ -57,10 +57,10 @@ func generateEntryAction(ctx context.Context, cmd *cli.Command, cfg *config.Valu
 	listCmd := commands.NewListCommand(cfg, containerManager)
 
 	opts := &commands.GenerateEntryOptions{
-		Verbose:       cmd.Bool("verbose"),
-		Delete:        cmd.Bool("delete"),
-		Root:          cmd.Bool("root"),
-		DistroboxPath: distroboxPath,
+		Verbose:   cmd.Bool("verbose"),
+		Delete:    cmd.Bool("delete"),
+		Root:      cmd.Bool("root"),
+		OtterPath: otterPath,
 	}
 	if cmd.Bool("all") {
 		opts.All = true

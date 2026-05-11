@@ -1,4 +1,4 @@
-package insidedistrobox_test
+package insideContainer_test
 
 import (
 	"os"
@@ -8,14 +8,14 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	insidedistrobox "github.com/ferret-linux/otter/internal/inside-container"
+	insideContainer "github.com/ferret-linux/otter/internal/inside-container"
 )
 
 func TestProvisionScripts_CustomDir(t *testing.T) {
 	tmpDir := t.TempDir()
 	t.Setenv("OTR_SCRIPTS_DIR", tmpDir)
 
-	scriptsDir, err := insidedistrobox.ProvisionScripts()
+	scriptsDir, err := insideContainer.ProvisionScripts()
 	require.NoError(t, err, "ProvisionScripts failed")
 	defer os.RemoveAll(scriptsDir)
 
@@ -37,7 +37,7 @@ func TestProvisionScripts_HomeDir(t *testing.T) {
 	tmpDir := t.TempDir()
 	t.Setenv("HOME", tmpDir)
 
-	scriptsDir, err := insidedistrobox.ProvisionScripts()
+	scriptsDir, err := insideContainer.ProvisionScripts()
 	require.NoError(t, err, "ProvisionScripts failed")
 	defer os.RemoveAll(scriptsDir)
 

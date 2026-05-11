@@ -1,4 +1,4 @@
-package insidedistrobox
+package insideContainer
 
 import (
 	_ "embed"
@@ -46,10 +46,10 @@ func ProvisionScripts() (string, error) {
 }
 
 // hostDir returns the directory path where the scripts should be stored.
-// Evaluates DBX_SCRIPTS_DIR env var first, then HOME env var, and falls back to default path.
+// Evaluates OTR_SCRIPTS_DIR env var first, then HOME env var, and falls back to default path.
 func hostDir() string {
-	// First check DBX_SCRIPTS_DIR env var
-	if dir := os.Getenv("DBX_SCRIPTS_DIR"); dir != "" {
+	// First check OTR_SCRIPTS_DIR env var
+	if dir := os.Getenv("OTR_SCRIPTS_DIR"); dir != "" {
 		return dir
 	}
 
