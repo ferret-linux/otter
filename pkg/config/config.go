@@ -136,16 +136,16 @@ func readConfigFile(filePath string) (map[string]string, error) {
 func readEnv() map[string]string {
 	envConfig := make(map[string]string)
 
-	if value, exists := os.LookupEnv("DBX_CONTAINER_MANAGER"); exists {
+	if value, exists := os.LookupEnv("OTR_CONTAINER_MANAGER"); exists {
 		envConfig["container_manager"] = value
 	}
-	if value, exists := os.LookupEnv("DBX_SUDO_COMMAND"); exists {
+	if value, exists := os.LookupEnv("OTR_SUDO_COMMAND"); exists {
 		envConfig["sudo_program"] = value
 	}
-	if value, exists := os.LookupEnv("DBX_SUDO_PROGRAM"); exists {
+	if value, exists := os.LookupEnv("OTR_SUDO_PROGRAM"); exists {
 		envConfig["sudo_program"] = value
 	}
-	if value, exists := os.LookupEnv("DBX_VERBOSE"); exists {
+	if value, exists := os.LookupEnv("OTR_VERBOSE"); exists {
 		envConfig["verbose"] = value
 	}
 
