@@ -37,7 +37,7 @@ func TestGenerateEntryCommand_Execute(t *testing.T) {
 		Icon:                "https://github.com/ferret-project/otter/raw/refs/heads/main/icons/terminal-otter-icon.svg",
 		Root:                false,
 		DesktopEntryBaseDir: fmt.Sprintf("%s/.local/share/", tempDir),
-		DistroboxPath:       "/usr/bin/otter",
+		OtterPath:           "/usr/bin/otter",
 	}
 
 	err := generateEntryCmd.Execute(ctx, opts)
@@ -99,7 +99,7 @@ func TestGenerateEntryCommand_Execute_Root(t *testing.T) {
 		Icon:                "https://github.com/ferret-project/otter/raw/refs/heads/main/icons/terminal-otter-icon.svg",
 		Root:                true,
 		DesktopEntryBaseDir: fmt.Sprintf("%s/.local/share/", tempDir),
-		DistroboxPath:       "/usr/bin/otter",
+		OtterPath:           "/usr/bin/otter",
 	}
 
 	err := generateEntryCmd.Execute(ctx, opts)
@@ -155,7 +155,7 @@ func TestGenerateAllEntriesCommand_Execute(t *testing.T) {
 		Verbose:             false,
 		Delete:              false,
 		DesktopEntryBaseDir: fmt.Sprintf("%s/.local/share/", tempDir),
-		DistroboxPath:       "/usr/bin/otter",
+		OtterPath:           "/usr/bin/otter",
 	}
 	err := genAllEntriesCmd.Execute(ctx, opts)
 	require.NoError(t, err, "GenerateAllEntriesCommand.Execute()")

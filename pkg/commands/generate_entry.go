@@ -26,7 +26,7 @@ type GenerateEntryOptions struct {
 	Delete              bool
 	Root                bool
 	DesktopEntryBaseDir string
-	DistroboxPath       string
+	OtterPath           string
 	All                 bool
 	Icon                string // ignored when All=true
 	ContainerName       string // ignored when All=true
@@ -92,19 +92,19 @@ func (c *GenerateEntryCommand) Execute(
 		return nil
 	}
 
-	// Determine DistroboxPath
-	distroboxPath := opts.DistroboxPath
-	if distroboxPath == "" {
+	// Determine OtterPath
+	otterPath := opts.OtterPath
+	if otterPath == "" {
 		p, err := os.Executable()
 		if err != nil {
 			return fmt.Errorf("cannot read otter path, %w", err)
 		}
-		distroboxPath = p
+		otterPath = p
 	}
 
 	// Create the desktop entries for all the containers
 	for _, containerName := range containerNames {
-		if err := c.createEntry(containerName, icon, desktopEntryBaseDir, distroboxPath, opts.Root); err != nil {
+		if err := c.createEntry(containerName, icon, desktopEntryBaseDir, otterPath, opts.Root); err != nil {
 			return fmt.Errorf("failed to create desktop entry for container %s: %w", containerName, err)
 		}
 	}
@@ -128,7 +128,7 @@ func (c *GenerateEntryCommand) createEntry(
 	containerName string,
 	icon string,
 	desktopEntryBaseDir string,
-	distroboxPath string,
+	otterPath string,
 	root bool,
 ) error {
 	desktopEntryAppsDir, _, err := c.ensureDesktopEntryDirExists(desktopEntryBaseDir)
@@ -137,7 +137,7 @@ func (c *GenerateEntryCommand) createEntry(
 	}
 
 	entryFilePath := c.getEntryFilePath(desktopEntryAppsDir, containerName)
-	data := c.composeDesktopEntryData(containerName, icon, distroboxPath, root)
+	data := c.composeDesktopEntryData(containerName, icon, otterPath, root)
 	if err := c.writeDesktopEntryFile(entryFilePath, data); err != nil {
 		return fmt.Errorf("failed to write desktop entry file for container %s: %w", containerName, err)
 	}
@@ -162,7 +162,7 @@ func (c *GenerateEntryCommand) ensureDesktopEntryDirExists(desktopEntryBaseDir s
 func (c *GenerateEntryCommand) composeDesktopEntryData(
 	containerName string,
 	icon string,
-	distroboxPath string,
+	otterPath string,
 	root bool,
 ) map[string]string {
 	extraFlags := ""
@@ -173,7 +173,7 @@ func (c *GenerateEntryCommand) composeDesktopEntryData(
 	return map[string]string{
 		"entry_name":     getEntryName(containerName),
 		"container_name": containerName,
-		"distrobox_path": distroboxPath,
+		"otter_path":     otterPath,
 		"icon":           c.getDesktopIcon(icon),
 		"extra_flags":    extraFlags,
 	}

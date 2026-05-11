@@ -61,22 +61,22 @@ func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, 
 		return nil, fmt.Errorf("failed while listing contaiers: %w", err)
 	}
 
-	distroboxesToRemove := getContainersToRemove(listResult.Containers, options.ContainerNames, options.All)
+	otterContainersToRemove := getContainersToRemove(listResult.Containers, options.ContainerNames, options.All)
 
 	userEnv := userenv.LoadUserEnvironment(ctx)
 	userHome := userEnv.Home
 
-	var removedDistroboxes []containermanager.Container
-	for _, currentDistrobox := range distroboxesToRemove {
-		err := c.removeContainer(ctx, currentDistrobox, options.Force, options.NoTTY, userHome)
+	var removedOtterContainers []containermanager.Container
+	for _, currentOtterContainer := range otterContainersToRemove {
+		err := c.removeContainer(ctx, currentOtterContainer, options.Force, options.NoTTY, userHome)
 		if err != nil {
 			//nolint:forbidigo // waiting for the logger implementation
-			fmt.Printf("error deleting %s: %s", currentDistrobox.Name, err)
+			fmt.Printf("error deleting %s: %s", currentOtterContainer.Name, err)
 		}
-		removedDistroboxes = append(removedDistroboxes, currentDistrobox)
+		removedOtterContainers = append(removedOtterContainers, currentOtterContainer)
 	}
 
-	return &RmResult{Containers: removedDistroboxes}, nil
+	return &RmResult{Containers: removedOtterContainers}, nil
 }
 
 func (c *RmCommand) removeContainer(
