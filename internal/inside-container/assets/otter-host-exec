@@ -34,7 +34,7 @@ if [ ! -t 1 ] ||
 	! tty > /dev/null 2>&1; then
 	non_interactive=1
 fi
-distrobox_host_exec_default_command="${SHELL:-/bin/sh}"
+otter_host_exec_default_command="${SHELL:-/bin/sh}"
 host_spawn_version="v1.6.0"
 download_command=""
 sudo_command=""
@@ -45,7 +45,7 @@ version="1.8.2.4"
 # Arguments:
 #   None
 # Expected global variables:
-#   version: distrobox version
+#   version: otter version
 # Expected env variables:
 #   None
 # Outputs:
@@ -53,31 +53,32 @@ version="1.8.2.4"
 show_help()
 {
 	cat << EOF
-distrobox version: ${version}
-
-Usage:
-
-	distrobox-host-exec [command [arguments]]
-	distrobox-host-exec ls
-	distrobox-host-exec bash -l
-	distrobox-host-exec flatpak run org.mozilla.firefox
-	distrobox-host-exec podman ps -a
-
-
-Options:
-
-	--help/-h:		show this message
-	--verbose/-v:		show more verbosity
-	--version/-V:		show version
-	--yes/-Y:		Automatically answer yes to prompt:
-                                host-spawn will be installed on the guest system
-                                if host-spawn is not detected.
-                                This behaviour is default when running in a non-interactive shell.
+╭─────────────────────────────────────────────────╮
+│▸ Usage:                                         │
+│  otter-host-exec ls                             │
+│  otter-host-exec bash -l                        │
+│  otter-host-exec podman ps -a                   │
+│  otter-host-exec flatpak remotes                │
+├─────────────────────────────────────────────────┤
+│▸ Options:                                       │
+│ --yes ┆ -Y  Automatic host-spawn installation   │
+├─────────────────────────────────────────────────┤
+│▸ Extras:                                        │
+│ --help    ┆ -h  Show this help message          │
+│ --verbose ┆ -v  Show more verbose output        │
+│ --version ┆ -V  Show version information        │
+├─────────────────────────────────────────────────┤
+│▸ Notes:                                         │
+│ --yes  Auto-confirmed in non-interactive shells.│
+│        When auto confirmed, host-spawn will be  │
+│        installed in the container, as           │
+│        otter-host-exec needs it to work.        │
+╰─────────────────────────────────────────────────╯
 EOF
 }
 
 # If we're a symlink to a command, use that as command to exec, and skip arg parsing.
-if [ "$(basename "${0}")" != "distrobox-host-exec" ]; then
+if [ "$(basename "${0}")" != "otter-host-exec" ]; then
 	host_command="$(basename "${0}")"
 fi
 # Parse arguments
@@ -95,7 +96,7 @@ if [ -z "${host_command}" ]; then
 				shift
 				;;
 			-V | --version)
-				printf "distrobox: %s\n" "${version}"
+				printf "otter: %s\n" "${version}"
 				printf "host-spawn: %s\n" "${host_spawn_version}"
 				exit 0
 				;;
@@ -136,7 +137,7 @@ if [ ! -f /run/.containerenv ] && [ ! -f /.dockerenv ] && [ -z "${container:-}" 
 fi
 
 if [ -z "${host_command}" ]; then
-	host_command="${distrobox_host_exec_default_command}"
+	host_command="${otter_host_exec_default_command}"
 fi
 
 if [ "$(id -ru)" -ne 0 ]; then
@@ -177,7 +178,7 @@ if ! command -v host-spawn > /dev/null ||
 	# Accept only y,Y,Yes,yes,n,N,No,no.
 	case "${response}" in
 		y | Y | Yes | yes | YES)
-			# Download matching version with current distrobox
+			# Download matching version with current otter
 			if ! ${download_command} /tmp/host-spawn \
 				"https://github.com/1player/host-spawn/releases/download/${host_spawn_version}/host-spawn-${architecture}"; then
 
