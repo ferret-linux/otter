@@ -21,9 +21,9 @@ func defaultsMap() map[string]string {
 		"container_manager": "podman",
 		"sudo_program":      "sudo",
 		"verbose":           "false",
-		// container_image Fedora toolbox is a sensitive default
-		"container_image": "registry.fedoraproject.org/fedora-toolbox:latest",
-		"container_name":  "my-distrobox",
+		// ubuntu-lts is default container image
+		"container_image": "docker.io/library/ubuntu:26.04",
+		"container_name":  "my-box",
 	}
 }
 
@@ -92,17 +92,17 @@ func getConfigFilePaths() ([]string, error) {
 	// priority over system defaults
 	// leave priority to environment variables.
 	//
-	// On NixOS, for the distrobox derivation to pick up a static config file shipped
+	// On NixOS, for the otter derivation to pick up a static config file shipped
 	// by the package maintainer the path must be relative to the script itself.
 	return []string{
-		filepath.Join(selfDir, "..", "share", "distrobox", "distrobox.conf"), // for NixOS
-		"/usr/share/distrobox/distrobox.conf",
-		"/usr/share/defaults/distrobox/distrobox.conf",
-		"/usr/etc/distrobox/distrobox.conf",
-		"/usr/local/share/distrobox/distrobox.conf",
-		"/etc/distrobox/distrobox.conf",
-		filepath.Join(xdgConfigHome, "distrobox", "distrobox.conf"),
-		filepath.Join(home, ".distroboxrc"),
+		filepath.Join(selfDir, "..", "share", "otter", "otter.conf"), // for NixOS
+		"/usr/share/otter/otter.conf",
+		"/usr/share/defaults/otter/otter.conf",
+		"/usr/etc/otter/otter.conf",
+		"/usr/local/share/otter/otter.conf",
+		"/etc/otter/otter.conf",
+		filepath.Join(xdgConfigHome, "otter", "otter.conf"),
+		filepath.Join(home, ".otterrc"),
 	}, nil
 }
 

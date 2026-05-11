@@ -14,6 +14,6 @@ func TestDefaultConfigValues(t *testing.T) {
 	assert.Equal(t, "podman", cfg.ContainerManagerType)
 	assert.Equal(t, "sudo", cfg.SudoProgram)
 	assert.False(t, cfg.Verbose)
-	assert.Equal(t, "registry.fedoraproject.org/fedora-toolbox:latest", cfg.DefaultContainerImage)
-	assert.Equal(t, "my-distrobox", cfg.DefaultContainerName)
+	assert.Equal(t, "docker.io/library/ubuntu:26.04", cfg.DefaultContainerImage)
+	assert.Equal(t, "my-box", cfg.DefaultContainerName)
 }
