@@ -289,7 +289,7 @@ func (c *CreateCommand) askPullImage(ctx context.Context, containerImage string,
 	if opts.ContainerAlwaysPull || !c.containerManager.ImageExists(ctx, containerImage) {
 		skipConfirm := opts.NonInteractive || opts.ContainerAlwaysPull || opts.DryRun
 		if !skipConfirm {
-			msg := fmt.Sprintf("Image '%s' not found.\n. Do you want to pull the image now?", containerImage)
+			msg := fmt.Sprintf("Image '%s' not found on your system.\nWould you like to pull it?", containerImage)
 			answer := c.prompter.Prompt(msg, true)
 			if !answer {
 				return ErrImagePullAbortedByUser
