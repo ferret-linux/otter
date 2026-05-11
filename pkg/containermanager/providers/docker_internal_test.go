@@ -33,28 +33,28 @@ func TestDocker_makeCreateCommand(t *testing.T) {
 	}
 
 	cmd := docker.makeCreateCommand(
-		"my-container",                // containerName
-		"my-image",                    // containerImage
-		containerAdditionalFlags,      // containerAdditionalFlags
-		"my-hostname",                 // containerHostname
-		containerAdditionalPackages,   // containerAdditionalPackages
-		containerAdditionalVolumes,    // containerAdditionalVolumes
-		"",                            // containerUserCustomHome
-		"",                            // containerPlatform
-		false,                         // nopasswd
-		true,                          // init
-		"echo 'pre-init-hook'",        // containerPreInitHook
-		"echo 'init-hook'",            // containerInitHook
-		false,                         // nvidia
-		false,                         // unshareDevsys
-		false,                         // unshareGroups
-		false,                         // unshareIPC
-		false,                         // unshareNetNS
-		false,                         // unshareProcess
-		userEnv,                       // userEnv
-		"/path/to/distrobox-init",     // distroboxInitPath
-		"/path/to/distrobox-export",   // distroboxExportPath
-		"/path/to/distrobox-hostexec", // distroboxHostexecPath
+		"my-container",              // containerName
+		"my-image",                  // containerImage
+		containerAdditionalFlags,    // containerAdditionalFlags
+		"my-hostname",               // containerHostname
+		containerAdditionalPackages, // containerAdditionalPackages
+		containerAdditionalVolumes,  // containerAdditionalVolumes
+		"",                          // containerUserCustomHome
+		"",                          // containerPlatform
+		false,                       // nopasswd
+		true,                        // init
+		"echo 'pre-init-hook'",      // containerPreInitHook
+		"echo 'init-hook'",          // containerInitHook
+		false,                       // nvidia
+		false,                       // unshareDevsys
+		false,                       // unshareGroups
+		false,                       // unshareIPC
+		false,                       // unshareNetNS
+		false,                       // unshareProcess
+		userEnv,                     // userEnv
+		"/path/to/otter-init",       // distroboxInitPath
+		"/path/to/otter-export",     // distroboxExportPath
+		"/path/to/otter-hostexec",   // distroboxHostexecPath
 	)
 
 	// Build expected string dynamically for paths that depend on host filesystem
@@ -75,16 +75,16 @@ func TestDocker_makeCreateCommand(t *testing.T) {
  --ipc host
  --network host
  --pid host
- --label manager=distrobox
- --label distrobox.unshare_groups=0
+ --label manager=otter
+ --label otter.unshare_groups=0
  --env SHELL=sh
  --env HOME=/home/user
  --env container=docker
  --env TERMINFO_DIRS=/usr/share/terminfo:/run/host/usr/share/terminfo
  --env CONTAINER_ID=my-container
  --volume /tmp:/tmp:rslave
- --volume /path/to/distrobox-export:/usr/bin/distrobox-export:ro
- --volume /path/to/distrobox-hostexec:/usr/bin/distrobox-host-exec:ro
+ --volume /path/to/otter-export:/usr/bin/otter-export:ro
+ --volume /path/to/otter-hostexec:/usr/bin/otter-host-exec:ro
  --volume /home/user:/home/user:rslave
  --volume /:/run/host/:rslave
  --volume /dev:/dev:rslave
@@ -101,7 +101,7 @@ func TestDocker_makeCreateCommand(t *testing.T) {
  --volume /etc/hosts:/etc/hosts:ro
  --volume /etc/resolv.conf:/etc/resolv.conf:ro
  --volume /path/to/my-volume:/var/local/my-volume:ro
- --volume /path/to/distrobox-init:/usr/bin/entrypoint:ro
+ --volume /path/to/otter-init:/usr/bin/entrypoint:ro
  --entrypoint /usr/bin/entrypoint
  my-image
  --verbose
@@ -582,5 +582,5 @@ esac
 }
 
 func dockerFakeInspectJSON(status string) string {
-	return `[{"Id":"container-id","State":{"Status":"` + status + `"},"Config":{"Labels":{"distrobox.unshare_groups":"0"},"Env":["HOME=/home/testuser","PATH=/usr/bin:/bin"]}}]`
+	return `[{"Id":"container-id","State":{"Status":"` + status + `"},"Config":{"Labels":{"otter.unshare_groups":"0"},"Env":["HOME=/home/testuser","PATH=/usr/bin:/bin"]}}]`
 }

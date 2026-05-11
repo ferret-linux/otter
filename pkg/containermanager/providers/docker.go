@@ -125,9 +125,9 @@ func (d *Docker) Create(
 		opts.UnshareNetNS,
 		opts.UnshareProcess,
 		userEnv,
-		filepath.Join(scriptsDir, "distrobox-init"),
-		filepath.Join(scriptsDir, "distrobox-export"),
-		filepath.Join(scriptsDir, "distrobox-host-exec"),
+		filepath.Join(scriptsDir, "otter-init"),
+		filepath.Join(scriptsDir, "otter-export"),
+		filepath.Join(scriptsDir, "otter-host-exec"),
 	)
 
 	_, err = d.run(ctx, cmd, runOptions{DryRun: opts.DryRun})
@@ -204,15 +204,15 @@ func (d *Docker) makeCreateCommand(
 	// Mount user home, dev and host's root inside container.
 	// This grants access to external devices like usb webcams, disks and so on.
 	//
-	// Mount also the distrobox-init utility as the container entrypoint.
-	// Also mount in the container the distrobox-export and distrobox-host-exec
+	// Mount also the otter-init utility as the container entrypoint.
+	// Also mount in the container the otter-export and otter-host-exec
 	// utilities.
 
-	options = append(options, "--label", "manager=distrobox")
+	options = append(options, "--label", "manager=otter")
 	options = append(
 		options,
 		"--label",
-		fmt.Sprintf("distrobox.unshare_groups=%d", containermanager.Btoi(unshareGroups)),
+		fmt.Sprintf("otter.unshare_groups=%d", containermanager.Btoi(unshareGroups)),
 	)
 	options = append(options, "--env", fmt.Sprintf("SHELL=%s", shellFilepath))
 	options = append(options, "--env", fmt.Sprintf("HOME=%s", containerUserHome))
@@ -224,11 +224,11 @@ func (d *Docker) makeCreateCommand(
 	)
 	options = append(options, "--env", fmt.Sprintf("CONTAINER_ID=%s", containerName))
 	options = append(options, "--volume", "/tmp:/tmp:rslave")
-	options = append(options, "--volume", fmt.Sprintf("%s:%s", distroboxExportPath, "/usr/bin/distrobox-export:ro"))
+	options = append(options, "--volume", fmt.Sprintf("%s:%s", distroboxExportPath, "/usr/bin/otter-export:ro"))
 	options = append(
 		options,
 		"--volume",
-		fmt.Sprintf("%s:%s", distroboxHostexecPath, "/usr/bin/distrobox-host-exec:ro"),
+		fmt.Sprintf("%s:%s", distroboxHostexecPath, "/usr/bin/otter-host-exec:ro"),
 	)
 	options = append(options, "--volume", fmt.Sprintf("%s:%s:rslave", containerUserHome, containerUserHome))
 	options = append(options, "--volume", "/:/run/host/:rslave")
@@ -293,7 +293,7 @@ func (d *Docker) makeCreateCommand(
 	// This works around this using an unnamed volume so that this path will be
 	// mounted with a normal non-overlay FS, allowing ACLs and preventing errors.
 	//
-	// This work around works in conjunction with distrobox-init's package manager
+	// This work around works in conjunction with otter-init's package manager
 	// setups.
 	// So that we can use pre/post hooks for package managers to present to the
 	// systemd install script a blank path to work with, and mount the host's
@@ -314,7 +314,7 @@ func (d *Docker) makeCreateCommand(
 	// Ensure support forwarding of RedHat subscription-manager
 	// This is needed in order to have a working subscription forwarded into the container,
 	// this will ensure that rhel-9-for-x86_64-appstream-rpms and rhel-9-for-x86_64-baseos-rpms repos
-	// will be available in the container, so that distrobox-init will be able to
+	// will be available in the container, so that otter-init will be able to
 	// install properly all the dependencies like mesa drivers.
 	//
 	// /run/secrets is a standard location for RHEL containers, that is being pointed by
@@ -333,11 +333,11 @@ func (d *Docker) makeCreateCommand(
 
 	// If we have a custom home to use,
 	//	1- override the HOME env variable
-	//	2- export the DISTROBOX_HOST_HOME env variable pointing to original HOME
+	//	2- export the OTTER_HOST_HOME env variable pointing to original HOME
 	// 	3- mount the custom home inside the container.
 	if containerUserCustomHome != "" {
 		options = append(options, "--env", fmt.Sprintf("HOME=%s", containerUserCustomHome))
-		options = append(options, "--env", fmt.Sprintf("DISTROBOX_HOST_HOME=%s", containerUserHome))
+		options = append(options, "--env", fmt.Sprintf("OTTER_HOST_HOME=%s", containerUserHome))
 		options = append(
 			options,
 			"--volume",
@@ -401,10 +401,10 @@ func (d *Docker) makeCreateCommand(
 		options = append(options, "--volume", vol)
 	}
 
-	// Now execute the entrypoint, refer to `distrobox-init -h` for instructions
+	// Now execute the entrypoint, refer to `otter-init -h` for instructions
 	// containerManager
-	// Be aware that entrypoint corresponds to distrobox-init, the copying of it
-	// inside the container is moved to distrobox-enter, in the start phase.
+	// Be aware that entrypoint corresponds to otter-init, the copying of it
+	// inside the container is moved to otter-enter, in the start phase.
 	// This is done to make init, export and host-exec location independent from
 	// the host, and easier to upgrade.
 	//
@@ -413,9 +413,9 @@ func (d *Docker) makeCreateCommand(
 	options = append(options, "--volume", fmt.Sprintf("%s:%s", distroboxInitPath, "/usr/bin/entrypoint:ro"))
 	options = append(options, "--entrypoint", "/usr/bin/entrypoint")
 
-	// Build the rest of the arguments for distrobox-init
+	// Build the rest of the arguments for otter-init
 	//
-	// The arguments will be passed to distrobox-init as the entrypoint
+	// The arguments will be passed to otter-init as the entrypoint
 	homeToUse := containerUserHome
 	if containerUserCustomHome != "" {
 		homeToUse = containerUserCustomHome
@@ -665,7 +665,7 @@ func (d *Docker) InspectContainer(ctx context.Context, containerName string) (*c
 	config.ContainerStatus = inspect.State.Status
 
 	// Check for unshare_groups label
-	if v, ok := inspect.Config.Labels["distrobox.unshare_groups"]; ok && v == "1" {
+	if v, ok := inspect.Config.Labels["otter.unshare_groups"]; ok && v == "1" {
 		config.UnshareGroups = true
 	}
 
@@ -765,7 +765,7 @@ func (d *Docker) generateEnterCommand(
 
 	// Environment variables
 	cmd = append(cmd, fmt.Sprintf("--env=CONTAINER_ID=%s", containerName))
-	cmd = append(cmd, fmt.Sprintf("--env=DISTROBOX_PATH=%s", executablePath))
+	cmd = append(cmd, fmt.Sprintf("--env=OTTER_PATH=%s", executablePath))
 
 	for _, env := range containermanager.FilterEnvVars() {
 		cmd = append(cmd, fmt.Sprintf("--env=%s", env))
@@ -824,7 +824,7 @@ func (d *Docker) startContainer(ctx context.Context, containerName string, progr
 	if cacheDir == "" {
 		cacheDir = filepath.Join(userEnv.Home, ".cache")
 	}
-	cacheDir = filepath.Join(cacheDir, "distrobox")
+	cacheDir = filepath.Join(cacheDir, "otter")
 
 	// Create cache directory
 	if err := os.MkdirAll(cacheDir, 0755); err != nil { //nolint:gosec // we need this writable by everybody
@@ -886,7 +886,7 @@ func (d *Docker) waitForSetup(
 			case strings.HasPrefix(line, "Warning:"):
 				printer.PrintWarning(line)
 
-			case strings.HasPrefix(line, "distrobox:"):
+			case strings.HasPrefix(line, "otter:"):
 				parts := strings.SplitN(line, " ", 2)
 				if len(parts) > 1 {
 					progress.Done()

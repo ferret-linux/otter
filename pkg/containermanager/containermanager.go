@@ -73,7 +73,7 @@ type RmOptions struct {
 }
 
 func (c Container) IsDistrobox() bool {
-	return c.Labels["manager"] == "distrobox"
+	return c.Labels["manager"] == "otter"
 }
 
 func (c Container) IsRunning() bool {

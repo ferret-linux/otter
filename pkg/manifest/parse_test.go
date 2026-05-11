@@ -286,7 +286,7 @@ image=ubuntu:24.04
 }
 
 func TestParse_ExampleManifest(t *testing.T) {
-	parsed, err := manifest.Parse(t.Context(), "../../extras/distrobox-example-manifest.ini")
+	parsed, err := manifest.Parse(t.Context(), "../../extras/otter-example-manifest.ini")
 	require.NoError(t, err)
 	require.Len(t, parsed, 5)
 
@@ -295,7 +295,7 @@ func TestParse_ExampleManifest(t *testing.T) {
 		names[i] = item.Name
 	}
 	assert.Equal(t,
-		[]string{"generic1", "generic2", "generic3", "arch", "tumbleweed_distrobox"},
+		[]string{"generic1", "generic2", "generic3", "arch", "tumbleweed_box"},
 		names,
 	)
 
@@ -322,7 +322,7 @@ func TestParse_ExampleManifest(t *testing.T) {
 	assert.Equal(t, []string{"touch /init-normal"}, arch.InitHooks)
 
 	tw := parsed[4]
-	assert.Equal(t, "registry.opensuse.org/opensuse/distrobox", tw.Image)
+	assert.Equal(t, "registry.opensuse.org/opensuse/tumbleweed", tw.Image)
 	assert.True(t, tw.AlwaysPull)
 	assert.Equal(t, []string{"htop"}, tw.ExportedApps)
 	assert.Equal(t, []string{"/usr/bin/htop", "/usr/bin/git"}, tw.ExportedBins)

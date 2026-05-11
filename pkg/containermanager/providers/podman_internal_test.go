@@ -35,29 +35,29 @@ func TestPodman_makeCreateCommand(t *testing.T) {
 
 	cmd := podman.makeCreateCommand(
 		t.Context(),
-		"my-container",                // containerName
-		"my-image",                    // containerImage
-		containerAdditionalFlags,      // containerAdditionalFlags
-		"my-hostname",                 // containerHostname
-		containerAdditionalPackages,   // containerAdditionalPackages
-		containerAdditionalVolumes,    // containerAdditionalVolumes
-		"",                            // containerUserCustomHome
-		"",                            // containerPlatform
-		false,                         // nopasswd
-		true,                          // init
-		"echo 'pre-init-hook'",        // containerPreInitHook
-		"echo 'init-hook'",            // containerInitHook
-		false,                         // nvidia
-		false,                         // unshareDevsys
-		false,                         // unshareGroups
-		false,                         // unshareIPC
-		false,                         // unshareNetNS
-		false,                         // unshareProcess
-		false,                         // dryRun
-		userEnv,                       // userEnv
-		"/path/to/distrobox-init",     // distroboxInitPath
-		"/path/to/distrobox-export",   // distroboxExportPath
-		"/path/to/distrobox-hostexec", // distroboxHostexecPath
+		"my-container",              // containerName
+		"my-image",                  // containerImage
+		containerAdditionalFlags,    // containerAdditionalFlags
+		"my-hostname",               // containerHostname
+		containerAdditionalPackages, // containerAdditionalPackages
+		containerAdditionalVolumes,  // containerAdditionalVolumes
+		"",                          // containerUserCustomHome
+		"",                          // containerPlatform
+		false,                       // nopasswd
+		true,                        // init
+		"echo 'pre-init-hook'",      // containerPreInitHook
+		"echo 'init-hook'",          // containerInitHook
+		false,                       // nvidia
+		false,                       // unshareDevsys
+		false,                       // unshareGroups
+		false,                       // unshareIPC
+		false,                       // unshareNetNS
+		false,                       // unshareProcess
+		false,                       // dryRun
+		userEnv,                     // userEnv
+		"/path/to/otter-init",       // distroboxInitPath
+		"/path/to/otter-export",     // distroboxExportPath
+		"/path/to/otter-hostexec",   // distroboxHostexecPath
 	)
 
 	cmdStr := strings.Join(cmd, " ")
@@ -134,9 +134,9 @@ func TestPodman_makeCreateCommandRootful(t *testing.T) {
 		false,
 		false, // dryRun
 		userEnv,
-		"/path/to/distrobox-init",
-		"/path/to/distrobox-export",
-		"/path/to/distrobox-hostexec",
+		"/path/to/otter-init",
+		"/path/to/otter-export",
+		"/path/to/otter-hostexec",
 	)
 
 	cmdStr := strings.Join(cmd, " ")
@@ -183,9 +183,9 @@ func TestPodman_makeCreateCommandNoInit(t *testing.T) {
 		false,
 		false, // dryRun
 		userEnv,
-		"/path/to/distrobox-init",
-		"/path/to/distrobox-export",
-		"/path/to/distrobox-hostexec",
+		"/path/to/otter-init",
+		"/path/to/otter-export",
+		"/path/to/otter-hostexec",
 	)
 
 	cmdStr := strings.Join(cmd, " ")
@@ -233,9 +233,9 @@ func TestPodman_makeCreateCommandWithCrun(t *testing.T) {
 		false,
 		false, // dryRun
 		userEnv,
-		"/path/to/distrobox-init",
-		"/path/to/distrobox-export",
-		"/path/to/distrobox-hostexec",
+		"/path/to/otter-init",
+		"/path/to/otter-export",
+		"/path/to/otter-hostexec",
 	)
 
 	cmdStr := strings.Join(cmd, " ")
@@ -281,9 +281,9 @@ func TestPodman_makeCreateCommandWithPlatform(t *testing.T) {
 		false,
 		false, // dryRun
 		userEnv,
-		"/path/to/distrobox-init",
-		"/path/to/distrobox-export",
-		"/path/to/distrobox-hostexec",
+		"/path/to/otter-init",
+		"/path/to/otter-export",
+		"/path/to/otter-hostexec",
 	)
 
 	cmdStr := strings.Join(cmd, " ")
@@ -324,9 +324,9 @@ func TestPodman_makeCreateCommandWithCustomHome(t *testing.T) {
 		false,
 		false, // dryRun
 		userEnv,
-		"/path/to/distrobox-init",
-		"/path/to/distrobox-export",
-		"/path/to/distrobox-hostexec",
+		"/path/to/otter-init",
+		"/path/to/otter-export",
+		"/path/to/otter-hostexec",
 	)
 
 	cmdStr := strings.Join(cmd, " ")
@@ -334,8 +334,8 @@ func TestPodman_makeCreateCommandWithCustomHome(t *testing.T) {
 	// Check custom home is set
 	assert.Contains(t, cmdStr, "--env HOME=/custom/home")
 
-	// Check DISTROBOX_HOST_HOME is set to original home
-	assert.Contains(t, cmdStr, "--env DISTROBOX_HOST_HOME=/home/user")
+	// Check OTTER_HOST_HOME is set to original home
+	assert.Contains(t, cmdStr, "--env OTTER_HOST_HOME=/home/user")
 
 	// Check custom home is mounted
 	assert.Contains(t, cmdStr, "--volume /custom/home:/custom/home:rslave")
@@ -382,9 +382,9 @@ func TestPodman_makeCreateCommandWithAdditionalFlags(t *testing.T) {
 		false,
 		false, // dryRun
 		userEnv,
-		"/path/to/distrobox-init",
-		"/path/to/distrobox-export",
-		"/path/to/distrobox-hostexec",
+		"/path/to/otter-init",
+		"/path/to/otter-export",
+		"/path/to/otter-hostexec",
 	)
 
 	cmdStr := strings.Join(cmd, " ")
@@ -432,9 +432,9 @@ func TestPodman_makeCreateCommandWithAdditionalPackages(t *testing.T) {
 		false,
 		false, // dryRun
 		userEnv,
-		"/path/to/distrobox-init",
-		"/path/to/distrobox-export",
-		"/path/to/distrobox-hostexec",
+		"/path/to/otter-init",
+		"/path/to/otter-export",
+		"/path/to/otter-hostexec",
 	)
 
 	cmdStr := strings.Join(cmd, " ")
@@ -533,9 +533,9 @@ func TestPodman_makeCreateCommandUnshareOptions(t *testing.T) {
 				tt.unshareProcess,
 				false, // dryRun
 				userEnv,
-				"/path/to/distrobox-init",
-				"/path/to/distrobox-export",
-				"/path/to/distrobox-hostexec",
+				"/path/to/otter-init",
+				"/path/to/otter-export",
+				"/path/to/otter-hostexec",
 			)
 
 			cmdStr := strings.Join(cmd, " ")
@@ -571,7 +571,7 @@ func TestPodman_Name(t *testing.T) {
 
 func TestParsePodmanContainerList(t *testing.T) {
 	// Test parsing JSON array output from podman ps --format json
-	output := `[{"Command":"sleep infinity","CreatedAt":"2024-01-31 10:00:00 +0000 UTC","ID":"abc123def456789012345678901234567890","Image":"fedora:39","Labels":{"manager":"distrobox","distrobox.unshare_groups":"0"},"Mounts":"","Names":["my-container"],"Networks":"","Ports":"","State":"running","Status":"Up 2 hours"},{"Command":"/bin/bash","CreatedAt":"2024-01-31 09:00:00 +0000 UTC","ID":"xyz789abc123456789012345678901234567890","Image":"ubuntu:22.04","Labels":{"manager":"distrobox"},"Mounts":"","Names":["test-box"],"Networks":"","Ports":"","State":"exited","Status":"Exited (0) 1 hour ago"}]`
+	output := `[{"Command":"sleep infinity","CreatedAt":"2024-01-31 10:00:00 +0000 UTC","ID":"abc123def456789012345678901234567890","Image":"fedora:39","Labels":{"manager":"otter","otter.unshare_groups":"0"},"Mounts":"","Names":["my-container"],"Networks":"","Ports":"","State":"running","Status":"Up 2 hours"},{"Command":"/bin/bash","CreatedAt":"2024-01-31 09:00:00 +0000 UTC","ID":"xyz789abc123456789012345678901234567890","Image":"ubuntu:22.04","Labels":{"manager":"otter"},"Mounts":"","Names":["test-box"],"Networks":"","Ports":"","State":"exited","Status":"Exited (0) 1 hour ago"}]`
 
 	containers, err := parsePodmanContainerList(output)
 	require.NoError(t, err)
@@ -581,8 +581,8 @@ func TestParsePodmanContainerList(t *testing.T) {
 	assert.Equal(t, "abc123def456", containers[0].ID)
 	assert.Equal(t, "my-container", containers[0].Name)
 	assert.Equal(t, "fedora:39", containers[0].Image)
-	assert.Equal(t, "distrobox", containers[0].Labels["manager"])
-	assert.Equal(t, "0", containers[0].Labels["distrobox.unshare_groups"])
+	assert.Equal(t, "otter", containers[0].Labels["manager"])
+	assert.Equal(t, "0", containers[0].Labels["otter.unshare_groups"])
 
 	// Check second container
 	assert.Equal(t, "xyz789abc123", containers[1].ID)
@@ -778,5 +778,5 @@ esac
 }
 
 func podmanFakeInspectJSON(status string) string {
-	return `[{"Id":"container-id","State":{"Status":"` + status + `"},"Config":{"Labels":{"distrobox.unshare_groups":"0"},"Env":["HOME=/home/testuser","PATH=/usr/bin:/bin"]}}]`
+	return `[{"Id":"container-id","State":{"Status":"` + status + `"},"Config":{"Labels":{"otter.unshare_groups":"0"},"Env":["HOME=/home/testuser","PATH=/usr/bin:/bin"]}}]`
 }
