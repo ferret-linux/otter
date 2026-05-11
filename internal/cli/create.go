@@ -248,7 +248,7 @@ func printCreateCompleted(progress *ui.Progress, containerName string, rootful b
 		rootFlag = "--root "
 	}
 
-	msg := "Distrobox '%s' successfully created.\nTo enter, run:\n\notter enter %s%s\n\n"
+	msg := "Otter '%s' successfully created.\nTo enter, run:\n\notter enter %s%s\n\n"
 
 	progress.Finalize(msg, containerName, rootFlag, containerName)
 }
@@ -259,7 +259,7 @@ func printContainerAlreadyExists(progress *ui.Progress, containerName string, ro
 		rootFlag = "--root "
 	}
 
-	msg := `Distrobox named '%s' already exists.
+	msg := `Container named '%s' already exists.
 To enter, run:
 
 otter enter %s%s
