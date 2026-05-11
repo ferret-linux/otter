@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	insidedistrobox "github.com/ferret-linux/otter/internal/inside-container"
+	insideContainer "github.com/ferret-linux/otter/internal/inside-container"
 	"github.com/ferret-linux/otter/internal/userenv"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ui"
@@ -88,7 +88,7 @@ func (p *Podman) Create(
 ) error {
 	userEnv := userenv.LoadUserEnvironment(ctx)
 
-	scriptsDir, err := insidedistrobox.ProvisionScripts()
+	scriptsDir, err := insideContainer.ProvisionScripts()
 	if err != nil {
 		return fmt.Errorf("failed to provision scripts: %w", err)
 	}
@@ -160,9 +160,9 @@ func (p *Podman) makeCreateCommand(
 	unshareProcess bool,
 	dryRun bool,
 	userEnv *userenv.UserEnvironment,
-	distroboxInitPath string,
-	distroboxExportPath string,
-	distroboxHostexecPath string,
+	otterInitPath string,
+	otterExportPath string,
+	otterHostexecPath string,
 ) []string {
 	containerUserHome := userEnv.Home
 	containerUserName := userEnv.User
@@ -222,11 +222,11 @@ func (p *Podman) makeCreateCommand(
 	)
 	options = append(options, "--env", fmt.Sprintf("CONTAINER_ID=%s", containerName))
 	options = append(options, "--volume", "/tmp:/tmp:rslave")
-	options = append(options, "--volume", fmt.Sprintf("%s:%s", distroboxExportPath, "/usr/bin/otter-export:ro"))
+	options = append(options, "--volume", fmt.Sprintf("%s:%s", otterExportPath, "/usr/bin/otter-export:ro"))
 	options = append(
 		options,
 		"--volume",
-		fmt.Sprintf("%s:%s", distroboxHostexecPath, "/usr/bin/otter-host-exec:ro"),
+		fmt.Sprintf("%s:%s", otterHostexecPath, "/usr/bin/otter-host-exec:ro"),
 	)
 	options = append(options, "--volume", fmt.Sprintf("%s:%s:rslave", containerUserHome, containerUserHome))
 
@@ -419,7 +419,7 @@ func (p *Podman) makeCreateCommand(
 	//
 	// We set the entrypoint _before_ running the container image so that
 	// we can override any user provided entrypoint if need be
-	options = append(options, "--volume", fmt.Sprintf("%s:%s", distroboxInitPath, "/usr/bin/entrypoint:ro"))
+	options = append(options, "--volume", fmt.Sprintf("%s:%s", otterInitPath, "/usr/bin/entrypoint:ro"))
 	options = append(options, "--entrypoint", "/usr/bin/entrypoint")
 
 	// Build the rest of the arguments for otter-init

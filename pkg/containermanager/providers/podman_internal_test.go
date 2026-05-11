@@ -55,9 +55,9 @@ func TestPodman_makeCreateCommand(t *testing.T) {
 		false,                       // unshareProcess
 		false,                       // dryRun
 		userEnv,                     // userEnv
-		"/path/to/otter-init",       // distroboxInitPath
-		"/path/to/otter-export",     // distroboxExportPath
-		"/path/to/otter-hostexec",   // distroboxHostexecPath
+		"/path/to/otter-init",       // otterInitPath
+		"/path/to/otter-export",     // otterExportPath
+		"/path/to/otter-hostexec",   // otterHostexecPath
 	)
 
 	cmdStr := strings.Join(cmd, " ")

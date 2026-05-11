@@ -52,9 +52,9 @@ func TestDocker_makeCreateCommand(t *testing.T) {
 		false,                       // unshareNetNS
 		false,                       // unshareProcess
 		userEnv,                     // userEnv
-		"/path/to/otter-init",       // distroboxInitPath
-		"/path/to/otter-export",     // distroboxExportPath
-		"/path/to/otter-hostexec",   // distroboxHostexecPath
+		"/path/to/otter-init",       // otterInitPath
+		"/path/to/otter-export",     // otterExportPath
+		"/path/to/otter-hostexec",   // otterHostexecPath
 	)
 
 	// Build expected string dynamically for paths that depend on host filesystem

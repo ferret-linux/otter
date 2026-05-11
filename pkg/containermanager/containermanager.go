@@ -72,7 +72,7 @@ type RmOptions struct {
 	ContainerHome string
 }
 
-func (c Container) IsDistrobox() bool {
+func (c Container) IsOtterContainer() bool {
 	return c.Labels["manager"] == "otter"
 }
 
