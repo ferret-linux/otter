@@ -4,7 +4,8 @@
 │▸ Usage:                                                  │
 │  otter rm --all --force                                  │
 │  otter rm --force my-box                                 │
-│  otter rm my-box my-box2 my-box3                         │
+│  otter remove my-box my-box2 my-box3                     │
+│  otter remove --all --root --force --rm-home             │
 ├──────────────────────────────────────────────────────────┤
 │▸ Options:                                                │
 │ --all     ┆ -a  Delete all otters                        │

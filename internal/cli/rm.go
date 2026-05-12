@@ -17,7 +17,8 @@ import (
 
 func newRmCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
-		Name: "rm",
+		Name:    "remove",
+		Aliases: []string{"rm"},
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",

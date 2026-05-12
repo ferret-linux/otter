@@ -3,15 +3,14 @@
 ├──────────────────────────────────────────────────────┤
 │▸ Commands:                                           │
 │  stop                 Stop running containers        │
+│  enter                Enter running containers       │
 │  create               Create new containers          │
 │  upgrade              Upgrade packages in containers │
 │  assemble             Build containers from a spec   │
 │                                                      │
 │  ls  ┆ list           List all containers            │
 │  rm  ┆ remove         Remove containers              │
-│  run ┆ enter          Enter running containers       │
 │  eph ┆ ephemeral      Spin up disposable containers  │
-│  cmp ┆ compatibility  compatible image & system test │
 │  gde ┆ generate-entry Generate .desktop entry        │
 ├──────────────────────────────────────────────────────┤
 │▸ Extras:                                             │

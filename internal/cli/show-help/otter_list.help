@@ -2,9 +2,10 @@
 │⦿ List all otter managed containers        │
 ├───────────────────────────────────────────┤
 │▸ Usage:                                   │
-│  otter ls                                 │
 │  otter ls --root                          │
+│  otter ls --no-color                      │
 │  otter list --no-color                    │
+│  otter list --no-color --root             │
 ├───────────────────────────────────────────┤
 │▸ Options:                                 │
 │ --root     ┆ -r  list rootful containers  │

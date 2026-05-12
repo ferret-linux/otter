@@ -2,8 +2,8 @@
 │⦿ Generate desktop entry for containers    │
 ├───────────────────────────────────────────┤
 │▸ Usage:                                   │
-│  otter generate-entry --all               │
-│  otter generate-entry my-box              │
+│  otter gde --all                          │
+│  otter gde my-box                         │
 │  otter generate-entry debian --delete     │
 │  otter generate-entry --i /path/to/icon   │
 ├───────────────────────────────────────────┤
