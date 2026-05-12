@@ -18,7 +18,7 @@ var colorSlots = []string{
 	"\033[96m", // {1} teal   — tagline/messages
 	"\033[36m", // {2} cyan    — box borders
 	"\033[33m", // {3} yellow  — headers (▸ Commands:)
-	"\033[35m", // {4} magenta — flags/extras
+	"\033[34m", // {4} blue    — flags/extras
 	"\033[37m", // {5} dim     — descriptions/info text
 }
 
