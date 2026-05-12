@@ -15,7 +15,7 @@ var helpFS embed.FS
 
 var colorSlots = []string{
 	"\033[32m", // {0} green   — command names
-	"\033[97m", // {1} white   — tagline/messages
+	"\033[96m", // {1} teal   — tagline/messages
 	"\033[36m", // {2} cyan    — box borders
 	"\033[33m", // {3} yellow  — headers (▸ Commands:)
 	"\033[35m", // {4} magenta — flags/extras
