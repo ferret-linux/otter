@@ -1,4 +1,6 @@
 ╭──────────────────────────────────────────────╮
+│⦿ Create short-lived container environments   │
+├──────────────────────────────────────────────┤
 │▸ Usage:                                      │
 │  otter ephemeral -i fedora -- rpm -qa        │
 │  otter ephemeral --nvidia --init --root      │

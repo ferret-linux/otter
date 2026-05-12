@@ -1,4 +1,6 @@
 ╭───────────────────────────────────────────────────╮
+│⦿ Upgrade packages inside otter managed containers │
+├───────────────────────────────────────────────────┤
 │▸ Usage:                                           │
 │  otter upgrade my-box                             │
 │  otter upgrade --all                              │

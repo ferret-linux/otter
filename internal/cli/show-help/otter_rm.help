@@ -1,4 +1,6 @@
 ╭──────────────────────────────────────────────────────────╮
+│⦿ Remove otter managed container environments             │
+├──────────────────────────────────────────────────────────┤
 │▸ Usage:                                                  │
 │  otter rm --all --force                                  │
 │  otter rm --force my-box                                 │

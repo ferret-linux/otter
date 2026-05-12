@@ -1,4 +1,6 @@
 ╭─────────────────────────────────────────────────────╮
+│⦿ Stop a otter managed running container environment │
+├─────────────────────────────────────────────────────┤
 │▸ Usage:                                             │
 │  otter stop my-box                                  │
 │  otter stop --all                                   │

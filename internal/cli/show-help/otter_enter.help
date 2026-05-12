@@ -1,4 +1,6 @@
 ╭─────────────────────────────────────────────────────────────────────────╮
+│⦿ Enter into a otter managed container environment                       │
+├─────────────────────────────────────────────────────────────────────────┤
 │▸ Usage:                                                                 │
 │  otter enter my-box                                                     │
 │  otter enter my-ubuntu --root                                           │

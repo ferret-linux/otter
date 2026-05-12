@@ -1,4 +1,6 @@
 ╭───────────────────────────────────────────────────────────╮
+│⦿ Manage otter containers using manifest files             │
+├───────────────────────────────────────────────────────────┤
 │▸ Usage:                                                   │
 │  otter assemble create                                    │
 │  otter assemble remove                                    │

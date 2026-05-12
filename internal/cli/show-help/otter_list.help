@@ -1,4 +1,6 @@
 ╭───────────────────────────────────────────╮
+│⦿ List all otter managed containers        │
+├───────────────────────────────────────────┤
 │▸ Usage:                                   │
 │  otter ls                                 │
 │  otter ls --root                          │

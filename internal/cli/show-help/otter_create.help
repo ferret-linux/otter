@@ -1,4 +1,6 @@
 ╭─────────────────────────────────────────────────────────────────────────────────────╮
+│⦿ Create native distro like container environments using otter                       │
+├─────────────────────────────────────────────────────────────────────────────────────┤
 │▸ Usage:                                                                             │
 │  otter create --init --nvidia --root                                                │
 │  otter create --clone my-box --name my-copy                                         │

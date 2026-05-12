@@ -1,4 +1,6 @@
 ╭───────────────────────────────────────────╮
+│⦿ Generate desktop entry for containers    │
+├───────────────────────────────────────────┤
 │▸ Usage:                                   │
 │  otter generate-entry --all               │
 │  otter generate-entry my-box              │
