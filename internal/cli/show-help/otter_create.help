@@ -41,7 +41,7 @@
 {2}│{R}{3}▸ Extras:{R}                                                                            {2}│{R}
 {2}│{R} {4}--help{R}    ┆ {4}-h{R}  Show this help message                                              {2}│{R}
 {2}│{R} {4}--verbose{R} ┆ {4}-v{R}  Show more verbose output                                            {2}│{R}
-{2}│{R} {4}--dry-run{R} ┆ {4}-d{R}   Print the generated container manager command                      {2}│{R}
+{2}│{R} {4}--dry-run{R} ┆ {4}-d{R}  Print the generated container manager command                       {2}│{R}
 {2}│{R} {4}--absolutely-disable-root-password-i-am-really-positively-sure{R}                      {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Notes:{R}                                                                             {2}│{R}

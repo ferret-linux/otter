@@ -9,7 +9,7 @@
 {2}├──────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                    {2}│{R}
 {2}│{R} {4}--{R}     ┆ {4}-e{R}  Command to execute at login     {2}│{R}
-{2}│{R} {4}--root{R} ┆ {4}-r{R}  rootful ephemeral container     {2}│{R}
+{2}│{R} {4}--root{R} ┆ {4}-r{R}  Rootful ephemeral container     {2}│{R}
 {2}├──────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                     {2}│{R}
 {2}│{R} {4}--help{R}    ┆ {4}-h{R}  Show this help message       {2}│{R}

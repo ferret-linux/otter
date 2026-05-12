@@ -8,7 +8,7 @@
 {2}│{R}  otter list --no-color --root             {2}│{R}
 {2}├───────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                 {2}│{R}
-{2}│{R} {4}--root{R}     ┆ {4}-r{R}  list rootful containers  {2}│{R}
+{2}│{R} {4}--root{R}     ┆ {4}-r{R}  List rootful containers  {2}│{R}
 {2}│{R} {4}--no-color{R}       Disable color formatting {2}│{R}
 {2}├───────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                  {2}│{R}
@@ -18,11 +18,11 @@
 {2}│{R}{3}▸ Notes:{R}                                   {2}│{R}
 {2}│{R} {4}--root{R}  Prefer over 'sudo otter'.         {2}│{R}
 {2}│{R}         Set OTR_SUDO_PROGRAM to use a     {2}│{R}
-{2}│{R}          different sudo program. you can  {2}│{R}
+{2}│{R}         different sudo program. you can   {2}│{R}
 {2}│{R}         also use otter.conf and set       {2}│{R}
 {2}│{R}         'otter_sudo_program' variable.    {2}│{R}
 {2}├───────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                {2}│{R}
-{2}│{R} Rootful containers are hidden by default. {2}│{R}
+{2}│{R} Rootful containers are hidden by default, {2}│{R}
 {2}│{R} Pass '--root' to include them in the list.{2}│{R}
 {2}╰───────────────────────────────────────────╯{R}
