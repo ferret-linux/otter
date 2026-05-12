@@ -86,7 +86,7 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		withContainerManager,
 	)
 
-	rm := cc.apply(
+	remove := cc.apply(
 		newRmCommand,
 		withRoot,
 		withContainerManager,
@@ -117,7 +117,7 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		ephemeral,
 		generateEntry,
 		list,
-		rm,
+		remove,
 		stop,
 		upgrade,
 	}
