@@ -1,24 +1,24 @@
-╭───────────────────────────────────────────────────────────╮
-│⦿ Manage otter containers using manifest files             │
-├───────────────────────────────────────────────────────────┤
-│▸ Usage:                                                   │
-│  otter assemble create                                    │
-│  otter assemble remove                                    │
-│  otter assemble create --file /path/to/file.ini           │
-│  otter assemble remove --file /path/to/file.ini           │
-│  otter assemble create --replace --file /path/to/file.ini │
-├───────────────────────────────────────────────────────────┤
-│▸ Commands:                                                │
-│  create        Create Container defined in manifest       │
-│  remove   ┆ rm Remove container defined in manifest       │
-├───────────────────────────────────────────────────────────┤
-│▸ Options:                                                 │
-│ --file    ┆ -f Path or URL to the manifest/ini file       │
-│ --name    ┆ -n Run against a single entry in the manifest │
-│ --replace ┆ -R Replace containers with matching names     │
-├───────────────────────────────────────────────────────────┤
-│▸ Extras:                                                  │
-│ --help    ┆ -h Show this help message                     │
-│ --verbose ┆ -v Show more verbose output                   │
-│ --dry-run ┆ -d Print generated command without running it │
-╰───────────────────────────────────────────────────────────╯
+{2}╭───────────────────────────────────────────────────────────╮{R}
+{2}│{R}{1}⦿ Manage otter containers using manifest files             {R}{2}│{R}
+{2}├───────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Usage:{R}                                                   {2}│{R}
+{2}│{R}  otter assemble create                                    {2}│{R}
+{2}│{R}  otter assemble remove                                    {2}│{R}
+{2}│{R}  otter assemble create --file /path/to/file.ini           {2}│{R}
+{2}│{R}  otter assemble remove --file /path/to/file.ini           {2}│{R}
+{2}│{R}  otter assemble create --replace --file /path/to/file.ini {2}│{R}
+{2}├───────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Commands:{R}                                                {2}│{R}
+{2}│{R}  {0}create{R}        Create Container defined in manifest       {2}│{R}
+{2}│{R}  {0}remove{R}   ┆ {0}rm{R} Remove container defined in manifest       {2}│{R}
+{2}├───────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Options:{R}                                                 {2}│{R}
+{2}│{R} {4}--file{R}    ┆ {4}-f{R} Path or URL to the manifest/ini file       {2}│{R}
+{2}│{R} {4}--name{R}    ┆ {4}-n{R} Run against a single entry in the manifest {2}│{R}
+{2}│{R} {4}--replace{R} ┆ {4}-R{R} Replace containers with matching names     {2}│{R}
+{2}├───────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                                  {2}│{R}
+{2}│{R} {4}--help{R}    ┆ {4}-h{R} Show this help message                     {2}│{R}
+{2}│{R} {4}--verbose{R} ┆ {4}-v{R} Show more verbose output                   {2}│{R}
+{2}│{R} {4}--dry-run{R} ┆ {4}-d{R} Print generated command without running it {2}│{R}
+{2}╰───────────────────────────────────────────────────────────╯{R}

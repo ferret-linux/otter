@@ -1,28 +1,28 @@
-╭──────────────────────────────────────────────╮
-│⦿ Create short-lived container environments   │
-├──────────────────────────────────────────────┤
-│▸ Usage:                                      │
-│  otter eph -i fedora --init -- rpm -q        │
-│  otter eph -i void --nvidia -- ls -la        │
-│  otter ephemeral -i fedora -- rpm -qa        │
-│  otter ephemeral --nvidia --init --root      │
-├──────────────────────────────────────────────┤
-│▸ Options:                                    │
-│ --     ┆ -e  Command to execute at login     │
-│ --root ┆ -r  rootful ephemeral container     │
-├──────────────────────────────────────────────┤
-│▸ Extras:                                     │
-│ --help    ┆ -h  Show this help message       │
-│ --verbose ┆ -v  Show more verbose output     │
-├──────────────────────────────────────────────┤
-│▸ Notes:                                      │
-│ --root  Preferred over 'sudo otter'.         │
-│         To use a different sudo program,     │
-│         set OTR_SUDO_PROGRAM or the          │
-│         'otter_sudo_program' config variable.│
-├──────────────────────────────────────────────┤
-│▸ See also:                                   │
-│  Ephemeral containers are removed on exit,   │
-│  wraps create, enter & remove under the hood │
-│  and inherits all flags from 'otter create'. │
-╰──────────────────────────────────────────────╯
+{2}╭──────────────────────────────────────────────╮{R}
+{2}│{R}{1}⦿ Create short-lived container environments   {R}{2}│{R}
+{2}├──────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Usage:{R}                                      {2}│{R}
+{2}│{R}  otter eph -i fedora --init -- rpm -q        {2}│{R}
+{2}│{R}  otter eph -i void --nvidia -- ls -la        {2}│{R}
+{2}│{R}  otter ephemeral -i fedora -- rpm -qa        {2}│{R}
+{2}│{R}  otter ephemeral --nvidia --init --root      {2}│{R}
+{2}├──────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Options:{R}                                    {2}│{R}
+{2}│{R} {4}--{R}     ┆ {4}-e{R}  Command to execute at login     {2}│{R}
+{2}│{R} {4}--root{R} ┆ {4}-r{R}  rootful ephemeral container     {2}│{R}
+{2}├──────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                     {2}│{R}
+{2}│{R} {4}--help{R}    ┆ {4}-h{R}  Show this help message       {2}│{R}
+{2}│{R} {4}--verbose{R} ┆ {4}-v{R}  Show more verbose output     {2}│{R}
+{2}├──────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Notes:{R}                                      {2}│{R}
+{2}│{R} {4}--root{R}  Preferred over 'sudo otter'.         {2}│{R}
+{2}│{R}         To use a different sudo program,     {2}│{R}
+{2}│{R}         set OTR_SUDO_PROGRAM or the          {2}│{R}
+{2}│{R}         'otter_sudo_program' config variable.{2}│{R}
+{2}├──────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ See also:{R}                                   {2}│{R}
+{2}│{R}  Ephemeral containers are removed on exit,   {2}│{R}
+{2}│{R}  wraps create, enter & remove under the hood {2}│{R}
+{2}│{R}  and inherits all flags from 'otter create'. {2}│{R}
+{2}╰──────────────────────────────────────────────╯{R}

@@ -1,25 +1,25 @@
-╭─────────────────────────────────────────────────────╮
-│⦿ Stop a otter managed running container environment │
-├─────────────────────────────────────────────────────┤
-│▸ Usage:                                             │
-│  otter stop my-box                                  │
-│  otter stop --all                                   │
-│  otter stop --yes my-box                            │
-├─────────────────────────────────────────────────────┤
-│▸ Options:                                           │
-│ --all  ┆ -a  Stop all otters                        │
-│ --root ┆ -r  stop rootful containers                │
-│ --yes  ┆ -Y  Stop without confirmation              │
-├─────────────────────────────────────────────────────┤
-│▸ Extras:                                            │
-│ --help    ┆ -h  Show this help message              │
-│ --verbose ┆ -v  Show more verbose output            │
-├─────────────────────────────────────────────────────┤
-│▸ Notes:                                             │
-│ --root  Prefer over 'sudo otter'.If you dont want   │
-│         to use 'sudo' for root escalation you can   │
-│         Set OTR_SUDO_PROGRAM to use different app.  │
-├─────────────────────────────────────────────────────┤
-│▸ See also:                                          │
-│ Rootful containers need '--root' for 'stop' to work.│
-╰─────────────────────────────────────────────────────╯
+{2}╭─────────────────────────────────────────────────────╮{R}
+{2}│{R}{1}⦿ Stop a otter managed running container environment {R}{2}│{R}
+{2}├─────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Usage:{R}                                             {2}│{R}
+{2}│{R}  otter stop my-box                                  {2}│{R}
+{2}│{R}  otter stop --all                                   {2}│{R}
+{2}│{R}  otter stop --yes my-box                            {2}│{R}
+{2}├─────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Options:{R}                                           {2}│{R}
+{2}│{R} {4}--all{R}  ┆ {4}-a{R}  Stop all otters                        {2}│{R}
+{2}│{R} {4}--root{R} ┆ {4}-r{R}  stop rootful containers                {2}│{R}
+{2}│{R} {4}--yes{R}  ┆ {4}-Y{R}  Stop without confirmation              {2}│{R}
+{2}├─────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                            {2}│{R}
+{2}│{R} {4}--help{R}    ┆ {4}-h{R}  Show this help message              {2}│{R}
+{2}│{R} {4}--verbose{R} ┆ {4}-v{R}  Show more verbose output            {2}│{R}
+{2}├─────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Notes:{R}                                             {2}│{R}
+{2}│{R} {4}--root{R}  Prefer over 'sudo otter'.If you dont want   {2}│{R}
+{2}│{R}         to use 'sudo' for root escalation you can   {2}│{R}
+{2}│{R}         Set OTR_SUDO_PROGRAM to use different app.  {2}│{R}
+{2}├─────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ See also:{R}                                          {2}│{R}
+{2}│{R} Rootful containers need '--root' for 'stop' to work.{2}│{R}
+{2}╰─────────────────────────────────────────────────────╯{R}

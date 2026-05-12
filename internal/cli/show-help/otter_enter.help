@@ -1,30 +1,30 @@
-╭─────────────────────────────────────────────────────────────────────────╮
-│⦿ Enter into a otter managed container environment                       │
-├─────────────────────────────────────────────────────────────────────────┤
-│▸ Usage:                                                                 │
-│  otter enter my-box                                                     │
-│  otter enter my-ubuntu --root                                           │
-│  otter enter my-alpine -- sh -l                                         │
-│  otter enter --name fedora-44 -- bash -l                                │
-│  otter enter --additional-flags "--env MY_VAR=value" --n b1 -- bash -l  │
-│  otter enter --additional-flags "--preserve-fds" --name test -- bash -l │
-├─────────────────────────────────────────────────────────────────────────┤
-│▸ Options:                                                               │
-│ --                        Command to execute into the container         │
-│ --name             ┆ -n   Name of the container to enter                │
-│ --root             ┆ -r   Launch container manager with root privileges │
-│ --no-tty           ┆ -T   Do not instantiate a tty                      │
-│ --clean-path              Reset PATH inside container to FHS standard   │
-│ --no-workdir       ┆ -nw  Always start from container's home directory  │
-│ --additional-flags ┆ -a   Additional flags to pass to container manager │
-├─────────────────────────────────────────────────────────────────────────┤
-│▸ Extras:                                                                │
-│ --help    ┆ -h  Show this help message                                  │
-│ --verbose ┆ -v  Show more verbose output                                │
-│ --dry-run ┆ -d   Print the generated container manager command          │
-├─────────────────────────────────────────────────────────────────────────┤
-│▸ Notes:                                                                 │
-│ --root  Preferred over 'sudo otter' when root is needed. To use a       │
-│         program other than sudo, set OTR_SUDO_PROGRAM or the            │
-│         'otter_sudo_program' config variable.                           │
-╰─────────────────────────────────────────────────────────────────────────╯
+{2}╭─────────────────────────────────────────────────────────────────────────╮{R}
+{2}│{R}{1}⦿ Enter into a otter managed container environment                       {R}{2}│{R}
+{2}├─────────────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Usage:{R}                                                                 {2}│{R}
+{2}│{R}  otter enter my-box                                                     {2}│{R}
+{2}│{R}  otter enter my-ubuntu --root                                           {2}│{R}
+{2}│{R}  otter enter my-alpine -- sh -l                                         {2}│{R}
+{2}│{R}  otter enter --name fedora-44 -- bash -l                                {2}│{R}
+{2}│{R}  otter enter --additional-flags "--env MY_VAR=value" --n b1 -- bash -l  {2}│{R}
+{2}│{R}  otter enter --additional-flags "--preserve-fds" --name test -- bash -l {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Options:{R}                                                               {2}│{R}
+{2}│{R} {4}--{R}                        Command to execute into the container         {2}│{R}
+{2}│{R} {4}--name{R}             ┆ {4}-n{R}   Name of the container to enter                {2}│{R}
+{2}│{R} {4}--root{R}             ┆ {4}-r{R}   Launch container manager with root privileges {2}│{R}
+{2}│{R} {4}--no-tty{R}           ┆ {4}-T{R}   Do not instantiate a tty                      {2}│{R}
+{2}│{R} {4}--clean-path{R}              Reset PATH inside container to FHS standard   {2}│{R}
+{2}│{R} {4}--no-workdir{R}       ┆ {4}-nw{R}  Always start from container's home directory  {2}│{R}
+{2}│{R} {4}--additional-flags{R} ┆ {4}-a{R}   Additional flags to pass to container manager {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                                                {2}│{R}
+{2}│{R} {4}--help{R}    ┆ {4}-h{R}  Show this help message                                  {2}│{R}
+{2}│{R} {4}--verbose{R} ┆ {4}-v{R}  Show more verbose output                                {2}│{R}
+{2}│{R} {4}--dry-run{R} ┆ {4}-d{R}   Print the generated container manager command          {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Notes:{R}                                                                 {2}│{R}
+{2}│{R} {4}--root{R}  Preferred over 'sudo otter' when root is needed. To use a       {2}│{R}
+{2}│{R}         program other than sudo, set OTR_SUDO_PROGRAM or the            {2}│{R}
+{2}│{R}         'otter_sudo_program' config variable.                           {2}│{R}
+{2}╰─────────────────────────────────────────────────────────────────────────╯{R}

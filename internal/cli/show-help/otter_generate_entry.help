@@ -1,19 +1,19 @@
-╭───────────────────────────────────────────╮
-│⦿ Generate desktop entry for containers    │
-├───────────────────────────────────────────┤
-│▸ Usage:                                   │
-│  otter gde --all                          │
-│  otter gde my-box                         │
-│  otter generate-entry debian --delete     │
-│  otter generate-entry --i /path/to/icon   │
-├───────────────────────────────────────────┤
-│▸ Options:                                 │
-│ --all    ┆ -a  Perform for all otters     │
-│ --root   ┆ -r  Perform on rootful otters  │
-│ --icon   ┆ -i  Specify a custom icon path │
-│ --delete ┆ -d  Delete the entry           │
-├───────────────────────────────────────────┤
-│▸ Extras:                                  │
-│ --help    ┆ -h  Show this help message    │
-│ --verbose ┆ -v  Show more verbose output  │
-╰───────────────────────────────────────────╯
+{2}╭───────────────────────────────────────────╮{R}
+{2}│{R}{1}⦿ Generate desktop entry for containers    {R}{2}│{R}
+{2}├───────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Usage:{R}                                   {2}│{R}
+{2}│{R}  otter gde --all                          {2}│{R}
+{2}│{R}  otter gde my-box                         {2}│{R}
+{2}│{R}  otter generate-entry debian --delete     {2}│{R}
+{2}│{R}  otter generate-entry --i /path/to/icon   {2}│{R}
+{2}├───────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Options:{R}                                 {2}│{R}
+{2}│{R} {4}--all{R}    ┆ {4}-a{R}  Perform for all otters     {2}│{R}
+{2}│{R} {4}--root{R}   ┆ {4}-r{R}  Perform on rootful otters  {2}│{R}
+{2}│{R} {4}--icon{R}   ┆ {4}-i{R}  Specify a custom icon path {2}│{R}
+{2}│{R} {4}--delete{R} ┆ {4}-d{R}  Delete the entry           {2}│{R}
+{2}├───────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                  {2}│{R}
+{2}│{R} {4}--help{R}    ┆ {4}-h{R}  Show this help message    {2}│{R}
+{2}│{R} {4}--verbose{R} ┆ {4}-v{R}  Show more verbose output  {2}│{R}
+{2}╰───────────────────────────────────────────╯{R}

@@ -1,26 +1,26 @@
-╭──────────────────────────────────────────────────────────╮
-│⦿ Remove otter managed container environments             │
-├──────────────────────────────────────────────────────────┤
-│▸ Usage:                                                  │
-│  otter rm --all --force                                  │
-│  otter rm --force my-box                                 │
-│  otter remove my-box my-box2 my-box3                     │
-│  otter remove --all --root --force --rm-home             │
-├──────────────────────────────────────────────────────────┤
-│▸ Options:                                                │
-│ --all     ┆ -a  Delete all otters                        │
-│ --root    ┆ -r  Launch container with root privileges    │
-│ --force   ┆ -f  Force deletion of problematic containers │
-│ --rm-home       Remove container home,preserves host     │
-├──────────────────────────────────────────────────────────┤
-│▸ Extras:                                                 │
-│ --help    ┆ -h  Show this help message                   │
-│ --verbose ┆ -v  Show more verbose output                 │
-├──────────────────────────────────────────────────────────┤
-│▸ Notes:                                                  │
-│ --root  Prefer over 'sudo otte                           │
-│         Set OTR_SUDO_PROGRAM to use a different program. │
-├──────────────────────────────────────────────────────────┤
-│▸ See also:                                               │
-│ Rootful containers need '--root' to work with 'remove' . │
-╰──────────────────────────────────────────────────────────╯
+{2}╭──────────────────────────────────────────────────────────╮{R}
+{2}│{R}{1}⦿ Remove otter managed container environments             {R}{2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Usage:{R}                                                  {2}│{R}
+{2}│{R}  otter rm --all --force                                  {2}│{R}
+{2}│{R}  otter rm --force my-box                                 {2}│{R}
+{2}│{R}  otter remove my-box my-box2 my-box3                     {2}│{R}
+{2}│{R}  otter remove --all --root --force --rm-home             {2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Options:{R}                                                {2}│{R}
+{2}│{R} {4}--all{R}     ┆ {4}-a{R}  Delete all otters                        {2}│{R}
+{2}│{R} {4}--root{R}    ┆ {4}-r{R}  Launch container with root privileges    {2}│{R}
+{2}│{R} {4}--force{R}   ┆ {4}-f{R}  Force deletion of problematic containers {2}│{R}
+{2}│{R} {4}--rm-home{R}       Remove container home,preserves host     {2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                                 {2}│{R}
+{2}│{R} {4}--help{R}    ┆ {4}-h{R}  Show this help message                   {2}│{R}
+{2}│{R} {4}--verbose{R} ┆ {4}-v{R}  Show more verbose output                 {2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Notes:{R}                                                  {2}│{R}
+{2}│{R} {4}--root{R}  Prefer over 'sudo otte                           {2}│{R}
+{2}│{R}         Set OTR_SUDO_PROGRAM to use a different program. {2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ See also:{R}                                               {2}│{R}
+{2}│{R} Rootful containers need '--root' to work with 'remove' . {2}│{R}
+{2}╰──────────────────────────────────────────────────────────╯{R}

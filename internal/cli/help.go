@@ -5,12 +5,21 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
 	ucli "github.com/urfave/cli/v3"
 )
 
 //go:embed show-help
 var helpFS embed.FS
+
+var colorSlots = []string{
+	"\033[32m", // {0} green   — command names
+	"\033[97m", // {1} white   — tagline/messages
+	"\033[36m", // {2} cyan    — box borders
+	"\033[33m", // {3} yellow  — headers (▸ Commands:)
+	"\033[35m", // {4} magenta — flags/extras
+}
 
 func init() {
 	ucli.HelpPrinter = func(_ io.Writer, _ string, data any) {
@@ -22,11 +31,25 @@ func init() {
 	}
 }
 
+func renderColors(s string) string {
+	noColor := os.Getenv("NO_COLOR") != "" || os.Getenv("TERM") == "dumb"
+	if noColor {
+		for i := range colorSlots {
+			s = strings.ReplaceAll(s, fmt.Sprintf("{%d}", i), "")
+		}
+		return strings.ReplaceAll(s, "{R}", "")
+	}
+	for i, code := range colorSlots {
+		s = strings.ReplaceAll(s, fmt.Sprintf("{%d}", i), code)
+	}
+	return strings.ReplaceAll(s, "{R}", "\033[0m")
+}
+
 func printHelp(name string) {
 	b, err := helpFS.ReadFile("show-help/" + name + ".help")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "help not found: %s\n", name)
 		return
 	}
-	fmt.Fprint(os.Stdout, string(b))
+	fmt.Fprint(os.Stdout, renderColors(string(b)))
 }
