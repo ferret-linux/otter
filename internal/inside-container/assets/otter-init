@@ -2275,8 +2275,8 @@ fi
 # toolbx prompt: https://github.com/containers/toolbox/blob/main/profile.d/toolbox.sh#L47
 # this will ensure greater compatibility between the two implementations
 if [ -f /run/.toolboxenv ]; then
-    [ "\${BASH_VERSION:-}" != "" ] && export PS1="╭⟮⬢⟯─⟮\u@\$CONTAINER_ID⟯─⟮\W⟯─⟮\$(date +%H:%M)⟯\n╰─▶ "
-    [ "\${ZSH_VERSION:-}" != "" ] && export PS1="╭⟮⬢⟯─⟮%n@\$CONTAINER_ID⟯─⟮%1~⟯─⟮%D{%H:%M}⟯"$'\n'"╰─▶ "
+    [ "\${BASH_VERSION:-}" != "" ] && export PS1="\[\033[37m\]╭⟮\[\e[0;92m\]⬢\[\033[37m\]⟯─⟮\[\e[0;96m\]\u\[\033[37m\]@\[\e[0;95m\]\$CONTAINER_ID\[\033[37m\]⟯─⟮\[\e[0;92m\]\W\[\033[37m\]⟯─⟮\[\e[0;94m\]\$(date +%H:%M)\[\033[37m\]⟯\[\e[0m\]\n\[\033[37m\]╰─\[\e[0;92m\]▶ \[\e[0m\]"
+    [ "\${ZSH_VERSION:-}" != "" ] && export PS1="%F{7}╭⟮%F{10}⬢%F{7}⟯─⟮%F{14}%n%F{7}@%F{13}\$CONTAINER_ID%F{7}⟯─⟮%F{10}%1~%F{7}⟯─⟮%F{12}%D{%H:%M}%F{7}⟯%f"$'\n'"%F{7}╰─%F{10}▶ %f"
 fi
 
 # This will ensure we have a first-shell password setup for an user if needed.
