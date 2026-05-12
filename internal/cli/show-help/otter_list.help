@@ -2,27 +2,27 @@
 {2}│{R}{1}⦿ List all otter managed containers        {R}{2}│{R}
 {2}├───────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                   {2}│{R}
-{2}│{R}  otter ls --root                          {2}│{R}
-{2}│{R}  otter ls --no-color                      {2}│{R}
-{2}│{R}  otter list --no-color                    {2}│{R}
-{2}│{R}  otter list --no-color --root             {2}│{R}
+{2}│{R}  {5}otter ls --root{R}                          {2}│{R}
+{2}│{R}  {5}otter ls --no-color{R}                      {2}│{R}
+{2}│{R}  {5}otter list --no-color{R}                    {2}│{R}
+{2}│{R}  {5}otter list --no-color --root{R}             {2}│{R}
 {2}├───────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                 {2}│{R}
-{2}│{R} {4}--root{R}     ┆ {4}-r{R}  List rootful containers  {2}│{R}
-{2}│{R} {4}--no-color{R}       Disable color formatting {2}│{R}
+{2}│{R} {4}--root{R}     ┆ {4}-r{R}  {5}List rootful containers{R}  {2}│{R}
+{2}│{R} {4}--no-color{R}       {5}Disable color formatting{R} {2}│{R}
 {2}├───────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                  {2}│{R}
-{2}│{R} {4}--help{R}    ┆ {4}-h{R}  Show this help message    {2}│{R}
-{2}│{R} {4}--verbose{R} ┆ {4}-v{R}  Show more verbose output  {2}│{R}
+{2}│{R} {4}--help{R}    ┆ {4}-h{R}  {5}Show this help message{R}    {2}│{R}
+{2}│{R} {4}--verbose{R} ┆ {4}-v{R}  {5}Show more verbose output{R}  {2}│{R}
 {2}├───────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Notes:{R}                                   {2}│{R}
-{2}│{R} {4}--root{R}  Prefer over 'sudo otter'.         {2}│{R}
-{2}│{R}         Set OTR_SUDO_PROGRAM to use a     {2}│{R}
-{2}│{R}         different sudo program. you can   {2}│{R}
-{2}│{R}         also use otter.conf and set       {2}│{R}
-{2}│{R}         'otter_sudo_program' variable.    {2}│{R}
+{2}│{R} {4}--root{R}  {5}Prefer over 'sudo otter'.{R}         {2}│{R}
+{2}│{R}         {5}Set OTR_SUDO_PROGRAM to use a{R}     {2}│{R}
+{2}│{R}         {5}different sudo program. you can{R}   {2}│{R}
+{2}│{R}         {5}also use otter.conf and set{R}       {2}│{R}
+{2}│{R}         {5}'otter_sudo_program' variable.{R}    {2}│{R}
 {2}├───────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                {2}│{R}
-{2}│{R} Rootful containers are hidden by default, {2}│{R}
-{2}│{R} Pass '--root' to include them in the list.{2}│{R}
+{2}│{R} {5}Rootful containers are hidden by default,{R} {2}│{R}
+{2}│{R} {5}Pass '--root' to include them in the list.{R}{2}│{R}
 {2}╰───────────────────────────────────────────╯{R}

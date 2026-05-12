@@ -2,66 +2,66 @@
 {2}│{R}{1}⦿ Create native distro like container environments using otter                       {R}{2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                                                             {2}│{R}
-{2}│{R}  otter create --init --nvidia --root                                                {2}│{R}
-{2}│{R}  otter create --clone my-box --name my-copy                                         {2}│{R}
-{2}│{R}  otter create --image alpine --name my-alpinebox                                    {2}│{R}
-{2}│{R}  otter create --init --additional-flags "--pids-limit 100"                          {2}│{R}
-{2}│{R}  otter create --init --volume /opt/my-dir:/usr/local/my-dir:rw                      {2}│{R}
-{2}│{R}  otter create --image centos:stream10 --pull --home ~/otter/centos10                {2}│{R}
-{2}│{R}  otter create --image alpine:latest --additional-packages "git tmux vim"            {2}│{R}
-{2}│{R}  otter create --image rocky --pre-init-hooks "rpm -qa | wc -l"                      {2}│{R}
-{2}│{R}  otter create --image registry.fedoraproject.org/fedora-toolbox:latest              {2}│{R}
-{2}│{R}  otter create --image alpine:latest --init-hooks "touch /tmp/test1 && touch grass"  {2}│{R}
+{2}│{R}  {5}otter create --init --nvidia --root{R}                                                {2}│{R}
+{2}│{R}  {5}otter create --clone my-box --name my-copy{R}                                         {2}│{R}
+{2}│{R}  {5}otter create --image alpine --name my-alpinebox{R}                                    {2}│{R}
+{2}│{R}  {5}otter create --init --additional-flags "--pids-limit 100"{R}                          {2}│{R}
+{2}│{R}  {5}otter create --init --volume /opt/my-dir:/usr/local/my-dir:rw{R}                      {2}│{R}
+{2}│{R}  {5}otter create --image centos:stream10 --pull --home ~/otter/centos10{R}                {2}│{R}
+{2}│{R}  {5}otter create --image alpine:latest --additional-packages "git tmux vim"{R}            {2}│{R}
+{2}│{R}  {5}otter create --image rocky --pre-init-hooks "rpm -qa | wc -l"{R}                      {2}│{R}
+{2}│{R}  {5}otter create --image registry.fedoraproject.org/fedora-toolbox:latest{R}              {2}│{R}
+{2}│{R}  {5}otter create --image alpine:latest --init-hooks "touch /tmp/test1 && touch grass"{R}  {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                                                           {2}│{R}
-{2}│{R} {4}--yes{R}                 ┆ {4}-Y{R}   Non-interactive, pull images without asking            {2}│{R}
-{2}│{R} {4}--home{R}                ┆ {4}-H{R}   Custom HOME directory for the container                {2}│{R}
-{2}│{R} {4}--init{R}                ┆ {4}-I{R}   Use init system (e.g. systemd) inside the container    {2}│{R}
-{2}│{R} {4}--name{R}                ┆ {4}-n{R}   Name for the container                                 {2}│{R}
-{2}│{R} {4}--pull{R}                ┆ {4}-p{R}   Pull image even if it exists locally (implies --yes)   {2}│{R}
-{2}│{R} {4}--root{R}                ┆ {4}-r{R}   Launch container manager with root privileges          {2}│{R}
-{2}│{R} {4}--clone{R}               ┆ {4}-c{R}   Name of container to use as base for new container     {2}│{R}
-{2}│{R} {4}--image{R}               ┆ {4}-i{R}   Image to use for the container                         {2}│{R}
-{2}│{R} {4}--nvidia{R}                     Integrate host's Nvidia drivers into container         {2}│{R}
-{2}│{R} {4}--volume{R}                     Additional volumes to add to the container             {2}│{R}
-{2}│{R} {4}--hostname{R}                   Hostname for the container                             {2}│{R}
-{2}│{R} {4}--no-entry{R}                   Do not generate a container entry on host system       {2}│{R}
-{2}│{R} {4}--platform{R}                   Specify the target platform, e.g. linux/arm64          {2}│{R}
-{2}│{R} {4}--init-hooks{R}                 Commands to run at end of container initialization     {2}│{R}
-{2}│{R} {4}--unshare-ipc{R}                Do not share IPC namespace with host                   {2}│{R}
-{2}│{R} {4}--unshare-all{R}                Activate all unshare flags                             {2}│{R}
-{2}│{R} {4}--unshare-netns{R}              Do not share net namespace with host                   {2}│{R}
-{2}│{R} {4}--pre-init-hooks{R}             Commands to run at start of container initialization   {2}│{R}
-{2}│{R} {4}--unshare-groups{R}             Do not forward user's additional groups into container {2}│{R}
-{2}│{R} {4}--unshare-devsys{R}             Do not share host devices and sysfs dirs               {2}│{R}
-{2}│{R} {4}--unshare-process{R}            Do not share process namespace with host               {2}│{R}
-{2}│{R} {4}--additional-flags{R}    ┆ {4}-a{R}   Additional flags to pass to the container manager      {2}│{R}
-{2}│{R} {4}--additional-packages{R} ┆ {4}-ap{R}  Additional packages to install during container setup  {2}│{R}
+{2}│{R} {4}--yes{R}                 ┆ {4}-Y{R}   {5}Non-interactive, pull images without asking{R}            {2}│{R}
+{2}│{R} {4}--home{R}                ┆ {4}-H{R}   {5}Custom HOME directory for the container{R}                {2}│{R}
+{2}│{R} {4}--init{R}                ┆ {4}-I{R}   {5}Use init system (e.g. systemd) inside the container{R}    {2}│{R}
+{2}│{R} {4}--name{R}                ┆ {4}-n{R}   {5}Name for the container{R}                                 {2}│{R}
+{2}│{R} {4}--pull{R}                ┆ {4}-p{R}   {5}Pull image even if it exists locally (implies --yes){R}   {2}│{R}
+{2}│{R} {4}--root{R}                ┆ {4}-r{R}   {5}Launch container manager with root privileges{R}          {2}│{R}
+{2}│{R} {4}--clone{R}               ┆ {4}-c{R}   {5}Name of container to use as base for new container{R}     {2}│{R}
+{2}│{R} {4}--image{R}               ┆ {4}-i{R}   {5}Image to use for the container{R}                         {2}│{R}
+{2}│{R} {4}--nvidia{R}          {5}           Integrate host's Nvidia drivers into container{R}         {2}│{R}
+{2}│{R} {4}--volume{R}          {5}           Additional volumes to add to the container{R}             {2}│{R}
+{2}│{R} {4}--hostname{R}          {5}         Hostname for the container{R}                             {2}│{R}
+{2}│{R} {4}--no-entry{R}          {5}         Do not generate a container entry on host system{R}       {2}│{R}
+{2}│{R} {4}--platform{R}          {5}         Specify the target platform, e.g. linux/arm64{R}          {2}│{R}
+{2}│{R} {4}--init-hooks{R}          {5}       Commands to run at end of container initialization{R}     {2}│{R}
+{2}│{R} {4}--unshare-ipc{R}          {5}      Do not share IPC namespace with host{R}                   {2}│{R}
+{2}│{R} {4}--unshare-all{R}          {5}      Activate all unshare flags{R}                             {2}│{R}
+{2}│{R} {4}--unshare-netns{R}          {5}    Do not share net namespace with host{R}                   {2}│{R}
+{2}│{R} {4}--pre-init-hooks{R}          {5}   Commands to run at start of container initialization{R}   {2}│{R}
+{2}│{R} {4}--unshare-groups{R}          {5}   Do not forward user's additional groups into container{R} {2}│{R}
+{2}│{R} {4}--unshare-devsys{R}          {5}   Do not share host devices and sysfs dirs{R}               {2}│{R}
+{2}│{R} {4}--unshare-process{R}          {5}  Do not share process namespace with host{R}               {2}│{R}
+{2}│{R} {4}--additional-flags{R}    ┆ {4}-a{R}   {5}Additional flags to pass to the container manager{R}      {2}│{R}
+{2}│{R} {4}--additional-packages{R} ┆ {4}-ap{R}  {5}Additional packages to install during container setup{R}  {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                                                            {2}│{R}
-{2}│{R} {4}--help{R}    ┆ {4}-h{R}  Show this help message                                              {2}│{R}
-{2}│{R} {4}--verbose{R} ┆ {4}-v{R}  Show more verbose output                                            {2}│{R}
-{2}│{R} {4}--dry-run{R} ┆ {4}-d{R}  Print the generated container manager command                       {2}│{R}
-{2}│{R} {4}--absolutely-disable-root-password-i-am-really-positively-sure{R}                      {2}│{R}
+{2}│{R} {4}--help{R}    ┆ {4}-h{R}  {5}Show this help message{R}                                              {2}│{R}
+{2}│{R} {4}--verbose{R} ┆ {4}-v{R}  {5}Show more verbose output{R}                                            {2}│{R}
+{2}│{R} {4}--dry-run{R} ┆ {4}-d{R}  {5}Print the generated container manager command{R}                       {2}│{R}
+{2}│{R} {4}--absolutely-disable-root-password-i-am-really-positively-sure{R}          {5} {R}           {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Notes:{R}                                                                             {2}│{R}
-{2}│{R} {4}--root{R}    Preferred over 'sudo otter' when root is needed. To use a program         {2}│{R}
-{2}│{R}           other than sudo, set OTR_SUDO_PROGRAM or 'otter_sudo_program' config var. {2}│{R}
+{2}│{R} {4}--root{R}    {5}Preferred over 'sudo otter' when root is needed. To use a program{R}         {2}│{R}
+{2}│{R}           {5}other than sudo, set OTR_SUDO_PROGRAM or 'otter_sudo_program' config var.{R} {2}│{R}
 {2}│{R}                                                                                     {2}│{R}
-{2}│{R} {4}--init{R}    Makes host processes not visible from within the container, assumes       {2}│{R}
-{2}│{R}           --unshare-process. May require additional packages depending on the image {2}│{R}
-{2}│{R}           ,like systemd, runit or openrc.                                           {2}│{R}
+{2}│{R} {4}--init{R}    {5}Makes host processes not visible from within the container, assumes{R}       {2}│{R}
+{2}│{R}           {5}--unshare-process. May require additional packages depending on the image{R} {2}│{R}
+{2}│{R}           {5},like systemd, runit or openrc.{R}                                           {2}│{R}
 {2}│{R}                                                                                     {2}│{R}
-{2}│{R} {4}--clone{R}   Useful to rename an existing container or create multiple copies of the   {2}│{R}
-{2}│{R}           same container environment.                                               {2}│{R}
+{2}│{R} {4}--clone{R}   {5}Useful to rename an existing container or create multiple copies of the{R}   {2}│{R}
+{2}│{R}           {5}same container environment.{R}                                               {2}│{R}
 {2}│{R}                                                                                     {2}│{R}
-{2}│{R} {4}--nvidia{R}  Best effort attempt to integrate host nvidia drivers into the container.  {2}│{R}
-{2}│{R}           For a better experience consider nvidia's nvidia-container-toolkit,       {2}│{R}
-{2}│{R}           the official way to use nvidia cards inside containers.                   {2}│{R}
+{2}│{R} {4}--nvidia{R}  {5}Best effort attempt to integrate host nvidia drivers into the container.{R}  {2}│{R}
+{2}│{R}           {5}For a better experience consider nvidia's nvidia-container-toolkit,{R}       {2}│{R}
+{2}│{R}           {5}the official way to use nvidia cards inside containers.{R}                   {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Compatibility:{R}                                                                     {2}│{R}
-{2}│{R}  For a list of compatible images run:                                               {2}│{R}
-{2}│{R}  otter compatibility --list-images                                                  {2}│{R}
-{2}│{R}  For checking system compatibiltiy run:                                             {2}│{R}
-{2}│{R}  otter compatibility --system                                                       {2}│{R}
+{2}│{R}  {5}For a list of compatible images run:{R}                                               {2}│{R}
+{2}│{R}  {5}otter compatibility --list-images{R}                                                  {2}│{R}
+{2}│{R}  {5}For checking system compatibiltiy run:{R}                                             {2}│{R}
+{2}│{R}  {5}otter compatibility --system{R}                                                       {2}│{R}
 {2}╰─────────────────────────────────────────────────────────────────────────────────────╯{R}
