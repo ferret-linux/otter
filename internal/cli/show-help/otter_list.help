@@ -19,7 +19,7 @@
 {2}│{R} {4}--root{R}  Prefer over 'sudo otter'.         {2}│{R}
 {2}│{R}         Set OTR_SUDO_PROGRAM to use a     {2}│{R}
 {2}│{R}          different sudo program. you can  {2}│{R}
-{2}│{R}		  also use otter.conf and set       {2}│{R}
+{2}│{R}         also use otter.conf and set       {2}│{R}
 {2}│{R}         'otter_sudo_program' variable.    {2}│{R}
 {2}├───────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                {2}│{R}
