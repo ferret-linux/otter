@@ -18,36 +18,18 @@ import (
 )
 
 func newAssembleCommand(cfg *config.Values) *cli.Command {
-	fileFlag := &cli.StringFlag{Name: "file", Usage: "path or URL to otter manifest/ini file"}
+	fileFlag := &cli.StringFlag{Name: "file"}
 	nameFlag := &cli.StringFlag{
 		Name:    "name",
 		Aliases: []string{"n"},
-		Usage:   "run against a single entry in the manifest/ini file",
 	}
 	dryRunFlag := &cli.BoolFlag{
 		Name:    "dry-run",
 		Aliases: []string{"d"},
-		Usage:   "only print the container manager command generated",
 	}
 
 	return &cli.Command{
 		Name: "assemble",
-		UsageText: `
-	otter assemble create
-	otter assemble rm
-	otter assemble create --file /path/to/file.ini
-	otter assemble rm --file /path/to/file.ini
-	otter assemble create --replace --file /path/to/file.ini
-
-Options:
-
-	--file:			path or URL to the otter manifest/ini file
-	--name/-n:		run against a single entry in the manifest/ini file
-	--replace/-R:		replace already existing containers with matching names
-	--dry-run/-d:		only print the container manager command generated
-	--verbose/-v:		show more verbosity
-	--version/-V:		show version
-`,
 		Commands: []*cli.Command{
 			{
 				Name: "create",
@@ -57,7 +39,6 @@ Options:
 					&cli.BoolFlag{
 						Name:    "replace",
 						Aliases: []string{"R"},
-						Usage:   "replace already existing containers with matching names",
 					},
 					dryRunFlag,
 				},

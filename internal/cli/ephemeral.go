@@ -33,14 +33,6 @@ func newEphemeralCommand(cfg *config.Values) *cli.Command {
 
 	return &cli.Command{
 		Name:  "ephemeral",
-		Usage: "create a temporary otter container that is automatically removed on exit",
-		UsageText: `otter ephemeral [options] [-- command]
-
-Examples:
-    otter ephemeral
-    otter ephemeral --image alpine:latest -- cat /etc/os-release
-    otter ephemeral --root --image fedora:39
-    otter ephemeral -- bash -c "echo hello"`,
 		Flags: flags,
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			return ephemeralAction(ctx, cmd, cfg)

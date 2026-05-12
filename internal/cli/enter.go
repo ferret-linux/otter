@@ -16,43 +16,35 @@ import (
 
 func newEnterCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
-		Name:  "enter",
-		Usage: "Enter a otter container",
+		Name: "enter",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "name",
 				Aliases: []string{"n"},
-				Usage:   "name for the container",
 			},
 			&cli.BoolFlag{
 				Name:    "dry-run",
 				Aliases: []string{"d"},
-				Usage:   "only print the container manager command generated",
 			},
 			&cli.BoolFlag{
 				Name:    "clean-path",
 				Aliases: []string{"c"},
-				Usage:   "only print the container manager command generated",
 			},
 			&cli.StringFlag{
 				Name:    "additional-flags",
 				Aliases: []string{"a"},
-				Usage:   "additional flags to pass to the container manager command",
 			},
 			&cli.BoolFlag{
 				Name:    "yes",
 				Aliases: []string{"y"},
-				Usage:   "only print the container manager command generated",
 			},
 			&cli.BoolFlag{
 				Name:    "no-tty",
 				Aliases: []string{"T", "H"},
-				Usage:   "do not instantiate a tty",
 			},
 			&cli.BoolFlag{
 				Name:    "no-workdir",
 				Aliases: []string{"nw"},
-				Usage:   "always start the container from container's home directory",
 			},
 		},
 		UseShortOptionHandling: true,

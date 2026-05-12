@@ -17,25 +17,15 @@ import (
 
 func newStopCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
-		Name:  "stop",
-		Usage: "stop running otter containers",
-		UsageText: `otter stop [options] [container-name...]
-
-Examples:
-    otter stop container-name
-    otter stop container1 container2
-    otter stop --all
-    otter stop --yes container-name`,
+		Name: "stop",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
-				Usage:   "stop all otter containers",
 			},
 			&cli.BoolFlag{
 				Name:    "yes",
 				Aliases: []string{"Y"},
-				Usage:   "non-interactive, stop without asking",
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {

@@ -17,30 +17,18 @@ import (
 
 func newUpgradeCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
-		Name:  "upgrade",
-		Usage: "upgrade packages inside otter containers",
-		UsageText: `otter upgrade [options] [container-name...]
-
-Examples:
-    otter upgrade container-name
-    otter upgrade container1 container2
-    otter upgrade --all
-    otter upgrade --all --running
-    otter upgrade --yes container-name`,
+		Name: "upgrade",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
-				Usage:   "upgrade all otter containers",
 			},
 			&cli.BoolFlag{
-				Name:  "running",
-				Usage: "upgrade only running otter containers (requires --all)",
+				Name: "running",
 			},
 			&cli.BoolFlag{
 				Name:    "yes",
 				Aliases: []string{"Y"},
-				Usage:   "non-interactive, upgrade without asking",
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {

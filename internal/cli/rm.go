@@ -17,27 +17,22 @@ import (
 
 func newRmCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
-		Name:  "rm",
-		Usage: "Remove otter containers",
+		Name: "rm",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
-				Usage:   "delete all otter containers",
 			},
 			&cli.BoolFlag{
 				Name:    "force",
 				Aliases: []string{"f"},
-				Usage:   "force deletion",
 			},
 			&cli.BoolFlag{
 				Name:    "yes",
 				Aliases: []string{"Y"},
-				Usage:   "non-interactive mode",
 			},
 			&cli.BoolFlag{
-				Name:  "rm-home",
-				Usage: "Remove container's home directory",
+				Name: "rm-home",
 			},
 		},
 

@@ -18,148 +18,98 @@ import (
 //nolint:funlen // function length is acceptable for CLI command definition
 func newCreateCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
-
-		Name:  "create",
-		Usage: "create a new otter container",
-		UsageText: `otter create [options] [container_name]
-
-Examples:
-    otter create --image alpine:latest --name test --init-hooks "touch /var/tmp/test1 && touch /var/tmp/test2"
-    otter create --image fedora:39 --name test --additional-flags "--env MY_VAR=value"
-    otter create --image fedora:39 --name test --volume /opt/my-dir:/usr/local/my-dir:rw --additional-flags "--pids-limit 100"
-    otter create -i docker.io/almalinux/8-init --init --name test --pre-init-hooks "dnf config-manager --enable powertools && dnf -y install epel-release"
-    otter create --clone fedora-39 --name fedora-39-copy
-    otter create --image alpine my-alpine-container
-    otter create --image registry.fedoraproject.org/fedora-toolbox:latest --name fedora-toolbox-latest
-    otter create --pull --image centos:stream9 --home ~/otter/centos9
-    otter create --image alpine:latest --name test2 --additional-packages "git tmux vim"
-    otter create --image ubuntu:22.04 --name ubuntu-nvidia --nvidia
-
-    DBX_NON_INTERACTIVE=1 DBX_CONTAINER_NAME=test-alpine DBX_CONTAINER_IMAGE=alpine otter-create`,
+		Name: "create",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "image",
 				Aliases: []string{"i"},
-				Usage: fmt.Sprintf(
-					"image to use for the container (default: %s)",
-					cfg.DefaultContainerImage,
-				),
-				Value: cfg.DefaultContainerImage,
+				Value:   cfg.DefaultContainerImage,
 			},
 			&cli.StringFlag{
 				Name:    "name",
 				Aliases: []string{"n"},
-				Usage:   fmt.Sprintf("name for the container (default: %s)", cfg.DefaultContainerName),
 			},
 			&cli.StringFlag{
-				Name:  "hostname",
-				Usage: "hostname for the container",
+				Name: "hostname",
 			},
 			&cli.BoolFlag{
 				Name:    "pull",
 				Aliases: []string{"p"},
-				Usage:   "pull the image even if it exists locally (implies --yes)",
 			},
 			&cli.BoolFlag{
 				Name:    "yes",
 				Aliases: []string{"Y"},
-				Usage:   "non-interactive, pull images without asking",
 			},
 			&cli.StringFlag{
 				Name:    "clone",
 				Aliases: []string{"c"},
-				Usage: `name of the otter container to use as base for a new container
-this will be useful to either rename an existing otter container or have multiple copies
-of the same environment.`,
 			},
 			&cli.StringFlag{
 				Name:    "home",
 				Aliases: []string{"H"},
-				Usage:   "select a custom HOME directory for the container. Useful to avoid host's home littering with temp files.",
 			},
 			&cli.StringSliceFlag{
-				Name:  "volume",
-				Usage: "additional volumes to add to the container",
+				Name: "volume",
 			},
 			&cli.StringSliceFlag{
 				Name:    "additional-flags",
 				Aliases: []string{"a"},
-				Usage:   "additional flags to pass to the container manager command",
 			},
 			&cli.StringSliceFlag{
 				Name:    "additional-packages",
 				Aliases: []string{"ap"},
-				Usage:   "additional packages to install during initial container setup",
 			},
 			&cli.StringFlag{
-				Name:  "init-hooks",
-				Usage: "additional commands to execute at the end of container initialization",
+				Name: "init-hooks",
 			},
 			&cli.StringFlag{
-				Name:  "pre-init-hooks",
-				Usage: "additional commands to execute at the start of container initialization",
+				Name: "pre-init-hooks",
 			},
 			&cli.BoolFlag{
 				Name:    "init",
 				Aliases: []string{"I"},
-				Usage: `use init system (like systemd) inside the container.
-this will make host's processes not visible from within the container. (assumes --unshare-process)
-may require additional packages depending on the container image: https://github.com/89luca89/distrobox/blob/main/docs/useful_tips.md#using-init-system-inside-a-distrobox`,
 			},
 			&cli.BoolFlag{
-				Name:  "nvidia",
-				Usage: "try to integrate host's nVidia drivers in the guest",
+				Name: "nvidia",
 			},
 			&cli.StringFlag{
-				Name:  "platform",
-				Usage: "specify which platform to use, eg: linux/arm64",
+				Name: "platform",
 			},
 			&cli.BoolFlag{
-				Name:  "unshare-devsys",
-				Usage: "do not share host devices and sysfs dirs from host",
+				Name: "unshare-devsys",
 			},
 			&cli.BoolFlag{
-				Name:  "unshare-groups",
-				Usage: "do not forward user's additional groups into the container",
+				Name: "unshare-groups",
 			},
 			&cli.BoolFlag{
-				Name:  "unshare-ipc",
-				Usage: "do not share ipc namespace with host",
+				Name: "unshare-ipc",
 			},
 			&cli.BoolFlag{
-				Name:  "unshare-netns",
-				Usage: "do not share the net namespace with host",
+				Name: "unshare-netns",
 			},
 			&cli.BoolFlag{
-				Name:  "unshare-process",
-				Usage: "do not share process namespace with host",
+				Name: "unshare-process",
 			},
 			&cli.BoolFlag{
-				Name:  "unshare-all",
-				Usage: "activate all the unshare flags below",
+				Name: "unshare-all",
 			},
 			&cli.BoolFlag{
-				Name:  "no-entry",
-				Usage: "do not generate a container entry in the application list",
+				Name: "no-entry",
 			},
 			&cli.BoolFlag{
 				Name:    "dry-run",
 				Aliases: []string{"d"},
-				Usage:   "only print the container manager command generated",
 			},
 			&cli.BoolFlag{
 				Name:    "verbose",
 				Aliases: []string{"v"},
-				Usage:   "show more verbosity",
 			},
 			&cli.BoolFlag{
-				Name:  "absolutely-disable-root-password-i-am-really-positively-sure",
-				Usage: `⚠️ ⚠️ when setting up a rootful container, this will skip user password setup, leaving it blank. ⚠️ ⚠️`,
+				Name: "absolutely-disable-root-password-i-am-really-positively-sure",
 			},
 			&cli.BoolFlag{
 				Name:    "compatibility",
 				Aliases: []string{"C"},
-				Usage:   "show compatibility information and exit",
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {

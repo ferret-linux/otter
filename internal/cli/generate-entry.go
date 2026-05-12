@@ -15,27 +15,22 @@ import (
 
 func newGenerateEntryCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
-		Name:  "generate-entry",
-		Usage: "Generate or delete container entries",
+		Name: "generate-entry",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "delete",
 				Aliases: []string{"d"},
-				Usage:   "delete the entry",
 			},
 			&cli.StringFlag{
 				Name:    "icon",
 				Aliases: []string{"i"},
-				Usage:   "specify a custom icon (default auto)",
 				Value:   "auto",
 			},
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
-				Usage:   "perform for all otter containers",
 			},
 		},
-		ArgsUsage: "container-name",
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			return generateEntryAction(ctx, cmd, cfg)
 		},

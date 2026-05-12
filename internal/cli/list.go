@@ -18,11 +18,9 @@ func newListCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "list",
 		Aliases: []string{"ls"},
-		Usage:   "List otter containers",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
-				Name:  "no-color",
-				Usage: "Disable color output",
+				Name: "no-color",
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {

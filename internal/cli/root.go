@@ -23,18 +23,15 @@ const containerManagerKey contextKey = "containerManager"
 func NewRootCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "otter",
-		Usage:   "Use any Linux distribution inside your terminal",
 		Version: version.Version,
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "verbose",
 				Aliases: []string{"v"},
-				Usage:   "show more verbosity",
 				Value:   cfg.Verbose,
 			},
 			&cli.StringFlag{
 				Name:   "sudo-command",
-				Usage:  "",
 				Hidden: true,
 				Value:  cfg.SudoProgram,
 			},
@@ -133,9 +130,6 @@ func withRoot(_ *config.Values, cmd *cli.Command) *cli.Command {
 	cmd.Flags = append(cmd.Flags, &cli.BoolFlag{
 		Name:    "root",
 		Aliases: []string{"r"},
-		Usage: "launch podman/docker/lilipod with root privileges. Note that if you need root this is the preferred\n" +
-			"way over \"sudo otter\" (note: if using a program other than 'sudo' for root privileges is necessary,\n" +
-			"specify it through the DBX_SUDO_PROGRAM env variable, or 'otter_sudo_program' config variable)",
 	})
 
 	prev := cmd.Before
