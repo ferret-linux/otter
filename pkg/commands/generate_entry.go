@@ -27,6 +27,7 @@ var distroIconsFS embed.FS
 const defaultContainerName = "my-box"
 
 var distroIconMap = map[string]string{
+	"ol":                  "oracle-box.svg",
 	"arch":                "arch-box.svg",
 	"archlinux":           "arch-box.svg",
 	"ubuntu":              "ubuntu-box.svg",
