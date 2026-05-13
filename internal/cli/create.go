@@ -23,7 +23,6 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 			&cli.StringFlag{
 				Name:    "image",
 				Aliases: []string{"i"},
-				Value:   cfg.DefaultContainerImage,
 			},
 			&cli.StringFlag{
 				Name:    "name",
