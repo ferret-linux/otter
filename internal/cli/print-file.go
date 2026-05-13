@@ -11,7 +11,7 @@ import (
 )
 
 //go:embed show-file
-var helpFS embed.FS
+var printFS embed.FS
 
 var colorSlots = []string{
 	"\033[32m", // {0} green   — command names
@@ -28,7 +28,7 @@ func init() {
 		if !ok {
 			return
 		}
-		printHelp("otter_" + cmd.Name)
+		printFile("otter_" + cmd.Name)
 	}
 }
 
@@ -46,10 +46,10 @@ func renderColors(s string) string {
 	return strings.ReplaceAll(s, "{R}", "\033[0m")
 }
 
-func printHelp(name string) {
-	b, err := helpFS.ReadFile("show-file/" + name + ".help")
+func printFile(name string) {
+	b, err := printFS.ReadFile("show-file/" + name + ".help")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "help not found: %s\n", name)
+		fmt.Fprintf(os.Stderr, "File not found: %s\n", name)
 		return
 	}
 	fmt.Fprint(os.Stdout, renderColors(string(b)))

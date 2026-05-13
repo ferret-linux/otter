@@ -187,8 +187,7 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 }
 
 func showCompatibility() error {
-	// TODO: fetch compatibility
-	// https://github.com/89luca89/distrobox/blob/main/distrobox-create#L254
+	printFile("image_compatibility")
 	return nil
 }
 
