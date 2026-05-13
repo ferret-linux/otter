@@ -1,71 +1,71 @@
-╭───────────────┬─────────────────────────────────────────────────╮
-│ Linux Distros │Container Image Registry Path                    │
-├───────────────┼─────────────────────────────────────────────────┤
-│               │docker.io/library/ubuntu:24.04                   │
-│ Ubuntu        │docker.io/library/ubuntu:26.04                   │
-│               │docker.io/library/ubuntu:latest                  │
-├───────────────┼─────────────────────────────────────────────────┤
-│               │docker.io/library/debian:stable                  │
-│ Debian        │docker.io/library/debian:testing                 │
-│               │docker.io/library/debian:unstable                │
-├───────────────┼─────────────────────────────────────────────────┤
-│               │quay.io/fedora/fedora:44                         │
-│ Fedora        │quay.io/fedora/fedora:latest                     │
-│               │quay.io/fedora/fedora:rawhide                    │
-├───────────────┼─────────────────────────────────────────────────┤
-│ Arch Linux    │docker.io/library/archlinux:latest               │
-├───────────────┼─────────────────────────────────────────────────┤
-│ BlackArch     │docker.io/blackarchlinux/blackarch:latest        │
-├───────────────┼─────────────────────────────────────────────────┤
-│               │docker.io/library/alpine:3.23                    │
-│ Alpine Linux  │docker.io/library/alpine:edge                    │
-│               │docker.io/library/alpine:latest                  │
-├───────────────┼─────────────────────────────────────────────────┤
-│               │registry.opensuse.org/opensuse/leap:16           │
-│ OpenSUSE      │registry.opensuse.org/opensuse/leap:latest       │
-│               ├─────────────────────────────────────────────────┤
-│               │registry.opensuse.org/opensuse/tumbleweed:latest │
-├───────────────┼─────────────────────────────────────────────────┤
-│               │ghcr.io/void-linux/void-musl-full:latest         │
-│ Void Linux    │ghcr.io/void-linux/void-glibc-full:latest        │
-├───────────────┼─────────────────────────────────────────────────┤
-│               │docker.io/kalilinux/kali-rolling:latest          │
-│ Kali Linux    │docker.io/kalilinux/kali-last-release:latest     │
-│               │docker.io/kalilinux/kali-bleeding-edge:latest    │
-├───────────────┼─────────────────────────────────────────────────┤
-│               │docker.io/library/almalinux:9                    │
-│ Alma Linux    │docker.io/library/almalinux:10                   │
-│               │docker.io/library/almalinux:latest               │
-├───────────────┼─────────────────────────────────────────────────┤
-│               │quay.io/rockylinux/rockylinux:9                  │
-│ Rocky Linux   │quay.io/rockylinux/rockylinux:10                 │
-│               │quay.io/rockylinux/rockylinux:latest             │
-├───────────────┼─────────────────────────────────────────────────┤
-│               │registry.access.redhat.com/ubi10/ubi             │
-│ RHEL UBI      │registry.access.redhat.com/ubi10/ubi-init        │
-│               │registry.access.redhat.com/ubi10/ubi-minimal     │
-├───────────────┼─────────────────────────────────────────────────┤
-│               │container-registry.oracle.com/os/oraclelinux:8   │
-│ Oracle Linux  │container-registry.oracle.com/os/oraclelinux:9   │
-│               │container-registry.oracle.com/os/oraclelinux:10  │
-├───────────────┼─────────────────────────────────────────────────┤
-│               │quay.io/centos/centos:stream8                    │
-│ CentOS Stream │quay.io/centos/centos:stream9                    │
-│               │quay.io/centos/centos:stream10                   │
-├───────────────┼─────────────────────────────────────────────────┤
-│ Gentoo Linux  │docker.io/gentoo/stage3:latest                   │
-├─────────────────────────────────────────────────────────────────┤
-│ NOTE: Custom images are not guaranteed to work like             │
-│ officially supported ones. To improve support, open an          │
-│ issue or PR at https://github.com/ferret-linux/otter            │
-├─────────────────────────────────────────────────────────────────┤
-│ Examples of custom images:                                      │
-│ docker.io/library/alt:p10                                       │
-│ docker.io/library/alt:sisyphus                                  │
-│ docker.io/vbatts/slackware:current                              │
-│ docker.io/linuxmintd/mint22.3-amd64                             │
-│ docker.io/library/neurodebian:nd120                             │
-│ cgr.dev/chainguard/wolfi-base:latest                            │
-│ registry.gitlab.com/crystal-linux/misc/docker:latest            │
-│ invent-registry.kde.org/neon/docker-images/plasma:latest        │
-╰─────────────────────────────────────────────────────────────────╯
+{2}╭───────────────┬─────────────────────────────────────────────────╮{R}
+{2}│{R} {3}Linux Distros{R} {2}│{R}{3}Container Image Registry Path{R}                    {2}│{R}
+{2}├───────────────┼─────────────────────────────────────────────────┤{R}
+{2}│{R}               {2}│{R}{5}docker.io/library/ubuntu:24.04{R}                   {2}│{R}
+{2}│{R} {1}Ubuntu{R}        {2}│{R}{5}docker.io/library/ubuntu:26.04{R}                   {2}│{R}
+{2}│{R}               {2}│{R}{5}docker.io/library/ubuntu:latest{R}                  {2}│{R}
+{2}├───────────────┼─────────────────────────────────────────────────┤{R}
+{2}│{R}               {2}│{R}{5}docker.io/library/debian:stable{R}                  {2}│{R}
+{2}│{R} {1}Debian{R}        {2}│{R}{5}docker.io/library/debian:testing{R}                 {2}│{R}
+{2}│{R}               {2}│{R}{5}docker.io/library/debian:unstable{R}                {2}│{R}
+{2}├───────────────┼─────────────────────────────────────────────────┤{R}
+{2}│{R}               {2}│{R}{5}quay.io/fedora/fedora:44{R}                         {2}│{R}
+{2}│{R} {1}Fedora{R}        {2}│{R}{5}quay.io/fedora/fedora:latest{R}                     {2}│{R}
+{2}│{R}               {2}│{R}{5}quay.io/fedora/fedora:rawhide{R}                    {2}│{R}
+{2}├───────────────┼─────────────────────────────────────────────────┤{R}
+{2}│{R} {1}Arch Linux{R}    {2}│{R}{5}docker.io/library/archlinux:latest{R}               {2}│{R}
+{2}├───────────────┼─────────────────────────────────────────────────┤{R}
+{2}│{R} {1}BlackArch{R}     {2}│{R}{5}docker.io/blackarchlinux/blackarch:latest{R}        {2}│{R}
+{2}├───────────────┼─────────────────────────────────────────────────┤{R}
+{2}│{R}               {2}│{R}{5}docker.io/library/alpine:3.23{R}                    {2}│{R}
+{2}│{R} {1}Alpine Linux{R}  {2}│{R}{5}docker.io/library/alpine:edge{R}                    {2}│{R}
+{2}│{R}               {2}│{R}{5}docker.io/library/alpine:latest{R}                  {2}│{R}
+{2}├───────────────┼─────────────────────────────────────────────────┤{R}
+{2}│{R}               {2}│{R}{5}registry.opensuse.org/opensuse/leap:16{R}           {2}│{R}
+{2}│{R} {1}OpenSUSE{R}      {2}│{R}{5}registry.opensuse.org/opensuse/leap:latest{R}       {2}│{R}
+{2}│{R}               {2}├─────────────────────────────────────────────────┤{R}
+{2}│{R}               {2}│{R}{5}registry.opensuse.org/opensuse/tumbleweed:latest{R} {2}│{R}
+{2}├───────────────┼─────────────────────────────────────────────────┤{R}
+{2}│{R}               {2}│{R}{5}ghcr.io/void-linux/void-musl-full:latest{R}         {2}│{R}
+{2}│{R} {1}Void Linux{R}    {2}│{R}{5}ghcr.io/void-linux/void-glibc-full:latest{R}        {2}│{R}
+{2}├───────────────┼─────────────────────────────────────────────────┤{R}
+{2}│{R}               {2}│{R}{5}docker.io/kalilinux/kali-rolling:latest{R}          {2}│{R}
+{2}│{R} {1}Kali Linux{R}    {2}│{R}{5}docker.io/kalilinux/kali-last-release:latest{R}     {2}│{R}
+{2}│{R}               {2}│{R}{5}docker.io/kalilinux/kali-bleeding-edge:latest{R}    {2}│{R}
+{2}├───────────────┼─────────────────────────────────────────────────┤{R}
+{2}│{R}               {2}│{R}{5}docker.io/library/almalinux:9{R}                    {2}│{R}
+{2}│{R} {1}Alma Linux{R}    {2}│{R}{5}docker.io/library/almalinux:10{R}                   {2}│{R}
+{2}│{R}               {2}│{R}{5}docker.io/library/almalinux:latest{R}               {2}│{R}
+{2}├───────────────┼─────────────────────────────────────────────────┤{R}
+{2}│{R}               {2}│{R}{5}quay.io/rockylinux/rockylinux:9{R}                  {2}│{R}
+{2}│{R} {1}Rocky Linux{R}   {2}│{R}{5}quay.io/rockylinux/rockylinux:10{R}                 {2}│{R}
+{2}│{R}               {2}│{R}{5}quay.io/rockylinux/rockylinux:latest{R}             {2}│{R}
+{2}├───────────────┼─────────────────────────────────────────────────┤{R}
+{2}│{R}               {2}│{R}{5}registry.access.redhat.com/ubi10/ubi{R}             {2}│{R}
+{2}│{R} {1}RHEL UBI{R}      {2}│{R}{5}registry.access.redhat.com/ubi10/ubi-init{R}        {2}│{R}
+{2}│{R}               {2}│{R}{5}registry.access.redhat.com/ubi10/ubi-minimal{R}     {2}│{R}
+{2}├───────────────┼─────────────────────────────────────────────────┤{R}
+{2}│{R}               {2}│{R}{5}container-registry.oracle.com/os/oraclelinux:8{R}   {2}│{R}
+{2}│{R} {1}Oracle Linux{R}  {2}│{R}{5}container-registry.oracle.com/os/oraclelinux:9{R}   {2}│{R}
+{2}│{R}               {2}│{R}{5}container-registry.oracle.com/os/oraclelinux:10{R}  {2}│{R}
+{2}├───────────────┼─────────────────────────────────────────────────┤{R}
+{2}│{R}               {2}│{R}{5}quay.io/centos/centos:stream8{R}                    {2}│{R}
+{2}│{R} {1}CentOS Stream{R} {2}│{R}{5}quay.io/centos/centos:stream9{R}                    {2}│{R}
+{2}│{R}               {2}│{R}{5}quay.io/centos/centos:stream10{R}                   {2}│{R}
+{2}├───────────────┼─────────────────────────────────────────────────┤{R}
+{2}│{R} {1}Gentoo Linux{R}  {2}│{R}{5}docker.io/gentoo/stage3:latest{R}                   {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────┤{R}
+{2}│{R} {3}NOTE:{R} {5}Custom images are not guaranteed to work like{R}             {2}│{R}
+{2}│{R} {5}officially supported ones. To improve support, open an{R}          {2}│{R}
+{2}│{R} {5}issue or PR at{R} {4}https://github.com/ferret-linux/otter{R}            {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────┤{R}
+{2}│{R} {3}Examples of custom images:{R}                                      {2}│{R}
+{2}│{R} {5}docker.io/library/alt:p10{R}                                       {2}│{R}
+{2}│{R} {5}docker.io/library/alt:sisyphus{R}                                  {2}│{R}
+{2}│{R} {5}docker.io/vbatts/slackware:current{R}                              {2}│{R}
+{2}│{R} {5}docker.io/linuxmintd/mint22.3-amd64{R}                             {2}│{R}
+{2}│{R} {5}docker.io/library/neurodebian:nd120{R}                             {2}│{R}
+{2}│{R} {5}cgr.dev/chainguard/wolfi-base:latest{R}                            {2}│{R}
+{2}│{R} {5}registry.gitlab.com/crystal-linux/misc/docker:latest{R}            {2}│{R}
+{2}│{R} {5}invent-registry.kde.org/neon/docker-images/plasma:latest{R}        {2}│{R}
+{2}╰─────────────────────────────────────────────────────────────────╯{R}
