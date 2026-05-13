@@ -304,7 +304,7 @@ func (c *GenerateEntryCommand) readDistroID(ctx context.Context, containerName s
 		line := scanner.Text()
 		if strings.HasPrefix(line, "ID=") {
 			id := strings.TrimPrefix(line, "ID=")
-			id = strings.Trim(id, "\"")
+			id = strings.Trim(id, "\"'")
 			return strings.ToLower(strings.TrimSpace(id))
 		}
 	}
