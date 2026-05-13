@@ -1563,18 +1563,20 @@ setup_xbps()
 		diffutils
 		findutils
 		gnupg2
-		inetutils-ping
+		inetutils
 		iproute2
 		less
 		lsof
 		man-db
+		mit-krb5
 		mit-krb5-client
 		mit-krb5-libs
 		mtr
-		ncurses-base
+		ncurses
 		nss
 		openssh
 		pigz
+		pinentry
 		pinentry-tty
 		procps-ng
 		rsync
@@ -1584,6 +1586,7 @@ setup_xbps()
 		traceroute
 		tree
 		tzdata
+		which
 		unzip
 		util-linux
 		xauth
