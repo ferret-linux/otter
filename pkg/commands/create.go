@@ -209,7 +209,6 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 			ctx,
 			&GenerateEntryOptions{
 				ContainerName: containerName,
-				Icon:          "auto",
 			},
 		)
 		if err != nil {

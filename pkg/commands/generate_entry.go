@@ -253,7 +253,7 @@ func (c *GenerateEntryCommand) getEntryFilePath(desktopEntryDir, containerName s
 // writes the matching embedded SVG to iconsDir, and returns the path.
 // Falls back to the generic otter icon silently on any failure.
 func (c *GenerateEntryCommand) getIconPath(ctx context.Context, containerName string, icon string, iconsDir string) string {
-	if icon != "auto" {
+	if icon != "auto" && icon != "" {
 		return icon
 	}
 
