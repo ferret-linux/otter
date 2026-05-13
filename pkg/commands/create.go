@@ -86,7 +86,9 @@ type CreateOptions struct {
 	ContainerHostname string
 	// ContainerPlatform platform to use for the container (e.g., linux/amd64, linux/arm64)
 	ContainerPlatform string
-	Nopasswd          bool
+	// ContainerShell custom shell to use inside the container instead of the host shell
+	ContainerShell string
+	Nopasswd       bool
 
 	// UnshareNetNs if true, do not share host network namespace
 	UnshareNetNs bool
@@ -174,6 +176,7 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 			ContainerClone:          opts.ContainerClone,
 			ContainerUserCustomHome: containerUserCustomHome,
 			ContainerHostname:       containerHostname,
+			ContainerShell:          opts.ContainerShell,
 			ContainerPlatform:       opts.ContainerPlatform,
 			Nopasswd:                opts.Nopasswd,
 			UnshareDevsys:           opts.UnshareDevsys,

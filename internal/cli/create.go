@@ -32,6 +32,10 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 			&cli.StringFlag{
 				Name: "hostname",
 			},
+			&cli.StringFlag{
+				Name:    "shell",
+				Aliases: []string{"s"},
+			},
 			&cli.BoolFlag{
 				Name:    "pull",
 				Aliases: []string{"p"},
@@ -151,6 +155,7 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 		Nvidia:                  cmd.Bool("nvidia"),
 		ContainerInitHook:       cmd.String("init-hooks"),
 		ContainerPreInitHook:    cmd.String("pre-init-hooks"),
+		ContainerShell:          cmd.String("shell"),
 		ContainerPlatform:       cmd.String("platform"),
 		DryRun:                  cmd.Bool("dry-run"),
 		GenerateEntry:           !cmd.Bool("no-entry"),

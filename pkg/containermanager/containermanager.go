@@ -38,6 +38,7 @@ type CreateOptions struct {
 	ContainerUserCustomHome string
 	ContainerHostname       string
 	ContainerPlatform       string
+	ContainerShell          string
 	ContainerUserHome       string
 	Nopasswd                bool
 	UnshareDevsys           bool

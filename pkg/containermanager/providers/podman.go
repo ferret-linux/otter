@@ -101,6 +101,10 @@ func (p *Podman) Create(
 		}
 	}
 
+	if opts.ContainerShell != "" {
+		userEnv.Shell = opts.ContainerShell
+	}
+
 	cmd := p.makeCreateCommand(
 		ctx,
 		opts.ContainerName,
