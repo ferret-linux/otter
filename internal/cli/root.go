@@ -158,7 +158,6 @@ func withRoot(_ *config.Values, cmd *cli.Command) *cli.Command {
 func withContainerManager(cfg *config.Values, cmd *cli.Command) *cli.Command {
 	cmd.Flags = append(cmd.Flags, &cli.StringFlag{
 		Name:   "container-manager",
-		Usage:  "",
 		Hidden: true,
 		Value:  cfg.ContainerManagerType,
 	})
