@@ -10,7 +10,7 @@ import (
 	ucli "github.com/urfave/cli/v3"
 )
 
-//go:embed show-help
+//go:embed show-file
 var helpFS embed.FS
 
 var colorSlots = []string{
@@ -47,7 +47,7 @@ func renderColors(s string) string {
 }
 
 func printHelp(name string) {
-	b, err := helpFS.ReadFile("show-help/" + name + ".help")
+	b, err := helpFS.ReadFile("show-file/" + name + ".help")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "help not found: %s\n", name)
 		return
