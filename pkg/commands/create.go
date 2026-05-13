@@ -131,7 +131,7 @@ func NewCreateCommand(cfg *config.Values, cm containermanager.ContainerManager, 
 	return &CreateCommand{
 		cfg:              cfg,
 		containerManager: cm,
-		generateEntryCmd: NewGenerateEntryCommand(cfg, NewListCommand(cfg, cm)),
+		generateEntryCmd: NewGenerateEntryCommand(cfg, NewListCommand(cfg, cm), cm),
 		progress:         progress,
 		prompter:         prompter,
 	}
@@ -209,6 +209,7 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 			ctx,
 			&GenerateEntryOptions{
 				ContainerName: containerName,
+				Icon:          "auto",
 			},
 		)
 		if err != nil {

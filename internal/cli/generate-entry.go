@@ -50,8 +50,6 @@ func generateEntryAction(ctx context.Context, cmd *cli.Command, cfg *config.Valu
 		return errors.New("container manager not found in context")
 	}
 
-	listCmd := commands.NewListCommand(cfg, containerManager)
-
 	opts := &commands.GenerateEntryOptions{
 		Verbose:   cmd.Bool("verbose"),
 		Delete:    cmd.Bool("delete"),
@@ -65,7 +63,7 @@ func generateEntryAction(ctx context.Context, cmd *cli.Command, cfg *config.Valu
 		opts.Icon = cmd.String("icon")
 	}
 
-	genEntryCmd := commands.NewGenerateEntryCommand(cfg, listCmd)
+	genEntryCmd := commands.NewGenerateEntryCommand(cfg, commands.NewListCommand(cfg, containerManager), containerManager)
 
 	err = genEntryCmd.Execute(ctx, opts)
 	if err != nil {

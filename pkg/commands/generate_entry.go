@@ -1,8 +1,9 @@
 package commands
 
 import (
+	"bufio"
 	"context"
-	_ "embed"
+	"embed"
 	"fmt"
 	"html/template"
 	"os"
@@ -11,15 +12,40 @@ import (
 
 	"github.com/ferret-linux/otter/internal/userenv"
 	pkgconfig "github.com/ferret-linux/otter/pkg/config"
+	"github.com/ferret-linux/otter/pkg/containermanager"
 )
 
 //go:embed assets/desktop_entry.toml.tmpl
 var desktopEntryTmpl string
 
-const (
-	defaultContainerName = "my-box"
-	defaultEntryIcon     = "https://github.com/ferret-project/otter/raw/refs/heads/main/icons/terminal-otter-icon.svg"
-)
+//go:embed assets/terminal-otter-icon.svg
+var defaultIconData []byte
+
+//go:embed assets/distros
+var distroIconsFS embed.FS
+
+const defaultContainerName = "my-box"
+
+var distroIconMap = map[string]string{
+	"arch":                "arch-box.svg",
+	"archlinux":           "arch-box.svg",
+	"ubuntu":              "ubuntu-box.svg",
+	"debian":              "debian-box.svg",
+	"fedora":              "fedora-box.svg",
+	"alpine":              "alpine-box.svg",
+	"kali":                "kali-box.svg",
+	"centos":              "centos-box.svg",
+	"almalinux":           "alma-box.svg",
+	"alma":                "alma-box.svg",
+	"rocky":               "rocky-box.svg",
+	"gentoo":              "gentoo-box.svg",
+	"void":                "void-box.svg",
+	"blackarch":           "blackarch-box.svg",
+	"opensuse-leap":       "leap-box.svg",
+	"opensuse-tumbleweed": "tumbleweed-box.svg",
+	"rhel":                "rhel-box.svg",
+	"slackware":           "slackware-box.svg",
+}
 
 type GenerateEntryOptions struct {
 	Verbose             bool
@@ -33,14 +59,16 @@ type GenerateEntryOptions struct {
 }
 
 type GenerateEntryCommand struct {
-	cfg         *pkgconfig.Values
-	listCommand *ListCommand
+	cfg              *pkgconfig.Values
+	listCommand      *ListCommand
+	containerManager containermanager.ContainerManager
 }
 
-func NewGenerateEntryCommand(cfg *pkgconfig.Values, listCommand *ListCommand) *GenerateEntryCommand {
+func NewGenerateEntryCommand(cfg *pkgconfig.Values, listCommand *ListCommand, cm containermanager.ContainerManager) *GenerateEntryCommand {
 	return &GenerateEntryCommand{
-		cfg:         cfg,
-		listCommand: listCommand,
+		cfg:              cfg,
+		listCommand:      listCommand,
+		containerManager: cm,
 	}
 }
 
@@ -104,7 +132,7 @@ func (c *GenerateEntryCommand) Execute(
 
 	// Create the desktop entries for all the containers
 	for _, containerName := range containerNames {
-		if err := c.createEntry(containerName, icon, desktopEntryBaseDir, otterPath, opts.Root); err != nil {
+		if err := c.createEntry(ctx, containerName, icon, desktopEntryBaseDir, otterPath, opts.Root); err != nil {
 			return fmt.Errorf("failed to create desktop entry for container %s: %w", containerName, err)
 		}
 	}
@@ -125,19 +153,20 @@ func (c *GenerateEntryCommand) deleteEntry(containerName string, desktopEntryBas
 }
 
 func (c *GenerateEntryCommand) createEntry(
+	ctx context.Context,
 	containerName string,
 	icon string,
 	desktopEntryBaseDir string,
 	otterPath string,
 	root bool,
 ) error {
-	desktopEntryAppsDir, _, err := c.ensureDesktopEntryDirExists(desktopEntryBaseDir)
+	desktopEntryAppsDir, desktopEntryIconsDir, err := c.ensureDesktopEntryDirExists(desktopEntryBaseDir)
 	if err != nil {
 		return fmt.Errorf("failed to ensure desktop entry directories exist: %w", err)
 	}
 
 	entryFilePath := c.getEntryFilePath(desktopEntryAppsDir, containerName)
-	data := c.composeDesktopEntryData(containerName, icon, otterPath, root)
+	data := c.composeDesktopEntryData(containerName, c.getIconPath(ctx, containerName, icon, desktopEntryIconsDir), otterPath, root)
 	if err := c.writeDesktopEntryFile(entryFilePath, data); err != nil {
 		return fmt.Errorf("failed to write desktop entry file for container %s: %w", containerName, err)
 	}
@@ -146,12 +175,11 @@ func (c *GenerateEntryCommand) createEntry(
 }
 
 func (c *GenerateEntryCommand) ensureDesktopEntryDirExists(desktopEntryBaseDir string) (string, string, error) {
-	// Ensure the needed targets directories exist
 	desktopEntryAppsDir := filepath.Join(desktopEntryBaseDir, "applications")
 	if err := os.MkdirAll(desktopEntryAppsDir, 0750); err != nil {
 		return "", "", fmt.Errorf("failed to create desktop entry applications directory: %w", err)
 	}
-	desktopEntryIconsDir := filepath.Join(desktopEntryBaseDir, "icons")
+	desktopEntryIconsDir := filepath.Join(desktopEntryBaseDir, "icons", "otter")
 	if err := os.MkdirAll(desktopEntryIconsDir, 0750); err != nil {
 		return "", "", fmt.Errorf("failed to create desktop entry icons directory: %w", err)
 	}
@@ -174,7 +202,7 @@ func (c *GenerateEntryCommand) composeDesktopEntryData(
 		"entry_name":     getEntryName(containerName),
 		"container_name": containerName,
 		"otter_path":     otterPath,
-		"icon":           c.getDesktopIcon(icon),
+		"icon":           icon,
 		"extra_flags":    extraFlags,
 	}
 }
@@ -219,13 +247,67 @@ func (c *GenerateEntryCommand) getEntryFilePath(desktopEntryDir, containerName s
 	return filepath.Join(desktopEntryDir, containerName+".desktop")
 }
 
-func (c *GenerateEntryCommand) getDesktopIcon(
-	icon string,
-) string {
-	if icon == "auto" {
-		// TODO: detect the icon for the current container's distro
-		return defaultEntryIcon
+// getIconPath returns the local icon path for the desktop entry.
+// If icon is "auto", reads /etc/os-release from the container to detect the distro,
+// writes the matching embedded SVG to iconsDir, and returns the path.
+// Falls back to the generic otter icon silently on any failure.
+func (c *GenerateEntryCommand) getIconPath(ctx context.Context, containerName string, icon string, iconsDir string) string {
+	if icon != "auto" {
+		return icon
 	}
 
-	return icon
+	distroID := c.readDistroID(ctx, containerName)
+	iconFileName, ok := distroIconMap[distroID]
+
+	var iconData []byte
+	var destFileName string
+
+	if ok {
+		if data, err := distroIconsFS.ReadFile("assets/distros/" + iconFileName); err == nil {
+			iconData = data
+			destFileName = iconFileName
+		}
+	}
+
+	if iconData == nil {
+		iconData = defaultIconData
+		destFileName = "terminal-otter-icon.svg"
+	}
+
+	destPath := filepath.Join(iconsDir, destFileName)
+	if _, err := os.Stat(destPath); os.IsNotExist(err) {
+		//nolint:gosec // 644 is standard for icon files
+		_ = os.WriteFile(destPath, iconData, 0644)
+	}
+
+	return destPath
+}
+
+// readDistroID copies /etc/os-release from the container and returns the ID= value.
+// Returns empty string if detection fails.
+func (c *GenerateEntryCommand) readDistroID(ctx context.Context, containerName string) string {
+	tmpFile := filepath.Join(os.TempDir(), containerName+".os-release")
+	defer os.Remove(tmpFile)
+
+	if err := c.containerManager.CopyFromContainer(ctx, containerName, "/etc/os-release", tmpFile); err != nil {
+		return ""
+	}
+
+	f, err := os.Open(tmpFile)
+	if err != nil {
+		return ""
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := scanner.Text()
+		if strings.HasPrefix(line, "ID=") {
+			id := strings.TrimPrefix(line, "ID=")
+			id = strings.Trim(id, "\"")
+			return strings.ToLower(strings.TrimSpace(id))
+		}
+	}
+
+	return ""
 }

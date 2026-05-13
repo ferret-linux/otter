@@ -98,3 +98,7 @@ func (m *MockContainerManager) PullImage(_ context.Context, imageName string, pl
 	m.Spy.PullImage = append(m.Spy.PullImage, []any{imageName, platform, dryRun})
 	return nil
 }
+
+func (m *MockContainerManager) CopyFromContainer(_ context.Context, _ string, _ string, _ string) error {
+	return nil
+}

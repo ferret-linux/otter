@@ -28,7 +28,7 @@ func TestGenerateEntryCommand_Execute(t *testing.T) {
 	// Generate the entry
 	//
 
-	generateEntryCmd := commands.NewGenerateEntryCommand(&config.Values{}, listCmd)
+	generateEntryCmd := commands.NewGenerateEntryCommand(&config.Values{}, listCmd, containerManager)
 
 	opts := &commands.GenerateEntryOptions{
 		ContainerName:       "test-container",
@@ -90,7 +90,7 @@ func TestGenerateEntryCommand_Execute_Root(t *testing.T) {
 	containerManager := providers.NewDocker(false, "sudo", false)
 	listCmd := commands.NewListCommand(&config.Values{}, containerManager)
 
-	generateEntryCmd := commands.NewGenerateEntryCommand(&config.Values{}, listCmd)
+	generateEntryCmd := commands.NewGenerateEntryCommand(&config.Values{}, listCmd, containerManager)
 
 	opts := &commands.GenerateEntryOptions{
 		ContainerName:       "test-container",
@@ -144,7 +144,7 @@ func TestGenerateAllEntriesCommand_Execute(t *testing.T) {
 	listCmd := commands.NewListCommand(&config.Values{}, containerManager)
 
 	// create the generate all entries command
-	genAllEntriesCmd := commands.NewGenerateEntryCommand(&config.Values{}, listCmd)
+	genAllEntriesCmd := commands.NewGenerateEntryCommand(&config.Values{}, listCmd, containerManager)
 
 	//
 	// Generate the entries

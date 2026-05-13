@@ -100,6 +100,8 @@ type ContainerManager interface {
 	InspectContainer(ctx context.Context, containerName string) (*InspectResult, error)
 	PullImage(ctx context.Context, imageName string, platform string, dryRun bool) error
 	Commit(ctx context.Context, containerID string, imageTag string) error
+	// CopyFromContainer copies a file from the container filesystem to the host.
+	CopyFromContainer(ctx context.Context, containerName string, srcPath string, destPath string) error
 }
 
 func PathExists(path string) bool {

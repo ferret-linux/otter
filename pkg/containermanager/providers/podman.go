@@ -759,6 +759,11 @@ func (p *Podman) Commit(ctx context.Context, containerID string, tag string) err
 	return err
 }
 
+func (p *Podman) CopyFromContainer(ctx context.Context, containerName string, srcPath string, destPath string) error {
+	_, err := p.run(ctx, []string{"cp", containerName + ":" + srcPath, destPath}, runOptions{})
+	return err
+}
+
 func (p *Podman) InspectContainer(ctx context.Context, containerName string) (*containermanager.InspectResult, error) {
 	config := containermanager.InspectResult{}
 	args := []string{"inspect", "--type", "container", "--format", "json", containerName}

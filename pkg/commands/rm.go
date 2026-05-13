@@ -41,7 +41,7 @@ func NewRmCommand(
 	prompter *ui.Prompter,
 ) *RmCommand {
 	listCmd := NewListCommand(cfg, cm)
-	generateEntryCmd := NewGenerateEntryCommand(cfg, listCmd)
+	generateEntryCmd := NewGenerateEntryCommand(cfg, listCmd, cm)
 	return &RmCommand{
 		cfg:              cfg,
 		containerManager: cm,

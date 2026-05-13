@@ -598,6 +598,11 @@ func (d *Docker) Commit(ctx context.Context, containerID string, tag string) err
 	return err
 }
 
+func (d *Docker) CopyFromContainer(ctx context.Context, containerName string, srcPath string, destPath string) error {
+	_, err := d.run(ctx, []string{"cp", containerName + ":" + srcPath, destPath}, runOptions{})
+	return err
+}
+
 func parseContainerList(output string) ([]containermanager.Container, error) {
 	var containers []containermanager.Container
 
