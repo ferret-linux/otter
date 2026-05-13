@@ -175,6 +175,12 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 		return nil
 	}
 
+	if errors.Is(err, commands.ErrUnknownImage) {
+		fmt.Fprintf(os.Stderr, "\033[31merror:\033[0m %s\n", err)
+		printFile("image_options")
+		return err
+	}
+
 	if err != nil {
 		return fmt.Errorf("create command failed: %w", err)
 	}

@@ -21,6 +21,42 @@ const (
 
 var ErrHostnameTooLong = fmt.Errorf("hostname too long, must be less than %d characters", maxHostnameLength)
 var ErrImagePullAbortedByUser = errors.New("image pull operation aborted by user")
+var ErrUnknownImage = errors.New("unknown image")
+
+var imageAliases = map[string]string{
+	"arch":                "docker.io/library/archlinux:latest",
+	"alma":                "docker.io/library/almalinux:latest",
+	"kali":                "docker.io/kalilinux/kali-rolling:latest",
+	"rhel":                "registry.access.redhat.com/ubi10/ubi-init:latest",
+	"rocky":               "quay.io/rockylinux/rockylinux:latest",
+	"fedora":              "quay.io/fedora/fedora:44",
+	"centos":              "quay.io/centos/centos:stream10",
+	"gentoo":              "docker.io/gentoo/stage3:latest",
+	"ubuntu":              "docker.io/library/ubuntu:latest",
+	"debian":              "docker.io/library/debian:stable",
+	"alpine":              "docker.io/library/alpine:latest",
+	"void-musl":           "ghcr.io/void-linux/void-musl-full:latest",
+	"blackarch":           "docker.io/blackarchlinux/blackarch:latest",
+	"kali-edge":           "docker.io/kalilinux/kali-bleeding-edge:latest",
+	"ubuntu-lts":          "docker.io/library/ubuntu:26.04",
+	"void-glibc":          "ghcr.io/void-linux/void-glibc-full:latest",
+	"alpine-edge":         "docker.io/library/alpine:edge",
+	"opensuse-leap":       "registry.opensuse.org/opensuse/leap:latest",
+	"fedora-rawhide":      "quay.io/fedora/fedora:rawhide",
+	"debian-testing":      "docker.io/library/debian:testing",
+	"debian-unstable":     "docker.io/library/debian:unstable",
+	"opensuse-tumbleweed": "registry.opensuse.org/opensuse/tumbleweed:latest",
+}
+
+func resolveImage(image string) (string, error) {
+	if strings.ContainsAny(image, "/:") {
+		return image, nil
+	}
+	if resolved, ok := imageAliases[strings.ToLower(image)]; ok {
+		return resolved, nil
+	}
+	return "", fmt.Errorf("%w %q, use a full registry path or a valid alias", ErrUnknownImage, image)
+}
 
 type ContainerAlreadyExistsError struct {
 	ContainerName string
@@ -99,7 +135,10 @@ func NewCreateCommand(cfg *config.Values, cm containermanager.ContainerManager, 
 }
 
 func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*CreateResult, error) {
-	containerImage := c.makeContainerImage(&opts)
+	containerImage, err := c.makeContainerImage(&opts)
+	if err != nil {
+		return nil, err
+	}
 	containerName := c.makeContainerName(&opts, containerImage)
 	containerHostname, err := c.makeContainerHostname(&opts)
 	if err != nil {
@@ -186,7 +225,7 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 // set a default name for the container, that is distinguishable from the default
 // toolbx one. This will avoid problems when using both toolbx and otter on
 // the same system.
-func (c *CreateCommand) makeContainerImage(opts *CreateOptions) string {
+func (c *CreateCommand) makeContainerImage(opts *CreateOptions) (string, error) {
 	containerImage := opts.ContainerImage
 	if opts.ContainerClone == "" && containerImage == "" {
 		containerImage = c.cfg.DefaultContainerImage
@@ -194,8 +233,15 @@ func (c *CreateCommand) makeContainerImage(opts *CreateOptions) string {
 	if opts.DryRun && opts.ContainerClone != "" {
 		containerImage = opts.ContainerClone
 	}
+	if containerImage != "" && opts.ContainerClone == "" {
+		resolved, err := resolveImage(containerImage)
+		if err != nil {
+			return "", err
+		}
+		containerImage = resolved
+	}
 
-	return containerImage
+	return containerImage, nil
 }
 
 // Determine right containerName to use
