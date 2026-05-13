@@ -35,6 +35,7 @@ var imageAliases = map[string]string{
 	"ubuntu":              "docker.io/library/ubuntu:latest",
 	"debian":              "docker.io/library/debian:stable",
 	"alpine":              "docker.io/library/alpine:latest",
+	"oracle":              "container-registry.oracle.com/os/oraclelinux:10",
 	"void-musl":           "ghcr.io/void-linux/void-musl-full:latest",
 	"blackarch":           "docker.io/blackarchlinux/blackarch:latest",
 	"kali-edge":           "docker.io/kalilinux/kali-bleeding-edge:latest",
