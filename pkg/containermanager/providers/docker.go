@@ -105,9 +105,7 @@ func (d *Docker) Create(
 		}
 	}
 
-	if opts.ContainerShell != "" {
-		userEnv.Shell = opts.ContainerShell
-	}
+	userEnv.Shell = opts.ContainerShell
 
 	cmd := d.makeCreateCommand(
 		opts.ContainerName,

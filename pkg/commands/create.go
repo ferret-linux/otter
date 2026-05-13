@@ -138,6 +138,8 @@ func NewCreateCommand(cfg *config.Values, cm containermanager.ContainerManager, 
 }
 
 func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*CreateResult, error) {
+	opts.ContainerShell = c.makeContainerShell(&opts)
+
 	containerImage, err := c.makeContainerImage(&opts)
 	if err != nil {
 		return nil, err
@@ -229,6 +231,18 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 // set a default name for the container, that is distinguishable from the default
 // toolbx one. This will avoid problems when using both toolbx and otter on
 // the same system.
+func (c *CreateCommand) makeContainerShell(opts *CreateOptions) string {
+	if opts.ContainerShell != "" {
+		return opts.ContainerShell
+	}
+	switch filepath.Base(os.Getenv("SHELL")) {
+	case "bash", "zsh", "fish":
+		return filepath.Base(os.Getenv("SHELL"))
+	default:
+		return "bash"
+	}
+}
+
 func (c *CreateCommand) makeContainerImage(opts *CreateOptions) (string, error) {
 	containerImage := opts.ContainerImage
 	if opts.ContainerClone == "" && containerImage == "" {

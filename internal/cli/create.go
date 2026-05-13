@@ -35,6 +35,14 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 			&cli.StringFlag{
 				Name:    "shell",
 				Aliases: []string{"s"},
+				Action: func(_ context.Context, _ *cli.Command, v string) error {
+					switch v {
+					case "bash", "zsh", "fish":
+						return nil
+					default:
+						return fmt.Errorf("invalid shell %q, must be one of: bash, zsh, fish", v)
+					}
+				},
 			},
 			&cli.BoolFlag{
 				Name:    "pull",
