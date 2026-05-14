@@ -1189,6 +1189,8 @@ setup_emerge()
 		sys-apps/util-linux
 		net-misc/wget
 		app-arch/pigz
+		app-text/tree
+		x11-apps/xauth
 	"
 	install_pkg=""
 	for dep in ${deps}; do
