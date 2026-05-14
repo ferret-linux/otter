@@ -1167,7 +1167,8 @@ setup_emerge()
 	# Check if shell_pkg is available in distro's repo. If not we
 	# fall back to bash, and we set the SHELL variable to bash so
 	# that it is set up correctly for the user.
-	if ! emerge --ask=n --autounmask-continue --noreplace --quiet-build "${shell_pkg}"; then
+	getuto 2>/dev/null || :
+	if ! emerge --ask=n --autounmask-continue --noreplace --quiet-build --getbinpkg "${shell_pkg}"; then
 		shell_pkg="bash"
 	fi
 	deps="
@@ -1187,6 +1188,7 @@ setup_emerge()
 		sys-process/lsof
 		sys-apps/util-linux
 		net-misc/wget
+		app-arch/pigz
 	"
 	install_pkg=""
 	for dep in ${deps}; do
@@ -1196,7 +1198,7 @@ setup_emerge()
 		fi
 	done
 	# shellcheck disable=SC2086
-	emerge --ask=n --autounmask-continue --noreplace --quiet-build ${install_pkg}
+	emerge --ask=n --autounmask-continue --noreplace --quiet-build --getbinpkg --keep-going ${install_pkg}
 
 	# In case the locale is not available, install it
 	# will ensure we don't fallback to C.UTF-8
@@ -1214,7 +1216,7 @@ EOF
 	if [ -n "${container_additional_packages}" ]; then
 		# shellcheck disable=SC2086
 		emerge --ask=n --autounmask-continue --noreplace --quiet-build \
-			${container_additional_packages}
+			--getbinpkg --keep-going ${container_additional_packages}
 	fi
 }
 
@@ -1869,6 +1871,7 @@ if [ "${shell_pkg}" = "zsh" ]; then
 	mkdir -p /etc/zsh
 	printf 'emulate sh -c '\''source /etc/profile'\''\n' > /etc/zsh/zprofile
 	printf 'emulate sh -c '\''source /etc/profile'\''\n' > /etc/zshenv
+	printf '[ -f /etc/profile.d/otter_profile.sh ] && source /etc/profile.d/otter_profile.sh\n' >> /etc/zsh/zprofile
 fi
 
 # Attempt to download host-spawn during init, we don't care if it fails, so let's
