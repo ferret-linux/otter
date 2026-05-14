@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
+	"text/tabwriter"
 
 	"github.com/urfave/cli/v3"
 
@@ -48,24 +50,41 @@ func listAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error
 }
 
 func printResult(result *commands.ListResult, noColor bool) {
-	rowFormat := "%-12s | %-20s | %-18s | %-30s\n"
+	if len(result.Containers) == 0 {
+		//nolint:forbidigo // Using fmt.Println is acceptable here for CLI output
+		fmt.Println("no containers found")
+		return
+	}
 
-	//nolint:forbidigo // Using fmt.Printf is acceptable here for CLI output
-	fmt.Printf(rowFormat, "ID", "NAME", "STATUS", "IMAGE")
+	var buf strings.Builder
+	w := tabwriter.NewWriter(&buf, 0, 0, 3, ' ', 0)
 
+	fmt.Fprintln(w, "ID\tNAME\tSTATUS\tIMAGE")
 	for _, c := range result.Containers {
-		var line string
+		status := "○ " + c.Status
+		if c.IsRunning() {
+			status = "● " + c.Status
+		}
+		fmt.Fprintf(w, "%s\t%s\t%s\t%s\n", c.ID, c.Name, status, c.Image)
+	}
+	w.Flush()
+
+	lines := strings.Split(strings.TrimRight(buf.String(), "\n"), "\n")
+
+	//nolint:forbidigo // Using fmt.Println is acceptable here for CLI output
+	fmt.Println(lines[0])
+	for i, c := range result.Containers {
+		line := lines[i+1]
 		switch {
 		case noColor:
-			line = rowFormat
+			fmt.Println(line)
 		case c.IsRunning():
-			line = ui.Green(rowFormat)
+			fmt.Println(ui.Green(line))
+		case strings.Contains(strings.ToLower(c.Status), "exited"):
+			fmt.Println(ui.Dim(line))
 		default:
-			line = ui.Yellow(rowFormat)
+			fmt.Println(ui.Yellow(line))
 		}
-
-		//nolint:forbidigo // Using fmt.Printf is acceptable here for CLI output
-		fmt.Printf(line, c.ID, c.Name, c.Status, c.Image)
 	}
 }
 
