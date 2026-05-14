@@ -72,8 +72,18 @@ func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, 
 		if err != nil {
 			//nolint:forbidigo // waiting for the logger implementation
 			fmt.Printf("error deleting %s: %s", currentOtterContainer.Name, err)
+		} else {
+			removedOtterContainers = append(removedOtterContainers, currentOtterContainer)
 		}
-		removedOtterContainers = append(removedOtterContainers, currentOtterContainer)
+	}
+
+	if len(removedOtterContainers) > 0 {
+		names := make([]string, len(removedOtterContainers))
+		for i, c := range removedOtterContainers {
+			names[i] = c.Name
+		}
+		//nolint:forbidigo // waiting for the logger implementation
+		fmt.Printf("removed: %s\n", strings.Join(names, " "))
 	}
 
 	return &RmResult{Containers: removedOtterContainers}, nil
