@@ -284,10 +284,14 @@ func (c *CreateCommand) makeContainerName(opts *CreateOptions, containerImage st
 		containerName = c.cfg.DefaultContainerName
 	}
 	if containerName == "" {
-		base := path.Base(containerImage)
-		base = strings.ReplaceAll(base, ":", "-")
-		base = strings.ReplaceAll(base, ".", "-")
-		containerName = base
+		if _, ok := imageAliases[strings.ToLower(opts.ContainerImage)]; ok {
+			containerName = "my-" + strings.ToLower(opts.ContainerImage)
+		} else {
+			base := path.Base(containerImage)
+			base = strings.ReplaceAll(base, ":", "-")
+			base = strings.ReplaceAll(base, ".", "-")
+			containerName = base
+		}
 	}
 
 	return containerName
