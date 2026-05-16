@@ -62,7 +62,6 @@
 {2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Compatibility:{R}                                                                     {2}│{R}
 {2}│{R}  {5}For a list of compatible images run:{R}                                               {2}│{R}
-{2}│{R}  {5}otter compatibility --list-images{R}                                                  {2}│{R}
-{2}│{R}  {5}For checking system compatibiltiy run:{R}                                             {2}│{R}
-{2}│{R}  {5}otter compatibility --system{R}                                                       {2}│{R}
+{2}│{R}  {5}otter create --compatibility{R}                                                       {2}│{R}
+{2}│{R}  {5}otter create --image typo{R}                                                          {2}│{R}
 {2}╰─────────────────────────────────────────────────────────────────────────────────────╯{R}
