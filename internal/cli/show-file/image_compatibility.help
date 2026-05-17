@@ -54,7 +54,7 @@
 {2}│{R}               {2}│{R}{5}quay.io/centos/centos:stream10{R}                   {2}│{R}
 {2}├───────────────┼─────────────────────────────────────────────────┤{R}
 {2}│{R} {1}Gentoo Linux{R}  {2}│{R}{5}docker.io/gentoo/stage3:latest{R}                   {2}│{R}
-{2}├─────────────────────────────────────────────────────────────────┤{R}
+{2}├───────────────┴─────────────────────────────────────────────────┤{R}
 {2}│{R} {3}NOTE:{R} {5}Custom images are not guaranteed to work like{R}             {2}│{R}
 {2}│{R} {5}officially supported ones. To improve support, open an{R}          {2}│{R}
 {2}│{R} {5}issue or PR at{R} {4}https://github.com/ferret-linux/otter{R}            {2}│{R}
