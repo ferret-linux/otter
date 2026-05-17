@@ -380,7 +380,11 @@ func (d *Docker) makeCreateCommand(
 		// we want to keep it in sync
 		hostname, _ := os.Hostname()
 		if containerHostname == hostname {
-			netFiles = append(netFiles, "/etc/hostname")
+			hostnameFile := "/etc/hostname"
+			if real, err := filepath.EvalSymlinks(hostnameFile); err == nil {
+				hostnameFile = real
+			}
+			options = append(options, "--volume", fmt.Sprintf("%s:/etc/hostname:ro", hostnameFile))
 		}
 
 		for _, netFile := range netFiles {
