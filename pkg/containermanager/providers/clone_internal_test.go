@@ -68,3 +68,33 @@ func TestDocker_CloneAsRoot_AlreadyRootStillReturnsCopy(t *testing.T) {
 
 	assert.True(t, clone.root)
 }
+
+func TestNerdctl_CloneAsRoot_PreservesFieldsAndFlipsRoot(t *testing.T) {
+	original := NewNerdctl(false, "doas", true)
+
+	cloned := original.CloneAsRoot()
+
+	require.NotSame(t, original, cloned, "expected a fresh instance")
+
+	clone, ok := cloned.(*Nerdctl)
+	require.True(t, ok, "expected *Nerdctl, got %T", cloned)
+
+	assert.True(t, clone.root, "clone should be in root mode")
+	assert.Equal(t, original.sudoCommand, clone.sudoCommand)
+	assert.Equal(t, original.verbose, clone.verbose)
+
+	assert.False(t, original.root, "original should remain non-root")
+}
+
+func TestNerdctl_CloneAsRoot_AlreadyRootStillReturnsCopy(t *testing.T) {
+	original := NewNerdctl(true, "sudo", false)
+
+	cloned := original.CloneAsRoot()
+
+	require.NotSame(t, original, cloned)
+
+	clone, ok := cloned.(*Nerdctl)
+	require.True(t, ok)
+
+	assert.True(t, clone.root)
+}

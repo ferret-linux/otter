@@ -39,6 +39,26 @@ func TestNewAutoDetect(t *testing.T) {
 			expectedName: "podman-launcher",
 		},
 		{
+			name:         "nerdctl only",
+			binaries:     []string{"nerdctl"},
+			expectedName: "nerdctl",
+		},
+		{
+			name:         "nerdctl and docker",
+			binaries:     []string{"nerdctl", "docker"},
+			expectedName: "nerdctl",
+		},
+		{
+			name:         "podman and nerdctl",
+			binaries:     []string{"podman", "nerdctl"},
+			expectedName: "podman",
+		},
+		{
+			name:         "podman-launcher and nerdctl",
+			binaries:     []string{"podman-launcher", "nerdctl"},
+			expectedName: "podman-launcher",
+		},
+		{
 			name:        "nothing available",
 			binaries:    []string{},
 			expectError: true,

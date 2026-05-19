@@ -478,3 +478,6 @@ linters:
       - path: 'pkg/containermanager/providers/docker(_internal_test)?\.go'
         linters:
           - dupl
+      - path: 'pkg/containermanager/providers/nerdctl(_internal_test)?\.go'
+        linters:
+          - dupl

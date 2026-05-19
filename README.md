@@ -15,7 +15,7 @@ pre-configured, opinionated, and ready to go.
 
 Otter is a container environment manager built for people who want more —
 more integrated, out-of-the-box configured containers, and less time fighting
-their tools. It works with both Docker and Podman, is opinionated by design,
+their tools. It works with Docker, Podman, and nerdctl, is opinionated by design,
 and gets out of your way so you can focus on building.
 
 ### > quick start
