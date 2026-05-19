@@ -217,5 +217,5 @@ esac
 }
 
 func nerdctlFakeInspectJSON(status string) string {
-	return `[{"Id":"container-id","State":{"Status":"` + status + `"},"Config":{"Labels":{"otter.unshare_groups":"0"},"Env":["HOME=/home/testuser","PATH=/usr/bin:/bin"]}}]`
+	return `{"Id":"container-id","State":{"Status":"` + status + `"},"Config":{"Labels":{"otter.unshare_groups":"0"},"Env":["HOME=/home/testuser","PATH=/usr/bin:/bin"]}}`
 }

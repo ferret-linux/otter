@@ -329,12 +329,12 @@ func (n *Nerdctl) ImageExists(ctx context.Context, imageName string) bool {
 		return false
 	}
 
-	var inspects []inspectOutput
-	if err := json.Unmarshal([]byte(output), &inspects); err != nil {
+	var inspect inspectOutput
+	if err := json.Unmarshal([]byte(output), &inspect); err != nil {
 		return false
 	}
 
-	return len(inspects) > 0
+	return inspect.ID != ""
 }
 
 func (n *Nerdctl) PullImage(ctx context.Context, imageName string, platform string, dryRun bool) error {
@@ -404,16 +404,15 @@ func (n *Nerdctl) InspectContainer(ctx context.Context, containerName string) (*
 		return nil, err
 	}
 
-	var inspects []inspectOutput
-	if err := json.Unmarshal([]byte(output), &inspects); err != nil {
+	var inspect inspectOutput
+	// nerdctl container inspect returns a single object, not an array
+	if err := json.Unmarshal([]byte(output), &inspect); err != nil {
 		return nil, fmt.Errorf("error unmarshaling json into containerInspect: %w", err)
 	}
 
-	if len(inspects) == 0 {
+	if inspect.ID == "" {
 		return nil, errors.New("container not found")
 	}
-
-	inspect := inspects[0]
 	config.ContainerID = inspect.ID
 	config.ContainerStatus = inspect.State.Status
 
