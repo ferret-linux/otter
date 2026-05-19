@@ -22,6 +22,7 @@ import (
 
 type Podman struct {
 	command     podmanCommand
+	binary      string
 	root        bool
 	sudoCommand string
 	verbose     bool
@@ -38,8 +39,13 @@ const (
 var _ containermanager.ContainerManager = &Podman{}
 
 func newPodman(command podmanCommand, root bool, sudoCommand string, verbose bool) *Podman {
+	binary, err := exec.LookPath(string(command))
+	if err != nil {
+		binary = string(command)
+	}
 	return &Podman{
 		command:     command,
+		binary:      binary,
 		sudoCommand: sudoCommand,
 		root:        root,
 		verbose:     verbose,
@@ -467,7 +473,7 @@ func (p *Podman) Exists(ctx context.Context, containerName string) bool {
 }
 
 func (p *Podman) run(ctx context.Context, args []string, opts runOptions) (string, error) {
-	command := string(p.command)
+	command := p.binary
 	if p.root {
 		args = append([]string{command}, args...)
 		command = p.sudoCommand

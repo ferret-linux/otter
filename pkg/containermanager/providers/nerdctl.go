@@ -19,6 +19,7 @@ import (
 )
 
 type Nerdctl struct {
+	binary      string
 	root        bool
 	sudoCommand string
 	verbose     bool
@@ -27,7 +28,12 @@ type Nerdctl struct {
 var _ containermanager.ContainerManager = &Nerdctl{}
 
 func NewNerdctl(root bool, sudoCommand string, verbose bool) *Nerdctl {
+	binary, err := exec.LookPath("nerdctl")
+	if err != nil {
+		binary = "nerdctl"
+	}
 	return &Nerdctl{
+		binary:      binary,
 		sudoCommand: sudoCommand,
 		root:        root,
 		verbose:     verbose,
@@ -485,7 +491,7 @@ func (n *Nerdctl) Enter(
 }
 
 func (n *Nerdctl) run(ctx context.Context, args []string, opts runOptions) (string, error) {
-	command := "nerdctl"
+	command := n.binary
 	if n.root {
 		args = append([]string{command}, args...)
 		command = n.sudoCommand

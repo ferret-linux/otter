@@ -21,6 +21,7 @@ import (
 )
 
 type Docker struct {
+	binary      string
 	root        bool
 	sudoCommand string
 	verbose     bool
@@ -29,7 +30,12 @@ type Docker struct {
 var _ containermanager.ContainerManager = &Docker{}
 
 func NewDocker(root bool, sudoCommand string, verbose bool) *Docker {
+	binary, err := exec.LookPath("docker")
+	if err != nil {
+		binary = "docker"
+	}
 	return &Docker{
+		binary:      binary,
 		sudoCommand: sudoCommand,
 		root:        root,
 		verbose:     verbose,
@@ -458,7 +464,7 @@ func (d *Docker) Exists(ctx context.Context, containerName string) bool {
 }
 
 func (d *Docker) run(ctx context.Context, args []string, opts runOptions) (string, error) {
-	command := "docker"
+	command := d.binary
 	if d.root {
 		args = append([]string{command}, args...)
 		command = d.sudoCommand
