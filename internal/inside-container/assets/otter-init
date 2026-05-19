@@ -2162,7 +2162,6 @@ if [ "${nvidia}" -eq 1 ]; then
 		-o -iname "libcuda*.so*" \
 		-o -iname "libnvcuvid*" \
 		-o -iname "libnvoptix*" \
-		-o -iname "libgstnvcodec*" \
 		\) || :)"
 	for nvidia_lib in ${NVIDIA_LIBS}; do
 		dest_file="$(printf "%s" "${nvidia_lib}" |
