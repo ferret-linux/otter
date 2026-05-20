@@ -881,7 +881,7 @@ func (d *Docker) waitForSetup(
 		nextSince := containermanager.TimestampNow()
 		output, err := d.run(ctx, []string{"logs", "--since", since, containerName}, runOptions{})
 		if err != nil {
-			time.Sleep(100 * time.Millisecond) //nolint:mnd // TODO refactor sleeps
+			time.Sleep(logsRetryInterval)
 			continue
 		}
 		since = nextSince
@@ -915,6 +915,6 @@ func (d *Docker) waitForSetup(
 			}
 		}
 
-		time.Sleep(500 * time.Millisecond) //nolint:mnd // TODO refactor sleeps
+		time.Sleep(setupPollInterval)
 	}
 }
