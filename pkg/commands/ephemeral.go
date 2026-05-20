@@ -26,23 +26,20 @@ type EphemeralCommand struct {
 	createCmd        *CreateCommand
 	enterCmd         *EnterCommand
 	rmCmd            *RmCommand
-	printer          *ui.Printer
 }
 
 func NewEphemeralCommand(
 	cfg *config.Values,
 	cm containermanager.ContainerManager,
 	progress *ui.Progress,
-	printer *ui.Printer,
 	prompter *ui.Prompter,
 ) *EphemeralCommand {
 	return &EphemeralCommand{
 		cfg:              cfg,
 		containerManager: cm,
 		createCmd:        NewCreateCommand(cfg, cm, progress, prompter),
-		enterCmd:         NewEnterCommand(cfg, cm, progress, printer),
+		enterCmd:         NewEnterCommand(cfg, cm, progress),
 		rmCmd:            NewRmCommand(cfg, cm, prompter),
-		printer:          printer,
 	}
 }
 
@@ -75,7 +72,7 @@ func (c *EphemeralCommand) Execute(ctx context.Context, opts EphemeralOptions) e
 			NoTTY:          true,
 		}
 		if _, rmErr := c.rmCmd.Execute(cleanupCtx, rmOpts); rmErr != nil {
-			c.printer.PrintWarningln("warning: %s: %s", name, rmErr)
+			ui.DefaultLogger.Warn("%s: %s", name, rmErr)
 		}
 	}()
 
