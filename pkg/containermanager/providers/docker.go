@@ -749,8 +749,7 @@ func (d *Docker) generateEnterCommand(
 
 	containerConfig, err := d.InspectContainer(ctx, containerName)
 	if err != nil {
-		// TODO handle missing container
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("container '%s' not found — are you sure the container was created?", containerName)
 	}
 	// User selection
 	if containerConfig.UnshareGroups {
