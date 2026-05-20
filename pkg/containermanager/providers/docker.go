@@ -471,8 +471,7 @@ func (d *Docker) run(ctx context.Context, args []string, opts runOptions) (strin
 	}
 
 	if opts.DryRun {
-		//nolint:forbidigo // Print command in dry-run mode
-		fmt.Println(command, strings.Join(args, " "))
+		ui.DefaultLogger.Info("%s %s", command, strings.Join(args, " "))
 		return "", nil
 	}
 
@@ -536,8 +535,7 @@ func (d *Docker) Enter(
 
 	if options.DryRun {
 		command = append(command, commandArgs...)
-		//nolint:forbidigo // Print command in dry-run mode
-		fmt.Println(d.Name() + " " + strings.Join(command, "\n"))
+		ui.DefaultLogger.Info("%s %s", d.Name(), strings.Join(command, "\n"))
 
 		return nil
 	}

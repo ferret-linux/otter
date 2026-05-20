@@ -461,8 +461,7 @@ func (n *Nerdctl) Enter(
 
 	if options.DryRun {
 		command = append(command, commandArgs...)
-		//nolint:forbidigo // Print command in dry-run mode
-		fmt.Println(n.Name() + " " + strings.Join(command, "\n"))
+		ui.DefaultLogger.Info("%s %s", n.Name(), strings.Join(command, "\n"))
 
 		return nil
 	}
@@ -497,8 +496,7 @@ func (n *Nerdctl) run(ctx context.Context, args []string, opts runOptions) (stri
 	}
 
 	if opts.DryRun {
-		//nolint:forbidigo // Print command in dry-run mode
-		fmt.Println(command, strings.Join(args, " "))
+		ui.DefaultLogger.Info("%s %s", command, strings.Join(args, " "))
 		return "", nil
 	}
 
