@@ -4,6 +4,8 @@ const (
 	colorRed    = "\033[31m"
 	colorGreen  = "\033[32m"
 	colorYellow = "\033[33m"
+	colorCyan   = "\033[36m"
+	colorTeal   = "\033[96m"
 	colorDim    = "\033[37m"
 	colorBold   = "\033[1m"
 	colorReset  = "\033[0m"
@@ -19,6 +21,14 @@ func Green(text string) string {
 
 func Yellow(text string) string {
 	return colorYellow + text + colorReset
+}
+
+func Cyan(text string) string {
+	return colorCyan + text + colorReset
+}
+
+func Teal(text string) string {
+	return colorTeal + text + colorReset
 }
 
 func Dim(text string) string {
