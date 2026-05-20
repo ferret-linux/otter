@@ -11,13 +11,10 @@ import (
 var ErrNoContainerManager = errors.New("no container manager found")
 
 // NewAutoDetect returns a ContainerManager for the first available container runtime.
-// Priority order: podman > podman-launcher > nerdctl > docker.
+// Priority order: podman > nerdctl > docker.
 func NewAutoDetect(root bool, sudoCommand string, verbose bool) (containermanager.ContainerManager, error) {
 	if _, err := exec.LookPath("podman"); err == nil {
 		return NewPodman(root, sudoCommand, verbose), nil
-	}
-	if _, err := exec.LookPath("podman-launcher"); err == nil {
-		return NewPodmanLauncher(root, sudoCommand, verbose), nil
 	}
 	if _, err := exec.LookPath("nerdctl"); err == nil {
 		return NewNerdctl(root, sudoCommand, verbose), nil

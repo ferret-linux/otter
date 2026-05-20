@@ -34,11 +34,6 @@ func TestNewAutoDetect(t *testing.T) {
 			expectedName: "podman",
 		},
 		{
-			name:         "podman-launcher only",
-			binaries:     []string{"podman-launcher"},
-			expectedName: "podman-launcher",
-		},
-		{
 			name:         "nerdctl only",
 			binaries:     []string{"nerdctl"},
 			expectedName: "nerdctl",
@@ -52,11 +47,6 @@ func TestNewAutoDetect(t *testing.T) {
 			name:         "podman and nerdctl",
 			binaries:     []string{"podman", "nerdctl"},
 			expectedName: "podman",
-		},
-		{
-			name:         "podman-launcher and nerdctl",
-			binaries:     []string{"podman-launcher", "nerdctl"},
-			expectedName: "podman-launcher",
 		},
 		{
 			name:        "nothing available",

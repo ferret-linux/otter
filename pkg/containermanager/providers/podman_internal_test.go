@@ -565,8 +565,6 @@ func TestPodman_Name(t *testing.T) {
 	podman := NewPodman(false, "sudo", false)
 	assert.Equal(t, "podman", podman.Name())
 
-	launcher := NewPodmanLauncher(false, "sudo", false)
-	assert.Equal(t, "podman-launcher", launcher.Name())
 }
 
 func TestParsePodmanContainerList(t *testing.T) {
@@ -644,11 +642,6 @@ func TestPodman_runUsesCorrectBinary(t *testing.T) {
 			name:           "NewPodman uses podman binary",
 			constructor:    func() *Podman { return NewPodman(false, "sudo", false) },
 			expectedPrefix: "podman ",
-		},
-		{
-			name:           "NewPodmanLauncher uses podman-launcher binary",
-			constructor:    func() *Podman { return NewPodmanLauncher(false, "sudo", false) },
-			expectedPrefix: "podman-launcher ",
 		},
 	}
 

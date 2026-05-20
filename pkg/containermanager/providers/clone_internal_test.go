@@ -26,7 +26,7 @@ func TestPodman_CloneAsRoot_PreservesFieldsAndFlipsRoot(t *testing.T) {
 }
 
 func TestPodman_CloneAsRoot_AlreadyRootStillReturnsCopy(t *testing.T) {
-	original := newPodman(podmanCommandLauncher, true, "sudo", false)
+	original := newPodman(podmanCommandPodman, true, "sudo", false)
 
 	cloned := original.CloneAsRoot()
 
@@ -36,7 +36,7 @@ func TestPodman_CloneAsRoot_AlreadyRootStillReturnsCopy(t *testing.T) {
 	require.True(t, ok)
 
 	assert.True(t, clone.root)
-	assert.Equal(t, podmanCommandLauncher, clone.command)
+	assert.Equal(t, podmanCommandPodman, clone.command)
 }
 
 func TestDocker_CloneAsRoot_PreservesFieldsAndFlipsRoot(t *testing.T) {

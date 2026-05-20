@@ -32,8 +32,7 @@ type Podman struct {
 type podmanCommand string
 
 const (
-	podmanCommandPodman   podmanCommand = "podman"
-	podmanCommandLauncher podmanCommand = "podman-launcher"
+	podmanCommandPodman podmanCommand = "podman"
 )
 
 var _ containermanager.ContainerManager = &Podman{}
@@ -54,10 +53,6 @@ func newPodman(command podmanCommand, root bool, sudoCommand string, verbose boo
 
 func NewPodman(root bool, sudoCommand string, verbose bool) *Podman {
 	return newPodman(podmanCommandPodman, root, sudoCommand, verbose)
-}
-
-func NewPodmanLauncher(root bool, sudoCommand string, verbose bool) *Podman {
-	return newPodman(podmanCommandLauncher, root, sudoCommand, verbose)
 }
 
 func (p *Podman) CloneAsRoot() containermanager.ContainerManager {
@@ -242,7 +237,7 @@ func (p *Podman) makeCreateCommand(
 	// now we cannot mount /:/run/host as before, as it will try to mount RO partitions as RW thus breaking things.
 	// This will ensure we will mount directories one-by-one thus avoiding this problem.
 	//
-	// This happens ONLY with podman+runc, docker and lilipod are unaffected,
+	// This happens ONLY with podman+runc, docker & nerdctl is unaffected,
 	// so let's do this only if we have podman AND runc.
 	if !dryRun && p.usesRunc(ctx) {
 		options = append(options, hostRootMountsForRunc(ctx)...)

@@ -42,7 +42,7 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 
 func printMissingContainerManager(p *ui.Printer) {
 	p.Println("Missing dependency: we need a container manager.")
-	p.Println("Please install one of podman, podman-launcher, nerdctl, or docker.")
+	p.Println("Please install one of podman, nerdctl, or docker.")
 	p.Println("You can follow the documentation on:")
 	p.Println("\tman otter-compatibility")
 	p.Println("or:")
@@ -51,7 +51,7 @@ func printMissingContainerManager(p *ui.Printer) {
 
 func printInvalidContainerManager(p *ui.Printer, containerManagerType string) {
 	p.Println("Invalid input %s.", containerManagerType)
-	p.Println("The available choices are: 'autodetect', 'podman', 'podman-launcher', 'nerdctl', 'docker'")
+	p.Println("The available choices are: 'autodetect', 'podman', 'nerdctl', 'docker'")
 }
 
 func subcommands(cfg *config.Values) []*cli.Command {
@@ -200,8 +200,6 @@ func buildContainerManager(
 		return providers.NewDocker(root, sudoCommand, verbose), nil
 	case "podman":
 		return providers.NewPodman(root, sudoCommand, verbose), nil
-	case "podman-launcher":
-		return providers.NewPodmanLauncher(root, sudoCommand, verbose), nil
 	case "nerdctl":
 		return providers.NewNerdctl(root, sudoCommand, verbose), nil
 	case "autodetect", "":
