@@ -40,18 +40,14 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 	}
 }
 
-func printMissingContainerManager(p *ui.Printer) {
-	p.Println("Missing dependency: we need a container manager.")
-	p.Println("Please install one of podman, nerdctl, or docker.")
-	p.Println("You can follow the documentation on:")
-	p.Println("\tman otter-compatibility")
-	p.Println("or:")
-	p.Println("\thttps://github.com/89luca89/distrobox/blob/main/docs/compatibility.md")
+func printMissingContainerManager(l *ui.Logger) {
+	l.Error("Missing dependency: we need a container manager.")
+	l.Info("Please install one of podman, nerdctl, or docker.\nYou can follow the documentation on:\n\tman otter-compatibility\nor:\n\thttps://github.com/89luca89/distrobox/blob/main/docs/compatibility.md")
 }
 
-func printInvalidContainerManager(p *ui.Printer, containerManagerType string) {
-	p.Println("Invalid input %s.", containerManagerType)
-	p.Println("The available choices are: 'autodetect', 'podman', 'nerdctl', 'docker'")
+func printInvalidContainerManager(l *ui.Logger, containerManagerType string) {
+	l.Error("Invalid input %s.", containerManagerType)
+	l.Warn("The available choices are: 'autodetect', 'podman', 'nerdctl', 'docker'")
 }
 
 func subcommands(cfg *config.Values) []*cli.Command {
@@ -193,7 +189,7 @@ func buildContainerManager(
 	verbose bool,
 	root bool,
 ) (containermanager.ContainerManager, error) {
-	errPrinter := ui.NewPrinter(os.Stderr, true)
+	errLogger := ui.NewLogger(os.Stderr)
 
 	switch containerManagerType {
 	case "docker":
@@ -206,13 +202,13 @@ func buildContainerManager(
 		cm, err := providers.NewAutoDetect(root, sudoCommand, verbose)
 		if err != nil {
 			if errors.Is(err, providers.ErrNoContainerManager) {
-				printMissingContainerManager(errPrinter)
+				printMissingContainerManager(errLogger)
 			}
 			return nil, fmt.Errorf("failed to auto-detect container manager: %w", err)
 		}
 		return cm, nil
 	default:
-		printInvalidContainerManager(errPrinter, containerManagerType)
+		printInvalidContainerManager(errLogger, containerManagerType)
 		return nil, fmt.Errorf("invalid input %s", containerManagerType)
 	}
 }
