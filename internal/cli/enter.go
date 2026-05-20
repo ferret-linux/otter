@@ -86,9 +86,7 @@ func enterAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) erro
 	}
 
 	progress := ui.NewProgress(os.Stderr)
-	printer := ui.NewPrinter(os.Stderr, true)
-
-	enterCmd := commands.NewEnterCommand(cfg, containerManager, progress, printer)
+	enterCmd := commands.NewEnterCommand(cfg, containerManager, progress)
 	_, err := enterCmd.Execute(ctx, options)
 	if err != nil {
 		return fmt.Errorf("failed to execute enter command: %w", err)

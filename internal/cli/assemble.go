@@ -104,9 +104,7 @@ func assembleAction(ctx context.Context, cmd *cli.Command, cfg *config.Values, d
 
 	prompter := ui.NewPrompter(*bufio.NewReader(os.Stdin), os.Stdout)
 	progress := ui.NewProgress(os.Stderr)
-	printer := ui.NewPrinter(os.Stdout, true)
-
-	assembleCmd := commands.NewAssembleCommand(cfg, containerManager, prompter, progress, printer)
+	assembleCmd := commands.NewAssembleCommand(cfg, containerManager, prompter, progress)
 
 	err = assembleCmd.Execute(ctx, opts)
 	if err != nil {
