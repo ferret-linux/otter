@@ -70,7 +70,8 @@ func ephemeralAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) 
 			GenerateEntry:           false,
 			Rootful:                 cmd.Bool("root"),
 		},
-		DryRun: cmd.Bool("dry-run"),
+		DryRun:        cmd.Bool("dry-run"),
+		CustomCommand: cmd.Args().Slice(),
 	}
 
 	progress := ui.NewProgress(os.Stderr)

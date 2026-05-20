@@ -16,7 +16,8 @@ const ephemeralCleanupTimeout = 30 * time.Second
 type EphemeralOptions struct {
 	CreateOptions
 
-	DryRun bool
+	DryRun        bool
+	CustomCommand []string
 }
 
 type EphemeralCommand struct {
@@ -49,6 +50,9 @@ func (c *EphemeralCommand) Execute(ctx context.Context, opts EphemeralOptions) e
 	name := opts.ContainerName
 	if name == "" {
 		name = makeRandomName()
+		for c.containerManager.Exists(ctx, name) {
+			name = makeRandomName()
+		}
 	}
 
 	// create ephemeral container
@@ -79,7 +83,7 @@ func (c *EphemeralCommand) Execute(ctx context.Context, opts EphemeralOptions) e
 	enterOpts := EnterOptions{
 		ContainerName: name,
 		DryRun:        opts.DryRun,
-		// TODO: handle enter command
+		CustomCommand: opts.CustomCommand,
 	}
 	if _, enterErr := c.enterCmd.Execute(ctx, enterOpts); enterErr != nil {
 		return fmt.Errorf("ephemeral: %w", enterErr)
@@ -91,10 +95,9 @@ func (c *EphemeralCommand) Execute(ctx context.Context, opts EphemeralOptions) e
 func makeRandomName() string {
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	l := len(charset)
-	b := make([]byte, 10) //nolint:mnd // length of random part
+	b := make([]byte, 3) //nolint:mnd // length of random part
 	for i := range b {
 		b[i] = charset[rand.IntN(l)] //nolint:gosec // cryptographic security not needed
 	}
-	// FIXME: avoid collisions
 	return fmt.Sprintf("otter-%s", string(b))
 }
