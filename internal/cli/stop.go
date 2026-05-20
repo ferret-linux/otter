@@ -50,8 +50,6 @@ func stopAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error
 		All:            all,
 	}
 
-	printer := ui.NewPrinter(os.Stdout, true)
-	errPrinter := ui.NewPrinter(os.Stderr, true)
 	prompter := ui.NewPrompter(*bufio.NewReader(os.Stdin), os.Stdout)
 
 	stopCmd := commands.NewStopCommand(cfg, containerManager, prompter)
@@ -59,12 +57,12 @@ func stopAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error
 	err := stopCmd.Execute(ctx, options)
 
 	if errors.Is(err, commands.ErrStopAbortedByUserError) {
-		printer.Println("Aborted.")
+		ui.DefaultLogger.Warn("Aborted.")
 		return nil
 	}
 
 	if errors.Is(err, commands.ErrEmptyContainerList) {
-		errPrinter.Println("No containers found.")
+		ui.DefaultLogger.Warn("No containers found.")
 		return nil
 	}
 

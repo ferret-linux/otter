@@ -50,27 +50,25 @@ func upgradeAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) er
 		NonInteractive: cmd.Bool("yes"),
 	}
 
-	printer := ui.NewPrinter(os.Stdout, true)
-	errPrinter := ui.NewPrinter(os.Stderr, true)
 	progress := ui.NewProgress(os.Stderr)
 	prompter := ui.NewPrompter(*bufio.NewReader(os.Stdin), os.Stdout)
 
-	upgradeCmd := commands.NewUpgradeCommand(cfg, containerManager, progress, printer, prompter)
+	upgradeCmd := commands.NewUpgradeCommand(cfg, containerManager, progress, prompter)
 
 	err := upgradeCmd.Execute(ctx, options)
 
 	if errors.Is(err, commands.ErrUpgradeAbortedByUser) {
-		printer.Println("Aborted.")
+		ui.DefaultLogger.Warn("Aborted.")
 		return nil
 	}
 
 	if errors.Is(err, commands.ErrEmptyContainerList) {
-		errPrinter.Println("No containers found.")
+		ui.DefaultLogger.Warn("No containers found.")
 		return nil
 	}
 
 	if errors.Is(err, commands.ErrUpgradeNoContainerSpecified) {
-		errPrinter.Println("Please specify the name of the container.")
+		ui.DefaultLogger.Warn("Please specify the name of the container.")
 		//nolint:wrapcheck // sentinel returned as-is so caller exits non-zero
 		return err
 	}

@@ -2,7 +2,6 @@ package providers
 
 import (
 	"bytes"
-	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -693,7 +692,6 @@ func TestPodmanEnterPropagatesStartError(t *testing.T) {
 			NoWorkDir:     true,
 		},
 		ui.NewDevNullProgress(),
-		ui.NewPrinter(io.Discard, false),
 	)
 
 	require.Error(t, err)
@@ -714,7 +712,6 @@ func TestPodmanEnterPropagatesExecError(t *testing.T) {
 			NoWorkDir:     true,
 		},
 		ui.NewDevNullProgress(),
-		ui.NewPrinter(io.Discard, false),
 	)
 
 	require.Error(t, err)

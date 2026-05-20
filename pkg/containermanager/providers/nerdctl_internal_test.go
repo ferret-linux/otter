@@ -1,7 +1,6 @@
 package providers
 
 import (
-	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -133,7 +132,6 @@ func TestNerdctlEnterPropagatesStartError(t *testing.T) {
 			NoWorkDir:     true,
 		},
 		ui.NewDevNullProgress(),
-		ui.NewPrinter(io.Discard, false),
 	)
 
 	require.Error(t, err)
@@ -154,7 +152,6 @@ func TestNerdctlEnterPropagatesExecError(t *testing.T) {
 			NoWorkDir:     true,
 		},
 		ui.NewDevNullProgress(),
-		ui.NewPrinter(io.Discard, false),
 	)
 
 	require.Error(t, err)

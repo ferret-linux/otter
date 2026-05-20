@@ -75,10 +75,9 @@ func ephemeralAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) 
 	}
 
 	progress := ui.NewProgress(os.Stderr)
-	printer := ui.NewPrinter(os.Stderr, true)
 	prompter := ui.NewPrompter(*bufio.NewReader(os.Stdin), os.Stdout)
 
-	ephemeralCmd := commands.NewEphemeralCommand(cfg, containerManager, progress, printer, prompter)
+	ephemeralCmd := commands.NewEphemeralCommand(cfg, containerManager, progress, prompter)
 
 	err := ephemeralCmd.Execute(ctx, opts)
 	if err != nil {

@@ -21,8 +21,7 @@ import (
 func newTestAssembleCommand(mock *testutil.MockContainerManager) *commands.AssembleCommand {
 	progress := ui.NewDevNullProgress()
 	prompter := ui.NewPrompter(*bufio.NewReader(strings.NewReader("")), io.Discard)
-	printer := ui.NewPrinter(io.Discard, false)
-	return commands.NewAssembleCommand(&config.Values{}, mock, prompter, progress, printer)
+	return commands.NewAssembleCommand(&config.Values{}, mock, prompter, progress)
 }
 
 func getEnterOptions(spy testutil.ContainerManagerSpy, index int) containermanager.EnterOptions {
@@ -245,8 +244,7 @@ func TestAssembleCommand_CreateUsesItemNameWhenImageEmpty(t *testing.T) {
 	}
 	progress := ui.NewDevNullProgress()
 	prompter := ui.NewPrompter(*bufio.NewReader(strings.NewReader("")), io.Discard)
-	printer := ui.NewPrinter(io.Discard, false)
-	cmd := commands.NewAssembleCommand(cfg, mock, prompter, progress, printer)
+	cmd := commands.NewAssembleCommand(cfg, mock, prompter, progress)
 
 	err := cmd.Execute(context.Background(), commands.AssembleOptions{
 		Items: []manifest.Item{
@@ -271,8 +269,7 @@ func TestAssembleCommand_ExampleManifest(t *testing.T) {
 	}
 	progress := ui.NewDevNullProgress()
 	prompter := ui.NewPrompter(*bufio.NewReader(strings.NewReader("")), io.Discard)
-	printer := ui.NewPrinter(io.Discard, false)
-	cmd := commands.NewAssembleCommand(cfg, mock, prompter, progress, printer)
+	cmd := commands.NewAssembleCommand(cfg, mock, prompter, progress)
 
 	err = cmd.Execute(context.Background(), commands.AssembleOptions{
 		Items:  items,

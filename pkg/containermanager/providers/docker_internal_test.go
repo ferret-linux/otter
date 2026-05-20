@@ -1,7 +1,6 @@
 package providers
 
 import (
-	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -504,7 +503,6 @@ func TestDockerEnterPropagatesStartError(t *testing.T) {
 			NoWorkDir:     true,
 		},
 		ui.NewDevNullProgress(),
-		ui.NewPrinter(io.Discard, false),
 	)
 
 	require.Error(t, err)
@@ -525,7 +523,6 @@ func TestDockerEnterPropagatesExecError(t *testing.T) {
 			NoWorkDir:     true,
 		},
 		ui.NewDevNullProgress(),
-		ui.NewPrinter(io.Discard, false),
 	)
 
 	require.Error(t, err)
