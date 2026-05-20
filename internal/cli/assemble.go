@@ -68,10 +68,10 @@ func assembleAction(ctx context.Context, cmd *cli.Command, cfg *config.Values, d
 		return errors.New("container manager not found in context")
 	}
 
-	// TODO: handle file name as a positional argument
-	// https://github.com/89luca89/distrobox-next/blob/07b3abf2015effafc5596b9dc7f02c35a17eb8a7/otter-assemble#L205
-
 	manifestFilePath := cmd.String("file")
+	if manifestFilePath == "" && cmd.Args().Len() > 0 {
+		manifestFilePath = cmd.Args().First()
+	}
 	if manifestFilePath == "" {
 		manifestFilePath = "./otter.ini"
 	}
