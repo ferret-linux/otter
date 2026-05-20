@@ -517,7 +517,6 @@ func (p *Podman) Enter(
 	ctx context.Context,
 	options containermanager.EnterOptions,
 	progress *ui.Progress,
-	printer *ui.Printer,
 ) error {
 	userEnv := userenv.LoadUserEnvironment(ctx)
 	user := userEnv.User
@@ -553,7 +552,7 @@ func (p *Podman) Enter(
 		}
 
 		// Monitor logs for setup completion
-		if err := p.waitForSetup(ctx, options.ContainerName, logTimestamp, progress, printer); err != nil {
+		if err := p.waitForSetup(ctx, options.ContainerName, logTimestamp, progress); err != nil {
 			return err
 		}
 
@@ -931,7 +930,6 @@ func (p *Podman) waitForSetup(
 	containerName string,
 	since string,
 	progress *ui.Progress,
-	printer *ui.Printer,
 ) error {
 	for {
 		if err := ctx.Err(); err != nil {
@@ -941,11 +939,11 @@ func (p *Podman) waitForSetup(
 		// Check container is still running
 		inspectResult, err := p.InspectContainer(ctx, containerName)
 		if err != nil {
-			printer.PrintError("\nContainer Setup Failure!")
+			ui.DefaultLogger.Error("Container Setup Failure!")
 			return fmt.Errorf("container stopped during setup: %w", err)
 		}
 		if inspectResult.ContainerStatus != containermanager.RunningStatus {
-			printer.PrintError("\nContainer Setup Failure!")
+			ui.DefaultLogger.Error("Container Setup Failure!")
 			return fmt.Errorf(
 				"container stopped during setup: status=%s",
 				inspectResult.ContainerStatus,
@@ -972,11 +970,11 @@ func (p *Podman) waitForSetup(
 
 			case strings.HasPrefix(line, "Error:"):
 				progress.Fail()
-				printer.PrintError(line)
+				ui.DefaultLogger.Error("%s", line)
 				return fmt.Errorf("container setup error: %s", line)
 
 			case strings.HasPrefix(line, "Warning:"):
-				printer.PrintWarning(line)
+				ui.DefaultLogger.Warn("%s", line)
 
 			case strings.HasPrefix(line, "otter:"):
 				parts := strings.SplitN(line, " ", 2)
