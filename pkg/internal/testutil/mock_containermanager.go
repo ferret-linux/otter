@@ -49,8 +49,8 @@ func (m *MockContainerManager) CloneAsRoot() containermanager.ContainerManager {
 	return m.RootClone
 }
 
-func (m *MockContainerManager) Enter(_ context.Context, options containermanager.EnterOptions, progress *ui.Progress, printer *ui.Printer) error {
-	m.Spy.Enter = append(m.Spy.Enter, []any{options, progress, printer})
+func (m *MockContainerManager) Enter(_ context.Context, options containermanager.EnterOptions, progress *ui.Progress) error {
+	m.Spy.Enter = append(m.Spy.Enter, []any{options, progress})
 	return nil
 }
 
