@@ -25,20 +25,17 @@ type EnterCommand struct {
 	cfg              *config.Values
 	containerManager containermanager.ContainerManager
 	progress         *ui.Progress
-	printer          *ui.Printer
 }
 
 func NewEnterCommand(
 	cfg *config.Values,
 	cm containermanager.ContainerManager,
 	progress *ui.Progress,
-	printer *ui.Printer,
 ) *EnterCommand {
 	return &EnterCommand{
 		cfg:              cfg,
 		containerManager: cm,
 		progress:         progress,
-		printer:          printer,
 	}
 }
 
@@ -53,7 +50,7 @@ func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterRe
 		CleanPath:       opts.CleanPath,
 	}
 
-	err := c.containerManager.Enter(ctx, cmdOpts, c.progress, c.printer)
+	err := c.containerManager.Enter(ctx, cmdOpts, c.progress)
 	if err != nil {
 		return nil, fmt.Errorf("failed to enter the container: %w", err)
 	}
