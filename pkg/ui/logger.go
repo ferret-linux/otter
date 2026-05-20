@@ -34,7 +34,7 @@ func (l *Logger) Warn(msg string, a ...any) {
 }
 
 func (l *Logger) Info(msg string, a ...any) {
-	icon := colorCyan + "[ℹ]" + colorReset
+	icon := colorCyan + "[i]" + colorReset
 	text := colorDim + fmt.Sprintf(msg, a...) + colorReset
 	fmt.Fprintf(l.writer, "%s %s\n", icon, text)
 }

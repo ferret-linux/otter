@@ -6,8 +6,9 @@ import (
 )
 
 type Progress struct {
-	pending bool
-	writer  io.Writer
+	pending     bool
+	lastMessage string
+	writer      io.Writer
 }
 
 func NewProgress(writer io.Writer) *Progress {
@@ -30,15 +31,18 @@ func (p *Progress) Next(message string, a ...any) {
 	}
 
 	p.pending = true
-	msg := fmt.Sprintf(message, a...)
-	fmt.Fprintf(p.writer, "%-40s\t", msg)
+	p.lastMessage = fmt.Sprintf(message, a...)
+
+	if p.writer != io.Discard {
+		DefaultLogger.Info("%s", p.lastMessage)
+	}
 }
 
 func (p *Progress) Finalize(message string, a ...any) {
 	p.Done()
-	p.Next(message, a...)
-	fmt.Fprintf(p.writer, "\n")
-	p.pending = false
+	if p.writer != io.Discard {
+		DefaultLogger.Ok("%s", fmt.Sprintf(message, a...))
+	}
 }
 
 func (p *Progress) Done() {
@@ -47,7 +51,9 @@ func (p *Progress) Done() {
 	}
 
 	p.pending = false
-	fmt.Fprintf(p.writer, "%s\n", Green("[ OK ] "))
+	if p.writer != io.Discard {
+		DefaultLogger.Ok("%s", p.lastMessage)
+	}
 }
 
 func (p *Progress) Fail() {
@@ -56,5 +62,7 @@ func (p *Progress) Fail() {
 	}
 
 	p.pending = false
-	fmt.Fprintf(p.writer, "%s\n", Red("[ ERR ]"))
+	if p.writer != io.Discard {
+		DefaultLogger.Error("%s", p.lastMessage)
+	}
 }
