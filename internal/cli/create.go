@@ -188,7 +188,7 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 	}
 
 	if errors.Is(err, commands.ErrUnknownImage) {
-		fmt.Fprintf(os.Stderr, "\033[31merror:\033[0m %s\n", err)
+		ui.DefaultLogger.Error("%s", err)
 		printFile("image_options")
 		return err
 	}

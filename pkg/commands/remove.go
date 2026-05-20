@@ -70,8 +70,7 @@ func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, 
 	for _, currentOtterContainer := range otterContainersToRemove {
 		err := c.removeContainer(ctx, currentOtterContainer, options.Force, options.NoTTY, userHome)
 		if err != nil {
-			//nolint:forbidigo // waiting for the logger implementation
-			fmt.Printf("error deleting %s: %s", currentOtterContainer.Name, err)
+			ui.DefaultLogger.Error("failed deleting %s: %s", currentOtterContainer.Name, err)
 		} else {
 			removedOtterContainers = append(removedOtterContainers, currentOtterContainer)
 		}
@@ -82,8 +81,7 @@ func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, 
 		for i, c := range removedOtterContainers {
 			names[i] = c.Name
 		}
-		//nolint:forbidigo // waiting for the logger implementation
-		fmt.Printf("removed: %s\n", strings.Join(names, " "))
+		ui.DefaultLogger.Ok("removed, %s", strings.Join(names, " "))
 	}
 
 	return &RmResult{Containers: removedOtterContainers}, nil
@@ -144,8 +142,7 @@ func (c *RmCommand) cleanup(ctx context.Context, userHome, containerName string)
 
 	for _, path := range toDelete {
 		if err := os.Remove(path); err != nil {
-			//nolint:forbidigo // FIXME: use logger instead of fmt.Printf when available
-			fmt.Printf("warning: failed to remove file '%s': %s\n", path, err)
+			ui.DefaultLogger.Warn("failed to remove file '%s': %s", path, err)
 		}
 	}
 
@@ -159,8 +156,7 @@ func (c *RmCommand) cleanup(ctx context.Context, userHome, containerName string)
 		},
 	)
 	if err != nil {
-		//nolint:forbidigo // FIXME: use logger instead of fmt.Printf when available
-		fmt.Printf("warning: failed to remove desktop entry for container '%s': %s\n", containerName, err)
+		ui.DefaultLogger.Warn("failed to remove desktop entry for '%s': %s", containerName, err)
 	}
 }
 
@@ -227,8 +223,7 @@ func findExportedDesktopApps(userHome, containerName string) []string {
 
 	matches, err := filepath.Glob(appsPattern)
 	if err != nil {
-		//nolint:forbidigo // FIXME: use logger instead of fmt.Printf when available
-		fmt.Printf("warning: failed to glob desktop apps: %s\n", err)
+		ui.DefaultLogger.Warn("failed to glob desktop apps: %s", err)
 		return []string{}
 	}
 

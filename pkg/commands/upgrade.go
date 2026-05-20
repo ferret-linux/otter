@@ -89,8 +89,7 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 
 	for _, name := range containerNames {
 		if err := c.upgradeContainer(ctx, name); err != nil {
-			//nolint:forbidigo // FIXME: waiting for the logger implementation
-			fmt.Printf("error upgrading %s: %s\n", name, err)
+			ui.DefaultLogger.Error("failed while upgrading %s: %s", name, err)
 
 			lastErr = err
 
