@@ -35,14 +35,13 @@ func NewUpgradeCommand(
 	cfg *config.Values,
 	cm containermanager.ContainerManager,
 	progress *ui.Progress,
-	printer *ui.Printer,
 	prompter *ui.Prompter,
 ) *UpgradeCommand {
 	return &UpgradeCommand{
 		cfg:              cfg,
 		containerManager: cm,
 		listCmd:          NewListCommand(cfg, cm),
-		enterCmd:         NewEnterCommand(cfg, cm, progress, printer),
+		enterCmd:         NewEnterCommand(cfg, cm, progress),
 		prompter:         prompter,
 	}
 }
