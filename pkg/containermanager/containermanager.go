@@ -90,7 +90,7 @@ type ContainerManager interface {
 	// CloneAsRoot returns a copy of the manager configured to run in root
 	// mode. The original instance is not modified.
 	CloneAsRoot() ContainerManager
-	Enter(ctx context.Context, options EnterOptions, progress *ui.Progress, printer *ui.Printer) error
+	Enter(ctx context.Context, options EnterOptions, progress *ui.Progress) error
 	ListContainers(ctx context.Context) ([]Container, error)
 	Create(ctx context.Context, opts CreateOptions) error
 	Remove(ctx context.Context, containerName string, opts RmOptions) error
