@@ -39,7 +39,6 @@ type AssembleCommand struct {
 	rmCmdRoot     *RmCommand
 	enterCmdRoot  *EnterCommand
 	progress      *ui.Progress
-	printer       *ui.Printer
 }
 
 func NewAssembleCommand(
@@ -47,19 +46,17 @@ func NewAssembleCommand(
 	cm containermanager.ContainerManager,
 	prompter *ui.Prompter,
 	progress *ui.Progress,
-	printer *ui.Printer,
 ) *AssembleCommand {
 	cmRoot := cm.CloneAsRoot()
 	return &AssembleCommand{
 		cfg:           cfg,
 		createCmd:     NewCreateCommand(cfg, cm, ui.NewDevNullProgress(), prompter),
 		rmCmd:         NewRmCommand(cfg, cm, prompter),
-		enterCmd:      NewEnterCommand(cfg, cm, progress, printer),
+		enterCmd:      NewEnterCommand(cfg, cm, progress),
 		createCmdRoot: NewCreateCommand(cfg, cmRoot, ui.NewDevNullProgress(), prompter),
 		rmCmdRoot:     NewRmCommand(cfg, cmRoot, prompter),
-		enterCmdRoot:  NewEnterCommand(cfg, cmRoot, progress, printer),
+		enterCmdRoot:  NewEnterCommand(cfg, cmRoot, progress),
 		progress:      progress,
-		printer:       printer,
 	}
 }
 
@@ -183,7 +180,7 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item, d
 			Force:          true,
 			ContainerNames: []string{item.Name},
 		}); rmErr != nil {
-			ac.printer.PrintWarningln("warning: %s: %s", item.Name, rmErr)
+			ui.DefaultLogger.Warn("%s: %s", item.Name, rmErr)
 		}
 	}()
 
