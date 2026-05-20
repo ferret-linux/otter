@@ -14,6 +14,7 @@ func NewLogger(writer io.Writer) *Logger {
 	return &Logger{writer: writer}
 }
 
+// DefaultLogger writes to stderr
 var DefaultLogger = NewLogger(os.Stderr)
 
 func (l *Logger) Ok(msg string, a ...any) {
