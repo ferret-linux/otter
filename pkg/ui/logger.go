@@ -3,15 +3,18 @@ package ui
 import (
 	"fmt"
 	"io"
+	"os"
 )
 
 type Logger struct {
 	writer io.Writer
 }
 
-func Logger(writer io.Writer) *Logger {
-	return &logger{writer: writer}
+func NewLogger(writer io.Writer) *Logger {
+	return &Logger{writer: writer}
 }
+
+var DefaultLogger = NewLogger(os.Stderr)
 
 func (l *Logger) Ok(msg string, a ...any) {
 	icon := colorGreen + "[✓]" + colorReset
