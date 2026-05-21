@@ -21,6 +21,7 @@ type StopOptions struct {
 	ContainerNames []string
 	NonInteractive bool
 	All            bool
+	DryRun         bool
 }
 
 var ErrEmptyContainerList = errors.New("cannot find containers to stop")
@@ -65,7 +66,7 @@ func (c *StopCommand) Execute(ctx context.Context, opts *StopOptions) error {
 		return ErrStopAbortedByUserError
 	}
 
-	err := c.containerManager.Stop(ctx, containerNames)
+	err := c.containerManager.Stop(ctx, containerNames, opts.DryRun)
 	if err != nil {
 		return fmt.Errorf("failed to stop containers: %w", err)
 	}

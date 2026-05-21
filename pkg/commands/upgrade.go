@@ -18,6 +18,7 @@ type UpgradeOptions struct {
 	All            bool
 	Running        bool
 	NonInteractive bool
+	DryRun         bool
 }
 
 type UpgradeCommand struct {
@@ -87,7 +88,7 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 	var lastErr error
 
 	for _, name := range containerNames {
-		if err := c.upgradeContainer(ctx, name); err != nil {
+		if err := c.upgradeContainer(ctx, name, opts.DryRun); err != nil {
 			lastErr = fmt.Errorf("failed while upgrading %s: %w", name, err)
 			continue
 		}
@@ -96,10 +97,11 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 	return lastErr
 }
 
-func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string) error {
+func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string, dryRun bool) error {
 	enterOpts := EnterOptions{
 		ContainerName: name,
 		CustomCommand: []string{"sh", "-c", upgradeScript},
+		DryRun:        dryRun,
 	}
 
 	if _, err := c.enterCmd.Execute(ctx, enterOpts); err != nil {

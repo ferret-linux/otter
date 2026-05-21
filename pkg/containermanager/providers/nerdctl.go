@@ -360,7 +360,7 @@ func (n *Nerdctl) Remove(
 
 	args = append(args, []string{"--volumes", containerName}...)
 
-	_, err := n.run(ctx, args, runOptions{})
+	_, err := n.run(ctx, args, runOptions{DryRun: options.DryRun})
 	if err != nil {
 		return fmt.Errorf("error removing the container: %w", err)
 	}
@@ -375,11 +375,11 @@ func (n *Nerdctl) Remove(
 	return nil
 }
 
-func (n *Nerdctl) Stop(ctx context.Context, containerNames []string) error {
+func (n *Nerdctl) Stop(ctx context.Context, containerNames []string, dryRun bool) error {
 	args := []string{"stop"}
 	args = append(args, containerNames...)
 
-	_, err := n.run(ctx, args, runOptions{})
+	_, err := n.run(ctx, args, runOptions{DryRun: dryRun})
 	if err != nil {
 		return fmt.Errorf("error stopping containers: %w", err)
 	}

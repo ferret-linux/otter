@@ -32,6 +32,7 @@ type RmOptions struct {
 	Force          bool
 	All            bool
 	RemoveHome     bool
+	DryRun         bool
 	ContainerNames []string
 }
 
@@ -68,7 +69,7 @@ func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, 
 
 	var removedOtterContainers []containermanager.Container
 	for _, currentOtterContainer := range otterContainersToRemove {
-		err := c.removeContainer(ctx, currentOtterContainer, options.Force, options.NoTTY, userHome)
+		err := c.removeContainer(ctx, currentOtterContainer, options.Force, options.NoTTY, userHome, options.DryRun)
 		if err != nil {
 			ui.DefaultLogger.Error("failed deleting %s: %s", currentOtterContainer.Name, err)
 		} else {
@@ -105,6 +106,7 @@ func (c *RmCommand) removeContainer(
 	force bool,
 	noTTY bool,
 	userHome string,
+	dryRun bool,
 ) error {
 	forceRemove := force
 	if !forceRemove && !noTTY && strings.Contains(container.Status, "Up") {
@@ -133,15 +135,18 @@ func (c *RmCommand) removeContainer(
 
 	cmOptions := containermanager.RmOptions{
 		Force:         forceRemove,
-		RemoveHome:    removeHome,
+		RemoveHome:    removeHome && !dryRun,
 		ContainerHome: inspectOutput.ContainerHome,
+		DryRun:        dryRun,
 	}
 	err = c.containerManager.Remove(ctx, container.Name, cmOptions)
 	if err != nil {
 		return fmt.Errorf("failed to remove container: %w", err)
 	}
 
-	c.cleanup(ctx, userHome, container.Name)
+	if !dryRun {
+		c.cleanup(ctx, userHome, container.Name)
+	}
 
 	return nil
 }

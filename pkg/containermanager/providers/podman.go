@@ -608,7 +608,7 @@ func (p *Podman) Remove(
 
 	args = append(args, []string{"--volumes", containerName}...)
 
-	_, err := p.run(ctx, args, runOptions{})
+	_, err := p.run(ctx, args, runOptions{DryRun: options.DryRun})
 	if err != nil {
 		return fmt.Errorf("error removing the container: %w", err)
 	}
@@ -623,11 +623,11 @@ func (p *Podman) Remove(
 	return nil
 }
 
-func (p *Podman) Stop(ctx context.Context, containerNames []string) error {
+func (p *Podman) Stop(ctx context.Context, containerNames []string, dryRun bool) error {
 	args := []string{"stop"}
 	args = append(args, containerNames...)
 
-	_, err := p.run(ctx, args, runOptions{})
+	_, err := p.run(ctx, args, runOptions{DryRun: dryRun})
 	if err != nil {
 		return fmt.Errorf("error stopping containers: %w", err)
 	}

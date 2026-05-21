@@ -71,6 +71,7 @@ type RmOptions struct {
 	Force         bool
 	RemoveHome    bool
 	ContainerHome string
+	DryRun        bool
 }
 
 func (c Container) IsOtterContainer() bool {
@@ -96,7 +97,7 @@ type ContainerManager interface {
 	Remove(ctx context.Context, containerName string, opts RmOptions) error
 	Exists(ctx context.Context, containerName string) bool
 	ImageExists(ctx context.Context, imageName string) bool
-	Stop(ctx context.Context, containerNames []string) error
+	Stop(ctx context.Context, containerNames []string, dryRun bool) error
 	InspectContainer(ctx context.Context, containerName string) (*InspectResult, error)
 	PullImage(ctx context.Context, imageName string, platform string, dryRun bool) error
 	Commit(ctx context.Context, containerID string, imageTag string) error
