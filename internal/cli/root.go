@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/urfave/cli/v3"
 
@@ -37,6 +38,17 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 			},
 		},
 		Commands: subcommands(cfg),
+		ExitErrHandler: func(ctx context.Context, cmd *cli.Command, err error) {
+			if err == nil {
+				return
+			}
+			if cmd.Bool("verbose") {
+				ui.DefaultLogger.Error("%s", err)
+			} else {
+				parts := strings.Split(err.Error(), ": ")
+				ui.DefaultLogger.Error("%s", parts[len(parts)-1])
+			}
+		},
 	}
 }
 
