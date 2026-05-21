@@ -2,18 +2,19 @@ package main
 
 import (
 	"context"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/ferret-linux/otter/internal/cli"
 	"github.com/ferret-linux/otter/pkg/config"
+	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 func main() {
 	if err := run(); err != nil {
-		log.Fatal(err)
+		ui.DefaultLogger.Error("%s", err)
+		os.Exit(1)
 	}
 }
 
