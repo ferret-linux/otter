@@ -527,7 +527,7 @@ func (d *Docker) Enter(
 		options.Verbose,
 	)
 	if err != nil {
-		return fmt.Errorf("err: %w", err)
+		return err
 	}
 
 	commandArgs := containermanager.BuildCommandArgs(options.CustomCommand, user, options.NoTTY, config.UnshareGroups)
