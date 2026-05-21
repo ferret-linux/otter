@@ -55,53 +55,62 @@ func subcommands(cfg *config.Values) []*cli.Command {
 
 	list := cc.apply(
 		newListCommand,
+		withUsageErrorHandler,
 		withRoot,
 		withContainerManager,
 	)
 
 	generateEntry := cc.apply(
 		newGenerateEntryCommand,
+		withUsageErrorHandler,
 		withRoot,
 		withContainerManager,
 	)
 
 	create := cc.apply(
 		newCreateCommand,
+		withUsageErrorHandler,
 		withRoot,
 		withContainerManager,
 	)
 
 	enter := cc.apply(
 		newEnterCommand,
+		withUsageErrorHandler,
 		withRoot,
 		withContainerManager,
 	)
 
 	assemble := cc.apply(
 		newAssembleCommand,
+		withUsageErrorHandler,
 		withContainerManager,
 	)
 
 	remove := cc.apply(
 		newRmCommand,
+		withUsageErrorHandler,
 		withRoot,
 		withContainerManager,
 	)
 
 	stop := cc.apply(
 		newStopCommand,
+		withUsageErrorHandler,
 		withRoot,
 		withContainerManager,
 	)
 
 	ephemeral := cc.apply(
 		newEphemeralCommand,
+		withUsageErrorHandler,
 		withRoot,
 		withContainerManager,
 	)
 
 	upgrade := cc.apply(
 		newUpgradeCommand,
+		withUsageErrorHandler,
 		withRoot,
 		withContainerManager,
 	)
@@ -117,6 +126,14 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		stop,
 		upgrade,
 	}
+}
+
+func withUsageErrorHandler(_ *config.Values, cmd *cli.Command) *cli.Command {
+	cmd.OnUsageError = func(_ context.Context, _ *cli.Command, err error, _ bool) error {
+		ui.DefaultLogger.Error("%s", err)
+		return cli.Exit("", 1)
+	}
+	return cmd
 }
 
 // withRoot declares the --root flag on a command and, when it is set,
