@@ -76,6 +76,18 @@ func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, 
 		}
 	}
 
+	if len(otterContainersToRemove) == 0 && options.All {
+		ui.DefaultLogger.Warn("no containers found to remove")
+	}
+
+	for _, name := range options.ContainerNames {
+		if !slices.ContainsFunc(otterContainersToRemove, func(c containermanager.Container) bool {
+			return c.Name == name
+		}) {
+			ui.DefaultLogger.Warn("container '%s' not found", name)
+		}
+	}
+
 	if len(removedOtterContainers) > 0 {
 		names := make([]string, len(removedOtterContainers))
 		for i, c := range removedOtterContainers {
