@@ -88,10 +88,7 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 
 	for _, name := range containerNames {
 		if err := c.upgradeContainer(ctx, name); err != nil {
-			ui.DefaultLogger.Error("failed while upgrading %s: %s", name, err)
-
-			lastErr = err
-
+			lastErr = fmt.Errorf("failed while upgrading %s: %w", name, err)
 			continue
 		}
 	}
