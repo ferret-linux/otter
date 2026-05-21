@@ -74,8 +74,8 @@ func (m *MockContainerManager) Exists(_ context.Context, containerName string) b
 	return false
 }
 
-func (m *MockContainerManager) Stop(_ context.Context, containerNames []string) error {
-	m.Spy.Stop = append(m.Spy.Stop, []any{containerNames})
+func (m *MockContainerManager) Stop(_ context.Context, containerNames []string, dryRun bool) error {
+	m.Spy.Stop = append(m.Spy.Stop, []any{containerNames, dryRun})
 	return nil
 }
 
