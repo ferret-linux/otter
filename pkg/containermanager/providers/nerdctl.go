@@ -553,7 +553,7 @@ func (n *Nerdctl) generateEnterCommand(
 
 	containerConfig, err := n.InspectContainer(ctx, containerName)
 	if err != nil {
-		return nil, nil, fmt.Errorf("container '%s' not found — are you sure the container was created?", containerName)
+		return nil, nil, fmt.Errorf("container '%s' not found — are you sure it was created?", containerName)
 	}
 
 	if containerConfig.UnshareGroups {
