@@ -152,6 +152,7 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item, d
 		DryRun:                  dryRun,
 		NonInteractive:          true,
 		ContainerAlwaysPull:     item.AlwaysPull,
+		ContainerShell:          item.UserShell,
 	}
 
 	createCmd := ac.createCmd

@@ -40,6 +40,22 @@ start_now=true
 	assert.True(t, parsed[0].StartNow)
 }
 
+func TestParse_UserShell(t *testing.T) {
+	rawManifest := `
+[mybox]
+image=ubuntu:24.04
+user_shell=zsh
+`
+	manifestPath := t.TempDir() + "/manifest.ini"
+	err := os.WriteFile(manifestPath, []byte(rawManifest), 0o644)
+	require.NoError(t, err)
+
+	parsed, err := manifest.Parse(t.Context(), manifestPath)
+	require.NoError(t, err)
+	require.Len(t, parsed, 1)
+	assert.Equal(t, "zsh", parsed[0].UserShell)
+}
+
 func TestParse_SkipUnknownKeys(t *testing.T) {
 	rawManifest := `
 [distrodev]

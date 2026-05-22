@@ -43,6 +43,7 @@ type Item struct {
 	ExportedApps       []string
 	ExportedBins       []string
 	ExportedBinsPath   string
+	UserShell          string
 }
 
 // Parse reads and parses a manifest file from the given filepath or URL.
@@ -162,6 +163,8 @@ func sectionToItem(section *ini.Section, env *userenv.UserEnvironment) Item { //
 			item.Hostname = last
 		case "exported_bins_path":
 			item.ExportedBinsPath = last
+		case "user_shell":
+			item.UserShell = last
 
 		case "init":
 			item.Init = parseBool(last)
