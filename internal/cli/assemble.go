@@ -62,19 +62,25 @@ func newAssembleCommand(cfg *config.Values) *cli.Command {
 	}
 }
 
+const defaultManifestPath = "./otter.ini"
+
+func resolveManifestPath(flagValue string, positional []string) string {
+	if flagValue != "" {
+		return flagValue
+	}
+	if len(positional) > 0 && positional[0] != "" {
+		return positional[0]
+	}
+	return defaultManifestPath
+}
+
 func assembleAction(ctx context.Context, cmd *cli.Command, cfg *config.Values, deleteFlag bool) error {
 	containerManager, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 	if !ok {
 		return errors.New("container manager not found in context")
 	}
 
-	manifestFilePath := cmd.String("file")
-	if manifestFilePath == "" && cmd.Args().Len() > 0 {
-		manifestFilePath = cmd.Args().First()
-	}
-	if manifestFilePath == "" {
-		manifestFilePath = "./otter.ini"
-	}
+	manifestFilePath := resolveManifestPath(cmd.String("file"), cmd.Args().Slice())
 
 	manifest, err := manifest.Parse(ctx, manifestFilePath)
 	if err != nil {
