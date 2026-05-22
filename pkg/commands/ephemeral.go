@@ -11,7 +11,10 @@ import (
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
-const ephemeralCleanupTimeout = 30 * time.Second
+const (
+	ephemeralCleanupTimeout     = 30 * time.Second
+	ephemeralMaxNameGenAttempts = 10
+)
 
 type EphemeralOptions struct {
 	CreateOptions
@@ -46,10 +49,11 @@ func NewEphemeralCommand(
 func (c *EphemeralCommand) Execute(ctx context.Context, opts EphemeralOptions) error {
 	name := opts.ContainerName
 	if name == "" {
-		name = makeRandomName()
-		for c.containerManager.Exists(ctx, name) {
-			name = makeRandomName()
+		generatedName, err := c.makeUniqueRandomName(ctx, opts.DryRun)
+		if err != nil {
+			return fmt.Errorf("ephemeral: %w", err)
 		}
+		name = generatedName
 	}
 
 	// create ephemeral container
@@ -87,6 +91,20 @@ func (c *EphemeralCommand) Execute(ctx context.Context, opts EphemeralOptions) e
 	}
 
 	return nil
+}
+
+// makeUniqueRandomName generates a random container name that does not
+// collide with an existing container. When dryRun is true, the existence
+// check is skipped (mirroring the rest of the dry-run pipeline, where no
+// container lookup is performed).
+func (c *EphemeralCommand) makeUniqueRandomName(ctx context.Context, dryRun bool) (string, error) {
+	for range ephemeralMaxNameGenAttempts {
+		name := makeRandomName()
+		if dryRun || !c.containerManager.Exists(ctx, name) {
+			return name, nil
+		}
+	}
+	return "", fmt.Errorf("failed to generate unique ephemeral container name after %d attempts", ephemeralMaxNameGenAttempts)
 }
 
 func makeRandomName() string {
