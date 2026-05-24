@@ -39,6 +39,10 @@ func newRmCommand(cfg *config.Values) *cli.Command {
 				Name:    "dry-run",
 				Aliases: []string{"d"},
 			},
+			&cli.BoolFlag{
+				Name:    "verbose",
+				Aliases: []string{"V"},
+			},
 		},
 
 		Action: func(ctx context.Context, cmd *cli.Command) error {
@@ -64,6 +68,7 @@ func rmAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
 		All:            cmd.Bool("all"),
 		RemoveHome:     cmd.Bool("rm-home"),
 		DryRun:         cmd.Bool("dry-run"),
+		Verbose:        cmd.Bool("verbose"),
 		ContainerNames: names,
 	}
 

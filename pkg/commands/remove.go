@@ -33,6 +33,7 @@ type RmOptions struct {
 	All            bool
 	RemoveHome     bool
 	DryRun         bool
+	Verbose        bool
 	ContainerNames []string
 }
 
@@ -69,7 +70,7 @@ func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, 
 
 	var removedOtterContainers []containermanager.Container
 	for _, currentOtterContainer := range otterContainersToRemove {
-		err := c.removeContainer(ctx, currentOtterContainer, options.Force, options.NoTTY, userHome, options.DryRun)
+		err := c.removeContainer(ctx, currentOtterContainer, options.Force, options.NoTTY, options.Verbose, userHome, options.DryRun)
 		if err != nil {
 			ui.DefaultLogger.Error("failed deleting %s: %s", currentOtterContainer.Name, err)
 		} else {
@@ -105,6 +106,7 @@ func (c *RmCommand) removeContainer(
 	container containermanager.Container,
 	force bool,
 	noTTY bool,
+	verbose bool,
 	userHome string,
 	dryRun bool,
 ) error {
@@ -145,13 +147,13 @@ func (c *RmCommand) removeContainer(
 	}
 
 	if !dryRun {
-		c.cleanup(ctx, userHome, container.Name)
+		c.cleanup(ctx, userHome, container.Name, verbose)
 	}
 
 	return nil
 }
 
-func (c *RmCommand) cleanup(ctx context.Context, userHome, containerName string) {
+func (c *RmCommand) cleanup(ctx context.Context, userHome, containerName string, verbose bool) {
 	bins := findExportedBinaries(userHome, containerName)
 	desktopApps := findExportedDesktopApps(userHome, containerName)
 
@@ -168,8 +170,7 @@ func (c *RmCommand) cleanup(ctx context.Context, userHome, containerName string)
 		&GenerateEntryOptions{
 			ContainerName: containerName,
 			Delete:        true,
-			// TODO: handle verbose
-			Verbose: false,
+			Verbose:       verbose,
 		},
 	)
 	if err != nil {

@@ -33,11 +33,17 @@ type ContainerManagerSpy struct {
 // ExistsFn, when non-nil, overrides the default Exists behavior (which
 // always returns false). Tests can use it to simulate name collisions
 // or other lookup scenarios.
+//
+// ListContainersResult and InspectContainerResult, when non-nil, override
+// the default zero-value return values of ListContainers and
+// InspectContainer respectively.
 type MockContainerManager struct {
-	Spy       ContainerManagerSpy
-	Root      bool
-	RootClone *MockContainerManager
-	ExistsFn  func(containerName string) bool
+	Spy                    ContainerManagerSpy
+	Root                   bool
+	RootClone              *MockContainerManager
+	ExistsFn               func(containerName string) bool
+	ListContainersResult   []containermanager.Container
+	InspectContainerResult *containermanager.InspectResult
 }
 
 func (m *MockContainerManager) Name() string {
@@ -48,11 +54,14 @@ func (m *MockContainerManager) Name() string {
 func (m *MockContainerManager) CloneAsRoot() containermanager.ContainerManager {
 	m.Spy.CloneAsRoot = append(m.Spy.CloneAsRoot, []any{})
 	if m.RootClone == nil {
-		// Propagate behavior hooks (e.g. ExistsFn) to the clone so tests
-		// see consistent results between the rootless and root variants.
+		// Propagate override fields so tests that set them on the base
+		// mock see consistent behavior when code paths run on the root
+		// clone (real providers preserve fields across CloneAsRoot).
 		m.RootClone = &MockContainerManager{
-			Root:     true,
-			ExistsFn: m.ExistsFn,
+			Root:                   true,
+			ExistsFn:               m.ExistsFn,
+			ListContainersResult:   m.ListContainersResult,
+			InspectContainerResult: m.InspectContainerResult,
 		}
 	}
 	return m.RootClone
@@ -65,6 +74,9 @@ func (m *MockContainerManager) Enter(_ context.Context, options containermanager
 
 func (m *MockContainerManager) ListContainers(_ context.Context) ([]containermanager.Container, error) {
 	m.Spy.ListContainers = append(m.Spy.ListContainers, []any{})
+	if m.ListContainersResult != nil {
+		return m.ListContainersResult, nil
+	}
 	return []containermanager.Container{}, nil
 }
 
@@ -93,6 +105,9 @@ func (m *MockContainerManager) Stop(_ context.Context, containerNames []string, 
 
 func (m *MockContainerManager) InspectContainer(_ context.Context, containerName string) (*containermanager.InspectResult, error) {
 	m.Spy.InspectContainer = append(m.Spy.InspectContainer, []any{containerName})
+	if m.InspectContainerResult != nil {
+		return m.InspectContainerResult, nil
+	}
 	return &containermanager.InspectResult{}, nil
 }
 
