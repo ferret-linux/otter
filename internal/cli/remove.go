@@ -39,10 +39,6 @@ func newRmCommand(cfg *config.Values) *cli.Command {
 				Name:    "dry-run",
 				Aliases: []string{"d"},
 			},
-			&cli.BoolFlag{
-				Name:    "verbose",
-				Aliases: []string{"V"},
-			},
 		},
 
 		Action: func(ctx context.Context, cmd *cli.Command) error {

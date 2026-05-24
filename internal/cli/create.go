@@ -112,10 +112,6 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 				Aliases: []string{"d"},
 			},
 			&cli.BoolFlag{
-				Name:    "verbose",
-				Aliases: []string{"v"},
-			},
-			&cli.BoolFlag{
 				Name: "absolutely-disable-root-password-i-am-really-positively-sure",
 			},
 			&cli.BoolFlag{
