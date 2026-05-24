@@ -1,0 +1,22 @@
+{2}╭──────────────────────────────────────────────────────╮{R}
+{2}│{R}{1}⦿ Lock a container to prevent removal or upgrades     {R}{2}│{R}
+{2}├──────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Usage:{R}                                              {2}│{R}
+{2}│{R}  {5}otter lock my-box{R}                                   {2}│{R}
+{2}├──────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Options:{R}                                            {2}│{R}
+{2}│{R} {4}--root{R}    {2}┆{R} {4}-r{R}  {5}Lock a rootful container{R}            {2}│{R}
+{2}├──────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                             {2}│{R}
+{2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}              {2}│{R}
+{2}│{R} {4}--verbose{R} {2}┆{R} {4}-v{R}  {5}Show more verbose output{R}            {2}│{R}
+{2}├───────────┴──────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Notes:{R}                                              {2}│{R}
+{2}│{R} {5}Locked containers are skipped by 'remove' and{R}        {2}│{R}
+{2}│{R} {5}'upgrade'. Use 'otter unlock' to reverse.{R}            {2}│{R}
+{2}│{R} {5}Container must be running to lock.{R}                   {2}│{R}
+{2}├──────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ See also:{R}                                           {2}│{R}
+{2}│{R} {5}Lock state is stored inside the container at{R}         {2}│{R}
+{2}│{R} {5}/usr/lib/otter/container.lock{R}                        {2}│{R}
+{2}╰──────────────────────────────────────────────────────╯{R}

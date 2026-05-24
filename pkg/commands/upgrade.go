@@ -88,6 +88,13 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 	var lastErr error
 
 	for _, name := range containerNames {
+		if isLocked(ctx, c.containerManager, name) {
+			if opts.All || opts.Running {
+				ui.DefaultLogger.Warn("'%s' is locked, skipping", name)
+				continue
+			}
+			return fmt.Errorf("'%s' is locked, run 'otter unlock %s' first", name, name)
+		}
 		if err := c.upgradeContainer(ctx, name, opts.DryRun); err != nil {
 			lastErr = fmt.Errorf("failed while upgrading %s: %w", name, err)
 			continue

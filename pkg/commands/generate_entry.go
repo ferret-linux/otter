@@ -310,5 +310,7 @@ func (c *GenerateEntryCommand) readDistroID(ctx context.Context, containerName s
 		}
 	}
 
+	_ = scanner.Err()
+
 	return ""
 }

@@ -70,6 +70,14 @@ func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, 
 
 	var removedOtterContainers []containermanager.Container
 	for _, currentOtterContainer := range otterContainersToRemove {
+		if isLocked(ctx, c.containerManager, currentOtterContainer.Name) {
+			if options.All {
+				ui.DefaultLogger.Warn("'%s' is locked, skipping", currentOtterContainer.Name)
+				continue
+			}
+			ui.DefaultLogger.Error("'%s' is locked, run 'otter unlock %s' first", currentOtterContainer.Name, currentOtterContainer.Name)
+			continue
+		}
 		err := c.removeContainer(ctx, currentOtterContainer, options.Force, options.NoTTY, options.Verbose, userHome, options.DryRun)
 		if err != nil {
 			ui.DefaultLogger.Error("failed deleting %s: %s", currentOtterContainer.Name, err)

@@ -22,4 +22,5 @@
 {2}├───────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                        {2}│{R}
 {2}│{R}  {5}Rootful containers need '--root' for 'upgrade'.{R}  {2}│{R}
+{2}│{R}  {5}Locked containers are skipped. Use 'otter unlock'.{R}{2}│{R}
 {2}╰───────────────────────────────────────────────────╯{R}
