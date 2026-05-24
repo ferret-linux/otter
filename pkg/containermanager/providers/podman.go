@@ -766,6 +766,16 @@ func (p *Podman) CopyFromContainer(ctx context.Context, containerName string, sr
 	return err
 }
 
+func (p *Podman) WriteToContainer(ctx context.Context, containerName string, srcPath string, destPath string) error {
+	_, err := p.run(ctx, []string{"cp", srcPath, containerName + ":" + destPath}, runOptions{})
+	return err
+}
+
+func (p *Podman) DeleteFromContainer(ctx context.Context, containerName string, filePath string) error {
+	_, err := p.run(ctx, []string{"exec", containerName, "rm", "-rf", filePath}, runOptions{})
+	return err
+}
+
 func (p *Podman) InspectContainer(ctx context.Context, containerName string) (*containermanager.InspectResult, error) {
 	config := containermanager.InspectResult{}
 	args := []string{"inspect", "--type", "container", "--format", "json", containerName}

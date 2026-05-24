@@ -610,6 +610,16 @@ func (d *Docker) CopyFromContainer(ctx context.Context, containerName string, sr
 	return err
 }
 
+func (d *Docker) WriteToContainer(ctx context.Context, containerName string, srcPath string, destPath string) error {
+	_, err := d.run(ctx, []string{"cp", srcPath, containerName + ":" + destPath}, runOptions{})
+	return err
+}
+
+func (d *Docker) DeleteFromContainer(ctx context.Context, containerName string, filePath string) error {
+	_, err := d.run(ctx, []string{"exec", containerName, "rm", "-rf", filePath}, runOptions{})
+	return err
+}
+
 func parseContainerList(output string) ([]containermanager.Container, error) {
 	var containers []containermanager.Container
 

@@ -129,3 +129,11 @@ func (m *MockContainerManager) PullImage(_ context.Context, imageName string, pl
 func (m *MockContainerManager) CopyFromContainer(_ context.Context, _ string, _ string, _ string) error {
 	return nil
 }
+
+func (m *MockContainerManager) WriteToContainer(_ context.Context, _ string, _ string, _ string) error {
+	return nil
+}
+
+func (m *MockContainerManager) DeleteFromContainer(_ context.Context, _ string, _ string) error {
+	return nil
+}

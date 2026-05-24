@@ -396,6 +396,16 @@ func (n *Nerdctl) CopyFromContainer(ctx context.Context, containerName string, s
 	return err
 }
 
+func (n *Nerdctl) WriteToContainer(ctx context.Context, containerName string, srcPath string, destPath string) error {
+	_, err := n.run(ctx, []string{"cp", srcPath, containerName + ":" + destPath}, runOptions{})
+	return err
+}
+
+func (n *Nerdctl) DeleteFromContainer(ctx context.Context, containerName string, filePath string) error {
+	_, err := n.run(ctx, []string{"exec", containerName, "rm", "-rf", filePath}, runOptions{})
+	return err
+}
+
 func (n *Nerdctl) InspectContainer(ctx context.Context, containerName string) (*containermanager.InspectResult, error) {
 	config := containermanager.InspectResult{}
 	args := []string{"container", "inspect", "--format", "json", containerName}

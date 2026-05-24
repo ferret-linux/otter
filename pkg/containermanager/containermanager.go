@@ -103,6 +103,10 @@ type ContainerManager interface {
 	Commit(ctx context.Context, containerID string, imageTag string) error
 	// CopyFromContainer copies a file from the container filesystem to the host.
 	CopyFromContainer(ctx context.Context, containerName string, srcPath string, destPath string) error
+	// WriteToContainer copies a file from the host into the container filesystem.
+	WriteToContainer(ctx context.Context, containerName string, srcPath string, destPath string) error
+	// DeleteFromContainer removes a file or directory from inside the container filesystem.
+	DeleteFromContainer(ctx context.Context, containerName string, filePath string) error
 }
 
 func PathExists(path string) bool {
