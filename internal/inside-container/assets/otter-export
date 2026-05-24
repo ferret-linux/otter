@@ -553,7 +553,11 @@ export_application()
 		if [ ! -e "${icon_home_directory}/$(basename "${icon_file}")" ] && [ -e "$(realpath "${icon_file}")" ]; then
 			cp -rf "$(realpath "${icon_file}")" "${icon_home_directory}"
 		fi
-		icons_to_remove="${icons_to_remove:+${icons_to_remove} }$(echo "${icon_home_directory}/$(basename "${icon_file}")" | sed 's|/run/host||g;s|//|/|g')"
+		_icon_path="$(echo "${icon_home_directory}/$(basename "${icon_file}")" | sed 's|/run/host||g;s|//|/|g')"
+		case " ${icons_to_remove} " in
+			*" ${_icon_path} "*) ;;
+			*) icons_to_remove="${icons_to_remove:+${icons_to_remove} }${_icon_path}" ;;
+		esac
 	done
 
 	# create desktop files for the otter
