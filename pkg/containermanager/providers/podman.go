@@ -767,6 +767,10 @@ func (p *Podman) CopyFromContainer(ctx context.Context, containerName string, sr
 }
 
 func (p *Podman) WriteToContainer(ctx context.Context, containerName string, srcPath string, destPath string) error {
+	dir := destPath[:strings.LastIndex(destPath, "/")]
+	if _, err := p.run(ctx, []string{"exec", containerName, "mkdir", "-p", dir}, runOptions{}); err != nil {
+		return fmt.Errorf("failed to create directory %s: %w", dir, err)
+	}
 	_, err := p.run(ctx, []string{"cp", srcPath, containerName + ":" + destPath}, runOptions{})
 	return err
 }

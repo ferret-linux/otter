@@ -611,6 +611,10 @@ func (d *Docker) CopyFromContainer(ctx context.Context, containerName string, sr
 }
 
 func (d *Docker) WriteToContainer(ctx context.Context, containerName string, srcPath string, destPath string) error {
+	dir := destPath[:strings.LastIndex(destPath, "/")]
+	if _, err := d.run(ctx, []string{"exec", containerName, "mkdir", "-p", dir}, runOptions{}); err != nil {
+		return fmt.Errorf("failed to create directory %s: %w", dir, err)
+	}
 	_, err := d.run(ctx, []string{"cp", srcPath, containerName + ":" + destPath}, runOptions{})
 	return err
 }

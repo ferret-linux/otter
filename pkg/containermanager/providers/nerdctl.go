@@ -397,6 +397,10 @@ func (n *Nerdctl) CopyFromContainer(ctx context.Context, containerName string, s
 }
 
 func (n *Nerdctl) WriteToContainer(ctx context.Context, containerName string, srcPath string, destPath string) error {
+	dir := destPath[:strings.LastIndex(destPath, "/")]
+	if _, err := n.run(ctx, []string{"exec", containerName, "mkdir", "-p", dir}, runOptions{}); err != nil {
+		return fmt.Errorf("failed to create directory %s: %w", dir, err)
+	}
 	_, err := n.run(ctx, []string{"cp", srcPath, containerName + ":" + destPath}, runOptions{})
 	return err
 }
