@@ -23,11 +23,6 @@ func newAssembleCommand(cfg *config.Values) *cli.Command {
 		Name:    "name",
 		Aliases: []string{"n"},
 	}
-	dryRunFlag := &cli.BoolFlag{
-		Name:    "dry-run",
-		Aliases: []string{"d"},
-	}
-
 	return &cli.Command{
 		Name: "assemble",
 		Commands: []*cli.Command{
@@ -40,7 +35,6 @@ func newAssembleCommand(cfg *config.Values) *cli.Command {
 						Name:    "replace",
 						Aliases: []string{"R"},
 					},
-					dryRunFlag,
 				},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
 					return assembleAction(ctx, cmd, cfg, false)
@@ -52,7 +46,6 @@ func newAssembleCommand(cfg *config.Values) *cli.Command {
 				Flags: []cli.Flag{
 					fileFlag,
 					nameFlag,
-					dryRunFlag,
 				},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
 					return assembleAction(ctx, cmd, cfg, true)
@@ -101,6 +94,7 @@ func assembleAction(ctx context.Context, cmd *cli.Command, cfg *config.Values, d
 		Items:   manifest,
 		Boxname: cmd.String("name"),
 		DryRun:  cmd.Bool("dry-run"),
+		Verbose: cmd.Bool("verbose"),
 	}
 	if deleteFlag {
 		opts.Delete = true

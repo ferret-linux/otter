@@ -30,10 +30,6 @@ func newUpgradeCommand(cfg *config.Values) *cli.Command {
 				Name:    "yes",
 				Aliases: []string{"Y"},
 			},
-			&cli.BoolFlag{
-				Name:    "dry-run",
-				Aliases: []string{"d"},
-			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			return upgradeAction(ctx, cmd, cfg)
@@ -53,6 +49,7 @@ func upgradeAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) er
 		Running:        cmd.Bool("running"),
 		NonInteractive: cmd.Bool("yes"),
 		DryRun:         cmd.Bool("dry-run"),
+		Verbose:        cmd.Bool("verbose"),
 	}
 
 	progress := ui.NewProgress(os.Stderr)

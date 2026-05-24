@@ -20,7 +20,7 @@ func newGenerateEntryCommand(cfg *config.Values) *cli.Command {
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "delete",
-				Aliases: []string{"d"},
+				Aliases: []string{"del"},
 			},
 			&cli.StringFlag{
 				Name:    "icon",
@@ -52,6 +52,7 @@ func generateEntryAction(ctx context.Context, cmd *cli.Command, cfg *config.Valu
 
 	opts := &commands.GenerateEntryOptions{
 		Verbose:   cmd.Bool("verbose"),
+		DryRun:    cmd.Bool("dry-run"),
 		Delete:    cmd.Bool("delete"),
 		Root:      cmd.Bool("root"),
 		OtterPath: otterPath,

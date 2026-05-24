@@ -19,6 +19,7 @@ type UpgradeOptions struct {
 	Running        bool
 	NonInteractive bool
 	DryRun         bool
+	Verbose        bool
 }
 
 type UpgradeCommand struct {
@@ -88,6 +89,9 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 	var lastErr error
 
 	for _, name := range containerNames {
+		if opts.Verbose {
+			ui.DefaultLogger.Info("upgrading '%s'", name)
+		}
 		if isLocked(ctx, c.containerManager, name) {
 			if opts.All || opts.Running {
 				ui.DefaultLogger.Warn("'%s' is locked, skipping", name)

@@ -27,10 +27,6 @@ func newStopCommand(cfg *config.Values) *cli.Command {
 				Name:    "yes",
 				Aliases: []string{"Y"},
 			},
-			&cli.BoolFlag{
-				Name:    "dry-run",
-				Aliases: []string{"d"},
-			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			return stopAction(ctx, cmd, cfg)
@@ -53,6 +49,7 @@ func stopAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error
 		NonInteractive: nonInteractive,
 		All:            all,
 		DryRun:         cmd.Bool("dry-run"),
+		Verbose:        cmd.Bool("verbose"),
 	}
 
 	prompter := ui.NewPrompter(*bufio.NewReader(os.Stdin), os.Stdout)

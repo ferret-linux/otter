@@ -475,6 +475,10 @@ func (d *Docker) run(ctx context.Context, args []string, opts runOptions) (strin
 		return "", nil
 	}
 
+	if d.verbose {
+		ui.DefaultLogger.Info("%s %s", command, strings.Join(args, " "))
+	}
+
 	cmd := exec.CommandContext(ctx, command, args...)
 
 	if opts.Interactive {

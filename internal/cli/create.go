@@ -108,10 +108,6 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 				Name: "no-entry",
 			},
 			&cli.BoolFlag{
-				Name:    "dry-run",
-				Aliases: []string{"d"},
-			},
-			&cli.BoolFlag{
 				Name: "absolutely-disable-root-password-i-am-really-positively-sure",
 			},
 			&cli.BoolFlag{
@@ -161,6 +157,7 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 		ContainerShell:          cmd.String("shell"),
 		ContainerPlatform:       cmd.String("platform"),
 		DryRun:                  cmd.Bool("dry-run"),
+		Verbose:                 cmd.Bool("verbose"),
 		GenerateEntry:           !cmd.Bool("no-entry"),
 		Rootful:                 cmd.Bool("root"),
 		ContainerAlwaysPull:     cmd.Bool("pull"),

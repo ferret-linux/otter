@@ -31,6 +31,10 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 				Aliases: []string{"v"},
 				Value:   cfg.Verbose,
 			},
+			&cli.BoolFlag{
+				Name:    "dry-run",
+				Aliases: []string{"d"},
+			},
 			&cli.StringFlag{
 				Name:   "sudo-command",
 				Hidden: true,

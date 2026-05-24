@@ -14,6 +14,8 @@ var ErrNotLocked = errors.New("container is not locked")
 
 type UnlockOptions struct {
 	ContainerName string
+	Verbose       bool
+	DryRun        bool
 }
 
 type UnlockCommand struct {
@@ -35,6 +37,15 @@ func (c *UnlockCommand) Execute(ctx context.Context, opts UnlockOptions) error {
 
 	if !isLocked(ctx, c.containerManager, opts.ContainerName) {
 		return fmt.Errorf("'%s' %w", opts.ContainerName, ErrNotLocked)
+	}
+
+	if opts.Verbose {
+		ui.DefaultLogger.Info("removing lock file from '%s' at %s", opts.ContainerName, lockFilePath)
+	}
+
+	if opts.DryRun {
+		ui.DefaultLogger.Info("would remove lock file from '%s' at %s", opts.ContainerName, lockFilePath)
+		return nil
 	}
 
 	if err := c.containerManager.DeleteFromContainer(ctx, opts.ContainerName, lockFilePath); err != nil {

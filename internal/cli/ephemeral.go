@@ -71,6 +71,7 @@ func ephemeralAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) 
 			Rootful:                 cmd.Bool("root"),
 		},
 		DryRun:        cmd.Bool("dry-run"),
+		Verbose:       cmd.Bool("verbose"),
 		CustomCommand: cmd.Args().Slice(),
 	}
 

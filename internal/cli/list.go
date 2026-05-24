@@ -32,6 +32,14 @@ func newListCommand(cfg *config.Values) *cli.Command {
 }
 
 func listAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
+	if cmd.Bool("verbose") {
+		ui.DefaultLogger.Info("bro what kind of verbosity do you need here lmao")
+	}
+
+	if cmd.Bool("dry-run") {
+		ui.DefaultLogger.Info("chat are we fr, bro wants dry-run on list")
+	}
+
 	containerManager, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 	if !ok {
 		return errors.New("container manager not found in context")

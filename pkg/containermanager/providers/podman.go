@@ -479,6 +479,10 @@ func (p *Podman) run(ctx context.Context, args []string, opts runOptions) (strin
 		return "", nil
 	}
 
+	if p.verbose {
+		ui.DefaultLogger.Info("%s %s", command, strings.Join(args, " "))
+	}
+
 	cmd := exec.CommandContext(ctx, command, args...)
 
 	if opts.Interactive {

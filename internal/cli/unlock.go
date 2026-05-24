@@ -32,6 +32,8 @@ func unlockAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 	unlockCmd := commands.NewUnlockCommand(cfg, cm)
 	if err := unlockCmd.Execute(ctx, commands.UnlockOptions{
 		ContainerName: cmd.Args().First(),
+		Verbose:       cmd.Bool("verbose"),
+		DryRun:        cmd.Bool("dry-run"),
 	}); err != nil {
 		return fmt.Errorf("failed to unlock container: %w", err)
 	}

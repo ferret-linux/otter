@@ -513,6 +513,10 @@ func (n *Nerdctl) run(ctx context.Context, args []string, opts runOptions) (stri
 		return "", nil
 	}
 
+	if n.verbose {
+		ui.DefaultLogger.Info("%s %s", command, strings.Join(args, " "))
+	}
+
 	cmd := exec.CommandContext(ctx, command, args...)
 
 	if opts.Interactive {

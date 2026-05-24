@@ -111,8 +111,9 @@ type CreateOptions struct {
 	ContainerHomePrefix     string
 	Init                    bool
 
-	Nvidia bool
-	DryRun bool
+	Nvidia  bool
+	DryRun  bool
+	Verbose bool
 
 	GenerateEntry bool
 	Rootful       bool
@@ -166,6 +167,10 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 
 	if err := c.askPullImage(ctx, containerImage, opts); err != nil {
 		return nil, err
+	}
+
+	if opts.Verbose {
+		ui.DefaultLogger.Info("creating '%s' from image '%s' with hostname '%s'", containerName, containerImage, containerHostname)
 	}
 
 	c.progress.Next("Creating '%s' using image %s", containerName, containerImage)

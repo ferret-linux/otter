@@ -77,14 +77,23 @@ func (ac *AssembleCommand) Execute(ctx context.Context, opts AssembleOptions) er
 	for _, item := range items {
 		switch {
 		case opts.Delete:
+			if opts.Verbose {
+				ui.DefaultLogger.Info("deleting '%s'", item.Name)
+			}
 			if err := ac.deleteItem(ctx, item, opts.DryRun); err != nil {
 				return fmt.Errorf("failed to delete item '%s': %w", item.Name, err)
 			}
 		case opts.Replace:
+			if opts.Verbose {
+				ui.DefaultLogger.Info("replacing '%s'", item.Name)
+			}
 			if err := ac.replaceItem(ctx, item, opts.DryRun); err != nil {
 				return fmt.Errorf("failed to replace item '%s': %w", item.Name, err)
 			}
 		default:
+			if opts.Verbose {
+				ui.DefaultLogger.Info("creating '%s'", item.Name)
+			}
 			if err := ac.createItem(ctx, item, opts.DryRun); err != nil {
 				return fmt.Errorf("failed to create item '%s': %w", item.Name, err)
 			}

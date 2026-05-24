@@ -23,10 +23,6 @@ func newEnterCommand(cfg *config.Values) *cli.Command {
 				Aliases: []string{"n"},
 			},
 			&cli.BoolFlag{
-				Name:    "dry-run",
-				Aliases: []string{"d"},
-			},
-			&cli.BoolFlag{
 				Name:    "clean-path",
 				Aliases: []string{"c"},
 			},
@@ -47,8 +43,6 @@ func newEnterCommand(cfg *config.Values) *cli.Command {
 				Aliases: []string{"nw"},
 			},
 		},
-		UseShortOptionHandling: true,
-		SkipFlagParsing:        false,
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			return enterAction(ctx, cmd, cfg)
 		},

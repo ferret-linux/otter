@@ -32,6 +32,8 @@ func lockAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error
 	lockCmd := commands.NewLockCommand(cfg, cm)
 	if err := lockCmd.Execute(ctx, commands.LockOptions{
 		ContainerName: cmd.Args().First(),
+		Verbose:       cmd.Bool("verbose"),
+		DryRun:        cmd.Bool("dry-run"),
 	}); err != nil {
 		return fmt.Errorf("failed to lock container: %w", err)
 	}

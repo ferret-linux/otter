@@ -20,6 +20,7 @@ type EphemeralOptions struct {
 	CreateOptions
 
 	DryRun        bool
+	Verbose       bool
 	CustomCommand []string
 }
 
@@ -54,6 +55,10 @@ func (c *EphemeralCommand) Execute(ctx context.Context, opts EphemeralOptions) e
 			return fmt.Errorf("ephemeral: %w", err)
 		}
 		name = generatedName
+	}
+
+	if opts.Verbose {
+		ui.DefaultLogger.Info("creating ephemeral container '%s' from image '%s'", name, opts.ContainerImage)
 	}
 
 	// create ephemeral container

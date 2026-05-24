@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
@@ -22,6 +23,7 @@ type StopOptions struct {
 	NonInteractive bool
 	All            bool
 	DryRun         bool
+	Verbose        bool
 }
 
 var ErrEmptyContainerList = errors.New("cannot find containers to stop")
@@ -64,6 +66,10 @@ func (c *StopCommand) Execute(ctx context.Context, opts *StopOptions) error {
 
 	if !proceed {
 		return ErrStopAbortedByUserError
+	}
+
+	if opts.Verbose {
+		ui.DefaultLogger.Info("stopping: %s", strings.Join(containerNames, ", "))
 	}
 
 	err := c.containerManager.Stop(ctx, containerNames, opts.DryRun)
