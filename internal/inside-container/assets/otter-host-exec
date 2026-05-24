@@ -39,7 +39,7 @@ host_spawn_version="v1.6.0"
 download_command=""
 sudo_command=""
 verbose=0
-version="0.0.0"
+version="1.0.0"
 
 # show_help will print usage to stdout.
 # Arguments:
