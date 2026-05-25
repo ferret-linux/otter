@@ -516,7 +516,6 @@ func (d *Docker) run(ctx context.Context, args []string, opts runOptions) (strin
 func (d *Docker) Enter(
 	ctx context.Context,
 	options containermanager.EnterOptions,
-	progress *ui.Progress,
 ) error {
 	userEnv := userenv.LoadUserEnvironment(ctx)
 	user := userEnv.User
@@ -545,18 +544,7 @@ func (d *Docker) Enter(
 
 	inspectResult, err := d.InspectContainer(ctx, options.ContainerName)
 	if err != nil || inspectResult.ContainerStatus != containermanager.RunningStatus {
-		logTimestamp := containermanager.TimestampNow()
-
-		if err := d.startContainer(ctx, options.ContainerName, progress); err != nil {
-			return err
-		}
-
-		// Monitor logs for setup completion
-		if err := d.waitForSetup(ctx, options.ContainerName, logTimestamp, progress); err != nil {
-			return err
-		}
-
-		progress.Finalize("Container Setup Complete!")
+		return fmt.Errorf("container '%s' is not running, use 'otter start' first", options.ContainerName)
 	}
 
 	if _, err := d.run(ctx, append(command, commandArgs...), runOptions{Interactive: true}); err != nil {
@@ -830,15 +818,26 @@ func (d *Docker) generateEnterCommand(
 	return cmd, containerConfig, nil
 }
 
-func (d *Docker) startContainer(ctx context.Context, containerName string, progress *ui.Progress) error {
-	// Start the container
-	_, err := d.run(ctx, []string{"start", containerName}, runOptions{Interactive: true})
+func (d *Docker) Start(ctx context.Context, containerName string, dryRun bool) error {
+	if dryRun {
+		ui.DefaultLogger.Info("%s start %s", d.Name(), containerName)
+		return nil
+	}
+
+	inspectResult, err := d.InspectContainer(ctx, containerName)
+	if err == nil && inspectResult.ContainerStatus == containermanager.RunningStatus {
+		return fmt.Errorf("container '%s' is already running", containerName)
+	}
+
+	progress := ui.NewProgress(os.Stderr)
+	logTimestamp := containermanager.TimestampNow()
+
+	_, err = d.run(ctx, []string{"start", containerName}, runOptions{Interactive: true})
 	if err != nil {
 		return fmt.Errorf("failed to start container: %w", err)
 	}
 
-	// Check if container is running after start
-	inspectResult, err := d.InspectContainer(ctx, containerName)
+	inspectResult, err = d.InspectContainer(ctx, containerName)
 	if err != nil || inspectResult.ContainerStatus != containermanager.RunningStatus {
 		logs, err := d.run(ctx, []string{"logs", containerName}, runOptions{})
 		if err != nil {
@@ -857,11 +856,15 @@ func (d *Docker) startContainer(ctx context.Context, containerName string, progr
 	}
 	cacheDir = filepath.Join(cacheDir, "otter")
 
-	// Create cache directory
 	if err := os.MkdirAll(cacheDir, 0755); err != nil { //nolint:gosec // we need this writable by everybody
 		return fmt.Errorf("failed to create cache directory: %w", err)
 	}
 
+	if err := d.waitForSetup(ctx, containerName, logTimestamp, progress); err != nil {
+		return err
+	}
+
+	progress.Finalize("Container Setup Complete!")
 	return nil
 }
 

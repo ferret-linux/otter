@@ -520,7 +520,6 @@ func (p *Podman) run(ctx context.Context, args []string, opts runOptions) (strin
 func (p *Podman) Enter(
 	ctx context.Context,
 	options containermanager.EnterOptions,
-	progress *ui.Progress,
 ) error {
 	userEnv := userenv.LoadUserEnvironment(ctx)
 	user := userEnv.User
@@ -549,18 +548,7 @@ func (p *Podman) Enter(
 
 	inspectResult, err := p.InspectContainer(ctx, options.ContainerName)
 	if err != nil || inspectResult.ContainerStatus != containermanager.RunningStatus {
-		logTimestamp := containermanager.TimestampNow()
-
-		if err := p.startContainer(ctx, options.ContainerName, progress); err != nil {
-			return err
-		}
-
-		// Monitor logs for setup completion
-		if err := p.waitForSetup(ctx, options.ContainerName, logTimestamp, progress); err != nil {
-			return err
-		}
-
-		progress.Finalize("Container Setup Complete!")
+		return fmt.Errorf("container '%s' is not running, use 'otter start' first", options.ContainerName)
 	}
 
 	if _, err := p.run(ctx, append(command, commandArgs...), runOptions{Interactive: true}); err != nil {
@@ -908,15 +896,26 @@ func (p *Podman) generateEnterCommand(
 	return cmd, containerConfig, nil
 }
 
-func (p *Podman) startContainer(ctx context.Context, containerName string, progress *ui.Progress) error {
-	// Start the container
-	_, err := p.run(ctx, []string{"start", containerName}, runOptions{Interactive: true})
+func (p *Podman) Start(ctx context.Context, containerName string, dryRun bool) error {
+	if dryRun {
+		ui.DefaultLogger.Info("%s start %s", p.Name(), containerName)
+		return nil
+	}
+
+	inspectResult, err := p.InspectContainer(ctx, containerName)
+	if err == nil && inspectResult.ContainerStatus == containermanager.RunningStatus {
+		return fmt.Errorf("container '%s' is already running", containerName)
+	}
+
+	progress := ui.NewProgress(os.Stderr)
+	logTimestamp := containermanager.TimestampNow()
+
+	_, err = p.run(ctx, []string{"start", containerName}, runOptions{Interactive: true})
 	if err != nil {
 		return fmt.Errorf("failed to start container: %w", err)
 	}
 
-	// Check if container is running after start
-	inspectResult, err := p.InspectContainer(ctx, containerName)
+	inspectResult, err = p.InspectContainer(ctx, containerName)
 	if err != nil || inspectResult.ContainerStatus != containermanager.RunningStatus {
 		logs, err := p.run(ctx, []string{"logs", containerName}, runOptions{})
 		if err != nil {
@@ -935,11 +934,15 @@ func (p *Podman) startContainer(ctx context.Context, containerName string, progr
 	}
 	cacheDir = filepath.Join(cacheDir, "otter")
 
-	// Create cache directory
 	if err := os.MkdirAll(cacheDir, 0755); err != nil { //nolint:gosec // we need this writable by everybody
 		return fmt.Errorf("failed to create cache directory: %w", err)
 	}
 
+	if err := p.waitForSetup(ctx, containerName, logTimestamp, progress); err != nil {
+		return err
+	}
+
+	progress.Finalize("Container Setup Complete!")
 	return nil
 }
 

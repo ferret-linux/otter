@@ -7,8 +7,6 @@ import (
 	"regexp"
 	"strings"
 	"time"
-
-	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 const (
@@ -91,12 +89,13 @@ type ContainerManager interface {
 	// CloneAsRoot returns a copy of the manager configured to run in root
 	// mode. The original instance is not modified.
 	CloneAsRoot() ContainerManager
-	Enter(ctx context.Context, options EnterOptions, progress *ui.Progress) error
+	Enter(ctx context.Context, options EnterOptions) error
 	ListContainers(ctx context.Context) ([]Container, error)
 	Create(ctx context.Context, opts CreateOptions) error
 	Remove(ctx context.Context, containerName string, opts RmOptions) error
 	Exists(ctx context.Context, containerName string) bool
 	ImageExists(ctx context.Context, imageName string) bool
+	Start(ctx context.Context, containerName string, dryRun bool) error
 	Stop(ctx context.Context, containerNames []string, dryRun bool) error
 	InspectContainer(ctx context.Context, containerName string) (*InspectResult, error)
 	PullImage(ctx context.Context, imageName string, platform string, dryRun bool) error

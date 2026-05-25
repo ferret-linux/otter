@@ -452,7 +452,6 @@ func (n *Nerdctl) ListContainersByName(ctx context.Context) ([]containermanager.
 func (n *Nerdctl) Enter(
 	ctx context.Context,
 	options containermanager.EnterOptions,
-	progress *ui.Progress,
 ) error {
 	userEnv := userenv.LoadUserEnvironment(ctx)
 	user := userEnv.User
@@ -481,17 +480,7 @@ func (n *Nerdctl) Enter(
 
 	inspectResult, err := n.InspectContainer(ctx, options.ContainerName)
 	if err != nil || inspectResult.ContainerStatus != containermanager.RunningStatus {
-		logTimestamp := containermanager.TimestampNow()
-
-		if err := n.startContainer(ctx, options.ContainerName, progress); err != nil {
-			return err
-		}
-
-		if err := n.waitForSetup(ctx, options.ContainerName, logTimestamp, progress); err != nil {
-			return err
-		}
-
-		progress.Finalize("Container Setup Complete!")
+		return fmt.Errorf("container '%s' is not running, use 'otter start' first", options.ContainerName)
 	}
 
 	if _, err := n.run(ctx, append(command, commandArgs...), runOptions{Interactive: true}); err != nil {
@@ -627,13 +616,26 @@ func (n *Nerdctl) generateEnterCommand(
 	return cmd, containerConfig, nil
 }
 
-func (n *Nerdctl) startContainer(ctx context.Context, containerName string, progress *ui.Progress) error {
-	_, err := n.run(ctx, []string{"start", containerName}, runOptions{Interactive: true})
+func (n *Nerdctl) Start(ctx context.Context, containerName string, dryRun bool) error {
+	if dryRun {
+		ui.DefaultLogger.Info("%s start %s", n.Name(), containerName)
+		return nil
+	}
+
+	inspectResult, err := n.InspectContainer(ctx, containerName)
+	if err == nil && inspectResult.ContainerStatus == containermanager.RunningStatus {
+		return fmt.Errorf("container '%s' is already running", containerName)
+	}
+
+	progress := ui.NewProgress(os.Stderr)
+	logTimestamp := containermanager.TimestampNow()
+
+	_, err = n.run(ctx, []string{"start", containerName}, runOptions{Interactive: true})
 	if err != nil {
 		return fmt.Errorf("failed to start container: %w", err)
 	}
 
-	inspectResult, err := n.InspectContainer(ctx, containerName)
+	inspectResult, err = n.InspectContainer(ctx, containerName)
 	if err != nil || inspectResult.ContainerStatus != containermanager.RunningStatus {
 		logs, err := n.run(ctx, []string{"logs", containerName}, runOptions{})
 		if err != nil {
@@ -656,6 +658,11 @@ func (n *Nerdctl) startContainer(ctx context.Context, containerName string, prog
 		return fmt.Errorf("failed to create cache directory: %w", err)
 	}
 
+	if err := n.waitForSetup(ctx, containerName, logTimestamp, progress); err != nil {
+		return err
+	}
+
+	progress.Finalize("Container Setup Complete!")
 	return nil
 }
 
