@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	insideContainer "github.com/ferret-linux/otter/internal/inside-container"
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ui"
@@ -109,6 +110,16 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 }
 
 func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string, dryRun bool) error {
+	if !dryRun {
+		if _, updated, err := insideContainer.ProvisionScripts(); err != nil {
+			ui.DefaultLogger.Warn("failed to provision scripts: %s", err)
+		} else if updated {
+			ui.DefaultLogger.Info("otter scripts updated")
+		} else {
+			ui.DefaultLogger.Info("otter scripts already up to date")
+		}
+	}
+
 	enterOpts := EnterOptions{
 		ContainerName: name,
 		CustomCommand: []string{"sh", "-c", upgradeScript},

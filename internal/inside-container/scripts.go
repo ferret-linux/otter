@@ -18,12 +18,12 @@ var initScript string
 var exportScripts string
 
 // ProvisionScripts ensures that all necessary scripts are created in the host directory.
-// It returns the path to the directory where the scripts are stored.
-func ProvisionScripts() (string, error) {
+// It returns the path to the directory where the scripts are stored, and whether any scripts were updated.
+func ProvisionScripts() (string, bool, error) {
 	dir := hostDir()
 	//nolint:gosec // 0755 is the same as from distrobox v1, let's keep it for compatibility
 	if err := os.MkdirAll(dir, 0755); err != nil {
-		return "", fmt.Errorf("failed to create scripts directory: %w", err)
+		return "", false, fmt.Errorf("failed to create scripts directory: %w", err)
 	}
 
 	scripts := []struct {
@@ -35,6 +35,7 @@ func ProvisionScripts() (string, error) {
 		{"otter-export", exportScripts},
 	}
 
+	updated := false
 	for _, script := range scripts {
 		destFilePath := filepath.Join(dir, script.name)
 		newHash := sha256.Sum256([]byte(script.content))
@@ -45,11 +46,12 @@ func ProvisionScripts() (string, error) {
 		}
 		//nolint:gosec // 0755 is the same as from distrobox v1, let's keep it for compatibility
 		if err := os.WriteFile(destFilePath, []byte(script.content), 0755); err != nil {
-			return "", fmt.Errorf("failed to write script %s: %w", script.name, err)
+			return "", false, fmt.Errorf("failed to write script %s: %w", script.name, err)
 		}
+		updated = true
 	}
 
-	return dir, nil
+	return dir, updated, nil
 }
 
 // hostDir returns the directory path where the scripts should be stored.

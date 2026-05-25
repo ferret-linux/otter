@@ -15,7 +15,7 @@ func TestProvisionScripts_CustomDir(t *testing.T) {
 	tmpDir := t.TempDir()
 	t.Setenv("OTR_SCRIPTS_DIR", tmpDir)
 
-	scriptsDir, err := insideContainer.ProvisionScripts()
+	scriptsDir, _, err := insideContainer.ProvisionScripts()
 	require.NoError(t, err, "ProvisionScripts failed")
 	defer os.RemoveAll(scriptsDir)
 
@@ -37,7 +37,7 @@ func TestProvisionScripts_HomeDir(t *testing.T) {
 	tmpDir := t.TempDir()
 	t.Setenv("HOME", tmpDir)
 
-	scriptsDir, err := insideContainer.ProvisionScripts()
+	scriptsDir, _, err := insideContainer.ProvisionScripts()
 	require.NoError(t, err, "ProvisionScripts failed")
 	defer os.RemoveAll(scriptsDir)
 
