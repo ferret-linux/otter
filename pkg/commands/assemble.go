@@ -34,9 +34,11 @@ type AssembleCommand struct {
 	cfg           *config.Values
 	createCmd     *CreateCommand
 	rmCmd         *RmCommand
+	startCmd      *StartCommand
 	enterCmd      *EnterCommand
 	createCmdRoot *CreateCommand
 	rmCmdRoot     *RmCommand
+	startCmdRoot  *StartCommand
 	enterCmdRoot  *EnterCommand
 	progress      *ui.Progress
 }
@@ -52,10 +54,12 @@ func NewAssembleCommand(
 		cfg:           cfg,
 		createCmd:     NewCreateCommand(cfg, cm, ui.NewDevNullProgress(), prompter),
 		rmCmd:         NewRmCommand(cfg, cm, prompter),
-		enterCmd:      NewEnterCommand(cfg, cm, progress),
+		startCmd:      NewStartCommand(cfg, cm),
+		enterCmd:      NewEnterCommand(cfg, cm),
 		createCmdRoot: NewCreateCommand(cfg, cmRoot, ui.NewDevNullProgress(), prompter),
 		rmCmdRoot:     NewRmCommand(cfg, cmRoot, prompter),
-		enterCmdRoot:  NewEnterCommand(cfg, cmRoot, progress),
+		startCmdRoot:  NewStartCommand(cfg, cmRoot),
+		enterCmdRoot:  NewEnterCommand(cfg, cmRoot),
 		progress:      progress,
 	}
 }
@@ -230,9 +234,15 @@ func (ac *AssembleCommand) joinHooks(hooks []string) string {
 }
 
 func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) error {
+	startCmd := ac.startCmd
 	enterCmd := ac.enterCmd
 	if item.Root {
+		startCmd = ac.startCmdRoot
 		enterCmd = ac.enterCmdRoot
+	}
+
+	if err := startCmd.Execute(ctx, &StartOptions{ContainerName: item.Name}); err != nil {
+		return err
 	}
 	if item.StartNow {
 		_, err := enterCmd.Execute(ctx, EnterOptions{

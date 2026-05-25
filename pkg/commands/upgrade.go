@@ -27,6 +27,7 @@ type UpgradeCommand struct {
 	cfg              *config.Values
 	containerManager containermanager.ContainerManager
 	listCmd          *ListCommand
+	startCmd         *StartCommand
 	enterCmd         *EnterCommand
 	prompter         *ui.Prompter
 }
@@ -44,7 +45,8 @@ func NewUpgradeCommand(
 		cfg:              cfg,
 		containerManager: cm,
 		listCmd:          NewListCommand(cfg, cm),
-		enterCmd:         NewEnterCommand(cfg, cm, progress),
+		startCmd:         NewStartCommand(cfg, cm),
+		enterCmd:         NewEnterCommand(cfg, cm),
 		prompter:         prompter,
 	}
 }
@@ -118,6 +120,13 @@ func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string, dryR
 		} else {
 			ui.DefaultLogger.Info("otter scripts already up to date")
 		}
+	}
+
+	if err := c.startCmd.Execute(ctx, &StartOptions{
+		ContainerName: name,
+		DryRun:        dryRun,
+	}); err != nil {
+		return err
 	}
 
 	enterOpts := EnterOptions{

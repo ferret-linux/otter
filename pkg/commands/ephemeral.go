@@ -28,6 +28,7 @@ type EphemeralCommand struct {
 	cfg              *config.Values
 	containerManager containermanager.ContainerManager
 	createCmd        *CreateCommand
+	startCmd         *StartCommand
 	enterCmd         *EnterCommand
 	rmCmd            *RmCommand
 }
@@ -42,7 +43,8 @@ func NewEphemeralCommand(
 		cfg:              cfg,
 		containerManager: cm,
 		createCmd:        NewCreateCommand(cfg, cm, progress, prompter),
-		enterCmd:         NewEnterCommand(cfg, cm, progress),
+		startCmd:         NewStartCommand(cfg, cm),
+		enterCmd:         NewEnterCommand(cfg, cm),
 		rmCmd:            NewRmCommand(cfg, cm, prompter),
 	}
 }
@@ -84,6 +86,13 @@ func (c *EphemeralCommand) Execute(ctx context.Context, opts EphemeralOptions) e
 			ui.DefaultLogger.Warn("%s: %s", name, rmErr)
 		}
 	}()
+
+	if err := c.startCmd.Execute(ctx, &StartOptions{
+		ContainerName: name,
+		DryRun:        opts.DryRun,
+	}); err != nil {
+		return fmt.Errorf("ephemeral: %w", err)
+	}
 
 	// enter into it
 	enterOpts := EnterOptions{
