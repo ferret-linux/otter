@@ -624,7 +624,8 @@ func (n *Nerdctl) Start(ctx context.Context, containerName string, dryRun bool) 
 
 	inspectResult, err := n.InspectContainer(ctx, containerName)
 	if err == nil && inspectResult.ContainerStatus == containermanager.RunningStatus {
-		return fmt.Errorf("container '%s' is already running", containerName)
+		ui.DefaultLogger.Info("container '%s' is already running", containerName)
+		return nil
 	}
 
 	progress := ui.NewProgress(os.Stderr)
