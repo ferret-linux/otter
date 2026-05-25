@@ -4,6 +4,7 @@
 {2}│{R}{3}▸ Commands:{R}                                           {2}│{R}
 {2}│{R}  {0}lock{R}                 {5}Lock a container{R}               {2}│{R}
 {2}│{R}  {0}stop{R}                 {5}Stop running containers{R}        {2}│{R}
+{2}│{R}  {0}start{R}                {5}Start a container{R}              {2}│{R}
 {2}│{R}  {0}enter{R}                {5}Enter running containers{R}       {2}│{R}
 {2}│{R}  {0}unlock{R}               {5}Unlock a container{R}             {2}│{R}
 {2}│{R}  {0}create{R}               {5}Create new containers{R}          {2}│{R}
