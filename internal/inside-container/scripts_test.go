@@ -41,7 +41,7 @@ func TestProvisionScripts_HomeDir(t *testing.T) {
 	require.NoError(t, err, "ProvisionScripts failed")
 	defer os.RemoveAll(scriptsDir)
 
-	expected := filepath.Join(tmpDir, ".local", "share", "otter", "v2")
+	expected := filepath.Join(tmpDir, ".local", "share", "otter")
 	require.Equal(t, expected, scriptsDir)
 
 	expectedScripts := []string{

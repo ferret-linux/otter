@@ -1,6 +1,7 @@
 package insideContainer
 
 import (
+	"crypto/sha256"
 	_ "embed"
 	"fmt"
 	"os"
@@ -36,6 +37,12 @@ func ProvisionScripts() (string, error) {
 
 	for _, script := range scripts {
 		destFilePath := filepath.Join(dir, script.name)
+		newHash := sha256.Sum256([]byte(script.content))
+		if existing, err := os.ReadFile(destFilePath); err == nil {
+			if sha256.Sum256(existing) == newHash {
+				continue
+			}
+		}
 		//nolint:gosec // 0755 is the same as from distrobox v1, let's keep it for compatibility
 		if err := os.WriteFile(destFilePath, []byte(script.content), 0755); err != nil {
 			return "", fmt.Errorf("failed to write script %s: %w", script.name, err)
@@ -54,11 +61,10 @@ func hostDir() string {
 	}
 
 	// Then, check HOME env var
-	// v2 is added to avoid collisions with v1 installations
 	if home := os.Getenv("HOME"); home != "" {
-		return filepath.Join(home, ".local", "share", "otter", "v2")
+		return filepath.Join(home, ".local", "share", "otter")
 	}
 
 	// Fallback to default path
-	return "/var/lib/otter/v2"
+	return "/var/lib/otter"
 }
