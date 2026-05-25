@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/ferret-linux/otter/pkg/containermanager"
-	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 // ContainerManagerSpy records all calls made to each method.
@@ -17,6 +16,7 @@ type ContainerManagerSpy struct {
 	Create           [][]any
 	Remove           [][]any
 	Exists           [][]any
+	Start            [][]any
 	Stop             [][]any
 	InspectContainer [][]any
 	Commit           [][]any
@@ -67,8 +67,8 @@ func (m *MockContainerManager) CloneAsRoot() containermanager.ContainerManager {
 	return m.RootClone
 }
 
-func (m *MockContainerManager) Enter(_ context.Context, options containermanager.EnterOptions, progress *ui.Progress) error {
-	m.Spy.Enter = append(m.Spy.Enter, []any{options, progress})
+func (m *MockContainerManager) Enter(_ context.Context, options containermanager.EnterOptions) error {
+	m.Spy.Enter = append(m.Spy.Enter, []any{options})
 	return nil
 }
 
@@ -96,6 +96,11 @@ func (m *MockContainerManager) Exists(_ context.Context, containerName string) b
 		return m.ExistsFn(containerName)
 	}
 	return false
+}
+
+func (m *MockContainerManager) Start(_ context.Context, containerName string, dryRun bool) error {
+	m.Spy.Start = append(m.Spy.Start, []any{containerName, dryRun})
+	return nil
 }
 
 func (m *MockContainerManager) Stop(_ context.Context, containerNames []string, dryRun bool) error {

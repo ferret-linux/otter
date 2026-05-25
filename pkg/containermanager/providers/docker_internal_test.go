@@ -11,7 +11,6 @@ import (
 
 	"github.com/ferret-linux/otter/internal/userenv"
 	"github.com/ferret-linux/otter/pkg/containermanager"
-	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 func TestDocker_makeCreateCommand(t *testing.T) {
@@ -489,11 +488,9 @@ func hasSubstring(s, substr string) bool {
 	return false
 }
 
-func TestDockerEnterPropagatesStartError(t *testing.T) {
+func TestDockerEnterErrorsWhenNotRunning(t *testing.T) {
 	installFakeDockerRuntime(t)
 	t.Setenv("FAKE_INSPECT_STDOUT", dockerFakeInspectJSON("exited"))
-	t.Setenv("FAKE_START_EXIT", "9")
-	t.Setenv("FAKE_START_STDERR", "start failed")
 
 	err := NewDocker(false, "sudo", false).Enter(
 		t.Context(),
@@ -502,8 +499,19 @@ func TestDockerEnterPropagatesStartError(t *testing.T) {
 			NoTTY:         true,
 			NoWorkDir:     true,
 		},
-		ui.NewDevNullProgress(),
 	)
+
+	require.Error(t, err)
+	assert.ErrorContains(t, err, "use 'otter start' first")
+}
+
+func TestDockerStartPropagatesStartError(t *testing.T) {
+	installFakeDockerRuntime(t)
+	t.Setenv("FAKE_INSPECT_STDOUT", dockerFakeInspectJSON("exited"))
+	t.Setenv("FAKE_START_EXIT", "9")
+	t.Setenv("FAKE_START_STDERR", "start failed")
+
+	err := NewDocker(false, "sudo", false).Start(t.Context(), "box", false)
 
 	require.Error(t, err)
 	assert.ErrorContains(t, err, "failed to start container")
@@ -522,7 +530,6 @@ func TestDockerEnterPropagatesExecError(t *testing.T) {
 			NoTTY:         true,
 			NoWorkDir:     true,
 		},
-		ui.NewDevNullProgress(),
 	)
 
 	require.Error(t, err)

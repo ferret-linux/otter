@@ -12,7 +12,6 @@ import (
 
 	"github.com/ferret-linux/otter/internal/userenv"
 	"github.com/ferret-linux/otter/pkg/containermanager"
-	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 func TestPodman_makeCreateCommand(t *testing.T) {
@@ -678,11 +677,9 @@ func TestCommandExists(t *testing.T) {
 	assert.False(t, commandExists("this-command-definitely-does-not-exist-12345"), "Did not expect non-existent command to be found")
 }
 
-func TestPodmanEnterPropagatesStartError(t *testing.T) {
+func TestPodmanEnterErrorsWhenNotRunning(t *testing.T) {
 	installFakePodmanRuntime(t)
 	t.Setenv("FAKE_INSPECT_STDOUT", podmanFakeInspectJSON("exited"))
-	t.Setenv("FAKE_START_EXIT", "9")
-	t.Setenv("FAKE_START_STDERR", "start failed")
 
 	err := NewPodman(false, "sudo", false).Enter(
 		t.Context(),
@@ -691,8 +688,19 @@ func TestPodmanEnterPropagatesStartError(t *testing.T) {
 			NoTTY:         true,
 			NoWorkDir:     true,
 		},
-		ui.NewDevNullProgress(),
 	)
+
+	require.Error(t, err)
+	assert.ErrorContains(t, err, "use 'otter start' first")
+}
+
+func TestPodmanStartPropagatesStartError(t *testing.T) {
+	installFakePodmanRuntime(t)
+	t.Setenv("FAKE_INSPECT_STDOUT", podmanFakeInspectJSON("exited"))
+	t.Setenv("FAKE_START_EXIT", "9")
+	t.Setenv("FAKE_START_STDERR", "start failed")
+
+	err := NewPodman(false, "sudo", false).Start(t.Context(), "box", false)
 
 	require.Error(t, err)
 	assert.ErrorContains(t, err, "failed to start container")
@@ -711,7 +719,6 @@ func TestPodmanEnterPropagatesExecError(t *testing.T) {
 			NoTTY:         true,
 			NoWorkDir:     true,
 		},
-		ui.NewDevNullProgress(),
 	)
 
 	require.Error(t, err)

@@ -4,14 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"os"
 
 	"github.com/urfave/cli/v3"
 
 	"github.com/ferret-linux/otter/pkg/commands"
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
-	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 func newEnterCommand(cfg *config.Values) *cli.Command {
@@ -79,8 +77,7 @@ func enterAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) erro
 		Verbose:         cmd.Bool("verbose"),
 	}
 
-	progress := ui.NewProgress(os.Stderr)
-	enterCmd := commands.NewEnterCommand(cfg, containerManager, progress)
+	enterCmd := commands.NewEnterCommand(cfg, containerManager)
 	_, err := enterCmd.Execute(ctx, options)
 	if err != nil {
 		return fmt.Errorf("failed to execute enter command: %w", err)

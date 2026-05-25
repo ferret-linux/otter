@@ -11,7 +11,6 @@ import (
 
 	"github.com/ferret-linux/otter/internal/userenv"
 	"github.com/ferret-linux/otter/pkg/containermanager"
-	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 func TestNerdctl_makeCreateCommand(t *testing.T) {
@@ -118,11 +117,9 @@ func TestNerdctl_makeCreateCommand(t *testing.T) {
 	assert.Equal(t, expected, got)
 }
 
-func TestNerdctlEnterPropagatesStartError(t *testing.T) {
+func TestNerdctlEnterErrorsWhenNotRunning(t *testing.T) {
 	installFakeNerdctlRuntime(t)
 	t.Setenv("FAKE_INSPECT_STDOUT", nerdctlFakeInspectJSON("exited"))
-	t.Setenv("FAKE_START_EXIT", "9")
-	t.Setenv("FAKE_START_STDERR", "start failed")
 
 	err := NewNerdctl(false, "sudo", false).Enter(
 		t.Context(),
@@ -131,8 +128,19 @@ func TestNerdctlEnterPropagatesStartError(t *testing.T) {
 			NoTTY:         true,
 			NoWorkDir:     true,
 		},
-		ui.NewDevNullProgress(),
 	)
+
+	require.Error(t, err)
+	assert.ErrorContains(t, err, "use 'otter start' first")
+}
+
+func TestNerdctlStartPropagatesStartError(t *testing.T) {
+	installFakeNerdctlRuntime(t)
+	t.Setenv("FAKE_INSPECT_STDOUT", nerdctlFakeInspectJSON("exited"))
+	t.Setenv("FAKE_START_EXIT", "9")
+	t.Setenv("FAKE_START_STDERR", "start failed")
+
+	err := NewNerdctl(false, "sudo", false).Start(t.Context(), "box", false)
 
 	require.Error(t, err)
 	assert.ErrorContains(t, err, "failed to start container")
@@ -151,7 +159,6 @@ func TestNerdctlEnterPropagatesExecError(t *testing.T) {
 			NoTTY:         true,
 			NoWorkDir:     true,
 		},
-		ui.NewDevNullProgress(),
 	)
 
 	require.Error(t, err)

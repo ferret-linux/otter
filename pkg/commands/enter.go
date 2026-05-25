@@ -6,7 +6,6 @@ import (
 
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
-	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 type EnterResult struct{}
@@ -24,18 +23,15 @@ type EnterOptions struct {
 type EnterCommand struct {
 	cfg              *config.Values
 	containerManager containermanager.ContainerManager
-	progress         *ui.Progress
 }
 
 func NewEnterCommand(
 	cfg *config.Values,
 	cm containermanager.ContainerManager,
-	progress *ui.Progress,
 ) *EnterCommand {
 	return &EnterCommand{
 		cfg:              cfg,
 		containerManager: cm,
-		progress:         progress,
 	}
 }
 
@@ -50,7 +46,7 @@ func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterRe
 		CleanPath:       opts.CleanPath,
 	}
 
-	err := c.containerManager.Enter(ctx, cmdOpts, c.progress)
+	err := c.containerManager.Enter(ctx, cmdOpts)
 	if err != nil {
 		return nil, fmt.Errorf("failed to enter the container: %w", err)
 	}
