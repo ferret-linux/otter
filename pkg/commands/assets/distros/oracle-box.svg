@@ -21,11 +21,11 @@
             <stop offset="1" stop-color="#5a0808"/>
         </linearGradient>
         <linearGradient id="shadowgrad" gradientUnits="userSpaceOnUse" x1="76" y1="102" x2="124" y2="102">
-            <stop offset="0" stop-color="#2e0808"/>
+            <stop offset="0" stop-color="#3d1010"/>
             <stop offset="0.15" stop-color="#4b1313"/>
             <stop offset="0.5" stop-color="#8a2020"/>
             <stop offset="0.85" stop-color="#4b1313"/>
-            <stop offset="1" stop-color="#2e0808"/>
+            <stop offset="1" stop-color="#3d1010"/>
         </linearGradient>
     </defs>
 

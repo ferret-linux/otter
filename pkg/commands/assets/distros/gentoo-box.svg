@@ -21,11 +21,11 @@
             <stop offset="1" stop-color="#3a1060"/>
         </linearGradient>
         <linearGradient id="shadowgrad" gradientUnits="userSpaceOnUse" x1="76" y1="102" x2="124" y2="102">
-            <stop offset="0" stop-color="#1a0832"/>
+            <stop offset="0" stop-color="#2a0a52"/>
             <stop offset="0.15" stop-color="#2a0a52"/>
             <stop offset="0.5" stop-color="#6030a8"/>
             <stop offset="0.85" stop-color="#2a0a52"/>
-            <stop offset="1" stop-color="#1a0832"/>
+            <stop offset="1" stop-color="#2a0a52"/>
         </linearGradient>
         <clipPath id="circleclip">
             <circle cx="100" cy="98" r="24"/>
@@ -49,7 +49,7 @@
     <!-- Gentoo logo inside circle: exact paths from source, transformed to fit -->
     <!-- Source logo viewBox is 512x512, circle is 48px diameter centered at 100,98 -->
     <!-- We use a nested svg to handle the complex nested group transforms -->
-    <svg x="76" y="74" width="48" height="48" viewBox="0 0 512 512">
+    <g transform="translate(72,70) scale(0.11000)">
         <!-- Reconstruct the original: g4109 translate(187.96288,23.364569), then the purple circle and white paths -->
         <g transform="translate(187.96288,23.364569)">
             viewBox="-80 -180 512 512"
@@ -62,5 +62,5 @@
                     transform="matrix(0.80000004,0,0,0.80000004,-8.3085983e-6,0)"/>
             </g>
         </g>
-    </svg>
+    </g>
 </svg>

@@ -21,11 +21,11 @@
             <stop offset="1" stop-color="#042b1a"/>
         </linearGradient>
         <linearGradient id="shadowgrad" gradientUnits="userSpaceOnUse" x1="76" y1="102" x2="124" y2="102">
-            <stop offset="0" stop-color="#081e10"/>
+            <stop offset="0" stop-color="#0a3820"/>
             <stop offset="0.15" stop-color="#0a3820"/>
             <stop offset="0.5" stop-color="#126035"/>
             <stop offset="0.85" stop-color="#0a3820"/>
-            <stop offset="1" stop-color="#081e10"/>
+            <stop offset="1" stop-color="#0a3820"/>
         </linearGradient>
     </defs>
 
@@ -41,7 +41,7 @@
     <circle cx="100" cy="98" r="24" fill="url(#cgrad)"/>
 
     <!-- Rocky Linux logo scaled into badge -->
-    <svg x="79" y="77" width="42" height="42" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(79,77) scale(0.21875)">
         <path fill="#ffffff" fill-rule="evenodd" d="M186.658 127.658C190.119 117.746 192 107.093 192 96c0-53.02-42.981-96-96-96C42.98 0 0 42.98 0 96c0 26.234 10.523 50.011 27.578 67.338l97.38-97.38L149 90zm-17.536 30.547-44.164-44.163-69.16 69.16C68.027 188.849 81.645 192 96 192c29.288 0 55.514-13.116 73.122-33.795" clip-rule="evenodd"/>
-    </svg>
+    </g>
 </svg>

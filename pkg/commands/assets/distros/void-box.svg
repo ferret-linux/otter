@@ -21,11 +21,11 @@
             <stop offset="1" stop-color="#0a3210"/>
         </linearGradient>
         <linearGradient id="shadowgrad" gradientUnits="userSpaceOnUse" x1="76" y1="102" x2="124" y2="102">
-            <stop offset="0" stop-color="#081808"/>
+            <stop offset="0" stop-color="#103010"/>
             <stop offset="0.15" stop-color="#103010"/>
             <stop offset="0.5" stop-color="#1e5828"/>
             <stop offset="0.85" stop-color="#103010"/>
-            <stop offset="1" stop-color="#081808"/>
+            <stop offset="1" stop-color="#103010"/>
         </linearGradient>
     </defs>
 
@@ -44,11 +44,11 @@
     <circle cx="100" cy="98" r="24" fill="url(#voidgrad)"/>
 
     <!-- Void logo inside circle, exact paths from source scaled to fit -->
-    <svg x="72" y="70" width="56" height="56" viewBox="0 0 64 64">
+    <g transform="translate(68,66) scale(1.000)">
         <g transform="translate(2 2)scale(0.9375)">
             <path fill="#91cd91" d="M32 10a22 22 0 0 0-12.92 4.219l4.941 4.941a15.1 15.1 0 0 1 7.98-2.285A15.125 15.125 0 0 1 47.124 32a15.1 15.1 0 0 1-2.293 7.97l4.944 4.945A22 22 0 0 0 54 32a22 22 0 0 0-22-22"/>
-            <path fill="#0e2619" d="M14.224 19.085A22 22 0 0 0 10 32a22 22 0 0 0 22 22 22 22 0 0 0 12.92-4.219l-4.942-4.941A15.1 15.1 0 0 1 32 47.125 15.125 15.125 0 0 1 16.874 32a15.1 15.1 0 0 1 2.294-7.97z"/>
+            <path fill="#91cd91" d="M14.224 19.085A22 22 0 0 0 10 32a22 22 0 0 0 22 22 22 22 0 0 0 12.92-4.219l-4.942-4.941A15.1 15.1 0 0 1 32 47.125 15.125 15.125 0 0 1 16.874 32a15.1 15.1 0 0 1 2.294-7.97z"/>
             <circle cx="32" cy="32" r="8" fill="#91cd91"/>
         </g>
-    </svg>
+    </g>
 </svg>
