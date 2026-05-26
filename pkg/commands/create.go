@@ -173,7 +173,11 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 		ui.DefaultLogger.Info("creating '%s' from image '%s' with hostname '%s'", containerName, containerImage, containerHostname)
 	}
 
-	c.progress.Next("Creating '%s' using image %s", containerName, containerImage)
+	displayImage := opts.ContainerImage
+	if displayImage == "" {
+		displayImage = c.cfg.DefaultContainerImage
+	}
+	c.progress.Next("Creating '%s' using image '%s'", containerName, displayImage)
 
 	err = c.containerManager.Create(
 		ctx,
