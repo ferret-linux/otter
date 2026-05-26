@@ -11,7 +11,7 @@ import (
 
 	"github.com/ferret-linux/otter/pkg/commands"
 	"github.com/ferret-linux/otter/pkg/config"
-	"github.com/ferret-linux/otter/pkg/containermanager/providers"
+	"github.com/ferret-linux/otter/pkg/internal/testutil"
 )
 
 func TestGenerateEntryCommand_Execute(t *testing.T) {
@@ -21,7 +21,7 @@ func TestGenerateEntryCommand_Execute(t *testing.T) {
 	defer os.RemoveAll(tempDir)
 
 	// create the list command
-	containerManager := providers.NewDocker(false, "sudo", false)
+	containerManager := &testutil.MockContainerManager{}
 	listCmd := commands.NewListCommand(&config.Values{}, containerManager)
 
 	//
@@ -87,7 +87,7 @@ func TestGenerateEntryCommand_Execute_Root(t *testing.T) {
 	tempDir := t.TempDir()
 	defer os.RemoveAll(tempDir)
 
-	containerManager := providers.NewDocker(false, "sudo", false)
+	containerManager := &testutil.MockContainerManager{}
 	listCmd := commands.NewListCommand(&config.Values{}, containerManager)
 
 	generateEntryCmd := commands.NewGenerateEntryCommand(&config.Values{}, listCmd, containerManager)
@@ -140,7 +140,7 @@ func TestGenerateAllEntriesCommand_Execute(t *testing.T) {
 	defer os.RemoveAll(tempDir)
 
 	// create the list command
-	containerManager := providers.NewDocker(false, "sudo", false)
+	containerManager := &testutil.MockContainerManager{}
 	listCmd := commands.NewListCommand(&config.Values{}, containerManager)
 
 	// create the generate all entries command

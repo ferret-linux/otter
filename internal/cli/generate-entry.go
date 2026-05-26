@@ -68,7 +68,7 @@ func generateEntryAction(ctx context.Context, cmd *cli.Command, cfg *config.Valu
 
 	err = genEntryCmd.Execute(ctx, opts)
 	if err != nil {
-		return fmt.Errorf("failed to execute generate entry command: %w", err)
+		return err
 	}
 
 	return nil
