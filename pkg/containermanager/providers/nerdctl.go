@@ -623,7 +623,10 @@ func (n *Nerdctl) Start(ctx context.Context, containerName string, dryRun bool) 
 	}
 
 	inspectResult, err := n.InspectContainer(ctx, containerName)
-	if err == nil && inspectResult.ContainerStatus == containermanager.RunningStatus {
+	if err != nil {
+		return fmt.Errorf("container '%s' not found", containerName)
+	}
+	if inspectResult.ContainerStatus == containermanager.RunningStatus {
 		ui.DefaultLogger.Info("container '%s' is already running", containerName)
 		return nil
 	}
@@ -633,7 +636,7 @@ func (n *Nerdctl) Start(ctx context.Context, containerName string, dryRun bool) 
 
 	_, err = n.run(ctx, []string{"start", containerName}, runOptions{Interactive: true})
 	if err != nil {
-		return fmt.Errorf("failed to start container: %w", err)
+		return err
 	}
 
 	inspectResult, err = n.InspectContainer(ctx, containerName)

@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
@@ -38,7 +37,7 @@ func (c *StartCommand) Execute(ctx context.Context, opts *StartOptions) error {
 	}
 
 	if err := c.containerManager.Start(ctx, containerName, opts.DryRun); err != nil {
-		return fmt.Errorf("failed to start container: %w", err)
+		return err
 	}
 
 	return nil

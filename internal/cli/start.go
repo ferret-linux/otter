@@ -3,7 +3,6 @@ package cli
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/urfave/cli/v3"
 
@@ -44,7 +43,7 @@ func startAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) erro
 		DryRun:        cmd.Bool("dry-run"),
 		Verbose:       cmd.Bool("verbose"),
 	}); err != nil {
-		return fmt.Errorf("failed to start container: %w", err)
+		return err
 	}
 
 	return nil

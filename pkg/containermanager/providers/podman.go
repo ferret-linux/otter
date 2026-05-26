@@ -903,7 +903,10 @@ func (p *Podman) Start(ctx context.Context, containerName string, dryRun bool) e
 	}
 
 	inspectResult, err := p.InspectContainer(ctx, containerName)
-	if err == nil && inspectResult.ContainerStatus == containermanager.RunningStatus {
+	if err != nil {
+		return fmt.Errorf("container '%s' not found", containerName)
+	}
+	if inspectResult.ContainerStatus == containermanager.RunningStatus {
 		ui.DefaultLogger.Info("container '%s' is already running", containerName)
 		return nil
 	}
@@ -913,7 +916,7 @@ func (p *Podman) Start(ctx context.Context, containerName string, dryRun bool) e
 
 	_, err = p.run(ctx, []string{"start", containerName}, runOptions{Interactive: true})
 	if err != nil {
-		return fmt.Errorf("failed to start container: %w", err)
+		return err
 	}
 
 	inspectResult, err = p.InspectContainer(ctx, containerName)
