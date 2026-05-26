@@ -96,18 +96,14 @@ func (c *GenerateEntryCommand) Execute(
 		// Set icon to auto for all entries
 		icon = "auto"
 	case opts.ContainerName != "":
-		if !opts.Delete {
-			if _, err := c.containerManager.InspectContainer(ctx, opts.ContainerName); err != nil {
-				return fmt.Errorf("container '%s' not found", opts.ContainerName)
-			}
+		if _, err := c.containerManager.InspectContainer(ctx, opts.ContainerName); err != nil {
+			return fmt.Errorf("container '%s' not found", opts.ContainerName)
 		}
 		containerNames = []string{opts.ContainerName}
 		icon = opts.Icon
 	default:
-		if !opts.Delete {
-			if _, err := c.containerManager.InspectContainer(ctx, defaultContainerName); err != nil {
-				return fmt.Errorf("container '%s' not found", defaultContainerName)
-			}
+		if _, err := c.containerManager.InspectContainer(ctx, defaultContainerName); err != nil {
+			return fmt.Errorf("container '%s' not found", defaultContainerName)
 		}
 		containerNames = []string{defaultContainerName}
 		icon = opts.Icon
