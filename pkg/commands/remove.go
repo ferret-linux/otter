@@ -150,13 +150,13 @@ func (c *RmCommand) removeContainer(
 		ContainerHome: inspectOutput.ContainerHome,
 		DryRun:        dryRun,
 	}
+	if !dryRun {
+		c.cleanup(ctx, userHome, container.Name, verbose)
+	}
+
 	err = c.containerManager.Remove(ctx, container.Name, cmOptions)
 	if err != nil {
 		return fmt.Errorf("failed to remove container: %w", err)
-	}
-
-	if !dryRun {
-		c.cleanup(ctx, userHome, container.Name, verbose)
 	}
 
 	return nil
