@@ -488,77 +488,71 @@ export_application()
 		return 127
 	fi
 
-	# Find icons by using the Icon= specification. If it's only a name, we'll
-	# search for the file, if it's already a path, just grab it.
-	icon_files=""
+	# Find the single best icon for this app from the first desktop file.
+	# Prefer SVG over PNG, skip anything symbolic.
+	icon_name=""
 	IFS="¤"
 	for desktop_file in ${desktop_files}; do
 		if [ -z "${desktop_file}" ]; then
 			continue
 		fi
-
-		icon_name="$(grep Icon= "${desktop_file}" | cut -d'=' -f2- | paste -sd "¤" -)"
-
-		for icon in ${icon_name}; do
-			if case "${icon_name}" in "/"*) true ;; *) false ;; esac &&
-				[ -e "${icon_name}" ]; then
-				# In case it's an hard path, conserve it and continue
-				icon_files="${icon_files}¤${icon_name}"
-			else
-				# If it's not an hard path, find all files in the canonical paths.
-				icon_files="${icon_files}¤$(find \
-					/usr/share/icons \
-					/usr/share/pixmaps \
-					/var/lib/flatpak/exports/share/icons -iname "*${icon}*" \
-					-printf "%p¤" 2> /dev/null || :)"
-			fi
-		done
-
-		# remove leading delimiter
-		icon_files=${icon_files#¤}
+		icon_name="$(grep "^Icon=" "${desktop_file}" | head -n1 | cut -d'=' -f2-)"
+		break
 	done
+	unset IFS
+
+	icon_file=""
+	if [ -n "${icon_name}" ]; then
+		if case "${icon_name}" in "/"*) true ;; *) false ;; esac && [ -e "${icon_name}" ]; then
+			# Icon= is already an absolute path, use it directly
+			icon_file="${icon_name}"
+		else
+			# Search for SVG: hicolor, then flatpak, then pixmaps — skip symbolic
+			icon_file="$(find /usr/share/icons/hicolor \
+				-type f -name "${icon_name}.svg" \
+				2> /dev/null | grep -v symbolic | head -n1 || :)"
+
+			if [ -z "${icon_file}" ]; then
+				icon_file="$(find /var/lib/flatpak/exports/share/icons \
+					-type f -name "${icon_name}.svg" \
+					2> /dev/null | grep -v symbolic | head -n1 || :)"
+			fi
+
+			if [ -z "${icon_file}" ]; then
+				icon_file="$(find /usr/share/pixmaps \
+					-type f -name "${icon_name}.svg" \
+					2> /dev/null | grep -v symbolic | head -n1 || :)"
+			fi
+
+			# No SVG found — fall back to largest PNG by size prefix (e.g. 256x256 > 128x128)
+			if [ -z "${icon_file}" ]; then
+				icon_file="$(find /usr/share/icons/hicolor \
+					-type f -name "${icon_name}.png" \
+					2> /dev/null | grep -v symbolic | sort -t'/' -Vr | head -n1 || :)"
+			fi
+
+			if [ -z "${icon_file}" ]; then
+				icon_file="$(find /var/lib/flatpak/exports/share/icons \
+					-type f -name "${icon_name}.png" \
+					2> /dev/null | grep -v symbolic | sort -t'/' -Vr | head -n1 || :)"
+			fi
+
+			if [ -z "${icon_file}" ]; then
+				icon_file="$(find /usr/share/pixmaps \
+					-type f -name "${icon_name}.png" \
+					2> /dev/null | grep -v symbolic | head -n1 || :)"
+			fi
+		fi
+	fi
+
+	# Paths for the single exported icon
+	icon_dest_dir="/run/host${host_home}/.local/share/otter/icons/apps"
+	icon_ext="${icon_file##*.}"
+	icon_dest_file="${icon_dest_dir}/${container_name}-${icon_name}.${icon_ext}"
+	icon_host_path="${host_home}/.local/share/otter/icons/apps/${container_name}-${icon_name}.${icon_ext}"
 
 	# create applications dir if not existing
 	mkdir -p "/run/host${host_home}/.local/share/applications"
-
-	# copy icons in home directory
-	icon_file_absolute_path=""
-	IFS="¤"
-	for icon_file in ${icon_files}; do
-		if [ -z "${icon_file}" ]; then
-			continue
-		fi
-
-		# replace canonical paths with equivalent paths in HOME
-		icon_home_directory="$(dirname "${icon_file}" |
-			sed "s|/usr/share/|\/run\/host\/${host_home}/.local/share/|g" |
-			sed "s|/var/lib/flatpak/exports/share|\/run\/host\/${host_home}/.local/share/|g" |
-			sed "s|pixmaps|icons|g")"
-
-		# check if we're exporting an icon which is not in a canonical path
-		if [ "${icon_home_directory}" = "$(dirname "${icon_file}")" ]; then
-			icon_home_directory="${host_home}/.local/share/icons/"
-			icon_file_absolute_path="${icon_home_directory}$(basename "${icon_file}")"
-		fi
-
-		# check if we're exporting or deleting
-		if [ "${exported_delete}" -ne 0 ]; then
-			# we need to remove, not export
-			rm -rf "${icon_home_directory:?}"/"$(basename "${icon_file:?}")"
-			continue
-		fi
-
-		# we wanto to export the application's icons
-		mkdir -p "${icon_home_directory}"
-		if [ ! -e "${icon_home_directory}/$(basename "${icon_file}")" ] && [ -e "$(realpath "${icon_file}")" ]; then
-			cp -rf "$(realpath "${icon_file}")" "${icon_home_directory}"
-		fi
-		_icon_path="$(echo "${icon_home_directory}/$(basename "${icon_file}")" | sed 's|/run/host||g;s|//|/|g')"
-		case " ${icons_to_remove} " in
-			*" ${_icon_path} "*) ;;
-			*) icons_to_remove="${icons_to_remove:+${icons_to_remove} }${_icon_path}" ;;
-		esac
-	done
 
 	# create desktop files for the otter
 	IFS="¤"
@@ -574,6 +568,7 @@ export_application()
 		if [ "${exported_delete}" -ne 0 ]; then
 			rm -f "/run/host${host_home}/.local/share/applications/${desktop_original_file}"
 			rm -f "/run/host${host_home}/.local/share/applications/${desktop_home_file}"
+			rm -f "${icon_dest_file}"
 			# we're done, go to next
 			continue
 		fi
@@ -606,23 +601,16 @@ export_application()
 		printf "\n[Desktop Action Remove]\nName=Remove %s\nExec=sh -c 'rm -f %s %s && update-desktop-database %s/.local/share/applications'\n" \
 			"${exported_app}" \
 			"${host_home}/.local/share/applications/${desktop_home_file}" \
-			"${icons_to_remove:-}" \
+			"${icon_host_path}" \
 			"${host_home}" >> "/run/host${host_home}/.local/share/applications/${desktop_home_file}"
-		# In case of an icon in a non canonical path, we need to replace the path
-		# in the desktop file.
-		if [ -n "${icon_file_absolute_path}" ]; then
-			sed -i "s|Icon=.*|Icon=${icon_file_absolute_path}|g" \
-				"/run/host${host_home}/.local/share/applications/${desktop_home_file}"
-			# we're done, go to next
-			continue
-		fi
 
-		# In case of an icon in a canonical path, but specified as an absolute
-		# we need to replace the path in the desktop file.
-		sed -i "s|Icon=/usr/share/|Icon=/run/host${host_home}/.local/share/|g" \
-			"/run/host${host_home}/.local/share/applications/${desktop_home_file}"
-		sed -i "s|pixmaps|icons|g" \
-			"/run/host${host_home}/.local/share/applications/${desktop_home_file}"
+		# Copy icon to otter-managed dir and rewrite Icon= to point to it
+		if [ -n "${icon_file}" ]; then
+			mkdir -p "${icon_dest_dir}"
+			cp -f "$(realpath "${icon_file}")" "${icon_dest_file}"
+			sed -i "s|^Icon=.*|Icon=${icon_host_path}|g" \
+				"/run/host${host_home}/.local/share/applications/${desktop_home_file}"
+		fi
 	done
 
 	# Update the desktop files database to ensure exported applications will
