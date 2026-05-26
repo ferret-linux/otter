@@ -52,6 +52,7 @@ func (p *Progress) Done() {
 
 	p.pending = false
 	if p.writer != io.Discard {
+		fmt.Fprintf(p.writer, "\033[1A\r\033[2K")
 		DefaultLogger.Ok("%s", p.lastMessage)
 	}
 }
