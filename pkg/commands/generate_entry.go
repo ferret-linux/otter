@@ -150,6 +150,7 @@ func (c *GenerateEntryCommand) Execute(
 		if err := c.createEntry(ctx, containerName, icon, desktopEntryBaseDir, otterPath, opts.Root); err != nil {
 			return fmt.Errorf("failed to create desktop entry for container %s: %w", containerName, err)
 		}
+		ui.DefaultLogger.Ok("desktop entry created for '%s'", containerName)
 	}
 
 	return nil
