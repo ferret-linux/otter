@@ -36,8 +36,21 @@ func NewEnterCommand(
 }
 
 func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterResult, error) {
-	if !opts.DryRun && !c.containerManager.IsSetupDone(ctx, opts.ContainerName) {
-		return nil, fmt.Errorf("container '%s' is not ready yet", opts.ContainerName)
+	if !opts.DryRun {
+		if !c.containerManager.Exists(ctx, opts.ContainerName) {
+			return nil, fmt.Errorf("container '%s' does not exist", opts.ContainerName)
+		}
+
+		containers, _ := c.containerManager.ListContainers(ctx)
+		for _, ct := range containers {
+			if ct.Name == opts.ContainerName && !ct.IsRunning() {
+				return nil, fmt.Errorf("container '%s' is stopped, run 'otter start %s'", opts.ContainerName, opts.ContainerName)
+			}
+		}
+
+		if !c.containerManager.IsSetupDone(ctx, opts.ContainerName) {
+			return nil, fmt.Errorf("container '%s' is initializing, please wait", opts.ContainerName)
+		}
 	}
 
 	cmdOpts := containermanager.EnterOptions{
