@@ -171,7 +171,8 @@ func subcommands(cfg *config.Values) []*cli.Command {
 func withUsageErrorHandler(_ *config.Values, cmd *cli.Command) *cli.Command {
 	cmd.OnUsageError = func(_ context.Context, _ *cli.Command, err error, _ bool) error {
 		ui.DefaultLogger.Error("%s", err)
-		return cli.Exit("", 1)
+		os.Exit(1)
+		return nil
 	}
 	return cmd
 }
