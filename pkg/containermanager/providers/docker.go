@@ -935,3 +935,8 @@ func (d *Docker) waitForSetup(
 		time.Sleep(setupPollInterval)
 	}
 }
+
+func (d *Docker) IsSetupDone(ctx context.Context, containerName string) bool {
+	_, err := d.run(ctx, []string{"exec", containerName, "test", "-f", "/usr/lib/otter/container.ready"}, runOptions{})
+	return err == nil
+}

@@ -730,3 +730,8 @@ func (n *Nerdctl) waitForSetup(
 		time.Sleep(setupPollInterval)
 	}
 }
+
+func (n *Nerdctl) IsSetupDone(ctx context.Context, containerName string) bool {
+	_, err := n.run(ctx, []string{"exec", containerName, "test", "-f", "/usr/lib/otter/container.ready"}, runOptions{})
+	return err == nil
+}

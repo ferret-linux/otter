@@ -36,6 +36,10 @@ func NewEnterCommand(
 }
 
 func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterResult, error) {
+	if !opts.DryRun && !c.containerManager.IsSetupDone(ctx, opts.ContainerName) {
+		return nil, fmt.Errorf("container '%s' is not ready yet, setup is still in progress", opts.ContainerName)
+	}
+
 	cmdOpts := containermanager.EnterOptions{
 		ContainerName:   opts.ContainerName,
 		AdditionalFlags: opts.AdditionalFlags,

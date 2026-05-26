@@ -1013,3 +1013,8 @@ func (p *Podman) waitForSetup(
 		time.Sleep(setupPollInterval)
 	}
 }
+
+func (p *Podman) IsSetupDone(ctx context.Context, containerName string) bool {
+	_, err := p.run(ctx, []string{"exec", containerName, "test", "-f", "/usr/lib/otter/container.ready"}, runOptions{})
+	return err == nil
+}

@@ -106,6 +106,8 @@ type ContainerManager interface {
 	WriteToContainer(ctx context.Context, containerName string, srcPath string, destPath string) error
 	// DeleteFromContainer removes a file or directory from inside the container filesystem.
 	DeleteFromContainer(ctx context.Context, containerName string, filePath string) error
+	// IsSetupDone returns true if the container has completed its initial setup.
+	IsSetupDone(ctx context.Context, containerName string) bool
 }
 
 func PathExists(path string) bool {

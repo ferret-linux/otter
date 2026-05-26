@@ -22,6 +22,7 @@ type ContainerManagerSpy struct {
 	Commit           [][]any
 	ImageExists      [][]any
 	PullImage        [][]any
+	IsSetupDone      [][]any
 }
 
 // MockContainerManager is a no-op container manager for testing.
@@ -141,4 +142,9 @@ func (m *MockContainerManager) WriteToContainer(_ context.Context, _ string, _ s
 
 func (m *MockContainerManager) DeleteFromContainer(_ context.Context, _ string, _ string) error {
 	return nil
+}
+
+func (m *MockContainerManager) IsSetupDone(_ context.Context, containerName string) bool {
+	m.Spy.IsSetupDone = append(m.Spy.IsSetupDone, []any{containerName})
+	return true
 }
