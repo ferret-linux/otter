@@ -59,8 +59,15 @@ func (c *StopCommand) Execute(ctx context.Context, opts *StopOptions) error {
 		ui.DefaultLogger.Info("stopping: %s", strings.Join(containerNames, ", "))
 	}
 
-	err := c.containerManager.Stop(ctx, containerNames, opts.DryRun)
-	if err != nil {
+	if !opts.DryRun {
+		for _, name := range containerNames {
+			if _, err := c.containerManager.InspectContainer(ctx, name); err != nil {
+				return fmt.Errorf("container '%s' not found", name)
+			}
+		}
+	}
+
+	if err := c.containerManager.Stop(ctx, containerNames, opts.DryRun); err != nil {
 		return fmt.Errorf("failed to stop containers: %w", err)
 	}
 

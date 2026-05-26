@@ -3,7 +3,6 @@ package cli
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/urfave/cli/v3"
 
@@ -51,7 +50,7 @@ func stopAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error
 	}
 
 	if err != nil {
-		return fmt.Errorf("failed to stop containers: %w", err)
+		return err
 	}
 
 	return nil
