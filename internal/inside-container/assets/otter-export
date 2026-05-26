@@ -95,13 +95,13 @@ show_help()
 │ --app          ┆ -a   Name of the application to export         │
 │ --bin          ┆ -b   Absolute path of the binary to export     │
 │ --sudo         ┆ -S   Run the exported item as sudo             │
-│ --delete       ┆ -d   Delete an exported application or binary  │
+│ --delete       ┆ -del Delete an exported application or binary  │
 │ --list-apps           List applications exported from container │
 │ --enter-flags  ┆ -nf  Flags to pass to otter-enter              │
 │ --export-path  ┆ -ep  Path where to export the binary           │
 │ --extra-flags  ┆ -ef  Extra flags to append to the command      │
 │ --export-label ┆ -el  Label to append to exported application   │
-│ --list-binaries	    List binaries exported from container     │
+│ --list-binaries       List binaries exported from container     │
 ├─────────────────────────────────────────────────────────────────┤
 │▸ Extras:                                                        │
 │ --help    ┆ -h  Show this help message                          │
@@ -197,7 +197,7 @@ while :; do
 				shift
 			fi
 			;;
-		-d | --delete)
+		-del | --delete)
 			exported_delete=1
 			shift
 			;;
