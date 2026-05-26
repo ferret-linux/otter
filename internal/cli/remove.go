@@ -35,6 +35,9 @@ func newRmCommand(cfg *config.Values) *cli.Command {
 			&cli.BoolFlag{
 				Name: "rm-home",
 			},
+			&cli.BoolFlag{
+				Name: "bypass-lock",
+			},
 		},
 
 		Action: func(ctx context.Context, cmd *cli.Command) error {
@@ -57,6 +60,7 @@ func rmAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
 	options := commands.RmOptions{
 		NoTTY:          cmd.Bool("yes"),
 		Force:          cmd.Bool("force"),
+		BypassLock:     cmd.Bool("bypass-lock"),
 		All:            cmd.Bool("all"),
 		RemoveHome:     cmd.Bool("rm-home"),
 		DryRun:         cmd.Bool("dry-run"),

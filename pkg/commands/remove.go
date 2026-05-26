@@ -30,6 +30,7 @@ type RmCommand struct {
 type RmOptions struct {
 	NoTTY          bool
 	Force          bool
+	BypassLock     bool
 	All            bool
 	RemoveHome     bool
 	DryRun         bool
@@ -70,7 +71,7 @@ func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, 
 
 	var removedOtterContainers []containermanager.Container
 	for _, currentOtterContainer := range otterContainersToRemove {
-		if isLocked(ctx, c.containerManager, currentOtterContainer.Name) {
+		if !options.BypassLock && isLocked(ctx, c.containerManager, currentOtterContainer.Name) {
 			if options.All {
 				ui.DefaultLogger.Warn("'%s' is locked, skipping", currentOtterContainer.Name)
 				continue
