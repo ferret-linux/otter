@@ -117,11 +117,16 @@ func (c *GenerateEntryCommand) Execute(
 	}
 
 	if opts.Delete {
-		// Delete the desktop entries for all the containers
 		for _, containerName := range containerNames {
+			entryPath := c.getEntryFilePath(filepath.Join(desktopEntryBaseDir, "applications"), containerName)
+			if _, err := os.Stat(entryPath); os.IsNotExist(err) {
+				ui.DefaultLogger.Info("no desktop entry found for '%s'", containerName)
+				continue
+			}
 			if err := c.deleteEntry(containerName, desktopEntryBaseDir); err != nil {
 				return fmt.Errorf("failed to delete desktop entry for container %s: %w", containerName, err)
 			}
+			ui.DefaultLogger.Ok("desktop entry removed for '%s'", containerName)
 		}
 
 		return nil
