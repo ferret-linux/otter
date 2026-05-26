@@ -231,6 +231,8 @@ fi
 # this helps avoid enter before container is in a fully usable state or is being
 # upgraded by using 'otter upgrade'
 rm -f /usr/lib/otter/container.ready
+# ensure the directory is present for otter to not break
+mkdir -p /usr/lib/otter
 
 set -o errexit
 set -o nounset
