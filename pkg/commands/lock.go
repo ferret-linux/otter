@@ -36,7 +36,7 @@ func NewLockCommand(cfg *config.Values, cm containermanager.ContainerManager) *L
 
 func (c *LockCommand) Execute(ctx context.Context, opts LockOptions) error {
 	if !c.containerManager.Exists(ctx, opts.ContainerName) {
-		return fmt.Errorf("%w: '%s'", ErrContainerNotFound, opts.ContainerName)
+		return fmt.Errorf("container '%s' not found", opts.ContainerName)
 	}
 
 	if isLocked(ctx, c.containerManager, opts.ContainerName) {

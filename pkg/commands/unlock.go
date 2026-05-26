@@ -32,7 +32,7 @@ func NewUnlockCommand(cfg *config.Values, cm containermanager.ContainerManager) 
 
 func (c *UnlockCommand) Execute(ctx context.Context, opts UnlockOptions) error {
 	if !c.containerManager.Exists(ctx, opts.ContainerName) {
-		return fmt.Errorf("%w: '%s'", ErrContainerNotFound, opts.ContainerName)
+		return fmt.Errorf("container '%s' not found", opts.ContainerName)
 	}
 
 	if !isLocked(ctx, c.containerManager, opts.ContainerName) {
