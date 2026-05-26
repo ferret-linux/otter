@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"bufio"
 	"context"
 	"errors"
 	"fmt"
@@ -26,10 +25,6 @@ func newUpgradeCommand(cfg *config.Values) *cli.Command {
 			&cli.BoolFlag{
 				Name: "running",
 			},
-			&cli.BoolFlag{
-				Name:    "yes",
-				Aliases: []string{"Y"},
-			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			return upgradeAction(ctx, cmd, cfg)
@@ -47,22 +42,15 @@ func upgradeAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) er
 		ContainerNames: cmd.Args().Slice(),
 		All:            cmd.Bool("all"),
 		Running:        cmd.Bool("running"),
-		NonInteractive: cmd.Bool("yes"),
 		DryRun:         cmd.Bool("dry-run"),
 		Verbose:        cmd.Bool("verbose"),
 	}
 
 	progress := ui.NewProgress(os.Stderr)
-	prompter := ui.NewPrompter(*bufio.NewReader(os.Stdin), os.Stdout)
 
-	upgradeCmd := commands.NewUpgradeCommand(cfg, containerManager, progress, prompter)
+	upgradeCmd := commands.NewUpgradeCommand(cfg, containerManager, progress)
 
 	err := upgradeCmd.Execute(ctx, options)
-
-	if errors.Is(err, commands.ErrUpgradeAbortedByUser) {
-		ui.DefaultLogger.Warn("Aborted.")
-		return nil
-	}
 
 	if errors.Is(err, commands.ErrEmptyContainerList) {
 		ui.DefaultLogger.Warn("No containers found.")

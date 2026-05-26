@@ -15,26 +15,22 @@ type StopCommand struct {
 	cfg              *config.Values
 	containerManager containermanager.ContainerManager
 	listCmd          *ListCommand
-	prompter         *ui.Prompter
 }
 
 type StopOptions struct {
 	ContainerNames []string
-	NonInteractive bool
 	All            bool
 	DryRun         bool
 	Verbose        bool
 }
 
 var ErrEmptyContainerList = errors.New("cannot find containers to stop")
-var ErrStopAbortedByUserError = errors.New("stop operation aborted by user")
 
-func NewStopCommand(cfg *config.Values, containerManager containermanager.ContainerManager, prompter *ui.Prompter) *StopCommand {
+func NewStopCommand(cfg *config.Values, containerManager containermanager.ContainerManager) *StopCommand {
 	return &StopCommand{
 		cfg:              cfg,
 		containerManager: containerManager,
 		listCmd:          NewListCommand(cfg, containerManager),
-		prompter:         prompter,
 	}
 }
 
@@ -57,15 +53,6 @@ func (c *StopCommand) Execute(ctx context.Context, opts *StopOptions) error {
 		containerNames = opts.ContainerNames
 	default:
 		containerNames = []string{c.cfg.DefaultContainerName}
-	}
-
-	proceed := opts.NonInteractive || c.prompter.Prompt(
-		fmt.Sprintf("Do you really want to stop %s?", containerNames),
-		true,
-	)
-
-	if !proceed {
-		return ErrStopAbortedByUserError
 	}
 
 	if opts.Verbose {

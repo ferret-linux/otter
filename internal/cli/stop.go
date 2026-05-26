@@ -1,11 +1,9 @@
 package cli
 
 import (
-	"bufio"
 	"context"
 	"errors"
 	"fmt"
-	"os"
 
 	"github.com/urfave/cli/v3"
 
@@ -23,10 +21,6 @@ func newStopCommand(cfg *config.Values) *cli.Command {
 				Name:    "all",
 				Aliases: []string{"a"},
 			},
-			&cli.BoolFlag{
-				Name:    "yes",
-				Aliases: []string{"Y"},
-			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			return stopAction(ctx, cmd, cfg)
@@ -40,28 +34,16 @@ func stopAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error
 		return errors.New("container manager not found in context")
 	}
 
-	all := cmd.Bool("all")
-	nonInteractive := cmd.Bool("yes")
-	containerNames := cmd.Args().Slice()
-
 	options := &commands.StopOptions{
-		ContainerNames: containerNames,
-		NonInteractive: nonInteractive,
-		All:            all,
+		ContainerNames: cmd.Args().Slice(),
+		All:            cmd.Bool("all"),
 		DryRun:         cmd.Bool("dry-run"),
 		Verbose:        cmd.Bool("verbose"),
 	}
 
-	prompter := ui.NewPrompter(*bufio.NewReader(os.Stdin), os.Stdout)
-
-	stopCmd := commands.NewStopCommand(cfg, containerManager, prompter)
+	stopCmd := commands.NewStopCommand(cfg, containerManager)
 
 	err := stopCmd.Execute(ctx, options)
-
-	if errors.Is(err, commands.ErrStopAbortedByUserError) {
-		ui.DefaultLogger.Warn("Aborted.")
-		return nil
-	}
 
 	if errors.Is(err, commands.ErrEmptyContainerList) {
 		ui.DefaultLogger.Warn("No containers found.")

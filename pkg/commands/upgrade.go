@@ -18,7 +18,6 @@ type UpgradeOptions struct {
 	ContainerNames []string
 	All            bool
 	Running        bool
-	NonInteractive bool
 	DryRun         bool
 	Verbose        bool
 }
@@ -29,17 +28,14 @@ type UpgradeCommand struct {
 	listCmd          *ListCommand
 	startCmd         *StartCommand
 	enterCmd         *EnterCommand
-	prompter         *ui.Prompter
 }
 
-var ErrUpgradeAbortedByUser = errors.New("upgrade operation aborted by user")
 var ErrUpgradeNoContainerSpecified = errors.New("please specify the name of the container")
 
 func NewUpgradeCommand(
 	cfg *config.Values,
 	cm containermanager.ContainerManager,
 	progress *ui.Progress,
-	prompter *ui.Prompter,
 ) *UpgradeCommand {
 	return &UpgradeCommand{
 		cfg:              cfg,
@@ -47,7 +43,6 @@ func NewUpgradeCommand(
 		listCmd:          NewListCommand(cfg, cm),
 		startCmd:         NewStartCommand(cfg, cm),
 		enterCmd:         NewEnterCommand(cfg, cm),
-		prompter:         prompter,
 	}
 }
 
@@ -81,12 +76,6 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 		containerNames = opts.ContainerNames
 	default:
 		return ErrUpgradeNoContainerSpecified
-	}
-
-	proceed := opts.NonInteractive || c.canProceed(containerNames)
-
-	if !proceed {
-		return ErrUpgradeAbortedByUser
 	}
 
 	var lastErr error
@@ -140,11 +129,4 @@ func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string, dryR
 	}
 
 	return nil
-}
-
-func (c *UpgradeCommand) canProceed(containerNames []string) bool {
-	return c.prompter.Prompt(
-		fmt.Sprintf("Do you really want to upgrade %s?", containerNames),
-		true,
-	)
 }
