@@ -208,9 +208,8 @@ func printCreateCompleted(progress *ui.Progress, containerName string, rootful b
 		rootFlag = "--root "
 	}
 
-	msg := "Otter '%s' successfully created.\nTo enter, run:\n\notter enter %s%s\n\n"
-
-	progress.Finalize(msg, containerName, rootFlag, containerName)
+	progress.Finalize("Otter '%s' successfully created.", containerName)
+	ui.DefaultLogger.Info("To enter, run: otter enter %s%s", rootFlag, containerName)
 }
 
 func printContainerAlreadyExists(progress *ui.Progress, containerName string, rootful bool) {
@@ -219,12 +218,6 @@ func printContainerAlreadyExists(progress *ui.Progress, containerName string, ro
 		rootFlag = "--root "
 	}
 
-	msg := `Container named '%s' already exists.
-To enter, run:
-
-otter enter %s%s
-
-`
-
-	progress.Finalize(msg, containerName, rootFlag, containerName)
+	progress.Finalize("Container named '%s' already exists.", containerName)
+	ui.DefaultLogger.Info("To enter, run: otter enter %s%s", rootFlag, containerName)
 }
