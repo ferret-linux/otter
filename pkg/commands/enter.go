@@ -6,6 +6,7 @@ import (
 
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 type EnterResult struct{}
@@ -59,9 +60,18 @@ func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterRe
 		CleanPath:       opts.CleanPath,
 	}
 
+	if !opts.DryRun && !opts.NoTTY {
+		ui.DefaultLogger.Info("entering '%s'...\n", opts.ContainerName)
+	}
+
 	err := c.containerManager.Enter(ctx, cmdOpts)
 	if err != nil {
 		return nil, fmt.Errorf("failed to enter the container: %w", err)
+	}
+
+	if !opts.DryRun && !opts.NoTTY {
+		fmt.Println()
+		ui.DefaultLogger.Info("container still running — use 'otter stop %s' to stop it", opts.ContainerName)
 	}
 
 	return &EnterResult{}, nil
