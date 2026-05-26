@@ -226,6 +226,12 @@ if [ "${upgrade}" -eq 0 ]; then
 	[ -z "${container_user_name}" ] && printf "Error: Invalid arguments, missing username\n" && exit 2
 	[ -z "${container_user_uid}" ] && printf "Error: Invalid arguments, missing user uid\n" && exit 2
 fi
+
+# Remove any container.ready file to prevent enter before container is ready to use
+# this helps avoid enter before container is in a fully usable state or is being
+# upgraded by using 'otter upgrade'
+rm -f /usr/lib/otter/container.ready
+
 set -o errexit
 set -o nounset
 # set verbosity
@@ -2723,6 +2729,7 @@ fi
 #
 # For non-init containers, the init will stop here
 if [ "${init}" -eq 0 ]; then
+	touch /usr/lib/otter/container.ready
 	printf "container_setup_done\n"
 	# Keepalive loop
 	# disable verbose logging for this phase.
@@ -2925,12 +2932,14 @@ if [ -e /usr/lib/systemd/systemd ] || [ -e /lib/systemd/systemd ]; then
 	systemctl start user@${container_user_name}.service && \
 	systemctl start user-integration@${container_user_name}.service && \
 	loginctl enable-linger ${container_user_name} || : && \
+	touch /usr/lib/otter/container.ready && \
 	echo container_setup_done" &
 
 	[ -e /usr/lib/systemd/systemd ] && exec /usr/lib/systemd/systemd --system --log-target=console --unit=multi-user.target
 	[ -e /lib/systemd/systemd ] && exec /lib/systemd/systemd --system --log-target=console --unit=multi-user.target
 
 elif [ -e /sbin/init ]; then
+	touch /usr/lib/otter/container.ready
 	printf "container_setup_done\n"
 
 	# Fallback to standard init path, this is useful in case of non-Systemd containers
