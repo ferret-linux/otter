@@ -188,7 +188,7 @@ func (c *GenerateEntryCommand) ensureDesktopEntryDirExists(desktopEntryBaseDir s
 	if err := os.MkdirAll(desktopEntryAppsDir, 0750); err != nil {
 		return "", "", fmt.Errorf("failed to create desktop entry applications directory: %w", err)
 	}
-	desktopEntryIconsDir := filepath.Join(desktopEntryBaseDir, "icons", "otter")
+	desktopEntryIconsDir := filepath.Join(desktopEntryBaseDir, "otter", "icons", "distros")
 	if err := os.MkdirAll(desktopEntryIconsDir, 0750); err != nil {
 		return "", "", fmt.Errorf("failed to create desktop entry icons directory: %w", err)
 	}
