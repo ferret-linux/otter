@@ -34,10 +34,12 @@ type AssembleCommand struct {
 	cfg           *config.Values
 	createCmd     *CreateCommand
 	rmCmd         *RmCommand
+	lockCmd       *LockCommand
 	startCmd      *StartCommand
 	enterCmd      *EnterCommand
 	createCmdRoot *CreateCommand
 	rmCmdRoot     *RmCommand
+	lockCmdRoot   *LockCommand
 	startCmdRoot  *StartCommand
 	enterCmdRoot  *EnterCommand
 	progress      *ui.Progress
@@ -54,10 +56,12 @@ func NewAssembleCommand(
 		cfg:           cfg,
 		createCmd:     NewCreateCommand(cfg, cm, ui.NewDevNullProgress(), prompter),
 		rmCmd:         NewRmCommand(cfg, cm, prompter),
+		lockCmd:       NewLockCommand(cfg, cm),
 		startCmd:      NewStartCommand(cfg, cm),
 		enterCmd:      NewEnterCommand(cfg, cm),
 		createCmdRoot: NewCreateCommand(cfg, cmRoot, ui.NewDevNullProgress(), prompter),
 		rmCmdRoot:     NewRmCommand(cfg, cmRoot, prompter),
+		lockCmdRoot:   NewLockCommand(cfg, cmRoot),
 		startCmdRoot:  NewStartCommand(cfg, cmRoot),
 		enterCmdRoot:  NewEnterCommand(cfg, cmRoot),
 		progress:      progress,
@@ -201,6 +205,17 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item, d
 	if !dryRun {
 		err = ac.setupBox(ctx, item)
 		if err != nil {
+			ac.progress.Fail()
+			return err
+		}
+	}
+
+	if item.Lock {
+		lockCmd := ac.lockCmd
+		if item.Root {
+			lockCmd = ac.lockCmdRoot
+		}
+		if err := lockCmd.Execute(ctx, LockOptions{ContainerName: item.Name}); err != nil {
 			ac.progress.Fail()
 			return err
 		}

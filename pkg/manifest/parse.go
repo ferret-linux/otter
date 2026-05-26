@@ -31,6 +31,7 @@ type Item struct {
 	InitHooks          []string
 	PreInitHooks       []string
 	AlwaysPull         bool
+	Lock               bool
 	Root               bool
 	StartNow           bool
 	UnshareGroups      bool
@@ -174,6 +175,8 @@ func sectionToItem(section *ini.Section, env *userenv.UserEnvironment) Item { //
 			item.Entry = parseBool(last)
 		case "pull":
 			item.AlwaysPull = parseBool(last)
+		case "lock":
+			item.Lock = parseBool(last)
 		case "root":
 			item.Root = parseBool(last)
 		case "start_now":
