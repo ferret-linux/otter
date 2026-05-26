@@ -28,7 +28,7 @@ var imageAliases = map[string]string{
 	"alma":                "docker.io/library/almalinux:latest",
 	"kali":                "docker.io/kalilinux/kali-rolling:latest",
 	"rhel":                "registry.access.redhat.com/ubi10/ubi-init:latest",
-	"rocky":               "quay.io/rockylinux/rockylinux:latest",
+	"rocky":               "docker.io/rockylinux/rockylinux:10-ubi-init",
 	"fedora":              "quay.io/fedora/fedora:44",
 	"centos":              "quay.io/centos/centos:stream10",
 	"gentoo":              "docker.io/gentoo/stage3:latest",
