@@ -304,10 +304,6 @@ fi
 # Prefix to add to an existing command to work through the container
 container_command_prefix="${OTTER_PATH:-"otter"} enter${rootful:+ ${rootful}} -n ${container_name}${enter_flags:+ ${enter_flags}} --${sudo_prefix:+ ${sudo_prefix}} "
 
-if [ -n "${rootful}" ]; then
-	container_command_prefix="env SUDO_ASKPASS=\"${sudo_askpass_path}\" OTR_SUDO_PROGRAM=\"sudo --askpass\" ${container_command_prefix}"
-fi
-
 if [ -z "${exported_app_label}" ]; then
 	exported_app_label=" (on ${container_name})"
 elif [ "${exported_app_label}" = "none" ]; then
@@ -588,6 +584,12 @@ export_application()
 			sed "/^DBusActivatable=true/d" |
 			sed "s|Name.*|&${exported_app_label}|g" \
 				> "/run/host${host_home}/.local/share/applications/${desktop_home_file}"
+		# For rootful containers, ensure Terminal=true so sudo password prompt is visible
+		if [ -n "${rootful}" ] && grep -q "^Terminal=" "/run/host${host_home}/.local/share/applications/${desktop_home_file}"; then
+			sed -i "s|^Terminal=.*|Terminal=true|g" "/run/host${host_home}/.local/share/applications/${desktop_home_file}"
+		elif [ -n "${rootful}" ]; then
+			printf "Terminal=true\n" >> "/run/host${host_home}/.local/share/applications/${desktop_home_file}"
+		fi
 		# in the end we add the final quote we've opened in the "container_command_prefix"
 
 		if ! grep -q "StartupWMClass" "/run/host${host_home}/.local/share/applications/${desktop_home_file}"; then
