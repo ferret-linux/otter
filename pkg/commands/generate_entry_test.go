@@ -109,7 +109,7 @@ func TestGenerateEntryCommand_Execute_Root(t *testing.T) {
 	assert.FileExists(t, expectedEntryPath)
 
 	expectedContent := `[Desktop Entry]
-Name=Test-container
+Name=Test-container (rootful)
 GenericName=Terminal entering Test-container
 Comment=Terminal entering Test-container
 Categories=Otter;System;Utility

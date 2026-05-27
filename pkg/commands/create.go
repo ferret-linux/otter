@@ -226,11 +226,12 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 
 	c.progress.Done()
 
-	if opts.GenerateEntry && !opts.DryRun && !opts.Rootful {
+	if opts.GenerateEntry && !opts.DryRun {
 		err := c.generateEntryCmd.Execute(
 			ctx,
 			&GenerateEntryOptions{
 				ContainerName: containerName,
+				Root:          opts.Rootful,
 			},
 		)
 		if err != nil {

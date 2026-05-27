@@ -220,7 +220,7 @@ func (c *GenerateEntryCommand) composeDesktopEntryData(
 	}
 
 	return map[string]string{
-		"entry_name":     getEntryName(containerName),
+		"entry_name":     getEntryName(containerName, root),
 		"container_name": containerName,
 		"otter_path":     otterPath,
 		"icon":           icon,
@@ -230,15 +230,21 @@ func (c *GenerateEntryCommand) composeDesktopEntryData(
 
 // getEntryName returns the formatted entry name for the desktop entry
 // based on the container name, capitalizing the first letter.
-func getEntryName(containerName string) string {
+func getEntryName(containerName string, root bool) string {
 	if containerName == "" {
 		return ""
 	}
 	first := strings.ToUpper(containerName[:1])
+	var name string
 	if len(containerName) > 1 {
-		return first + containerName[1:]
+		name = first + containerName[1:]
+	} else {
+		name = first
 	}
-	return first
+	if root {
+		return name + " (rootful)"
+	}
+	return name
 }
 
 func (c *GenerateEntryCommand) writeDesktopEntryFile(
