@@ -455,8 +455,11 @@ func (p *Podman) makeCreateCommand(
 		"--nvidia", strconv.Itoa(containermanager.Btoi(nvidia)),
 		"--pre-init-hooks", containerPreInitHook,
 		"--additional-packages", strings.Join(containerAdditionalPackages, " "),
-		"--", containerInitHook,
 	}
+	if p.root {
+		args = append(args, "--rootful")
+	}
+	args = append(args, "--", containerInitHook)
 
 	// Final assembly of the command
 	// podman create [options] image [args...]

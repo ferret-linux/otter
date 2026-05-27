@@ -145,6 +145,8 @@ func TestPodman_makeCreateCommandRootful(t *testing.T) {
 
 	// Rootful mode should NOT have --userns keep-id
 	assert.NotContains(t, cmdStr, "--userns keep-id")
+	// Rootful mode should have --rootful flag passed to otter-init
+	assert.Contains(t, cmdStr, "--rootful")
 
 	// Should still have other Podman-specific flags
 	assert.Contains(t, cmdStr, "--annotation run.oci.keep_original_groups=1")

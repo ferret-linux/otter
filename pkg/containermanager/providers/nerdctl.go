@@ -313,8 +313,11 @@ func (n *Nerdctl) makeCreateCommand(
 		"--nvidia", strconv.Itoa(containermanager.Btoi(nvidia)),
 		"--pre-init-hooks", containerPreInitHook,
 		"--additional-packages", strings.Join(containerAdditionalPackages, " "),
-		"--", containerInitHook,
 	}
+	if n.root {
+		args = append(args, "--rootful")
+	}
+	args = append(args, "--", containerInitHook)
 
 	//nolint:mnd // 2 is fine here, it's "create" and image
 	cmd := make([]string, 0, len(options)+len(args)+2)

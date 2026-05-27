@@ -450,8 +450,11 @@ func (d *Docker) makeCreateCommand(
 		"--nvidia", strconv.Itoa(containermanager.Btoi(nvidia)),
 		"--pre-init-hooks", containerPreInitHook,
 		"--additional-packages", strings.Join(containerAdditionalPackages, " "),
-		"--", containerInitHook,
 	}
+	if d.root {
+		args = append(args, "--rootful")
+	}
+	args = append(args, "--", containerInitHook)
 
 	// Final assembly of the command
 	// docker create [options] image [args...]

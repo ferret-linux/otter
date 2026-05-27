@@ -102,6 +102,7 @@ show_help()
 │ --group               ┆ -g   GID of the user                   │
 │ --nvidia                     Integrate host's Nvidia drivers   │
 │ --upgrade             ┆ -U   Run init in upgrade mode          │
+│ --rootful                    Mark container as rootful         │
 │ --pre-init-hooks             Commands to execute in pre-setup  │
 │ --additional-packages        Extra packages to install         │
 ├────────────────────────────────────────────────────────────────┤
@@ -137,6 +138,10 @@ while :; do
 		-U | --upgrade)
 			shift
 			upgrade=1
+			;;
+		--rootful)
+			shift
+			rootful=1
 			;;
 		-n | --name)
 			if [ -n "$2" ]; then
@@ -236,6 +241,13 @@ if [ "${upgrade}" -ne 0 ]; then
 fi
 # ensure the directory is present for otter to not break
 mkdir -p /usr/lib/otter
+if [ "${rootful}" -eq 1 ]; then
+	touch /usr/lib/otter/container.rootful
+	rm -f /usr/lib/otter/container.rootless
+else
+	touch /usr/lib/otter/container.rootless
+	rm -f /usr/lib/otter/container.rootful
+fi
 
 set -o errexit
 set -o nounset
@@ -244,24 +256,7 @@ if [ "${verbose}" -ne 0 ]; then
 	set -o xtrace
 fi
 
-# Determine if we're in a rootful container, generally if we're able to read
-# host's /etc/shadow, it means we're really root!
-#
-# if /run/.nopasswd is present, let's treat the init as rootless, this is not
-# a good thing, users behold!
-#
-# if /run/.otter.rootless is present, the container was explicitly created
-# without --root (otter-create mounts this marker for rootless containers).
-# Trust it over the shadow heuristic, which gives false positives on Docker
-# Desktop (macOS) where the container always has root access to the VM's fs.
-if [ ! -e /run/.otter.rootless ] &&
-	stat /run/host/etc/shadow > /dev/null &&
-	{
-		[ "$(stat -c "%u" /run/host/etc/shadow)" = "0" ] || [ "$(stat -f "%u" /run/host/etc/shadow 2> /dev/null)" = "0" ]
-	} &&
-	[ ! -e /run/.nopasswd ]; then
-	rootful=1
-fi
+# rootful is set explicitly via --rootful flag passed by otter-create at container creation time.
 
 # Get host $LANG
 if [ -f "/run/host/etc/locale.conf" ]; then
