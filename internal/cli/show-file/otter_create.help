@@ -23,21 +23,21 @@
 {2}│{R} {4}--clone{R}               {2}┆{R} {4}-c{R}   {5}Name of container to use as base for new container{R}     {2}│{R}
 {2}│{R} {4}--image{R}               {2}┆{R} {4}-i{R}   {5}Image to use for the container{R}                         {2}│{R}
 {2}│{R} {4}--shell{R}               {2}┆{R} {4}-s{R}   {5}Shell to use inside the container{R}                      {2}│{R}
-{2}│{R} {4}--memory{R}          {5}                       Memory limit for the container (e.g. 512m, 2g){R}         {2}│{R}
-{2}│{R} {4}--nvidia{R}          {5}                       Integrate host's Nvidia drivers into container{R}         {2}│{R}
-{2}│{R} {4}--volume{R}          {5}                       Additional volumes to add to the container{R}             {2}│{R}
-{2}│{R} {4}--hostname{R}        {5}                       Hostname for the container{R}                             {2}│{R}
-{2}│{R} {4}--no-entry{R}        {5}                       Do not generate a container entry on host system{R}       {2}│{R}
-{2}│{R} {4}--platform{R}        {5}                       Specify the target platform, e.g. linux/arm64{R}          {2}│{R}
-{2}│{R} {4}--init-hooks{R}      {5}                       Commands to run at end of container initialization{R}     {2}│{R}
-{2}│{R} {4}--cpu-threads{R}     {5}                       Number of CPU threads the container can use{R}            {2}│{R}
-{2}│{R} {4}--unshare-ipc{R}     {5}                       Do not share IPC namespace with host{R}                   {2}│{R}
-{2}│{R} {4}--unshare-all{R}     {5}                       Activate all unshare flags{R}                             {2}│{R}
-{2}│{R} {4}--unshare-netns{R}       {5}                   Do not share net namespace with host{R}                   {2}│{R}
-{2}│{R} {4}--pre-init-hooks{R}      {5}                   Commands to run at start of container initialization{R}   {2}│{R}
-{2}│{R} {4}--unshare-groups{R}      {5}                   Do not forward user's additional groups into container{R} {2}│{R}
-{2}│{R} {4}--unshare-devsys{R}      {5}                   Do not share host devices and sysfs dirs{R}               {2}│{R}
-{2}│{R} {4}--unshare-process{R}     {5}                   Do not share process namespace with host{R}               {2}│{R}
+{2}│{R} {4}--memory{R}          {5}           Memory limit for the container (e.g. 512m, 2g){R}         {2}│{R}
+{2}│{R} {4}--nvidia{R}          {5}           Integrate host's Nvidia drivers into container{R}         {2}│{R}
+{2}│{R} {4}--volume{R}          {5}           Additional volumes to add to the container{R}             {2}│{R}
+{2}│{R} {4}--hostname{R}        {5}           Hostname for the container{R}                             {2}│{R}
+{2}│{R} {4}--no-entry{R}        {5}           Do not generate a container entry on host system{R}       {2}│{R}
+{2}│{R} {4}--platform{R}        {5}           Specify the target platform, e.g. linux/arm64{R}          {2}│{R}
+{2}│{R} {4}--init-hooks{R}      {5}           Commands to run at end of container initialization{R}     {2}│{R}
+{2}│{R} {4}--cpu-threads{R}     {5}           Number of CPU threads the container can use{R}            {2}│{R}
+{2}│{R} {4}--unshare-ipc{R}     {5}           Do not share IPC namespace with host{R}                   {2}│{R}
+{2}│{R} {4}--unshare-all{R}     {5}           Activate all unshare flags{R}                             {2}│{R}
+{2}│{R} {4}--unshare-netns{R}       {5}       Do not share net namespace with host{R}                   {2}│{R}
+{2}│{R} {4}--pre-init-hooks{R}      {5}       Commands to run at start of container initialization{R}   {2}│{R}
+{2}│{R} {4}--unshare-groups{R}      {5}       Do not forward user's additional groups into container{R} {2}│{R}
+{2}│{R} {4}--unshare-devsys{R}      {5}       Do not share host devices and sysfs dirs{R}               {2}│{R}
+{2}│{R} {4}--unshare-process{R}     {5}       Do not share process namespace with host{R}               {2}│{R}
 {2}│{R} {4}--additional-flags{R}    {2}┆{R} {4}-a{R}   {5}Additional flags to pass to the container manager{R}      {2}│{R}
 {2}│{R} {4}--additional-packages{R} {2}┆{R} {4}-ap{R}  {5}Additional packages to install during container setup{R}  {2}│{R}
 {2}├───────────────────────┴─────────────────────────────────────────────────────────────┤{R}
