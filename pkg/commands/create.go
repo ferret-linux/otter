@@ -447,6 +447,7 @@ func (c *CreateCommand) askPullImage(ctx context.Context, containerImage string,
 			}
 		}
 
+		ui.DefaultLogger.Info("large images may take a while, please be patient...")
 		c.progress.Next("pulling '%s'...", containerImage)
 		err := c.containerManager.PullImage(ctx, containerImage, opts.ContainerPlatform, opts.DryRun)
 		if err != nil {
