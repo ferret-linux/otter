@@ -540,6 +540,8 @@ func TestPodman_makeCreateCommandUnshareOptions(t *testing.T) {
 				"",
 				"",
 				false,
+				"",
+				0,
 				false,
 				false,
 				tt.unshareIPC,
