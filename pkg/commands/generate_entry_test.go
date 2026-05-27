@@ -105,7 +105,7 @@ func TestGenerateEntryCommand_Execute_Root(t *testing.T) {
 	err := generateEntryCmd.Execute(ctx, opts)
 	require.NoError(t, err, "GenerateEntryCommand.Execute()")
 
-	expectedEntryPath := fmt.Sprintf("%s/.local/share/applications/test-container.desktop", tempDir)
+	expectedEntryPath := fmt.Sprintf("%s/.local/share/applications/rootful-test-container.desktop", tempDir)
 	assert.FileExists(t, expectedEntryPath)
 
 	expectedContent := `[Desktop Entry]

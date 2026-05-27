@@ -118,12 +118,12 @@ func (c *GenerateEntryCommand) Execute(
 
 	if opts.Delete {
 		for _, containerName := range containerNames {
-			entryPath := c.getEntryFilePath(filepath.Join(desktopEntryBaseDir, "applications"), containerName)
+			entryPath := c.getEntryFilePath(filepath.Join(desktopEntryBaseDir, "applications"), containerName, opts.Root)
 			if _, err := os.Stat(entryPath); os.IsNotExist(err) {
 				ui.DefaultLogger.Info("no desktop entry found for '%s'", containerName)
 				continue
 			}
-			if err := c.deleteEntry(containerName, desktopEntryBaseDir); err != nil {
+			if err := c.deleteEntry(containerName, desktopEntryBaseDir, opts.Root); err != nil {
 				return fmt.Errorf("failed to delete desktop entry for container %s: %w", containerName, err)
 			}
 			ui.DefaultLogger.Ok("desktop entry removed for '%s'", containerName)
@@ -144,7 +144,7 @@ func (c *GenerateEntryCommand) Execute(
 
 	// Create the desktop entries for all the containers
 	for _, containerName := range containerNames {
-		entryPath := c.getEntryFilePath(filepath.Join(desktopEntryBaseDir, "applications"), containerName)
+		entryPath := c.getEntryFilePath(filepath.Join(desktopEntryBaseDir, "applications"), containerName, opts.Root)
 		if opts.Verbose {
 			ui.DefaultLogger.Info("writing desktop entry for '%s' to %s", containerName, entryPath)
 		}
@@ -161,9 +161,9 @@ func (c *GenerateEntryCommand) Execute(
 	return nil
 }
 
-func (c *GenerateEntryCommand) deleteEntry(containerName string, desktopEntryBaseDir string) error {
+func (c *GenerateEntryCommand) deleteEntry(containerName string, desktopEntryBaseDir string, root bool) error {
 	desktopEntryAppsDir := filepath.Join(desktopEntryBaseDir, "applications")
-	entryFilePath := c.getEntryFilePath(desktopEntryAppsDir, containerName)
+	entryFilePath := c.getEntryFilePath(desktopEntryAppsDir, containerName, root)
 	if _, err := os.Stat(entryFilePath); os.IsNotExist(err) {
 		return nil
 	}
@@ -186,7 +186,7 @@ func (c *GenerateEntryCommand) createEntry(
 		return fmt.Errorf("failed to ensure desktop entry directories exist: %w", err)
 	}
 
-	entryFilePath := c.getEntryFilePath(desktopEntryAppsDir, containerName)
+	entryFilePath := c.getEntryFilePath(desktopEntryAppsDir, containerName, root)
 	data := c.composeDesktopEntryData(containerName, c.getIconPath(ctx, containerName, icon, desktopEntryIconsDir), otterPath, root)
 	if err := c.writeDesktopEntryFile(entryFilePath, data); err != nil {
 		return fmt.Errorf("failed to write desktop entry file for container %s: %w", containerName, err)
@@ -270,7 +270,10 @@ func (c *GenerateEntryCommand) writeDesktopEntryFile(
 	return nil
 }
 
-func (c *GenerateEntryCommand) getEntryFilePath(desktopEntryDir, containerName string) string {
+func (c *GenerateEntryCommand) getEntryFilePath(desktopEntryDir, containerName string, root bool) string {
+	if root {
+		return filepath.Join(desktopEntryDir, "rootful-"+containerName+".desktop")
+	}
 	return filepath.Join(desktopEntryDir, containerName+".desktop")
 }
 
