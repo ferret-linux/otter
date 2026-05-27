@@ -261,6 +261,29 @@ func validateMemory(memory string) error {
 	if !matched {
 		return fmt.Errorf("invalid memory format, use m or g suffix (e.g. 512m, 2g)")
 	}
+	data, err := os.ReadFile("/proc/meminfo")
+	if err != nil {
+		return fmt.Errorf("failed to read memory info: %w", err)
+	}
+	var totalKB uint64
+	for _, line := range strings.Split(string(data), "\n") {
+		if strings.HasPrefix(line, "MemTotal:") {
+			fmt.Sscanf(line, "MemTotal: %d kB", &totalKB)
+			break
+		}
+	}
+	value, _ := strconv.ParseUint(memory[:len(memory)-1], 10, 64)
+	if memory[len(memory)-1] == 'g' {
+		value *= 1024 * 1024
+		if value > totalKB {
+			return fmt.Errorf("not enough memory, host has %dg", totalKB/1024/1024)
+		}
+	} else {
+		value *= 1024
+		if value > totalKB {
+			return fmt.Errorf("not enough memory, host has %dm", totalKB/1024)
+		}
+	}
 	return nil
 }
 
