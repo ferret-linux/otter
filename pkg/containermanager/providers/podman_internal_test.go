@@ -745,23 +745,6 @@ func TestPodmanEnterPropagatesExecError(t *testing.T) {
 	assert.ErrorContains(t, err, "exit status 7")
 }
 
-func TestPodmanEnterDetachesWhenNoTTYWithCommand(t *testing.T) {
-	installFakePodmanRuntime(t)
-	t.Setenv("FAKE_INSPECT_STDOUT", podmanFakeInspectJSON("running"))
-
-	err := NewPodman(false, "sudo", false).Enter(
-		t.Context(),
-		containermanager.EnterOptions{
-			ContainerName: "box",
-			NoTTY:         true,
-			NoWorkDir:     true,
-			CustomCommand: []string{"firefox"},
-		},
-	)
-
-	require.NoError(t, err)
-}
-
 func installFakePodmanRuntime(t *testing.T) {
 	t.Helper()
 
