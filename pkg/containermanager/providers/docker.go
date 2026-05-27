@@ -737,7 +737,7 @@ func (d *Docker) PullImage(ctx context.Context, imageName string, platform strin
 	} else {
 		args = []string{"pull", imageName}
 	}
-	_, err := d.run(ctx, args, runOptions{DryRun: dryRun, TailLogs: true})
+	_, err := d.run(ctx, args, runOptions{DryRun: dryRun})
 	return err
 }
 

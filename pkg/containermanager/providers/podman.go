@@ -594,7 +594,7 @@ func (p *Podman) PullImage(ctx context.Context, imageName string, platform strin
 	} else {
 		args = []string{"pull", imageName}
 	}
-	_, err := p.run(ctx, args, runOptions{DryRun: dryRun, TailLogs: true})
+	_, err := p.run(ctx, args, runOptions{DryRun: dryRun})
 	return err
 }
 

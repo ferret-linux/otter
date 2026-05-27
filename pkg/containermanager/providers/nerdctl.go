@@ -354,7 +354,7 @@ func (n *Nerdctl) PullImage(ctx context.Context, imageName string, platform stri
 	} else {
 		args = []string{"pull", imageName}
 	}
-	_, err := n.run(ctx, args, runOptions{DryRun: dryRun, TailLogs: true})
+	_, err := n.run(ctx, args, runOptions{DryRun: dryRun})
 	return err
 }
 

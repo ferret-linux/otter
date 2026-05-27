@@ -447,10 +447,13 @@ func (c *CreateCommand) askPullImage(ctx context.Context, containerImage string,
 			}
 		}
 
+		c.progress.Next("pulling '%s'...", containerImage)
 		err := c.containerManager.PullImage(ctx, containerImage, opts.ContainerPlatform, opts.DryRun)
 		if err != nil {
+			c.progress.Fail()
 			return fmt.Errorf("failed to pull image '%s': %w", containerImage, err)
 		}
+		c.progress.Done()
 	}
 
 	return nil
