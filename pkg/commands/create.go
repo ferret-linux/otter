@@ -441,7 +441,7 @@ func (c *CreateCommand) askPullImage(ctx context.Context, containerImage string,
 		skipConfirm := opts.NonInteractive || opts.ContainerAlwaysPull || opts.DryRun
 		if !skipConfirm {
 			ui.DefaultLogger.Warn("image '%s' not found on your system.", containerImage)
-			answer := c.prompter.Prompt("Would you like to pull it?", true)
+			answer := c.prompter.Prompt("would you like to pull it?", true)
 			if !answer {
 				return ErrImagePullAbortedByUser
 			}
