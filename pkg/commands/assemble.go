@@ -198,6 +198,7 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item, d
 		if _, rmErr := rmCmd.Execute(cleanupCtx, RmOptions{
 			NoTTY:          true,
 			Force:          true,
+			Root:           item.Root,
 			ContainerNames: []string{item.Name},
 		}); rmErr != nil {
 			ui.DefaultLogger.Warn("%s: %s", item.Name, rmErr)

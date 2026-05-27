@@ -65,6 +65,7 @@ func rmAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
 		RemoveHome:     cmd.Bool("rm-home"),
 		DryRun:         cmd.Bool("dry-run"),
 		Verbose:        cmd.Bool("verbose"),
+		Root:           cmd.Bool("root"),
 		ContainerNames: names,
 	}
 
