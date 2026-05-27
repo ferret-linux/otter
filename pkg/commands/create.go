@@ -286,7 +286,7 @@ func validateCPUThreads(threads int) error {
 	}
 	hostThreads := end - start + 1
 	if threads > hostThreads {
-		return fmt.Errorf("not enough threads, host has %d threads", hostThreads)
+		return fmt.Errorf("not enough threads, host has max %d threads available", hostThreads)
 	}
 	return nil
 }
