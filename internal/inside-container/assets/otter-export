@@ -559,14 +559,12 @@ export_application()
 			continue
 		fi
 
-		desktop_original_file="$(basename "${desktop_file}")"
 		desktop_prefix="${container_name}"
 		[ -n "${rootful}" ] && desktop_prefix="rootful-${container_name}"
 		desktop_home_file="${desktop_prefix}-$(basename "${desktop_file}")"
 
 		# check if we're exporting or deleting
 		if [ "${exported_delete}" -ne 0 ]; then
-			rm -f "/run/host${host_home}/.local/share/applications/${desktop_original_file}"
 			rm -f "/run/host${host_home}/.local/share/applications/${desktop_home_file}"
 			rm -f "${icon_dest_file}"
 			# we're done, go to next
