@@ -166,7 +166,7 @@ func (c *RmCommand) removeContainer(
 
 func (c *RmCommand) cleanup(ctx context.Context, userHome, containerName string, verbose bool, root bool) {
 	bins := findExportedBinaries(userHome, containerName)
-	desktopApps := findExportedDesktopApps(userHome, containerName)
+	desktopApps := findExportedDesktopApps(userHome, containerName, root)
 
 	toDelete := slices.Concat(bins, desktopApps)
 
@@ -248,8 +248,12 @@ func findExportedBinaries(userHome, containerName string) []string {
 	return files
 }
 
-func findExportedDesktopApps(userHome, containerName string) []string {
-	appsPattern := filepath.Join(userHome, ".local", "share", "applications", containerName+"*")
+func findExportedDesktopApps(userHome, containerName string, root bool) []string {
+	prefix := containerName
+	if root {
+		prefix = "rootful-" + containerName
+	}
+	appsPattern := filepath.Join(userHome, ".local", "share", "applications", prefix+"*")
 
 	matches, err := filepath.Glob(appsPattern)
 	if err != nil {
