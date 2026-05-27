@@ -80,6 +80,12 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 				Name:    "init",
 				Aliases: []string{"I"},
 			},
+			&cli.StringFlag{
+				Name: "memory",
+			},
+			&cli.IntFlag{
+				Name: "cpu-threads",
+			},
 			&cli.BoolFlag{
 				Name: "nvidia",
 			},
@@ -152,6 +158,8 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 		ContainerUserCustomHome: cmd.String("home"),
 		Init:                    cmd.Bool("init"),
 		Nvidia:                  cmd.Bool("nvidia"),
+		Memory:                  cmd.String("memory"),
+		CPUThreads:              cmd.Int("cpu-threads"),
 		ContainerInitHook:       cmd.String("init-hooks"),
 		ContainerPreInitHook:    cmd.String("pre-init-hooks"),
 		ContainerShell:          cmd.String("shell"),

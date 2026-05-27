@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 
 	"gopkg.in/ini.v1"
@@ -45,6 +46,8 @@ type Item struct {
 	ExportedBins       []string
 	ExportedBinsPath   string
 	UserShell          string
+	Memory             string
+	CPUThreads         int
 }
 
 // Parse reads and parses a manifest file from the given filepath or URL.
@@ -166,6 +169,12 @@ func sectionToItem(section *ini.Section, env *userenv.UserEnvironment) Item { //
 			item.ExportedBinsPath = last
 		case "user_shell":
 			item.UserShell = last
+		case "memory":
+			item.Memory = last
+		case "cpu_threads":
+			if v, err := strconv.Atoi(last); err == nil {
+				item.CPUThreads = v
+			}
 
 		case "init":
 			item.Init = parseBool(last)

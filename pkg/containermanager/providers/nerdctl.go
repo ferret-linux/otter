@@ -93,6 +93,8 @@ func (n *Nerdctl) Create(
 		opts.ContainerPreInitHook,
 		opts.ContainerInitHook,
 		opts.Nvidia,
+		opts.Memory,
+		opts.CPUThreads,
 		opts.UnshareDevsys,
 		opts.UnshareGroups,
 		opts.UnshareIPC,
@@ -126,6 +128,8 @@ func (n *Nerdctl) makeCreateCommand(
 	containerPreInitHook string,
 	containerInitHook string,
 	nvidia bool,
+	memory string,
+	cpuThreads int,
 	unshareDevsys bool,
 	unshareGroups bool,
 	unshareIPC bool,
@@ -146,6 +150,12 @@ func (n *Nerdctl) makeCreateCommand(
 
 	if containerPlatform != "" {
 		options = append(options, "--platform="+containerPlatform)
+	}
+	if memory != "" {
+		options = append(options, "--memory", memory)
+	}
+	if cpuThreads > 0 {
+		options = append(options, "--cpus", strconv.Itoa(cpuThreads))
 	}
 	options = append(options, "--hostname", containerHostname)
 	options = append(options, "--name", containerName)

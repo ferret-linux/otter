@@ -164,6 +164,8 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item, d
 		ContainerUserCustomHome: item.Home,
 		Init:                    item.Init,
 		Nvidia:                  item.Nvidia,
+		Memory:                  item.Memory,
+		CPUThreads:              item.CPUThreads,
 		GenerateEntry:           item.Entry,
 		Rootful:                 item.Root,
 		DryRun:                  dryRun,

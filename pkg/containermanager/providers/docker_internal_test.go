@@ -44,6 +44,8 @@ func TestDocker_makeCreateCommand(t *testing.T) {
 		"echo 'pre-init-hook'",      // containerPreInitHook
 		"echo 'init-hook'",          // containerInitHook
 		false,                       // nvidia
+		"",                          // memory
+		0,                           // cpuThreads
 		false,                       // unshareDevsys
 		false,                       // unshareGroups
 		false,                       // unshareIPC

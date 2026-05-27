@@ -52,6 +52,8 @@ type CreateOptions struct {
 	Init                    bool
 	Nvidia                  bool
 	DryRun                  bool
+	Memory                  string
+	CPUThreads              int
 }
 
 type EnterOptions struct {

@@ -64,6 +64,8 @@ func ephemeralAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) 
 			ContainerUserCustomHome: cmd.String("home"),
 			Init:                    cmd.Bool("init"),
 			Nvidia:                  cmd.Bool("nvidia"),
+			Memory:                  cmd.String("memory"),
+			CPUThreads:              cmd.Int("cpu-threads"),
 			ContainerInitHook:       cmd.String("init-hooks"),
 			ContainerPreInitHook:    cmd.String("pre-init-hooks"),
 			ContainerPlatform:       cmd.String("platform"),

@@ -7,6 +7,8 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -111,9 +113,11 @@ type CreateOptions struct {
 	ContainerHomePrefix     string
 	Init                    bool
 
-	Nvidia  bool
-	DryRun  bool
-	Verbose bool
+	Nvidia     bool
+	DryRun     bool
+	Verbose    bool
+	Memory     string
+	CPUThreads int
 
 	GenerateEntry bool
 	Rootful       bool
@@ -140,6 +144,13 @@ func NewCreateCommand(cfg *config.Values, cm containermanager.ContainerManager, 
 
 func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*CreateResult, error) {
 	opts.ContainerShell = c.makeContainerShell(&opts)
+
+	if err := validateMemory(opts.Memory); err != nil {
+		return nil, err
+	}
+	if err := validateCPUThreads(opts.CPUThreads); err != nil {
+		return nil, err
+	}
 
 	containerImage, err := c.makeContainerImage(&opts)
 	if err != nil {
@@ -203,6 +214,8 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 			Init:                    opts.Init,
 			Nvidia:                  opts.Nvidia,
 			DryRun:                  opts.DryRun,
+			Memory:                  opts.Memory,
+			CPUThreads:              opts.CPUThreads,
 		},
 	)
 
@@ -240,6 +253,44 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 // set a default name for the container, that is distinguishable from the default
 // toolbx one. This will avoid problems when using both toolbx and otter on
 // the same system.
+func validateMemory(memory string) error {
+	if memory == "" {
+		return nil
+	}
+	matched, _ := regexp.MatchString(`^[0-9]+(m|g)$`, memory)
+	if !matched {
+		return fmt.Errorf("invalid memory format, use m or g suffix (e.g. 512m, 2g)")
+	}
+	return nil
+}
+
+func validateCPUThreads(threads int) error {
+	if threads == 0 {
+		return nil
+	}
+	if threads < 0 {
+		return fmt.Errorf("cpu-threads must be greater than 0")
+	}
+	data, err := os.ReadFile("/sys/devices/system/cpu/present")
+	if err != nil {
+		return fmt.Errorf("failed to read cpu info: %w", err)
+	}
+	parts := strings.SplitN(strings.TrimSpace(string(data)), "-", 2)
+	if len(parts) != 2 {
+		return fmt.Errorf("failed to parse cpu info")
+	}
+	start, err1 := strconv.Atoi(parts[0])
+	end, err2 := strconv.Atoi(parts[1])
+	if err1 != nil || err2 != nil {
+		return fmt.Errorf("failed to parse cpu info")
+	}
+	hostThreads := end - start + 1
+	if threads > hostThreads {
+		return fmt.Errorf("not enough threads, host has %d threads", hostThreads)
+	}
+	return nil
+}
+
 func (c *CreateCommand) makeContainerShell(opts *CreateOptions) string {
 	if opts.ContainerShell != "" {
 		return opts.ContainerShell
