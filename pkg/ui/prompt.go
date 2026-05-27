@@ -29,6 +29,7 @@ func (p *Prompter) Prompt(label string, defaultChoice bool) bool {
 	s, _ = p.reader.ReadString('\n')
 	s = strings.TrimSpace(s)
 	s = strings.ToLower(s)
+	fmt.Fprintf(p.writer, "\033[1A\r\033[2K")
 
 	yes := []string{"y", "yes", "Y", "YES"}
 	no := []string{"n", "no", "N", "NO"}
