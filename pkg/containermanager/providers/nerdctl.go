@@ -534,11 +534,6 @@ func (n *Nerdctl) run(ctx context.Context, args []string, opts runOptions) (stri
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
 
-	if opts.TailLogs {
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-	}
-
 	err := cmd.Run()
 	if err != nil {
 		captured := strings.TrimSpace(stderr.String())

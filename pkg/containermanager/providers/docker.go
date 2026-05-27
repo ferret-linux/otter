@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -64,7 +63,6 @@ type dockerContainer struct {
 type runOptions struct {
 	DryRun      bool
 	Interactive bool
-	TailLogs    bool
 }
 
 type inspectOutput struct {
@@ -506,11 +504,6 @@ func (d *Docker) run(ctx context.Context, args []string, opts runOptions) (strin
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
-
-	if opts.TailLogs {
-		cmd.Stdout = io.MultiWriter(&stdout, os.Stdout)
-		cmd.Stderr = io.MultiWriter(&stderr, os.Stderr)
-	}
 
 	err := cmd.Run()
 	if err != nil {
