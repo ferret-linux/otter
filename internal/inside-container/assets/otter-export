@@ -302,7 +302,7 @@ if [ "${is_sudo}" -ne 0 ]; then
 fi
 
 # Prefix to add to an existing command to work through the container
-container_command_prefix="${OTTER_PATH:-"otter"} enter${rootful:+ ${rootful}} -n ${container_name}${enter_flags:+ ${enter_flags}} --${sudo_prefix:+ ${sudo_prefix}} "
+container_command_prefix="${OTTER_PATH:-"otter"} enter${rootful:+ ${rootful}} -n ${container_name}${enter_flags:+ ${enter_flags}} --no-tty --${sudo_prefix:+ ${sudo_prefix}} "
 
 if [ -z "${exported_app_label}" ]; then
 	exported_app_label=" (on ${container_name})"
