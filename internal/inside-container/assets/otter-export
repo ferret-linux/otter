@@ -230,7 +230,7 @@ if [ ! -f /run/.containerenv ] && [ ! -f /.dockerenv ] && [ -z "${container:-}" 
 fi
 
 # Check if we're in a rootful or rootless container.
-if grep -q "rootless=0" /run/.containerenv 2> /dev/null; then
+if [ -f /usr/lib/otter/container.rootful ]; then
 	rootful="--root"
 
 	# We need an askpass script for SUDO_ASKPASS, to launch graphical apps
@@ -548,8 +548,10 @@ export_application()
 	# Paths for the single exported icon
 	icon_dest_dir="/run/host${host_home}/.local/share/otter/icons/apps"
 	icon_ext="${icon_file##*.}"
-	icon_dest_file="${icon_dest_dir}/${container_name}-${icon_name}.${icon_ext}"
-	icon_host_path="${host_home}/.local/share/otter/icons/apps/${container_name}-${icon_name}.${icon_ext}"
+	icon_prefix="${container_name}"
+	[ -n "${rootful}" ] && icon_prefix="rootful-${container_name}"
+	icon_dest_file="${icon_dest_dir}/${icon_prefix}-${icon_name}.${icon_ext}"
+	icon_host_path="${host_home}/.local/share/otter/icons/apps/${icon_prefix}-${icon_name}.${icon_ext}"
 
 	# create applications dir if not existing
 	mkdir -p "/run/host${host_home}/.local/share/applications"
@@ -562,7 +564,9 @@ export_application()
 		fi
 
 		desktop_original_file="$(basename "${desktop_file}")"
-		desktop_home_file="${container_name}-$(basename "${desktop_file}")"
+		desktop_prefix="${container_name}"
+		[ -n "${rootful}" ] && desktop_prefix="rootful-${container_name}"
+		desktop_home_file="${desktop_prefix}-$(basename "${desktop_file}")"
 
 		# check if we're exporting or deleting
 		if [ "${exported_delete}" -ne 0 ]; then
