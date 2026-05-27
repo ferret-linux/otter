@@ -496,7 +496,8 @@ func (n *Nerdctl) Enter(
 		return fmt.Errorf("container '%s' is not running, use 'otter start' first", options.ContainerName)
 	}
 
-	if _, err := n.run(ctx, append(command, commandArgs...), runOptions{Interactive: true}); err != nil {
+	detach := options.NoTTY && len(options.CustomCommand) > 0
+	if _, err := n.run(ctx, append(command, commandArgs...), runOptions{Interactive: !detach, Detach: detach}); err != nil {
 		return err
 	}
 
@@ -520,6 +521,13 @@ func (n *Nerdctl) run(ctx context.Context, args []string, opts runOptions) (stri
 	}
 
 	cmd := exec.CommandContext(ctx, command, args...)
+
+	if opts.Detach {
+		if err := cmd.Start(); err != nil {
+			return "", fmt.Errorf("error starting detached command: %w", err)
+		}
+		return "", nil
+	}
 
 	if opts.Interactive {
 		cmd.Stdout = os.Stdout

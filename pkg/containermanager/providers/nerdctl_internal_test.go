@@ -167,6 +167,23 @@ func TestNerdctlEnterPropagatesExecError(t *testing.T) {
 	assert.ErrorContains(t, err, "exit status 7")
 }
 
+func TestNerdctlEnterDetachesWhenNoTTYWithCommand(t *testing.T) {
+	installFakeNerdctlRuntime(t)
+	t.Setenv("FAKE_INSPECT_STDOUT", nerdctlFakeInspectJSON("running"))
+
+	err := NewNerdctl(false, "sudo", false).Enter(
+		t.Context(),
+		containermanager.EnterOptions{
+			ContainerName: "box",
+			NoTTY:         true,
+			NoWorkDir:     true,
+			CustomCommand: []string{"firefox"},
+		},
+	)
+
+	require.NoError(t, err)
+}
+
 func installFakeNerdctlRuntime(t *testing.T) {
 	t.Helper()
 

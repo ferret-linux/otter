@@ -538,6 +538,23 @@ func TestDockerEnterPropagatesExecError(t *testing.T) {
 	assert.ErrorContains(t, err, "exit status 7")
 }
 
+func TestDockerEnterDetachesWhenNoTTYWithCommand(t *testing.T) {
+	installFakeDockerRuntime(t)
+	t.Setenv("FAKE_INSPECT_STDOUT", dockerFakeInspectJSON("running"))
+
+	err := NewDocker(false, "sudo", false).Enter(
+		t.Context(),
+		containermanager.EnterOptions{
+			ContainerName: "box",
+			NoTTY:         true,
+			NoWorkDir:     true,
+			CustomCommand: []string{"firefox"},
+		},
+	)
+
+	require.NoError(t, err)
+}
+
 func installFakeDockerRuntime(t *testing.T) {
 	t.Helper()
 
