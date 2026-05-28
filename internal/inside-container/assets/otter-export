@@ -54,16 +54,6 @@ sudo_prefix=""
 verbose=0
 version="1.0.0"
 
-sudo_askpass_path="${dest_path}/otter_sudo_askpass"
-sudo_askpass_script="#!/bin/sh
-if command -v zenity 2>&1 > /dev/null; then
-	zenity --password
-elif command -v kdialog 2>&1 > /dev/null; then
-	kdialog --password 'A password is required...'
-else
-	exit 127
-fi"
-
 # We depend on some commands, let's be sure we have them
 base_dependencies="basename find grep sed"
 for dep in ${base_dependencies}; do
@@ -232,13 +222,6 @@ fi
 # Check if we're in a rootful or rootless container.
 if [ -f /usr/lib/otter/container.rootful ]; then
 	rootful="--root"
-
-	# We need an askpass script for SUDO_ASKPASS, to launch graphical apps
-	# from the drawer
-	if [ ! -e "${sudo_askpass_path}" ]; then
-		echo "${sudo_askpass_script}" > "${sudo_askpass_path}"
-		chmod +x "${sudo_askpass_path}"
-	fi
 fi
 
 # We're working with HOME, so we must run as USER, not as root.
@@ -594,7 +577,6 @@ export_application()
 		elif [ -n "${rootful}" ]; then
 			printf "Terminal=true\n" >> "/run/host${host_home}/.local/share/applications/${desktop_home_file}"
 		fi
-		# in the end we add the final quote we've opened in the "container_command_prefix"
 
 		if ! grep -q "StartupWMClass" "/run/host${host_home}/.local/share/applications/${desktop_home_file}"; then
 			printf "StartupWMClass=%s\n" "${exported_app}" >> "\
