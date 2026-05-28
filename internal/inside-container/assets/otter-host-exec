@@ -57,22 +57,7 @@ verbose = False
 if os.path.basename(sys.argv[0]) != "otter-host-exec":
     host_command = os.path.basename(sys.argv[0])
 
-if not host_command:
-    parser = argparse.ArgumentParser(
-        add_help=False,
-        formatter_class=argparse.RawTextHelpFormatter,
-    )
-    parser.add_argument("-h", "--help", action="store_true")
-    parser.add_argument("-v", "--verbose", action="store_true")
-    parser.add_argument("-V", "--version", action="store_true")
-    parser.add_argument("-Y", "--yes", action="store_true")
-    parser.add_argument("command", nargs="?", default="")
-    parser.add_argument("args", nargs=argparse.REMAINDER)
-
-    args = parser.parse_args()
-
-    if args.help:
-        print("""\
+HELP_TEXT = """\
 ╭─────────────────────────────────────────────────╮
 │▸ Usage:                                         │
 │  otter-host-exec ls                             │
@@ -93,7 +78,30 @@ if not host_command:
 │        When auto confirmed, host-spawn will be  │
 │        installed in the container, as           │
 │        otter-host-exec needs it to work.        │
-╰─────────────────────────────────────────────────╯""")
+╰─────────────────────────────────────────────────╯"""
+
+if not host_command:
+    def _parser_error(message):
+        print(f"ERROR: {message}\n", file=sys.stderr)
+        print(HELP_TEXT)
+        sys.exit(1)
+
+    parser = argparse.ArgumentParser(
+        add_help=False,
+        formatter_class=argparse.RawTextHelpFormatter,
+    )
+    parser.error = _parser_error
+    parser.add_argument("-h", "--help", action="store_true")
+    parser.add_argument("-v", "--verbose", action="store_true")
+    parser.add_argument("-V", "--version", action="store_true")
+    parser.add_argument("-Y", "--yes", action="store_true")
+    parser.add_argument("command", nargs="?", default="")
+    parser.add_argument("args", nargs=argparse.REMAINDER)
+
+    args = parser.parse_args()
+
+    if args.help:
+        print(HELP_TEXT)
         sys.exit(0)
 
     if args.version:
@@ -118,7 +126,7 @@ if (
     and not Path("/.dockerenv").is_file()
     and not os.environ.get("container")
 ):
-    print(f"You must run {os.path.basename(sys.argv[0])} inside a container!", file=sys.stderr)
+    print(f"You must run  {os.path.basename(sys.argv[0])} inside a container!", file=sys.stderr)
     sys.exit(126)
 
 if not host_command:
@@ -188,8 +196,9 @@ if not host_spawn_ok:
         sys.exit(1)
 
 # Point dbus/xdg to host's runtime dir for initful containers
-xdg = os.environ.get("XDG_RUNTIME_DIR") or f"/run/user/{os.getuid()}"
-dbus = os.environ.get("DBUS_SESSION_BUS_ADDRESS") or f"unix:path=/run/user/{os.getuid()}/bus"
+real_uid = os.getresuid()[0]
+xdg = os.environ.get("XDG_RUNTIME_DIR") or f"/run/user/{real_uid}"
+dbus = os.environ.get("DBUS_SESSION_BUS_ADDRESS") or f"unix:path=/run/user/{real_uid}/bus"
 
 os.environ["XDG_RUNTIME_DIR"] = f"/run/host/{xdg}"
 dbus_path = dbus.split("=", 1)[-1]
