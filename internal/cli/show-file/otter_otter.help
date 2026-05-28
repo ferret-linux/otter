@@ -2,20 +2,19 @@
 {2}│{R}{1}⦿ Use any Linux distribution inside your terminal     {R}{2}│{R}
 {2}├──────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Commands:{R}                                           {2}│{R}
-{2}│{R}  {0}lock{R}                 {5}Lock a container{R}               {2}│{R}
-{2}│{R}  {0}stop{R}                 {5}Stop running containers{R}        {2}│{R}
-{2}│{R}  {0}start{R}                {5}Start a container{R}              {2}│{R}
-{2}│{R}  {0}enter{R}                {5}Enter running containers{R}       {2}│{R}
-{2}│{R}  {0}unlock{R}               {5}Unlock a container{R}             {2}│{R}
-{2}│{R}  {0}create{R}               {5}Create new containers{R}          {2}│{R}
-{2}│{R}  {0}upgrade{R}              {5}Upgrade packages in containers{R} {2}│{R}
-{2}│{R}  {0}assemble{R}             {5}Build containers from a spec{R}   {2}│{R}
-{2}│{R}                                                      {2}│{R}
-{2}│{R}  {0}ls{R}  {2}┆{R} {0}list{R}          {5} List all containers{R}            {2}│{R}
-{2}│{R}  {0}rm{R}  {2}┆{R} {0}remove{R}         {5}Remove containers{R}              {2}│{R}
-{2}│{R}  {0}eph{R} {2}┆{R} {0}ephemeral{R}      {5}Spin up disposable containers{R}  {2}│{R}
-{2}│{R}  {0}gde{R} {2}┆{R} {0}generate-entry{R} {5}Generate .desktop entry{R}        {2}│{R}
-{2}├──────┴───────────────────────────────────────────────┤{R}
+{2}│{R}  {0}ls{R}   {2}┆{R} {0}list{R}           {5}List all containers{R}           {2}│{R}
+{2}│{R}  {0}sh{R}   {2}┆{R} {0}enter{R}          {5}Enter running containers{R}      {2}│{R}
+{2}│{R}  {0}mk{R}   {2}┆{R} {0}create{R}         {5}Create new containers{R}         {2}│{R}
+{2}│{R}  {0}rm{R}   {2}┆{R} {0}remove{R}         {5}Remove containers{R}             {2}│{R}
+{2}│{R}  {0}run{R}  {2}┆{R} {0}start{R}          {5}Start containers{R}              {2}│{R}
+{2}│{R}  {0}off{R}  {2}┆{R} {0}stop{R}           {5}Stop running containers{R}       {2}│{R}
+{2}│{R}  {0}lck{R}  {2}┆{R} {0}lock{R}           {5}Lock a unlocked containers{R}    {2}│{R}
+{2}│{R}  {0}ulck{R} {2}┆{R} {0}unlock{R}         {5}Unlock a locked containers{R}    {2}│{R}
+{2}│{R}  {0}sync{R} {2}┆{R} {0}upgrade{R}        {5}Update packages in containers{R} {2}│{R}
+{2}│{R}  {0}spec{R} {2}┆{R} {0}assemble{R}       {5}Manage containers from a spec{R} {2}│{R}
+{2}│{R}  {0}temp{R} {2}┆{R} {0}ephemeral{R}      {5}Create temporary containers{R}   {2}│{R}
+{2}│{R}  {0}gety{R} {2}┆{R} {0}generate-entry{R} {5}Create container's entry{R}      {2}│{R}
+{2}├───────┴──────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                             {2}│{R}
 {2}│{R}  {4}--help{R}    {2}┆{R} {4}-h{R} {5}Show this help message{R}               {2}│{R}
 {2}│{R}  {4}--version{R} {2}┆{R} {4}-v{R} {5}Print version information{R}            {2}│{R}

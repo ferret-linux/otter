@@ -24,7 +24,8 @@ func newAssembleCommand(cfg *config.Values) *cli.Command {
 		Aliases: []string{"n"},
 	}
 	return &cli.Command{
-		Name: "assemble",
+		Name:    "assemble",
+		Aliases: []string{"spec"},
 		Commands: []*cli.Command{
 			{
 				Name: "create",

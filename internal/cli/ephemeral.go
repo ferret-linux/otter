@@ -33,7 +33,7 @@ func newEphemeralCommand(cfg *config.Values) *cli.Command {
 
 	return &cli.Command{
 		Name:    "ephemeral",
-		Aliases: []string{"eph"},
+		Aliases: []string{"temp"},
 		Flags:   flags,
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			return ephemeralAction(ctx, cmd, cfg)

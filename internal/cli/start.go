@@ -13,7 +13,8 @@ import (
 
 func newStartCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
-		Name: "start",
+		Name:    "start",
+		Aliases: []string{"run"},
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "name",

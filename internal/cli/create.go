@@ -18,7 +18,8 @@ import (
 //nolint:funlen // function length is acceptable for CLI command definition
 func newCreateCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
-		Name: "create",
+		Name:    "create",
+		Aliases: []string{"mk"},
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "image",

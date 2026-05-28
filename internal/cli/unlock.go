@@ -14,7 +14,7 @@ import (
 func newUnlockCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:      "unlock",
-		Usage:     "Unlock a container to allow removal and upgrades",
+		Aliases:   []string{"ulck"},
 		ArgsUsage: "CONTAINER",
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			return unlockAction(ctx, cmd, cfg)

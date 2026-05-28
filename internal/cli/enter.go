@@ -14,7 +14,8 @@ import (
 
 func newEnterCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
-		Name: "enter",
+		Name:    "enter",
+		Aliases: []string{"sh"},
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "name",

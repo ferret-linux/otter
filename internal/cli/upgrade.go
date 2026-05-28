@@ -16,7 +16,8 @@ import (
 
 func newUpgradeCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
-		Name: "upgrade",
+		Name:    "upgrade",
+		Aliases: []string{"sync"},
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",

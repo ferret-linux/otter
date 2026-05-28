@@ -14,7 +14,7 @@ import (
 func newLockCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:      "lock",
-		Usage:     "Lock a container to prevent removal or upgrades",
+		Aliases:   []string{"lck"},
 		ArgsUsage: "CONTAINER",
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			return lockAction(ctx, cmd, cfg)
