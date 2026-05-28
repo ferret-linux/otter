@@ -669,7 +669,7 @@ list_exported_applications()
 		# Get app name, and remove label
 		name="$(grep -Eo 'Name=.*' "${i}" | head -n 1 | cut -d'=' -f2- | sed 's|(.*)||g')"
 		# Print only stuff we exported from this box!
-		if echo "${i}" | grep -q "${CONTAINER_ID}"; then
+		if echo "${i}" | grep -qE "/(rootful-)?${CONTAINER_ID}-[^/]+\.desktop$"; then
 			printf "%-20s | %-30s\n" "${name}" "${i}"
 		fi
 	done
@@ -710,7 +710,7 @@ list_exported_binaries()
 		# Get original binary name
 		name="$(grep -B1 "fi" "${i}" | grep exec | cut -d' ' -f2)"
 		# Print only stuff we exported from this box!
-		if grep "^# name:.*" "${i}" | grep -q "${CONTAINER_ID}"; then
+		if grep -q "^# name: ${CONTAINER_ID}$" "${i}"; then
 			printf "%-20s | %-30s\n" "${name}" "${i}"
 		fi
 	done
