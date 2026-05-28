@@ -1,0 +1,214 @@
+#!/usr/bin/env python3
+# shellcheck disable=all
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the otter project:
+#    https://github.com/ferret-project/otter
+# Copyright (C) 2026 otter contributors
+#
+# This file is based on distrobox:
+#    https://github.com/89luca89/distrobox
+# Copyright (C) 2021 distrobox contributors
+#
+# otter is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License version 3
+# as published by the Free Software Foundation.
+#
+# otter is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with otter; if not, see <http://www.gnu.org/licenses/>.
+
+import argparse
+import os
+import platform
+import re
+import shutil
+import subprocess
+import sys
+import urllib.request
+from pathlib import Path
+from pwd import getpwnam
+
+# Ensure env variables are correctly set
+if not os.environ.get("USER"):
+    os.environ["USER"] = os.popen("id -run").read().strip()
+if not os.environ.get("HOME"):
+    os.environ["HOME"] = getpwnam(os.environ["USER"]).pw_dir
+if not os.environ.get("SHELL"):
+    os.environ["SHELL"] = getpwnam(os.environ["USER"]).pw_shell
+
+# Defaults
+HOST_SPAWN_VERSION = "v1.6.0"
+VERSION = "1.0.0"
+
+try:
+    os.ttyname(sys.stdout.fileno())
+    non_interactive = not sys.stdout.isatty()
+except OSError:
+    non_interactive = True
+host_command = ""
+verbose = False
+
+# If we're a symlink to a command, use that as the command to exec
+if os.path.basename(sys.argv[0]) != "otter-host-exec":
+    host_command = os.path.basename(sys.argv[0])
+
+if not host_command:
+    parser = argparse.ArgumentParser(
+        add_help=False,
+        formatter_class=argparse.RawTextHelpFormatter,
+    )
+    parser.add_argument("-h", "--help", action="store_true")
+    parser.add_argument("-v", "--verbose", action="store_true")
+    parser.add_argument("-V", "--version", action="store_true")
+    parser.add_argument("-Y", "--yes", action="store_true")
+    parser.add_argument("command", nargs="?", default="")
+    parser.add_argument("args", nargs=argparse.REMAINDER)
+
+    args = parser.parse_args()
+
+    if args.help:
+        print("""\
+╭─────────────────────────────────────────────────╮
+│▸ Usage:                                         │
+│  otter-host-exec ls                             │
+│  otter-host-exec bash -l                        │
+│  otter-host-exec podman ps -a                   │
+│  otter-host-exec flatpak remotes                │
+├─────────────────────────────────────────────────┤
+│▸ Options:                                       │
+│ --yes ┆ -Y  Automatic host-spawn installation   │
+├─────────────────────────────────────────────────┤
+│▸ Extras:                                        │
+│ --help    ┆ -h  Show this help message          │
+│ --verbose ┆ -v  Show more verbose output        │
+│ --version ┆ -V  Show version information        │
+├─────────────────────────────────────────────────┤
+│▸ Notes:                                         │
+│ --yes  Auto-confirmed in non-interactive shells.│
+│        When auto confirmed, host-spawn will be  │
+│        installed in the container, as           │
+│        otter-host-exec needs it to work.        │
+╰─────────────────────────────────────────────────╯""")
+        sys.exit(0)
+
+    if args.version:
+        print(f"otter: {VERSION}")
+        print(f"host-spawn: {HOST_SPAWN_VERSION}")
+        sys.exit(0)
+
+    if args.yes:
+        non_interactive = True
+
+    if args.verbose:
+        verbose = True
+
+    host_command = args.command
+    extra_args = args.args
+else:
+    extra_args = sys.argv[1:]
+
+# Check we're running inside a container and not on the host
+if (
+    not Path("/run/.containerenv").is_file()
+    and not Path("/.dockerenv").is_file()
+    and not os.environ.get("container")
+):
+    print(f"You must run {os.path.basename(sys.argv[0])} inside a container!", file=sys.stderr)
+    sys.exit(126)
+
+if not host_command:
+    host_command = os.environ.get("SHELL", "/bin/sh")
+
+# sudo command detection
+sudo_command = []
+if os.getresuid()[0] != 0:
+    if shutil.which("sudo"):
+        sudo_command = ["sudo"]
+    else:
+        sudo_command = ["su", "-l", "-c"]
+
+# Normalize architecture name to comply to golang/release naming
+architecture = platform.machine()
+if re.search(r"armv", architecture):
+    m = re.search(r"armv[0-9]+", architecture)
+    if m:
+        architecture = m.group(0)
+
+# Setup host-spawn
+def get_host_spawn_version():
+    try:
+        result = subprocess.run(
+            ["host-spawn", "--version"],
+            capture_output=True, text=True
+        )
+        return result.stdout.strip()
+    except Exception:
+        return ""
+
+def version_tuple(v):
+    v = v.lstrip("v")
+    return tuple(int(x) for x in re.split(r"[.\-]", v) if x.isdigit())
+
+host_spawn_found = bool(shutil.which("host-spawn"))
+host_spawn_ok = False
+if host_spawn_found:
+    installed_ver = get_host_spawn_version()
+    host_spawn_ok = version_tuple(installed_ver) >= version_tuple(HOST_SPAWN_VERSION)
+
+if not host_spawn_ok:
+    if not non_interactive:
+        print("Warning: host-spawn not found or version is too old!")
+        print("Do you want to install host-spawn utility? [Y/n] ", end="", flush=True)
+        response = input().strip() or "Y"
+    else:
+        response = "yes"
+
+    if response in ("y", "Y", "Yes", "yes", "YES"):
+        url = f"https://github.com/1player/host-spawn/releases/download/{HOST_SPAWN_VERSION}/host-spawn-{architecture}"
+        tmp_path = Path("/tmp/host-spawn")
+        try:
+            urllib.request.urlretrieve(url, tmp_path)
+        except Exception:
+            print("Error: Cannot download host-spawn", file=sys.stderr)
+            sys.exit(1)
+        if tmp_path.exists():
+            subprocess.run(sudo_command + ["sh", "-c", "mv /tmp/host-spawn /usr/bin/"], check=True)
+            subprocess.run(sudo_command + ["sh", "-c", "chmod +x /usr/bin/host-spawn"], check=True)
+    elif response in ("n", "N", "No", "no", "NO"):
+        print("Installation aborted, please install host-spawn.")
+        sys.exit(0)
+    else:
+        print("Invalid input.", file=sys.stderr)
+        print("The available choices are: y,Y,Yes,yes,YES or n,N,No,no,NO.\nExiting.", file=sys.stderr)
+        sys.exit(1)
+
+# Point dbus/xdg to host's runtime dir for initful containers
+xdg = os.environ.get("XDG_RUNTIME_DIR") or f"/run/user/{os.getuid()}"
+dbus = os.environ.get("DBUS_SESSION_BUS_ADDRESS") or f"unix:path=/run/user/{os.getuid()}/bus"
+
+os.environ["XDG_RUNTIME_DIR"] = f"/run/host/{xdg}"
+dbus_path = dbus.split("=", 1)[-1]
+os.environ["DBUS_SESSION_BUS_ADDRESS"] = f"unix:path=/run/host/{dbus_path}"
+
+# PTY decision — xdg-open, gio, flatpak and non-tty get --no-pty
+cmd_basename = os.path.basename(host_command)
+try:
+    os.ttyname(sys.stdout.fileno())
+    tty_ok = sys.stdout.isatty()
+except OSError:
+    tty_ok = False
+
+no_pty = (
+    cmd_basename in ("xdg-open", "gio", "flatpak")
+    or not tty_ok
+)
+
+if no_pty:
+    os.execvp("host-spawn", ["host-spawn", "--no-pty", host_command] + extra_args)
+else:
+    os.execvp("host-spawn", ["host-spawn", host_command] + extra_args)
