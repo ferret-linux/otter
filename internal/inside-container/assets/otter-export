@@ -1,0 +1,592 @@
+#!/usr/bin/env python3
+# shellcheck disable=all
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the otter project:
+#    https://github.com/ferret-project/otter
+# Copyright (C) 2026 otter contributors
+#
+# This file is based on distrobox:
+#    https://github.com/89luca89/distrobox
+# Copyright (C) 2021 distrobox contributors
+#
+# otter is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License version 3
+# as published by the Free Software Foundation.
+#
+# otter is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with otter; if not, see <http://www.gnu.org/licenses/>.
+
+# Expected env variables:
+#   HOME
+#   USER
+#   OTTER_PATH
+#   OTTER_HOST_HOME
+
+import os
+import re
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+from pwd import getpwnam
+
+# Ensure env variables are correctly set
+if not os.environ.get("USER"):
+    os.environ["USER"] = os.popen("id -run").read().strip()
+if not os.environ.get("HOME"):
+    os.environ["HOME"] = getpwnam(os.environ["USER"]).pw_dir
+if not os.environ.get("SHELL"):
+    os.environ["SHELL"] = getpwnam(os.environ["USER"]).pw_shell
+
+# Defaults
+container_name = os.environ.get("CONTAINER_ID", "")
+if not container_name:
+    try:
+        containerenv = Path("/run/.containerenv").read_text()
+        m = re.search(r'^name="?([^"\n]+)"?', containerenv, re.MULTILINE)
+        if m:
+            container_name = m.group(1)
+    except OSError:
+        pass
+
+export_action = ""
+exported_app = ""
+exported_app_label = ""
+exported_bin = ""
+exported_delete = False
+extra_flags = ""
+enter_flags = ""
+host_home = os.environ.get("OTTER_HOST_HOME") or os.environ.get("HOME", "")
+dest_path = os.environ.get("OTTER_EXPORT_PATH") or f"{host_home}/.local/bin"
+is_sudo = False
+rootful = ""
+sudo_prefix = ""
+verbose = False
+VERSION = "1.0.0"
+
+# We depend on some commands, let's be sure we have them
+for dep in ["basename", "find", "grep", "sed"]:
+    if not shutil.which(dep):
+        print(f"Missing dependency: {dep}", file=sys.stderr)
+        sys.exit(127)
+
+HELP_TEXT = """\
+╭─────────────────────────────────────────────────────────────────╮
+│▸ Usage:                                                         │
+│  otter-export --app firefox                                     │
+│  otter-export --bin docker --sudo                               │
+│  otter-export --bin /usr/bin/zeditor                            │
+├─────────────────────────────────────────────────────────────────┤
+│▸ Options:                                                       │
+│ --app          ┆ -a   Name of the application to export         │
+│ --bin          ┆ -b   Absolute path of the binary to export     │
+│ --sudo         ┆ -S   Run the exported item as sudo             │
+│ --delete       ┆ -del Delete an exported application or binary  │
+│ --list-apps           List applications exported from container │
+│ --enter-flags  ┆ -nf  Flags to pass to otter-enter              │
+│ --export-path  ┆ -ep  Path where to export the binary           │
+│ --extra-flags  ┆ -ef  Extra flags to append to the command      │
+│ --export-label ┆ -el  Label to append to exported application   │
+│ --list-binaries       List binaries exported from container     │
+├─────────────────────────────────────────────────────────────────┤
+│▸ Extras:                                                        │
+│ --help    ┆ -h  Show this help message                          │
+│ --verbose ┆ -v  Show more verbose output                        │
+│ --version ┆ -V  Show version information                        │
+├─────────────────────────────────────────────────────────────────┤
+│▸ Notes:                                                         │
+│ --export-label  Defaults to "my-box" . Use "none" to disable.   │
+│ --list-apps     List apps exported from this container,         │
+│                 Use -ep for custom search paths.                │
+│ --list-binaries List binaries exported from container,          │
+│                 Use -ep for custom search paths.                │
+├─────────────────────────────────────────────────────────────────┤
+│▸ See also:                                                      │
+│ --app  You can also provide a path to the desktop file directly.│
+│        Useful when export fails — desktop files are usually at  │
+│        '/usr/share/applications' inside the container.          │
+╰─────────────────────────────────────────────────────────────────╯"""
+
+# Parse arguments
+args = sys.argv[1:]
+i = 0
+while i < len(args):
+    a = args[i]
+    if a in ("-h", "--help"):
+        print(HELP_TEXT)
+        sys.exit(0)
+    elif a in ("-v", "--verbose"):
+        verbose = True
+        i += 1
+    elif a in ("-V", "--version"):
+        print(f"otter: {VERSION}")
+        sys.exit(0)
+    elif a in ("-a", "--app"):
+        if i + 1 < len(args) and args[i + 1]:
+            export_action = "app"
+            exported_app = args[i + 1]
+            i += 2
+        else:
+            i += 1
+    elif a in ("-b", "--bin"):
+        if i + 1 < len(args) and args[i + 1]:
+            export_action = "bin"
+            exported_bin = args[i + 1]
+            i += 2
+        else:
+            i += 1
+    elif a == "--list-apps":
+        export_action = "list-apps"
+        exported_bin = "null"
+        i += 1
+    elif a == "--list-binaries":
+        export_action = "list-binaries"
+        exported_bin = "null"
+        i += 1
+    elif a in ("-S", "--sudo"):
+        is_sudo = True
+        i += 1
+    elif a in ("-el", "--export-label"):
+        if i + 1 < len(args) and args[i + 1]:
+            exported_app_label = args[i + 1]
+            i += 2
+        else:
+            i += 1
+    elif a in ("-ep", "--export-path"):
+        if i + 1 < len(args) and args[i + 1]:
+            dest_path = args[i + 1]
+            i += 2
+        else:
+            i += 1
+    elif a in ("-ef", "--extra-flags"):
+        if i + 1 < len(args) and args[i + 1]:
+            extra_flags = args[i + 1]
+            i += 2
+        else:
+            i += 1
+    elif a in ("-nf", "--enter-flags"):
+        if i + 1 < len(args) and args[i + 1]:
+            enter_flags = args[i + 1]
+            i += 2
+        else:
+            i += 1
+    elif a in ("-del", "--delete"):
+        exported_delete = True
+        i += 1
+    elif a.startswith("-"):
+        print(f"ERROR: Invalid flag '{a}'\n", file=sys.stderr)
+        print(HELP_TEXT)
+        sys.exit(1)
+    else:
+        break
+
+if verbose:
+    os.environ["XTRACE"] = "1"
+
+# Ensure we can write stuff there
+Path(dest_path).mkdir(parents=True, exist_ok=True)
+
+# Check we're running inside a container and not on the host
+if (
+    not Path("/run/.containerenv").is_file()
+    and not Path("/.dockerenv").is_file()
+    and not os.environ.get("container")
+):
+    print(f"You must run  {os.path.basename(sys.argv[0])} inside a container!", file=sys.stderr)
+    sys.exit(126)
+
+# Check if we're in a rootful or rootless container
+if Path("/usr/lib/otter/container.rootful").is_file():
+    rootful = "--root"
+
+# We're working with HOME, so we must run as USER, not as root
+if os.getuid() == 0:
+    print(f"You must not run  {os.path.basename(sys.argv[0])} as root!", file=sys.stderr)
+    sys.exit(1)
+
+# Ensure we're not receiving more than one action at a time
+if exported_app and exported_bin:
+    print("Error: Invalid arguments, choose only one action below.", file=sys.stderr)
+    print("Error: You can only export one thing at time.", file=sys.stderr)
+    sys.exit(2)
+
+# Filter enter_flags and remove redundant options
+if enter_flags:
+    filtered = []
+    parts = enter_flags.split()
+    j = 0
+    while j < len(parts):
+        if parts[j] in ("--root", "-r"):
+            print(f"Warning: {parts[j]} argument will be set automatically and should be removed.", file=sys.stderr)
+        elif parts[j] in ("--name", "-n"):
+            print(f"Warning: {parts[j]} argument will be set automatically and should be removed.", file=sys.stderr)
+            j += 1  # skip the value too
+        else:
+            filtered.append(parts[j])
+        j += 1
+    enter_flags = " ".join(filtered)
+
+# Command to execute
+container_command_suffix = f"'{exported_bin}' {extra_flags} \"$@\""
+
+# Check if exported application/binary should be run with sudo privileges
+if is_sudo:
+    sudo_prefix = "sudo -S"
+    try:
+        subprocess.run(["sudo", "-S", "test"], capture_output=True)
+    except Exception:
+        sudo_prefix = "sudo"
+
+    # Edge case for systems with doas
+    if shutil.which("doas"):
+        sudo_prefix = "doas"
+        container_command_suffix = f"sh -l -c \"'{exported_bin}' {extra_flags} $@\""
+
+    # Edge case for systems without sudo
+    if shutil.which("su-exec"):
+        sudo_prefix = "su-exec root"
+        container_command_suffix = f"sh -l -c \"'{exported_bin}' {extra_flags} $@\""
+
+# Prefix to add to an existing command to work through the container
+otter_path = os.environ.get("OTTER_PATH", "otter")
+_rootful_part = f" {rootful}" if rootful else ""
+_enter_flags_part = f" {enter_flags}" if enter_flags else ""
+_sudo_part = f" {sudo_prefix}" if sudo_prefix else ""
+container_command_prefix = (
+    f"{otter_path} enter{_rootful_part} -n {container_name}{_enter_flags_part} --no-tty --{_sudo_part} "
+)
+
+if not exported_app_label:
+    if rootful:
+        exported_app_label = f" (on {container_name}, rootful)"
+    else:
+        exported_app_label = f" (on {container_name})"
+elif exported_app_label == "none":
+    exported_app_label = ""
+else:
+    exported_app_label = f" {exported_app_label}"
+
+
+def generate_script():
+    name_prefix = f"rootful-{container_name}" if rootful else container_name
+    return f"""#!/bin/sh
+# otter_binary
+# name: {name_prefix}
+if [ -z "${{CONTAINER_ID}}" ]; then
+\texec "{otter_path}" enter {rootful} -n {container_name} {enter_flags} -- {sudo_prefix} {container_command_suffix}
+elif [ -n "${{CONTAINER_ID}}" ] && [ "${{CONTAINER_ID}}" != "{container_name}" ]; then
+\texec otter-host-exec '{dest_path}/{os.path.basename(exported_bin)}' "$@"
+else
+\texec {sudo_prefix} '{exported_bin}' "$@"
+fi
+"""
+
+
+def export_binary():
+    if not Path(exported_bin).is_file():
+        print(f"Error: cannot find {exported_bin}.", file=sys.stderr)
+        return 127
+
+    bin_suffix = f"rootful-{container_name}" if rootful else container_name
+    dest_file = Path(dest_path) / f"{os.path.basename(exported_bin)}-{bin_suffix}"
+
+    Path(dest_path).mkdir(parents=True, exist_ok=True)
+
+    if exported_delete:
+        if "otter_binary" not in dest_file.read_text():
+            print(f"Error: {exported_bin} is not exported.", file=sys.stderr)
+            return 1
+        dest_file.unlink()
+        print(f"{exported_bin} from {container_name} removed successfully from {dest_path}.\nOK!")
+        return 0
+
+    try:
+        dest_file.touch()
+    except OSError:
+        print(f"Error: cannot create destination file {dest_file}.", file=sys.stderr)
+        return 1
+
+    dest_file.write_text(generate_script())
+    dest_file.chmod(0o755)
+    print(f"{exported_bin} from {container_name} exported successfully in {dest_path}.\nOK!")
+    return 0
+
+
+def export_application():
+    canon_dirs = []
+
+    if Path(exported_app).exists():
+        desktop_files_raw = exported_app
+    else:
+        xdg_data_dirs = os.environ.get("XDG_DATA_DIRS", "")
+        if xdg_data_dirs:
+            for xdg_dir in xdg_data_dirs.split(":"):
+                p = Path(xdg_dir) / "applications"
+                if p.is_dir():
+                    canon_dirs.append(str(p))
+        else:
+            for d in ["/usr/share/applications", "/usr/local/share/applications",
+                      "/var/lib/flatpak/exports/share/applications"]:
+                if Path(d).is_dir():
+                    canon_dirs.append(d)
+
+        xdg_data_home = os.environ.get("XDG_DATA_HOME", "")
+        if xdg_data_home:
+            p = Path(xdg_data_home) / "applications"
+            if p.is_dir():
+                canon_dirs.append(str(p))
+        else:
+            p = Path(host_home) / ".local/share/applications"
+            if p.is_dir():
+                canon_dirs.append(str(p))
+
+        if not canon_dirs:
+            print("Error: cannot find any desktop files.", file=sys.stderr)
+            print("Error: trying to export a non-installed application.", file=sys.stderr)
+            return 127
+
+        # find files matching exported_app in Exec= or Name=, excluding already-exported ones
+        find_cmd = ["find"] + canon_dirs + ["-type", "f", "-print", "-o", "-type", "l", "-print"]
+        result = subprocess.run(find_cmd, capture_output=True, text=True)
+        candidates = [f for f in result.stdout.splitlines() if f]
+
+        otter_path_pat = os.environ.get("OTTER_PATH", "otter")
+        matched = []
+        for f in candidates:
+            try:
+                content = Path(f).read_text(errors="replace")
+                if (re.search(rf"Exec=.*{re.escape(exported_app)}.*", content) or
+                        re.search(rf"Name=.*{re.escape(exported_app)}.*", content)):
+                    if not re.search(rf"Exec=.*{re.escape(otter_path_pat)}.*enter.*", content):
+                        matched.append(f)
+            except OSError:
+                pass
+
+        desktop_files_raw = "¤".join(matched)
+
+    if not desktop_files_raw:
+        print("Error: cannot find any desktop files.", file=sys.stderr)
+        print("Error: trying to export a non-installed application.", file=sys.stderr)
+        return 127
+
+    desktop_files = [f for f in desktop_files_raw.split("¤") if f]
+
+    # Find the single best icon from the first desktop file
+    icon_name = ""
+    for df in desktop_files:
+        try:
+            content = Path(df).read_text(errors="replace")
+            m = re.search(r"^Icon=(.+)$", content, re.MULTILINE)
+            if m:
+                icon_name = m.group(1).strip()
+            break
+        except OSError:
+            pass
+
+    icon_file = ""
+    if icon_name:
+        if icon_name.startswith("/") and Path(icon_name).exists():
+            icon_file = icon_name
+        else:
+            search_dirs = [
+                ("/usr/share/icons/hicolor", f"{icon_name}.svg"),
+                ("/var/lib/flatpak/exports/share/icons", f"{icon_name}.svg"),
+                ("/usr/share/pixmaps", f"{icon_name}.svg"),
+            ]
+            for sdir, pattern in search_dirs:
+                if not icon_file:
+                    r = subprocess.run(
+                        ["find", sdir, "-type", "f", "-name", pattern],
+                        capture_output=True, text=True
+                    )
+                    hits = [f for f in r.stdout.splitlines() if "symbolic" not in f]
+                    if hits:
+                        icon_file = hits[0]
+
+            if not icon_file:
+                png_dirs = [
+                    "/usr/share/icons/hicolor",
+                    "/var/lib/flatpak/exports/share/icons",
+                    "/usr/share/pixmaps",
+                ]
+                for sdir in png_dirs:
+                    if not icon_file:
+                        r = subprocess.run(
+                            ["find", sdir, "-type", "f", "-name", f"{icon_name}.png"],
+                            capture_output=True, text=True
+                        )
+                        hits = sorted(
+                            [f for f in r.stdout.splitlines() if "symbolic" not in f],
+                            reverse=True
+                        )
+                        if hits:
+                            icon_file = hits[0]
+
+    icon_dest_dir = f"/run/host{host_home}/.local/share/otter/icons/apps"
+    icon_ext = Path(icon_file).suffix.lstrip(".") if icon_file else ""
+    icon_prefix = f"rootful-{container_name}" if rootful else container_name
+    icon_dest_file = f"{icon_dest_dir}/{icon_prefix}-{icon_name}.{icon_ext}"
+    icon_host_path = f"{host_home}/.local/share/otter/icons/apps/{icon_prefix}-{icon_name}.{icon_ext}"
+
+    Path(f"/run/host{host_home}/.local/share/applications").mkdir(parents=True, exist_ok=True)
+
+    for df in desktop_files:
+        desktop_prefix = f"rootful-{container_name}" if rootful else container_name
+        desktop_home_file = f"{desktop_prefix}-{os.path.basename(df)}"
+        dest_desktop = Path(f"/run/host{host_home}/.local/share/applications/{desktop_home_file}")
+
+        if exported_delete:
+            dest_desktop.unlink(missing_ok=True)
+            Path(icon_dest_file).unlink(missing_ok=True)
+            continue
+
+        try:
+            content = Path(df).read_text(errors="replace")
+        except OSError:
+            continue
+
+        # Add command_prefix, extra flags, remove TryExec/DBusActivatable, append label to Name
+        content = re.sub(
+            r"^Exec=(.*)$",
+            lambda m: f"Exec={container_command_prefix}{m.group(1)}",
+            content, flags=re.MULTILINE
+        )
+        if extra_flags:
+            content = re.sub(r"(%.*)", rf"{extra_flags} \1", content)
+        content = re.sub(r"^TryExec=.*\n?", "", content, flags=re.MULTILINE)
+        content = re.sub(r"^DBusActivatable=true\n?", "", content, flags=re.MULTILINE)
+        content = re.sub(r"^(Name.*)$", rf"\1{exported_app_label}", content, flags=re.MULTILINE)
+
+        dest_desktop.write_text(content)
+
+        # For rootful containers, ensure Terminal=true
+        if rootful:
+            dcontent = dest_desktop.read_text()
+            if re.search(r"^Terminal=", dcontent, re.MULTILINE):
+                dcontent = re.sub(r"^Terminal=.*$", "Terminal=true", dcontent, flags=re.MULTILINE)
+            else:
+                dcontent += "Terminal=true\n"
+            dest_desktop.write_text(dcontent)
+
+        dcontent = dest_desktop.read_text()
+        if "StartupWMClass" not in dcontent:
+            dcontent += f"StartupWMClass={exported_app}\n"
+            dest_desktop.write_text(dcontent)
+
+        # Merge Remove into existing Actions= line, or add one if absent
+        dcontent = dest_desktop.read_text()
+        if re.search(r"^Actions=", dcontent, re.MULTILINE):
+            dcontent = re.sub(r"^(Actions=.*)$", r"\1Remove;", dcontent, flags=re.MULTILINE)
+        else:
+            dcontent += "\nActions=Remove;\n"
+        dcontent += (
+            f"\n[Desktop Action Remove]\n"
+            f"Name=Remove {exported_app}\n"
+            f"Exec=sh -c 'rm -f {host_home}/.local/share/applications/{desktop_home_file} "
+            f"{icon_host_path} && update-desktop-database {host_home}/.local/share/applications'\n"
+        )
+        dest_desktop.write_text(dcontent)
+
+        # Copy icon and rewrite Icon=
+        if icon_file:
+            Path(icon_dest_dir).mkdir(parents=True, exist_ok=True)
+            shutil.copy2(str(Path(icon_file).resolve()), icon_dest_file)
+            dcontent = dest_desktop.read_text()
+            dcontent = re.sub(r"^Icon=.*$", f"Icon={icon_host_path}", dcontent, flags=re.MULTILINE)
+            dest_desktop.write_text(dcontent)
+
+    # Update desktop database
+    subprocess.run(
+        ["/usr/bin/otter-host-exec", "--yes", "update-desktop-database",
+         f"{host_home}/.local/share/applications"],
+        capture_output=True
+    )
+
+    if exported_delete:
+        print(f"Application {exported_app} successfully un-exported.\nOK!")
+        print(f"{exported_app} will disappear from your applications list in a few seconds.")
+    else:
+        print(f"Application {exported_app} successfully exported.\nOK!")
+        print(f"{exported_app} will appear in your applications list in a few seconds.")
+
+    return 0
+
+
+def list_exported_applications():
+    apps_dir = f"/run/host{host_home}/.local/share/applications"
+    result = subprocess.run(
+        ["find", apps_dir, "-type", "f", "-print", "-o", "-type", "l", "-print"],
+        capture_output=True, text=True
+    )
+    otter_path_pat = os.environ.get("OTTER_PATH", "otter")
+    container_id = os.environ.get("CONTAINER_ID", "")
+
+    for f in result.stdout.splitlines():
+        if not f:
+            continue
+        try:
+            content = Path(f).read_text(errors="replace")
+        except OSError:
+            continue
+        if not re.search(rf"Exec=.*{re.escape(otter_path_pat)}.*enter.*", content):
+            continue
+        if not re.search(rf"/(rootful-)?{re.escape(container_id)}-[^/]+\.desktop$", f):
+            continue
+        m = re.search(r"^Name=(.*)$", content, re.MULTILINE)
+        name = re.sub(r"\(.*\)", "", m.group(1)).strip() if m else ""
+        print(f"{name:<20} | {f:<30}")
+
+
+def list_exported_binaries():
+    result = subprocess.run(
+        ["find", dest_path, "-type", "f", "-print"],
+        capture_output=True, text=True
+    )
+    container_id = os.environ.get("CONTAINER_ID", "")
+    bin_list_suffix = (
+        f"rootful-{container_id}"
+        if Path("/usr/lib/otter/container.rootful").is_file()
+        else container_id
+    )
+
+    for f in result.stdout.splitlines():
+        if not f:
+            continue
+        try:
+            content = Path(f).read_text(errors="replace")
+        except OSError:
+            continue
+        if "# otter_binary" not in content:
+            continue
+        if f"# name: {bin_list_suffix}" not in content:
+            continue
+        # Get original binary name
+        name = ""
+        for line in content.splitlines():
+            if "exec" in line:
+                parts = line.split()
+                if len(parts) > 1:
+                    name = parts[1]
+                break
+        print(f"{name:<20} | {f:<30}")
+
+
+# Main dispatch
+if export_action == "app":
+    sys.exit(export_application())
+elif export_action == "bin":
+    sys.exit(export_binary())
+elif export_action == "list-apps":
+    list_exported_applications()
+elif export_action == "list-binaries":
+    list_exported_binaries()
+else:
+    print("Invalid arguments, choose an action below.", file=sys.stderr)
+    print(HELP_TEXT)
+    sys.exit(2)
