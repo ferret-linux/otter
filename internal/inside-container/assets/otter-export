@@ -305,7 +305,11 @@ fi
 container_command_prefix="${OTTER_PATH:-"otter"} enter${rootful:+ ${rootful}} -n ${container_name}${enter_flags:+ ${enter_flags}} --no-tty --${sudo_prefix:+ ${sudo_prefix}} "
 
 if [ -z "${exported_app_label}" ]; then
-	exported_app_label=" (on ${container_name})"
+	if [ -n "${rootful}" ]; then
+		exported_app_label=" (on ${container_name}, rootful)"
+	else
+		exported_app_label=" (on ${container_name})"
+	fi
 elif [ "${exported_app_label}" = "none" ]; then
 	exported_app_label=""
 else
