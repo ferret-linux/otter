@@ -713,6 +713,7 @@ setup_apk()
 		curl
 		diffutils
 		findmnt
+		python3
 		findutils
 		gnupg
 		gpg
@@ -841,6 +842,7 @@ setup_apt()
 		pigz
 		pinentry-curses
 		procps
+		python3
 		rsync
 		sudo
 		tcpdump
@@ -960,6 +962,7 @@ setup_aptrpm()
 		pigz
 		pinentry-common
 		procps
+		python3
 		su
 		sudo
 		tcpdump
@@ -1094,6 +1097,7 @@ setup_dnf()
 		pigz
 		pinentry
 		procps-ng
+		python3
 		rsync
 		shadow-utils
 		sudo
@@ -1197,6 +1201,7 @@ setup_emerge()
 		app-arch/pigz
 		app-text/tree
 		x11-apps/xauth
+		dev-lang/python
 	"
 	install_pkg=""
 	for dep in ${deps}; do
@@ -1283,6 +1288,7 @@ setup_microdnf()
 		pigz
 		pinentry
 		procps-ng
+		python3
 		rsync
 		shadow-utils
 		sudo
@@ -1396,6 +1402,7 @@ setup_pacman()
 		pigz
 		pinentry
 		procps-ng
+		python
 		rsync
 		shadow
 		sudo
@@ -1516,6 +1523,7 @@ setup_slackpkg()
 		time
 		wget
 		xauth
+		python3
 	"
 	install_pkg=""
 	dep=""
@@ -1604,6 +1612,7 @@ setup_xbps()
 		zip
 		wget
 		vte3
+		python3
 		mesa-dri
 		vulkan-loader
 		mesa-vulkan-intel
@@ -1723,6 +1732,7 @@ EOF
 		words
 		xauth
 		zip
+		python3
 		Mesa-dri
 		libvulkan1
 		libvulkan_intel
