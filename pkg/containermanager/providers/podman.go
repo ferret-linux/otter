@@ -219,6 +219,7 @@ func (p *Podman) makeCreateCommand(
 	// utilities.
 
 	options = append(options, "--label", "manager=otter")
+	options = append(options, "--label", "otter.managed_container=1")
 	options = append(
 		options,
 		"--label",

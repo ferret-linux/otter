@@ -75,7 +75,12 @@ type RmOptions struct {
 }
 
 func (c Container) IsOtterContainer() bool {
-	return c.Labels["manager"] == "otter"
+	if c.Labels["manager"] == "otter" {
+		return true
+	}
+	// Fallback: manager label was overridden via --additional-flags,
+	// check for otter.managed_container which is always set at creation
+	return c.Labels["otter.managed_container"] == "1"
 }
 
 func (c Container) IsRunning() bool {
