@@ -378,7 +378,9 @@ export_binary()
 		return 127
 	fi
 	# generate dest_file path
-	dest_file="${dest_path}/$(basename "${exported_bin}")"
+	bin_suffix="${container_name}"
+	[ -n "${rootful}" ] && bin_suffix="rootful-${container_name}"
+	dest_file="${dest_path}/$(basename "${exported_bin}")-${bin_suffix}"
 
 	# create the binary destination path if it doesn't exist
 	mkdir -p "${dest_path}"
