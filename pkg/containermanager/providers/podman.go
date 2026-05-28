@@ -558,7 +558,11 @@ func (p *Podman) Enter(
 		return fmt.Errorf("container '%s' is not running, use 'otter start' first", options.ContainerName)
 	}
 
-	if _, err := p.run(ctx, append(command, commandArgs...), runOptions{Interactive: true}); err != nil {
+	runOpt := runOptions{Interactive: true}
+	if options.NoTTY {
+		runOpt = runOptions{Detach: true}
+	}
+	if _, err := p.run(ctx, append(command, commandArgs...), runOpt); err != nil {
 		return err
 	}
 
@@ -832,8 +836,12 @@ func (p *Podman) generateEnterCommand(
 	}
 
 	cmd = append(cmd, "exec")
-	cmd = append(cmd, "--interactive")
-	cmd = append(cmd, "--detach-keys=")
+	if noTTY {
+		cmd = append(cmd, "--detach")
+	} else {
+		cmd = append(cmd, "--interactive")
+		cmd = append(cmd, "--detach-keys=")
+	}
 
 	containerConfig, err := p.InspectContainer(ctx, containerName)
 	if err != nil {

@@ -63,6 +63,7 @@ type dockerContainer struct {
 type runOptions struct {
 	DryRun      bool
 	Interactive bool
+	Detach      bool
 }
 
 type inspectOutput struct {
@@ -504,6 +505,14 @@ func (d *Docker) run(ctx context.Context, args []string, opts runOptions) (strin
 		return "", nil
 	}
 
+	if opts.Detach {
+		if err := cmd.Start(); err != nil {
+			return "", fmt.Errorf("error starting detached command: %w", err)
+		}
+		_ = cmd.Process.Release()
+		return "", nil
+	}
+
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
@@ -553,7 +562,11 @@ func (d *Docker) Enter(
 		return fmt.Errorf("container '%s' is not running, use 'otter start' first", options.ContainerName)
 	}
 
-	if _, err := d.run(ctx, append(command, commandArgs...), runOptions{Interactive: true}); err != nil {
+	runOpt := runOptions{Interactive: true}
+	if options.NoTTY {
+		runOpt = runOptions{Detach: true}
+	}
+	if _, err := d.run(ctx, append(command, commandArgs...), runOpt); err != nil {
 		return err
 	}
 
@@ -753,8 +766,12 @@ func (d *Docker) generateEnterCommand(
 	}
 
 	cmd = append(cmd, "exec")
-	cmd = append(cmd, "--interactive")
-	cmd = append(cmd, "--detach-keys=")
+	if noTTY {
+		cmd = append(cmd, "--detach")
+	} else {
+		cmd = append(cmd, "--interactive")
+		cmd = append(cmd, "--detach-keys=")
+	}
 
 	containerConfig, err := d.InspectContainer(ctx, containerName)
 	if err != nil {

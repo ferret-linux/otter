@@ -496,7 +496,11 @@ func (n *Nerdctl) Enter(
 		return fmt.Errorf("container '%s' is not running, use 'otter start' first", options.ContainerName)
 	}
 
-	if _, err := n.run(ctx, append(command, commandArgs...), runOptions{Interactive: true}); err != nil {
+	runOpt := runOptions{Interactive: true}
+	if options.NoTTY {
+		runOpt = runOptions{Detach: true}
+	}
+	if _, err := n.run(ctx, append(command, commandArgs...), runOpt); err != nil {
 		return err
 	}
 
@@ -564,7 +568,11 @@ func (n *Nerdctl) generateEnterCommand(
 	}
 
 	cmd = append(cmd, "exec")
-	cmd = append(cmd, "--interactive")
+	if noTTY {
+		cmd = append(cmd, "--detach")
+	} else {
+		cmd = append(cmd, "--interactive")
+	}
 
 	containerConfig, err := n.InspectContainer(ctx, containerName)
 	if err != nil {
