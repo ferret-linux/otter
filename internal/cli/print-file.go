@@ -8,6 +8,9 @@ import (
 	"strings"
 
 	ucli "github.com/urfave/cli/v3"
+	"golang.org/x/term"
+
+	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 //go:embed show-file
@@ -46,11 +49,35 @@ func renderColors(s string) string {
 	return strings.ReplaceAll(s, "{R}", "\033[0m")
 }
 
+func contentWidth(raw string) (width int) {
+	for _, line := range strings.Split(raw, "\n") {
+		clean := line
+		for i := range colorSlots {
+			clean = strings.ReplaceAll(clean, fmt.Sprintf("{%d}", i), "")
+		}
+		clean = strings.ReplaceAll(clean, "{R}", "")
+		if runes := len([]rune(clean)); runes > width {
+			width = runes
+		}
+	}
+	return
+}
+
 func printFile(name string) {
 	b, err := printFS.ReadFile("show-file/" + name + ".help")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "File not found: %s\n", name)
 		return
 	}
+
+	termW, _, err := term.GetSize(int(os.Stderr.Fd()))
+	if err == nil {
+		needW := contentWidth(string(b))
+		if termW < needW {
+			ui.DefaultLogger.Warn("terminal window is too small to display help")
+			return
+		}
+	}
+
 	fmt.Fprint(os.Stdout, renderColors(string(b)))
 }
