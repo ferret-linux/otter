@@ -28,6 +28,7 @@
 #   OTTER_PATH
 #   OTTER_HOST_HOME
 
+import argparse
 import os
 import re
 import shutil
@@ -38,7 +39,7 @@ from pwd import getpwnam
 
 # Ensure env variables are correctly set
 if not os.environ.get("USER"):
-    os.environ["USER"] = os.popen("id -run").read().strip()
+    os.environ["USER"] = subprocess.run(["id", "-run"], capture_output=True, text=True).stdout.strip()
 if not os.environ.get("HOME"):
     os.environ["HOME"] = getpwnam(os.environ["USER"]).pw_dir
 if not os.environ.get("SHELL"):
@@ -56,25 +57,11 @@ if not container_name:
         pass
 
 export_action = ""
-exported_app = ""
-exported_app_label = ""
-exported_bin = ""
-exported_delete = False
-extra_flags = ""
-enter_flags = ""
 host_home = os.environ.get("OTTER_HOST_HOME") or os.environ.get("HOME", "")
 dest_path = os.environ.get("OTTER_EXPORT_PATH") or f"{host_home}/.local/bin"
-is_sudo = False
 rootful = ""
 sudo_prefix = ""
-verbose = False
 VERSION = "1.0.0"
-
-# We depend on some commands, let's be sure we have them
-for dep in ["basename", "find", "grep", "sed"]:
-    if not shutil.which(dep):
-        print(f"Missing dependency: {dep}", file=sys.stderr)
-        sys.exit(127)
 
 def render_help(text):
     color_green  = "\033[32m"  # {0} green  — command names
@@ -130,78 +117,54 @@ HELP_TEXT = """\
 {2}│{R}        {5}'/usr/share/applications' inside the container.{R}          {2}│{R}
 {2}╰─────────────────────────────────────────────────────────────────╯{R}"""
 
-# Parse arguments
-args = sys.argv[1:]
-i = 0
-while i < len(args):
-    a = args[i]
-    if a in ("-h", "--help"):
-        print(render_help(HELP_TEXT))
-        sys.exit(0)
-    elif a in ("-v", "--verbose"):
-        verbose = True
-        i += 1
-    elif a in ("-V", "--version"):
-        print(f"otter: {VERSION}")
-        sys.exit(0)
-    elif a in ("-a", "--app"):
-        if i + 1 < len(args) and args[i + 1]:
-            export_action = "app"
-            exported_app = args[i + 1]
-            i += 2
-        else:
-            i += 1
-    elif a in ("-b", "--bin"):
-        if i + 1 < len(args) and args[i + 1]:
-            export_action = "bin"
-            exported_bin = args[i + 1]
-            i += 2
-        else:
-            i += 1
-    elif a == "--list-apps":
-        export_action = "list-apps"
-        exported_bin = "null"
-        i += 1
-    elif a == "--list-binaries":
-        export_action = "list-binaries"
-        exported_bin = "null"
-        i += 1
-    elif a in ("-S", "--sudo"):
-        is_sudo = True
-        i += 1
-    elif a in ("-el", "--export-label"):
-        if i + 1 < len(args) and args[i + 1]:
-            exported_app_label = args[i + 1]
-            i += 2
-        else:
-            i += 1
-    elif a in ("-ep", "--export-path"):
-        if i + 1 < len(args) and args[i + 1]:
-            dest_path = args[i + 1]
-            i += 2
-        else:
-            i += 1
-    elif a in ("-ef", "--extra-flags"):
-        if i + 1 < len(args) and args[i + 1]:
-            extra_flags = args[i + 1]
-            i += 2
-        else:
-            i += 1
-    elif a in ("-nf", "--enter-flags"):
-        if i + 1 < len(args) and args[i + 1]:
-            enter_flags = args[i + 1]
-            i += 2
-        else:
-            i += 1
-    elif a in ("-del", "--delete"):
-        exported_delete = True
-        i += 1
-    elif a.startswith("-"):
-        print(f"ERROR: Invalid flag '{a}'\n", file=sys.stderr)
-        print(render_help(HELP_TEXT))
-        sys.exit(1)
-    else:
-        break
+def _parser_error(message):
+    print(f"ERROR: {message}\n", file=sys.stderr)
+    print(render_help(HELP_TEXT))
+    sys.exit(1)
+
+parser = argparse.ArgumentParser(add_help=False)
+parser.error = _parser_error
+parser.add_argument("-h", "--help",         action="store_true")
+parser.add_argument("-v", "--verbose",      action="store_true")
+parser.add_argument("-V", "--version",      action="store_true")
+parser.add_argument("-a", "--app",          dest="exported_app",   default="")
+parser.add_argument("-b", "--bin",          dest="exported_bin",   default="")
+parser.add_argument("-S", "--sudo",         action="store_true",   dest="is_sudo")
+parser.add_argument("-del", "--delete",     action="store_true",   dest="exported_delete")
+parser.add_argument("--list-apps",          action="store_true")
+parser.add_argument("--list-binaries",      action="store_true")
+parser.add_argument("-el", "--export-label", dest="exported_app_label", default="")
+parser.add_argument("-ep", "--export-path",  dest="dest_path",     default=dest_path)
+parser.add_argument("-ef", "--extra-flags",  dest="extra_flags",   default="")
+parser.add_argument("-nf", "--enter-flags",  dest="enter_flags",   default="")
+
+args = parser.parse_args()
+
+if args.help:
+    print(render_help(HELP_TEXT))
+    sys.exit(0)
+if args.version:
+    print(f"otter: {VERSION}")
+    sys.exit(0)
+
+verbose          = args.verbose
+exported_app     = args.exported_app
+exported_bin     = args.exported_bin
+is_sudo          = args.is_sudo
+exported_delete  = args.exported_delete
+exported_app_label = args.exported_app_label
+dest_path        = args.dest_path
+extra_flags      = args.extra_flags
+enter_flags      = args.enter_flags
+
+if args.list_apps:
+    export_action = "list-apps"
+elif args.list_binaries:
+    export_action = "list-binaries"
+elif exported_app:
+    export_action = "app"
+elif exported_bin:
+    export_action = "bin"
 
 if verbose:
     os.environ["XTRACE"] = "1"
@@ -341,7 +304,7 @@ def export_application():
     canon_dirs = []
 
     if Path(exported_app).exists():
-        desktop_files_raw = exported_app
+        desktop_files = [exported_app]
     else:
         xdg_data_dirs = os.environ.get("XDG_DATA_DIRS", "")
         if xdg_data_dirs:
@@ -387,14 +350,12 @@ def export_application():
             except OSError:
                 pass
 
-        desktop_files_raw = "¤".join(matched)
+        desktop_files = matched
 
-    if not desktop_files_raw:
+    if not desktop_files:
         print("Error: cannot find any desktop files.", file=sys.stderr)
         print("Error: trying to export a non-installed application.", file=sys.stderr)
         return 127
-
-    desktop_files = [f for f in desktop_files_raw.split("¤") if f]
 
     # Find the single best icon from the first desktop file
     icon_name = ""
@@ -483,43 +444,35 @@ def export_application():
         content = re.sub(r"^DBusActivatable=true\n?", "", content, flags=re.MULTILINE)
         content = re.sub(r"^(.*Name.*)$", rf"\1{exported_app_label}", content, flags=re.MULTILINE)
 
-        dest_desktop.write_text(content)
-
         # For rootful containers, ensure Terminal=true
         if rootful:
-            dcontent = dest_desktop.read_text()
-            if re.search(r"^Terminal=", dcontent, re.MULTILINE):
-                dcontent = re.sub(r"^Terminal=.*$", "Terminal=true", dcontent, flags=re.MULTILINE)
+            if re.search(r"^Terminal=", content, re.MULTILINE):
+                content = re.sub(r"^Terminal=.*$", "Terminal=true", content, flags=re.MULTILINE)
             else:
-                dcontent += "Terminal=true\n"
-            dest_desktop.write_text(dcontent)
+                content += "Terminal=true\n"
 
-        dcontent = dest_desktop.read_text()
-        if "StartupWMClass" not in dcontent:
-            dcontent += f"StartupWMClass={exported_app}\n"
-            dest_desktop.write_text(dcontent)
+        if "StartupWMClass" not in content:
+            content += f"StartupWMClass={exported_app}\n"
 
         # Merge Remove into existing Actions= line, or add one if absent
-        dcontent = dest_desktop.read_text()
-        if re.search(r"^Actions=", dcontent, re.MULTILINE):
-            dcontent = re.sub(r"^(Actions=.*)$", r"\1Remove;", dcontent, flags=re.MULTILINE)
+        if re.search(r"^Actions=", content, re.MULTILINE):
+            content = re.sub(r"^(Actions=.*)$", r"\1Remove;", content, flags=re.MULTILINE)
         else:
-            dcontent += "\nActions=Remove;\n"
-        dcontent += (
+            content += "\nActions=Remove;\n"
+        content += (
             f"\n[Desktop Action Remove]\n"
             f"Name=Remove {exported_app}\n"
             f"Exec=sh -c 'rm -f {host_home}/.local/share/applications/{desktop_home_file} "
             f"{icon_host_path} && update-desktop-database {host_home}/.local/share/applications'\n"
         )
-        dest_desktop.write_text(dcontent)
 
         # Copy icon and rewrite Icon=
         if icon_file:
             Path(icon_dest_dir).mkdir(parents=True, exist_ok=True)
             shutil.copy2(str(Path(icon_file).resolve()), icon_dest_file)
-            dcontent = dest_desktop.read_text()
-            dcontent = re.sub(r"^Icon=.*$", f"Icon={icon_host_path}", dcontent, flags=re.MULTILINE)
-            dest_desktop.write_text(dcontent)
+            content = re.sub(r"^Icon=.*$", f"Icon={icon_host_path}", content, flags=re.MULTILINE)
+
+        dest_desktop.write_text(content)
 
     # Update desktop database
     subprocess.run(

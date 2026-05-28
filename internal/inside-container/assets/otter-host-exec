@@ -35,7 +35,7 @@ from pwd import getpwnam
 
 # Ensure env variables are correctly set
 if not os.environ.get("USER"):
-    os.environ["USER"] = os.popen("id -run").read().strip()
+    os.environ["USER"] = subprocess.run(["id", "-run"], capture_output=True, text=True).stdout.strip()
 if not os.environ.get("HOME"):
     os.environ["HOME"] = getpwnam(os.environ["USER"]).pw_dir
 if not os.environ.get("SHELL"):
@@ -159,7 +159,7 @@ if os.getresuid()[0] != 0:
 
 # Normalize architecture name to comply to golang/release naming
 architecture = platform.machine()
-if re.search(r"armv", architecture):
+if "armv" in architecture:
     m = re.search(r"armv[0-9]+", architecture)
     if m:
         architecture = m.group(0)
