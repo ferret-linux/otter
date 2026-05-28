@@ -425,6 +425,7 @@ def export_application():
                         )
                         hits = sorted(
                             [f for f in r.stdout.splitlines() if "symbolic" not in f],
+                            key=lambda p: [int(x) if x.isdigit() else x for x in re.split(r'(\d+)', p)],
                             reverse=True
                         )
                         if hits:
