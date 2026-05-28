@@ -477,6 +477,8 @@ func (n *Nerdctl) Enter(
 		options.NoTTY,
 		options.NoWorkDir,
 		options.CleanPath,
+		options.EmptyEnv,
+		options.AddEnv,
 		options.Verbose,
 	)
 	if err != nil {
@@ -560,6 +562,8 @@ func (n *Nerdctl) generateEnterCommand(
 	noTTY bool,
 	noWorkDir bool,
 	cleanPath bool,
+	emptyEnv bool,
+	addEnv []string,
 	verbose bool,
 ) ([]string, *containermanager.InspectResult, error) {
 	cmd := []string{}
@@ -606,8 +610,15 @@ func (n *Nerdctl) generateEnterCommand(
 	cmd = append(cmd, fmt.Sprintf("--env=CONTAINER_ID=%s", containerName))
 	cmd = append(cmd, fmt.Sprintf("--env=OTTER_PATH=%s", executablePath))
 
-	for _, env := range containermanager.FilterEnvVars() {
-		cmd = append(cmd, fmt.Sprintf("--env=%s", env))
+	if !emptyEnv {
+		for _, env := range containermanager.FilterEnvVars() {
+			cmd = append(cmd, fmt.Sprintf("--env=%s", env))
+		}
+	}
+	for _, env := range addEnv {
+		if val, ok := os.LookupEnv(env); ok {
+			cmd = append(cmd, fmt.Sprintf("--env=%s=%s", env, val))
+		}
 	}
 
 	containerPaths := containermanager.BuildContainerPath(cleanPath, os.Getenv("PATH"), containerConfig.ContainerPath)

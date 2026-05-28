@@ -40,6 +40,12 @@ func newEnterCommand(cfg *config.Values) *cli.Command {
 				Name:    "no-workdir",
 				Aliases: []string{"nw"},
 			},
+			&cli.StringSliceFlag{
+				Name: "add-env",
+			},
+			&cli.BoolFlag{
+				Name: "empty-env",
+			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			return enterAction(ctx, cmd, cfg)
@@ -71,9 +77,11 @@ func enterAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) erro
 		ContainerName:   containerName,
 		AdditionalFlags: cmd.String("additional-flags"),
 		CustomCommand:   args,
+		AddEnv:          cmd.StringSlice("add-env"),
 		DryRun:          cmd.Bool("dry-run"),
 		NoTTY:           cmd.Bool("no-tty"),
 		CleanPath:       cmd.Bool("clean-path"),
+		EmptyEnv:        cmd.Bool("empty-env"),
 		Verbose:         cmd.Bool("verbose"),
 	}
 

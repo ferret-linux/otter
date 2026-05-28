@@ -15,10 +15,12 @@ type EnterOptions struct {
 	ContainerName   string
 	AdditionalFlags string
 	CustomCommand   []string
+	AddEnv          []string
 	DryRun          bool
 	NoTTY           bool
 	Verbose         bool
 	CleanPath       bool
+	EmptyEnv        bool
 }
 
 type EnterCommand struct {
@@ -54,10 +56,12 @@ func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterRe
 		ContainerName:   opts.ContainerName,
 		AdditionalFlags: opts.AdditionalFlags,
 		CustomCommand:   opts.CustomCommand,
+		AddEnv:          opts.AddEnv,
 		DryRun:          opts.DryRun,
 		NoTTY:           opts.NoTTY,
 		Verbose:         opts.Verbose,
 		CleanPath:       opts.CleanPath,
+		EmptyEnv:        opts.EmptyEnv,
 	}
 
 	if !opts.DryRun && !opts.NoTTY {

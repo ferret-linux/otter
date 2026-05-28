@@ -60,10 +60,12 @@ type EnterOptions struct {
 	ContainerName   string
 	AdditionalFlags string
 	CustomCommand   []string
+	AddEnv          []string
 	DryRun          bool
 	NoTTY           bool
 	NoWorkDir       bool
 	CleanPath       bool
+	EmptyEnv        bool
 	Verbose         bool
 }
 
