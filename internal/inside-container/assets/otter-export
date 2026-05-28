@@ -444,15 +444,15 @@ def export_application():
         content = re.sub(r"^DBusActivatable=true\n?", "", content, flags=re.MULTILINE)
         content = re.sub(r"^(.*Name.*)$", rf"\1{exported_app_label}", content, flags=re.MULTILINE)
 
-        # For rootful containers, ensure Terminal=true
+        # For rootful containers, ensure Terminal=true under [Desktop Entry]
         if rootful:
-            if re.search(r"^Terminal=", content, re.MULTILINE):
-                content = re.sub(r"^Terminal=.*$", "Terminal=true", content, flags=re.MULTILINE)
-            else:
-                content += "Terminal=true\n"
+            content = re.sub(r"^Terminal=.*$", "Terminal=true", content, flags=re.MULTILINE)
+            if not re.search(r"^Terminal=", content, re.MULTILINE):
+                content = re.sub(r"^(\[Desktop Entry\])", r"\1\nTerminal=true", content, flags=re.MULTILINE)
 
-        if "StartupWMClass" not in content:
-            content += f"StartupWMClass={exported_app}\n"
+        desktop_original_stem = Path(df).stem
+        content = re.sub(r"^StartupWMClass=.*\n?", "", content, flags=re.MULTILINE)
+        content += f"StartupWMClass={desktop_original_stem}\n"
 
         # Merge Remove into existing Actions= line, or add one if absent
         if re.search(r"^Actions=", content, re.MULTILINE):
