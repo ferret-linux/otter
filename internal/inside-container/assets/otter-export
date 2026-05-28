@@ -238,9 +238,8 @@ container_command_suffix = f"'{exported_bin}' {extra_flags} \"$@\""
 # Check if exported application/binary should be run with sudo privileges
 if is_sudo:
     sudo_prefix = "sudo -S"
-    try:
-        subprocess.run(["sudo", "-S", "test"], capture_output=True)
-    except Exception:
+    result = subprocess.run(["sudo", "-S", "test"], capture_output=True)
+    if result.returncode != 0:
         sudo_prefix = "sudo"
 
     # Edge case for systems with doas
