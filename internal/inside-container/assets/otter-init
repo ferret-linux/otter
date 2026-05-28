@@ -214,6 +214,17 @@ while :; do
 	esac
 done
 
+# Skip/Unset first run only flags/steps
+# this prevents container from breaking on reboot
+# mostly useful for otter assemble as user can define
+# hooks & packages which might not be needed or break
+# the container or error out on a rerun.
+if [ -f /usr/lib/otter/container.bootstrapped ]; then
+	container_additional_packages=""
+	pre_init_hook=""
+	init_hook=""
+fi
+
 # Check we're running inside a container and not on the host
 if [ ! -f /run/.containerenv ] && [ ! -f /.dockerenv ] && [ -z "${container:-}" ]; then
 	printf >&2 "You must run %s inside a container!\n" " $(basename "$0")"
@@ -2740,6 +2751,7 @@ fi
 # For non-init containers, the init will stop here
 if [ "${init}" -eq 0 ]; then
 	touch /usr/lib/otter/container.ready
+	touch /usr/lib/otter/container.bootstrapped
 	printf "container_setup_done\n"
 	# Keepalive loop
 	# disable verbose logging for this phase.
@@ -2943,6 +2955,7 @@ if [ -e /usr/lib/systemd/systemd ] || [ -e /lib/systemd/systemd ]; then
 	systemctl start user-integration@${container_user_name}.service && \
 	loginctl enable-linger ${container_user_name} || : && \
 	touch /usr/lib/otter/container.ready && \
+	touch /usr/lib/otter/container.bootstrapped && \
 	echo container_setup_done" &
 
 	[ -e /usr/lib/systemd/systemd ] && exec /usr/lib/systemd/systemd --system --log-target=console --unit=multi-user.target
@@ -2950,6 +2963,7 @@ if [ -e /usr/lib/systemd/systemd ] || [ -e /lib/systemd/systemd ]; then
 
 elif [ -e /sbin/init ]; then
 	touch /usr/lib/otter/container.ready
+	touch /usr/lib/otter/container.bootstrapped
 	printf "container_setup_done\n"
 
 	# Fallback to standard init path, this is useful in case of non-Systemd containers
