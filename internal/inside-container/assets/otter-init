@@ -425,13 +425,11 @@ mount_bind()
 	return 0
 }
 
-if [ ! -f /usr/lib/otter/container.bootstrapped ]; then
-	if [ -n "${pre_init_hook}" ]; then
-		printf "otter: Executing pre-init hooks...\n"
-		# execute pre-init hooks if specified
-		# shellcheck disable=SC2086
-		eval ${pre_init_hook}
-	fi
+if [ -n "${pre_init_hook}" ]; then
+	printf "otter: Executing pre-init hooks...\n"
+	# execute pre-init hooks if specified
+	# shellcheck disable=SC2086
+	eval ${pre_init_hook}
 fi
 
 ###############################################################################
@@ -2712,13 +2710,11 @@ fi
 ###############################################################################
 
 ###############################################################################
-if [ ! -f /usr/lib/otter/container.bootstrapped ]; then
-	if [ -n "${init_hook}" ]; then
-		printf "otter: Executing init hooks...\n"
-		# execute eventual init hooks if specified
-		# shellcheck disable=SC2086
-		eval ${init_hook}
-	fi
+if [ -n "${init_hook}" ]; then
+	printf "otter: Executing init hooks...\n"
+	# execute eventual init hooks if specified
+	# shellcheck disable=SC2086
+	eval ${init_hook}
 fi
 ###############################################################################
 
@@ -2744,7 +2740,6 @@ fi
 # For non-init containers, the init will stop here
 if [ "${init}" -eq 0 ]; then
 	touch /usr/lib/otter/container.ready
-	touch /usr/lib/otter/container.bootstrapped
 	printf "container_setup_done\n"
 	# Keepalive loop
 	# disable verbose logging for this phase.
@@ -2948,7 +2943,6 @@ if [ -e /usr/lib/systemd/systemd ] || [ -e /lib/systemd/systemd ]; then
 	systemctl start user-integration@${container_user_name}.service && \
 	loginctl enable-linger ${container_user_name} || : && \
 	touch /usr/lib/otter/container.ready && \
-	touch /usr/lib/otter/container.bootstrapped && \
 	echo container_setup_done" &
 
 	[ -e /usr/lib/systemd/systemd ] && exec /usr/lib/systemd/systemd --system --log-target=console --unit=multi-user.target
@@ -2956,7 +2950,6 @@ if [ -e /usr/lib/systemd/systemd ] || [ -e /lib/systemd/systemd ]; then
 
 elif [ -e /sbin/init ]; then
 	touch /usr/lib/otter/container.ready
-	touch /usr/lib/otter/container.bootstrapped
 	printf "container_setup_done\n"
 
 	# Fallback to standard init path, this is useful in case of non-Systemd containers
