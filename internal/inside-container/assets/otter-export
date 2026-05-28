@@ -464,7 +464,7 @@ def export_application():
             content = re.sub(r"(%.*)", rf"{extra_flags} \1", content)
         content = re.sub(r"^TryExec=.*\n?", "", content, flags=re.MULTILINE)
         content = re.sub(r"^DBusActivatable=true\n?", "", content, flags=re.MULTILINE)
-        content = re.sub(r"^(Name.*)$", rf"\1{exported_app_label}", content, flags=re.MULTILINE)
+        content = re.sub(r"^(.*Name.*)$", rf"\1{exported_app_label}", content, flags=re.MULTILINE)
 
         dest_desktop.write_text(content)
 
