@@ -341,7 +341,7 @@ generate_script()
 	cat << EOF
 #!/bin/sh
 # otter_binary
-# name: ${container_name}
+# name: ${rootful:+rootful-}${container_name}
 if [ -z "\${CONTAINER_ID}" ]; then
 	exec "${OTTER_PATH:-"otter"}" enter ${rootful} -n ${container_name} ${enter_flags} -- ${sudo_prefix} ${container_command_suffix}
 elif [ -n "\${CONTAINER_ID}" ] && [ "\${CONTAINER_ID}" != "${container_name}" ]; then
@@ -712,7 +712,9 @@ list_exported_binaries()
 		# Get original binary name
 		name="$(grep -B1 "fi" "${i}" | grep exec | cut -d' ' -f2)"
 		# Print only stuff we exported from this box!
-		if grep -q "^# name: ${CONTAINER_ID}$" "${i}"; then
+		bin_list_suffix="${CONTAINER_ID}"
+		[ -f /usr/lib/otter/container.rootful ] && bin_list_suffix="rootful-${CONTAINER_ID}"
+		if grep -q "^# name: ${bin_list_suffix}$" "${i}"; then
 			printf "%-20s | %-30s\n" "${name}" "${i}"
 		fi
 	done
