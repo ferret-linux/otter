@@ -302,7 +302,10 @@ def export_binary():
         if "otter_binary" not in dest_file.read_text():
             print(f"Error: {exported_bin} is not exported.", file=sys.stderr)
             return 1
-        dest_file.unlink()
+        try:
+            dest_file.unlink()
+        except OSError:
+            return 1
         print(f"{exported_bin} from {container_name} removed successfully from {dest_path}.\nOK!")
         return 0
 
@@ -342,7 +345,7 @@ def export_application():
             if p.is_dir():
                 canon_dirs.append(str(p))
         else:
-            p = Path(host_home) / ".local/share/applications"
+            p = Path(os.environ.get("HOME", "")) / ".local/share/applications"
             if p.is_dir():
                 canon_dirs.append(str(p))
 
@@ -566,14 +569,17 @@ def list_exported_binaries():
             continue
         if f"# name: {bin_list_suffix}" not in content:
             continue
-        # Get original binary name
+        # Get original binary name — match shell: grep -B1 "fi" | grep exec | cut -d' ' -f2
         name = ""
-        for line in content.splitlines():
-            if "exec" in line:
-                parts = line.split()
-                if len(parts) > 1:
-                    name = parts[1]
-                break
+        lines = content.splitlines()
+        for idx, line in enumerate(lines):
+            if line.strip() == "fi" and idx > 0:
+                prev = lines[idx - 1]
+                if "exec" in prev:
+                    parts = prev.split()
+                    if len(parts) > 1:
+                        name = parts[1]
+                    break
         print(f"{name:<20} | {f:<30}")
 
 
