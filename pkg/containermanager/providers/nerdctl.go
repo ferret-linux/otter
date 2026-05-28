@@ -616,8 +616,12 @@ func (n *Nerdctl) generateEnterCommand(
 		}
 	}
 	for _, env := range addEnv {
-		if val, ok := os.LookupEnv(env); ok {
+		if strings.Contains(env, "=") {
+			cmd = append(cmd, fmt.Sprintf("--env=%s", env))
+		} else if val, ok := os.LookupEnv(env); ok {
 			cmd = append(cmd, fmt.Sprintf("--env=%s=%s", env, val))
+		} else {
+			ui.DefaultLogger.Warn("env-var '%s' not found on host, skipping", env)
 		}
 	}
 
