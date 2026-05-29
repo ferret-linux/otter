@@ -27,9 +27,7 @@
 #	USER
 #	SHELL
 
-# Early exit trap , errors on first faliure & creates a broked state file
-# useful to distinguish a semi-broken container from a working one
-trap '[ "$?" -ne 0 ] && printf "Error: An error occurred\n" && touch /usr/lib/otter/container.borked' EXIT
+trap '[ "$?" -ne 0 ] && printf "Error: An error occurred\n"' EXIT
 
 # Redirect stderr to stdout as podman by default logs stderr as priority 3 journald errors.
 # Github issue: https://github.com/containers/podman/issues/20728
@@ -215,13 +213,6 @@ while :; do
 			break ;;
 	esac
 done
-
-# Check if the container is borked or not, Fail if otter-init previously
-# failed, If so then fail with a error asking user to recreate
-if [ -f /usr/lib/otter/container.borked ]; then
-	printf "Error: container is borked, please recreate it\n"
-	exit 1
-fi
 
 # Skip/Unset first run only flags/steps
 # this prevents container from breaking on reboot
