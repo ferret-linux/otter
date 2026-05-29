@@ -8,6 +8,7 @@ import (
 
 	"github.com/ferret-linux/otter/internal/cli"
 	"github.com/ferret-linux/otter/pkg/config"
+	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 func main() {
@@ -17,6 +18,10 @@ func main() {
 }
 
 func run() error {
+	if os.Getuid() == 0 {
+		ui.DefaultLogger.Error("running as root is highly unsupported, use '--root'")
+	}
+
 	cfg, err := config.LoadValues()
 	if err != nil {
 		//nolint:wrapcheck // main reports errors as-is
