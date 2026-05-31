@@ -28,8 +28,9 @@ RUN zypper dup -y
 COPY images/scripts/packages/pkg-opensuse.sh /tmp/pkg-opensuse.sh
 RUN sh /tmp/pkg-opensuse.sh
 
-# Locale setup
-RUN localedef -i en_US -f UTF-8 en_US.UTF-8
+# Locale setup — glibc-locale (installed via pkg script) pre-builds locales on Leap;
+# localedef requires glibc-i18ndata charmap files which are not available on Leap 15.x
+RUN echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
 # Timezone default
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
