@@ -22,15 +22,9 @@ RUN emerge-webrsync && getuto
 # Upgrade all packages
 RUN emerge --ask=n --autounmask-continue --quiet-build --getbinpkg -uDN @world
 
-# Install packages
-RUN emerge --ask=n --autounmask-continue --noreplace --quiet-build --getbinpkg \
-    app-shells/bash app-shells/bash-completion app-crypt/gnupg \
-    app-crypt/pinentry app-arch/pigz app-text/tree \
-    dev-lang/python net-misc/curl net-misc/wget \
-    sys-apps/diffutils sys-apps/findutils sys-apps/less sys-apps/shadow \
-    sys-apps/util-linux sys-devel/bc sys-libs/ncurses \
-    sys-process/lsof sys-process/procps \
-    app-admin/sudo x11-apps/xauth sys-apps/openrc
+# Run package install script
+COPY images/scripts/pkg_gentoo.sh /tmp/pkg_gentoo.sh
+RUN sh /tmp/pkg_gentoo.sh
 
 # Locale setup
 RUN sed -i "s|#.*en_US.UTF-8|en_US.UTF-8|g" /etc/locale.gen \

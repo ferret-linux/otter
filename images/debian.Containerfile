@@ -19,16 +19,9 @@ RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
 # Upgrade all packages
 RUN apt-get update && apt-get upgrade -y
 
-# Install packages
-RUN apt-get install -y --no-install-recommends \
-    apt-utils bash-completion bc bzip2 curl dialog diffutils findutils \
-    gnupg gnupg2 gpgsm hostname iproute2 iputils-ping keyutils less \
-    libcap2-bin libkrb5-3 libegl-mesa0 libegl1 libgl1 \
-    libglx-mesa0 libnss-mdns libnss-myhostname \
-    curl wget systemd libvulkan1 locales lsof man-db manpages \
-    mesa-vulkan-drivers mtr ncurses-base openssh-client passwd pigz \
-    pinentry-curses procps python3 rsync sudo tcpdump time traceroute \
-    tree tzdata unzip util-linux wget xauth xz-utils zip systemd
+# Run package install script
+COPY images/scripts/pkg_debian.sh /tmp/pkg_debian.sh
+RUN sh /tmp/pkg_debian.sh
 
 # Locale setup
 RUN sed -i "s|# en_US.UTF-8|en_US.UTF-8|g" /etc/locale.gen \

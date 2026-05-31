@@ -23,15 +23,9 @@ RUN xbps-install -Syu xbps
 
 # Upgrade all packages
 RUN xbps-install -Syu
-
-# Install packages
-RUN xbps-install -Sy \
-    bash-completion bc bzip2 curl diffutils findutils gnupg2 inetutils \
-    iproute2 less lsof man-db mesa-dri \
-    mit-krb5 mit-krb5-client mit-krb5-libs mtr ncurses nss openssh pigz \
-    pinentry pinentry-tty procps-ng python3 rsync shadow sudo time \
-    traceroute tree tzdata unzip util-linux vulkan-loader vte3 wget \
-    which xauth xz zip runit
+# Run package install script
+COPY images/scripts/pkg_void.sh /tmp/pkg_void.sh
+RUN sh /tmp/pkg_void.sh
 
 # Locale setup (glibc only, musl does not use libc-locales)
 RUN if [ -f /etc/default/libc-locales ]; then \

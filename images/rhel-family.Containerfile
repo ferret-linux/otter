@@ -20,16 +20,9 @@ RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf 2>/dev/null || \
 # Upgrade all packages
 RUN dnf upgrade -y
 
-# Install packages
-RUN dnf install -y \
-    bash-completion bc bzip2 cracklib-dicts curl diffutils findutils \
-    glibc-all-langpacks glibc-common glibc-locale-source gnupg2 \
-    gnupg2-smime hostname iproute iputils keyutils krb5-libs less lsof \
-    man-db mesa-dri-drivers mtr ncurses \
-    openssh-clients pam pigz pinentry procps-ng python3 \
-    rsync shadow-utils sudo time tzdata unzip \
-    util-linux vte-profile wget which \
-    xorg-x11-xauth xz zip systemd
+# Run package install script
+COPY images/scripts/pkg_rhel_family.sh /tmp/pkg_rhel_family.sh
+RUN sh /tmp/pkg_rhel_family.sh
 
 # Locale setup
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8

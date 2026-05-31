@@ -22,14 +22,9 @@ RUN sed -i "s|NoExtract.*||g" /etc/pacman.conf \
 # Upgrade all packages
 RUN pacman -Syyu --noconfirm
 
-# Install packages
-RUN pacman -S --needed --noconfirm \
-    bash bash-completion bc curl diffutils findutils glibc gnupg \
-    inetutils iputils keyutils less lsof man-db man-pages mesa \
-    mtr ncurses nss-mdns openssh pigz pinentry procps-ng python rsync \
-    shadow sudo tcpdump time traceroute tree tzdata unzip util-linux \
-    util-linux-libs vte-common vulkan-intel vulkan-radeon wget words \
-    xorg-xauth zip systemd base-devel git tar curl wget xdg-utils
+# Run package install script
+COPY images/scripts/pkg_arch_family.sh /tmp/pkg_arch_family.sh
+RUN sh /tmp/pkg_arch_family.sh
 
 # Timezone default
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
