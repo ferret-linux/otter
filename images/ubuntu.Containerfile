@@ -20,7 +20,7 @@ RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
 RUN apt-get update && apt-get upgrade -y
 
 # Run package install script
-COPY images/scripts/pkg-ubuntu.sh /tmp/pkg-ubuntu.sh
+COPY images/scripts/packages/pkg-ubuntu.sh /tmp/pkg-ubuntu.sh
 RUN sh /tmp/pkg-ubuntu.sh
 
 # Locale setup

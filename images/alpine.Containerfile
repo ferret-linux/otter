@@ -17,7 +17,7 @@ RUN mkdir -p \
 RUN apk update && apk upgrade
 
 # Run package install script
-COPY images/scripts/pkg-alpine.sh /tmp/pkg-alpine.sh
+COPY images/scripts/packages/pkg-alpine.sh /tmp/pkg-alpine.sh
 RUN sh /tmp/pkg-alpine.sh
 
 # Timezone default

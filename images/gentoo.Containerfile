@@ -23,7 +23,7 @@ RUN emerge-webrsync && getuto
 RUN emerge --ask=n --autounmask-continue --quiet-build --getbinpkg -uDN @world
 
 # Run package install script
-COPY images/scripts/pkg-gentoo.sh /tmp/pkg-gentoo.sh
+COPY images/scripts/packages/pkg-gentoo.sh /tmp/pkg-gentoo.sh
 RUN sh /tmp/pkg-gentoo.sh
 
 # Locale setup

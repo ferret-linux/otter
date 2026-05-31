@@ -20,7 +20,7 @@ RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
 RUN apt-get update && apt-get upgrade -y
 
 # Run package install script
-COPY images/scripts/pkg-debian.sh /tmp/pkg-debian.sh
+COPY images/scripts/packages/pkg-debian.sh /tmp/pkg-debian.sh
 RUN sh /tmp/pkg-debian.sh
 
 # Locale setup
