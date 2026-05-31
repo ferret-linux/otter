@@ -27,15 +27,17 @@ RUN xbps-install -Syu
 # Install packages
 RUN xbps-install -Sy \
     bash-completion bc bzip2 curl diffutils findutils gnupg2 inetutils \
-    iproute2 less lsof man-db mesa-dri mesa-vulkan-intel mesa-vulkan-radeon \
+    iproute2 less lsof man-db mesa-dri \
     mit-krb5 mit-krb5-client mit-krb5-libs mtr ncurses nss openssh pigz \
     pinentry pinentry-tty procps-ng python3 rsync shadow sudo time \
     traceroute tree tzdata unzip util-linux vulkan-loader vte3 wget \
     which xauth xz zip runit
 
-# Locale setup
-RUN sed -i "s|#.*en_US.UTF-8|en_US.UTF-8|g" /etc/default/libc-locales \
-    && xbps-reconfigure --force glibc-locales
+# Locale setup (glibc only, musl does not use libc-locales)
+RUN if [ -f /etc/default/libc-locales ]; then \
+    sed -i "s|#.*en_US.UTF-8|en_US.UTF-8|g" /etc/default/libc-locales \
+    && xbps-reconfigure --force glibc-locales; \
+    fi
 
 # Timezone default
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
