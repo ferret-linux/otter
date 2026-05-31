@@ -20,6 +20,7 @@ deps="
 	sys-apps/findutils
 	sys-apps/less
 	sys-apps/shadow
+	sys-apps/openrc
 	sys-apps/util-linux
 	sys-devel/bc
 	sys-libs/ncurses

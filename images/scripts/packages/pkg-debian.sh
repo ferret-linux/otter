@@ -46,6 +46,7 @@ deps="
 	openssh-client
 	passwd
 	pigz
+	systemd
 	pinentry-curses
 	procps
 	python3

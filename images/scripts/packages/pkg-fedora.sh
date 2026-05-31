@@ -48,6 +48,7 @@ deps="
 	tcpdump
 	time
 	traceroute
+	systemd
 	tree
 	tzdata
 	unzip

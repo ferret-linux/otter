@@ -47,6 +47,7 @@ deps="
 	sudo
 	tcpdump
 	time
+	systemd
 	traceroute
 	tree
 	tzdata

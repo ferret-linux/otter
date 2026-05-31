@@ -18,6 +18,7 @@ deps="
 	dialog
 	diffutils
 	findutils
+	systemd
 	gnupg
 	gnupg2
 	gpgsm

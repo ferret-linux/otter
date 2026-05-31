@@ -44,6 +44,7 @@ deps="
 	mtr
 	ncurses-base
 	openssh-client
+	systemd
 	passwd
 	pigz
 	pinentry-curses

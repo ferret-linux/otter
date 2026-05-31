@@ -15,6 +15,7 @@ deps="
 	findutils
 	glibc
 	gnupg
+	systemd
 	iputils
 	inetutils
 	keyutils

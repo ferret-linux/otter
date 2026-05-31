@@ -39,6 +39,7 @@ deps="
 	tree
 	tzdata
 	umount
+	openrc
 	unzip
 	util-linux
 	util-linux-login

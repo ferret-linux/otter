@@ -35,6 +35,7 @@ deps="
 	pam
 	pam-extra
 	pigz
+	systemd
 	pinentry
 	procps
 	python3

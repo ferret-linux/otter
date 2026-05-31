@@ -36,6 +36,7 @@ deps="
 	procps-ng
 	python3
 	rsync
+	runit
 	shadow
 	sudo
 	time
