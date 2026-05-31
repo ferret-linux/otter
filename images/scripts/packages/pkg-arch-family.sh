@@ -9,6 +9,10 @@ set -e
 
 deps="
 	bash-completion
+	base-devel
+	git
+	tar
+	fakeroot
 	bc
 	curl
 	diffutils
