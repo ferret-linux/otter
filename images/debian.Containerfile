@@ -23,7 +23,7 @@ RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y --no-install-recommends \
     apt-utils bash-completion bc bzip2 curl dialog diffutils findutils \
     gnupg gnupg2 gpgsm hostname iproute2 iputils-ping keyutils less \
-    libcap2-bin libkrb5-3 libegl-mesa0 libegl1 libegl1-mesa libgl1 \
+    libcap2-bin libkrb5-3 libegl-mesa0 libegl1 libgl1 \
     libgl1-mesa-glx libglx-mesa0 libnss-mdns libnss-myhostname \
     curl wget systemd libvulkan1 locales lsof man-db manpages \
     mesa-vulkan-drivers mtr ncurses-base openssh-client passwd pigz \

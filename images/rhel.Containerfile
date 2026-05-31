@@ -21,14 +21,14 @@ RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf 2>/dev/null || \
 RUN microdnf upgrade -y
 
 # Install packages
-RUN dnf install -y \
+RUN microdnf install -y \
     bash-completion bc bzip2 cracklib-dicts curl diffutils findutils \
     glibc-all-langpacks glibc-common glibc-locale-source gnupg2 \
     gnupg2-smime hostname iproute iputils keyutils krb5-libs less lsof \
     man-db man-pages mesa-dri-drivers mesa-vulkan-drivers mtr ncurses \
     nss-mdns openssh-clients pam passwd pigz pinentry procps-ng python3 \
     rsync shadow-utils sudo tcpdump time traceroute tree tzdata unzip \
-    util-linux util-linux-script vte-profile vulkan-tools wget which \
+    util-linux util-linux-script vte-profile vulkan wget which \
     xorg-x11-xauth xz zip systemd
 
 # Locale setup

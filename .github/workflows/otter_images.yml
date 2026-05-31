@@ -84,7 +84,7 @@ jobs:
             tag: stable
 
           - image: registry.access.redhat.com/ubi10/ubi-init:latest
-            containerfile: rhel-family.Containerfile
+            containerfile: rhel.Containerfile
             name: rhel-otr
             tag: stable
 

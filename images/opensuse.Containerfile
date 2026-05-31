@@ -27,10 +27,10 @@ RUN zypper dup -y
 # Install packages
 RUN zypper -n install -y \
     bash-completion bc bzip2 curl diffutils findutils glibc-locale \
-    glibc-locale-base gnupg hostname iputils keyutils less lsof man \
+    glibc-locale-base hostname iputils keyutils less lsof man \
     man-pages Mesa-dri libvulkan1 libvulkan_intel libvulkan_radeon \
-    libvte-2_91-0 mtr ncurses nss-mdns openssh-clients pam pam-extra \
-    pigz pinentry procps python3 rsync shadow sudo system-group-wheel \
+    libvte-2_91-0 mtr nss-mdns openssh-clients pam pam-extra \
+    pigz pinentry procps rsync shadow sudo system-group-wheel \
     systemd time timezone tree unzip util-linux util-linux-systemd \
     wget words xauth zip
 

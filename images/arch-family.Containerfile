@@ -25,7 +25,7 @@ RUN pacman -Syyu --noconfirm
 # Install packages
 RUN pacman -S --needed --noconfirm \
     bash bash-completion bc curl diffutils findutils glibc gnupg \
-    inetutils iputils keyutils less lsof man-db man-pages mesa mlocate \
+    inetutils iputils keyutils less lsof man-db man-pages mesa \
     mtr ncurses nss-mdns openssh pigz pinentry procps-ng python rsync \
     shadow sudo tcpdump time traceroute tree tzdata unzip util-linux \
     util-linux-libs vte-common vulkan-intel vulkan-radeon wget words \
