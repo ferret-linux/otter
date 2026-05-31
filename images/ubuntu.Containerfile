@@ -24,7 +24,7 @@ RUN apt-get install -y --no-install-recommends \
     apt-utils bash-completion bc bzip2 curl dialog diffutils findutils \
     gnupg gnupg2 gpgsm hostname iproute2 iputils-ping keyutils \
     language-pack-en less libcap2-bin libkrb5-3 libegl-mesa0 libegl1 \
-    libgl1 libgl1-mesa-glx libglx-mesa0 libnss-mdns \
+    libgl1 libglx-mesa0 libnss-mdns \
     libnss-myhostname libvulkan1 locales lsof man-db \
     manpages mesa-vulkan-drivers mtr ncurses-base openssh-client passwd \
     pigz pinentry-curses procps python3 rsync sudo tcpdump time systemd \

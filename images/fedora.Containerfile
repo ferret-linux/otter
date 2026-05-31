@@ -20,7 +20,7 @@ RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf 2>/dev/null || true
 RUN dnf upgrade -y
 
 # Install packages
-RUN dnf install --allowerasing --skip-missing -y \
+RUN dnf install --allowerasing -y \
     bash-completion bc bzip2 cracklib-dicts curl diffutils dnf-plugins-core \
     findutils glibc-all-langpacks glibc-common glibc-locale-source gnupg2 \
     gnupg2-smime hostname iproute iputils keyutils krb5-libs less lsof \
