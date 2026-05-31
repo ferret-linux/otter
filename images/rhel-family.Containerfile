@@ -39,7 +39,7 @@ RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
     && echo "UTC" > /etc/timezone
 
 # Cleanup
-RUN microdnf clean all \
+RUN dnf clean all \
     && rm -rf \
     /var/cache/dnf/* \
     /var/log/* \
