@@ -178,12 +178,12 @@ jobs:
 
           # rhel
           - image: registry.access.redhat.com/ubi10/ubi-init:latest
-            containerfile: rhel.Containerfile
+            containerfile: rhel-family.Containerfile
             name: rhel-otr
             tag: stable
             arch: amd64
           - image: registry.access.redhat.com/ubi10/ubi-init:latest
-            containerfile: rhel.Containerfile
+            containerfile: rhel-family.Containerfile
             name: rhel-otr
             tag: stable
             arch: arm64
