@@ -48,6 +48,7 @@ RUN zypper --non-interactive install \
     libvulkan1 \
     libvulkan_intel \
     libvulkan_radeon \
+    libvte-2_91-0 \
     lsof \
     man \
     man-pages \

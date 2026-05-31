@@ -50,7 +50,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libkrb5-3 \
     libnss-mdns \
     libnss-myhostname \
-    libvte-2.9*-common \
+    libvte-2.91-common \
     libvte-common \
     libvulkan1 \
     locales \
