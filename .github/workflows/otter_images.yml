@@ -24,117 +24,117 @@ jobs:
         include:
           - image: docker.io/library/ubuntu:latest
             containerfile: ubuntu.Containerfile
-            name: ubuntu-otter
-            tag: latest
+            name: ubuntu-otr
+            tag: stable
 
           - image: docker.io/library/ubuntu:26.04
             containerfile: ubuntu.Containerfile
-            name: ubuntu-otter
+            name: ubuntu-otr
             tag: lts
 
           - image: docker.io/library/debian:stable
             containerfile: debian.Containerfile
-            name: debian-otter
+            name: debian-otr
             tag: stable
 
           - image: docker.io/library/debian:testing
             containerfile: debian.Containerfile
-            name: debian-otter
+            name: debian-otr
             tag: testing
 
           - image: docker.io/library/debian:unstable
             containerfile: debian.Containerfile
-            name: debian-otter
+            name: debian-otr
             tag: unstable
 
           - image: quay.io/fedora/fedora:44
             containerfile: fedora.Containerfile
-            name: fedora-otter
-            tag: latest
+            name: fedora-otr
+            tag: stable
 
           - image: quay.io/fedora/fedora:rawhide
             containerfile: fedora.Containerfile
-            name: fedora-otter
+            name: fedora-otr
             tag: rawhide
 
           - image: docker.io/library/archlinux:latest
             containerfile: arch-family.Containerfile
-            name: arch-otter
+            name: arch-otr
             tag: latest
 
           - image: docker.io/blackarchlinux/blackarch:latest
             containerfile: arch-family.Containerfile
-            name: blackarch-otter
+            name: blackarch-otr
             tag: latest
 
           - image: docker.io/gentoo/stage3:latest
             containerfile: gentoo.Containerfile
-            name: gentoo-otter
-            tag: latest
+            name: gentoo-otr
+            tag: stage3
 
           - image: docker.io/library/almalinux:latest
             containerfile: rhel-family.Containerfile
-            name: alma-otter
-            tag: latest
+            name: alma-otr
+            tag: stable
 
           - image: docker.io/rockylinux/rockylinux:10-ubi-init
             containerfile: rhel-family.Containerfile
-            name: rocky-otter
-            tag: latest
+            name: rocky-otr
+            tag: stable
 
           - image: quay.io/centos/centos:stream10
             containerfile: rhel-family.Containerfile
-            name: centos-otter
-            tag: latest
+            name: centos-otr
+            tag: stable
 
           - image: container-registry.oracle.com/os/oraclelinux:10
             containerfile: rhel-family.Containerfile
-            name: oracle-otter
-            tag: latest
+            name: oracle-otr
+            tag: stable
 
           - image: registry.access.redhat.com/ubi10/ubi-init:latest
             containerfile: rhel-family.Containerfile
-            name: rhel-otter
-            tag: latest
+            name: rhel-otr
+            tag: stable
 
           - image: registry.opensuse.org/opensuse/leap:latest
             containerfile: opensuse.Containerfile
-            name: opensuse-otter
+            name: opensuse-otr
             tag: leap
 
           - image: registry.opensuse.org/opensuse/tumbleweed:latest
             containerfile: opensuse.Containerfile
-            name: opensuse-otter
+            name: opensuse-otr
             tag: tumbleweed
 
           - image: docker.io/library/alpine:latest
             containerfile: alpine.Containerfile
-            name: alpine-otter
+            name: alpine-otr
             tag: latest
 
           - image: docker.io/library/alpine:edge
             containerfile: alpine.Containerfile
-            name: alpine-otter
+            name: alpine-otr
             tag: edge
 
           - image: docker.io/kalilinux/kali-rolling:latest
             containerfile: kali.Containerfile
-            name: kali-otter
-            tag: latest
+            name: kali-otr
+            tag: rolling
 
           - image: docker.io/kalilinux/kali-bleeding-edge:latest
             containerfile: kali.Containerfile
-            name: kali-otter
+            name: kali-otr
             tag: edge
 
           - image: ghcr.io/void-linux/void-glibc-full:latest
             containerfile: void.Containerfile
-            name: void-otter
+            name: void-otr
             tag: glibc
 
           - image: ghcr.io/void-linux/void-musl-full:latest
             containerfile: void.Containerfile
-            name: void-otter
+            name: void-otr
             tag: musl
 
     steps:
