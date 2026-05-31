@@ -39,6 +39,8 @@ deps="
 	pinentry
 	procps
 	glibc-i18n
+	glibc-locale
+	glibc-i18ndata
 	python3
 	rsync
 	shadow
