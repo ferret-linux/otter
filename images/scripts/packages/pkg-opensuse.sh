@@ -38,6 +38,7 @@ deps="
 	systemd
 	pinentry
 	procps
+	glibc-i18n
 	python3
 	rsync
 	shadow
