@@ -1,0 +1,157 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the otter project:
+#    https://github.com/ferret-linux/otter
+# Copyright (C) 2026 otter contributors
+
+name: Build Otter Images
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: docker.io/library/ubuntu:latest
+            containerfile: ubuntu.Containerfile
+            name: ubuntu-otter
+            tag: latest
+
+          - image: docker.io/library/ubuntu:26.04
+            containerfile: ubuntu.Containerfile
+            name: ubuntu-otter
+            tag: lts
+
+          - image: docker.io/library/debian:stable
+            containerfile: debian.Containerfile
+            name: debian-otter
+            tag: stable
+
+          - image: docker.io/library/debian:testing
+            containerfile: debian.Containerfile
+            name: debian-otter
+            tag: testing
+
+          - image: docker.io/library/debian:unstable
+            containerfile: debian.Containerfile
+            name: debian-otter
+            tag: unstable
+
+          - image: quay.io/fedora/fedora:44
+            containerfile: fedora.Containerfile
+            name: fedora-otter
+            tag: latest
+
+          - image: quay.io/fedora/fedora:rawhide
+            containerfile: fedora.Containerfile
+            name: fedora-otter
+            tag: rawhide
+
+          - image: docker.io/library/archlinux:latest
+            containerfile: arch-family.Containerfile
+            name: arch-otter
+            tag: latest
+
+          - image: docker.io/blackarchlinux/blackarch:latest
+            containerfile: arch-family.Containerfile
+            name: blackarch-otter
+            tag: latest
+
+          - image: docker.io/gentoo/stage3:latest
+            containerfile: gentoo.Containerfile
+            name: gentoo-otter
+            tag: latest
+
+          - image: docker.io/library/almalinux:latest
+            containerfile: rhel-family.Containerfile
+            name: alma-otter
+            tag: latest
+
+          - image: docker.io/rockylinux/rockylinux:10-ubi-init
+            containerfile: rhel-family.Containerfile
+            name: rocky-otter
+            tag: latest
+
+          - image: quay.io/centos/centos:stream10
+            containerfile: rhel-family.Containerfile
+            name: centos-otter
+            tag: latest
+
+          - image: container-registry.oracle.com/os/oraclelinux:10
+            containerfile: rhel-family.Containerfile
+            name: oracle-otter
+            tag: latest
+
+          - image: registry.access.redhat.com/ubi10/ubi-init:latest
+            containerfile: rhel-family.Containerfile
+            name: rhel-otter
+            tag: latest
+
+          - image: registry.opensuse.org/opensuse/leap:latest
+            containerfile: opensuse.Containerfile
+            name: opensuse-otter
+            tag: leap
+
+          - image: registry.opensuse.org/opensuse/tumbleweed:latest
+            containerfile: opensuse.Containerfile
+            name: opensuse-otter
+            tag: tumbleweed
+
+          - image: docker.io/library/alpine:latest
+            containerfile: alpine.Containerfile
+            name: alpine-otter
+            tag: latest
+
+          - image: docker.io/library/alpine:edge
+            containerfile: alpine.Containerfile
+            name: alpine-otter
+            tag: edge
+
+          - image: docker.io/kalilinux/kali-rolling:latest
+            containerfile: kali.Containerfile
+            name: kali-otter
+            tag: latest
+
+          - image: docker.io/kalilinux/kali-bleeding-edge:latest
+            containerfile: kali.Containerfile
+            name: kali-otter
+            tag: edge
+
+          - image: ghcr.io/void-linux/void-glibc-full:latest
+            containerfile: void.Containerfile
+            name: void-otter
+            tag: glibc
+
+          - image: ghcr.io/void-linux/void-musl-full:latest
+            containerfile: void.Containerfile
+            name: void-otter
+            tag: musl
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io \
+            -u ${{ github.actor }} --password-stdin
+
+      - name: Build and Push
+        run: |
+          podman build \
+            --platform linux/amd64,linux/arm64 \
+            --build-arg IMAGE=${{ matrix.image }} \
+            -f images/${{ matrix.containerfile }} \
+            -t ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} \
+            .
+          podman push ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}
