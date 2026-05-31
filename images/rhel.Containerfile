@@ -25,10 +25,10 @@ RUN microdnf install -y \
     bash-completion bc bzip2 cracklib-dicts curl diffutils findutils \
     glibc-all-langpacks glibc-common glibc-locale-source gnupg2 \
     gnupg2-smime hostname iproute iputils keyutils krb5-libs less lsof \
-    man-db man-pages mesa-dri-drivers mesa-vulkan-drivers mtr ncurses \
-    nss-mdns openssh-clients pam passwd pigz pinentry procps-ng python3 \
-    rsync shadow-utils sudo tcpdump time traceroute tree tzdata unzip \
-    util-linux util-linux-script vte-profile vulkan wget which \
+    man-db mesa-dri-drivers mesa-vulkan-drivers mtr ncurses \
+    openssh-clients pam pigz pinentry procps-ng python3 \
+    rsync shadow-utils sudo time tzdata unzip \
+    util-linux vte-profile vulkan-tools wget which \
     xorg-x11-xauth xz zip systemd
 
 # Locale setup

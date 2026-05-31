@@ -18,7 +18,7 @@ RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf 2>/dev/null || \
     sed -i '/tsflags=nodocs/d' /etc/yum.conf 2>/dev/null || true
 
 # Upgrade all packages
-RUN microdnf upgrade -y
+RUN dnf upgrade -y
 
 # Install packages
 RUN dnf install -y \
@@ -26,9 +26,9 @@ RUN dnf install -y \
     glibc-all-langpacks glibc-common glibc-locale-source gnupg2 \
     gnupg2-smime hostname iproute iputils keyutils krb5-libs less lsof \
     man-db man-pages mesa-dri-drivers mesa-vulkan-drivers mtr ncurses \
-    nss-mdns openssh-clients pam passwd pigz pinentry procps-ng python3 \
+    openssh-clients pam pigz pinentry procps-ng python3 \
     rsync shadow-utils sudo tcpdump time traceroute tree tzdata unzip \
-    util-linux util-linux-script vte-profile vulkan-tools wget which \
+    util-linux vte-profile vulkan-tools wget which \
     xorg-x11-xauth xz zip systemd
 
 # Locale setup
