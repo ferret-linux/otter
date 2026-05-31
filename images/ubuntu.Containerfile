@@ -20,8 +20,8 @@ RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
 RUN apt-get update && apt-get upgrade -y
 
 # Run package install script
-COPY images/scripts/pkg_ubuntu.sh /tmp/pkg_ubuntu.sh
-RUN sh /tmp/pkg_ubuntu.sh
+COPY images/scripts/pkg-ubuntu.sh /tmp/pkg-ubuntu.sh
+RUN sh /tmp/pkg-ubuntu.sh
 
 # Locale setup
 RUN sed -i "s|# en_US.UTF-8|en_US.UTF-8|g" /etc/locale.gen \

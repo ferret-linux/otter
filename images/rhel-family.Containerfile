@@ -21,8 +21,8 @@ RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf 2>/dev/null || \
 RUN dnf upgrade -y
 
 # Run package install script
-COPY images/scripts/pkg_rhel_family.sh /tmp/pkg_rhel_family.sh
-RUN sh /tmp/pkg_rhel_family.sh
+COPY images/scripts/pkg-rhel-family.sh /tmp/pkg-rhel-family.sh
+RUN sh /tmp/pkg-rhel-family.sh
 
 # Locale setup
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8

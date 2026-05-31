@@ -20,8 +20,8 @@ RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
 RUN apt-get update && apt-get upgrade -y
 
 # Run package install script
-COPY images/scripts/pkg_debian.sh /tmp/pkg_debian.sh
-RUN sh /tmp/pkg_debian.sh
+COPY images/scripts/pkg-debian.sh /tmp/pkg-debian.sh
+RUN sh /tmp/pkg-debian.sh
 
 # Locale setup
 RUN sed -i "s|# en_US.UTF-8|en_US.UTF-8|g" /etc/locale.gen \

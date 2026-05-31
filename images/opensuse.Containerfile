@@ -25,8 +25,8 @@ RUN zypper al parallel-printer-support
 RUN zypper dup -y
 
 # Run package install script
-COPY images/scripts/pkg_opensuse.sh /tmp/pkg_opensuse.sh
-RUN sh /tmp/pkg_opensuse.sh
+COPY images/scripts/pkg-opensuse.sh /tmp/pkg-opensuse.sh
+RUN sh /tmp/pkg-opensuse.sh
 
 # Locale setup
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8

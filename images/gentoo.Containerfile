@@ -23,8 +23,8 @@ RUN emerge-webrsync && getuto
 RUN emerge --ask=n --autounmask-continue --quiet-build --getbinpkg -uDN @world
 
 # Run package install script
-COPY images/scripts/pkg_gentoo.sh /tmp/pkg_gentoo.sh
-RUN sh /tmp/pkg_gentoo.sh
+COPY images/scripts/pkg-gentoo.sh /tmp/pkg-gentoo.sh
+RUN sh /tmp/pkg-gentoo.sh
 
 # Locale setup
 RUN sed -i "s|#.*en_US.UTF-8|en_US.UTF-8|g" /etc/locale.gen \

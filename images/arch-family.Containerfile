@@ -23,8 +23,8 @@ RUN sed -i "s|NoExtract.*||g" /etc/pacman.conf \
 RUN pacman -Syyu --noconfirm
 
 # Run package install script
-COPY images/scripts/pkg_arch_family.sh /tmp/pkg_arch_family.sh
-RUN sh /tmp/pkg_arch_family.sh
+COPY images/scripts/pkg-arch-family.sh /tmp/pkg-arch-family.sh
+RUN sh /tmp/pkg-arch-family.sh
 
 # Timezone default
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \

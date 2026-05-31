@@ -20,8 +20,8 @@ RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf 2>/dev/null || true
 RUN dnf upgrade -y
 
 # Run package install script
-COPY images/scripts/pkg_fedora.sh /tmp/pkg_fedora.sh
-RUN sh /tmp/pkg_fedora.sh
+COPY images/scripts/pkg-fedora.sh /tmp/pkg-fedora.sh
+RUN sh /tmp/pkg-fedora.sh
 
 # Locale setup
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8

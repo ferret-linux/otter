@@ -20,8 +20,8 @@ RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
 RUN apt-get update && apt-get upgrade -y
 
 # Run package install script
-COPY images/scripts/pkg_kali.sh /tmp/pkg_kali.sh
-RUN sh /tmp/pkg_kali.sh
+COPY images/scripts/pkg-kali.sh /tmp/pkg-kali.sh
+RUN sh /tmp/pkg-kali.sh
 
 # Locale setup
 RUN sed -i "s|# en_US.UTF-8|en_US.UTF-8|g" /etc/locale.gen \

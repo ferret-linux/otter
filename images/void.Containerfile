@@ -24,8 +24,8 @@ RUN xbps-install -Syu xbps
 # Upgrade all packages
 RUN xbps-install -Syu
 # Run package install script
-COPY images/scripts/pkg_void.sh /tmp/pkg_void.sh
-RUN sh /tmp/pkg_void.sh
+COPY images/scripts/pkg-void.sh /tmp/pkg-void.sh
+RUN sh /tmp/pkg-void.sh
 
 # Locale setup (glibc only, musl does not use libc-locales)
 RUN if [ -f /etc/default/libc-locales ]; then \
