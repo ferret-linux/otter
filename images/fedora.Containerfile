@@ -1,0 +1,45 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the otter project:
+#    https://github.com/ferret-linux/otter
+# Copyright (C) 2026 otter contributors
+
+ARG IMAGE
+FROM ${IMAGE}
+
+# Pre-create otter dirs
+RUN mkdir -p \
+    /etc/profile.d \
+    /etc/sudoers.d \
+    /usr/lib/otter
+
+# Re-enable docs
+RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf 2>/dev/null || true
+
+# Upgrade all packages
+RUN dnf upgrade -y
+
+# Install packages
+RUN dnf install --allowerasing --skip-missing -y \
+    bash-completion bc bzip2 cracklib-dicts curl diffutils dnf-plugins-core \
+    findutils glibc-all-langpacks glibc-common glibc-locale-source gnupg2 \
+    gnupg2-smime hostname iproute iputils keyutils krb5-libs less lsof \
+    man-db man-pages mesa-dri-drivers mesa-vulkan-drivers mtr ncurses \
+    nss-mdns openssh-clients pam passwd pigz pinentry procps-ng python3 \
+    rsync shadow-utils sudo tcpdump time traceroute tree tzdata unzip \
+    util-linux util-linux-script vte-profile vulkan wget wget2-wget which \
+    whois words xorg-x11-xauth xz zip systemd
+
+# Locale setup
+RUN localedef -i en_US -f UTF-8 en_US.UTF-8
+
+# Timezone default
+RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
+    && echo "UTC" > /etc/timezone
+
+# Cleanup
+RUN dnf clean all \
+    && rm -rf \
+    /var/cache/dnf/* \
+    /var/log/* \
+    /var/tmp/*
