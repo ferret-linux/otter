@@ -49,7 +49,6 @@ RUN dnf install -y \
     mesa-vulkan-drivers \
     mtr \
     ncurses \
-    nss-mdns \
     openssh-clients \
     pam \
     passwd \

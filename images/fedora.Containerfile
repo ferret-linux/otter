@@ -17,7 +17,7 @@ RUN mkdir -p \
     /usr/lib/otter
 
 # Install default packages
-RUN dnf install -y --allowerasing \
+RUN dnf install -y --allowerasing --skip-missing \
     bash \
     bash-completion \
     bc \

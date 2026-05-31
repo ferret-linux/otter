@@ -46,7 +46,6 @@ RUN zypper --non-interactive install \
     keyutils \
     less \
     libvulkan1 \
-    libvulkan_intel \
     libvulkan_radeon \
     libvte-2_91-0 \
     lsof \

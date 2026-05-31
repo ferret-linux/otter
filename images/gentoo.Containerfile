@@ -23,8 +23,6 @@ RUN emerge --ask=n --autounmask-continue --noreplace --quiet-build --getbinpkg -
     app-arch/zip \
     app-crypt/gnupg \
     app-crypt/pinentry \
-    app-misc/ca-certificates \
-    app-misc/tmux \
     app-misc/tree \
     app-shells/bash \
     app-shells/bash-completion \
