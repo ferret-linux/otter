@@ -38,9 +38,11 @@ deps="
 	systemd
 	pinentry
 	procps
+	glibc
 	glibc-i18n
 	glibc-locale
 	glibc-i18ndata
+	glibc-locale-source
 	python3
 	rsync
 	shadow
