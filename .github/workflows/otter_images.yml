@@ -198,7 +198,7 @@ jobs:
 
   merge:
     runs-on: ubuntu-24.04
-    needs: [build, build-amd64-only]
+    needs: [build-multiarch-images, build-amd64-only-images]
     permissions:
       contents: read
       packages: write
