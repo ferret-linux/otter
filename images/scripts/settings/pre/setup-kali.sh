@@ -7,8 +7,8 @@
 
 set -e
 
-# Add otter image marker
-touch /usr/lib/otter/container.official
+# Add unique otter image marker
+touch /usr/lib/otter/container.kali
 
 # Hide initial info message
 touch /etc/skel/.hushlogin

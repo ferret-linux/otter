@@ -7,5 +7,5 @@
 
 set -e
 
-# Add otter image marker
-touch /usr/lib/otter/container.official
+# Add unique otter image marker
+touch /usr/lib/otter/container.void
