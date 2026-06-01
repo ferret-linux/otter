@@ -54,7 +54,7 @@ case "${pkgmgr}" in
         ;;
     apt)
         # shellcheck disable=SC2086
-        found="$(apt-cache show ${packages} 2>/dev/null | grep "^Package:" | sort -u | cut -d' ' -f2-)"
+        found="$(apt-cache show ${packages} 2>/dev/null | grep "^Package:" | sort -u | cut -d' ' -f2- | tr '\n' ' ')"
         for pkg in ${packages}; do
             case " ${found} " in
                 *" ${pkg} "*) valid="${valid} ${pkg}" ;;
