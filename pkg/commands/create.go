@@ -441,7 +441,7 @@ func (c *CreateCommand) askPullImage(ctx context.Context, containerImage string,
 	if opts.ContainerAlwaysPull || !c.containerManager.ImageExists(ctx, containerImage) {
 		skipConfirm := opts.NonInteractive || opts.ContainerAlwaysPull || opts.DryRun
 		if !skipConfirm {
-			ui.DefaultLogger.Warn("image '%s' not found on your system.", containerImage)
+			ui.DefaultLogger.Warn("image '%s' not found on your system.", imageDisplayName(containerImage))
 			answer := c.prompter.Prompt("would you like to pull it?", true)
 			if !answer {
 				return ErrImagePullAbortedByUser
@@ -471,4 +471,25 @@ func splitFields(in []string) []string {
 		out = append(out, strings.Fields(v)...)
 	}
 	return out
+}
+
+// imageDisplayName strips the registry host prefix from a fully qualified image
+// reference for cleaner user-facing output.
+// e.g. "ghcr.io/ferret-linux/ubuntu-otr:stable" -> "ubuntu-otr:stable"
+//
+//	"docker.io/library/ubuntu:latest" -> "ubuntu:latest"
+func imageDisplayName(image string) string {
+	// strip registry host (everything up to and including the first slash that
+	// follows a dot or colon, i.e. the host portion)
+	if i := strings.Index(image, "/"); i != -1 {
+		rest := image[i+1:]
+		// strip org/user prefix too if it's a ghcr/quay style path
+		if j := strings.Index(rest, "/"); j != -1 {
+			return rest[j+1:]
+		}
+		// docker.io/library/ubuntu -> already handled above, but for
+		// single-level paths like "docker.io/ubuntu" just return rest
+		return rest
+	}
+	return image
 }
