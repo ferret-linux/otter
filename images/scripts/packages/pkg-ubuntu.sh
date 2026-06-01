@@ -53,6 +53,8 @@ deps="
 	python3
 	rsync
 	sudo
+	ubuntu-restricted-extras
+	ubuntu-restricted-addons
 	systemd
 	tcpdump
 	time
