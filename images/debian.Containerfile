@@ -66,7 +66,6 @@ RUN apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr
     libmp3lame0 \
     libgl1-mesa-dri \
     intel-media-va-driver-non-free \
-    mesa-vdpau-drivers \
     libvdpau1 \
     libkrb5-3 \
     libegl-mesa0 \
