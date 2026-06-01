@@ -136,6 +136,6 @@ jobs:
               --tag ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 \
               --push \
               . && break
-            echo "Attempt $i/${{ strategy.max-parallel }} failed, retrying in 15s..."
+            echo "Attempt $i/3 failed, retrying in 15s..."
             sleep 15
           done
