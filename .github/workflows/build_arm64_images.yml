@@ -1,0 +1,131 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the otter project:
+#    https://github.com/ferret-linux/otter
+# Copyright (C) 2026 otter contributors
+
+name: Build arm64 Images
+
+on:
+  workflow_call:
+
+jobs:
+  build-arm64:
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: docker.io/library/ubuntu:latest
+            containerfile: ubuntu.Containerfile
+            name: ubuntu-otr
+            tag: stable
+          - image: docker.io/library/ubuntu:26.04
+            containerfile: ubuntu.Containerfile
+            name: ubuntu-otr
+            tag: lts
+          - image: docker.io/library/debian:stable
+            containerfile: debian.Containerfile
+            name: debian-otr
+            tag: stable
+          - image: docker.io/library/debian:testing
+            containerfile: debian.Containerfile
+            name: debian-otr
+            tag: testing
+          - image: docker.io/library/debian:unstable
+            containerfile: debian.Containerfile
+            name: debian-otr
+            tag: unstable
+          - image: quay.io/fedora/fedora:44
+            containerfile: fedora.Containerfile
+            name: fedora-otr
+            tag: stable
+          - image: quay.io/fedora/fedora:rawhide
+            containerfile: fedora.Containerfile
+            name: fedora-otr
+            tag: rawhide
+          # arch and blackarch excluded — no arm64 support
+          - image: docker.io/gentoo/stage3:latest
+            containerfile: gentoo.Containerfile
+            name: gentoo-otr
+            tag: stage3
+          - image: docker.io/library/almalinux:latest
+            containerfile: rhel-family.Containerfile
+            name: alma-otr
+            tag: stable
+          - image: docker.io/rockylinux/rockylinux:10-ubi-init
+            containerfile: rhel-family.Containerfile
+            name: rocky-otr
+            tag: stable
+          - image: quay.io/centos/centos:stream10
+            containerfile: rhel-family.Containerfile
+            name: centos-otr
+            tag: stable
+          - image: container-registry.oracle.com/os/oraclelinux:10
+            containerfile: rhel-family.Containerfile
+            name: oracle-otr
+            tag: stable
+          - image: registry.access.redhat.com/ubi10/ubi-init:latest
+            containerfile: rhel-family.Containerfile
+            name: rhel-otr
+            tag: stable
+          - image: registry.opensuse.org/opensuse/leap:latest
+            containerfile: opensuse.Containerfile
+            name: opensuse-otr
+            tag: leap
+          - image: registry.opensuse.org/opensuse/tumbleweed:latest
+            containerfile: opensuse.Containerfile
+            name: opensuse-otr
+            tag: tumbleweed
+          - image: docker.io/library/alpine:latest
+            containerfile: alpine.Containerfile
+            name: alpine-otr
+            tag: latest
+          - image: docker.io/library/alpine:edge
+            containerfile: alpine.Containerfile
+            name: alpine-otr
+            tag: edge
+          - image: docker.io/kalilinux/kali-rolling:latest
+            containerfile: kali.Containerfile
+            name: kali-otr
+            tag: rolling
+          - image: docker.io/kalilinux/kali-bleeding-edge:latest
+            containerfile: kali.Containerfile
+            name: kali-otr
+            tag: edge
+          - image: ghcr.io/void-linux/void-glibc-full:latest
+            containerfile: void.Containerfile
+            name: void-otr
+            tag: glibc
+          - image: ghcr.io/void-linux/void-musl-full:latest
+            containerfile: void.Containerfile
+            name: void-otr
+            tag: musl
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and Push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: images/${{ matrix.containerfile }}
+          push: true
+          tags: ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64
+          build-args: |
+            IMAGE=${{ matrix.image }}
