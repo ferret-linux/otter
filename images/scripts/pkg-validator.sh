@@ -73,21 +73,23 @@ case "${pkgmgr}" in
         done
         ;;
     pacman)
-        found="$(pacman -Ssq 2>/dev/null | tr '\n' ' ')"
+        # shellcheck disable=SC2046,SC2086
+        valid="$(pacman -Ssq 2>/dev/null | grep -E "^($(echo ${packages} | tr ' ' '|'))$" | tr '\n' ' ')"
         for pkg in ${packages}; do
-            case " ${found} " in
-                *" ${pkg} "*) valid="${valid} ${pkg}" ;;
+            case " ${valid} " in
+                *" ${pkg} "*) ;;
                 *) echo "WARN: ${pkg} not found in repos" >&2 ;;
             esac
         done
         ;;
     zypper)
+        # shellcheck disable=SC2086
+        found="$(zypper -n -q se --match-exact ${packages} 2>/dev/null | grep -e 'package$' | cut -d'|' -f2 | tr '\n' ' ')"
         for pkg in ${packages}; do
-            if zypper -n -q se --match-exact "${pkg}" 2>/dev/null | grep -q 'package'; then
-                valid="${valid} ${pkg}"
-            else
-                echo "WARN: ${pkg} not found in repos" >&2
-            fi
+            case " ${found} " in
+                *" ${pkg} "*) valid="${valid} ${pkg}" ;;
+                *) echo "WARN: ${pkg} not found in repos" >&2 ;;
+            esac
         done
         ;;
     xbps)
