@@ -33,7 +33,9 @@ RUN . /etc/os-release && \
     elif [ "${ID}" = "opensuse-leap" ]; then \
         zypper addrepo -cfp 90 'https://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Leap_$releasever/' packman; \
     fi && \
-    zypper --gpg-auto-import-keys refresh
+    zypper refresh && \
+    zypper --gpg-auto-import-keys refresh && \
+    zypper dist-upgrade --from packman --allow-vendor-change
 
 # Upgrade all packages
 RUN zypper dup -y --from packman --allow-vendor-change || zypper dup -y
