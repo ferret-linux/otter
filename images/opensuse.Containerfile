@@ -30,8 +30,57 @@ RUN zypper al parallel-printer-support
 RUN zypper dup -y
 
 # Run package install script
-COPY images/scripts/pkg-opensuse.sh /tmp/pkg-opensuse.sh
-RUN sh /tmp/pkg-opensuse.sh
+COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
+RUN zypper -n install -y $(sh /tmp/pkg-validator.sh --pkgmgr zypper -- \
+    Mesa-dri \
+    bash-completion \
+    bc \
+    bzip2 \
+    curl \
+    diffutils \
+    findutils \
+    glibc-locale \
+    glibc-locale-base \
+    gnupg \
+    hostname \
+    iputils \
+    keyutils \
+    less \
+    libvulkan1 \
+    libvulkan_intel \
+    libvulkan_radeon \
+    lsof \
+    man \
+    man-pages \
+    mtr \
+    ncurses \
+    nss-mdns \
+    openssh-clients \
+    pam \
+    pam-extra \
+    pigz \
+    systemd \
+    pinentry \
+    procps \
+    glibc \
+    glibc-i18n \
+    glibc-i18ndata \
+    glibc-locale-source \
+    python3 \
+    rsync \
+    shadow \
+    sudo \
+    system-group-wheel \
+    time \
+    timezone \
+    tree \
+    unzip \
+    util-linux \
+    util-linux-systemd \
+    wget \
+    words \
+    xauth \
+    zip) || [ ${?} = 106 ]
 
 # Locale setup — glibc-locale (installed via pkg script) pre-builds locales on Leap;
 # localedef requires glibc-i18ndata charmap files which are not available on Leap 15.x

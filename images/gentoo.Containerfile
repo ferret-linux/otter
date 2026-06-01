@@ -28,8 +28,28 @@ RUN emerge-webrsync && getuto
 RUN emerge --ask=n --autounmask-continue --quiet-build --getbinpkg -uDN @world
 
 # Run package install script
-COPY images/scripts/pkg-gentoo.sh /tmp/pkg-gentoo.sh
-RUN sh /tmp/pkg-gentoo.sh
+COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
+RUN emerge --ask=n --autounmask-continue --noreplace --quiet-build --getbinpkg --keep-going $(sh /tmp/pkg-validator.sh --pkgmgr emerge -- \
+    app-crypt/gnupg \
+    app-crypt/pinentry \
+    app-shells/bash-completion \
+    app-text/tree \
+    dev-lang/python \
+    net-misc/curl \
+    net-misc/wget \
+    app-arch/pigz \
+    sys-apps/diffutils \
+    sys-apps/findutils \
+    sys-apps/less \
+    sys-apps/shadow \
+    sys-apps/openrc \
+    sys-apps/util-linux \
+    sys-devel/bc \
+    sys-libs/ncurses \
+    sys-process/lsof \
+    sys-process/procps \
+    app-admin/sudo \
+    x11-apps/xauth)
 
 # Locale setup
 RUN sed -i "s|#.*en_US.UTF-8|en_US.UTF-8|g" /etc/locale.gen \

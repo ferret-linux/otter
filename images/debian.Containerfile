@@ -25,8 +25,61 @@ RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
 RUN apt-get update && apt-get upgrade -y
 
 # Run package install script
-COPY images/scripts/pkg-debian.sh /tmp/pkg-debian.sh
-RUN sh /tmp/pkg-debian.sh
+COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
+RUN apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr apt -- \
+    apt-utils \
+    bash-completion \
+    bc \
+    bzip2 \
+    curl \
+    dialog \
+    diffutils \
+    findutils \
+    gnupg \
+    gnupg2 \
+    gpgsm \
+    hostname \
+    iproute2 \
+    iputils-ping \
+    keyutils \
+    less \
+    libcap2-bin \
+    libkrb5-3 \
+    libegl-mesa0 \
+    libegl1 \
+    libgl1 \
+    libgl1-mesa-glx \
+    libglx-mesa0 \
+    libnss-mdns \
+    libnss-myhostname \
+    libvulkan1 \
+    locales \
+    lsof \
+    man-db \
+    manpages \
+    mesa-vulkan-drivers \
+    mtr \
+    ncurses-base \
+    openssh-client \
+    passwd \
+    pigz \
+    systemd \
+    pinentry-curses \
+    procps \
+    python3 \
+    rsync \
+    sudo \
+    tcpdump \
+    time \
+    traceroute \
+    tree \
+    tzdata \
+    unzip \
+    util-linux \
+    wget \
+    xauth \
+    xz-utils \
+    zip)
 
 # Locale setup
 RUN sed -i "s|# en_US.UTF-8|en_US.UTF-8|g" /etc/locale.gen \

@@ -22,8 +22,49 @@ RUN touch /usr/lib/otter/container.official && \
 RUN apk update && apk upgrade
 
 # Run package install script
-COPY images/scripts/pkg-alpine.sh /tmp/pkg-alpine.sh
-RUN sh /tmp/pkg-alpine.sh
+COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
+RUN apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
+    bash \
+    bc \
+    bzip2 \
+    coreutils \
+    curl \
+    diffutils \
+    findmnt \
+    findutils \
+    gnupg \
+    gpg \
+    iproute2 \
+    iputils \
+    keyutils \
+    less \
+    libcap \
+    lsof \
+    mount \
+    ncurses \
+    ncurses-terminfo \
+    net-tools \
+    openssh-client-default \
+    pigz \
+    pinentry \
+    python3 \
+    rsync \
+    shadow \
+    sudo \
+    tcpdump \
+    tree \
+    tzdata \
+    umount \
+    openrc \
+    unzip \
+    util-linux \
+    util-linux-login \
+    util-linux-misc \
+    vulkan-loader \
+    wget \
+    xauth \
+    xz \
+    zip)
 
 # Timezone default
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \

@@ -29,8 +29,52 @@ RUN xbps-install -Syu xbps
 # Upgrade all packages
 RUN xbps-install -Syu
 # Run package install script
-COPY images/scripts/pkg-void.sh /tmp/pkg-void.sh
-RUN sh /tmp/pkg-void.sh
+COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
+RUN xbps-install -Sy $(sh /tmp/pkg-validator.sh --pkgmgr xbps -- \
+    bash-completion \
+    bc \
+    bzip2 \
+    curl \
+    diffutils \
+    findutils \
+    gnupg2 \
+    inetutils \
+    iproute2 \
+    less \
+    lsof \
+    man-db \
+    mesa-dri \
+    mesa-vulkan-intel \
+    mesa-vulkan-radeon \
+    mit-krb5 \
+    mit-krb5-client \
+    mit-krb5-libs \
+    mtr \
+    ncurses \
+    nss \
+    openssh \
+    pigz \
+    pinentry \
+    pinentry-tty \
+    procps-ng \
+    python3 \
+    rsync \
+    runit \
+    shadow \
+    sudo \
+    time \
+    traceroute \
+    tree \
+    tzdata \
+    unzip \
+    util-linux \
+    vulkan-loader \
+    vte3 \
+    wget \
+    which \
+    xauth \
+    xz \
+    zip)
 
 # Locale setup (glibc only, musl does not use libc-locales)
 RUN if [ -f /etc/default/libc-locales ]; then \

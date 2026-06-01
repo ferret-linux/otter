@@ -28,8 +28,55 @@ RUN sed -i "s|NoExtract.*||g" /etc/pacman.conf \
 RUN pacman -Syyu --noconfirm
 
 # Run package install script
-COPY images/scripts/pkg-arch-family.sh /tmp/pkg-arch-family.sh
-RUN sh /tmp/pkg-arch-family.sh
+COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
+RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman -- \
+    bash-completion \
+    base-devel \
+    git \
+    tar \
+    fakeroot \
+    bc \
+    curl \
+    diffutils \
+    findutils \
+    glibc \
+    gnupg \
+    systemd \
+    iputils \
+    inetutils \
+    keyutils \
+    less \
+    lsof \
+    man-db \
+    man-pages \
+    mlocate \
+    mesa \
+    mtr \
+    ncurses \
+    nss-mdns \
+    openssh \
+    pigz \
+    pinentry \
+    procps-ng \
+    python \
+    rsync \
+    shadow \
+    sudo \
+    tcpdump \
+    time \
+    traceroute \
+    tree \
+    tzdata \
+    unzip \
+    util-linux \
+    util-linux-libs \
+    vte-common \
+    vulkan-intel \
+    vulkan-radeon \
+    wget \
+    words \
+    xorg-xauth \
+    zip)
 
 # Timezone default
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
