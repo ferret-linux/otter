@@ -342,31 +342,3 @@ jobs:
               ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 \
               ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64
           fi
-
-      - name: Delete staged arch tags
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          delete_tag() {
-            local pkg="$1"
-            local tag="$2"
-            # get version id for this tag
-            version_id=$(gh api \
-              /orgs/ferret-linux/packages/container/${pkg}/versions \
-              --paginate \
-              | jq -r ".[] | select(.metadata.container.tags[] == \"${tag}\") | .id")
-            if [ -n "${version_id}" ]; then
-              gh api --method DELETE \
-                /orgs/ferret-linux/packages/container/${pkg}/versions/${version_id}
-              echo "Deleted ${pkg}:${tag}"
-            fi
-          }
-
-          pkg="${{ matrix.name }}"
-          tag="${{ matrix.tag }}"
-
-          delete_tag "${pkg}" "${tag}-amd64"
-
-          if [ "${{ matrix.amd64_only }}" != "true" ]; then
-            delete_tag "${pkg}" "${tag}-arm64"
-          fi
