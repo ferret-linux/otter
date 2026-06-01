@@ -28,12 +28,15 @@ RUN dnf install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-rele
     "https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm" \
     "https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm"
 
+# RHEL sucks as always , best-effort enabling of repos
+RUN subscription-manager repos --enable "codeready-builder-for-rhel-$(rpm -E %{rhel})-$(uname -m)-rpms" || true
+
 # Upgrade all packages
 RUN dnf upgrade -y
 
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
-RUN dnf install -y $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
+RUN dnf install -y --skip-broken $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
     bash-completion \
     bc \
     bzip2 \
