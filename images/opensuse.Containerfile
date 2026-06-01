@@ -101,9 +101,9 @@ RUN zypper -n install -y $(sh /tmp/pkg-validator.sh --pkgmgr zypper -- \
     gstreamer-plugins-bad \
     gstreamer-plugins-ugly \
     gstreamer-plugins-libav \
-    libvpx7 \
-    libx264 \
-    libx265 \
+    libvpx2 \
+    libx264-164 \
+    libx265-215 \
     libopus0 \
     libFLAC12 \
     Mesa \
