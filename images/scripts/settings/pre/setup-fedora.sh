@@ -9,3 +9,8 @@ set -e
 
 # Add unique otter image marker
 touch /usr/lib/otter/container.fedora
+
+# Re-enable docs
+sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf 2>/dev/null || true
+# Update & upgrade base image packages
+dnf upgrade -y --refresh

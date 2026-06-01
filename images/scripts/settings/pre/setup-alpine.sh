@@ -9,3 +9,6 @@ set -e
 
 # Add unique otter image marker
 touch /usr/lib/otter/container.alpine
+
+# Update & upgrade base image packages
+apk update && apk upgrade

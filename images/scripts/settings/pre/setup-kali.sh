@@ -10,5 +10,7 @@ set -e
 # Add unique otter image marker
 touch /usr/lib/otter/container.kali
 
-# Hide initial info message
-touch /etc/skel/.hushlogin
+# Fix dpkg to install packages
+rm -f /etc/dpkg/dpkg.cfg.d/excludes
+# Update & upgrade base image packages
+apt update && apt upgrade --yes && apt autoremove --purge --yes
