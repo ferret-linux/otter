@@ -53,12 +53,13 @@ case "${pkgmgr}" in
         done
         ;;
     apt)
+        # shellcheck disable=SC2086
+        found="$(apt-cache show ${packages} 2>/dev/null | grep "^Package:" | sort -u | cut -d' ' -f2-)"
         for pkg in ${packages}; do
-            if apt-cache show "${pkg}" >/dev/null 2>&1; then
-                valid="${valid} ${pkg}"
-            else
-                echo "WARN: ${pkg} not found in repos" >&2
-            fi
+            case " ${found} " in
+                *" ${pkg} "*) valid="${valid} ${pkg}" ;;
+                *) echo "WARN: ${pkg} not found in repos" >&2 ;;
+            esac
         done
         ;;
     dnf)
