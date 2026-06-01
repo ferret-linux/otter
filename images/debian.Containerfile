@@ -11,7 +11,12 @@ FROM ${IMAGE}
 RUN mkdir -p \
     /etc/profile.d \
     /etc/sudoers.d \
-    /usr/lib/otter
+    /usr/lib/otter \
+    /usr/local/bin
+
+# Add otter image identifiers
+RUN touch /usr/lib/otter/container.official && \
+    touch /usr/lib/otter/container.debian
 
 # Re-enable locale and docs
 RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
@@ -20,7 +25,7 @@ RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
 RUN apt-get update && apt-get upgrade -y
 
 # Run package install script
-COPY images/scripts/packages/pkg-debian.sh /tmp/pkg-debian.sh
+COPY images/scripts/pkg-debian.sh /tmp/pkg-debian.sh
 RUN sh /tmp/pkg-debian.sh
 
 # Locale setup

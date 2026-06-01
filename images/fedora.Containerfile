@@ -11,7 +11,12 @@ FROM ${IMAGE}
 RUN mkdir -p \
     /etc/profile.d \
     /etc/sudoers.d \
-    /usr/lib/otter
+    /usr/lib/otter \
+    /usr/local/bin
+
+# Add otter image identifiers
+RUN touch /usr/lib/otter/container.official && \
+    touch /usr/lib/otter/container.fedora
 
 # Re-enable docs
 RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf 2>/dev/null || true
@@ -20,7 +25,7 @@ RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf 2>/dev/null || true
 RUN dnf upgrade -y
 
 # Run package install script
-COPY images/scripts/packages/pkg-fedora.sh /tmp/pkg-fedora.sh
+COPY images/scripts/pkg-fedora.sh /tmp/pkg-fedora.sh
 RUN sh /tmp/pkg-fedora.sh
 
 # Locale setup

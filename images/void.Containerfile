@@ -11,7 +11,12 @@ FROM ${IMAGE}
 RUN mkdir -p \
     /etc/profile.d \
     /etc/sudoers.d \
-    /usr/lib/otter
+    /usr/lib/otter \
+    /usr/local/bin
+
+# Add otter image identifiers
+RUN touch /usr/lib/otter/container.official && \
+    touch /usr/lib/otter/container.void
 
 # Configure xbps to not overwrite host-managed files
 RUN mkdir -p /etc/xbps.d \
@@ -24,7 +29,7 @@ RUN xbps-install -Syu xbps
 # Upgrade all packages
 RUN xbps-install -Syu
 # Run package install script
-COPY images/scripts/packages/pkg-void.sh /tmp/pkg-void.sh
+COPY images/scripts/pkg-void.sh /tmp/pkg-void.sh
 RUN sh /tmp/pkg-void.sh
 
 # Locale setup (glibc only, musl does not use libc-locales)

@@ -11,7 +11,12 @@ FROM ${IMAGE}
 RUN mkdir -p \
     /etc/profile.d \
     /etc/sudoers.d \
-    /usr/lib/otter
+    /usr/lib/otter \
+    /usr/local/bin
+
+# Add otter image identifiers
+RUN touch /usr/lib/otter/container.official && \
+    touch /usr/lib/otter/container.opensuse
 
 # Configure zypper to install recommended packages and docs
 RUN mkdir -p /etc/zypp/zypp.conf.d \
@@ -25,7 +30,7 @@ RUN zypper al parallel-printer-support
 RUN zypper dup -y
 
 # Run package install script
-COPY images/scripts/packages/pkg-opensuse.sh /tmp/pkg-opensuse.sh
+COPY images/scripts/pkg-opensuse.sh /tmp/pkg-opensuse.sh
 RUN sh /tmp/pkg-opensuse.sh
 
 # Locale setup — glibc-locale (installed via pkg script) pre-builds locales on Leap;

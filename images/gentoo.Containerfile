@@ -11,7 +11,12 @@ FROM ${IMAGE}
 RUN mkdir -p \
     /etc/profile.d \
     /etc/sudoers.d \
-    /usr/lib/otter
+    /usr/lib/otter \
+    /usr/local/bin
+
+# Add otter image identifiers
+RUN touch /usr/lib/otter/container.official && \
+    touch /usr/lib/otter/container.gentoo
 
 # Configure portage to use binary packages by default
 RUN echo 'FEATURES="getbinpkg"' >> /etc/portage/make.conf
@@ -23,7 +28,7 @@ RUN emerge-webrsync && getuto
 RUN emerge --ask=n --autounmask-continue --quiet-build --getbinpkg -uDN @world
 
 # Run package install script
-COPY images/scripts/packages/pkg-gentoo.sh /tmp/pkg-gentoo.sh
+COPY images/scripts/pkg-gentoo.sh /tmp/pkg-gentoo.sh
 RUN sh /tmp/pkg-gentoo.sh
 
 # Locale setup

@@ -11,7 +11,12 @@ FROM ${IMAGE}
 RUN mkdir -p \
     /etc/profile.d \
     /etc/sudoers.d \
-    /usr/lib/otter
+    /usr/lib/otter \
+    /usr/local/bin
+
+# Add otter image identifiers
+RUN touch /usr/lib/otter/container.official && \
+    touch /usr/lib/otter/container.ubuntu
 
 # Re-enable locale and docs
 RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
@@ -20,7 +25,7 @@ RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
 RUN apt-get update && apt-get upgrade -y
 
 # Run package install script
-COPY images/scripts/packages/pkg-ubuntu.sh /tmp/pkg-ubuntu.sh
+COPY images/scripts/pkg-ubuntu.sh /tmp/pkg-ubuntu.sh
 RUN sh /tmp/pkg-ubuntu.sh
 
 # Locale setup

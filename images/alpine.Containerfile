@@ -11,13 +11,18 @@ FROM ${IMAGE}
 RUN mkdir -p \
     /etc/profile.d \
     /etc/sudoers.d \
-    /usr/lib/otter
+    /usr/lib/otter \
+    /usr/local/bin
+
+# Add otter image identifiers
+RUN touch /usr/lib/otter/container.official && \
+    touch /usr/lib/otter/container.alpine
 
 # Upgrade all packages
 RUN apk update && apk upgrade
 
 # Run package install script
-COPY images/scripts/packages/pkg-alpine.sh /tmp/pkg-alpine.sh
+COPY images/scripts/pkg-alpine.sh /tmp/pkg-alpine.sh
 RUN sh /tmp/pkg-alpine.sh
 
 # Timezone default

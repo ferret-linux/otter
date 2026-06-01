@@ -11,7 +11,12 @@ FROM ${IMAGE}
 RUN mkdir -p \
     /etc/profile.d \
     /etc/sudoers.d \
-    /usr/lib/otter
+    /usr/lib/otter \
+    /usr/local/bin
+
+# Add otter image identifiers
+RUN touch /usr/lib/otter/container.official && \
+    touch /usr/lib/otter/container.arch-family
 
 # Configure pacman
 RUN sed -i "s|NoExtract.*||g" /etc/pacman.conf \
@@ -23,7 +28,7 @@ RUN sed -i "s|NoExtract.*||g" /etc/pacman.conf \
 RUN pacman -Syyu --noconfirm
 
 # Run package install script
-COPY images/scripts/packages/pkg-arch-family.sh /tmp/pkg-arch-family.sh
+COPY images/scripts/pkg-arch-family.sh /tmp/pkg-arch-family.sh
 RUN sh /tmp/pkg-arch-family.sh
 
 # Timezone default
