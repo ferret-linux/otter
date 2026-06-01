@@ -4,29 +4,30 @@
 #    https://github.com/ferret-linux/otter
 # Copyright (C) 2026 otter contributors
 
-name: Image Builder
+name: Image Builder (IB)
 
 on:
   schedule:
     - cron: '13 16 * * *'
+    - cron: '21 06 * * *'
   workflow_dispatch:
 
 jobs:
   build-amd64:
-    uses: ./.github/workflows/build_amd64_images.yml
+    uses: ./.github/workflows/.ib-x64-imgs.yml.yml
     permissions:
       contents: read
       packages: write
 
   build-arm64:
-    uses: ./.github/workflows/build_arm64_images.yml
+    uses: ./.github/workflows/.ib-arm-imgs.yml.yml
     permissions:
       contents: read
       packages: write
 
   merge:
     needs: [build-amd64, build-arm64]
-    uses: ./.github/workflows/merge_push_images.yml
+    uses: ./.github/workflows/.ib-merge-imgs.yml.yml
     permissions:
       contents: read
       packages: write

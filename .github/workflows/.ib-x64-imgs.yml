@@ -4,7 +4,7 @@
 #    https://github.com/ferret-linux/otter
 # Copyright (C) 2026 otter contributors
 
-name: Build amd64 Images
+name: .ib-x64
 
 on:
   workflow_call:

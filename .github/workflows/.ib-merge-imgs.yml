@@ -4,7 +4,7 @@
 #    https://github.com/ferret-linux/otter
 # Copyright (C) 2026 otter contributors
 
-name: Merge and Push Images
+name: .ib-merge
 
 on:
   workflow_call:
