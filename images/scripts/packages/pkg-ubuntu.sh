@@ -69,5 +69,5 @@ deps="
 
 # Only install packages that exist in the repo — mirrors otter-init's setup_apt pattern
 # shellcheck disable=SC2086,SC2046
-apt-get install -y --no-install-recommends \
+apt-get install -y --no-install-suggests \
 	$(apt-cache show ${deps} 2>/dev/null | grep "^Package:" | sort -u | cut -d' ' -f2-)
