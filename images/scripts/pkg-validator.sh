@@ -64,7 +64,12 @@ case "${pkgmgr}" in
         ;;
     dnf)
         # shellcheck disable=SC2086
-        found="$(dnf list -q ${packages} 2>/dev/null | grep "$(uname -m)\|noarch" | cut -d' ' -f1 | sed 's/\.[^.]*$//')"
+        found="$(dnf list -q ${packages} 2>/dev/null | \
+            grep -v "Packages" | \
+            grep "$(uname -m)\|noarch" | \
+            cut -d' ' -f1 | \
+            sed 's/\.[^.]*$//' | \
+            tr '\n' ' ')"
         for pkg in ${packages}; do
             case " ${found} " in
                 *" ${pkg} "*) valid="${valid} ${pkg}" ;;
