@@ -40,6 +40,9 @@ if [ -z "${packages}" ]; then
 fi
 
 valid=""
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+RESET='\033[0m'
 
 case "${pkgmgr}" in
     apk)
