@@ -71,24 +71,20 @@ jobs:
 
     steps:
       - name: Login to GHCR
-        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Set up Buildx
-        uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Create and Push Manifest
         run: |
           if [ "${{ matrix.amd64_only }}" = "true" ]; then
-            docker buildx imagetools create \
-              -t ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} \
+            podman manifest create \
+              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} \
               ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64
           else
-            docker buildx imagetools create \
-              -t ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} \
+            podman manifest create \
+              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} \
               ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 \
               ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64
           fi
+          podman manifest push \
+            ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} \
+            docker://ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}
