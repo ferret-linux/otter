@@ -128,11 +128,14 @@ jobs:
         uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4
 
       - name: Build and Push
-        uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7
-        with:
-          context: .
-          file: images/${{ matrix.containerfile }}
-          push: true
-          tags: ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64
-          build-args: |
-            IMAGE=${{ matrix.image }}
+        run: |
+          for i in 1 2 3; do
+            docker buildx build \
+              --build-arg IMAGE=${{ matrix.image }} \
+              --file images/${{ matrix.containerfile }} \
+              --tag ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 \
+              --push \
+              . && break
+            echo "Attempt $i/${{ strategy.max-parallel }} failed, retrying in 15s..."
+            sleep 15
+          done
