@@ -29,6 +29,18 @@ RUN apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
     bzip2 \
     coreutils \
     curl \
+    ffmpeg \
+    xdg-utils \
+    xdg-user-dirs \
+    gst-plugins-base \
+    gst-plugins-bad \
+    gst-plugins-ugly \
+    gst-plugins-good \
+    xdg-desktop-portal \
+    pipewire \
+    pipewire-jack \
+    pipewire-pulse \
+    vpl-gpu-rt \
     diffutils \
     findmnt \
     findutils \

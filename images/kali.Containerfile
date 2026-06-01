@@ -44,6 +44,27 @@ RUN apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr
     keyutils \
     less \
     libcap2-bin \
+    pipewire \
+    pipewire-pulse \
+    wireplumber \
+    libpipewire-0.3-0 \
+    ffmpeg \
+    gstreamer1.0-tools \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-ugly \
+    gstreamer1.0-libav \
+    libvpx9 \
+    libx264-164 \
+    libx265-199 \
+    libopus0 \
+    libflac12 \
+    libmp3lame0 \
+    libgl1-mesa-dri \
+    intel-media-va-driver-non-free \
+    mesa-vdpau-drivers \
+    libvdpau1 \
     libkrb5-3 \
     libegl-mesa0 \
     libegl1 \

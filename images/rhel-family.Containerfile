@@ -22,6 +22,12 @@ RUN touch /usr/lib/otter/container.official && \
 RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf 2>/dev/null || \
     sed -i '/tsflags=nodocs/d' /etc/yum.conf 2>/dev/null || true
 
+
+# Install epel repos
+RUN dnf install -y epel-release \
+    "https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm" \
+    "https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm"
+
 # Upgrade all packages
 RUN dnf upgrade -y
 
@@ -82,7 +88,25 @@ RUN dnf install -y $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
     words \
     xorg-x11-xauth \
     xz \
-    zip)
+    zip \
+    pipewire \
+    pipewire-pulseaudio \
+    wireplumber \
+    ffmpeg \
+    gstreamer1 \
+    gstreamer1-plugins-base \
+    gstreamer1-plugins-good \
+    gstreamer1-plugins-bad-free \
+    gstreamer1-plugins-bad-nonfree \
+    gstreamer1-plugins-ugly \
+    gstreamer1-plugin-libav \
+    mesa-va-drivers-freeworld \
+    mesa-vdpau-drivers-freeworld \
+    libvpx \
+    x264 \
+    x265 \
+    lame \
+    opus)4
 
 # Locale setup
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8

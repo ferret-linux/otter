@@ -26,8 +26,17 @@ RUN mkdir -p /etc/zypp/zypp.conf.d \
 # Lock parallel-printer-support as it can't be installed in rootless containers
 RUN zypper al parallel-printer-support
 
+# Add Packman repository for multimedia codecs
+RUN . /etc/os-release && \
+    if [ "${ID}" = "opensuse-tumbleweed" ]; then \
+        zypper addrepo -cfp 90 'https://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed/' packman; \
+    elif [ "${ID}" = "opensuse-leap" ]; then \
+        zypper addrepo -cfp 90 'https://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Leap_$releasever/' packman; \
+    fi && \
+    zypper --gpg-auto-import-keys refresh
+
 # Upgrade all packages
-RUN zypper dup -y
+RUN zypper dup -y --from packman --allow-vendor-change || zypper dup -y
 
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
@@ -80,7 +89,28 @@ RUN zypper -n install -y $(sh /tmp/pkg-validator.sh --pkgmgr zypper -- \
     wget \
     words \
     xauth \
-    zip) || [ ${?} = 106 ]
+    zip \
+    pipewire \
+    pipewire-pulseaudio \
+    wireplumber \
+    ffmpeg \
+    gstreamer \
+    gstreamer-plugins-base \
+    gstreamer-plugins-good \
+    gstreamer-plugins-bad \
+    gstreamer-plugins-ugly \
+    gstreamer-plugins-libav \
+    libvpx7 \
+    libx264 \
+    libx265 \
+    libopus0 \
+    libFLAC12 \
+    Mesa \
+    Mesa-dri-devel \
+    intel-media-driver \
+    libva-intel-driver \
+    mesa-libva \
+    libva2) || [ ${?} = 106 ]
 
 # Locale setup — glibc-locale (installed via pkg script) pre-builds locales on Leap;
 # localedef requires glibc-i18ndata charmap files which are not available on Leap 15.x

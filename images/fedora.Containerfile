@@ -21,8 +21,16 @@ RUN touch /usr/lib/otter/container.official && \
 # Re-enable docs
 RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf 2>/dev/null || true
 
+# Install rpm-fusion repos
+RUN dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
+    https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
+    dnf5-plugins -y --refresh
+
+# Enable Openh264 repos
+RUN dnf config-manager setopt fedora-cisco-openh264.enabled=1
+
 # Upgrade all packages
-RUN dnf upgrade -y
+RUN dnf upgrade -y --refresh
 
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
@@ -33,6 +41,10 @@ RUN dnf install -y $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
     cracklib-dicts \
     curl \
     diffutils \
+    ffmpeg \
+    mesa-va-drivers-freeworld \
+    rpmfusion-free-release-tainted \
+    rpmfusion-nonfree-release-tainted \
     dnf-plugins-core \
     findutils \
     glibc-all-langpacks \

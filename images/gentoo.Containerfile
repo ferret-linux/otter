@@ -38,6 +38,22 @@ RUN emerge --ask=n --autounmask-continue --noreplace --quiet-build --getbinpkg -
     net-misc/curl \
     net-misc/wget \
     app-arch/pigz \
+    media-video/pipewire \
+    media-video/wireplumber \
+    media-video/ffmpeg \
+    media-libs/gstreamer \
+    media-libs/gst-plugins-base \
+    media-libs/gst-plugins-good \
+    media-libs/gst-plugins-bad \
+    media-libs/gst-plugins-ugly \
+    media-libs/gst-libav \
+    media-libs/x264 \
+    media-libs/libvpx \
+    media-libs/x265 \
+    media-libs/opus \
+    media-libs/flac \
+    media-sound/lame \
+    media-libs/mesa \
     sys-apps/diffutils \
     sys-apps/findutils \
     sys-apps/less \
