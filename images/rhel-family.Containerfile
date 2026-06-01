@@ -106,7 +106,7 @@ RUN dnf install -y $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
     x264 \
     x265 \
     lame \
-    opus)4
+    opus)
 
 # Locale setup
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8
