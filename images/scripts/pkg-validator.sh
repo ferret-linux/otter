@@ -51,7 +51,7 @@ case "${pkgmgr}" in
         for pkg in ${packages}; do
             case " ${found} " in
                 *" ${pkg} "*) valid="${valid} ${pkg}" ;;
-                *) echo "WARN: ${pkg} not found in repos" >&2 ;;
+                *) printf "${YELLOW}WARN: ${RED}%s${YELLOW} not found in repos${RESET}\n" "${pkg}" >&2 ;;
             esac
         done
         ;;
@@ -61,7 +61,7 @@ case "${pkgmgr}" in
         for pkg in ${packages}; do
             case " ${found} " in
                 *" ${pkg} "*) valid="${valid} ${pkg}" ;;
-                *) echo "WARN: ${pkg} not found in repos" >&2 ;;
+                *) printf "${YELLOW}WARN: ${RED}%s${YELLOW} not found in repos${RESET}\n" "${pkg}" >&2 ;;
             esac
         done
         ;;
@@ -76,7 +76,7 @@ case "${pkgmgr}" in
         for pkg in ${packages}; do
             case " ${found} " in
                 *" ${pkg} "*) valid="${valid} ${pkg}" ;;
-                *) echo "WARN: ${pkg} not found in repos" >&2 ;;
+                *) printf "${YELLOW}WARN: ${RED}%s${YELLOW} not found in repos${RESET}\n" "${pkg}" >&2 ;;
             esac
         done
         ;;
@@ -86,7 +86,7 @@ case "${pkgmgr}" in
         for pkg in ${packages}; do
             case " ${valid} " in
                 *" ${pkg} "*) ;;
-                *) echo "WARN: ${pkg} not found in repos" >&2 ;;
+                *) printf "${YELLOW}WARN: ${RED}%s${YELLOW} not found in repos${RESET}\n" "${pkg}" >&2 ;;
             esac
         done
         ;;
@@ -96,7 +96,7 @@ case "${pkgmgr}" in
         for pkg in ${packages}; do
             case " ${found} " in
                 *" ${pkg} "*) valid="${valid} ${pkg}" ;;
-                *) echo "WARN: ${pkg} not found in repos" >&2 ;;
+                *) printf "${YELLOW}WARN: ${RED}%s${YELLOW} not found in repos${RESET}\n" "${pkg}" >&2 ;;
             esac
         done
         ;;
@@ -105,7 +105,7 @@ case "${pkgmgr}" in
         for pkg in ${packages}; do
             case " ${found} " in
                 *" ${pkg} "*) valid="${valid} ${pkg}" ;;
-                *) echo "WARN: ${pkg} not found in repos" >&2 ;;
+                *) printf "${YELLOW}WARN: ${RED}%s${YELLOW} not found in repos${RESET}\n" "${pkg}" >&2 ;;
             esac
         done
         ;;
@@ -114,7 +114,7 @@ case "${pkgmgr}" in
             if emerge --ask=n --search "${pkg}" 2>/dev/null | grep "Applications found" | grep -qE "[1-9][0-9]*"; then
                 valid="${valid} ${pkg}"
             else
-                echo "WARN: ${pkg} not found in repos" >&2
+                printf "${YELLOW}WARN: ${RED}%s${YELLOW} not found in repos${RESET}\n" "${pkg}" >&2
             fi
         done
         ;;
