@@ -19,7 +19,8 @@ RUN touch /usr/lib/otter/container.official && \
     touch /usr/lib/otter/container.gentoo
 
 # Configure portage to use binary packages by default
-RUN echo 'FEATURES="getbinpkg"' >> /etc/portage/make.conf
+RUN echo 'FEATURES="getbinpkg"' >> /etc/portage/make.conf && \
+    echo 'ACCEPT_LICENSE="*"' >> /etc/portage/make.conf
 
 # Sync portage tree and fetch binary package keys
 RUN emerge-webrsync && getuto

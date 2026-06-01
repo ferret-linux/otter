@@ -74,7 +74,22 @@ RUN xbps-install -Sy $(sh /tmp/pkg-validator.sh --pkgmgr xbps -- \
     which \
     xauth \
     xz \
-    zip)
+    zip \
+    ffmpeg \
+    gstreamer \
+    gst-plugins-base \
+    gst-plugins-good \
+    gst-plugins-bad \
+    gst-plugins-ugly \
+    libx264 \
+    x265 \
+    libvpx \
+    opus \
+    libflac \
+    lame \
+    pipewire \
+    pipewire-pulse \
+    wireplumber)
 
 # Locale setup (glibc only, musl does not use libc-locales)
 RUN if [ -f /etc/default/libc-locales ]; then \
