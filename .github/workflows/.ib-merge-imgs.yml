@@ -86,5 +86,6 @@ jobs:
               ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64
           fi
           podman manifest push \
+            --compression-format zstd:chunked \
             ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} \
             docker://ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}

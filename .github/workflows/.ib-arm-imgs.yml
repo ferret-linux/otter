@@ -131,4 +131,6 @@ jobs:
 
       - name: Push
         run: |
-          podman push ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64
+          podman push \
+            --compression-format zstd:chunked \
+            ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64
