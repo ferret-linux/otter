@@ -33,7 +33,8 @@ RUN echo '*/* PYTHON_TARGETS: -* python3_13 python3_14' >> /etc/portage/package.
     emerge --ask=n --quiet-build --getbinpkg -uDN --exclude sys-apps/portage @world
 RUN sed -i 's/PYTHON_SINGLE_TARGET.*/PYTHON_SINGLE_TARGET: -* python3_14/' /etc/portage/package.use/python && \
     emerge --ask=n --quiet-build --getbinpkg -uDN --exclude sys-apps/portage @world
-RUN rm /etc/portage/package.use/python
+RUN rm /etc/portage/package.use/python && \
+    emerge --ask=n --quiet-build --getbinpkg -uDN sys-apps/portage
 # ##########################################################################
 
 # Upgrade Python first in its own layer
