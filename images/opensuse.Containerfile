@@ -114,6 +114,12 @@ RUN zypper -n install --auto-agree-with-licenses -y \
     mesa-libva \
     libva2) || [ ${?} = 106 ]
 
+# Install fetchmsttfonts separately — its post-install script exits non-zero
+# even on success; rpm's %post scriptlet bypasses zypper's stdin so piping
+# 'i' does not work. We force-install and ignore the non-zero exit.
+RUN EULA_AGREED=1 EULA_ACCEPTED=yes zypper -n install --auto-agree-with-licenses -y \
+    fetchmsttfonts || true
+
 # Locale setup — glibc-locale (installed via pkg script) pre-builds locales on Leap;
 # localedef requires glibc-i18ndata charmap files which are not available on Leap 15.x
 RUN echo "LANG=en_US.UTF-8" > /etc/locale.conf
