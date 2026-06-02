@@ -25,6 +25,17 @@ RUN echo 'FEATURES="getbinpkg"' >> /etc/portage/make.conf && \
 # Sync portage tree and fetch binary package keys
 RUN emerge-webrsync && getuto
 
+# ##########################################################################
+# TEMPORARY WORKAROUND - Remove once stage3 ships Python 3.14 as default
+# Expected: ~2026-06-02 | See Gentoo news: 2026-04-16-python3-14
+RUN echo '*/* PYTHON_TARGETS: -* python3_13 python3_14' >> /etc/portage/package.use/python && \
+    echo '*/* PYTHON_SINGLE_TARGET: -* python3_13' >> /etc/portage/package.use/python && \
+    emerge --ask=n --quiet-build --getbinpkg -uDN --exclude sys-apps/portage @world
+RUN sed -i 's/PYTHON_SINGLE_TARGET.*/PYTHON_SINGLE_TARGET: -* python3_14/' /etc/portage/package.use/python && \
+    emerge --ask=n --quiet-build --getbinpkg -uDN --exclude sys-apps/portage @world
+RUN rm /etc/portage/package.use/python
+# ##########################################################################
+
 # Upgrade Python first in its own layer
 RUN emerge --ask=n --quiet-build --getbinpkg -uDN dev-lang/python
 
