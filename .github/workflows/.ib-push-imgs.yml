@@ -10,7 +10,36 @@ on:
   workflow_call:
 
 jobs:
+  load-matrix-amd64:
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.filter.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Filter matrix for amd64
+        id: filter
+        run: |
+          matrix=$(jq -c '[.[] | select(.enabled == true and (.arches | contains(["amd64"])))]' images/images.json)
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+
+  load-matrix-arm64:
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.filter.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Filter matrix for arm64
+        id: filter
+        run: |
+          matrix=$(jq -c '[.[] | select(.enabled == true and (.arches | contains(["arm64"])))]' images/images.json)
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+
   push-amd64:
+    needs: load-matrix-amd64
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -19,53 +48,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - name: ubuntu-otr
-            tag: stable
-          - name: ubuntu-otr
-            tag: lts
-          - name: debian-otr
-            tag: stable
-          - name: debian-otr
-            tag: testing
-          - name: debian-otr
-            tag: unstable
-          - name: fedora-otr
-            tag: stable
-          - name: fedora-otr
-            tag: rawhide
-          - name: arch-otr
-            tag: latest
-          - name: blackarch-otr
-            tag: latest
-          - name: gentoo-otr
-            tag: stage3
-          - name: alma-otr
-            tag: stable
-          - name: rocky-otr
-            tag: stable
-          - name: centos-otr
-            tag: stable
-          - name: oracle-otr
-            tag: stable
-          - name: rhel-otr
-            tag: stable
-          - name: opensuse-otr
-            tag: leap
-          - name: opensuse-otr
-            tag: tumbleweed
-          - name: alpine-otr
-            tag: latest
-          - name: alpine-otr
-            tag: edge
-          - name: kali-otr
-            tag: rolling
-          - name: kali-otr
-            tag: edge
-          - name: void-otr
-            tag: glibc
-          - name: void-otr
-            tag: musl
+        include: ${{ fromJson(needs.load-matrix-amd64.outputs.matrix) }}
 
     steps:
       - name: Login to GHCR
@@ -89,6 +72,7 @@ jobs:
             ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64
 
   push-arm64:
+    needs: load-matrix-arm64
     runs-on: ubuntu-24.04-arm
     permissions:
       contents: read
@@ -97,49 +81,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - name: ubuntu-otr
-            tag: stable
-          - name: ubuntu-otr
-            tag: lts
-          - name: debian-otr
-            tag: stable
-          - name: debian-otr
-            tag: testing
-          - name: debian-otr
-            tag: unstable
-          - name: fedora-otr
-            tag: stable
-          - name: fedora-otr
-            tag: rawhide
-          - name: gentoo-otr
-            tag: stage3
-          - name: alma-otr
-            tag: stable
-          - name: rocky-otr
-            tag: stable
-          - name: centos-otr
-            tag: stable
-          - name: oracle-otr
-            tag: stable
-          - name: rhel-otr
-            tag: stable
-          - name: opensuse-otr
-            tag: leap
-          - name: opensuse-otr
-            tag: tumbleweed
-          - name: alpine-otr
-            tag: latest
-          - name: alpine-otr
-            tag: edge
-          - name: kali-otr
-            tag: rolling
-          - name: kali-otr
-            tag: edge
-          - name: void-otr
-            tag: glibc
-          - name: void-otr
-            tag: musl
+        include: ${{ fromJson(needs.load-matrix-arm64.outputs.matrix) }}
 
     steps:
       - name: Login to GHCR

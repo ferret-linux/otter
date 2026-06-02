@@ -1,0 +1,186 @@
+[
+  {
+    "image": "docker.io/library/ubuntu:latest",
+    "containerfile": "ubuntu.Containerfile",
+    "name": "ubuntu-otr",
+    "tag": "stable",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  },
+  {
+    "image": "docker.io/library/ubuntu:26.04",
+    "containerfile": "ubuntu.Containerfile",
+    "name": "ubuntu-otr",
+    "tag": "lts",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  },
+  {
+    "image": "docker.io/library/debian:stable",
+    "containerfile": "debian.Containerfile",
+    "name": "debian-otr",
+    "tag": "stable",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  },
+  {
+    "image": "docker.io/library/debian:testing",
+    "containerfile": "debian.Containerfile",
+    "name": "debian-otr",
+    "tag": "testing",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  },
+  {
+    "image": "docker.io/library/debian:unstable",
+    "containerfile": "debian.Containerfile",
+    "name": "debian-otr",
+    "tag": "unstable",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  },
+  {
+    "image": "quay.io/fedora/fedora:44",
+    "containerfile": "fedora.Containerfile",
+    "name": "fedora-otr",
+    "tag": "stable",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  },
+  {
+    "image": "quay.io/fedora/fedora:rawhide",
+    "containerfile": "fedora.Containerfile",
+    "name": "fedora-otr",
+    "tag": "rawhide",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  },
+  {
+    "image": "docker.io/library/archlinux:latest",
+    "containerfile": "arch-family.Containerfile",
+    "name": "arch-otr",
+    "tag": "latest",
+    "arches": ["amd64"],
+    "enabled": true
+  },
+  {
+    "image": "docker.io/blackarchlinux/blackarch:latest",
+    "containerfile": "arch-family.Containerfile",
+    "name": "blackarch-otr",
+    "tag": "latest",
+    "arches": ["amd64"],
+    "enabled": true
+  },
+  {
+    "image": "docker.io/gentoo/stage3:latest",
+    "containerfile": "gentoo.Containerfile",
+    "name": "gentoo-otr",
+    "tag": "stage3",
+    "arches": ["amd64", "arm64"],
+    "enabled": false
+  },
+  {
+    "image": "docker.io/library/almalinux:latest",
+    "containerfile": "rhel-family.Containerfile",
+    "name": "alma-otr",
+    "tag": "stable",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  },
+  {
+    "image": "docker.io/rockylinux/rockylinux:10-ubi-init",
+    "containerfile": "rhel-family.Containerfile",
+    "name": "rocky-otr",
+    "tag": "stable",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  },
+  {
+    "image": "quay.io/centos/centos:stream10",
+    "containerfile": "rhel-family.Containerfile",
+    "name": "centos-otr",
+    "tag": "stable",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  },
+  {
+    "image": "container-registry.oracle.com/os/oraclelinux:10",
+    "containerfile": "rhel-family.Containerfile",
+    "name": "oracle-otr",
+    "tag": "stable",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  },
+  {
+    "image": "registry.access.redhat.com/ubi10/ubi-init:latest",
+    "containerfile": "rhel-family.Containerfile",
+    "name": "rhel-otr",
+    "tag": "stable",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  },
+  {
+    "image": "registry.opensuse.org/opensuse/leap:latest",
+    "containerfile": "opensuse.Containerfile",
+    "name": "opensuse-otr",
+    "tag": "leap",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  },
+  {
+    "image": "registry.opensuse.org/opensuse/tumbleweed:latest",
+    "containerfile": "opensuse.Containerfile",
+    "name": "opensuse-otr",
+    "tag": "tumbleweed",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  },
+  {
+    "image": "docker.io/library/alpine:latest",
+    "containerfile": "alpine.Containerfile",
+    "name": "alpine-otr",
+    "tag": "latest",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  },
+  {
+    "image": "docker.io/library/alpine:edge",
+    "containerfile": "alpine.Containerfile",
+    "name": "alpine-otr",
+    "tag": "edge",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  },
+  {
+    "image": "docker.io/kalilinux/kali-rolling:latest",
+    "containerfile": "kali.Containerfile",
+    "name": "kali-otr",
+    "tag": "rolling",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  },
+  {
+    "image": "docker.io/kalilinux/kali-bleeding-edge:latest",
+    "containerfile": "kali.Containerfile",
+    "name": "kali-otr",
+    "tag": "edge",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  },
+  {
+    "image": "ghcr.io/void-linux/void-glibc-full:latest",
+    "containerfile": "void.Containerfile",
+    "name": "void-otr",
+    "tag": "glibc",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  },
+  {
+    "image": "ghcr.io/void-linux/void-musl-full:latest",
+    "containerfile": "void.Containerfile",
+    "name": "void-otr",
+    "tag": "musl",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  }
+]

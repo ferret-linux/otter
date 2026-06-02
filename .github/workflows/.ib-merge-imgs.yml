@@ -10,7 +10,22 @@ on:
   workflow_call:
 
 jobs:
+  load-matrix:
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.filter.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Filter matrix
+        id: filter
+        run: |
+          matrix=$(jq -c '[.[] | select(.enabled == true)]' images/images.json)
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+
   merge:
+    needs: load-matrix
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -19,55 +34,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - name: ubuntu-otr
-            tag: stable
-          - name: ubuntu-otr
-            tag: lts
-          - name: debian-otr
-            tag: stable
-          - name: debian-otr
-            tag: testing
-          - name: debian-otr
-            tag: unstable
-          - name: fedora-otr
-            tag: stable
-          - name: fedora-otr
-            tag: rawhide
-          - name: arch-otr
-            tag: latest
-            amd64_only: true
-          - name: blackarch-otr
-            tag: latest
-            amd64_only: true
-          - name: gentoo-otr
-            tag: stage3
-          - name: alma-otr
-            tag: stable
-          - name: rocky-otr
-            tag: stable
-          - name: centos-otr
-            tag: stable
-          - name: oracle-otr
-            tag: stable
-          - name: rhel-otr
-            tag: stable
-          - name: opensuse-otr
-            tag: leap
-          - name: opensuse-otr
-            tag: tumbleweed
-          - name: alpine-otr
-            tag: latest
-          - name: alpine-otr
-            tag: edge
-          - name: kali-otr
-            tag: rolling
-          - name: kali-otr
-            tag: edge
-          - name: void-otr
-            tag: glibc
-          - name: void-otr
-            tag: musl
+        include: ${{ fromJson(needs.load-matrix.outputs.matrix) }}
 
     steps:
       - name: Login to GHCR
@@ -75,15 +42,16 @@ jobs:
 
       - name: Create and Push Manifest
         run: |
-          if [ "${{ matrix.amd64_only }}" = "true" ]; then
-            podman manifest create \
-              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} \
-              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64
-          else
+          ARCHES='${{ toJson(matrix.arches) }}'
+          if echo "$ARCHES" | jq -e 'contains(["arm64"])' > /dev/null; then
             podman manifest create \
               ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} \
               ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 \
               ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64
+          else
+            podman manifest create \
+              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} \
+              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64
           fi
           podman manifest push \
             --compression-format zstd:chunked \
