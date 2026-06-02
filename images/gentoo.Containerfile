@@ -26,7 +26,8 @@ RUN echo 'FEATURES="getbinpkg"' >> /etc/portage/make.conf && \
 RUN emerge-webrsync && getuto
 
 # Upgrade portage itself , so upgrade works
-RUN emerge --ask=n --quiet-build --getbinpkg -uDN sys-apps/portage
+RUN emerge --ask=n --quiet-build --getbinpkg -uDN dev-lang/python && \
+    emerge --ask=n --quiet-build --getbinpkg -uDN sys-apps/portage
 
 # Upgrade all packages
 RUN emerge --ask=n --autounmask-continue --quiet-build --getbinpkg -uDN @world
