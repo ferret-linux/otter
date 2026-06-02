@@ -27,6 +27,9 @@ RUN sed -i 's/Components: main/Components: main contrib non-free non-free-firmwa
 # Upgrade all packages
 RUN apt-get update && apt-get upgrade -y
 
+# Accept microsoft fonts eula
+RUN echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections
+
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr apt -- \
@@ -51,6 +54,9 @@ RUN apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr
     pipewire-pulse \
     wireplumber \
     libpipewire-0.3-0 \
+    ttf-mscorefonts-installer \
+    libavcodec-extra \
+    unrar \
     ffmpeg \
     gstreamer1.0-tools \
     gstreamer1.0-plugins-base \

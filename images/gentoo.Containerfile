@@ -36,6 +36,8 @@ RUN emerge --ask=n --autounmask-continue --noreplace --quiet-build --getbinpkg -
     app-shells/bash-completion \
     app-text/tree \
     dev-lang/python \
+    media-fonts/corefonts \
+    app-arch/unrar \
     net-misc/curl \
     net-misc/wget \
     app-arch/pigz \

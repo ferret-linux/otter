@@ -45,6 +45,7 @@ RUN dnf install -y --skip-broken $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
     diffutils \
     dnf-plugins-core \
     findutils \
+    mscore-fonts-all \
     glibc-all-langpacks \
     glibc-common \
     glibc-locale-source \

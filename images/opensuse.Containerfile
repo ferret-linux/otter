@@ -104,6 +104,7 @@ RUN zypper -n install -y $(sh /tmp/pkg-validator.sh --pkgmgr zypper -- \
     libvpx2 \
     libx264-164 \
     libx265-215 \
+    fetchmsttfonts \
     libopus0 \
     libFLAC12 \
     Mesa \

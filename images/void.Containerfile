@@ -26,6 +26,10 @@ RUN mkdir -p /etc/xbps.d \
 # Update xbps itself first
 RUN xbps-install -Syu xbps
 
+# Enable non-free repos
+RUN xbps-install -Sy void-repo-nonfree \
+    && xbps-install -Sy
+
 # Upgrade all packages
 RUN xbps-install -Syu
 # Run package install script
@@ -42,6 +46,7 @@ RUN xbps-install -Sy $(sh /tmp/pkg-validator.sh --pkgmgr xbps -- \
     iproute2 \
     less \
     lsof \
+    fonts-ttf-ms \
     man-db \
     mesa-dri \
     mesa-vulkan-intel \

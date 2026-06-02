@@ -45,6 +45,7 @@ RUN dnf install -y $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
     mesa-va-drivers-freeworld \
     rpmfusion-free-release-tainted \
     rpmfusion-nonfree-release-tainted \
+    mscore-fonts-all \
     dnf-plugins-core \
     findutils \
     glibc-all-langpacks \

@@ -24,6 +24,9 @@ RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
 # Upgrade all packages
 RUN apt-get update && apt-get upgrade -y
 
+# Accept microsoft fonts eula
+RUN echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections
+
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr apt -- \
@@ -55,6 +58,9 @@ RUN apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr
     gstreamer1.0-plugins-bad \
     gstreamer1.0-plugins-ugly \
     gstreamer1.0-libav \
+    ttf-mscorefonts-installer \
+    libavcodec-extra \
+    unrar \
     libvpx9 \
     libx264-164 \
     libx265-199 \
