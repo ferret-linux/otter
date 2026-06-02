@@ -1,47 +1,47 @@
-╭───────────────┬─────────────────────┬──────────────────────────────────────────────┬──────────────────────────────────────────────────╮
-│ Distros       │ Aliases             │ Otter Managed OCI images                     │ Official OCI Images                              │
-├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤
-│ Ubuntu        │ ubuntu              │ ghcr.io/ferret-linux/ubuntu-otr:stable       │ docker.io/library/ubuntu:latest                  │
-│               │ ubuntu-lts          │ ghcr.io/ferret-linux/ubuntu-otr:lts          │ docker.io/library/ubuntu:26.04                   │
-├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤
-│ Debian        │ debian              │ ghcr.io/ferret-linux/debian-otr:stable       │ docker.io/library/debian:stable                  │
-│               │ debian-testing      │ ghcr.io/ferret-linux/debian-otr:testing      │ docker.io/library/debian:testing                 │
-│               │ debian-unstable     │ ghcr.io/ferret-linux/debian-otr:unstable     │ docker.io/library/debian:unstable                │
-├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤
-│ Fedora        │ fedora              │ ghcr.io/ferret-linux/fedora-otr:stable       │ quay.io/fedora/fedora:44                         │
-│               │ fedora-rawhide      │ ghcr.io/ferret-linux/fedora-otr:rawhide      │ quay.io/fedora/fedora:rawhide                    │
-├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤
-│ Arch Linux    │ arch                │ ghcr.io/ferret-linux/arch-otr:latest         │ docker.io/library/archlinux:latest               │
-├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤
-│ BlackArch     │ blackarch           │ ghcr.io/ferret-linux/blackarch-otr:latest    │ docker.io/blackarchlinux/blackarch:latest        │
-├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤
-│ Alpine Linux  │ alpine              │ ghcr.io/ferret-linux/alpine-otr:latest       │ docker.io/library/alpine:latest                  │
-│               │ alpine-edge         │ ghcr.io/ferret-linux/alpine-otr:edge         │ docker.io/library/alpine:edge                    │
-├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤
-│ OpenSUSE      │ opensuse-leap       │ ghcr.io/ferret-linux/opensuse-otr:leap       │ registry.opensuse.org/opensuse/leap:latest       │
-│               │ opensuse-tumbleweed │ ghcr.io/ferret-linux/opensuse-otr:tumbleweed │ registry.opensuse.org/opensuse/tumbleweed:latest │
-├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤
-│ Void Linux    │ void-glibc          │ ghcr.io/ferret-linux/void-otr:glibc          │ ghcr.io/void-linux/void-glibc-full:latest        │
-│               │ void-musl           │ ghcr.io/ferret-linux/void-otr:musl           │ ghcr.io/void-linux/void-musl-full:latest         │
-├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤
-│ Kali Linux    │ kali                │ ghcr.io/ferret-linux/kali-otr:rolling        │ docker.io/kalilinux/kali-rolling:latest          │
-│               │ kali-edge           │ ghcr.io/ferret-linux/kali-otr:edge           │ docker.io/kalilinux/kali-bleeding-edge:latest    │
-├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤
-│ Alma Linux    │ alma                │ ghcr.io/ferret-linux/alma-otr:stable         │ docker.io/library/almalinux:latest               │
-├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤
-│ Rocky Linux   │ rocky               │ ghcr.io/ferret-linux/rocky-otr:stable        │ quay.io/rockylinux/rockylinux:10-ubi-init        │
-├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤
-│ RHEL UBI      │ rhel                │ ghcr.io/ferret-linux/rhel-otr:stable         │ registry.access.redhat.com/ubi10/ubi-init        │
-├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤
-│ Oracle Linux  │ oracle              │ ghcr.io/ferret-linux/oracle-otr:stable       │ container-registry.oracle.com/os/oraclelinux:10  │
-├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤
-│ CentOS Stream │ centos              │ ghcr.io/ferret-linux/centos-otr:stable       │ quay.io/centos/centos:stream10                   │
-├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤
-│ Gentoo Linux  │ gentoo              │ ghcr.io/ferret-linux/gentoo-otr:stage3       │ docker.io/gentoo/stage3:latest                   │
-├───────────────┴─────────────────────┴──────────────────────────────────────────────┴──────────────────────────────────────────────────┤
-│ NOTE: Otter images are derived from the official OCI images above and are the recommended defaults. Aliases use them by default. They │
-│ include additional packages, initialization, integration fixes, runtime configuration, and other enhancements required for full otter │
-│ compatibility, feature support, and consistent behavior across supported distributions. Official OCI images may work or may not work, │
-│ some functionality may be unavailable, require additional setup, or behave differently. For issues, feature requests, or additional   │
-│ distro support, please open an issue or PR at https://github.com/ferret-linux/otter                                                   │
-╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+{2}╭───────────────┬─────────────────────┬──────────────────────────────────────────────┬──────────────────────────────────────────────────╮{R}
+{2}│{R} {3}Distros{R}       {2}│{R} {3}Aliases{R}             {2}│{R} {3}otter Managed OCI images{R}                     {2}│{R} {3}Official OCI Images{R}                              {2}│{R}
+{2}├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤{R}
+{2}│{R} {1}Ubuntu{R}        {2}│{R} {0}ubuntu{R}              {2}│{R} {5}ghcr.io/ferret-linux/ubuntu-otr:stable{R}       {2}│{R} {5}docker.io/library/ubuntu:latest{R}                  {2}│{R}
+{2}│{R}               {2}│{R} {0}ubuntu-lts{R}          {2}│{R} {5}ghcr.io/ferret-linux/ubuntu-otr:lts{R}          {2}│{R} {5}docker.io/library/ubuntu:26.04{R}                   {2}│{R}
+{2}├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤{R}
+{2}│{R} {1}Debian{R}        {2}│{R} {0}debian{R}              {2}│{R} {5}ghcr.io/ferret-linux/debian-otr:stable{R}       {2}│{R} {5}docker.io/library/debian:stable{R}                  {2}│{R}
+{2}│{R}               {2}│{R} {0}debian-testing{R}      {2}│{R} {5}ghcr.io/ferret-linux/debian-otr:testing{R}      {2}│{R} {5}docker.io/library/debian:testing{R}                 {2}│{R}
+{2}│{R}               {2}│{R} {0}debian-unstable{R}     {2}│{R} {5}ghcr.io/ferret-linux/debian-otr:unstable{R}     {2}│{R} {5}docker.io/library/debian:unstable{R}                {2}│{R}
+{2}├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤{R}
+{2}│{R} {1}Fedora{R}        {2}│{R} {0}fedora{R}              {2}│{R} {5}ghcr.io/ferret-linux/fedora-otr:stable{R}       {2}│{R} {5}quay.io/fedora/fedora:44{R}                         {2}│{R}
+{2}│{R}               {2}│{R} {0}fedora-rawhide{R}      {2}│{R} {5}ghcr.io/ferret-linux/fedora-otr:rawhide{R}      {2}│{R} {5}quay.io/fedora/fedora:rawhide{R}                    {2}│{R}
+{2}├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤{R}
+{2}│{R} {1}Arch Linux{R}    {2}│{R} {0}arch{R}                {2}│{R} {5}ghcr.io/ferret-linux/arch-otr:latest{R}         {2}│{R} {5}docker.io/library/archlinux:latest{R}               {2}│{R}
+{2}├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤{R}
+{2}│{R} {1}BlackArch{R}     {2}│{R} {0}blackarch{R}           {2}│{R} {5}ghcr.io/ferret-linux/blackarch-otr:latest{R}    {2}│{R} {5}docker.io/blackarchlinux/blackarch:latest{R}        {2}│{R}
+{2}├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤{R}
+{2}│{R} {1}Alpine Linux{R}  {2}│{R} {0}alpine{R}              {2}│{R} {5}ghcr.io/ferret-linux/alpine-otr:latest{R}       {2}│{R} {5}docker.io/library/alpine:latest{R}                  {2}│{R}
+{2}│{R}               {2}│{R} {0}alpine-edge{R}         {2}│{R} {5}ghcr.io/ferret-linux/alpine-otr:edge{R}         {2}│{R} {5}docker.io/library/alpine:edge{R}                    {2}│{R}
+{2}├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤{R}
+{2}│{R} {1}OpenSUSE{R}      {2}│{R} {0}opensuse-leap{R}       {2}│{R} {5}ghcr.io/ferret-linux/opensuse-otr:leap{R}       {2}│{R} {5}registry.opensuse.org/opensuse/leap:latest{R}       {2}│{R}
+{2}│{R}               {2}│{R} {0}opensuse-tumbleweed{R} {2}│{R} {5}ghcr.io/ferret-linux/opensuse-otr:tumbleweed{R} {2}│{R} {5}registry.opensuse.org/opensuse/tumbleweed:latest{R} {2}│{R}
+{2}├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤{R}
+{2}│{R} {1}Void Linux{R}    {2}│{R} {0}void-glibc{R}          {2}│{R} {5}ghcr.io/ferret-linux/void-otr:glibc{R}          {2}│{R} {5}ghcr.io/void-linux/void-glibc-full:latest{R}        {2}│{R}
+{2}│{R}               {2}│{R} {0}void-musl{R}           {2}│{R} {5}ghcr.io/ferret-linux/void-otr:musl{R}           {2}│{R} {5}ghcr.io/void-linux/void-musl-full:latest{R}         {2}│{R}
+{2}├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤{R}
+{2}│{R} {1}Kali Linux{R}    {2}│{R} {0}kali{R}                {2}│{R} {5}ghcr.io/ferret-linux/kali-otr:rolling{R}        {2}│{R} {5}docker.io/kalilinux/kali-rolling:latest{R}          {2}│{R}
+{2}│{R}               {2}│{R} {0}kali-edge{R}           {2}│{R} {5}ghcr.io/ferret-linux/kali-otr:edge{R}           {2}│{R} {5}docker.io/kalilinux/kali-bleeding-edge:latest{R}    {2}│{R}
+{2}├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤{R}
+{2}│{R} {1}Alma Linux{R}    {2}│{R} {0}alma{R}                {2}│{R} {5}ghcr.io/ferret-linux/alma-otr:stable{R}         {2}│{R} {5}docker.io/library/almalinux:latest{R}               {2}│{R}
+{2}├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤{R}
+{2}│{R} {1}Rocky Linux{R}   {2}│{R} {0}rocky{R}               {2}│{R} {5}ghcr.io/ferret-linux/rocky-otr:stable{R}        {2}│{R} {5}quay.io/rockylinux/rockylinux:10-ubi-init{R}        {2}│{R}
+{2}├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤{R}
+{2}│{R} {1}RHEL UBI{R}      {2}│{R} {0}rhel{R}                {2}│{R} {5}ghcr.io/ferret-linux/rhel-otr:stable{R}         {2}│{R} {5}registry.access.redhat.com/ubi10/ubi-init{R}        {2}│{R}
+{2}├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤{R}
+{2}│{R} {1}Oracle Linux{R}  {2}│{R} {0}oracle{R}              {2}│{R} {5}ghcr.io/ferret-linux/oracle-otr:stable{R}       {2}│{R} {5}container-registry.oracle.com/os/oraclelinux:10{R}  {2}│{R}
+{2}├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤{R}
+{2}│{R} {1}CentOS Stream{R} {2}│{R} {0}centos{R}              {2}│{R} {5}ghcr.io/ferret-linux/centos-otr:stable{R}       {2}│{R} {5}quay.io/centos/centos:stream10{R}                   {2}│{R}
+{2}├───────────────┼─────────────────────┼──────────────────────────────────────────────┼──────────────────────────────────────────────────┤{R}
+{2}│{R} {1}Gentoo Linux{R}  {2}│{R} {0}gentoo{R}              {2}│{R} {5}ghcr.io/ferret-linux/gentoo-otr:stage3{R}       {2}│{R} {5}docker.io/gentoo/stage3:latest{R}                   {2}│{R}
+{2}├───────────────┴─────────────────────┴──────────────────────────────────────────────┴──────────────────────────────────────────────────┤{R}
+{2}│{R} {3}NOTE:{R} {5}otter images are derived from the official OCI images above and are the recommended defaults. Aliases use them by default. They{R} {2}│{R}
+{2}│{R} {5}include additional packages, initialization, integration fixes, runtime configuration, and other enhancements required for full otter{R} {2}│{R}
+{2}│{R} {5}compatibility, feature support, and consistent behavior across supported distributions. Official OCI images may work or may not work,{R} {2}│{R}
+{2}│{R} {5}some functionality may be unavailable, require additional setup, or behave differently. For issues, feature requests, or additional{R}   {2}│{R}
+{2}│{R} {5}distro support, please open an issue or PR at{R} {4}https://github.com/ferret-linux/otter{R}                                                   {2}│{R}
+{2}╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯{R}
