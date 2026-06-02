@@ -41,7 +41,7 @@ RUN zypper dup -y --from packman --allow-vendor-change || zypper dup -y
 
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
-RUN EULA_AGREED=1 EULA_ACCEPTED=yes zypper -n install --auto-agree-with-licenses -y \
+RUN yes 'i' | EULA_AGREED=1 EULA_ACCEPTED=yes zypper -n install --auto-agree-with-licenses -y \
     $(sh /tmp/pkg-validator.sh --pkgmgr zypper -- \
     Mesa-dri \
     bash-completion \
