@@ -912,6 +912,9 @@ setup_apt()
 		# shellcheck disable=SC2086
 		apt-get install -y ${container_additional_packages}
 	fi
+
+	# Make APT return to normal so it works as intended for user
+	unset DEBIAN_FRONTEND
 }
 
 # setup_aptrpm will upgrade or setup all packages for apt-get and rpm based systems.
