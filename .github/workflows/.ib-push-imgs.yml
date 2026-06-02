@@ -1,0 +1,163 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the otter project:
+#    https://github.com/ferret-linux/otter
+# Copyright (C) 2026 otter contributors
+
+name: .ib-push
+
+on:
+  workflow_call:
+
+jobs:
+  push-amd64:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: ubuntu-otr
+            tag: stable
+          - name: ubuntu-otr
+            tag: lts
+          - name: debian-otr
+            tag: stable
+          - name: debian-otr
+            tag: testing
+          - name: debian-otr
+            tag: unstable
+          - name: fedora-otr
+            tag: stable
+          - name: fedora-otr
+            tag: rawhide
+          - name: arch-otr
+            tag: latest
+          - name: blackarch-otr
+            tag: latest
+          - name: gentoo-otr
+            tag: stage3
+          - name: alma-otr
+            tag: stable
+          - name: rocky-otr
+            tag: stable
+          - name: centos-otr
+            tag: stable
+          - name: oracle-otr
+            tag: stable
+          - name: rhel-otr
+            tag: stable
+          - name: opensuse-otr
+            tag: leap
+          - name: opensuse-otr
+            tag: tumbleweed
+          - name: alpine-otr
+            tag: latest
+          - name: alpine-otr
+            tag: edge
+          - name: kali-otr
+            tag: rolling
+          - name: kali-otr
+            tag: edge
+          - name: void-otr
+            tag: glibc
+          - name: void-otr
+            tag: musl
+
+    steps:
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: image-amd64-${{ matrix.name }}-${{ matrix.tag }}
+          path: /tmp
+
+      - name: Load Image
+        run: |
+          podman image load \
+            -i /tmp/${{ matrix.name }}-${{ matrix.tag }}-amd64.tar
+
+      - name: Push
+        run: |
+          podman push \
+            --compression-format zstd:chunked \
+            ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64
+
+  push-arm64:
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: ubuntu-otr
+            tag: stable
+          - name: ubuntu-otr
+            tag: lts
+          - name: debian-otr
+            tag: stable
+          - name: debian-otr
+            tag: testing
+          - name: debian-otr
+            tag: unstable
+          - name: fedora-otr
+            tag: stable
+          - name: fedora-otr
+            tag: rawhide
+          - name: gentoo-otr
+            tag: stage3
+          - name: alma-otr
+            tag: stable
+          - name: rocky-otr
+            tag: stable
+          - name: centos-otr
+            tag: stable
+          - name: oracle-otr
+            tag: stable
+          - name: rhel-otr
+            tag: stable
+          - name: opensuse-otr
+            tag: leap
+          - name: opensuse-otr
+            tag: tumbleweed
+          - name: alpine-otr
+            tag: latest
+          - name: alpine-otr
+            tag: edge
+          - name: kali-otr
+            tag: rolling
+          - name: kali-otr
+            tag: edge
+          - name: void-otr
+            tag: glibc
+          - name: void-otr
+            tag: musl
+
+    steps:
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: image-arm64-${{ matrix.name }}-${{ matrix.tag }}
+          path: /tmp
+
+      - name: Load Image
+        run: |
+          podman image load \
+            -i /tmp/${{ matrix.name }}-${{ matrix.tag }}-arm64.tar
+
+      - name: Push
+        run: |
+          podman push \
+            --compression-format zstd:chunked \
+            ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64

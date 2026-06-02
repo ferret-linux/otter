@@ -136,8 +136,15 @@ jobs:
             --tag ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 \
             .
 
-      - name: Push
+      - name: Save Image
         run: |
-          podman push \
-            --compression-format zstd:chunked \
-            ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64
+          podman image save \
+            ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 \
+            -o /tmp/${{ matrix.name }}-${{ matrix.tag }}-amd64.tar
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-amd64-${{ matrix.name }}-${{ matrix.tag }}
+          path: /tmp/${{ matrix.name }}-${{ matrix.tag }}-amd64.tar
+          retention-days: 1

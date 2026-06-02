@@ -25,8 +25,15 @@ jobs:
       contents: read
       packages: write
 
-  merge:
+  push:
     needs: [build-amd64, build-arm64]
+    uses: ./.github/workflows/.ib-push-imgs.yml
+    permissions:
+      contents: read
+      packages: write
+
+  merge:
+    needs: [push]
     uses: ./.github/workflows/.ib-merge-imgs.yml
     permissions:
       contents: read
