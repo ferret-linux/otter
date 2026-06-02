@@ -2289,6 +2289,10 @@ if [ ! -d /etc/profile.d ]; then
 	mkdir -p /etc/profile.d
 fi
 cat << EOF > /etc/profile.d/otter_profile.sh
+# Fallback TERM to xterm-256color if the current type is not known to the container
+if [ -n "\${TERM:-}" ] && ! infocmp "\${TERM}" >/dev/null 2>&1; then
+    export TERM=xterm-256color
+fi
 test -z "\$USER" && export USER="\$(id -un 2> /dev/null)"
 test -z "\$UID"  && readonly UID="\$(id -ur 2> /dev/null)"
 test -z "\$EUID" && readonly EUID="\$(id -u  2> /dev/null)"
