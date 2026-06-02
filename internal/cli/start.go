@@ -14,11 +14,15 @@ import (
 func newStartCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "start",
-		Aliases: []string{"run"},
+		Aliases: []string{"boot"},
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "name",
 				Aliases: []string{"n"},
+			},
+			&cli.BoolFlag{
+				Name:    "all",
+				Aliases: []string{"a"},
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
@@ -41,6 +45,7 @@ func startAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) erro
 	startCmd := commands.NewStartCommand(cfg, containerManager)
 	if err := startCmd.Execute(ctx, &commands.StartOptions{
 		ContainerName: containerName,
+		All:           cmd.Bool("all"),
 		DryRun:        cmd.Bool("dry-run"),
 		Verbose:       cmd.Bool("verbose"),
 	}); err != nil {

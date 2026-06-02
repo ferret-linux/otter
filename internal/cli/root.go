@@ -117,6 +117,13 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		withContainerManager,
 	)
 
+	restart := cc.apply(
+		newRestartCommand,
+		withUsageErrorHandler,
+		withRoot,
+		withContainerManager,
+	)
+
 	stop := cc.apply(
 		newStopCommand,
 		withUsageErrorHandler,
@@ -161,6 +168,7 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		list,
 		lock,
 		remove,
+		restart,
 		start,
 		stop,
 		unlock,
