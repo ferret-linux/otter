@@ -67,14 +67,23 @@ type runOptions struct {
 }
 
 type inspectOutput struct {
-	ID    string `json:"Id"`
-	State struct {
+	ID           string `json:"Id"`
+	Created      string `json:"Created"`
+	Os           string `json:"Os"`
+	Architecture string `json:"Architecture"`
+	State        struct {
 		Status string `json:"Status"`
 	} `json:"State"`
 	Config struct {
-		Labels map[string]string `json:"Labels"`
-		Env    []string          `json:"Env"`
+		Image    string            `json:"Image"`
+		Hostname string            `json:"Hostname"`
+		Labels   map[string]string `json:"Labels"`
+		Env      []string          `json:"Env"`
 	} `json:"Config"`
+	HostConfig struct {
+		Memory   int64 `json:"Memory"`
+		NanoCpus int64 `json:"NanoCpus"`
+	} `json:"HostConfig"`
 }
 
 type InspectImageOutput struct {
@@ -227,11 +236,14 @@ func (d *Docker) makeCreateCommand(
 
 	options = append(options, "--label", "manager=otter")
 	options = append(options, "--label", "otter.managed_container=1")
-	options = append(
-		options,
-		"--label",
-		fmt.Sprintf("otter.unshare_groups=%d", containermanager.Btoi(unshareGroups)),
-	)
+	options = append(options, "--label", fmt.Sprintf("otter.unshare_groups=%d", containermanager.Btoi(unshareGroups)))
+	options = append(options, "--label", fmt.Sprintf("otter.unshare_ipc=%d", containermanager.Btoi(unshareIPC)))
+	options = append(options, "--label", fmt.Sprintf("otter.unshare_netns=%d", containermanager.Btoi(unshareNetNS)))
+	options = append(options, "--label", fmt.Sprintf("otter.unshare_process=%d", containermanager.Btoi(unshareProcess)))
+	options = append(options, "--label", fmt.Sprintf("otter.unshare_devsys=%d", containermanager.Btoi(unshareDevsys)))
+	options = append(options, "--label", fmt.Sprintf("otter.init=%d", containermanager.Btoi(init)))
+	options = append(options, "--label", fmt.Sprintf("otter.nvidia=%d", containermanager.Btoi(nvidia)))
+	options = append(options, "--label", fmt.Sprintf("otter.rootful=%d", containermanager.Btoi(d.root)))
 	options = append(options, "--env", fmt.Sprintf("SHELL=%s", shellFilepath))
 	options = append(options, "--env", fmt.Sprintf("HOME=%s", containerUserHome))
 	options = append(options, "--env", fmt.Sprintf("container=%s", containerManager))
@@ -705,18 +717,36 @@ func (d *Docker) InspectContainer(ctx context.Context, containerName string) (*c
 	inspect := inspects[0]
 	config.ContainerID = inspect.ID
 	config.ContainerStatus = inspect.State.Status
+	config.ContainerCreated = inspect.Created
+	config.ContainerImage = inspect.Config.Image
+	config.ContainerHostname = inspect.Config.Hostname
+	config.ContainerPlatform = inspect.Os + "/" + inspect.Architecture
 
-	// Check for unshare_groups label
-	if v, ok := inspect.Config.Labels["otter.unshare_groups"]; ok && v == "1" {
-		config.UnshareGroups = true
+	if inspect.HostConfig.Memory > 0 {
+		config.Memory = fmt.Sprintf("%dmb", inspect.HostConfig.Memory/1024/1024)
+	}
+	if inspect.HostConfig.NanoCpus > 0 {
+		config.CPUThreads = int(inspect.HostConfig.NanoCpus / 1e9)
 	}
 
-	// Extract HOME and PATH from container env
+	labels := inspect.Config.Labels
+	config.UnshareGroups = labels["otter.unshare_groups"] == "1"
+	config.UnshareIPC = labels["otter.unshare_ipc"] == "1"
+	config.UnshareNetNS = labels["otter.unshare_netns"] == "1"
+	config.UnshareProcess = labels["otter.unshare_process"] == "1"
+	config.UnshareDevsys = labels["otter.unshare_devsys"] == "1"
+	config.Init = labels["otter.init"] == "1"
+	config.Nvidia = labels["otter.nvidia"] == "1"
+	config.Rootful = labels["otter.rootful"] == "1"
+
 	for _, env := range inspect.Config.Env {
-		if strings.HasPrefix(env, "HOME=") {
+		switch {
+		case strings.HasPrefix(env, "HOME="):
 			config.ContainerHome = strings.TrimPrefix(env, "HOME=")
-		} else if strings.HasPrefix(env, "PATH=") {
+		case strings.HasPrefix(env, "PATH="):
 			config.ContainerPath = strings.TrimPrefix(env, "PATH=")
+		case strings.HasPrefix(env, "SHELL="):
+			config.ContainerShell = strings.TrimPrefix(env, "SHELL=")
 		}
 	}
 

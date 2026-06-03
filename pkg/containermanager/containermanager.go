@@ -22,11 +22,25 @@ type Container struct {
 }
 
 type InspectResult struct {
-	ContainerID     string
-	ContainerStatus string
-	ContainerHome   string
-	ContainerPath   string
-	UnshareGroups   bool
+	ContainerID       string
+	ContainerStatus   string
+	ContainerHome     string
+	ContainerPath     string
+	ContainerImage    string
+	ContainerPlatform string
+	ContainerCreated  string
+	ContainerHostname string
+	ContainerShell    string
+	Memory            string
+	CPUThreads        int
+	UnshareGroups     bool
+	UnshareIPC        bool
+	UnshareNetNS      bool
+	UnshareProcess    bool
+	UnshareDevsys     bool
+	Init              bool
+	Nvidia            bool
+	Rootful           bool
 }
 
 type CreateOptions struct {

@@ -11,6 +11,7 @@
 {2}│{R} {0}boot{R}  {2}┆{R} {0}start{R}          {5}Start containers{R}              {2}│{R}
 {2}│{R} {0}ulck{R}  {2}┆{R} {0}unlock{R}         {5}Unlock a locked containers{R}    {2}│{R}
 {2}│{R} {0}logs{R}  {2}┆{R} {0}journal{R}        {5}Show logs of a container{R}      {2}│{R}
+{2}│{R} {0}info{R}  {2}┆{R} {0}inspect{R}        {5}Show info of a container{R}      {2}│{R}
 {2}│{R} {0}sync{R}  {2}┆{R} {0}upgrade{R}        {5}Update packages in containers{R} {2}│{R}
 {2}│{R} {0}spec{R}  {2}┆{R} {0}assemble{R}       {5}Manage containers from a spec{R} {2}│{R}
 {2}│{R} {0}temp{R}  {2}┆{R} {0}ephemeral{R}      {5}Create temporary containers{R}   {2}│{R}

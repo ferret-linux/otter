@@ -151,6 +151,13 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		withContainerManager,
 	)
 
+	inspect := cc.apply(
+		newInspectCommand,
+		withUsageErrorHandler,
+		withRoot,
+		withContainerManager,
+	)
+
 	lock := cc.apply(
 		newLockCommand,
 		withUsageErrorHandler,
@@ -171,6 +178,7 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		enter,
 		ephemeral,
 		generateEntry,
+		inspect,
 		journal,
 		list,
 		lock,
