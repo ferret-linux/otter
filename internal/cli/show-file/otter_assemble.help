@@ -2,11 +2,14 @@
 {2}│{R}{1}⦿ Manage otter containers using manifest files             {R}{2}│{R}
 {2}├───────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                                   {2}│{R}
-{2}│{R}  {5}otter spec create{R}                                        {2}│{R}
-{2}│{R}  {5}otter spec remove{R}                                        {2}│{R}
+{2}│{R}  {5}otter spec     <create|remove> [options]{R}                 {2}│{R}
+{2}│{R}  {5}otter assemble <create|remove> [options]{R}                 {2}│{R}
+{2}├───────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                                {2}│{R}
+{2}│{R}  {5}otter spec mk --replace --file /path/to/file.ini{R}         {2}│{R}
+{2}│{R}  {5}otter spec rm --name my-box --file /path/to/file.ini{R}     {2}│{R}
 {2}│{R}  {5}otter assemble create --file /path/to/file.ini{R}           {2}│{R}
 {2}│{R}  {5}otter assemble remove --file /path/to/file.ini{R}           {2}│{R}
-{2}│{R}  {5}otter assemble mk --replace --file /path/to/file.ini{R}     {2}│{R}
 {2}├───────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Commands:{R}                                                {2}│{R}
 {2}│{R}  {0}create{R}   {2}┆{R} {0}mk{R} {5}Create Container defined in manifest{R}       {2}│{R}
@@ -21,4 +24,8 @@
 {2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R} {5}Show this help message{R}                     {2}│{R}
 {2}│{R} {4}--verbose{R} {2}┆{R} {4}-v{R} {5}Show more verbose output{R}                   {2}│{R}
 {2}│{R} {4}--dry-run{R} {2}┆{R} {4}-d{R} {5}Print generated command without running it{R} {2}│{R}
-{2}╰───────────┴───────────────────────────────────────────────╯{R}
+{2}├───────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Notes:{R}                                                   {2}│{R}
+{2}│{R} {4}--file{R}  {5}The manifest file can also be passed as a         {R}{2}│{R}
+{2}│{R}         {5}positional argument instead of using --file.{R}      {2}│{R}
+{2}╰───────────────────────────────────────────────────────────╯{R}

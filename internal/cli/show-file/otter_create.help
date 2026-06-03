@@ -2,16 +2,14 @@
 {2}│{R}{1}⦿ Create native distro like container environments using otter                       {R}{2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                                                             {2}│{R}
-{2}│{R}  {5}otter mk --init --nvidia --root{R}                                                    {2}│{R}
-{2}│{R}  {5}otter mk --clone my-box --name my-copy{R}                                             {2}│{R}
+{2}│{R}  {5}otter mk     [options] [--image image]{R}                                             {2}│{R}
+{2}│{R}  {5}otter create [options] [--image image]{R}                                             {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                                                          {2}│{R}
 {2}│{R}  {5}otter mk --image alpine --name my-alpinebox{R}                                        {2}│{R}
-{2}│{R}  {5}otter mk --init --additional-flags "--pids-limit 100"{R}                              {2}│{R}
 {2}│{R}  {5}otter mk --init --volume /opt/my-dir:/usr/local/my-dir:rw{R}                          {2}│{R}
 {2}│{R}  {5}otter create --image centos:stream10 --pull --home ~/otter/centos10{R}                {2}│{R}
 {2}│{R}  {5}otter create --image alpine:latest --additional-packages "git tmux vim"{R}            {2}│{R}
-{2}│{R}  {5}otter create --image rocky --pre-init-hooks "rpm -qa | wc -l"{R}                      {2}│{R}
-{2}│{R}  {5}otter create --image registry.fedoraproject.org/fedora-toolbox:latest{R}              {2}│{R}
-{2}│{R}  {5}otter create --image alpine:latest --init-hooks "touch /tmp/test1 && touch grass"{R}  {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                                                           {2}│{R}
 {2}│{R} {4}--yes{R}                 {2}┆{R} {4}-Y{R}   {5}Non-interactive, pull images without asking{R}            {2}│{R}

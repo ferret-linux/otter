@@ -2,8 +2,13 @@
 {2}│{R}{1}⦿ Show logs of an otter managed container        {R}{2}│{R}
 {2}├─────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                         {2}│{R}
-{2}│{R}  {5}otter journal my-box{R}                           {2}│{R}
+{2}│{R}  {5}otter logs    [options] [container]{R}            {2}│{R}
+{2}│{R}  {5}otter journal [options] [container]{R}            {2}│{R}
+{2}├─────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                      {2}│{R}
 {2}│{R}  {5}otter logs my-box --follow{R}                     {2}│{R}
+{2}│{R}  {5}otter logs my-box --tail 50 --timestamps{R}       {2}│{R}
+{2}│{R}  {5}otter journal my-box{R}                           {2}│{R}
 {2}│{R}  {5}otter journal my-box --since 1h --timestamps{R}   {2}│{R}
 {2}├─────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                       {2}│{R}

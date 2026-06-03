@@ -2,6 +2,10 @@
 {2}│{R}{1}⦿ List all otter managed containers        {R}{2}│{R}
 {2}├───────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                   {2}│{R}
+{2}│{R}  {5}otter ls   [options]{R}                     {2}│{R}
+{2}│{R}  {5}otter list [options]{R}                     {2}│{R}
+{2}├───────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                {2}│{R}
 {2}│{R}  {5}otter ls --root{R}                          {2}│{R}
 {2}│{R}  {5}otter ls --no-color{R}                      {2}│{R}
 {2}│{R}  {5}otter list --no-color{R}                    {2}│{R}

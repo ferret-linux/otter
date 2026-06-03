@@ -2,10 +2,14 @@
 {2}│{R}{1}⦿ Generate desktop entry for containers    {R}{2}│{R}
 {2}├───────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                   {2}│{R}
-{2}│{R}  {5}otter gety --all{R}                          {2}│{R}
-{2}│{R}  {5}otter gety my-box{R}                         {2}│{R}
+{2}│{R}  {5}otter gety           [options] [name]{R}    {2}│{R}
+{2}│{R}  {5}otter generate-entry [options] [name]{R}    {2}│{R}
+{2}├───────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                {2}│{R}
+{2}│{R}  {5}otter gety --all{R}                         {2}│{R}
+{2}│{R}  {5}otter gety my-box -i /path/to/icon{R}       {2}│{R}
 {2}│{R}  {5}otter generate-entry debian --delete{R}     {2}│{R}
-{2}│{R}  {5}otter generate-entry --i /path/to/icon{R}   {2}│{R}
+{2}│{R}  {5}otter generate-entry --all --root{R}        {2}│{R}
 {2}├───────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                 {2}│{R}
 {2}│{R} {4}--all{R}    {2}┆{R} {4}-a{R}  {5}Perform for all otters{R}     {2}│{R}

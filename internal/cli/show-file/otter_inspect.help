@@ -2,8 +2,14 @@
 {2}│{R}{1}⦿ Show info of an otter managed container    {R}{2}│{R}
 {2}├─────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                     {2}│{R}
-{2}│{R}  {5}otter inspect my-box{R}                       {2}│{R}
+{2}│{R}  {5}otter info    [options] [container]{R}        {2}│{R}
+{2}│{R}  {5}otter inspect [options] [container]{R}        {2}│{R}
+{2}├─────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                  {2}│{R}
 {2}│{R}  {5}otter info my-box{R}                          {2}│{R}
+{2}│{R}  {5}otter info my-box --root{R}                   {2}│{R}
+{2}│{R}  {5}otter inspect my-box{R}                       {2}│{R}
+{2}│{R}  {5}otter inspect my-box --root{R}                {2}│{R}
 {2}├─────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                    {2}│{R}
 {2}│{R} {4}--root{R}    {2}┆{R} {4}-r{R}  {5}Inspect a rootful container{R} {2}│{R}

@@ -2,7 +2,12 @@
 {2}│{R}{1}⦿ Upgrade packages inside otter managed containers {R}{2}│{R}
 {2}├───────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                           {2}│{R}
+{2}│{R}  {5}otter sync    [options] [container]{R}              {2}│{R}
+{2}│{R}  {5}otter upgrade [options] [container]{R}              {2}│{R}
+{2}├───────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                        {2}│{R}
 {2}│{R}  {5}otter sync my-box{R}                                {2}│{R}
+{2}│{R}  {5}otter sync --all --root{R}                          {2}│{R}
 {2}│{R}  {5}otter upgrade --all{R}                              {2}│{R}
 {2}│{R}  {5}otter upgrade --running{R}                          {2}│{R}
 {2}├───────────────────────────────────────────────────┤{R}
@@ -22,5 +27,5 @@
 {2}├───────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                        {2}│{R}
 {2}│{R}  {5}Rootful containers need '--root' for 'upgrade'.{R}  {2}│{R}
-{2}│{R}  {5}Locked containers are skipped. Use 'otter unlock'.{R}{2}│{R}
+{2}│{R}  {5}Locked containers are skipped. Use 'unlock'.     {R}{2}│{R}
 {2}╰───────────────────────────────────────────────────╯{R}

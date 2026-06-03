@@ -2,9 +2,14 @@
 {2}│{R}{1}⦿ Restart an otter managed container environment   {R}{2}│{R}
 {2}├───────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                           {2}│{R}
-{2}│{R}  {5}otter restart my-box{R}                             {2}│{R}
-{2}│{R}  {5}otter restart --all{R}                              {2}│{R}
+{2}│{R}  {5}otter reboot  [options] [container]{R}              {2}│{R}
+{2}│{R}  {5}otter restart [options] [container]{R}              {2}│{R}
+{2}├───────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                        {2}│{R}
 {2}│{R}  {5}otter reboot my-box{R}                              {2}│{R}
+{2}│{R}  {5}otter reboot --all{R}                               {2}│{R}
+{2}│{R}  {5}otter restart my-box{R}                             {2}│{R}
+{2}│{R}  {5}otter restart --all --root{R}                       {2}│{R}
 {2}├───────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                         {2}│{R}
 {2}│{R} {4}--all{R}     {2}┆{R} {4}-a{R}  {5}Restart all otter containers{R}      {2}│{R}
