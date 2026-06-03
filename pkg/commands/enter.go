@@ -21,6 +21,7 @@ type EnterOptions struct {
 	Verbose         bool
 	CleanPath       bool
 	EmptyEnv        bool
+	AutoStart       bool
 }
 
 type EnterCommand struct {
@@ -45,7 +46,14 @@ func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterRe
 			return nil, fmt.Errorf("container '%s' not found", opts.ContainerName)
 		}
 		if inspectResult.ContainerStatus != containermanager.RunningStatus {
-			return nil, fmt.Errorf("container '%s' is stopped, run 'otter start %s'", opts.ContainerName, opts.ContainerName)
+			if opts.AutoStart {
+				ui.DefaultLogger.Info("starting '%s'...\n", opts.ContainerName)
+				if err := c.containerManager.Start(ctx, opts.ContainerName, opts.DryRun); err != nil {
+					return nil, fmt.Errorf("failed to start container '%s': %w", opts.ContainerName, err)
+				}
+			} else {
+				return nil, fmt.Errorf("container '%s' is stopped, run 'otter start %s'", opts.ContainerName, opts.ContainerName)
+			}
 		}
 		if !c.containerManager.IsSetupDone(ctx, opts.ContainerName) {
 			return nil, fmt.Errorf("container '%s' is initializing, please wait", opts.ContainerName)

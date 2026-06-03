@@ -47,6 +47,10 @@ func newEnterCommand(cfg *config.Values) *cli.Command {
 			&cli.BoolFlag{
 				Name: "empty-env",
 			},
+			&cli.BoolFlag{
+				Name:    "auto-start",
+				Aliases: []string{"S"},
+			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			return enterAction(ctx, cmd, cfg)
@@ -83,6 +87,7 @@ func enterAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) erro
 		NoTTY:           cmd.Bool("no-tty"),
 		CleanPath:       cmd.Bool("clean-path"),
 		EmptyEnv:        cmd.Bool("empty-env"),
+		AutoStart:       cmd.Bool("auto-start"),
 		Verbose:         cmd.Bool("verbose"),
 	}
 
