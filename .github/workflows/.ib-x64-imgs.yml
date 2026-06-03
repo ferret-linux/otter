@@ -65,9 +65,16 @@ jobs:
             ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 \
             -o /tmp/${{ matrix.name }}-${{ matrix.tag }}-amd64.tar
 
+      - name: Checksum
+        run: |
+          sha256sum /tmp/${{ matrix.name }}-${{ matrix.tag }}-amd64.tar \
+            > /tmp/${{ matrix.name }}-${{ matrix.tag }}-amd64.tar.sha256
+
       - name: Upload Artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: image-amd64-${{ matrix.name }}-${{ matrix.tag }}
-          path: /tmp/${{ matrix.name }}-${{ matrix.tag }}-amd64.tar
+          path: |
+            /tmp/${{ matrix.name }}-${{ matrix.tag }}-amd64.tar
+            /tmp/${{ matrix.name }}-${{ matrix.tag }}-amd64.tar.sha256
           retention-days: 1

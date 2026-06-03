@@ -60,6 +60,10 @@ jobs:
           name: image-amd64-${{ matrix.name }}-${{ matrix.tag }}
           path: /tmp
 
+      - name: Verify Checksum
+        run: |
+          sha256sum -c /tmp/${{ matrix.name }}-${{ matrix.tag }}-amd64.tar.sha256
+
       - name: Load Image
         run: |
           podman image load \
@@ -91,6 +95,10 @@ jobs:
         with:
           name: image-arm64-${{ matrix.name }}-${{ matrix.tag }}
           path: /tmp
+
+      - name: Verify Checksum
+        run: |
+          sha256sum -c /tmp/${{ matrix.name }}-${{ matrix.tag }}-arm64.tar.sha256
 
       - name: Load Image
         run: |
