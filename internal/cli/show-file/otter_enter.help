@@ -2,9 +2,9 @@
 {2}│{R}{1}⦿ Enter into a otter managed container environment                       {R}{2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                                                 {2}│{R}
-{2}│{R}  {5}otter enter my-box{R}                                                     {2}│{R}
-{2}│{R}  {5}otter enter my-ubuntu --root{R}                                           {2}│{R}
-{2}│{R}  {5}otter enter my-alpine -- sh -l{R}                                         {2}│{R}
+{2}│{R}  {5}otter sh my-box{R}                                                        {2}│{R}
+{2}│{R}  {5}otter sh my-ubuntu --root{R}                                              {2}│{R}
+{2}│{R}  {5}otter sh my-alpine -- sh -l{R}                                            {2}│{R}
 {2}│{R}  {5}otter enter --name fedora-44 -- bash -l{R}                                {2}│{R}
 {2}│{R}  {5}otter enter --additional-flags "--env MY_VAR=value" --n b1 -- bash -l{R}  {2}│{R}
 {2}│{R}  {5}otter enter --additional-flags "--preserve-fds" --name test -- bash -l{R} {2}│{R}

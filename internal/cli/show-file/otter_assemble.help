@@ -2,14 +2,14 @@
 {2}│{R}{1}⦿ Manage otter containers using manifest files             {R}{2}│{R}
 {2}├───────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                                   {2}│{R}
-{2}│{R}  {5}otter assemble create{R}                                    {2}│{R}
-{2}│{R}  {5}otter assemble remove{R}                                    {2}│{R}
+{2}│{R}  {5}otter spec create{R}                                        {2}│{R}
+{2}│{R}  {5}otter spec remove{R}                                        {2}│{R}
 {2}│{R}  {5}otter assemble create --file /path/to/file.ini{R}           {2}│{R}
 {2}│{R}  {5}otter assemble remove --file /path/to/file.ini{R}           {2}│{R}
-{2}│{R}  {5}otter assemble create --replace --file /path/to/file.ini{R} {2}│{R}
+{2}│{R}  {5}otter assemble mk --replace --file /path/to/file.ini{R}     {2}│{R}
 {2}├───────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Commands:{R}                                                {2}│{R}
-{2}│{R}  {0}create{R}        {5}Create Container defined in manifest{R}       {2}│{R}
+{2}│{R}  {0}create{R}   {2}┆{R} {0}mk{R} {5}Create Container defined in manifest{R}       {2}│{R}
 {2}│{R}  {0}remove{R}   {2}┆{R} {0}rm{R} {5}Remove container defined in manifest{R}       {2}│{R}
 {2}├───────────┴───────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                                 {2}│{R}

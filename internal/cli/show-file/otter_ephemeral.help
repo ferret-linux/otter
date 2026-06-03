@@ -2,8 +2,8 @@
 {2}│{R}{1}⦿ Create short-lived container environments   {R}{2}│{R}
 {2}├──────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                      {2}│{R}
-{2}│{R}  {5}otter eph -i fedora --init -- rpm -q{R}        {2}│{R}
-{2}│{R}  {5}otter eph -i void --nvidia -- ls -la{R}        {2}│{R}
+{2}│{R}  {5}otter temp -i fedora --init -- rpm -q{R}       {2}│{R}
+{2}│{R}  {5}otter temp -i void --nvidia -- ls -la{R}       {2}│{R}
 {2}│{R}  {5}otter ephemeral -i fedora -- rpm -qa{R}        {2}│{R}
 {2}│{R}  {5}otter ephemeral --nvidia --init --root{R}      {2}│{R}
 {2}├──────────────────────────────────────────────┤{R}

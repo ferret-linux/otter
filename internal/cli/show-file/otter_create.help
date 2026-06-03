@@ -2,11 +2,11 @@
 {2}│{R}{1}⦿ Create native distro like container environments using otter                       {R}{2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                                                             {2}│{R}
-{2}│{R}  {5}otter create --init --nvidia --root{R}                                                {2}│{R}
-{2}│{R}  {5}otter create --clone my-box --name my-copy{R}                                         {2}│{R}
-{2}│{R}  {5}otter create --image alpine --name my-alpinebox{R}                                    {2}│{R}
-{2}│{R}  {5}otter create --init --additional-flags "--pids-limit 100"{R}                          {2}│{R}
-{2}│{R}  {5}otter create --init --volume /opt/my-dir:/usr/local/my-dir:rw{R}                      {2}│{R}
+{2}│{R}  {5}otter mk --init --nvidia --root{R}                                                    {2}│{R}
+{2}│{R}  {5}otter mk --clone my-box --name my-copy{R}                                             {2}│{R}
+{2}│{R}  {5}otter mk --image alpine --name my-alpinebox{R}                                        {2}│{R}
+{2}│{R}  {5}otter mk --init --additional-flags "--pids-limit 100"{R}                              {2}│{R}
+{2}│{R}  {5}otter mk --init --volume /opt/my-dir:/usr/local/my-dir:rw{R}                          {2}│{R}
 {2}│{R}  {5}otter create --image centos:stream10 --pull --home ~/otter/centos10{R}                {2}│{R}
 {2}│{R}  {5}otter create --image alpine:latest --additional-packages "git tmux vim"{R}            {2}│{R}
 {2}│{R}  {5}otter create --image rocky --pre-init-hooks "rpm -qa | wc -l"{R}                      {2}│{R}

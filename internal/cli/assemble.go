@@ -28,7 +28,8 @@ func newAssembleCommand(cfg *config.Values) *cli.Command {
 		Aliases: []string{"spec"},
 		Commands: []*cli.Command{
 			{
-				Name: "create",
+				Name:    "create",
+				Aliases: []string{"mk"},
 				Flags: []cli.Flag{
 					fileFlag,
 					nameFlag,

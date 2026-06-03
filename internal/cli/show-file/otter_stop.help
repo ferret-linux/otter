@@ -2,7 +2,7 @@
 {2}│{R}{1}⦿ Stop a otter managed running container environment {R}{2}│{R}
 {2}├─────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                             {2}│{R}
-{2}│{R}  {5}otter stop my-box{R}                                  {2}│{R}
+{2}│{R}  {5}otter off my-box{R}                                   {2}│{R}
 {2}│{R}  {5}otter stop --all{R}                                   {2}│{R}
 {2}│{R}  {5}otter stop --yes my-box{R}                            {2}│{R}
 {2}├─────────────────────────────────────────────────────┤{R}
