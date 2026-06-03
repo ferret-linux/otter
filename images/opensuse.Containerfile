@@ -114,6 +114,10 @@ RUN zypper -n install --auto-agree-with-licenses -y \
     mesa-libva \
     libva2) || [ ${?} = 106 ]
 
+# Install nerd fonts
+COPY images/scripts/nerd-fonts.sh /tmp/nerd-fonts.sh
+RUN sh /tmp/nerd-fonts.sh
+
 # Install fetchmsttfonts separately — its post-install script exits non-zero
 # even on success; rpm's %post scriptlet bypasses zypper's stdin so piping
 # 'i' does not work. We force-install and ignore the non-zero exit.

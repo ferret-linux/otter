@@ -76,6 +76,10 @@ RUN emerge --ask=n --autounmask-continue --noreplace --quiet-build --getbinpkg -
     app-admin/sudo \
     x11-apps/xauth)
 
+# Install nerd fonts
+COPY images/scripts/nerd-fonts.sh /tmp/nerd-fonts.sh
+RUN sh /tmp/nerd-fonts.sh
+
 # Locale setup
 RUN sed -i "s|#.*en_US.UTF-8|en_US.UTF-8|g" /etc/locale.gen \
     && locale-gen \
