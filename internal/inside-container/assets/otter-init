@@ -670,86 +670,43 @@ setup_apk()
 	if ! apk add "${shell_pkg}"; then
 		shell_pkg="bash"
 	fi
-	if apk add wolfi-base; then
-		deps="
-			busybox
-			gnutar
-			man-db
-			mesa
-			openssh-client
-			pinentry
-			posix-libc-utils
-			script
-		"
-	elif apk add alpine-base; then
-		deps="
-			bash-completion
-			docs
-			gcompat
-			libc-utils
-			lsof
-			man-pages
-			mandoc
-			musl-utils
-			openssh-client-default
-			pinentry
-			tar
-			vte3
-			which
-			$(apk search -q mesa-dri)
-			$(apk search -q mesa-vulkan)
-		"
-	elif apk add base-bootstrap; then
-		# Prevent "ADB schema error" while installing tzdb in rootful container on currently old image
-		apk upgrade -Ua
-		# Prevent "fchownat() of /tmp failed: Operation not permitted" from sd-tools trigger script
-		sed -i '' '/^q \/tmp/ s/^/#/' /usr/lib/tmpfiles.d/tmp.conf
-		# Setup rest of packages while also allowing install of extras from user repo
-		apk add chimera-repo-user
-		apk update
-		deps="
-			base-full-man
-			bash-completion
-			bc-gh
-			gtar
-			libarchive-progs
-			libcap-progs
-			lsof
-			mesa-dri
-			ncurses-term
-			opendoas
-			openssh
-			util-linux-mount
-			vte
-			wget2
-		"
-	fi
-	deps="${deps:-}
+	deps="
 		${shell_pkg}
 		bash
+		bash-completion
 		bc
 		bzip2
 		coreutils
 		curl
 		diffutils
+		docs
 		findmnt
-		python3
 		findutils
+		gcompat
 		gnupg
 		gpg
 		iproute2
 		iputils
 		keyutils
 		less
+		libc-utils
 		libcap
+		lsof
+		man-pages
+		mandoc
 		mount
+		musl-utils
 		ncurses
 		ncurses-terminfo
 		net-tools
+		openssh-client-default
 		pigz
+		pinentry
+		python3
 		rsync
 		shadow
 		sudo
+		tar
 		tcpdump
 		tree
 		tzdata
@@ -758,11 +715,15 @@ setup_apk()
 		util-linux
 		util-linux-login
 		util-linux-misc
+		vte3
 		vulkan-loader
 		wget
+		which
 		xauth
 		xz
 		zip
+		$(apk search -q mesa-dri)
+		$(apk search -q mesa-vulkan)
 		$(apk search -qe procps)
 	"
 	# shellcheck disable=SC2086
