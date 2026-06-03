@@ -69,6 +69,14 @@ type EnterOptions struct {
 	Verbose         bool
 }
 
+type JournalOptions struct {
+	Follow     bool
+	Since      string
+	Until      string
+	Timestamps bool
+	Tail       int
+}
+
 type RmOptions struct {
 	Force         bool
 	RemoveHome    bool
@@ -117,6 +125,8 @@ type ContainerManager interface {
 	DeleteFromContainer(ctx context.Context, containerName string, filePath string) error
 	// IsSetupDone returns true if the container has completed its initial setup.
 	IsSetupDone(ctx context.Context, containerName string) bool
+	// Journal streams the logs of a container to stdout.
+	Journal(ctx context.Context, containerName string, opts JournalOptions) error
 }
 
 func PathExists(path string) bool {

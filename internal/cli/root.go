@@ -145,6 +145,12 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		withContainerManager,
 	)
 
+	journal := cc.apply(
+		newJournalCommand,
+		withUsageErrorHandler,
+		withContainerManager,
+	)
+
 	lock := cc.apply(
 		newLockCommand,
 		withUsageErrorHandler,
@@ -165,6 +171,7 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		enter,
 		ephemeral,
 		generateEntry,
+		journal,
 		list,
 		lock,
 		remove,

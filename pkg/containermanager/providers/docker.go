@@ -982,3 +982,25 @@ func (d *Docker) IsSetupDone(ctx context.Context, containerName string) bool {
 	_, err := d.run(ctx, []string{"exec", containerName, "test", "-f", "/usr/lib/otter/container.ready"}, runOptions{})
 	return err == nil
 }
+
+func (d *Docker) Journal(ctx context.Context, containerName string, opts containermanager.JournalOptions) error {
+	args := []string{"logs"}
+	if opts.Follow {
+		args = append(args, "--follow")
+	}
+	if opts.Since != "" {
+		args = append(args, "--since", opts.Since)
+	}
+	if opts.Until != "" {
+		args = append(args, "--until", opts.Until)
+	}
+	if opts.Timestamps {
+		args = append(args, "--timestamps")
+	}
+	if opts.Tail >= 0 {
+		args = append(args, "--tail", fmt.Sprintf("%d", opts.Tail))
+	}
+	args = append(args, containerName)
+	_, err := d.run(ctx, args, runOptions{Interactive: true})
+	return err
+}
