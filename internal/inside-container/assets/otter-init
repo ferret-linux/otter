@@ -588,7 +588,7 @@ EOF
 
 }
 
-# setup_rpm_exceptions will create path-excludes for host mounts, rpm only (dnf, yum, zypper, microdnf).
+# setup_rpm_exceptions will create path-excludes for host mounts, rpm only (dnf, zypper).
 # Arguments:
 #   None
 # Expected global variables:
@@ -917,9 +917,9 @@ setup_apt()
 	unset DEBIAN_FRONTEND
 }
 
-# setup_dnf will upgrade or setup all packages for dnf/yum based systems.
+# setup_dnf will upgrade or setup all packages for dnf based systems.
 # Arguments:
-#   manager: yum or dnf
+#   manager: dnf
 # Expected global variables:
 #   upgrade: if we need to upgrade or not
 #   container_additional_packages: additional packages to install during this phase
@@ -1502,11 +1502,7 @@ PATH="${PATH}:/bin:/sbin:/usr/bin:/usr/sbin"
 
 # Setup pkg manager exceptions and excludes
 if command -v apt-get; then
-	if command -v rpm; then
-		setup_rpm_exceptions
-	else
-		setup_deb_exceptions
-	fi
+	setup_deb_exceptions
 elif command -v pacman; then
 	setup_pacman_exceptions
 elif command -v xbps-install; then
@@ -1514,10 +1510,6 @@ elif command -v xbps-install; then
 elif command -v zypper; then
 	setup_rpm_exceptions
 elif command -v dnf; then
-	setup_rpm_exceptions
-elif command -v microdnf; then
-	setup_rpm_exceptions
-elif command -v yum; then
 	setup_rpm_exceptions
 fi
 
@@ -1541,10 +1533,6 @@ if [ "${upgrade}" -ne 0 ] || [ ! -e /.containersetupdone ]; then
 		setup_zypper
 	elif command -v dnf; then
 		setup_dnf dnf
-	elif command -v microdnf; then
-		setup_microdnf
-	elif command -v yum; then
-		setup_dnf yum
 	else
 		printf "Error: could not find a supported package manager.\n"
 		printf "Error: could not set up base dependencies.\n"
