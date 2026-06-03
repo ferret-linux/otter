@@ -18,6 +18,9 @@
 {2}├─────────┴───────────────────────────────────┤{R}
 {2}│{R}{3}▸ Notes:{R}                                     {2}│{R}
 {2}│{R} {5}Alias: 'otter info' works identically.{R}      {2}│{R}
-{2}│{R} {5}Shows status, image, resources, features,{R}   {2}│{R}
-{2}│{R} {5}and isolation settings of the container.{R}    {2}│{R}
+{2}│{R} {5}Displays a formatted table showing all{R}      {2}│{R}
+{2}│{R} {5}container details defined at create time:{R}   {2}│{R}
+{2}│{R} {5}status, image, memory, CPU threads,{R}         {2}│{R}
+{2}│{R} {5}unshare flags, init, nvidia, and other{R}      {2}│{R}
+{2}│{R} {5}configured options.{R}                         {2}│{R}
 {2}╰─────────────────────────────────────────────╯{R}

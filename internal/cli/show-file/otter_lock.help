@@ -22,6 +22,7 @@
 {2}│{R} {5}Locked containers are skipped by 'remove' and{R}    {2}│{R}
 {2}│{R} {5}'upgrade'. Use 'otter unlock' to reverse.{R}        {2}│{R}
 {2}│{R} {5}Container must be running to lock.{R}               {2}│{R}
+{2}│{R} {5}Already locked containers are skipped.{R}           {2}│{R}
 {2}├──────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                       {2}│{R}
 {2}│{R} {5}Lock state is stored inside the container at{R}     {2}│{R}

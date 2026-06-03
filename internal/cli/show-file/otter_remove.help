@@ -15,7 +15,7 @@
 {2}│{R} {4}--all{R}     {2}┆{R} {4}-a{R}  {5}Delete all otters{R}                        {2}│{R}
 {2}│{R} {4}--root{R}    {2}┆{R} {4}-r{R}  {5}Launch container with root privileges{R}    {2}│{R}
 {2}│{R} {4}--force{R}   {2}┆{R} {4}-f{R}  {5}Force deletion of problematic containers{R} {2}│{R}
-{2}│{R} {4}--rm-home{R}       {5}Remove container home,preserves host{R}     {2}│{R}
+{2}│{R} {4}--rm-home{R}       {5}Remove container's custom home directory{R} {2}│{R}
 {2}│{R} {4}--dry-run{R} {2}┆{R} {4}-d{R}  {5}Print the generated container command{R}    {2}│{R}
 {2}│{R} {4}--bypass-lock{R}   {5}Remove container even if it is locked{R}    {2}│{R}
 {2}├──────────────────────────────────────────────────────────┤{R}

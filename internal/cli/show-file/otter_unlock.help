@@ -21,6 +21,7 @@
 {2}│{R}{3}▸ Notes:{R}                                           {2}│{R}
 {2}│{R} {5}Container must be running to unlock.{R}              {2}│{R}
 {2}│{R} {5}Use 'otter start' to start it first.{R}              {2}│{R}
+{2}│{R} {5}Already unlocked containers are skipped.{R}          {2}│{R}
 {2}├───────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                        {2}│{R}
 {2}│{R} {5}Use 'otter lock' to protect a container.{R}          {2}│{R}

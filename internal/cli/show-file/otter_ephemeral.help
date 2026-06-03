@@ -30,4 +30,6 @@
 {2}│{R}  {5}Ephemeral containers are removed on exit,{R}   {2}│{R}
 {2}│{R}  {5}wraps create, enter & remove under the hood{R} {2}│{R}
 {2}│{R}  {5}and inherits all flags from 'otter create'.{R} {2}│{R}
+{2}│{R}  {5}See 'otter create --help' for the full{R}      {2}│{R}
+{2}│{R}  {5}list of available options.{R}                  {2}│{R}
 {2}╰──────────────────────────────────────────────╯{R}
