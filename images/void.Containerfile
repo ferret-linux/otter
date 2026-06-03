@@ -96,10 +96,6 @@ RUN xbps-install -Sy $(sh /tmp/pkg-validator.sh --pkgmgr xbps -- \
     pipewire-pulse \
     wireplumber)
 
-# Install nerd fonts
-COPY images/scripts/nerd-fonts.sh /tmp/nerd-fonts.sh
-RUN sh /tmp/nerd-fonts.sh
-
 # Locale setup (glibc only, musl does not use libc-locales)
 RUN if [ -f /etc/default/libc-locales ]; then \
     sed -i "s|#.*en_US.UTF-8|en_US.UTF-8|g" /etc/default/libc-locales \

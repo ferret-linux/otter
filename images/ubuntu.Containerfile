@@ -87,10 +87,6 @@ RUN apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr
     xz-utils \
     zip)
 
-# Install nerd fonts
-COPY images/scripts/nerd-fonts.sh /tmp/nerd-fonts.sh
-RUN sh /tmp/nerd-fonts.sh
-
 # Locale setup
 RUN sed -i "s|# en_US.UTF-8|en_US.UTF-8|g" /etc/locale.gen \
     && locale-gen \

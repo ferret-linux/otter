@@ -97,10 +97,6 @@ RUN dnf install -y $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
     xz \
     zip)
 
-# Install nerd fonts
-COPY images/scripts/nerd-fonts.sh /tmp/nerd-fonts.sh
-RUN sh /tmp/nerd-fonts.sh
-
 # Locale setup
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8
 

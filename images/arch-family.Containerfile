@@ -90,10 +90,6 @@ RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman --
     xorg-xauth \
     zip)
 
-# Install nerd fonts
-COPY images/scripts/nerd-fonts.sh /tmp/nerd-fonts.sh
-RUN sh /tmp/nerd-fonts.sh
-
 # Timezone default
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
     && echo "UTC" > /etc/timezone
