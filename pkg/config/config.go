@@ -21,9 +21,9 @@ func defaultsMap() map[string]string {
 		"container_manager": "podman",
 		"sudo_program":      "sudo",
 		"verbose":           "false",
-		// ubuntu-lts is default container image
-		"container_image": "docker.io/library/ubuntu:26.04",
-		"container_name":  "my-box",
+		// otter's ubuntu-lts is default container image
+		"container_image": "ghcr.io/ferret-linux/ubuntu-otr:lts",
+		"container_name":  "my-container",
 	}
 }
 
