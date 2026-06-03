@@ -77,6 +77,9 @@ def render_help(text):
 HELP_TEXT = """\
 {2}╭─────────────────────────────────────────────────╮{R}
 {2}│{R}{3}▸ Usage:{R}                                         {2}│{R}
+{2}│{R}  {5}otter-host-exec [options] <command> [args]{R}     {2}│{R}
+{2}├─────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                      {2}│{R}
 {2}│{R}  {5}otter-host-exec ls{R}                             {2}│{R}
 {2}│{R}  {5}otter-host-exec bash -l{R}                        {2}│{R}
 {2}│{R}  {5}otter-host-exec podman ps -a{R}                   {2}│{R}
