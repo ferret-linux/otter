@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
@@ -22,7 +21,7 @@ type RestartCommand struct {
 	listCmd  *ListCommand
 }
 
-func NewRestartCommand(cfg *config.Values, cm containermanager.ContainerManager) *RestartCommand {
+func NewRestartCommand(cm containermanager.ContainerManager) *RestartCommand {
 	return &RestartCommand{
 		stopCmd:  NewStopCommand(cm),
 		startCmd: NewStartCommand(cm),
