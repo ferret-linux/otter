@@ -59,7 +59,8 @@ jobs:
               --file images/${{ matrix.containerfile }} \
               --tag ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64 \
               . && break
-            echo "Attempt $i/3 failed, retrying in 30s..."
+            echo "Attempt $i/3 failed, pruning and retrying in 30s..."
+            podman system prune -af
             sleep 30
           done
 
