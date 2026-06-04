@@ -27,12 +27,12 @@ func newStopCommand(cfg *config.Values) *cli.Command {
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return stopAction(ctx, cmd, cfg)
+			return stopAction(ctx, cmd)
 		},
 	}
 }
 
-func stopAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
+func stopAction(ctx context.Context, cmd *cli.Command) error {
 	containerManager, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 	if !ok {
 		return errors.New("container manager not found in context")
@@ -45,18 +45,10 @@ func stopAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error
 		Verbose:        cmd.Bool("verbose"),
 	}
 
-	stopCmd := commands.NewStopCommand(cfg, containerManager)
-
-	err := stopCmd.Execute(ctx, options)
-
+	err := commands.NewStopCommand(containerManager).Execute(ctx, options)
 	if errors.Is(err, commands.ErrEmptyContainerList) {
 		ui.DefaultLogger.Warn("No containers found.")
 		return nil
 	}
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }

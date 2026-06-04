@@ -26,12 +26,12 @@ func newListCommand(cfg *config.Values) *cli.Command {
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return listAction(ctx, cmd, cfg)
+			return listAction(ctx, cmd)
 		},
 	}
 }
 
-func listAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
+func listAction(ctx context.Context, cmd *cli.Command) error {
 	if cmd.Bool("verbose") {
 		ui.DefaultLogger.Info("bro what kind of verbosity do you need here lmao")
 	}
@@ -45,8 +45,7 @@ func listAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error
 		return errors.New("container manager not found in context")
 	}
 
-	listCmd := commands.NewListCommand(cfg, containerManager)
-	result, err := listCmd.Execute(ctx)
+	result, err := commands.NewListCommand(containerManager).Execute(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to execute list command: %w", err)
 	}

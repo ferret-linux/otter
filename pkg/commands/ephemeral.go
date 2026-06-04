@@ -25,7 +25,6 @@ type EphemeralOptions struct {
 }
 
 type EphemeralCommand struct {
-	cfg              *config.Values
 	containerManager containermanager.ContainerManager
 	createCmd        *CreateCommand
 	startCmd         *StartCommand
@@ -40,12 +39,11 @@ func NewEphemeralCommand(
 	prompter *ui.Prompter,
 ) *EphemeralCommand {
 	return &EphemeralCommand{
-		cfg:              cfg,
 		containerManager: cm,
 		createCmd:        NewCreateCommand(cfg, cm, progress, prompter),
-		startCmd:         NewStartCommand(cfg, cm),
-		enterCmd:         NewEnterCommand(cfg, cm),
-		rmCmd:            NewRmCommand(cfg, cm, prompter),
+		startCmd:         NewStartCommand(cm),
+		enterCmd:         NewEnterCommand(cm),
+		rmCmd:            NewRmCommand(cm, prompter),
 	}
 }
 

@@ -17,18 +17,16 @@ type RestartOptions struct {
 }
 
 type RestartCommand struct {
-	containerManager containermanager.ContainerManager
-	stopCmd          *StopCommand
-	startCmd         *StartCommand
-	listCmd          *ListCommand
+	stopCmd  *StopCommand
+	startCmd *StartCommand
+	listCmd  *ListCommand
 }
 
 func NewRestartCommand(cfg *config.Values, cm containermanager.ContainerManager) *RestartCommand {
 	return &RestartCommand{
-		containerManager: cm,
-		stopCmd:          NewStopCommand(cfg, cm),
-		startCmd:         NewStartCommand(cfg, cm),
-		listCmd:          NewListCommand(cfg, cm),
+		stopCmd:  NewStopCommand(cm),
+		startCmd: NewStartCommand(cm),
+		listCmd:  NewListCommand(cm),
 	}
 }
 

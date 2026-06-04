@@ -136,7 +136,7 @@ func NewCreateCommand(cfg *config.Values, cm containermanager.ContainerManager, 
 	return &CreateCommand{
 		cfg:              cfg,
 		containerManager: cm,
-		generateEntryCmd: NewGenerateEntryCommand(cfg, NewListCommand(cfg, cm), cm),
+		generateEntryCmd: NewGenerateEntryCommand(NewListCommand(cm), cm),
 		progress:         progress,
 		prompter:         prompter,
 	}

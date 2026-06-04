@@ -27,12 +27,12 @@ func newRestartCommand(cfg *config.Values) *cli.Command {
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return restartAction(ctx, cmd, cfg)
+			return restartAction(ctx, cmd)
 		},
 	}
 }
 
-func restartAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
+func restartAction(ctx context.Context, cmd *cli.Command) error {
 	containerManager, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 	if !ok {
 		return errors.New("container manager not found in context")
@@ -45,18 +45,10 @@ func restartAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) er
 		Verbose:        cmd.Bool("verbose"),
 	}
 
-	restartCmd := commands.NewRestartCommand(cfg, containerManager)
-
-	err := restartCmd.Execute(ctx, options)
-
+	err := commands.NewRestartCommand(containerManager).Execute(ctx, options)
 	if errors.Is(err, commands.ErrEmptyContainerList) {
 		ui.DefaultLogger.Warn("No containers found.")
 		return nil
 	}
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }

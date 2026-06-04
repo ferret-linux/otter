@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
@@ -25,16 +24,13 @@ type EnterOptions struct {
 }
 
 type EnterCommand struct {
-	cfg              *config.Values
 	containerManager containermanager.ContainerManager
 }
 
 func NewEnterCommand(
-	cfg *config.Values,
 	cm containermanager.ContainerManager,
 ) *EnterCommand {
 	return &EnterCommand{
-		cfg:              cfg,
 		containerManager: cm,
 	}
 }

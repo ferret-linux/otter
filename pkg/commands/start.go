@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
@@ -21,10 +20,10 @@ type StartCommand struct {
 	listCmd          *ListCommand
 }
 
-func NewStartCommand(cfg *config.Values, cm containermanager.ContainerManager) *StartCommand {
+func NewStartCommand(cm containermanager.ContainerManager) *StartCommand {
 	return &StartCommand{
 		containerManager: cm,
-		listCmd:          NewListCommand(cfg, cm),
+		listCmd:          NewListCommand(cm),
 	}
 }
 

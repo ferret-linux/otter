@@ -11,7 +11,6 @@ import (
 	"strings"
 
 	"github.com/ferret-linux/otter/internal/userenv"
-	pkgconfig "github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
@@ -58,14 +57,12 @@ type GenerateEntryOptions struct {
 }
 
 type GenerateEntryCommand struct {
-	cfg              *pkgconfig.Values
 	listCommand      *ListCommand
 	containerManager containermanager.ContainerManager
 }
 
-func NewGenerateEntryCommand(cfg *pkgconfig.Values, listCommand *ListCommand, cm containermanager.ContainerManager) *GenerateEntryCommand {
+func NewGenerateEntryCommand(listCommand *ListCommand, cm containermanager.ContainerManager) *GenerateEntryCommand {
 	return &GenerateEntryCommand{
-		cfg:              cfg,
 		listCommand:      listCommand,
 		containerManager: cm,
 	}

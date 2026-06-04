@@ -54,12 +54,12 @@ func newEnterCommand(cfg *config.Values) *cli.Command {
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return enterAction(ctx, cmd, cfg)
+			return enterAction(ctx, cmd)
 		},
 	}
 }
 
-func enterAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
+func enterAction(ctx context.Context, cmd *cli.Command) error {
 	containerManager, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 	if !ok {
 		return errors.New("container manager not found in context")
@@ -82,11 +82,9 @@ func enterAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) erro
 		Verbose:         cmd.Bool("verbose"),
 	}
 
-	enterCmd := commands.NewEnterCommand(cfg, containerManager)
-	_, err := enterCmd.Execute(ctx, options)
+	_, err := commands.NewEnterCommand(containerManager).Execute(ctx, options)
 	if err != nil {
 		return fmt.Errorf("failed to execute enter command: %w", err)
 	}
-
 	return nil
 }

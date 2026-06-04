@@ -26,16 +26,15 @@ func newLockCommand(cfg *config.Values) *cli.Command {
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return lockAction(ctx, cmd, cfg)
+			return lockAction(ctx, cmd)
 		},
 	}
 }
 
-func lockAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
+func lockAction(ctx context.Context, cmd *cli.Command) error {
 	cm := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 
-	lockCmd := commands.NewLockCommand(cfg, cm)
-	if err := lockCmd.Execute(ctx, commands.LockOptions{
+	if err := commands.NewLockCommand(cm).Execute(ctx, commands.LockOptions{
 		ContainerNames: cmd.StringSlice("name"),
 		All:            cmd.Bool("all"),
 		Verbose:        cmd.Bool("verbose"),
@@ -43,6 +42,5 @@ func lockAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error
 	}); err != nil {
 		return fmt.Errorf("failed to lock container: %w", err)
 	}
-
 	return nil
 }

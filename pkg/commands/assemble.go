@@ -31,7 +31,6 @@ type AssembleOptions struct {
 }
 
 type AssembleCommand struct {
-	cfg           *config.Values
 	createCmd     *CreateCommand
 	rmCmd         *RmCommand
 	lockCmd       *LockCommand
@@ -53,17 +52,16 @@ func NewAssembleCommand(
 ) *AssembleCommand {
 	cmRoot := cm.CloneAsRoot()
 	return &AssembleCommand{
-		cfg:           cfg,
 		createCmd:     NewCreateCommand(cfg, cm, ui.NewDevNullProgress(), prompter),
-		rmCmd:         NewRmCommand(cfg, cm, prompter),
-		lockCmd:       NewLockCommand(cfg, cm),
-		startCmd:      NewStartCommand(cfg, cm),
-		enterCmd:      NewEnterCommand(cfg, cm),
+		rmCmd:         NewRmCommand(cm, prompter),
+		lockCmd:       NewLockCommand(cm),
+		startCmd:      NewStartCommand(cm),
+		enterCmd:      NewEnterCommand(cm),
 		createCmdRoot: NewCreateCommand(cfg, cmRoot, ui.NewDevNullProgress(), prompter),
-		rmCmdRoot:     NewRmCommand(cfg, cmRoot, prompter),
-		lockCmdRoot:   NewLockCommand(cfg, cmRoot),
-		startCmdRoot:  NewStartCommand(cfg, cmRoot),
-		enterCmdRoot:  NewEnterCommand(cfg, cmRoot),
+		rmCmdRoot:     NewRmCommand(cmRoot, prompter),
+		lockCmdRoot:   NewLockCommand(cmRoot),
+		startCmdRoot:  NewStartCommand(cmRoot),
+		enterCmdRoot:  NewEnterCommand(cmRoot),
 		progress:      progress,
 	}
 }
@@ -117,7 +115,6 @@ func (ac *AssembleCommand) deleteItem(ctx context.Context, item manifest.Item, d
 		NoTTY:          dryRun,
 		Force:          true,
 		All:            false,
-		RemoveHome:     false,
 		ContainerNames: []string{item.Name},
 	}
 

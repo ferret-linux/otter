@@ -6,7 +6,6 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 )
 
@@ -15,13 +14,11 @@ type ListResult struct {
 }
 
 type ListCommand struct {
-	cfg              *config.Values
 	containerManager containermanager.ContainerManager
 }
 
-func NewListCommand(cfg *config.Values, cm containermanager.ContainerManager) *ListCommand {
+func NewListCommand(cm containermanager.ContainerManager) *ListCommand {
 	return &ListCommand{
-		cfg:              cfg,
 		containerManager: cm,
 	}
 }

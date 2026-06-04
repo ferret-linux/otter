@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
@@ -24,10 +23,10 @@ type UnlockCommand struct {
 	listCmd          *ListCommand
 }
 
-func NewUnlockCommand(cfg *config.Values, cm containermanager.ContainerManager) *UnlockCommand {
+func NewUnlockCommand(cm containermanager.ContainerManager) *UnlockCommand {
 	return &UnlockCommand{
 		containerManager: cm,
-		listCmd:          NewListCommand(cfg, cm),
+		listCmd:          NewListCommand(cm),
 	}
 }
 

@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/ferret-linux/otter/internal/userenv"
-	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
@@ -20,7 +19,6 @@ type RmResult struct {
 }
 
 type RmCommand struct {
-	cfg              *config.Values
 	containerManager containermanager.ContainerManager
 	listCmd          *ListCommand
 	generateEntryCmd *GenerateEntryCommand
@@ -40,14 +38,12 @@ type RmOptions struct {
 }
 
 func NewRmCommand(
-	cfg *config.Values,
 	cm containermanager.ContainerManager,
 	prompter *ui.Prompter,
 ) *RmCommand {
-	listCmd := NewListCommand(cfg, cm)
-	generateEntryCmd := NewGenerateEntryCommand(cfg, listCmd, cm)
+	listCmd := NewListCommand(cm)
+	generateEntryCmd := NewGenerateEntryCommand(listCmd, cm)
 	return &RmCommand{
-		cfg:              cfg,
 		containerManager: cm,
 		listCmd:          listCmd,
 		generateEntryCmd: generateEntryCmd,
@@ -80,7 +76,7 @@ func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, 
 			ui.DefaultLogger.Error("'%s' is locked, run 'otter unlock %s' first", currentOtterContainer.Name, currentOtterContainer.Name)
 			continue
 		}
-		err := c.removeContainer(ctx, currentOtterContainer, options.Force, options.NoTTY, options.Verbose, userHome, options.DryRun, options.Root)
+		err := c.removeContainer(ctx, currentOtterContainer, options.Force, options.NoTTY, options.RemoveHome, options.Verbose, userHome, options.DryRun, options.Root)
 		if err != nil {
 			ui.DefaultLogger.Error("failed deleting %s: %s", currentOtterContainer.Name, err)
 		} else {
@@ -116,6 +112,7 @@ func (c *RmCommand) removeContainer(
 	container containermanager.Container,
 	force bool,
 	noTTY bool,
+	removeHome bool,
 	verbose bool,
 	userHome string,
 	dryRun bool,
@@ -135,15 +132,13 @@ func (c *RmCommand) removeContainer(
 		return fmt.Errorf("error inspecting the container: %w", err)
 	}
 
-	removeHome := false
-	if !noTTY && inspectOutput.ContainerHome != userHome {
+	if !removeHome && !noTTY && inspectOutput.ContainerHome != userHome {
 		question := fmt.Sprintf(
 			"Do you really want to remove custom home of container %s (%s)?",
 			container.Name,
 			inspectOutput.ContainerHome,
 		)
-		answer := c.prompter.Prompt(question, false)
-		removeHome = answer
+		removeHome = c.prompter.Prompt(question, false)
 	}
 
 	cmOptions := containermanager.RmOptions{

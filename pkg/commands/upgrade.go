@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	insideContainer "github.com/ferret-linux/otter/internal/inside-container"
-	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
@@ -22,7 +21,6 @@ type UpgradeOptions struct {
 }
 
 type UpgradeCommand struct {
-	cfg              *config.Values
 	containerManager containermanager.ContainerManager
 	listCmd          *ListCommand
 	startCmd         *StartCommand
@@ -30,16 +28,13 @@ type UpgradeCommand struct {
 }
 
 func NewUpgradeCommand(
-	cfg *config.Values,
 	cm containermanager.ContainerManager,
-	progress *ui.Progress,
 ) *UpgradeCommand {
 	return &UpgradeCommand{
-		cfg:              cfg,
 		containerManager: cm,
-		listCmd:          NewListCommand(cfg, cm),
-		startCmd:         NewStartCommand(cfg, cm),
-		enterCmd:         NewEnterCommand(cfg, cm),
+		listCmd:          NewListCommand(cm),
+		startCmd:         NewStartCommand(cm),
+		enterCmd:         NewEnterCommand(cm),
 	}
 }
 

@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"os"
 
 	"github.com/urfave/cli/v3"
 
@@ -32,12 +31,12 @@ func newUpgradeCommand(cfg *config.Values) *cli.Command {
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return upgradeAction(ctx, cmd, cfg)
+			return upgradeAction(ctx, cmd)
 		},
 	}
 }
 
-func upgradeAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
+func upgradeAction(ctx context.Context, cmd *cli.Command) error {
 	containerManager, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 	if !ok {
 		return errors.New("container manager not found in context")
@@ -51,20 +50,13 @@ func upgradeAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) er
 		Verbose:        cmd.Bool("verbose"),
 	}
 
-	progress := ui.NewProgress(os.Stderr)
-
-	upgradeCmd := commands.NewUpgradeCommand(cfg, containerManager, progress)
-
-	err := upgradeCmd.Execute(ctx, options)
-
+	err := commands.NewUpgradeCommand(containerManager).Execute(ctx, options)
 	if errors.Is(err, commands.ErrEmptyContainerList) {
 		ui.DefaultLogger.Warn("No containers found.")
 		return nil
 	}
-
 	if err != nil {
 		return fmt.Errorf("failed to upgrade containers: %w", err)
 	}
-
 	return nil
 }

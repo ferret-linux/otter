@@ -37,12 +37,12 @@ func newGenerateEntryCommand(cfg *config.Values) *cli.Command {
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return generateEntryAction(ctx, cmd, cfg)
+			return generateEntryAction(ctx, cmd)
 		},
 	}
 }
 
-func generateEntryAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
+func generateEntryAction(ctx context.Context, cmd *cli.Command) error {
 	// The current executable is used as otter path
 	otterPath, err := os.Executable()
 	if err != nil {
@@ -68,12 +68,5 @@ func generateEntryAction(ctx context.Context, cmd *cli.Command, cfg *config.Valu
 		opts.Icon = cmd.String("icon")
 	}
 
-	genEntryCmd := commands.NewGenerateEntryCommand(cfg, commands.NewListCommand(cfg, containerManager), containerManager)
-
-	err = genEntryCmd.Execute(ctx, opts)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return commands.NewGenerateEntryCommand(commands.NewListCommand(containerManager), containerManager).Execute(ctx, opts)
 }

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
@@ -27,10 +26,10 @@ type LockCommand struct {
 	listCmd          *ListCommand
 }
 
-func NewLockCommand(cfg *config.Values, cm containermanager.ContainerManager) *LockCommand {
+func NewLockCommand(cm containermanager.ContainerManager) *LockCommand {
 	return &LockCommand{
 		containerManager: cm,
-		listCmd:          NewListCommand(cfg, cm),
+		listCmd:          NewListCommand(cm),
 	}
 }
 

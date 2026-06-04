@@ -45,12 +45,12 @@ func newRmCommand(cfg *config.Values) *cli.Command {
 		},
 
 		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return rmAction(ctx, cmd, cfg)
+			return rmAction(ctx, cmd)
 		},
 	}
 }
 
-func rmAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
+func rmAction(ctx context.Context, cmd *cli.Command) error {
 	containerManager, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 	if !ok {
 		return errors.New("container manager not found in context")
@@ -70,11 +70,8 @@ func rmAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
 
 	prompter := ui.NewPrompter(*bufio.NewReader(os.Stdin), os.Stdout)
 
-	rmCmd := commands.NewRmCommand(cfg, containerManager, prompter)
-	_, err := rmCmd.Execute(ctx, options)
-	if err != nil {
+	if _, err := commands.NewRmCommand(containerManager, prompter).Execute(ctx, options); err != nil {
 		return fmt.Errorf("failed to execute rm command: %w", err)
 	}
-
 	return nil
 }

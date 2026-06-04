@@ -26,26 +26,21 @@ func newStartCommand(cfg *config.Values) *cli.Command {
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return startAction(ctx, cmd, cfg)
+			return startAction(ctx, cmd)
 		},
 	}
 }
 
-func startAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
+func startAction(ctx context.Context, cmd *cli.Command) error {
 	containerManager, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 	if !ok {
 		return errors.New("container manager not found in context")
 	}
 
-	startCmd := commands.NewStartCommand(cfg, containerManager)
-	if err := startCmd.Execute(ctx, &commands.StartOptions{
+	return commands.NewStartCommand(containerManager).Execute(ctx, &commands.StartOptions{
 		ContainerNames: cmd.StringSlice("name"),
 		All:            cmd.Bool("all"),
 		DryRun:         cmd.Bool("dry-run"),
 		Verbose:        cmd.Bool("verbose"),
-	}); err != nil {
-		return err
-	}
-
-	return nil
+	})
 }

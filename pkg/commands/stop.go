@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
@@ -25,10 +24,10 @@ type StopOptions struct {
 
 var ErrEmptyContainerList = errors.New("cannot find containers to stop")
 
-func NewStopCommand(cfg *config.Values, containerManager containermanager.ContainerManager) *StopCommand {
+func NewStopCommand(cm containermanager.ContainerManager) *StopCommand {
 	return &StopCommand{
-		containerManager: containerManager,
-		listCmd:          NewListCommand(cfg, containerManager),
+		containerManager: cm,
+		listCmd:          NewListCommand(cm),
 	}
 }
 
