@@ -72,7 +72,7 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 	case len(opts.ContainerNames) > 0:
 		containerNames = opts.ContainerNames
 	default:
-		return ErrUpgradeNoContainerSpecified
+		return fmt.Errorf("please specify a container name with --name/-n")
 	}
 
 	var lastErr error

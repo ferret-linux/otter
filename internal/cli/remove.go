@@ -50,7 +50,7 @@ func newRmCommand(cfg *config.Values) *cli.Command {
 	}
 }
 
-func rmAction(ctx context.Context, cmd *cli.Command, _ *config.Values) error {
+func rmAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
 	containerManager, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 	if !ok {
 		return errors.New("container manager not found in context")
