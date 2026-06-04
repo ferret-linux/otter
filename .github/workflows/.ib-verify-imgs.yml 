@@ -4,7 +4,7 @@
 #    https://github.com/ferret-linux/otter
 # Copyright (C) 2026 otter contributors
 
-name: .ib-push
+name: .ib-verify
 
 on:
   workflow_call:
@@ -38,15 +38,15 @@ jobs:
           matrix=$(jq -c '[.[] | select(.enabled == true and (.arches | contains(["arm64"])))]' images/images.json)
           echo "matrix=$matrix" >> $GITHUB_OUTPUT
 
-  push-amd64:
+  verify-amd64:
     needs: load-matrix-amd64
     runs-on: ubuntu-24.04
     permissions:
       contents: read
-      packages: write
+      packages: read
 
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         include: ${{ fromJson(needs.load-matrix-amd64.outputs.matrix) }}
 
@@ -54,39 +54,31 @@ jobs:
       - name: Login to GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Download Artifact
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
-        with:
-          name: image-amd64-${{ matrix.name }}-${{ matrix.tag }}
-          path: /tmp
-
-      - name: Verify Checksum
+      - name: Pull arch-specific image
         run: |
-          sha256sum -c /tmp/${{ matrix.name }}-${{ matrix.tag }}-amd64.tar.sha256
+          podman pull ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64
 
-      - name: Load Image
+      - name: Run arch-specific image
         run: |
-          podman image load \
-            -i /tmp/${{ matrix.name }}-${{ matrix.tag }}-amd64.tar
+          podman run --rm ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 echo ok
 
-      - name: Push
+      - name: Pull manifest image
         run: |
-          for i in 1 2 3; do
-            podman push \
-              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 && break
-            echo "Attempt $i/3 failed, retrying in 15s..."
-            sleep 15
-          done
+          podman pull ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}
 
-  push-arm64:
+      - name: Run manifest image
+        run: |
+          podman run --rm ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} echo ok
+
+  verify-arm64:
     needs: load-matrix-arm64
     runs-on: ubuntu-24.04-arm
     permissions:
       contents: read
-      packages: write
+      packages: read
 
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         include: ${{ fromJson(needs.load-matrix-arm64.outputs.matrix) }}
 
@@ -94,26 +86,18 @@ jobs:
       - name: Login to GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Download Artifact
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
-        with:
-          name: image-arm64-${{ matrix.name }}-${{ matrix.tag }}
-          path: /tmp
-
-      - name: Verify Checksum
+      - name: Pull arch-specific image
         run: |
-          sha256sum -c /tmp/${{ matrix.name }}-${{ matrix.tag }}-arm64.tar.sha256
+          podman pull ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64
 
-      - name: Load Image
+      - name: Run arch-specific image
         run: |
-          podman image load \
-            -i /tmp/${{ matrix.name }}-${{ matrix.tag }}-arm64.tar
+          podman run --rm ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64 echo ok
 
-      - name: Push
+      - name: Pull manifest image
         run: |
-          for i in 1 2 3; do
-            podman push \
-              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64 && break
-            echo "Attempt $i/3 failed, retrying in 15s..."
-            sleep 15
-          done
+          podman pull ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}
+
+      - name: Run manifest image
+        run: |
+          podman run --rm ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} echo ok

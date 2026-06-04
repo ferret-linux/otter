@@ -53,11 +53,15 @@ jobs:
 
       - name: Build
         run: |
-          podman build \
-            --build-arg IMAGE=${{ matrix.image }} \
-            --file images/${{ matrix.containerfile }} \
-            --tag ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 \
-            .
+          for i in 1 2 3; do
+            podman build \
+              --build-arg IMAGE=${{ matrix.image }} \
+              --file images/${{ matrix.containerfile }} \
+              --tag ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 \
+              . && break
+            echo "Attempt $i/3 failed, retrying in 30s..."
+            sleep 30
+          done
 
       - name: Save Image
         run: |

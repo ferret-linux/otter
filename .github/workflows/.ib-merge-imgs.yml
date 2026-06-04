@@ -42,17 +42,22 @@ jobs:
 
       - name: Create and Push Manifest
         run: |
-          ARCHES='${{ toJson(matrix.arches) }}'
-          if echo "$ARCHES" | jq -e 'contains(["arm64"])' > /dev/null; then
-            podman manifest create \
+          for i in 1 2 3; do
+            ARCHES='${{ toJson(matrix.arches) }}'
+            if echo "$ARCHES" | jq -e 'contains(["arm64"])' > /dev/null; then
+              podman manifest create \
+                ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} \
+                ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 \
+                ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64
+            else
+              podman manifest create \
+                ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} \
+                ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64
+            fi
+            podman manifest push \
               ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} \
-              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 \
-              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64
-          else
-            podman manifest create \
-              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} \
-              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64
-          fi
-          podman manifest push \
-            ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} \
-            docker://ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}
+              docker://ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} && break
+            echo "Attempt $i/3 failed, retrying in 15s..."
+            podman manifest rm ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} 2>/dev/null || true
+            sleep 15
+          done

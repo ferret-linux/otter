@@ -38,3 +38,18 @@ jobs:
     permissions:
       contents: read
       packages: write
+
+  verify:
+    needs: [merge]
+    uses: ./.github/workflows/.ib-verify-imgs.yml
+    permissions:
+      contents: read
+      packages: read
+
+  purge:
+    needs: [verify]
+    if: failure()
+    uses: ./.github/workflows/.ib-purge-imgs.yml
+    permissions:
+      contents: read
+      packages: write

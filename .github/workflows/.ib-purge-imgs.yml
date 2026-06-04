@@ -8,6 +8,7 @@ name: .ib-purge
 
 on:
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   purge:
