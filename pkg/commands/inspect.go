@@ -15,13 +15,11 @@ type InspectOptions struct {
 }
 
 type InspectCommand struct {
-	cfg              *config.Values
 	containerManager containermanager.ContainerManager
 }
 
-func NewInspectCommand(cfg *config.Values, cm containermanager.ContainerManager) *InspectCommand {
+func NewInspectCommand(_ *config.Values, cm containermanager.ContainerManager) *InspectCommand {
 	return &InspectCommand{
-		cfg:              cfg,
 		containerManager: cm,
 	}
 }
@@ -41,21 +39,20 @@ func boolToSharedStr(b bool) string {
 }
 
 func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error {
-	containerName := opts.ContainerName
-	if containerName == "" {
-		containerName = c.cfg.DefaultContainerName
+	if opts.ContainerName == "" {
+		return fmt.Errorf("please specify a container name with --name/-n")
 	}
 
-	if !c.containerManager.Exists(ctx, containerName) {
-		return fmt.Errorf("container '%s' not found", containerName)
+	if !c.containerManager.Exists(ctx, opts.ContainerName) {
+		return fmt.Errorf("container '%s' not found", opts.ContainerName)
 	}
 
-	result, err := c.containerManager.InspectContainer(ctx, containerName)
+	result, err := c.containerManager.InspectContainer(ctx, opts.ContainerName)
 	if err != nil {
 		return fmt.Errorf("failed to inspect container: %w", err)
 	}
 
-	locked := isLocked(ctx, c.containerManager, containerName)
+	locked := isLocked(ctx, c.containerManager, opts.ContainerName)
 
 	// Trim Created timestamp to readable format
 	created := result.ContainerCreated
@@ -73,7 +70,7 @@ func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error
 		cpuThreads = fmt.Sprintf("%d threads", result.CPUThreads)
 	}
 
-	ui.DefaultLogger.Info("Name:        %s", containerName)
+	ui.DefaultLogger.Info("Name:        %s", opts.ContainerName)
 	ui.DefaultLogger.Info("ID:          %s", result.ContainerID)
 	ui.DefaultLogger.Info("Created:     %s", created)
 	ui.DefaultLogger.Info("Status:      %s", result.ContainerStatus)

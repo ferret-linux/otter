@@ -230,8 +230,8 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 		err := c.generateEntryCmd.Execute(
 			ctx,
 			&GenerateEntryOptions{
-				ContainerName: containerName,
-				Root:          opts.Rootful,
+				ContainerNames: []string{containerName},
+				Root:           opts.Rootful,
 			},
 		)
 		if err != nil {

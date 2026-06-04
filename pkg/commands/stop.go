@@ -12,7 +12,6 @@ import (
 )
 
 type StopCommand struct {
-	cfg              *config.Values
 	containerManager containermanager.ContainerManager
 	listCmd          *ListCommand
 }
@@ -28,7 +27,6 @@ var ErrEmptyContainerList = errors.New("cannot find containers to stop")
 
 func NewStopCommand(cfg *config.Values, containerManager containermanager.ContainerManager) *StopCommand {
 	return &StopCommand{
-		cfg:              cfg,
 		containerManager: containerManager,
 		listCmd:          NewListCommand(cfg, containerManager),
 	}
@@ -52,7 +50,7 @@ func (c *StopCommand) Execute(ctx context.Context, opts *StopOptions) error {
 	case len(opts.ContainerNames) > 0:
 		containerNames = opts.ContainerNames
 	default:
-		containerNames = []string{c.cfg.DefaultContainerName}
+		return fmt.Errorf("please specify a container name with --name/-n")
 	}
 
 	if opts.Verbose {

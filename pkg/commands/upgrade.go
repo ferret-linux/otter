@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	insideContainer "github.com/ferret-linux/otter/internal/inside-container"
@@ -29,8 +28,6 @@ type UpgradeCommand struct {
 	startCmd         *StartCommand
 	enterCmd         *EnterCommand
 }
-
-var ErrUpgradeNoContainerSpecified = errors.New("please specify the name of the container")
 
 func NewUpgradeCommand(
 	cfg *config.Values,
@@ -112,8 +109,8 @@ func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string, dryR
 	}
 
 	if err := c.startCmd.Execute(ctx, &StartOptions{
-		ContainerName: name,
-		DryRun:        dryRun,
+		ContainerNames: []string{name},
+		DryRun:         dryRun,
 	}); err != nil {
 		return err
 	}

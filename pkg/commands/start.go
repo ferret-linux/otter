@@ -10,21 +10,19 @@ import (
 )
 
 type StartOptions struct {
-	ContainerName string
-	All           bool
-	DryRun        bool
-	Verbose       bool
+	ContainerNames []string
+	All            bool
+	DryRun         bool
+	Verbose        bool
 }
 
 type StartCommand struct {
-	cfg              *config.Values
 	containerManager containermanager.ContainerManager
 	listCmd          *ListCommand
 }
 
 func NewStartCommand(cfg *config.Values, cm containermanager.ContainerManager) *StartCommand {
 	return &StartCommand{
-		cfg:              cfg,
 		containerManager: cm,
 		listCmd:          NewListCommand(cfg, cm),
 	}
@@ -47,11 +45,15 @@ func (c *StartCommand) Execute(ctx context.Context, opts *StartOptions) error {
 		return nil
 	}
 
-	containerName := opts.ContainerName
-	if containerName == "" {
-		containerName = c.cfg.DefaultContainerName
+	if len(opts.ContainerNames) == 0 {
+		return fmt.Errorf("please specify a container name with --name/-n")
 	}
-	return c.startOne(ctx, containerName, opts)
+	for _, name := range opts.ContainerNames {
+		if err := c.startOne(ctx, name, opts); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (c *StartCommand) startOne(ctx context.Context, containerName string, opts *StartOptions) error {

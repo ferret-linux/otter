@@ -13,10 +13,13 @@ import (
 
 func newJournalCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
-		Name:      "journal",
-		Aliases:   []string{"logs"},
-		ArgsUsage: "CONTAINER",
+		Name:    "journal",
+		Aliases: []string{"logs"},
 		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:    "name",
+				Aliases: []string{"n"},
+			},
 			&cli.BoolFlag{
 				Name:    "follow",
 				Aliases: []string{"f"},
@@ -48,14 +51,9 @@ func journalAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) er
 		return errors.New("container manager not found in context")
 	}
 
-	containerName := ""
-	if cmd.NArg() > 0 {
-		containerName = cmd.Args().First()
-	}
-
 	journalCmd := commands.NewJournalCommand(cfg, cm)
 	return journalCmd.Execute(ctx, commands.JournalOptions{
-		ContainerName: containerName,
+		ContainerName: cmd.String("name"),
 		Follow:        cmd.Bool("follow"),
 		Since:         cmd.String("since"),
 		Until:         cmd.String("until"),

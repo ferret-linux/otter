@@ -13,9 +13,18 @@ import (
 
 func newLockCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
-		Name:      "lock",
-		Aliases:   []string{"lck"},
-		ArgsUsage: "CONTAINER",
+		Name:    "lock",
+		Aliases: []string{"lck"},
+		Flags: []cli.Flag{
+			&cli.StringSliceFlag{
+				Name:    "name",
+				Aliases: []string{"n"},
+			},
+			&cli.BoolFlag{
+				Name:    "all",
+				Aliases: []string{"a"},
+			},
+		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			return lockAction(ctx, cmd, cfg)
 		},
@@ -25,15 +34,12 @@ func newLockCommand(cfg *config.Values) *cli.Command {
 func lockAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
 	cm := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 
-	if cmd.NArg() == 0 {
-		return fmt.Errorf("please specify the name of the container")
-	}
-
 	lockCmd := commands.NewLockCommand(cfg, cm)
 	if err := lockCmd.Execute(ctx, commands.LockOptions{
-		ContainerName: cmd.Args().First(),
-		Verbose:       cmd.Bool("verbose"),
-		DryRun:        cmd.Bool("dry-run"),
+		ContainerNames: cmd.StringSlice("name"),
+		All:            cmd.Bool("all"),
+		Verbose:        cmd.Bool("verbose"),
+		DryRun:         cmd.Bool("dry-run"),
 	}); err != nil {
 		return fmt.Errorf("failed to lock container: %w", err)
 	}

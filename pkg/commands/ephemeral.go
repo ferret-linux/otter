@@ -88,8 +88,8 @@ func (c *EphemeralCommand) Execute(ctx context.Context, opts EphemeralOptions) e
 	}()
 
 	if err := c.startCmd.Execute(ctx, &StartOptions{
-		ContainerName: name,
-		DryRun:        opts.DryRun,
+		ContainerNames: []string{name},
+		DryRun:         opts.DryRun,
 	}); err != nil {
 		return fmt.Errorf("ephemeral: %w", err)
 	}

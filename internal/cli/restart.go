@@ -17,6 +17,10 @@ func newRestartCommand(cfg *config.Values) *cli.Command {
 		Name:    "restart",
 		Aliases: []string{"reboot"},
 		Flags: []cli.Flag{
+			&cli.StringSliceFlag{
+				Name:    "name",
+				Aliases: []string{"n"},
+			},
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
@@ -35,7 +39,7 @@ func restartAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) er
 	}
 
 	options := &commands.RestartOptions{
-		ContainerNames: cmd.Args().Slice(),
+		ContainerNames: cmd.StringSlice("name"),
 		All:            cmd.Bool("all"),
 		DryRun:         cmd.Bool("dry-run"),
 		Verbose:        cmd.Bool("verbose"),

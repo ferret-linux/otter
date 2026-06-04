@@ -19,6 +19,10 @@ func newUpgradeCommand(cfg *config.Values) *cli.Command {
 		Name:    "upgrade",
 		Aliases: []string{"sync"},
 		Flags: []cli.Flag{
+			&cli.StringSliceFlag{
+				Name:    "name",
+				Aliases: []string{"n"},
+			},
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
@@ -40,7 +44,7 @@ func upgradeAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) er
 	}
 
 	options := &commands.UpgradeOptions{
-		ContainerNames: cmd.Args().Slice(),
+		ContainerNames: cmd.StringSlice("name"),
 		All:            cmd.Bool("all"),
 		Running:        cmd.Bool("running"),
 		DryRun:         cmd.Bool("dry-run"),
@@ -56,12 +60,6 @@ func upgradeAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) er
 	if errors.Is(err, commands.ErrEmptyContainerList) {
 		ui.DefaultLogger.Warn("No containers found.")
 		return nil
-	}
-
-	if errors.Is(err, commands.ErrUpgradeNoContainerSpecified) {
-		ui.DefaultLogger.Warn("Please specify the name of the container.")
-		//nolint:wrapcheck // sentinel returned as-is so caller exits non-zero
-		return err
 	}
 
 	if err != nil {

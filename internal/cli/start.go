@@ -16,7 +16,7 @@ func newStartCommand(cfg *config.Values) *cli.Command {
 		Name:    "start",
 		Aliases: []string{"boot"},
 		Flags: []cli.Flag{
-			&cli.StringFlag{
+			&cli.StringSliceFlag{
 				Name:    "name",
 				Aliases: []string{"n"},
 			},
@@ -37,17 +37,12 @@ func startAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) erro
 		return errors.New("container manager not found in context")
 	}
 
-	containerName := cmd.String("name")
-	if containerName == "" && cmd.Args().Len() > 0 {
-		containerName = cmd.Args().First()
-	}
-
 	startCmd := commands.NewStartCommand(cfg, containerManager)
 	if err := startCmd.Execute(ctx, &commands.StartOptions{
-		ContainerName: containerName,
-		All:           cmd.Bool("all"),
-		DryRun:        cmd.Bool("dry-run"),
-		Verbose:       cmd.Bool("verbose"),
+		ContainerNames: cmd.StringSlice("name"),
+		All:            cmd.Bool("all"),
+		DryRun:         cmd.Bool("dry-run"),
+		Verbose:        cmd.Bool("verbose"),
 	}); err != nil {
 		return err
 	}

@@ -218,7 +218,7 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item, d
 		if item.Root {
 			lockCmd = ac.lockCmdRoot
 		}
-		if err := lockCmd.Execute(ctx, LockOptions{ContainerName: item.Name}); err != nil {
+		if err := lockCmd.Execute(ctx, LockOptions{ContainerNames: []string{item.Name}}); err != nil {
 			ac.progress.Fail()
 			return err
 		}
@@ -259,7 +259,7 @@ func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) err
 		enterCmd = ac.enterCmdRoot
 	}
 
-	if err := startCmd.Execute(ctx, &StartOptions{ContainerName: item.Name}); err != nil {
+	if err := startCmd.Execute(ctx, &StartOptions{ContainerNames: []string{item.Name}}); err != nil {
 		return err
 	}
 	if item.StartNow {

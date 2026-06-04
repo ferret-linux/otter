@@ -18,28 +18,25 @@ type JournalOptions struct {
 }
 
 type JournalCommand struct {
-	cfg              *config.Values
 	containerManager containermanager.ContainerManager
 }
 
-func NewJournalCommand(cfg *config.Values, cm containermanager.ContainerManager) *JournalCommand {
+func NewJournalCommand(_ *config.Values, cm containermanager.ContainerManager) *JournalCommand {
 	return &JournalCommand{
-		cfg:              cfg,
 		containerManager: cm,
 	}
 }
 
 func (c *JournalCommand) Execute(ctx context.Context, opts JournalOptions) error {
-	containerName := opts.ContainerName
-	if containerName == "" {
-		containerName = c.cfg.DefaultContainerName
+	if opts.ContainerName == "" {
+		return fmt.Errorf("please specify a container name with --name/-n")
 	}
 
-	if !c.containerManager.Exists(ctx, containerName) {
-		return fmt.Errorf("container '%s' not found", containerName)
+	if !c.containerManager.Exists(ctx, opts.ContainerName) {
+		return fmt.Errorf("container '%s' not found", opts.ContainerName)
 	}
 
-	return c.containerManager.Journal(ctx, containerName, containermanager.JournalOptions{
+	return c.containerManager.Journal(ctx, opts.ContainerName, containermanager.JournalOptions{
 		Follow:     opts.Follow,
 		Since:      opts.Since,
 		Until:      opts.Until,

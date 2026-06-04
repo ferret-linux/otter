@@ -17,7 +17,6 @@ type RestartOptions struct {
 }
 
 type RestartCommand struct {
-	cfg              *config.Values
 	containerManager containermanager.ContainerManager
 	stopCmd          *StopCommand
 	startCmd         *StartCommand
@@ -26,7 +25,6 @@ type RestartCommand struct {
 
 func NewRestartCommand(cfg *config.Values, cm containermanager.ContainerManager) *RestartCommand {
 	return &RestartCommand{
-		cfg:              cfg,
 		containerManager: cm,
 		stopCmd:          NewStopCommand(cfg, cm),
 		startCmd:         NewStartCommand(cfg, cm),
@@ -52,7 +50,7 @@ func (c *RestartCommand) Execute(ctx context.Context, opts *RestartOptions) erro
 	case len(opts.ContainerNames) > 0:
 		containerNames = opts.ContainerNames
 	default:
-		containerNames = []string{c.cfg.DefaultContainerName}
+		return fmt.Errorf("please specify a container name with --name/-n")
 	}
 
 	for _, name := range containerNames {
@@ -67,9 +65,9 @@ func (c *RestartCommand) Execute(ctx context.Context, opts *RestartOptions) erro
 			return fmt.Errorf("failed to stop '%s': %w", name, err)
 		}
 		if err := c.startCmd.Execute(ctx, &StartOptions{
-			ContainerName: name,
-			DryRun:        opts.DryRun,
-			Verbose:       opts.Verbose,
+			ContainerNames: []string{name},
+			DryRun:         opts.DryRun,
+			Verbose:        opts.Verbose,
 		}); err != nil {
 			return fmt.Errorf("failed to start '%s': %w", name, err)
 		}

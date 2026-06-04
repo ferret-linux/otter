@@ -14,41 +14,71 @@ import (
 const lockFilePath = "/usr/lib/otter/container.lock"
 
 var ErrAlreadyLocked = errors.New("container is already locked")
-var ErrContainerNotFound = errors.New("container not found")
 
 type LockOptions struct {
-	ContainerName string
-	Verbose       bool
-	DryRun        bool
+	ContainerNames []string
+	All            bool
+	Verbose        bool
+	DryRun         bool
 }
 
 type LockCommand struct {
-	cfg              *config.Values
 	containerManager containermanager.ContainerManager
+	listCmd          *ListCommand
 }
 
 func NewLockCommand(cfg *config.Values, cm containermanager.ContainerManager) *LockCommand {
 	return &LockCommand{
-		cfg:              cfg,
 		containerManager: cm,
+		listCmd:          NewListCommand(cfg, cm),
 	}
 }
 
 func (c *LockCommand) Execute(ctx context.Context, opts LockOptions) error {
-	if !c.containerManager.Exists(ctx, opts.ContainerName) {
-		return fmt.Errorf("container '%s' not found", opts.ContainerName)
+	var containerNames []string
+	switch {
+	case opts.All:
+		listResult, err := c.listCmd.Execute(ctx)
+		if err != nil {
+			return fmt.Errorf("failed to list containers: %w", err)
+		}
+		if len(listResult.Containers) == 0 {
+			return ErrEmptyContainerList
+		}
+		for _, container := range listResult.Containers {
+			containerNames = append(containerNames, container.Name)
+		}
+	case len(opts.ContainerNames) > 0:
+		containerNames = opts.ContainerNames
+	default:
+		return fmt.Errorf("please specify a container name with --name/-n")
 	}
 
-	if isLocked(ctx, c.containerManager, opts.ContainerName) {
-		return fmt.Errorf("'%s' %w", opts.ContainerName, ErrAlreadyLocked)
+	var lastErr error
+	for _, name := range containerNames {
+		if err := c.lockOne(ctx, name, opts); err != nil {
+			ui.DefaultLogger.Error("failed to lock '%s': %s", name, err)
+			lastErr = err
+		}
+	}
+	return lastErr
+}
+
+func (c *LockCommand) lockOne(ctx context.Context, name string, opts LockOptions) error {
+	if !c.containerManager.Exists(ctx, name) {
+		return fmt.Errorf("container '%s' not found", name)
+	}
+
+	if isLocked(ctx, c.containerManager, name) {
+		return fmt.Errorf("'%s' %w", name, ErrAlreadyLocked)
 	}
 
 	if opts.Verbose {
-		ui.DefaultLogger.Info("writing lock file to '%s' at %s", opts.ContainerName, lockFilePath)
+		ui.DefaultLogger.Info("writing lock file to '%s' at %s", name, lockFilePath)
 	}
 
 	if opts.DryRun {
-		ui.DefaultLogger.Info("would write lock file to '%s' at %s", opts.ContainerName, lockFilePath)
+		ui.DefaultLogger.Info("would write lock file to '%s' at %s", name, lockFilePath)
 		return nil
 	}
 
@@ -59,11 +89,11 @@ func (c *LockCommand) Execute(ctx context.Context, opts LockOptions) error {
 	f.Close()
 	defer os.Remove(f.Name())
 
-	if err := c.containerManager.WriteToContainer(ctx, opts.ContainerName, f.Name(), lockFilePath); err != nil {
-		return fmt.Errorf("failed to write lock file into '%s': %w", opts.ContainerName, err)
+	if err := c.containerManager.WriteToContainer(ctx, name, f.Name(), lockFilePath); err != nil {
+		return fmt.Errorf("failed to write lock file into '%s': %w", name, err)
 	}
 
-	ui.DefaultLogger.Ok("locked '%s'", opts.ContainerName)
+	ui.DefaultLogger.Ok("locked '%s'", name)
 	return nil
 }
 

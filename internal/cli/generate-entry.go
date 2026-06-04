@@ -18,6 +18,10 @@ func newGenerateEntryCommand(cfg *config.Values) *cli.Command {
 		Name:    "generate-entry",
 		Aliases: []string{"gety"},
 		Flags: []cli.Flag{
+			&cli.StringSliceFlag{
+				Name:    "name",
+				Aliases: []string{"n"},
+			},
 			&cli.BoolFlag{
 				Name:    "delete",
 				Aliases: []string{"del"},
@@ -60,7 +64,7 @@ func generateEntryAction(ctx context.Context, cmd *cli.Command, cfg *config.Valu
 	if cmd.Bool("all") {
 		opts.All = true
 	} else {
-		opts.ContainerName = cmd.Args().First()
+		opts.ContainerNames = cmd.StringSlice("name")
 		opts.Icon = cmd.String("icon")
 	}
 

@@ -25,8 +25,6 @@ var defaultIconData []byte
 //go:embed assets/distros
 var distroIconsFS embed.FS
 
-const defaultContainerName = "my-box"
-
 var distroIconMap = map[string]string{
 	"ol":                  "oracle-box.svg",
 	"arch":                "arch-box.svg",
@@ -55,8 +53,8 @@ type GenerateEntryOptions struct {
 	DesktopEntryBaseDir string
 	OtterPath           string
 	All                 bool
-	Icon                string // ignored when All=true
-	ContainerName       string // ignored when All=true
+	Icon                string   // ignored when All=true or multiple names
+	ContainerNames      []string // ignored when All=true
 }
 
 type GenerateEntryCommand struct {
@@ -95,18 +93,20 @@ func (c *GenerateEntryCommand) Execute(
 		}
 		// Set icon to auto for all entries
 		icon = "auto"
-	case opts.ContainerName != "":
-		if _, err := c.containerManager.InspectContainer(ctx, opts.ContainerName); err != nil {
-			return fmt.Errorf("container '%s' not found", opts.ContainerName)
+	case len(opts.ContainerNames) > 0:
+		for _, name := range opts.ContainerNames {
+			if _, err := c.containerManager.InspectContainer(ctx, name); err != nil {
+				return fmt.Errorf("container '%s' not found", name)
+			}
 		}
-		containerNames = []string{opts.ContainerName}
-		icon = opts.Icon
+		containerNames = opts.ContainerNames
+		if len(opts.ContainerNames) == 1 {
+			icon = opts.Icon
+		} else {
+			icon = "auto"
+		}
 	default:
-		if _, err := c.containerManager.InspectContainer(ctx, defaultContainerName); err != nil {
-			return fmt.Errorf("container '%s' not found", defaultContainerName)
-		}
-		containerNames = []string{defaultContainerName}
-		icon = opts.Icon
+		return fmt.Errorf("please specify a container name with --name/-n")
 	}
 
 	// Determine the desktop entry base dir

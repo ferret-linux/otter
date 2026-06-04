@@ -179,10 +179,10 @@ func (c *RmCommand) cleanup(ctx context.Context, userHome, containerName string,
 	err := c.generateEntryCmd.Execute(
 		ctx,
 		&GenerateEntryOptions{
-			ContainerName: containerName,
-			Delete:        true,
-			Verbose:       verbose,
-			Root:          root,
+			ContainerNames: []string{containerName},
+			Delete:         true,
+			Verbose:        verbose,
+			Root:           root,
 		},
 	)
 	if err != nil {

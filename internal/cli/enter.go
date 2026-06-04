@@ -64,24 +64,10 @@ func enterAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) erro
 		return errors.New("container manager not found in context")
 	}
 
-	// Container name: --name flag takes priority, otherwise first positional arg.
-	// Everything after the container name (or after --) is the custom command.
-	containerName := cmd.String("name")
-
-	args := cmd.Args().Slice()
-	if containerName == "" && len(args) > 0 {
-		containerName = args[0]
-		args = args[1:]
-	}
-
-	if containerName == "" {
-		containerName = cfg.DefaultContainerName
-	}
-
 	options := commands.EnterOptions{
-		ContainerName:   containerName,
+		ContainerName:   cmd.String("name"),
 		AdditionalFlags: cmd.String("additional-flags"),
-		CustomCommand:   args,
+		CustomCommand:   cmd.Args().Slice(),
 		AddEnv:          cmd.StringSlice("add-env"),
 		DryRun:          cmd.Bool("dry-run"),
 		NoTTY:           cmd.Bool("no-tty"),

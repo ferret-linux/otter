@@ -20,6 +20,10 @@ func newRmCommand(cfg *config.Values) *cli.Command {
 		Name:    "remove",
 		Aliases: []string{"rm"},
 		Flags: []cli.Flag{
+			&cli.StringSliceFlag{
+				Name:    "name",
+				Aliases: []string{"n"},
+			},
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
@@ -46,15 +50,10 @@ func newRmCommand(cfg *config.Values) *cli.Command {
 	}
 }
 
-func rmAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
+func rmAction(ctx context.Context, cmd *cli.Command, _ *config.Values) error {
 	containerManager, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 	if !ok {
 		return errors.New("container manager not found in context")
-	}
-
-	names := cmd.Args().Slice()
-	if len(names) == 0 && !cmd.Bool("all") {
-		names = []string{cfg.DefaultContainerName}
 	}
 
 	options := commands.RmOptions{
@@ -66,7 +65,7 @@ func rmAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
 		DryRun:         cmd.Bool("dry-run"),
 		Verbose:        cmd.Bool("verbose"),
 		Root:           cmd.Bool("root"),
-		ContainerNames: names,
+		ContainerNames: cmd.StringSlice("name"),
 	}
 
 	prompter := ui.NewPrompter(*bufio.NewReader(os.Stdin), os.Stdout)
