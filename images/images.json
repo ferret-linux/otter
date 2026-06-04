@@ -133,7 +133,7 @@
     "name": "opensuse-otr",
     "tag": "tumbleweed",
     "arches": ["amd64", "arm64"],
-    "enabled": false
+    "enabled": true
   },
   {
     "image": "docker.io/library/alpine:latest",
