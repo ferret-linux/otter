@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/urfave/cli/v3"
 
@@ -62,6 +63,10 @@ func enterAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) erro
 	containerManager, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 	if !ok {
 		return errors.New("container manager not found in context")
+	}
+
+	if strings.Contains(cmd.String("name"), ",") {
+		return errors.New("enter only accepts a single container name")
 	}
 
 	options := commands.EnterOptions{
