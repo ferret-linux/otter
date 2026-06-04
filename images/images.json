@@ -120,7 +120,7 @@
     "enabled": true
   },
   {
-    "image": "registry.opensuse.org/opensuse/leap:latest",
+    "image": "registry.opensuse.org/opensuse/leap:16.0",
     "containerfile": "opensuse.Containerfile",
     "name": "opensuse-otr",
     "tag": "leap",
