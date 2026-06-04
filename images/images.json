@@ -125,7 +125,7 @@
     "name": "opensuse-otr",
     "tag": "leap",
     "arches": ["amd64", "arm64"],
-    "enabled": true
+    "enabled": false
   },
   {
     "image": "registry.opensuse.org/opensuse/tumbleweed:latest",
@@ -133,7 +133,7 @@
     "name": "opensuse-otr",
     "tag": "tumbleweed",
     "arches": ["amd64", "arm64"],
-    "enabled": true
+    "enabled": false
   },
   {
     "image": "docker.io/library/alpine:latest",
@@ -157,7 +157,7 @@
     "name": "kali-otr",
     "tag": "rolling",
     "arches": ["amd64", "arm64"],
-    "enabled": true
+    "enabled": false
   },
   {
     "image": "docker.io/kalilinux/kali-bleeding-edge:latest",
@@ -165,7 +165,7 @@
     "name": "kali-otr",
     "tag": "edge",
     "arches": ["amd64", "arm64"],
-    "enabled": true
+    "enabled": false
   },
   {
     "image": "ghcr.io/void-linux/void-glibc-full:latest",
