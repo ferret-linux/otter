@@ -30,6 +30,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
 
     strategy:
       fail-fast: false
@@ -39,6 +40,9 @@ jobs:
     steps:
       - name: Login to GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@c043e82f5244a011ee05466f5723c703f34dbbf1 # v3.9.0
 
       - name: Create and Push Manifest
         run: |
@@ -61,3 +65,8 @@ jobs:
             podman manifest rm ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} 2>/dev/null || true
             sleep 15
           done
+
+      - name: Sign
+        run: |
+          cosign sign --yes \
+            ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}

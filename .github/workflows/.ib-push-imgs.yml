@@ -44,6 +44,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
 
     strategy:
       fail-fast: false
@@ -69,6 +70,9 @@ jobs:
           podman image load \
             -i /tmp/${{ matrix.name }}-${{ matrix.tag }}-amd64.tar
 
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@c043e82f5244a011ee05466f5723c703f34dbbf1 # v3.9.0
+
       - name: Push
         run: |
           for i in 1 2 3; do
@@ -78,12 +82,18 @@ jobs:
             sleep 15
           done
 
+      - name: Sign
+        run: |
+          cosign sign --yes \
+            ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64
+
   push-arm64:
     needs: load-matrix-arm64
     runs-on: ubuntu-24.04-arm
     permissions:
       contents: read
       packages: write
+      id-token: write
 
     strategy:
       fail-fast: false
@@ -109,6 +119,9 @@ jobs:
           podman image load \
             -i /tmp/${{ matrix.name }}-${{ matrix.tag }}-arm64.tar
 
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@c043e82f5244a011ee05466f5723c703f34dbbf1 # v3.9.0
+
       - name: Push
         run: |
           for i in 1 2 3; do
@@ -117,3 +130,8 @@ jobs:
             echo "Attempt $i/3 failed, retrying in 15s..."
             sleep 15
           done
+
+      - name: Sign
+        run: |
+          cosign sign --yes \
+            ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64
