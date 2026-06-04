@@ -157,7 +157,7 @@
     "name": "kali-otr",
     "tag": "rolling",
     "arches": ["amd64", "arm64"],
-    "enabled": false
+    "enabled": true
   },
   {
     "image": "docker.io/kalilinux/kali-bleeding-edge:latest",
@@ -165,7 +165,7 @@
     "name": "kali-otr",
     "tag": "edge",
     "arches": ["amd64", "arm64"],
-    "enabled": false
+    "enabled": true
   },
   {
     "image": "ghcr.io/void-linux/void-glibc-full:latest",
