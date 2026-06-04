@@ -13,6 +13,7 @@
 {2}├───────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                         {2}│{R}
 {2}│{R} {4}--all{R}     {2}┆{R} {4}-a{R}  {5}Perform for all otters{R}            {2}│{R}
+{2}│{R} {4}--name{R}    {2}┆{R} {4}-n{R}  {5}Name of the container to upgrade{R}  {2}│{R}
 {2}│{R} {4}--root{R}    {2}┆{R} {4}-r{R}  {5}Upgrade rootful containers{R}        {2}│{R}
 {2}│{R} {4}--running{R}       {5}Only upgrade running containers{R}   {2}│{R}
 {2}│{R} {4}--dry-run{R} {2}┆{R} {4}-d{R}  {5}Print generated container command{R} {2}│{R}
