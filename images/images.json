@@ -125,7 +125,7 @@
     "name": "opensuse-otr",
     "tag": "leap",
     "arches": ["amd64", "arm64"],
-    "enabled": false
+    "enabled": true
   },
   {
     "image": "registry.opensuse.org/opensuse/tumbleweed:latest",
