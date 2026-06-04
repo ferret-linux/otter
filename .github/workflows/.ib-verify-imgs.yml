@@ -55,7 +55,7 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Install Cosign
-        uses: sigstore/cosign-installer@c043e82f5244a011ee05466f5723c703f34dbbf1 # v3.9.0
+        uses: sigstore/cosign-installer@7e8b541eb2e61bf99390e1afd4be13a184e9ebc5 # v3.10.1
 
       - name: Verify arch-specific signature
         run: |
@@ -104,7 +104,7 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Install Cosign
-        uses: sigstore/cosign-installer@c043e82f5244a011ee05466f5723c703f34dbbf1 # v3.9.0
+        uses: sigstore/cosign-installer@7e8b541eb2e61bf99390e1afd4be13a184e9ebc5 # v3.10.1
 
       - name: Verify arch-specific signature
         run: |
