@@ -105,7 +105,6 @@ HELP_TEXT = """\
 {2}├─────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                                        {2}│{R}
 {2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}                          {2}│{R}
-{2}│{R} {4}--verbose{R} {2}┆{R} {4}-v{R}  {5}Show more verbose output{R}                        {2}│{R}
 {2}│{R} {4}--version{R} {2}┆{R} {4}-V{R}  {5}Show version information{R}                        {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Notes:{R}                                                         {2}│{R}
@@ -129,7 +128,6 @@ def _parser_error(message):
 parser = argparse.ArgumentParser(add_help=False)
 parser.error = _parser_error
 parser.add_argument("-h", "--help",         action="store_true")
-parser.add_argument("-v", "--verbose",      action="store_true")
 parser.add_argument("-V", "--version",      action="store_true")
 parser.add_argument("-a", "--app",          dest="exported_app",   default="")
 parser.add_argument("-b", "--bin",          dest="exported_bin",   default="")
@@ -151,7 +149,6 @@ if args.version:
     print(f"otter: {VERSION}")
     sys.exit(0)
 
-verbose          = args.verbose
 exported_app     = args.exported_app
 exported_bin     = args.exported_bin
 is_sudo          = args.is_sudo
@@ -169,9 +166,6 @@ elif exported_app:
     export_action = "app"
 elif exported_bin:
     export_action = "bin"
-
-if verbose:
-    os.environ["XTRACE"] = "1"
 
 # Ensure we can write stuff there
 Path(dest_path).mkdir(parents=True, exist_ok=True)
