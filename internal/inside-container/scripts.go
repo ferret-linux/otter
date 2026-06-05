@@ -17,6 +17,9 @@ var initScript string
 //go:embed assets/otter-export
 var exportScripts string
 
+//go:embed assets/otter
+var otterScript string
+
 // ProvisionScripts ensures that all necessary scripts are created in the host directory.
 // It returns the path to the directory where the scripts are stored, and whether any scripts were updated.
 func ProvisionScripts() (string, bool, error) {
@@ -33,6 +36,7 @@ func ProvisionScripts() (string, bool, error) {
 		{"otter-host-exec", hostExecScript},
 		{"otter-init", initScript},
 		{"otter-export", exportScripts},
+		{"otter", otterScript},
 	}
 
 	updated := false

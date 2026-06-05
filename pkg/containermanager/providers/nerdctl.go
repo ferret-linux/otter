@@ -102,6 +102,7 @@ func (n *Nerdctl) Create(
 		filepath.Join(scriptsDir, "otter-init"),
 		filepath.Join(scriptsDir, "otter-export"),
 		filepath.Join(scriptsDir, "otter-host-exec"),
+		filepath.Join(scriptsDir, "otter"),
 	)
 
 	_, err = n.run(ctx, cmd, runOptions{})
@@ -137,6 +138,7 @@ func (n *Nerdctl) makeCreateCommand(
 	otterInitPath string,
 	otterExportPath string,
 	otterHostexecPath string,
+	otterPath string,
 ) []string {
 	containerUserHome := userEnv.Home
 	containerUserName := userEnv.User
@@ -194,12 +196,13 @@ func (n *Nerdctl) makeCreateCommand(
 	)
 	options = append(options, "--env", fmt.Sprintf("CONTAINER_ID=%s", containerName))
 	options = append(options, "--volume", "/tmp:/tmp:rslave")
-	options = append(options, "--volume", fmt.Sprintf("%s:%s", otterExportPath, "/usr/bin/otter-export:ro"))
+	options = append(options, "--volume", fmt.Sprintf("%s:%s", otterExportPath, "/usr/lib/otter/scripts/otter-export:ro"))
 	options = append(
 		options,
 		"--volume",
-		fmt.Sprintf("%s:%s", otterHostexecPath, "/usr/bin/otter-host-exec:ro"),
+		fmt.Sprintf("%s:%s", otterHostexecPath, "/usr/lib/otter/scripts/otter-host-exec:ro"),
 	)
+	options = append(options, "--volume", fmt.Sprintf("%s:%s", otterPath, "/usr/bin/otter:ro"))
 	options = append(options, "--volume", fmt.Sprintf("%s:%s:rslave", containerUserHome, containerUserHome))
 	options = append(options, "--volume", "/:/run/host/:rslave")
 
@@ -298,8 +301,8 @@ func (n *Nerdctl) makeCreateCommand(
 		options = append(options, "--volume", vol)
 	}
 
-	options = append(options, "--volume", fmt.Sprintf("%s:%s", otterInitPath, "/usr/bin/entrypoint:ro"))
-	options = append(options, "--entrypoint", "/usr/bin/entrypoint")
+	options = append(options, "--volume", fmt.Sprintf("%s:%s", otterInitPath, "/usr/lib/otter/scripts/otter-init:ro"))
+	options = append(options, "--entrypoint", "/usr/lib/otter/scripts/otter-init")
 
 	homeToUse := containerUserHome
 	if containerUserCustomHome != "" {

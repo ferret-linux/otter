@@ -10,7 +10,7 @@ import (
 )
 
 //nolint:lll // upgrade command mirrors the shell version
-const upgradeScript = `command -v su-exec 2>/dev/null && su-exec root /usr/bin/entrypoint --upgrade || command -v doas 2>/dev/null && doas /usr/bin/entrypoint --upgrade || sudo -S /usr/bin/entrypoint --upgrade`
+const upgradeScript = `command -v su-exec 2>/dev/null && su-exec root /usr/lib/otter/scripts/otter-init --upgrade || command -v doas 2>/dev/null && doas /usr/lib/otter/scripts/otter-init --upgrade || sudo -S /usr/lib/otter/scripts/otter-init --upgrade`
 
 type UpgradeOptions struct {
 	ContainerNames []string

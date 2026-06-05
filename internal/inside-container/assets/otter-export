@@ -474,7 +474,7 @@ def export_application():
 
     # Update desktop database
     subprocess.run(
-        ["/usr/bin/otter-host-exec", "--yes", "update-desktop-database",
+        ["/usr/lib/otter/scripts/otter-host-exec", "--yes", "update-desktop-database",
          f"{host_home}/.local/share/applications"],
         capture_output=True
     )
