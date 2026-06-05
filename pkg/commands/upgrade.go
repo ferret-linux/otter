@@ -16,8 +16,6 @@ type UpgradeOptions struct {
 	ContainerNames []string
 	All            bool
 	Running        bool
-	DryRun         bool
-	Verbose        bool
 }
 
 type UpgradeCommand struct {
@@ -73,9 +71,6 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 	var lastErr error
 
 	for _, name := range containerNames {
-		if opts.Verbose {
-			ui.DefaultLogger.Info("upgrading '%s'", name)
-		}
 		if isLocked(ctx, c.containerManager, name) {
 			if opts.All || opts.Running {
 				ui.DefaultLogger.Warn("'%s' is locked, skipping", name)
@@ -83,7 +78,7 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 			}
 			return fmt.Errorf("'%s' is locked, run 'otter unlock %s' first", name, name)
 		}
-		if err := c.upgradeContainer(ctx, name, opts.DryRun); err != nil {
+		if err := c.upgradeContainer(ctx, name); err != nil {
 			lastErr = fmt.Errorf("failed while upgrading %s: %w", name, err)
 			continue
 		}
@@ -92,20 +87,17 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 	return lastErr
 }
 
-func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string, dryRun bool) error {
-	if !dryRun {
-		if _, updated, err := insideContainer.ProvisionScripts(); err != nil {
-			ui.DefaultLogger.Warn("failed to provision scripts: %s", err)
-		} else if updated {
-			ui.DefaultLogger.Info("otter scripts updated")
-		} else {
-			ui.DefaultLogger.Info("otter scripts already up to date")
-		}
+func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string) error {
+	if _, updated, err := insideContainer.ProvisionScripts(); err != nil {
+		ui.DefaultLogger.Warn("failed to provision scripts: %s", err)
+	} else if updated {
+		ui.DefaultLogger.Info("otter scripts updated")
+	} else {
+		ui.DefaultLogger.Info("otter scripts already up to date")
 	}
 
 	if err := c.startCmd.Execute(ctx, &StartOptions{
 		ContainerNames: []string{name},
-		DryRun:         dryRun,
 	}); err != nil {
 		return err
 	}
@@ -113,7 +105,6 @@ func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string, dryR
 	enterOpts := EnterOptions{
 		ContainerName: name,
 		CustomCommand: []string{"sh", "-c", upgradeScript},
-		DryRun:        dryRun,
 	}
 
 	if _, err := c.enterCmd.Execute(ctx, enterOpts); err != nil {

@@ -41,8 +41,6 @@ func stopAction(ctx context.Context, cmd *cli.Command) error {
 	options := &commands.StopOptions{
 		ContainerNames: cmd.StringSlice("name"),
 		All:            cmd.Bool("all"),
-		DryRun:         cmd.Bool("dry-run"),
-		Verbose:        cmd.Bool("verbose"),
 	}
 
 	err := commands.NewStopCommand(containerManager).Execute(ctx, options)

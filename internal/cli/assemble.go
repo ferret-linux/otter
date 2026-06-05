@@ -95,8 +95,6 @@ func assembleAction(ctx context.Context, cmd *cli.Command, cfg *config.Values, d
 	opts := commands.AssembleOptions{
 		Items:   manifest,
 		Boxname: cmd.String("name"),
-		DryRun:  cmd.Bool("dry-run"),
-		Verbose: cmd.Bool("verbose"),
 	}
 	if deleteFlag {
 		opts.Delete = true

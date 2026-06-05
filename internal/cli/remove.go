@@ -62,8 +62,6 @@ func rmAction(ctx context.Context, cmd *cli.Command) error {
 		BypassLock:     cmd.Bool("bypass-lock"),
 		All:            cmd.Bool("all"),
 		RemoveHome:     cmd.Bool("rm-home"),
-		DryRun:         cmd.Bool("dry-run"),
-		Verbose:        cmd.Bool("verbose"),
 		Root:           cmd.Bool("root"),
 		ContainerNames: cmd.StringSlice("name"),
 	}

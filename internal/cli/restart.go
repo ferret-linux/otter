@@ -41,8 +41,6 @@ func restartAction(ctx context.Context, cmd *cli.Command) error {
 	options := &commands.RestartOptions{
 		ContainerNames: cmd.StringSlice("name"),
 		All:            cmd.Bool("all"),
-		DryRun:         cmd.Bool("dry-run"),
-		Verbose:        cmd.Bool("verbose"),
 	}
 
 	err := commands.NewRestartCommand(containerManager).Execute(ctx, options)

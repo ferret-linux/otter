@@ -19,8 +19,6 @@ const (
 type EphemeralOptions struct {
 	CreateOptions
 
-	DryRun        bool
-	Verbose       bool
 	CustomCommand []string
 }
 
@@ -50,15 +48,11 @@ func NewEphemeralCommand(
 func (c *EphemeralCommand) Execute(ctx context.Context, opts EphemeralOptions) error {
 	name := opts.ContainerName
 	if name == "" {
-		generatedName, err := c.makeUniqueRandomName(ctx, opts.DryRun)
+		generatedName, err := c.makeUniqueRandomName(ctx)
 		if err != nil {
 			return fmt.Errorf("ephemeral: %w", err)
 		}
 		name = generatedName
-	}
-
-	if opts.Verbose {
-		ui.DefaultLogger.Info("creating ephemeral container '%s' from image '%s'", name, opts.ContainerImage)
 	}
 
 	// create ephemeral container
@@ -66,7 +60,6 @@ func (c *EphemeralCommand) Execute(ctx context.Context, opts EphemeralOptions) e
 	createOpts.ContainerName = name
 	// override options not relevant for creating ephemeral containers
 	createOpts.GenerateEntry = false
-	createOpts.DryRun = opts.DryRun
 	createOpts.NonInteractive = true
 	if _, createErr := c.createCmd.Execute(ctx, createOpts); createErr != nil {
 		return fmt.Errorf("ephemeral: %w", createErr)
@@ -87,7 +80,6 @@ func (c *EphemeralCommand) Execute(ctx context.Context, opts EphemeralOptions) e
 
 	if err := c.startCmd.Execute(ctx, &StartOptions{
 		ContainerNames: []string{name},
-		DryRun:         opts.DryRun,
 	}); err != nil {
 		return fmt.Errorf("ephemeral: %w", err)
 	}
@@ -95,7 +87,6 @@ func (c *EphemeralCommand) Execute(ctx context.Context, opts EphemeralOptions) e
 	// enter into it
 	enterOpts := EnterOptions{
 		ContainerName: name,
-		DryRun:        opts.DryRun,
 		CustomCommand: opts.CustomCommand,
 	}
 	if _, enterErr := c.enterCmd.Execute(ctx, enterOpts); enterErr != nil {
@@ -105,14 +96,10 @@ func (c *EphemeralCommand) Execute(ctx context.Context, opts EphemeralOptions) e
 	return nil
 }
 
-// makeUniqueRandomName generates a random container name that does not
-// collide with an existing container. When dryRun is true, the existence
-// check is skipped (mirroring the rest of the dry-run pipeline, where no
-// container lookup is performed).
-func (c *EphemeralCommand) makeUniqueRandomName(ctx context.Context, dryRun bool) (string, error) {
+func (c *EphemeralCommand) makeUniqueRandomName(ctx context.Context) (string, error) {
 	for range ephemeralMaxNameGenAttempts {
 		name := makeRandomName()
-		if dryRun || !c.containerManager.Exists(ctx, name) {
+		if !c.containerManager.Exists(ctx, name) {
 			return name, nil
 		}
 	}

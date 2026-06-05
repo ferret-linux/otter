@@ -46,8 +46,6 @@ func upgradeAction(ctx context.Context, cmd *cli.Command) error {
 		ContainerNames: cmd.StringSlice("name"),
 		All:            cmd.Bool("all"),
 		Running:        cmd.Bool("running"),
-		DryRun:         cmd.Bool("dry-run"),
-		Verbose:        cmd.Bool("verbose"),
 	}
 
 	err := commands.NewUpgradeCommand(containerManager).Execute(ctx, options)

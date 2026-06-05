@@ -5,14 +5,11 @@ import (
 	"fmt"
 
 	"github.com/ferret-linux/otter/pkg/containermanager"
-	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 type RestartOptions struct {
 	ContainerNames []string
 	All            bool
-	DryRun         bool
-	Verbose        bool
 }
 
 type RestartCommand struct {
@@ -51,20 +48,13 @@ func (c *RestartCommand) Execute(ctx context.Context, opts *RestartOptions) erro
 	}
 
 	for _, name := range containerNames {
-		if opts.Verbose {
-			ui.DefaultLogger.Info("restarting: %s", name)
-		}
 		if err := c.stopCmd.Execute(ctx, &StopOptions{
 			ContainerNames: []string{name},
-			DryRun:         opts.DryRun,
-			Verbose:        opts.Verbose,
 		}); err != nil {
 			return fmt.Errorf("failed to stop '%s': %w", name, err)
 		}
 		if err := c.startCmd.Execute(ctx, &StartOptions{
 			ContainerNames: []string{name},
-			DryRun:         opts.DryRun,
-			Verbose:        opts.Verbose,
 		}); err != nil {
 			return fmt.Errorf("failed to start '%s': %w", name, err)
 		}

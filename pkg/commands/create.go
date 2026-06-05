@@ -114,8 +114,6 @@ type CreateOptions struct {
 	Init                    bool
 
 	Nvidia     bool
-	DryRun     bool
-	Verbose    bool
 	Memory     string
 	CPUThreads int
 
@@ -164,11 +162,11 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 
 	containerUserCustomHome := c.makeContainerUserCustomHome(&opts, containerName)
 
-	if !opts.DryRun && c.containerManager.Exists(ctx, containerName) {
+	if c.containerManager.Exists(ctx, containerName) {
 		return nil, &ContainerAlreadyExistsError{ContainerName: containerName}
 	}
 
-	if opts.ContainerClone != "" && !opts.DryRun {
+	if opts.ContainerClone != "" {
 		cloneImage, err := c.clone(ctx, opts.ContainerClone)
 		if err != nil {
 			return nil, fmt.Errorf("failed to clone container %s: %w", opts.ContainerClone, err)
@@ -178,10 +176,6 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 
 	if err := c.askPullImage(ctx, containerImage, opts); err != nil {
 		return nil, err
-	}
-
-	if opts.Verbose {
-		ui.DefaultLogger.Info("creating '%s' from image '%s' with hostname '%s'", containerName, containerImage, containerHostname)
 	}
 
 	displayImage := opts.ContainerImage
@@ -213,7 +207,6 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 			ContainerInitHook:       opts.ContainerInitHook,
 			Init:                    opts.Init,
 			Nvidia:                  opts.Nvidia,
-			DryRun:                  opts.DryRun,
 			Memory:                  opts.Memory,
 			CPUThreads:              opts.CPUThreads,
 		},
@@ -226,7 +219,7 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 
 	c.progress.Done()
 
-	if opts.GenerateEntry && !opts.DryRun {
+	if opts.GenerateEntry {
 		err := c.generateEntryCmd.Execute(
 			ctx,
 			&GenerateEntryOptions{
@@ -332,9 +325,6 @@ func (c *CreateCommand) makeContainerImage(opts *CreateOptions) (string, error) 
 	if opts.ContainerClone == "" && containerImage == "" {
 		containerImage = c.cfg.DefaultContainerImage
 	}
-	if opts.DryRun && opts.ContainerClone != "" {
-		containerImage = opts.ContainerClone
-	}
 	if containerImage != "" && opts.ContainerClone == "" {
 		resolved, err := resolveImage(containerImage)
 		if err != nil {
@@ -439,7 +429,7 @@ func (c *CreateCommand) clone(ctx context.Context, containerName string) (string
 
 func (c *CreateCommand) askPullImage(ctx context.Context, containerImage string, opts CreateOptions) error {
 	if opts.ContainerAlwaysPull || !c.containerManager.ImageExists(ctx, containerImage) {
-		skipConfirm := opts.NonInteractive || opts.ContainerAlwaysPull || opts.DryRun
+		skipConfirm := opts.NonInteractive || opts.ContainerAlwaysPull
 		if !skipConfirm {
 			ui.DefaultLogger.Warn("image '%s' not found on your system.", imageDisplayName(containerImage))
 			answer := c.prompter.Prompt("would you like to pull it?", true)
@@ -450,7 +440,7 @@ func (c *CreateCommand) askPullImage(ctx context.Context, containerImage string,
 
 		ui.DefaultLogger.Info("large images may take a while, please be patient...")
 		c.progress.Next("pulling '%s'...", containerImage)
-		err := c.containerManager.PullImage(ctx, containerImage, opts.ContainerPlatform, opts.DryRun)
+		err := c.containerManager.PullImage(ctx, containerImage, opts.ContainerPlatform)
 		if err != nil {
 			c.progress.Fail()
 			return fmt.Errorf("failed to pull image '%s': %w", containerImage, err)

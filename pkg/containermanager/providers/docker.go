@@ -23,12 +23,11 @@ type Docker struct {
 	binary      string
 	root        bool
 	sudoCommand string
-	verbose     bool
 }
 
 var _ containermanager.ContainerManager = &Docker{}
 
-func NewDocker(root bool, sudoCommand string, verbose bool) *Docker {
+func NewDocker(root bool, sudoCommand string) *Docker {
 	binary, err := exec.LookPath("docker")
 	if err != nil {
 		binary = "docker"
@@ -37,7 +36,6 @@ func NewDocker(root bool, sudoCommand string, verbose bool) *Docker {
 		binary:      binary,
 		sudoCommand: sudoCommand,
 		root:        root,
-		verbose:     verbose,
 	}
 }
 
@@ -61,7 +59,6 @@ type dockerContainer struct {
 }
 
 type runOptions struct {
-	DryRun      bool
 	Interactive bool
 	Detach      bool
 }
@@ -148,7 +145,7 @@ func (d *Docker) Create(
 		filepath.Join(scriptsDir, "otter-host-exec"),
 	)
 
-	_, err = d.run(ctx, cmd, runOptions{DryRun: opts.DryRun})
+	_, err = d.run(ctx, cmd, runOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create container: %w", err)
 	}
@@ -495,15 +492,6 @@ func (d *Docker) run(ctx context.Context, args []string, opts runOptions) (strin
 		command = d.sudoCommand
 	}
 
-	if opts.DryRun {
-		ui.DefaultLogger.Info("%s %s", command, strings.Join(args, " "))
-		return "", nil
-	}
-
-	if d.verbose {
-		ui.DefaultLogger.Info("%s %s", command, strings.Join(args, " "))
-	}
-
 	cmd := exec.CommandContext(ctx, command, args...)
 
 	if opts.Interactive {
@@ -557,20 +545,12 @@ func (d *Docker) Enter(
 		options.CleanPath,
 		options.EmptyEnv,
 		options.AddEnv,
-		options.Verbose,
 	)
 	if err != nil {
 		return err
 	}
 
 	commandArgs := containermanager.BuildCommandArgs(options.CustomCommand, user, options.NoTTY, config.UnshareGroups)
-
-	if options.DryRun {
-		command = append(command, commandArgs...)
-		ui.DefaultLogger.Info("%s %s", d.Name(), strings.Join(command, "\n"))
-
-		return nil
-	}
 
 	inspectResult, err := d.InspectContainer(ctx, options.ContainerName)
 	if err != nil || inspectResult.ContainerStatus != containermanager.RunningStatus {
@@ -600,7 +580,7 @@ func (d *Docker) Remove(
 
 	args = append(args, []string{"--volumes", containerName}...)
 
-	_, err := d.run(ctx, args, runOptions{DryRun: options.DryRun})
+	_, err := d.run(ctx, args, runOptions{})
 	if err != nil {
 		return fmt.Errorf("error removing the container: %w", err)
 	}
@@ -615,11 +595,11 @@ func (d *Docker) Remove(
 	return nil
 }
 
-func (d *Docker) Stop(ctx context.Context, containerNames []string, dryRun bool) error {
+func (d *Docker) Stop(ctx context.Context, containerNames []string) error {
 	args := []string{"stop"}
 	args = append(args, containerNames...)
 
-	_, err := d.run(ctx, args, runOptions{DryRun: dryRun})
+	_, err := d.run(ctx, args, runOptions{})
 	if err != nil {
 		return fmt.Errorf("error stopping containers: %w", err)
 	}
@@ -772,14 +752,14 @@ func (d *Docker) ImageExists(ctx context.Context, imageName string) bool {
 	return true
 }
 
-func (d *Docker) PullImage(ctx context.Context, imageName string, platform string, dryRun bool) error {
+func (d *Docker) PullImage(ctx context.Context, imageName string, platform string) error {
 	var args []string
 	if platform != "" {
 		args = []string{"pull", "--platform", platform, imageName}
 	} else {
 		args = []string{"pull", imageName}
 	}
-	_, err := d.run(ctx, args, runOptions{DryRun: dryRun})
+	_, err := d.run(ctx, args, runOptions{})
 	return err
 }
 
@@ -792,13 +772,8 @@ func (d *Docker) generateEnterCommand(
 	cleanPath bool,
 	emptyEnv bool,
 	addEnv []string,
-	verbose bool,
 ) ([]string, *containermanager.InspectResult, error) {
 	cmd := []string{}
-
-	if verbose {
-		cmd = append(cmd, "--log-level", "debug")
-	}
 
 	cmd = append(cmd, "exec")
 	if noTTY {
@@ -887,12 +862,7 @@ func (d *Docker) generateEnterCommand(
 	return cmd, containerConfig, nil
 }
 
-func (d *Docker) Start(ctx context.Context, containerName string, dryRun bool) error {
-	if dryRun {
-		ui.DefaultLogger.Info("%s start %s", d.Name(), containerName)
-		return nil
-	}
-
+func (d *Docker) Start(ctx context.Context, containerName string) error {
 	inspectResult, err := d.InspectContainer(ctx, containerName)
 	if err != nil {
 		return fmt.Errorf("container '%s' not found", containerName)

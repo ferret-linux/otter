@@ -55,8 +55,6 @@ func generateEntryAction(ctx context.Context, cmd *cli.Command) error {
 	}
 
 	opts := &commands.GenerateEntryOptions{
-		Verbose:   cmd.Bool("verbose"),
-		DryRun:    cmd.Bool("dry-run"),
 		Delete:    cmd.Bool("delete"),
 		Root:      cmd.Bool("root"),
 		OtterPath: otterPath,

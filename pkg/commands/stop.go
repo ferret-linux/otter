@@ -4,10 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/ferret-linux/otter/pkg/containermanager"
-	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 type StopCommand struct {
@@ -18,8 +16,6 @@ type StopCommand struct {
 type StopOptions struct {
 	ContainerNames []string
 	All            bool
-	DryRun         bool
-	Verbose        bool
 }
 
 var ErrEmptyContainerList = errors.New("cannot find containers to stop")
@@ -52,19 +48,13 @@ func (c *StopCommand) Execute(ctx context.Context, opts *StopOptions) error {
 		return fmt.Errorf("please specify a container name with --name/-n")
 	}
 
-	if opts.Verbose {
-		ui.DefaultLogger.Info("stopping: %s", strings.Join(containerNames, ", "))
-	}
-
-	if !opts.DryRun {
-		for _, name := range containerNames {
-			if _, err := c.containerManager.InspectContainer(ctx, name); err != nil {
-				return fmt.Errorf("container '%s' not found", name)
-			}
+	for _, name := range containerNames {
+		if _, err := c.containerManager.InspectContainer(ctx, name); err != nil {
+			return fmt.Errorf("container '%s' not found", name)
 		}
 	}
 
-	if err := c.containerManager.Stop(ctx, containerNames, opts.DryRun); err != nil {
+	if err := c.containerManager.Stop(ctx, containerNames); err != nil {
 		return fmt.Errorf("failed to stop containers: %w", err)
 	}
 

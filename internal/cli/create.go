@@ -165,8 +165,6 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 		ContainerPreInitHook:    cmd.String("pre-init-hooks"),
 		ContainerShell:          cmd.String("shell"),
 		ContainerPlatform:       cmd.String("platform"),
-		DryRun:                  cmd.Bool("dry-run"),
-		Verbose:                 cmd.Bool("verbose"),
 		GenerateEntry:           !cmd.Bool("no-entry"),
 		Rootful:                 cmd.Bool("root"),
 		ContainerAlwaysPull:     cmd.Bool("pull"),
@@ -199,9 +197,7 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 		return fmt.Errorf("create command failed: %w", err)
 	}
 
-	if !opts.DryRun {
-		printCreateCompleted(progress, result.ContainerName, opts.Rootful)
-	}
+	printCreateCompleted(progress, result.ContainerName, opts.Rootful)
 
 	return nil
 }

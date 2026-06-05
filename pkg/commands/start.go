@@ -5,14 +5,11 @@ import (
 	"fmt"
 
 	"github.com/ferret-linux/otter/pkg/containermanager"
-	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 type StartOptions struct {
 	ContainerNames []string
 	All            bool
-	DryRun         bool
-	Verbose        bool
 }
 
 type StartCommand struct {
@@ -56,11 +53,7 @@ func (c *StartCommand) Execute(ctx context.Context, opts *StartOptions) error {
 }
 
 func (c *StartCommand) startOne(ctx context.Context, containerName string, opts *StartOptions) error {
-	if opts.Verbose {
-		ui.DefaultLogger.Info("starting: %s", containerName)
-	}
-
-	if err := c.containerManager.Start(ctx, containerName, opts.DryRun); err != nil {
+	if err := c.containerManager.Start(ctx, containerName); err != nil {
 		return err
 	}
 

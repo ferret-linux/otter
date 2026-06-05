@@ -11,7 +11,6 @@ import (
 type Values struct {
 	ContainerManagerType  string
 	SudoProgram           string
-	Verbose               bool
 	DefaultContainerImage string
 	DefaultContainerName  string
 }
@@ -20,7 +19,6 @@ func defaultsMap() map[string]string {
 	return map[string]string{
 		"container_manager": "podman",
 		"sudo_program":      "sudo",
-		"verbose":           "false",
 		// otter's ubuntu-lts is default container image
 		"container_image": "ghcr.io/ferret-linux/ubuntu-otr:lts",
 		"container_name":  "my-container",
@@ -57,7 +55,6 @@ func toStruct(configMap map[string]string) *Values {
 	return &Values{
 		ContainerManagerType:  configMap["container_manager"],
 		SudoProgram:           configMap["sudo_program"],
-		Verbose:               toBool(configMap["verbose"]),
 		DefaultContainerImage: configMap["container_image"],
 		DefaultContainerName:  configMap["container_name"],
 	}
@@ -144,9 +141,6 @@ func readEnv() map[string]string {
 	}
 	if value, exists := os.LookupEnv("OTR_SUDO_PROGRAM"); exists {
 		envConfig["sudo_program"] = value
-	}
-	if value, exists := os.LookupEnv("OTR_VERBOSE"); exists {
-		envConfig["verbose"] = value
 	}
 
 	return envConfig

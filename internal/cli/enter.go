@@ -70,12 +70,10 @@ func enterAction(ctx context.Context, cmd *cli.Command) error {
 		AdditionalFlags: cmd.String("additional-flags"),
 		CustomCommand:   cmd.Args().Slice(),
 		AddEnv:          cmd.StringSlice("add-env"),
-		DryRun:          cmd.Bool("dry-run"),
 		NoTTY:           cmd.Bool("no-tty"),
 		CleanPath:       cmd.Bool("clean-path"),
 		EmptyEnv:        cmd.Bool("empty-env"),
 		AutoStart:       cmd.Bool("auto-start"),
-		Verbose:         cmd.Bool("verbose"),
 	}
 
 	_, err := commands.NewEnterCommand(containerManager).Execute(ctx, options)

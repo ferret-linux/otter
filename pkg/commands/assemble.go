@@ -26,8 +26,6 @@ type AssembleOptions struct {
 	// true=delete, false=create or update
 	Delete  bool
 	Replace bool
-	Verbose bool
-	DryRun  bool
 }
 
 type AssembleCommand struct {
@@ -83,24 +81,15 @@ func (ac *AssembleCommand) Execute(ctx context.Context, opts AssembleOptions) er
 	for _, item := range items {
 		switch {
 		case opts.Delete:
-			if opts.Verbose {
-				ui.DefaultLogger.Info("deleting '%s'", item.Name)
-			}
-			if err := ac.deleteItem(ctx, item, opts.DryRun); err != nil {
+			if err := ac.deleteItem(ctx, item); err != nil {
 				return fmt.Errorf("failed to delete item '%s': %w", item.Name, err)
 			}
 		case opts.Replace:
-			if opts.Verbose {
-				ui.DefaultLogger.Info("replacing '%s'", item.Name)
-			}
-			if err := ac.replaceItem(ctx, item, opts.DryRun); err != nil {
+			if err := ac.replaceItem(ctx, item); err != nil {
 				return fmt.Errorf("failed to replace item '%s': %w", item.Name, err)
 			}
 		default:
-			if opts.Verbose {
-				ui.DefaultLogger.Info("creating '%s'", item.Name)
-			}
-			if err := ac.createItem(ctx, item, opts.DryRun); err != nil {
+			if err := ac.createItem(ctx, item); err != nil {
 				return fmt.Errorf("failed to create item '%s': %w", item.Name, err)
 			}
 		}
@@ -109,10 +98,10 @@ func (ac *AssembleCommand) Execute(ctx context.Context, opts AssembleOptions) er
 	return nil
 }
 
-func (ac *AssembleCommand) deleteItem(ctx context.Context, item manifest.Item, dryRun bool) error {
+func (ac *AssembleCommand) deleteItem(ctx context.Context, item manifest.Item) error {
 	ac.progress.Next("Deleting %s...", item.Name)
 	opts := RmOptions{
-		NoTTY:          dryRun,
+		NoTTY:          true,
 		Force:          true,
 		All:            false,
 		ContainerNames: []string{item.Name},
@@ -132,16 +121,16 @@ func (ac *AssembleCommand) deleteItem(ctx context.Context, item manifest.Item, d
 	return nil
 }
 
-func (ac *AssembleCommand) replaceItem(ctx context.Context, item manifest.Item, dryRun bool) error {
-	err := ac.deleteItem(ctx, item, dryRun)
+func (ac *AssembleCommand) replaceItem(ctx context.Context, item manifest.Item) error {
+	err := ac.deleteItem(ctx, item)
 	if err != nil {
 		return err
 	}
 
-	return ac.createItem(ctx, item, dryRun)
+	return ac.createItem(ctx, item)
 }
 
-func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item, dryRun bool) error {
+func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item) error {
 	ac.progress.Next("Creating %s...", item.Name)
 	opts := CreateOptions{
 		ContainerClone:          item.Clone,
@@ -165,7 +154,6 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item, d
 		CPUThreads:              item.CPUThreads,
 		GenerateEntry:           item.Entry,
 		Rootful:                 item.Root,
-		DryRun:                  dryRun,
 		NonInteractive:          true,
 		ContainerAlwaysPull:     item.AlwaysPull,
 		ContainerShell:          item.UserShell,
@@ -183,7 +171,7 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item, d
 
 	success := false
 	defer func() {
-		if success || dryRun {
+		if success {
 			return
 		}
 		cleanupCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), assembleCleanupTimeout)
@@ -202,12 +190,10 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item, d
 		}
 	}()
 
-	if !dryRun {
-		err = ac.setupBox(ctx, item)
-		if err != nil {
-			ac.progress.Fail()
-			return err
-		}
+	err = ac.setupBox(ctx, item)
+	if err != nil {
+		ac.progress.Fail()
+		return err
 	}
 
 	if item.Lock {
@@ -264,7 +250,6 @@ func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) err
 			ContainerName: item.Name,
 			NoTTY:         true,
 			CustomCommand: []string{"true"}, // we just want to run the init hooks, so we can skip the shell
-			DryRun:        false,
 		})
 		if err != nil {
 			return fmt.Errorf("failed to execute init hooks for item '%s': %w", item.Name, err)
@@ -283,7 +268,6 @@ func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) err
 			ContainerName: item.Name,
 			NoTTY:         true,
 			CustomCommand: []string{"otter-export", "--app", app},
-			DryRun:        false,
 		})
 		if err != nil {
 			return fmt.Errorf("failed to export app '%s' for item '%s': %w", app, item.Name, err)
@@ -306,7 +290,6 @@ func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) err
 			ContainerName: item.Name,
 			NoTTY:         true,
 			CustomCommand: []string{"otter-export", "--bin", bin, "--export-path", item.ExportedBinsPath},
-			DryRun:        false,
 		})
 		if err != nil {
 			return fmt.Errorf("failed to export bin '%s' for item '%s': %w", bin, item.Name, err)

@@ -65,7 +65,6 @@ type CreateOptions struct {
 	ContainerInitHook       string
 	Init                    bool
 	Nvidia                  bool
-	DryRun                  bool
 	Memory                  string
 	CPUThreads              int
 }
@@ -75,12 +74,10 @@ type EnterOptions struct {
 	AdditionalFlags string
 	CustomCommand   []string
 	AddEnv          []string
-	DryRun          bool
 	NoTTY           bool
 	NoWorkDir       bool
 	CleanPath       bool
 	EmptyEnv        bool
-	Verbose         bool
 }
 
 type JournalOptions struct {
@@ -95,7 +92,6 @@ type RmOptions struct {
 	Force         bool
 	RemoveHome    bool
 	ContainerHome string
-	DryRun        bool
 }
 
 func (c Container) IsOtterContainer() bool {
@@ -126,10 +122,10 @@ type ContainerManager interface {
 	Remove(ctx context.Context, containerName string, opts RmOptions) error
 	Exists(ctx context.Context, containerName string) bool
 	ImageExists(ctx context.Context, imageName string) bool
-	Start(ctx context.Context, containerName string, dryRun bool) error
-	Stop(ctx context.Context, containerNames []string, dryRun bool) error
+	Start(ctx context.Context, containerName string) error
+	Stop(ctx context.Context, containerNames []string) error
 	InspectContainer(ctx context.Context, containerName string) (*InspectResult, error)
-	PullImage(ctx context.Context, imageName string, platform string, dryRun bool) error
+	PullImage(ctx context.Context, imageName string, platform string) error
 	Commit(ctx context.Context, containerID string, imageTag string) error
 	// CopyFromContainer copies a file from the container filesystem to the host.
 	CopyFromContainer(ctx context.Context, containerName string, srcPath string, destPath string) error

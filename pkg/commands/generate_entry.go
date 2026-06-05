@@ -45,8 +45,6 @@ var distroIconMap = map[string]string{
 }
 
 type GenerateEntryOptions struct {
-	Verbose             bool
-	DryRun              bool
 	Delete              bool
 	Root                bool
 	DesktopEntryBaseDir string
@@ -142,13 +140,6 @@ func (c *GenerateEntryCommand) Execute(
 	// Create the desktop entries for all the containers
 	for _, containerName := range containerNames {
 		entryPath := c.getEntryFilePath(filepath.Join(desktopEntryBaseDir, "applications"), containerName, opts.Root)
-		if opts.Verbose {
-			ui.DefaultLogger.Info("writing desktop entry for '%s' to %s", containerName, entryPath)
-		}
-		if opts.DryRun {
-			ui.DefaultLogger.Info("would write desktop entry for '%s' to %s", containerName, entryPath)
-			continue
-		}
 		if err := c.createEntry(ctx, containerName, icon, desktopEntryBaseDir, otterPath, opts.Root); err != nil {
 			return fmt.Errorf("failed to create desktop entry for container %s: %w", containerName, err)
 		}

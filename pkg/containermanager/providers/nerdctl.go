@@ -22,12 +22,11 @@ type Nerdctl struct {
 	binary      string
 	root        bool
 	sudoCommand string
-	verbose     bool
 }
 
 var _ containermanager.ContainerManager = &Nerdctl{}
 
-func NewNerdctl(root bool, sudoCommand string, verbose bool) *Nerdctl {
+func NewNerdctl(root bool, sudoCommand string) *Nerdctl {
 	binary, err := exec.LookPath("nerdctl")
 	if err != nil {
 		binary = "nerdctl"
@@ -36,7 +35,6 @@ func NewNerdctl(root bool, sudoCommand string, verbose bool) *Nerdctl {
 		binary:      binary,
 		sudoCommand: sudoCommand,
 		root:        root,
-		verbose:     verbose,
 	}
 }
 
@@ -106,7 +104,7 @@ func (n *Nerdctl) Create(
 		filepath.Join(scriptsDir, "otter-host-exec"),
 	)
 
-	_, err = n.run(ctx, cmd, runOptions{DryRun: opts.DryRun})
+	_, err = n.run(ctx, cmd, runOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create container: %w", err)
 	}
@@ -354,14 +352,14 @@ func (n *Nerdctl) ImageExists(ctx context.Context, imageName string) bool {
 	return inspect.ID != ""
 }
 
-func (n *Nerdctl) PullImage(ctx context.Context, imageName string, platform string, dryRun bool) error {
+func (n *Nerdctl) PullImage(ctx context.Context, imageName string, platform string) error {
 	var args []string
 	if platform != "" {
 		args = []string{"pull", "--platform", platform, imageName}
 	} else {
 		args = []string{"pull", imageName}
 	}
-	_, err := n.run(ctx, args, runOptions{DryRun: dryRun})
+	_, err := n.run(ctx, args, runOptions{})
 	return err
 }
 
@@ -377,7 +375,7 @@ func (n *Nerdctl) Remove(
 
 	args = append(args, []string{"--volumes", containerName}...)
 
-	_, err := n.run(ctx, args, runOptions{DryRun: options.DryRun})
+	_, err := n.run(ctx, args, runOptions{})
 	if err != nil {
 		return fmt.Errorf("error removing the container: %w", err)
 	}
@@ -392,11 +390,11 @@ func (n *Nerdctl) Remove(
 	return nil
 }
 
-func (n *Nerdctl) Stop(ctx context.Context, containerNames []string, dryRun bool) error {
+func (n *Nerdctl) Stop(ctx context.Context, containerNames []string) error {
 	args := []string{"stop"}
 	args = append(args, containerNames...)
 
-	_, err := n.run(ctx, args, runOptions{DryRun: dryRun})
+	_, err := n.run(ctx, args, runOptions{})
 	if err != nil {
 		return fmt.Errorf("error stopping containers: %w", err)
 	}
@@ -502,20 +500,12 @@ func (n *Nerdctl) Enter(
 		options.CleanPath,
 		options.EmptyEnv,
 		options.AddEnv,
-		options.Verbose,
 	)
 	if err != nil {
 		return err
 	}
 
 	commandArgs := containermanager.BuildCommandArgs(options.CustomCommand, user, options.NoTTY, config.UnshareGroups)
-
-	if options.DryRun {
-		command = append(command, commandArgs...)
-		ui.DefaultLogger.Info("%s %s", n.Name(), strings.Join(command, "\n"))
-
-		return nil
-	}
 
 	inspectResult, err := n.InspectContainer(ctx, options.ContainerName)
 	if err != nil || inspectResult.ContainerStatus != containermanager.RunningStatus {
@@ -538,15 +528,6 @@ func (n *Nerdctl) run(ctx context.Context, args []string, opts runOptions) (stri
 	if n.root {
 		args = append([]string{command}, args...)
 		command = n.sudoCommand
-	}
-
-	if opts.DryRun {
-		ui.DefaultLogger.Info("%s %s", command, strings.Join(args, " "))
-		return "", nil
-	}
-
-	if n.verbose {
-		ui.DefaultLogger.Info("%s %s", command, strings.Join(args, " "))
 	}
 
 	cmd := exec.CommandContext(ctx, command, args...)
@@ -587,13 +568,8 @@ func (n *Nerdctl) generateEnterCommand(
 	cleanPath bool,
 	emptyEnv bool,
 	addEnv []string,
-	verbose bool,
 ) ([]string, *containermanager.InspectResult, error) {
 	cmd := []string{}
-
-	if verbose {
-		cmd = append(cmd, "--debug")
-	}
 
 	cmd = append(cmd, "exec")
 	if noTTY {
@@ -671,12 +647,7 @@ func (n *Nerdctl) generateEnterCommand(
 	return cmd, containerConfig, nil
 }
 
-func (n *Nerdctl) Start(ctx context.Context, containerName string, dryRun bool) error {
-	if dryRun {
-		ui.DefaultLogger.Info("%s start %s", n.Name(), containerName)
-		return nil
-	}
-
+func (n *Nerdctl) Start(ctx context.Context, containerName string) error {
 	inspectResult, err := n.InspectContainer(ctx, containerName)
 	if err != nil {
 		return fmt.Errorf("container '%s' not found", containerName)

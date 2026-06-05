@@ -31,8 +31,6 @@ type RmOptions struct {
 	BypassLock     bool
 	All            bool
 	RemoveHome     bool
-	DryRun         bool
-	Verbose        bool
 	Root           bool
 	ContainerNames []string
 }
@@ -76,7 +74,7 @@ func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, 
 			ui.DefaultLogger.Error("'%s' is locked, run 'otter unlock %s' first", currentOtterContainer.Name, currentOtterContainer.Name)
 			continue
 		}
-		err := c.removeContainer(ctx, currentOtterContainer, options.Force, options.NoTTY, options.RemoveHome, options.Verbose, userHome, options.DryRun, options.Root)
+		err := c.removeContainer(ctx, currentOtterContainer, options.Force, options.NoTTY, options.RemoveHome, userHome, options.Root)
 		if err != nil {
 			ui.DefaultLogger.Error("failed deleting %s: %s", currentOtterContainer.Name, err)
 		} else {
@@ -113,9 +111,7 @@ func (c *RmCommand) removeContainer(
 	force bool,
 	noTTY bool,
 	removeHome bool,
-	verbose bool,
 	userHome string,
-	dryRun bool,
 	root bool,
 ) error {
 	forceRemove := force
@@ -143,13 +139,10 @@ func (c *RmCommand) removeContainer(
 
 	cmOptions := containermanager.RmOptions{
 		Force:         forceRemove,
-		RemoveHome:    removeHome && !dryRun,
+		RemoveHome:    removeHome,
 		ContainerHome: inspectOutput.ContainerHome,
-		DryRun:        dryRun,
 	}
-	if !dryRun {
-		c.cleanup(ctx, userHome, container.Name, verbose, root)
-	}
+	c.cleanup(ctx, userHome, container.Name, root)
 
 	err = c.containerManager.Remove(ctx, container.Name, cmOptions)
 	if err != nil {
@@ -159,7 +152,7 @@ func (c *RmCommand) removeContainer(
 	return nil
 }
 
-func (c *RmCommand) cleanup(ctx context.Context, userHome, containerName string, verbose bool, root bool) {
+func (c *RmCommand) cleanup(ctx context.Context, userHome, containerName string, root bool) {
 	bins := findExportedBinaries(userHome, containerName)
 	desktopApps := findExportedDesktopApps(userHome, containerName, root)
 
@@ -176,7 +169,6 @@ func (c *RmCommand) cleanup(ctx context.Context, userHome, containerName string,
 		&GenerateEntryOptions{
 			ContainerNames: []string{containerName},
 			Delete:         true,
-			Verbose:        verbose,
 			Root:           root,
 		},
 	)

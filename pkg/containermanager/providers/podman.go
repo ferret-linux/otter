@@ -24,7 +24,6 @@ type Podman struct {
 	binary      string
 	root        bool
 	sudoCommand string
-	verbose     bool
 }
 
 // podmanCommand represents the executable name for the Podman provider.
@@ -36,7 +35,7 @@ const (
 
 var _ containermanager.ContainerManager = &Podman{}
 
-func newPodman(command podmanCommand, root bool, sudoCommand string, verbose bool) *Podman {
+func newPodman(command podmanCommand, root bool, sudoCommand string) *Podman {
 	binary, err := exec.LookPath(string(command))
 	if err != nil {
 		binary = string(command)
@@ -46,12 +45,11 @@ func newPodman(command podmanCommand, root bool, sudoCommand string, verbose boo
 		binary:      binary,
 		sudoCommand: sudoCommand,
 		root:        root,
-		verbose:     verbose,
 	}
 }
 
-func NewPodman(root bool, sudoCommand string, verbose bool) *Podman {
-	return newPodman(podmanCommandPodman, root, sudoCommand, verbose)
+func NewPodman(root bool, sudoCommand string) *Podman {
+	return newPodman(podmanCommandPodman, root, sudoCommand)
 }
 
 func (p *Podman) CloneAsRoot() containermanager.ContainerManager {
@@ -125,14 +123,13 @@ func (p *Podman) Create(
 		opts.UnshareIPC,
 		opts.UnshareNetNS,
 		opts.UnshareProcess,
-		opts.DryRun,
 		userEnv,
 		filepath.Join(scriptsDir, "otter-init"),
 		filepath.Join(scriptsDir, "otter-export"),
 		filepath.Join(scriptsDir, "otter-host-exec"),
 	)
 
-	_, err = p.run(ctx, cmd, runOptions{DryRun: opts.DryRun})
+	_, err = p.run(ctx, cmd, runOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create container: %w", err)
 	}
@@ -164,7 +161,6 @@ func (p *Podman) makeCreateCommand(
 	unshareIPC bool,
 	unshareNetNS bool,
 	unshareProcess bool,
-	dryRun bool,
 	userEnv *userenv.UserEnvironment,
 	otterInitPath string,
 	otterExportPath string,
@@ -252,7 +248,7 @@ func (p *Podman) makeCreateCommand(
 	//
 	// This happens ONLY with podman+runc, docker & nerdctl is unaffected,
 	// so let's do this only if we have podman AND runc.
-	if !dryRun && p.usesRunc(ctx) {
+	if p.usesRunc(ctx) {
 		options = append(options, hostRootMountsForRunc(ctx)...)
 	} else {
 		options = append(options, "--volume", "/:/run/host/:rslave")
@@ -423,7 +419,7 @@ func (p *Podman) makeCreateCommand(
 
 	// Use keep-id only if going rootless.
 	if !p.root {
-		if dryRun || p.supportsKeepIDSize(ctx, containerImage) {
+		if p.supportsKeepIDSize(ctx, containerImage) {
 			options = append(options, "--userns", "keep-id:size=65536")
 		} else {
 			options = append(options, "--userns", "keep-id")
@@ -490,15 +486,6 @@ func (p *Podman) run(ctx context.Context, args []string, opts runOptions) (strin
 		command = p.sudoCommand
 	}
 
-	if opts.DryRun {
-		ui.DefaultLogger.Info("%s %s", command, strings.Join(args, " "))
-		return "", nil
-	}
-
-	if p.verbose {
-		ui.DefaultLogger.Info("%s %s", command, strings.Join(args, " "))
-	}
-
 	cmd := exec.CommandContext(ctx, command, args...)
 
 	if opts.Interactive {
@@ -544,20 +531,12 @@ func (p *Podman) Enter(
 		options.CleanPath,
 		options.EmptyEnv,
 		options.AddEnv,
-		options.Verbose,
 	)
 	if err != nil {
 		return err
 	}
 
 	commandArgs := containermanager.BuildCommandArgs(options.CustomCommand, user, options.NoTTY, config.UnshareGroups)
-
-	if options.DryRun {
-		command = append(command, commandArgs...)
-		ui.DefaultLogger.Info("%s %s", p.Name(), strings.Join(command, "\n"))
-
-		return nil
-	}
 
 	inspectResult, err := p.InspectContainer(ctx, options.ContainerName)
 	if err != nil || inspectResult.ContainerStatus != containermanager.RunningStatus {
@@ -594,14 +573,14 @@ func (p *Podman) ImageExists(ctx context.Context, imageName string) bool {
 	return true
 }
 
-func (p *Podman) PullImage(ctx context.Context, imageName string, platform string, dryRun bool) error {
+func (p *Podman) PullImage(ctx context.Context, imageName string, platform string) error {
 	var args []string
 	if platform != "" {
 		args = []string{"pull", "--platform", platform, imageName}
 	} else {
 		args = []string{"pull", imageName}
 	}
-	_, err := p.run(ctx, args, runOptions{DryRun: dryRun})
+	_, err := p.run(ctx, args, runOptions{})
 	return err
 }
 
@@ -617,7 +596,7 @@ func (p *Podman) Remove(
 
 	args = append(args, []string{"--volumes", containerName}...)
 
-	_, err := p.run(ctx, args, runOptions{DryRun: options.DryRun})
+	_, err := p.run(ctx, args, runOptions{})
 	if err != nil {
 		return fmt.Errorf("error removing the container: %w", err)
 	}
@@ -632,11 +611,11 @@ func (p *Podman) Remove(
 	return nil
 }
 
-func (p *Podman) Stop(ctx context.Context, containerNames []string, dryRun bool) error {
+func (p *Podman) Stop(ctx context.Context, containerNames []string) error {
 	args := []string{"stop"}
 	args = append(args, containerNames...)
 
-	_, err := p.run(ctx, args, runOptions{DryRun: dryRun})
+	_, err := p.run(ctx, args, runOptions{})
 	if err != nil {
 		return fmt.Errorf("error stopping containers: %w", err)
 	}
@@ -854,13 +833,8 @@ func (p *Podman) generateEnterCommand(
 	cleanPath bool,
 	emptyEnv bool,
 	addEnv []string,
-	verbose bool,
 ) ([]string, *containermanager.InspectResult, error) {
 	cmd := []string{}
-
-	if verbose {
-		cmd = append(cmd, "--log-level", "debug")
-	}
 
 	cmd = append(cmd, "exec")
 	if noTTY {
@@ -949,12 +923,7 @@ func (p *Podman) generateEnterCommand(
 	return cmd, containerConfig, nil
 }
 
-func (p *Podman) Start(ctx context.Context, containerName string, dryRun bool) error {
-	if dryRun {
-		ui.DefaultLogger.Info("%s start %s", p.Name(), containerName)
-		return nil
-	}
-
+func (p *Podman) Start(ctx context.Context, containerName string) error {
 	inspectResult, err := p.InspectContainer(ctx, containerName)
 	if err != nil {
 		return fmt.Errorf("container '%s' not found", containerName)

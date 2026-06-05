@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/urfave/cli/v3"
 
@@ -26,15 +25,6 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 		Name:    "otter",
 		Version: version.Version,
 		Flags: []cli.Flag{
-			&cli.BoolFlag{
-				Name:    "verbose",
-				Aliases: []string{"v"},
-				Value:   cfg.Verbose,
-			},
-			&cli.BoolFlag{
-				Name:    "dry-run",
-				Aliases: []string{"d"},
-			},
 			&cli.StringFlag{
 				Name:   "sudo-command",
 				Hidden: true,
@@ -46,12 +36,7 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 			if err == nil {
 				return
 			}
-			if cmd.Bool("verbose") {
-				ui.DefaultLogger.Error("%s", err)
-			} else {
-				parts := strings.Split(err.Error(), ": ")
-				ui.DefaultLogger.Error("%s", parts[len(parts)-1])
-			}
+			ui.DefaultLogger.Error("%s", err)
 		},
 	}
 }
@@ -252,7 +237,6 @@ func withContainerManager(cfg *config.Values, cmd *cli.Command) *cli.Command {
 			ctx,
 			c.String("container-manager"),
 			c.String("sudo-command"),
-			c.Bool("verbose"),
 			c.Bool("root"),
 		)
 		if err != nil {
@@ -267,20 +251,19 @@ func buildContainerManager(
 	_ context.Context,
 	containerManagerType string,
 	sudoCommand string,
-	verbose bool,
 	root bool,
 ) (containermanager.ContainerManager, error) {
 	errLogger := ui.NewLogger(os.Stderr)
 
 	switch containerManagerType {
 	case "docker":
-		return providers.NewDocker(root, sudoCommand, verbose), nil
+		return providers.NewDocker(root, sudoCommand), nil
 	case "podman":
-		return providers.NewPodman(root, sudoCommand, verbose), nil
+		return providers.NewPodman(root, sudoCommand), nil
 	case "nerdctl":
-		return providers.NewNerdctl(root, sudoCommand, verbose), nil
+		return providers.NewNerdctl(root, sudoCommand), nil
 	case "autodetect", "":
-		cm, err := providers.NewAutoDetect(root, sudoCommand, verbose)
+		cm, err := providers.NewAutoDetect(root, sudoCommand)
 		if err != nil {
 			if errors.Is(err, providers.ErrNoContainerManager) {
 				printMissingContainerManager(errLogger)

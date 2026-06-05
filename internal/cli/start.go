@@ -40,7 +40,5 @@ func startAction(ctx context.Context, cmd *cli.Command) error {
 	return commands.NewStartCommand(containerManager).Execute(ctx, &commands.StartOptions{
 		ContainerNames: cmd.StringSlice("name"),
 		All:            cmd.Bool("all"),
-		DryRun:         cmd.Bool("dry-run"),
-		Verbose:        cmd.Bool("verbose"),
 	})
 }
