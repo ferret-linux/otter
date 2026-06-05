@@ -54,7 +54,7 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 			},
 			&cli.StringFlag{
 				Name:    "clone",
-				Aliases: []string{"c"},
+				Aliases: []string{"C"},
 			},
 			&cli.StringFlag{
 				Name:    "home",
