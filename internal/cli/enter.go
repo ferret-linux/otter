@@ -31,10 +31,6 @@ func newEnterCommand(cfg *config.Values) *cli.Command {
 				Aliases: []string{"a"},
 			},
 			&cli.BoolFlag{
-				Name:    "yes",
-				Aliases: []string{"y"},
-			},
-			&cli.BoolFlag{
 				Name:    "no-tty",
 				Aliases: []string{"T", "H"},
 			},

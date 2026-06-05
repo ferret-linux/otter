@@ -34,7 +34,7 @@ func newRmCommand(cfg *config.Values) *cli.Command {
 			},
 			&cli.BoolFlag{
 				Name:    "yes",
-				Aliases: []string{"Y"},
+				Aliases: []string{"y"},
 			},
 			&cli.BoolFlag{
 				Name: "rm-home",

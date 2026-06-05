@@ -12,7 +12,7 @@
 {2}│{R}  {5}otter create --image alpine:latest --additional-packages "git tmux vim"{R}            {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                                                           {2}│{R}
-{2}│{R} {4}--yes{R}                 {2}┆{R} {4}-Y{R}   {5}Non-interactive, pull images without asking{R}            {2}│{R}
+{2}│{R} {4}--yes{R}                 {2}┆{R} {4}-y{R}   {5}Non-interactive, pull images without asking{R}            {2}│{R}
 {2}│{R} {4}--home{R}                {2}┆{R} {4}-H{R}   {5}Custom HOME directory for the container{R}                {2}│{R}
 {2}│{R} {4}--init{R}                {2}┆{R} {4}-I{R}   {5}Use init system (e.g. systemd) inside the container{R}    {2}│{R}
 {2}│{R} {4}--name{R}                {2}┆{R} {4}-n{R}   {5}Name for the container{R}                                 {2}│{R}
