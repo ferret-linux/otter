@@ -20,7 +20,6 @@
 {2}├─────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                        {2}│{R}
 {2}│{R} {4}--help{R}       {2}┆{R} {4}-h{R}  {5}Show this help message{R}       {2}│{R}
-{2}│{R} {4}--verbose{R}    {2}┆{R} {4}-v{R}  {5}Show more verbose output{R}     {2}│{R}
 {2}├─────────────┴───────────────────────────────────┤{R}
 {2}│{R}{3}▸ Notes:{R}                                         {2}│{R}
 {2}│{R} {5}Alias: 'otter logs' works identically.{R}          {2}│{R}

@@ -66,7 +66,7 @@ func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterRe
 		ui.DefaultLogger.Info("entering '%s'...\n", opts.ContainerName)
 	}
 
-	err := c.containerManager.Enter(ctx, cmdOpts)
+	err = c.containerManager.Enter(ctx, cmdOpts)
 	if err != nil {
 		return nil, fmt.Errorf("failed to enter the container: %w", err)
 	}

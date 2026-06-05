@@ -139,7 +139,6 @@ func (c *GenerateEntryCommand) Execute(
 
 	// Create the desktop entries for all the containers
 	for _, containerName := range containerNames {
-		entryPath := c.getEntryFilePath(filepath.Join(desktopEntryBaseDir, "applications"), containerName, opts.Root)
 		if err := c.createEntry(ctx, containerName, icon, desktopEntryBaseDir, otterPath, opts.Root); err != nil {
 			return fmt.Errorf("failed to create desktop entry for container %s: %w", containerName, err)
 		}
