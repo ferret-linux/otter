@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+# shellcheck disable=all
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the otter project:
+#    https://github.com/ferret-project/otter
+# Copyright (C) 2026 otter contributors
+#
+# otter is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License version 3
+# as published by the Free Software Foundation.
+#
+# otter is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with otter; if not, see <http://www.gnu.org/licenses/>.
+
+import os
+import sys
+
+SCRIPTS_DIR = "/usr/lib/otter/scripts"
+VERSION     = "1.0.0"
+
+def render_help(text):
+    color_green  = "\033[32m"
+    color_teal   = "\033[96m"
+    color_cyan   = "\033[36m"
+    color_yellow = "\033[33m"
+    color_blue   = "\033[34m"
+    color_dim    = "\033[37m"
+    slots = [color_green, color_teal, color_cyan, color_yellow, color_blue, color_dim]
+    if os.environ.get("NO_COLOR") is not None or os.environ.get("TERM") == "dumb":
+        for i in range(len(slots)):
+            text = text.replace(f"{{{i}}}", "")
+        return text.replace("{R}", "")
+    for i, code in enumerate(slots):
+        text = text.replace(f"{{{i}}}", code)
+    return text.replace("{R}", "\033[0m")
+
+HELP_TEXT = """\
+{2}╭─────────────────────────────────────────────────╮{R}
+{2}│{R}{1}⦿ Use any Linux distribution inside your terminal{R}{2}│{R}
+{2}├─────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Usage:{R}                                         {2}│{R}
+{2}│{R}  {5}otter <command> [args]{R}                         {2}│{R}
+{2}├─────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Commands:{R}                                      {2}│{R}
+{2}│{R} {4}export{R}    {5}Export apps or binaries to the host{R}   {2}│{R}
+{2}│{R} {4}host-exec{R} {5}Run a command on the host{R}             {2}│{R}
+{2}├─────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                        {2}│{R}
+{2}│{R} {4}--help{R} {2}┆{R} {4}-h{R}  {5}Show this help message{R}             {2}│{R}
+{2}│{R} {4}--version{R} {2}┆{R} {4}-V{R}  {5}Show version information{R}        {2}│{R}
+{2}├─────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Notes:{R}                                         {2}│{R}
+{2}│{R} {5}For command help, run:{R}                          {2}│{R}
+{2}│{R}  {4}otter export --help{R}                            {2}│{R}
+{2}│{R}  {4}otter host-exec --help{R}                         {2}│{R}
+{2}╰─────────────────────────────────────────────────╯{R}"""
+
+if len(sys.argv) < 2 or sys.argv[1] in ("--help", "-h"):
+    print(render_help(HELP_TEXT))
+    sys.exit(0)
+
+if sys.argv[1] in ("--version", "-V"):
+    print(f"otter: {VERSION}")
+    sys.exit(0)
+
+subcommand = sys.argv[1]
+remaining  = sys.argv[2:]
+
+if subcommand == "export":
+    os.execv(f"{SCRIPTS_DIR}/otter-export", ["otter-export"] + remaining)
+elif subcommand == "host-exec":
+    os.execv(f"{SCRIPTS_DIR}/otter-host-exec", ["otter-host-exec"] + remaining)
+else:
+    print(f"ERROR: unknown command '{subcommand}'\n", file=sys.stderr)
+    print(render_help(HELP_TEXT))
+    sys.exit(1)
