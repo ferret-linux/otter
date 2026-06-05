@@ -32,7 +32,7 @@ func newEnterCommand(cfg *config.Values) *cli.Command {
 			},
 			&cli.BoolFlag{
 				Name:    "no-tty",
-				Aliases: []string{"T", "H"},
+				Aliases: []string{"T"},
 			},
 			&cli.BoolFlag{
 				Name:    "no-workdir",
