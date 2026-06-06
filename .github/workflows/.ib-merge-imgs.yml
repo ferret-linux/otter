@@ -71,5 +71,9 @@ jobs:
 
       - name: Sign
         run: |
-          cosign sign --yes \
-            ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}
+          for i in 1 2 3; do
+            cosign sign --yes \
+              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} && break
+            echo "Attempt $i/3 failed, retrying in 15s..."
+            sleep 15
+          done

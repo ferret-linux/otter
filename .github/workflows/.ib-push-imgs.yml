@@ -87,8 +87,12 @@ jobs:
 
       - name: Sign
         run: |
-          cosign sign --yes \
-            ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64
+          for i in 1 2 3; do
+            cosign sign --yes \
+              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 && break
+            echo "Attempt $i/3 failed, retrying in 15s..."
+            sleep 15
+          done
 
   push-arm64:
     needs: load-matrix-arm64
@@ -139,5 +143,9 @@ jobs:
 
       - name: Sign
         run: |
-          cosign sign --yes \
-            ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64
+          for i in 1 2 3; do
+            cosign sign --yes \
+              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64 && break
+            echo "Attempt $i/3 failed, retrying in 15s..."
+            sleep 15
+          done
