@@ -28,9 +28,6 @@ RUN dnf install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-rele
     "https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm" \
     "https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm"
 
-# RHEL sucks as always , best-effort enabling of repos
-RUN subscription-manager repos --enable "codeready-builder-for-rhel-$(rpm -E %{rhel})-$(uname -m)-rpms" || true
-
 # Upgrade all packages
 RUN dnf upgrade -y
 

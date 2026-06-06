@@ -46,7 +46,6 @@ RUN xbps-install -Sy $(sh /tmp/pkg-validator.sh --pkgmgr xbps -- \
     iproute2 \
     less \
     lsof \
-    fonts-ttf-ms \
     man-db \
     mesa-dri \
     mesa-vulkan-intel \

@@ -77,7 +77,7 @@
     "name": "gentoo-otr",
     "tag": "stage3",
     "arches": ["amd64", "arm64"],
-    "enabled": false
+    "enabled": true
   },
   {
     "image": "docker.io/library/almalinux:latest",
@@ -125,7 +125,7 @@
     "name": "opensuse-otr",
     "tag": "leap",
     "arches": ["amd64", "arm64"],
-    "enabled": false
+    "enabled": true
   },
   {
     "image": "registry.opensuse.org/opensuse/tumbleweed:latest",
@@ -133,7 +133,7 @@
     "name": "opensuse-otr",
     "tag": "tumbleweed",
     "arches": ["amd64", "arm64"],
-    "enabled": false
+    "enabled": true
   },
   {
     "image": "docker.io/library/alpine:latest",

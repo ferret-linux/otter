@@ -26,16 +26,6 @@ RUN mkdir -p /etc/zypp/zypp.conf.d \
 # Lock parallel-printer-support as it can't be installed in rootless containers
 RUN zypper al parallel-printer-support
 
-# Add Packman repository for multimedia codecs
-RUN . /etc/os-release && \
-    if [ "${ID}" = "opensuse-tumbleweed" ]; then \
-        zypper addrepo -cfp 90 'https://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed/' packman; \
-    elif [ "${ID}" = "opensuse-leap" ]; then \
-        zypper addrepo -cfp 90 'https://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Leap_$releasever/' packman; \
-    fi && \
-    zypper --gpg-auto-import-keys refresh && \
-    zypper dist-upgrade --from packman --allow-vendor-change
-
 # Upgrade all packages
 RUN zypper dup -y --from packman --allow-vendor-change || zypper dup -y
 
@@ -113,12 +103,6 @@ RUN zypper -n install --auto-agree-with-licenses -y \
     libva-intel-driver \
     mesa-libva \
     libva2) || [ ${?} = 106 ]
-
-# Install fetchmsttfonts separately — its post-install script exits non-zero
-# even on success; rpm's %post scriptlet bypasses zypper's stdin so piping
-# 'i' does not work. We force-install and ignore the non-zero exit.
-RUN EULA_AGREED=1 EULA_ACCEPTED=yes zypper -n install --auto-agree-with-licenses -y \
-    fetchmsttfonts || true
 
 # Locale setup — glibc-locale (installed via pkg script) pre-builds locales on Leap;
 # localedef requires glibc-i18ndata charmap files which are not available on Leap 15.x
