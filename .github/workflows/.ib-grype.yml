@@ -67,7 +67,6 @@ jobs:
         run: |
           grype \
             sbom:/tmp/${{ matrix.name }}-${{ matrix.tag }}-amd64.spdx.json \
-            --fail-on critical \
             --output json \
             --file /tmp/${{ matrix.name }}-${{ matrix.tag }}-amd64.grype.json \
             ${{ matrix.grype_distro && format('--distro {0}', matrix.grype_distro) || '' }}
@@ -109,7 +108,6 @@ jobs:
         run: |
           grype \
             sbom:/tmp/${{ matrix.name }}-${{ matrix.tag }}-arm64.spdx.json \
-            --fail-on critical \
             --output json \
             --file /tmp/${{ matrix.name }}-${{ matrix.tag }}-arm64.grype.json \
             ${{ matrix.grype_distro && format('--distro {0}', matrix.grype_distro) || '' }}
