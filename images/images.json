@@ -77,7 +77,7 @@
     "name": "gentoo-otr",
     "tag": "stage3",
     "arches": ["amd64", "arm64"],
-    "enabled": true
+    "enabled": false
   },
   {
     "image": "docker.io/library/almalinux:latest",
