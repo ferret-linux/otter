@@ -15,8 +15,7 @@ RUN mkdir -p \
     /usr/local/bin
 
 # Add otter image identifiers
-RUN touch /usr/lib/otter/container.official && \
-    touch /usr/lib/otter/container.void
+RUN touch /usr/lib/otter/container.void
 
 # Configure xbps to not overwrite host-managed files
 RUN mkdir -p /etc/xbps.d \

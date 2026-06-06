@@ -7,3 +7,14 @@
 #
 # Usage: ./setup-common.sh
 # it's used to setup common settings/defaults that are generic across distros
+
+# Make common otter specific dir's
+mkdir -p \
+    /etc/profile.d \
+    /etc/sudoers.d \
+    /usr/lib/otter \
+    /usr/local/bin \
+    /usr/libexec/
+
+# Add generic image identifier
+touch /usr/lib/otter/container.official
