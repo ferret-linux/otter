@@ -4,11 +4,11 @@
 #    https://github.com/ferret-linux/otter
 # Copyright (C) 2026 otter contributors
 
-name: 2.KeepAlive
+name: 3.KeepAlive
 
 on:
   schedule:
-    - cron: '0 12 */6 * *'
+    - cron: '48 15 */7 * *'
   workflow_dispatch:
 
 jobs:

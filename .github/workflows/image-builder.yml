@@ -8,8 +8,7 @@ name: 1.Image Builder (IB)
 
 on:
   schedule:
-    - cron: '13 16 * * *'
-    - cron: '21 06 * * *'
+    - cron: '27 8 */2 * *'
   workflow_dispatch:
 
 jobs:
