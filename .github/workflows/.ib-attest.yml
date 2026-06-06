@@ -1,0 +1,105 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the otter project:
+#    https://github.com/ferret-linux/otter
+# Copyright (C) 2026 otter contributors
+
+name: .ib-attest
+
+on:
+  workflow_call:
+
+jobs:
+  load-matrix-amd64:
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.filter.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Filter matrix for amd64
+        id: filter
+        run: |
+          matrix=$(jq -c '[.[] | select(.enabled == true and (.arches | contains(["amd64"])))]' images/images.json)
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+
+  load-matrix-arm64:
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.filter.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Filter matrix for arm64
+        id: filter
+        run: |
+          matrix=$(jq -c '[.[] | select(.enabled == true and (.arches | contains(["arm64"])))]' images/images.json)
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+
+  attest-amd64:
+    needs: load-matrix-amd64
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.load-matrix-amd64.outputs.matrix) }}
+
+    steps:
+      - name: Download SBOM
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: sbom-amd64-${{ matrix.name }}-${{ matrix.tag }}
+          path: /tmp
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+
+      - name: Login to GHCR (Cosign)
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | cosign login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Attest SBOM
+        run: |
+          cosign attest --yes \
+            --predicate /tmp/${{ matrix.name }}-${{ matrix.tag }}-amd64.spdx.json \
+            --type spdxjson \
+            ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64
+
+  attest-arm64:
+    needs: load-matrix-arm64
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.load-matrix-arm64.outputs.matrix) }}
+
+    steps:
+      - name: Download SBOM
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: sbom-arm64-${{ matrix.name }}-${{ matrix.tag }}
+          path: /tmp
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+
+      - name: Login to GHCR (Cosign)
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | cosign login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Attest SBOM
+        run: |
+          cosign attest --yes \
+            --predicate /tmp/${{ matrix.name }}-${{ matrix.tag }}-arm64.spdx.json \
+            --type spdxjson \
+            ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64

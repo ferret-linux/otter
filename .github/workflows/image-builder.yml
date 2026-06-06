@@ -25,16 +25,36 @@ jobs:
       contents: read
       packages: write
 
-  push:
+  sbom-scan:
     needs: [build-amd64, build-arm64]
+    uses: ./.github/workflows/.ib-sbom-scan.yml
+    permissions:
+      contents: read
+
+  grype:
+    needs: [sbom-scan]
+    uses: ./.github/workflows/.ib-grype.yml
+    permissions:
+      contents: read
+
+  push:
+    needs: [grype]
     uses: ./.github/workflows/.ib-push-imgs.yml
     permissions:
       contents: read
       packages: write
       id-token: write
 
-  merge:
+  attest:
     needs: [push]
+    uses: ./.github/workflows/.ib-attest.yml
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+  merge:
+    needs: [attest]
     uses: ./.github/workflows/.ib-merge-imgs.yml
     permissions:
       contents: read
