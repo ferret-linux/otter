@@ -4,7 +4,7 @@
 #    https://github.com/ferret-linux/otter
 # Copyright (C) 2026 otter contributors
 
-name: ib-sbom-scan
+name: ib-sbom-scan (internal)
 
 on:
   workflow_call:

@@ -4,7 +4,7 @@
 #    https://github.com/ferret-linux/otter
 # Copyright (C) 2026 otter contributors
 
-name: 1mage Builder (IB)
+name: Image Builder (IB)
 
 on:
   schedule:
