@@ -64,6 +64,14 @@ jobs:
             --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
             ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64
 
+      - name: Verify arch-specific attestation
+        run: |
+          cosign verify-attestation \
+            --certificate-identity-regexp="https://github.com/ferret-linux/otter/.*" \
+            --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
+            --type spdxjson \
+            ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64
+
       - name: Pull arch-specific image
         run: |
           podman pull ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64
@@ -111,6 +119,14 @@ jobs:
           cosign verify \
             --certificate-identity-regexp="https://github.com/ferret-linux/otter/.*" \
             --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
+            ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64
+
+      - name: Verify arch-specific attestation
+        run: |
+          cosign verify-attestation \
+            --certificate-identity-regexp="https://github.com/ferret-linux/otter/.*" \
+            --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
+            --type spdxjson \
             ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64
 
       - name: Pull arch-specific image
