@@ -57,7 +57,7 @@
   },
   {
     "image": "docker.io/library/archlinux:latest",
-    "containerfile": "arch-family.Containerfile",
+    "containerfile": "archlinux.Containerfile",
     "name": "arch-otr",
     "tag": "latest",
     "arches": ["amd64"],
@@ -65,7 +65,7 @@
   },
   {
     "image": "docker.io/blackarchlinux/blackarch:latest",
-    "containerfile": "arch-family.Containerfile",
+    "containerfile": "blackarch.Containerfile",
     "name": "blackarch-otr",
     "tag": "latest",
     "arches": ["amd64"],
@@ -113,7 +113,7 @@
   },
   {
     "image": "registry.access.redhat.com/ubi10/ubi-init:latest",
-    "containerfile": "rhel-family.Containerfile",
+    "containerfile": "rhel.Containerfile",
     "name": "rhel-otr",
     "tag": "stable",
     "arches": ["amd64", "arm64"],

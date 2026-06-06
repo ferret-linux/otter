@@ -16,7 +16,7 @@ RUN mkdir -p \
 
 # Add otter image identifiers
 RUN touch /usr/lib/otter/container.official && \
-    touch /usr/lib/otter/container.arch-family
+    touch /usr/lib/otter/container.archlinux
 
 # Configure pacman
 RUN sed -i "s|NoExtract.*||g" /etc/pacman.conf \
