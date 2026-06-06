@@ -57,7 +57,7 @@ jobs:
           path: /tmp
 
       - name: Install Grype
-        uses: anchore/scan-action/download-grype@v6
+        uses: anchore/scan-action/download-grype@1638637db639e0ade3258b51db49a9a137574c3e # v6
 
       - name: Scan SBOM
         run: |
@@ -94,7 +94,7 @@ jobs:
           path: /tmp
 
       - name: Install Grype
-        uses: anchore/scan-action/download-grype@v6
+        uses: anchore/scan-action/download-grype@1638637db639e0ade3258b51db49a9a137574c3e # v6
 
       - name: Scan SBOM
         run: |
