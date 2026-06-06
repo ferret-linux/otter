@@ -70,7 +70,7 @@ jobs:
 
   purge:
     needs: [verify]
-    if: failure()
+    if: needs.verify.result == 'failure'
     uses: ./.github/workflows/.ib-purge-imgs.yml
     permissions:
       contents: read
