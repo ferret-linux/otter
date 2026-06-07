@@ -72,7 +72,6 @@ jobs:
     if: |
       always() && (
         needs.push.result == 'failure' || needs.push.result == 'skipped' ||
-        needs.attest.result == 'failure' || needs.attest.result == 'skipped' ||
         needs.merge.result == 'failure' || needs.merge.result == 'skipped' ||
         needs.verify.result == 'failure' || needs.verify.result == 'skipped'
       )
