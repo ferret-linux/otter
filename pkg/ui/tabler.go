@@ -32,7 +32,7 @@ func padRight(s string, w int) string {
 }
 
 func hline(width int, left, right string) string {
-	return left + strings.Repeat(horizontal, width-2) + right
+	return Cyan(left + strings.Repeat(horizontal, width-2) + right)
 }
 
 // Table is a multi-column table renderer.
@@ -80,33 +80,37 @@ func (t *Table) Render() {
 	inner++                 // trailing space before │
 	tableWidth := inner + 2 // +2 for the two │ borders
 
-	renderRow := func(cols []string) string {
+	renderRow := func(cols []string, colored bool) string {
 		var sb strings.Builder
-		sb.WriteString(vertical)
+		sb.WriteString(Cyan(vertical))
 		sb.WriteString(" ")
 		for i, col := range cols {
 			w := 0
 			if i < len(widths) {
 				w = widths[i]
 			}
-			sb.WriteString(padRight(col, w))
+			if colored {
+				sb.WriteString(Yellow(padRight(col, w)))
+			} else {
+				sb.WriteString(padRight(col, w))
+			}
 			if i < len(cols)-1 {
 				sb.WriteString(strings.Repeat(" ", colGap))
 			}
 		}
 		sb.WriteString(" ")
-		sb.WriteString(vertical)
+		sb.WriteString(Cyan(vertical))
 		return sb.String()
 	}
 
 	//nolint:forbidigo
 	fmt.Fprintln(t.w, hline(tableWidth, topLeft, topRight))
 	//nolint:forbidigo
-	fmt.Fprintln(t.w, Bold(renderRow(t.headers)))
+	fmt.Fprintln(t.w, renderRow(t.headers, true))
 	//nolint:forbidigo
 	fmt.Fprintln(t.w, hline(tableWidth, middleLeft, middleRight))
 	for _, r := range t.rows {
-		line := renderRow(r.cols)
+		line := renderRow(r.cols, false)
 		if r.color != nil {
 			line = r.color(line)
 		}
@@ -173,22 +177,22 @@ func (p *Panel) Render() {
 
 	renderKV := func(key, value string) string {
 		var sb strings.Builder
-		sb.WriteString(vertical)
+		sb.WriteString(Cyan(vertical))
 		sb.WriteString(" ")
 		sb.WriteString(padRight(key, keyWidth))
 		sb.WriteString(strings.Repeat(" ", colGap))
 		sb.WriteString(padRight(value, valueWidth))
 		sb.WriteString(" ")
-		sb.WriteString(vertical)
+		sb.WriteString(Cyan(vertical))
 		return sb.String()
 	}
 
 	renderSection := func(title string) string {
 		label := "▸ " + title + ":"
-		colored := Teal(label)
+		colored := Yellow(label)
 		// pad using visible width only
 		padding := strings.Repeat(" ", keyWidth+colGap+valueWidth-runeLen(label))
-		return vertical + " " + colored + padding + " " + vertical
+		return Cyan(vertical) + " " + colored + padding + " " + Cyan(vertical)
 	}
 
 	//nolint:forbidigo
