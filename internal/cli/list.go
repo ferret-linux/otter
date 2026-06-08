@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"strings"
-	"text/tabwriter"
 
 	"github.com/urfave/cli/v3"
 
@@ -48,32 +48,17 @@ func printResult(result *commands.ListResult) {
 		return
 	}
 
-	var buf strings.Builder
-	w := tabwriter.NewWriter(&buf, 0, 0, 3, ' ', 0)
-
-	fmt.Fprintln(w, "ID\tNAME\tSTATUS\tIMAGE")
+	t := ui.NewTable(os.Stdout, "ID", "NAME", "STATUS", "IMAGE")
 	for _, c := range result.Containers {
 		status := "○ " + c.Status
+		colorFn := ui.Yellow
 		if c.IsRunning() {
 			status = "● " + c.Status
+			colorFn = ui.Green
+		} else if strings.Contains(strings.ToLower(c.Status), "exited") {
+			colorFn = ui.Dim
 		}
-		fmt.Fprintf(w, "%s\t%s\t%s\t%s\n", c.ID, c.Name, status, c.Image)
+		t.AddRow(colorFn, c.ID, c.Name, status, c.Image)
 	}
-	w.Flush()
-
-	lines := strings.Split(strings.TrimRight(buf.String(), "\n"), "\n")
-
-	//nolint:forbidigo // Using fmt.Println is acceptable here for CLI output
-	fmt.Println(lines[0])
-	for i, c := range result.Containers {
-		line := lines[i+1]
-		switch {
-		case c.IsRunning():
-			fmt.Println(ui.Green(line))
-		case strings.Contains(strings.ToLower(c.Status), "exited"):
-			fmt.Println(ui.Dim(line))
-		default:
-			fmt.Println(ui.Yellow(line))
-		}
-	}
+	t.Render()
 }

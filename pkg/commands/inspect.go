@@ -3,6 +3,7 @@ package commands
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
@@ -70,33 +71,37 @@ func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error
 		cpuThreads = fmt.Sprintf("%d threads", result.CPUThreads)
 	}
 
-	ui.DefaultLogger.Info("Name:        %s", opts.ContainerName)
-	ui.DefaultLogger.Info("ID:          %s", result.ContainerID)
-	ui.DefaultLogger.Info("Created:     %s", created)
-	ui.DefaultLogger.Info("Status:      %s", result.ContainerStatus)
-	ui.DefaultLogger.Info("Image:       %s", result.ContainerImage)
-	ui.DefaultLogger.Info("Platform:    %s", result.ContainerPlatform)
-	ui.DefaultLogger.Info("Hostname:    %s", result.ContainerHostname)
-	ui.DefaultLogger.Info("Shell:       %s", result.ContainerShell)
-	ui.DefaultLogger.Info("Home:        %s", result.ContainerHome)
-	ui.DefaultLogger.Info("Locked:      %v", locked)
-	ui.DefaultLogger.Info("Rootful:     %v", result.Rootful)
-	ui.DefaultLogger.Info("Manager:     %s", opts.Manager)
-	ui.DefaultLogger.Info("")
-	ui.DefaultLogger.Info("Resources:")
-	ui.DefaultLogger.Info("  Memory:    %s", memory)
-	ui.DefaultLogger.Info("  CPU:       %s", cpuThreads)
-	ui.DefaultLogger.Info("")
-	ui.DefaultLogger.Info("Features:")
-	ui.DefaultLogger.Info("  Init:      %s", boolToEnabledStr(result.Init))
-	ui.DefaultLogger.Info("  Nvidia:    %s", boolToEnabledStr(result.Nvidia))
-	ui.DefaultLogger.Info("")
-	ui.DefaultLogger.Info("Isolation:")
-	ui.DefaultLogger.Info("  IPC:       %s", boolToSharedStr(result.UnshareIPC))
-	ui.DefaultLogger.Info("  Network:   %s", boolToSharedStr(result.UnshareNetNS))
-	ui.DefaultLogger.Info("  Process:   %s", boolToSharedStr(result.UnshareProcess))
-	ui.DefaultLogger.Info("  Devices:   %s", boolToSharedStr(result.UnshareDevsys))
-	ui.DefaultLogger.Info("  Groups:    %s", boolToSharedStr(result.UnshareGroups))
+	p := ui.NewPanel(os.Stdout)
+	p.AddSection("General",
+		ui.PanelRow("Name", opts.ContainerName),
+		ui.PanelRow("ID", result.ContainerID),
+		ui.PanelRow("Created", created),
+		ui.PanelRow("Status", result.ContainerStatus),
+		ui.PanelRow("Image", result.ContainerImage),
+		ui.PanelRow("Platform", result.ContainerPlatform),
+		ui.PanelRow("Hostname", result.ContainerHostname),
+		ui.PanelRow("Shell", result.ContainerShell),
+		ui.PanelRow("Home", result.ContainerHome),
+		ui.PanelRow("Locked", fmt.Sprintf("%v", locked)),
+		ui.PanelRow("Rootful", fmt.Sprintf("%v", result.Rootful)),
+		ui.PanelRow("Manager", opts.Manager),
+	)
+	p.AddSection("Resources",
+		ui.PanelRow("Memory", memory),
+		ui.PanelRow("CPU", cpuThreads),
+	)
+	p.AddSection("Features",
+		ui.PanelRow("Init", boolToEnabledStr(result.Init)),
+		ui.PanelRow("Nvidia", boolToEnabledStr(result.Nvidia)),
+	)
+	p.AddSection("Isolation",
+		ui.PanelRow("IPC", boolToSharedStr(result.UnshareIPC)),
+		ui.PanelRow("Network", boolToSharedStr(result.UnshareNetNS)),
+		ui.PanelRow("Process", boolToSharedStr(result.UnshareProcess)),
+		ui.PanelRow("Devices", boolToSharedStr(result.UnshareDevsys)),
+		ui.PanelRow("Groups", boolToSharedStr(result.UnshareGroups)),
+	)
+	p.Render()
 
 	return nil
 }
