@@ -67,6 +67,14 @@ jobs:
       contents: read
       packages: read
 
+  update-props:
+    needs: [verify]
+    uses: ./.github/workflows/.ib-update-props.yml
+    permissions:
+      contents: write
+      packages: read
+    secrets: inherit
+
   purge:
     needs: [push, attest, merge, verify]
     if: |

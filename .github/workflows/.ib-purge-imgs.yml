@@ -14,7 +14,7 @@ jobs:
   purge:
     runs-on: ubuntu-24.04
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
@@ -35,3 +35,13 @@ jobs:
           done
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Mark images as unavailable
+        run: |
+          jq '.images_available = false' images/images-properties.json > tmp.json && mv tmp.json images/images-properties.json
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add images/images-properties.json
+          git diff --cached --quiet && echo "No changes to commit" && exit 0
+          git commit -m "chore: mark images unavailable after purge [skip ci]"
+          git push
