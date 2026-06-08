@@ -3,6 +3,8 @@ package netcheck
 import (
 	"errors"
 	"sync"
+
+	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 var errAllFailed = errors.New("all targets failed")
@@ -26,6 +28,8 @@ func Check() error {
 	tcpResult := make(chan result, 1)
 	httpResult := make(chan result, 1)
 	httpsResult := make(chan result, 1)
+
+	ui.DefaultLogger.Info("verifying network availability...")
 
 	go func() { dnsResult <- result{"DNS", checkDNS()} }()
 	go func() { tcpResult <- result{"TCP", checkTCP()} }()
