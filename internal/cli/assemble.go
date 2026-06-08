@@ -9,11 +9,9 @@ import (
 
 	"github.com/urfave/cli/v3"
 
-	"github.com/ferret-linux/otter/internal/rootful"
 	"github.com/ferret-linux/otter/pkg/commands"
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
-	"github.com/ferret-linux/otter/pkg/manifest"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
@@ -57,44 +55,17 @@ func newAssembleCommand(cfg *config.Values) *cli.Command {
 	}
 }
 
-const defaultManifestPath = "./otter.ini"
-
-func resolveManifestPath(flagValue string, positional []string) string {
-	if flagValue != "" {
-		return flagValue
-	}
-	if len(positional) > 0 && positional[0] != "" {
-		return positional[0]
-	}
-	return defaultManifestPath
-}
-
 func assembleAction(ctx context.Context, cmd *cli.Command, cfg *config.Values, deleteFlag bool) error {
 	containerManager, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 	if !ok {
 		return errors.New("container manager not found in context")
 	}
 
-	manifestFilePath := resolveManifestPath(cmd.String("file"), cmd.Args().Slice())
-
-	manifest, err := manifest.Parse(ctx, manifestFilePath)
-	if err != nil {
-		return fmt.Errorf("failed to parse manifest file: %w", err)
-	}
-
-	// if at least one item in the manifest requires root, validate sudo before proceeding
-	for _, item := range manifest {
-		if item.Root {
-			if err := rootful.Validate(ctx, cmd.String("sudo-command")); err != nil {
-				return fmt.Errorf("cannot run in root mode: %w", err)
-			}
-			break
-		}
-	}
-
 	opts := commands.AssembleOptions{
-		Items:   manifest,
-		Boxname: cmd.String("name"),
+		ManifestPath: cmd.String("file"),
+		ManifestArgs: cmd.Args().Slice(),
+		SudoCommand:  cmd.String("sudo-command"),
+		Boxname:      cmd.String("name"),
 	}
 	if deleteFlag {
 		opts.Delete = true

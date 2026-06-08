@@ -8,10 +8,10 @@ import (
 
 	"github.com/urfave/cli/v3"
 
-	"github.com/ferret-linux/otter/internal/rootful"
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/containermanager/providers"
+	"github.com/ferret-linux/otter/pkg/rootful"
 	"github.com/ferret-linux/otter/pkg/ui"
 	"github.com/ferret-linux/otter/pkg/version"
 )
