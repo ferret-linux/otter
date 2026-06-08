@@ -23,7 +23,6 @@ const (
 )
 
 var ErrHostnameTooLong = fmt.Errorf("hostname too long, must be less than %d characters", maxHostnameLength)
-var ErrUnknownImage = errors.New("unknown image")
 
 type ContainerAlreadyExistsError struct {
 	ContainerName string
@@ -84,7 +83,6 @@ type CreateOptions struct {
 	Rootful       bool
 
 	ContainerAlwaysPull bool
-	NonInteractive      bool
 }
 
 type CreateResult struct {

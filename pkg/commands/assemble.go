@@ -154,7 +154,6 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item) e
 		CPUThreads:              item.CPUThreads,
 		GenerateEntry:           item.Entry,
 		Rootful:                 item.Root,
-		NonInteractive:          true,
 		ContainerAlwaysPull:     item.AlwaysPull,
 		ContainerShell:          item.UserShell,
 	}

@@ -156,7 +156,6 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 		GenerateEntry:           !cmd.Bool("no-entry"),
 		Rootful:                 cmd.Bool("root"),
 		ContainerAlwaysPull:     cmd.Bool("pull"),
-		NonInteractive:          cmd.Bool("yes"),
 	}
 
 	progress := ui.NewProgress(os.Stderr)
