@@ -71,9 +71,12 @@ jobs:
     needs: [push, attest, merge, verify]
     if: |
       always() && (
-        needs.push.result == 'failure' || needs.push.result == 'skipped' ||
-        needs.merge.result == 'failure' || needs.merge.result == 'skipped' ||
-        needs.verify.result == 'failure' || needs.verify.result == 'skipped'
+        needs.push.result == 'failure' ||
+        (needs.push.result == 'success' && (
+          needs.attest.result == 'failure' ||
+          needs.merge.result == 'failure' ||
+          needs.verify.result == 'failure'
+        ))
       )
     uses: ./.github/workflows/.ib-purge-imgs.yml
     permissions:
