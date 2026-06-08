@@ -10,43 +10,43 @@ var errAllFailed = errors.New("all targets failed")
 // Check runs all connectivity checks and returns an error if any fail.
 // Each check passes if at least one of its targets succeeds.
 // All four checks run in parallel.
+//
+// Evaluation:
+//   - If both DNS and TCP fail, return immediately without waiting for HTTP/HTTPS.
+//   - Otherwise wait for HTTP and HTTPS; if either fails, return an error.
 func Check() error {
 	type result struct {
 		name string
 		err  error
 	}
 
-	checks := []struct {
-		name string
-		fn   func() error
-	}{
-		{"DNS", checkDNS},
-		{"TCP", checkTCP},
-		{"HTTP", checkHTTP},
-		{"HTTPS", checkHTTPS},
+	dnsResult := make(chan result, 1)
+	tcpResult := make(chan result, 1)
+	httpResult := make(chan result, 1)
+	httpsResult := make(chan result, 1)
+
+	go func() { dnsResult <- result{"DNS", checkDNS()} }()
+	go func() { tcpResult <- result{"TCP", checkTCP()} }()
+	go func() { httpResult <- result{"HTTP", checkHTTP()} }()
+	go func() { httpsResult <- result{"HTTPS", checkHTTPS()} }()
+
+	dns := <-dnsResult
+	tcp := <-tcpResult
+
+	if dns.err != nil && tcp.err != nil {
+		return errors.New("no network connectivity: DNS and TCP checks both failed")
 	}
 
-	results := make(chan result, len(checks))
-
-	var wg sync.WaitGroup
-	for _, c := range checks {
-		wg.Add(1)
-		go func(name string, fn func() error) {
-			defer wg.Done()
-			results <- result{name: name, err: fn()}
-		}(c.name, c.fn)
+	http := <-httpResult
+	if http.err != nil {
+		return errors.New("no network connectivity: HTTP check failed")
 	}
 
-	go func() {
-		wg.Wait()
-		close(results)
-	}()
-
-	for r := range results {
-		if r.err != nil {
-			return errors.New("no network connectivity: " + r.name + " check failed")
-		}
+	https := <-httpsResult
+	if https.err != nil {
+		return errors.New("no network connectivity: HTTPS check failed")
 	}
+
 	return nil
 }
 
