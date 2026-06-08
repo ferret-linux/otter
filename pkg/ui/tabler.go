@@ -194,9 +194,9 @@ func (p *Panel) Render() {
 		var sb strings.Builder
 		sb.WriteString(Cyan(vertical))
 		sb.WriteString(" ")
-		sb.WriteString(padRight(key, keyWidth))
+		sb.WriteString(Teal(padRight(key, keyWidth)))
 		sb.WriteString(strings.Repeat(" ", colGap))
-		sb.WriteString(padRight(value, valueWidth))
+		sb.WriteString(Dim(padRight(value, valueWidth)))
 		sb.WriteString(" ")
 		sb.WriteString(Cyan(vertical))
 		return sb.String()
