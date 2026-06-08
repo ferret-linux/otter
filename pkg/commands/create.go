@@ -89,6 +89,7 @@ type CreateResult struct {
 	ContainerName     string
 	ContainerImage    string
 	ContainerHostname string
+	AlreadyExisted    bool
 }
 
 func NewCreateCommand(cfg *config.Values, cm containermanager.ContainerManager, progress *ui.Progress) *CreateCommand {
@@ -123,7 +124,7 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 	containerUserCustomHome := c.makeContainerUserCustomHome(&opts, containerName)
 
 	if c.containerManager.Exists(ctx, containerName) {
-		return nil, &ContainerAlreadyExistsError{ContainerName: containerName}
+		return &CreateResult{ContainerName: containerName, AlreadyExisted: true}, nil
 	}
 
 	if opts.ContainerClone != "" {

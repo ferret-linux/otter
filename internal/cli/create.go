@@ -11,7 +11,6 @@ import (
 	"github.com/ferret-linux/otter/pkg/commands"
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
-	"github.com/ferret-linux/otter/pkg/registry"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
@@ -162,19 +161,13 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 
 	createCmd := commands.NewCreateCommand(cfg, containerManager, progress)
 	result, err := createCmd.Execute(ctx, opts)
-
-	var containerAlreadyExistsErr *commands.ContainerAlreadyExistsError
-	if errors.As(err, &containerAlreadyExistsErr) {
-		printContainerAlreadyExists(progress, containerAlreadyExistsErr.ContainerName, opts.Rootful)
-	}
-
-	if errors.Is(err, registry.ErrUnknownImage) {
-		ui.DefaultLogger.Error("%s", err)
-		return nil
-	}
-
 	if err != nil {
 		return fmt.Errorf("create command failed: %w", err)
+	}
+
+	if result.AlreadyExisted {
+		printContainerAlreadyExists(progress, result.ContainerName, opts.Rootful)
+		return nil
 	}
 
 	printCreateCompleted(progress, result.ContainerName, opts.Rootful)
