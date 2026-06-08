@@ -16,10 +16,6 @@ func newJournalCommand(cfg *config.Values) *cli.Command {
 		Name:    "journal",
 		Aliases: []string{"logs"},
 		Flags: []cli.Flag{
-			&cli.StringFlag{
-				Name:    "name",
-				Aliases: []string{"n"},
-			},
 			&cli.BoolFlag{
 				Name:    "follow",
 				Aliases: []string{"f"},
@@ -53,7 +49,7 @@ func journalAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) er
 
 	journalCmd := commands.NewJournalCommand(cfg, cm)
 	return journalCmd.Execute(ctx, commands.JournalOptions{
-		ContainerName: cmd.String("name"),
+		ContainerName: firstName(cmd.Args().Slice()),
 		Follow:        cmd.Bool("follow"),
 		Since:         cmd.String("since"),
 		Until:         cmd.String("until"),

@@ -18,10 +18,6 @@ func newUpgradeCommand(cfg *config.Values) *cli.Command {
 		Name:    "upgrade",
 		Aliases: []string{"sync"},
 		Flags: []cli.Flag{
-			&cli.StringSliceFlag{
-				Name:    "name",
-				Aliases: []string{"n"},
-			},
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
@@ -43,7 +39,7 @@ func upgradeAction(ctx context.Context, cmd *cli.Command) error {
 	}
 
 	options := &commands.UpgradeOptions{
-		ContainerNames: cmd.StringSlice("name"),
+		ContainerNames: splitNames(cmd.Args().Slice()),
 		All:            cmd.Bool("all"),
 		Running:        cmd.Bool("running"),
 	}

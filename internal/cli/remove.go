@@ -20,10 +20,6 @@ func newRmCommand(cfg *config.Values) *cli.Command {
 		Name:    "remove",
 		Aliases: []string{"rm"},
 		Flags: []cli.Flag{
-			&cli.StringSliceFlag{
-				Name:    "name",
-				Aliases: []string{"n"},
-			},
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
@@ -63,7 +59,7 @@ func rmAction(ctx context.Context, cmd *cli.Command) error {
 		All:            cmd.Bool("all"),
 		RemoveHome:     cmd.Bool("rm-home"),
 		Root:           cmd.Bool("root"),
-		ContainerNames: cmd.StringSlice("name"),
+		ContainerNames: splitNames(cmd.Args().Slice()),
 	}
 
 	prompter := ui.NewPrompter(*bufio.NewReader(os.Stdin), os.Stdout)

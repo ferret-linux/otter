@@ -16,10 +16,6 @@ func newLockCommand(cfg *config.Values) *cli.Command {
 		Name:    "lock",
 		Aliases: []string{"lck"},
 		Flags: []cli.Flag{
-			&cli.StringSliceFlag{
-				Name:    "name",
-				Aliases: []string{"n"},
-			},
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
@@ -35,7 +31,7 @@ func lockAction(ctx context.Context, cmd *cli.Command) error {
 	cm := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 
 	if err := commands.NewLockCommand(cm).Execute(ctx, commands.LockOptions{
-		ContainerNames: cmd.StringSlice("name"),
+		ContainerNames: splitNames(cmd.Args().Slice()),
 		All:            cmd.Bool("all"),
 	}); err != nil {
 		return fmt.Errorf("failed to lock container: %w", err)

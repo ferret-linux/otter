@@ -17,14 +17,9 @@ import (
 
 const assembleCleanupTimeout = 30 * time.Second
 
-const defaultManifestPath = "./otter.ini"
-
 type AssembleOptions struct {
-	// ManifestPath is the explicit path to the manifest file (from --file flag).
-	// If empty, ManifestArgs[0] is tried, then defaultManifestPath.
+	// ManifestPath is the path to the manifest file (from --file flag). Required.
 	ManifestPath string
-	// ManifestArgs are the positional arguments passed to the command.
-	ManifestArgs []string
 	// SudoCommand is the sudo program to use for root validation.
 	SudoCommand string
 	// Boxname is the name of the box to assemble.
@@ -74,16 +69,11 @@ func NewAssembleCommand(
 }
 
 func (ac *AssembleCommand) Execute(ctx context.Context, opts AssembleOptions) error {
-	manifestPath := opts.ManifestPath
-	if manifestPath == "" {
-		if len(opts.ManifestArgs) > 0 && opts.ManifestArgs[0] != "" {
-			manifestPath = opts.ManifestArgs[0]
-		} else {
-			manifestPath = defaultManifestPath
-		}
+	if opts.ManifestPath == "" {
+		return fmt.Errorf("manifest path is required, use --file to specify it")
 	}
 
-	items, err := manifest.Parse(ctx, manifestPath)
+	items, err := manifest.Parse(ctx, opts.ManifestPath)
 	if err != nil {
 		return fmt.Errorf("failed to parse manifest file: %w", err)
 	}

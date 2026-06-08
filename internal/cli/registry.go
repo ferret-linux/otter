@@ -60,10 +60,6 @@ func newRegistryPullCommand(_ *config.Values) *cli.Command {
 		Name:    "pull",
 		Aliases: []string{"get"},
 		Flags: []cli.Flag{
-			&cli.StringSliceFlag{
-				Name:    "name",
-				Aliases: []string{"n"},
-			},
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
@@ -96,7 +92,7 @@ func registryPullAction(ctx context.Context, cmd *cli.Command) error {
 		ctx,
 		containerManager,
 		props,
-		cmd.StringSlice("name"),
+		splitNames(cmd.Args().Slice()),
 		cmd.Bool("all"),
 		cmd.Bool("force"),
 		progress,
@@ -108,10 +104,6 @@ func newRegistryRemoveCommand(_ *config.Values) *cli.Command {
 		Name:    "remove",
 		Aliases: []string{"rm"},
 		Flags: []cli.Flag{
-			&cli.StringSliceFlag{
-				Name:    "name",
-				Aliases: []string{"n"},
-			},
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
@@ -142,7 +134,7 @@ func registryRemoveAction(ctx context.Context, cmd *cli.Command) error {
 		ctx,
 		containerManager,
 		props,
-		cmd.StringSlice("name"),
+		splitNames(cmd.Args().Slice()),
 		cmd.Bool("all"),
 		cmd.Bool("force"),
 	)

@@ -17,10 +17,6 @@ func newEnterCommand(cfg *config.Values) *cli.Command {
 		Name:    "enter",
 		Aliases: []string{"sh"},
 		Flags: []cli.Flag{
-			&cli.StringFlag{
-				Name:    "name",
-				Aliases: []string{"n"},
-			},
 			&cli.BoolFlag{
 				Name:    "clean-path",
 				Aliases: []string{"c"},
@@ -61,9 +57,9 @@ func enterAction(ctx context.Context, cmd *cli.Command) error {
 	}
 
 	options := commands.EnterOptions{
-		ContainerName:   cmd.String("name"),
+		ContainerName:   firstName(cmd.Args().Slice()),
 		AdditionalFlags: cmd.String("additional-flags"),
-		CustomCommand:   cmd.Args().Slice(),
+		CustomCommand:   cmd.Args().Tail(),
 		AddEnv:          cmd.StringSlice("add-env"),
 		NoTTY:           cmd.Bool("no-tty"),
 		CleanPath:       cmd.Bool("clean-path"),

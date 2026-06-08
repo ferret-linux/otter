@@ -16,10 +16,6 @@ func newStartCommand(cfg *config.Values) *cli.Command {
 		Name:    "start",
 		Aliases: []string{"boot"},
 		Flags: []cli.Flag{
-			&cli.StringSliceFlag{
-				Name:    "name",
-				Aliases: []string{"n"},
-			},
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
@@ -38,7 +34,7 @@ func startAction(ctx context.Context, cmd *cli.Command) error {
 	}
 
 	return commands.NewStartCommand(containerManager).Execute(ctx, &commands.StartOptions{
-		ContainerNames: cmd.StringSlice("name"),
+		ContainerNames: splitNames(cmd.Args().Slice()),
 		All:            cmd.Bool("all"),
 	})
 }

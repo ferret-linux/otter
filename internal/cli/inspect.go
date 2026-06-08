@@ -15,12 +15,7 @@ func newInspectCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "inspect",
 		Aliases: []string{"info"},
-		Flags: []cli.Flag{
-			&cli.StringFlag{
-				Name:    "name",
-				Aliases: []string{"n"},
-			},
-		},
+		Flags:   []cli.Flag{},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			return inspectAction(ctx, cmd, cfg)
 		},
@@ -35,7 +30,7 @@ func inspectAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) er
 
 	inspectCmd := commands.NewInspectCommand(cfg, cm)
 	return inspectCmd.Execute(ctx, commands.InspectOptions{
-		ContainerName: cmd.String("name"),
+		ContainerName: firstName(cmd.Args().Slice()),
 		Manager:       cm.Name(),
 	})
 }

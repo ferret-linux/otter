@@ -25,10 +25,6 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 				Aliases: []string{"i"},
 			},
 			&cli.StringFlag{
-				Name:    "name",
-				Aliases: []string{"n"},
-			},
-			&cli.StringFlag{
 				Name: "hostname",
 			},
 			&cli.StringFlag{
@@ -131,7 +127,7 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 
 	opts := commands.CreateOptions{
 		ContainerImage:          cmd.String("image"),
-		ContainerName:           cmd.String("name"),
+		ContainerName:           firstName(cmd.Args().Slice()),
 		ContainerHostname:       cmd.String("hostname"),
 		ContainerClone:          cmd.String("clone"),
 		UnshareNetNs:            cmd.Bool("unshare-netns") || cmd.Bool("unshare-all"),

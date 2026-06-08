@@ -17,10 +17,6 @@ func newStopCommand(cfg *config.Values) *cli.Command {
 		Name:    "stop",
 		Aliases: []string{"off"},
 		Flags: []cli.Flag{
-			&cli.StringSliceFlag{
-				Name:    "name",
-				Aliases: []string{"n"},
-			},
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
@@ -39,7 +35,7 @@ func stopAction(ctx context.Context, cmd *cli.Command) error {
 	}
 
 	options := &commands.StopOptions{
-		ContainerNames: cmd.StringSlice("name"),
+		ContainerNames: splitNames(cmd.Args().Slice()),
 		All:            cmd.Bool("all"),
 	}
 

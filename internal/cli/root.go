@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/urfave/cli/v3"
 
@@ -182,6 +183,30 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		unlock,
 		upgrade,
 	}
+}
+
+// firstName returns the first positional argument, or empty string if none.
+func firstName(args []string) string {
+	if len(args) == 0 {
+		return ""
+	}
+	return args[0]
+}
+
+// splitNames splits the first positional argument on commas and returns the resulting slice.
+// e.g. "foo,bar" -> ["foo", "bar"]
+func splitNames(args []string) []string {
+	if len(args) == 0 {
+		return nil
+	}
+	var names []string
+	for _, n := range strings.Split(args[0], ",") {
+		n = strings.TrimSpace(n)
+		if n != "" {
+			names = append(names, n)
+		}
+	}
+	return names
 }
 
 func withUsageErrorHandler(_ *config.Values, cmd *cli.Command) *cli.Command {

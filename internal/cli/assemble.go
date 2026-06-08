@@ -17,10 +17,6 @@ import (
 
 func newAssembleCommand(cfg *config.Values) *cli.Command {
 	fileFlag := &cli.StringFlag{Name: "file"}
-	nameFlag := &cli.StringFlag{
-		Name:    "name",
-		Aliases: []string{"n"},
-	}
 	return &cli.Command{
 		Name:    "assemble",
 		Aliases: []string{"spec"},
@@ -30,7 +26,6 @@ func newAssembleCommand(cfg *config.Values) *cli.Command {
 				Aliases: []string{"mk"},
 				Flags: []cli.Flag{
 					fileFlag,
-					nameFlag,
 					&cli.BoolFlag{
 						Name:    "replace",
 						Aliases: []string{"R"},
@@ -45,7 +40,6 @@ func newAssembleCommand(cfg *config.Values) *cli.Command {
 				Aliases: []string{"rm"},
 				Flags: []cli.Flag{
 					fileFlag,
-					nameFlag,
 				},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
 					return assembleAction(ctx, cmd, cfg, true)
@@ -63,9 +57,8 @@ func assembleAction(ctx context.Context, cmd *cli.Command, cfg *config.Values, d
 
 	opts := commands.AssembleOptions{
 		ManifestPath: cmd.String("file"),
-		ManifestArgs: cmd.Args().Slice(),
 		SudoCommand:  cmd.String("sudo-command"),
-		Boxname:      cmd.String("name"),
+		Boxname:      firstName(cmd.Args().Slice()),
 	}
 	if deleteFlag {
 		opts.Delete = true

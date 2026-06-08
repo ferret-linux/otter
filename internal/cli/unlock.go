@@ -16,10 +16,6 @@ func newUnlockCommand(cfg *config.Values) *cli.Command {
 		Name:    "unlock",
 		Aliases: []string{"ulck"},
 		Flags: []cli.Flag{
-			&cli.StringSliceFlag{
-				Name:    "name",
-				Aliases: []string{"n"},
-			},
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
@@ -35,7 +31,7 @@ func unlockAction(ctx context.Context, cmd *cli.Command) error {
 	cm := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 
 	if err := commands.NewUnlockCommand(cm).Execute(ctx, commands.UnlockOptions{
-		ContainerNames: cmd.StringSlice("name"),
+		ContainerNames: splitNames(cmd.Args().Slice()),
 		All:            cmd.Bool("all"),
 	}); err != nil {
 		return fmt.Errorf("failed to unlock container: %w", err)
