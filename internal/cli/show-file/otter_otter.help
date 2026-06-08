@@ -14,7 +14,6 @@
 {2}│{R} {0}info{R}  {2}┆{R} {0}inspect{R}        {5}Show info of a container{R}      {2}│{R}
 {2}│{R} {0}sync{R}  {2}┆{R} {0}upgrade{R}        {5}Update packages in containers{R} {2}│{R}
 {2}│{R} {0}spec{R}  {2}┆{R} {0}assemble{R}       {5}Manage containers from a spec{R} {2}│{R}
-{2}│{R} {0}temp{R}  {2}┆{R} {0}ephemeral{R}      {5}Create temporary containers{R}   {2}│{R}
 {2}│{R} {0}gety{R}  {2}┆{R} {0}generate-entry{R} {5}Create clickable desktop entry{R}{2}│{R}
 {2}│{R} {0}reboot{R}{2}┆{R} {0}restart{R}        {5}Restart containers{R}            {2}│{R}
 {2}├───────┴──────────────────────────────────────────────┤{R}

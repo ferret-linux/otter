@@ -116,13 +116,6 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		withContainerManager,
 	)
 
-	ephemeral := cc.apply(
-		newEphemeralCommand,
-		withUsageErrorHandler,
-		withRoot,
-		withContainerManager,
-	)
-
 	upgrade := cc.apply(
 		newUpgradeCommand,
 		withUsageErrorHandler,
@@ -161,7 +154,6 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		assemble,
 		create,
 		enter,
-		ephemeral,
 		generateEntry,
 		inspect,
 		journal,
