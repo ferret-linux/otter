@@ -13,7 +13,9 @@ var errAllFailed = errors.New("all targets failed")
 //
 // Evaluation:
 //   - If both DNS and TCP fail, return immediately without waiting for HTTP/HTTPS.
-//   - Otherwise wait for HTTP and HTTPS; if either fails, return an error.
+//   - If HTTPS passes, report success immediately.
+//   - If HTTP passes, wait for HTTPS; if HTTPS fails, report fail.
+//   - If both HTTP and HTTPS fail, report fail.
 func Check() error {
 	type result struct {
 		name string
@@ -38,16 +40,17 @@ func Check() error {
 	}
 
 	http := <-httpResult
+	https := <-httpsResult
+
+	if https.err == nil {
+		return nil
+	}
+
 	if http.err != nil {
 		return errors.New("no network connectivity: HTTP check failed")
 	}
 
-	https := <-httpsResult
-	if https.err != nil {
-		return errors.New("no network connectivity: HTTPS check failed")
-	}
-
-	return nil
+	return errors.New("no network connectivity: HTTPS check failed")
 }
 
 // firstSuccess runs n tasks in parallel via fn(i) and returns nil as soon as
