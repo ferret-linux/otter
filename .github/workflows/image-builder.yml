@@ -88,5 +88,6 @@ jobs:
       )
     uses: ./.github/workflows/.ib-purge-imgs.yml
     permissions:
-      contents: read
+      contents: write
       packages: write
+    secrets: inherit
