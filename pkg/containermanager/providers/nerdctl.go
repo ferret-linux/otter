@@ -366,6 +366,15 @@ func (n *Nerdctl) PullImage(ctx context.Context, imageName string, platform stri
 	return err
 }
 
+func (n *Nerdctl) RemoveImage(ctx context.Context, imageName string, force bool) error {
+	args := []string{"rmi", imageName}
+	if force {
+		args = []string{"rmi", "--force", imageName}
+	}
+	_, err := n.run(ctx, args, runOptions{})
+	return err
+}
+
 func (n *Nerdctl) Remove(
 	ctx context.Context,
 	containerName string,

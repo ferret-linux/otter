@@ -126,6 +126,7 @@ type ContainerManager interface {
 	Stop(ctx context.Context, containerNames []string) error
 	InspectContainer(ctx context.Context, containerName string) (*InspectResult, error)
 	PullImage(ctx context.Context, imageName string, platform string) error
+	RemoveImage(ctx context.Context, imageName string, force bool) error
 	Commit(ctx context.Context, containerID string, imageTag string) error
 	// CopyFromContainer copies a file from the container filesystem to the host.
 	CopyFromContainer(ctx context.Context, containerName string, srcPath string, destPath string) error

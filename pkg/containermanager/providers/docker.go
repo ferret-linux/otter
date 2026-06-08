@@ -571,6 +571,15 @@ func (d *Docker) Enter(
 	return nil
 }
 
+func (d *Docker) RemoveImage(ctx context.Context, imageName string, force bool) error {
+	args := []string{"rmi", imageName}
+	if force {
+		args = []string{"rmi", "--force", imageName}
+	}
+	_, err := d.run(ctx, args, runOptions{})
+	return err
+}
+
 func (d *Docker) Remove(
 	ctx context.Context,
 	containerName string,

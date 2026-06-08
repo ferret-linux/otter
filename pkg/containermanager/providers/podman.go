@@ -587,6 +587,15 @@ func (p *Podman) PullImage(ctx context.Context, imageName string, platform strin
 	return err
 }
 
+func (p *Podman) RemoveImage(ctx context.Context, imageName string, force bool) error {
+	args := []string{"rmi", imageName}
+	if force {
+		args = []string{"rmi", "--force", imageName}
+	}
+	_, err := p.run(ctx, args, runOptions{})
+	return err
+}
+
 func (p *Podman) Remove(
 	ctx context.Context,
 	containerName string,
