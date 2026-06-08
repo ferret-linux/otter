@@ -13,12 +13,11 @@ var tcpTargets = []string{
 }
 
 func checkTCP() error {
-	for _, addr := range tcpTargets {
-		conn, err := net.DialTimeout("tcp", addr, 3*time.Second)
+	return firstSuccess(len(tcpTargets), func(i int) error {
+		conn, err := net.DialTimeout("tcp", tcpTargets[i], 3*time.Second)
 		if err == nil {
 			conn.Close()
-			return nil
 		}
-	}
-	return errAllFailed
+		return err
+	})
 }

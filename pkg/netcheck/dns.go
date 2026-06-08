@@ -10,10 +10,8 @@ var dnsTargets = []string{
 }
 
 func checkDNS() error {
-	for _, host := range dnsTargets {
-		if _, err := net.LookupHost(host); err == nil {
-			return nil
-		}
-	}
-	return errAllFailed
+	return firstSuccess(len(dnsTargets), func(i int) error {
+		_, err := net.LookupHost(dnsTargets[i])
+		return err
+	})
 }

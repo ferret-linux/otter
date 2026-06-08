@@ -14,14 +14,15 @@ var httpsTargets = []string{
 
 func checkHTTPS() error {
 	client := &http.Client{Timeout: 5 * time.Second}
-	for _, url := range httpsTargets {
-		resp, err := client.Head(url)
-		if err == nil {
-			resp.Body.Close()
-			if resp.StatusCode < 500 {
-				return nil
-			}
+	return firstSuccess(len(httpsTargets), func(i int) error {
+		resp, err := client.Head(httpsTargets[i])
+		if err != nil {
+			return err
 		}
-	}
-	return errAllFailed
+		resp.Body.Close()
+		if resp.StatusCode >= 500 {
+			return errAllFailed
+		}
+		return nil
+	})
 }
