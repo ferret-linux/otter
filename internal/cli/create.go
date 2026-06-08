@@ -170,7 +170,7 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 
 	if errors.Is(err, registry.ErrUnknownImage) {
 		ui.DefaultLogger.Error("%s", err)
-		return err
+		return nil
 	}
 
 	if err != nil {
