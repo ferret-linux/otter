@@ -6,6 +6,7 @@ import (
 
 	insideContainer "github.com/ferret-linux/otter/internal/inside-container"
 	"github.com/ferret-linux/otter/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/netcheck"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
@@ -88,6 +89,10 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 }
 
 func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string) error {
+	if err := netcheck.Check(); err != nil {
+		ui.DefaultLogger.Warn("%s", err)
+		return nil
+	}
 	if _, updated, err := insideContainer.ProvisionScripts(); err != nil {
 		ui.DefaultLogger.Warn("failed to provision scripts: %s", err)
 	} else if updated {
