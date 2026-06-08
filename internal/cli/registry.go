@@ -81,6 +81,11 @@ func registryPullAction(ctx context.Context, cmd *cli.Command) error {
 		return errors.New("container manager not found in context")
 	}
 
+	names, err := splitNames(cmd.Args().Slice())
+	if err != nil {
+		return err
+	}
+
 	props, err := registry.Fetch()
 	if err != nil {
 		return fmt.Errorf("failed to fetch registry: %w", err)
@@ -88,10 +93,6 @@ func registryPullAction(ctx context.Context, cmd *cli.Command) error {
 
 	progress := ui.NewProgress(os.Stderr)
 
-	names, err := splitNames(cmd.Args().Slice())
-	if err != nil {
-		return err
-	}
 	return commands.RegistryPull(
 		ctx,
 		containerManager,
@@ -129,15 +130,16 @@ func registryRemoveAction(ctx context.Context, cmd *cli.Command) error {
 		return errors.New("container manager not found in context")
 	}
 
+	names, err := splitNames(cmd.Args().Slice())
+	if err != nil {
+		return err
+	}
+
 	props, err := registry.Fetch()
 	if err != nil {
 		return fmt.Errorf("failed to fetch registry: %w", err)
 	}
 
-	names, err := splitNames(cmd.Args().Slice())
-	if err != nil {
-		return err
-	}
 	return commands.RegistryRemove(
 		ctx,
 		containerManager,
