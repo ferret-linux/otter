@@ -11,6 +11,7 @@ import (
 
 const (
 	RunningStatus = "running"
+	PausedStatus  = "paused"
 )
 
 type Container struct {
@@ -138,6 +139,10 @@ type ContainerManager interface {
 	IsSetupDone(ctx context.Context, containerName string) bool
 	// Journal streams the logs of a container to stdout.
 	Journal(ctx context.Context, containerName string, opts JournalOptions) error
+	// Pause freezes a running container without stopping it.
+	Pause(ctx context.Context, containerName string) error
+	// Unpause resumes a paused container.
+	Unpause(ctx context.Context, containerName string) error
 }
 
 func PathExists(path string) bool {

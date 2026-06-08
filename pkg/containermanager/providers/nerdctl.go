@@ -659,6 +659,22 @@ func (n *Nerdctl) generateEnterCommand(
 	return cmd, containerConfig, nil
 }
 
+func (n *Nerdctl) Pause(ctx context.Context, containerName string) error {
+	_, err := n.run(ctx, []string{"pause", containerName}, runOptions{})
+	if err != nil {
+		return fmt.Errorf("error pausing container '%s': %w", containerName, err)
+	}
+	return nil
+}
+
+func (n *Nerdctl) Unpause(ctx context.Context, containerName string) error {
+	_, err := n.run(ctx, []string{"unpause", containerName}, runOptions{})
+	if err != nil {
+		return fmt.Errorf("error unpausing container '%s': %w", containerName, err)
+	}
+	return nil
+}
+
 func (n *Nerdctl) Start(ctx context.Context, containerName string) error {
 	inspectResult, err := n.InspectContainer(ctx, containerName)
 	if err != nil {
@@ -667,6 +683,9 @@ func (n *Nerdctl) Start(ctx context.Context, containerName string) error {
 	if inspectResult.ContainerStatus == containermanager.RunningStatus {
 		ui.DefaultLogger.Info("container '%s' is already running", containerName)
 		return nil
+	}
+	if inspectResult.ContainerStatus == containermanager.PausedStatus {
+		return n.Unpause(ctx, containerName)
 	}
 
 	progress := ui.NewProgress(os.Stderr)

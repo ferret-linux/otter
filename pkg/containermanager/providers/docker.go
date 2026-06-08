@@ -874,6 +874,22 @@ func (d *Docker) generateEnterCommand(
 	return cmd, containerConfig, nil
 }
 
+func (d *Docker) Pause(ctx context.Context, containerName string) error {
+	_, err := d.run(ctx, []string{"pause", containerName}, runOptions{})
+	if err != nil {
+		return fmt.Errorf("error pausing container '%s': %w", containerName, err)
+	}
+	return nil
+}
+
+func (d *Docker) Unpause(ctx context.Context, containerName string) error {
+	_, err := d.run(ctx, []string{"unpause", containerName}, runOptions{})
+	if err != nil {
+		return fmt.Errorf("error unpausing container '%s': %w", containerName, err)
+	}
+	return nil
+}
+
 func (d *Docker) Start(ctx context.Context, containerName string) error {
 	inspectResult, err := d.InspectContainer(ctx, containerName)
 	if err != nil {
@@ -882,6 +898,9 @@ func (d *Docker) Start(ctx context.Context, containerName string) error {
 	if inspectResult.ContainerStatus == containermanager.RunningStatus {
 		ui.DefaultLogger.Info("container '%s' is already running", containerName)
 		return nil
+	}
+	if inspectResult.ContainerStatus == containermanager.PausedStatus {
+		return d.Unpause(ctx, containerName)
 	}
 
 	progress := ui.NewProgress(os.Stderr)

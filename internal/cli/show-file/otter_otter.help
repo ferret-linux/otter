@@ -7,6 +7,7 @@
 {2}│{R} {0}mk{R}    {2}┆{R} {0}create{R}         {5}Create new containers{R}         {2}│{R}
 {2}│{R} {0}rm{R}    {2}┆{R} {0}remove{R}         {5}Remove containers{R}             {2}│{R}
 {2}│{R} {0}off{R}   {2}┆{R} {0}stop{R}           {5}Stop running containers{R}       {2}│{R}
+{2}│{R} {0}frz{R}   {2}┆{R} {0}pause{R}          {5}Pause running containers{R}      {2}│{R}
 {2}│{R} {0}lck{R}   {2}┆{R} {0}lock{R}           {5}Lock an unlocked container{R}    {2}│{R}
 {2}│{R} {0}img{R}   {2}┆{R} {0}registry{R}       {5}Browse and manage otter images{R}{2}│{R}
 {2}│{R} {0}boot{R}  {2}┆{R} {0}start{R}          {5}Start containers{R}              {2}│{R}

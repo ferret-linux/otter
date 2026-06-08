@@ -123,6 +123,13 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		withContainerManager,
 	)
 
+	pause := cc.apply(
+		newPauseCommand,
+		withUsageErrorHandler,
+		withRoot,
+		withContainerManager,
+	)
+
 	stop := cc.apply(
 		newStopCommand,
 		withUsageErrorHandler,
@@ -175,6 +182,7 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		journal,
 		list,
 		lock,
+		pause,
 		registry,
 		remove,
 		restart,
