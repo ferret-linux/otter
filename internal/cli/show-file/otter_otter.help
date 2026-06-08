@@ -8,7 +8,7 @@
 {2}│{R} {0}rm{R}    {2}┆{R} {0}remove{R}         {5}Remove containers{R}             {2}│{R}
 {2}│{R} {0}off{R}   {2}┆{R} {0}stop{R}           {5}Stop running containers{R}       {2}│{R}
 {2}│{R} {0}lck{R}   {2}┆{R} {0}lock{R}           {5}Lock an unlocked container{R}    {2}│{R}
-{2}│{R} {0}hub{R}   {2}┆{R} {0}registry{R}       {5}Browse and manage otter images{R}{2}│{R}
+{2}│{R} {0}img{R}   {2}┆{R} {0}registry{R}       {5}Browse and manage otter images{R}{2}│{R}
 {2}│{R} {0}boot{R}  {2}┆{R} {0}start{R}          {5}Start containers{R}              {2}│{R}
 {2}│{R} {0}ulck{R}  {2}┆{R} {0}unlock{R}         {5}Unlock a locked container{R}     {2}│{R}
 {2}│{R} {0}logs{R}  {2}┆{R} {0}journal{R}        {5}Show logs of a container{R}      {2}│{R}
