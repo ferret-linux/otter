@@ -32,7 +32,7 @@ func newRegistryCommand(cfg *config.Values) *cli.Command {
 
 	return &cli.Command{
 		Name:    "registry",
-		Aliases: []string{"hub"},
+		Aliases: []string{"img"},
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",

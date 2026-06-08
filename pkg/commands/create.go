@@ -136,7 +136,7 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 
 	if !c.containerManager.ImageExists(ctx, containerImage) {
 		if !opts.ContainerAlwaysPull {
-			return nil, fmt.Errorf("image '%s' is not present locally, pull it first with:\n  otter hub pull -n %s", imageDisplayName(containerImage), opts.ContainerImage)
+			return nil, fmt.Errorf("image '%s' is not present locally, pull it first with:\n  otter img pull -n %s", imageDisplayName(containerImage), opts.ContainerImage)
 		}
 		if err := registry.Pull(ctx, c.containerManager, containerImage, opts.ContainerPlatform, true, c.progress); err != nil {
 			return nil, err
