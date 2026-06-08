@@ -117,10 +117,6 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 			&cli.BoolFlag{
 				Name: "absolutely-disable-root-password-i-am-really-positively-sure",
 			},
-			&cli.BoolFlag{
-				Name:    "compatibility",
-				Aliases: []string{"C"},
-			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			return createAction(ctx, cmd, cfg)
@@ -129,14 +125,6 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 }
 
 func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
-	if cmd.Bool("compatibility") {
-		err := showCompatibility()
-		if err != nil {
-			return fmt.Errorf("compatibility check failed: %w", err)
-		}
-		return nil
-	}
-
 	containerManager, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 	if !ok {
 		return errors.New("container manager not found in context")
@@ -199,11 +187,6 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 
 	printCreateCompleted(progress, result.ContainerName, opts.Rootful)
 
-	return nil
-}
-
-func showCompatibility() error {
-	printFile("image_compatibility")
 	return nil
 }
 
