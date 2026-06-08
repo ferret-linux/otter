@@ -1,4 +1,212 @@
 {
   "images_available": true,
-  "images": []
+  "images": [
+    {
+      "name": "ubuntu",
+      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:stable",
+      "fallback_vendor_image": "docker.io/library/ubuntu:latest",
+      "architecture": ["amd64", "arm64"],
+      "enabled": true,
+      "built_at": "",
+      "sizes": {}
+    },
+    {
+      "name": "ubuntu-lts",
+      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts",
+      "fallback_vendor_image": "docker.io/library/ubuntu:26.04",
+      "architecture": ["amd64", "arm64"],
+      "enabled": true,
+      "built_at": "",
+      "sizes": {}
+    },
+    {
+      "name": "debian",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:stable",
+      "fallback_vendor_image": "docker.io/library/debian:stable",
+      "architecture": ["amd64", "arm64"],
+      "enabled": true,
+      "built_at": "",
+      "sizes": {}
+    },
+    {
+      "name": "debian-testing",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:testing",
+      "fallback_vendor_image": "docker.io/library/debian:testing",
+      "architecture": ["amd64", "arm64"],
+      "enabled": true,
+      "built_at": "",
+      "sizes": {}
+    },
+    {
+      "name": "debian-unstable",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:unstable",
+      "fallback_vendor_image": "docker.io/library/debian:unstable",
+      "architecture": ["amd64", "arm64"],
+      "enabled": true,
+      "built_at": "",
+      "sizes": {}
+    },
+    {
+      "name": "fedora",
+      "official_image": "ghcr.io/ferret-linux/fedora-otr:stable",
+      "fallback_vendor_image": "quay.io/fedora/fedora:44",
+      "architecture": ["amd64", "arm64"],
+      "enabled": true,
+      "built_at": "",
+      "sizes": {}
+    },
+    {
+      "name": "fedora-rawhide",
+      "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide",
+      "fallback_vendor_image": "quay.io/fedora/fedora:rawhide",
+      "architecture": ["amd64", "arm64"],
+      "enabled": true,
+      "built_at": "",
+      "sizes": {}
+    },
+    {
+      "name": "arch",
+      "official_image": "ghcr.io/ferret-linux/arch-otr:latest",
+      "fallback_vendor_image": "docker.io/library/archlinux:latest",
+      "architecture": ["amd64"],
+      "enabled": true,
+      "built_at": "",
+      "sizes": {}
+    },
+    {
+      "name": "blackarch",
+      "official_image": "ghcr.io/ferret-linux/blackarch-otr:latest",
+      "fallback_vendor_image": "docker.io/blackarchlinux/blackarch:latest",
+      "architecture": ["amd64"],
+      "enabled": true,
+      "built_at": "",
+      "sizes": {}
+    },
+    {
+      "name": "gentoo",
+      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
+      "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
+      "architecture": ["amd64", "arm64"],
+      "enabled": false,
+      "built_at": "",
+      "sizes": {}
+    },
+    {
+      "name": "alma",
+      "official_image": "ghcr.io/ferret-linux/alma-otr:stable",
+      "fallback_vendor_image": "docker.io/library/almalinux:latest",
+      "architecture": ["amd64", "arm64"],
+      "enabled": true,
+      "built_at": "",
+      "sizes": {}
+    },
+    {
+      "name": "rocky",
+      "official_image": "ghcr.io/ferret-linux/rocky-otr:stable",
+      "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init",
+      "architecture": ["amd64", "arm64"],
+      "enabled": true,
+      "built_at": "",
+      "sizes": {}
+    },
+    {
+      "name": "centos",
+      "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
+      "fallback_vendor_image": "quay.io/centos/centos:stream10",
+      "architecture": ["amd64", "arm64"],
+      "enabled": true,
+      "built_at": "",
+      "sizes": {}
+    },
+    {
+      "name": "oracle",
+      "official_image": "ghcr.io/ferret-linux/oracle-otr:stable",
+      "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10",
+      "architecture": ["amd64", "arm64"],
+      "enabled": true,
+      "built_at": "",
+      "sizes": {}
+    },
+    {
+      "name": "rhel",
+      "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
+      "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest",
+      "architecture": ["amd64", "arm64"],
+      "enabled": true,
+      "built_at": "",
+      "sizes": {}
+    },
+    {
+      "name": "opensuse-leap",
+      "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
+      "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest",
+      "architecture": ["amd64", "arm64"],
+      "enabled": true,
+      "built_at": "",
+      "sizes": {}
+    },
+    {
+      "name": "opensuse-tumbleweed",
+      "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
+      "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
+      "architecture": ["amd64", "arm64"],
+      "enabled": true,
+      "built_at": "",
+      "sizes": {}
+    },
+    {
+      "name": "alpine",
+      "official_image": "ghcr.io/ferret-linux/alpine-otr:latest",
+      "fallback_vendor_image": "docker.io/library/alpine:latest",
+      "architecture": ["amd64", "arm64"],
+      "enabled": true,
+      "built_at": "",
+      "sizes": {}
+    },
+    {
+      "name": "alpine-edge",
+      "official_image": "ghcr.io/ferret-linux/alpine-otr:edge",
+      "fallback_vendor_image": "docker.io/library/alpine:edge",
+      "architecture": ["amd64", "arm64"],
+      "enabled": true,
+      "built_at": "",
+      "sizes": {}
+    },
+    {
+      "name": "kali",
+      "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
+      "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest",
+      "architecture": ["amd64", "arm64"],
+      "enabled": true,
+      "built_at": "",
+      "sizes": {}
+    },
+    {
+      "name": "kali-edge",
+      "official_image": "ghcr.io/ferret-linux/kali-otr:edge",
+      "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest",
+      "architecture": ["amd64", "arm64"],
+      "enabled": true,
+      "built_at": "",
+      "sizes": {}
+    },
+    {
+      "name": "void-glibc",
+      "official_image": "ghcr.io/ferret-linux/void-otr:glibc",
+      "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest",
+      "architecture": ["amd64", "arm64"],
+      "enabled": true,
+      "built_at": "",
+      "sizes": {}
+    },
+    {
+      "name": "void-musl",
+      "official_image": "ghcr.io/ferret-linux/void-otr:musl",
+      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest",
+      "architecture": ["amd64", "arm64"],
+      "enabled": true,
+      "built_at": "",
+      "sizes": {}
+    }
+  ]
 }
