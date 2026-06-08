@@ -14,6 +14,7 @@ import (
 
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/registry"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
@@ -22,44 +23,7 @@ const (
 )
 
 var ErrHostnameTooLong = fmt.Errorf("hostname too long, must be less than %d characters", maxHostnameLength)
-var ErrImagePullAbortedByUser = errors.New("image pull operation aborted by user")
 var ErrUnknownImage = errors.New("unknown image")
-
-var imageAliases = map[string]string{
-	"arch":                "ghcr.io/ferret-linux/arch-otr:latest",
-	"alma":                "ghcr.io/ferret-linux/alma-otr:stable",
-	"kali":                "ghcr.io/ferret-linux/kali-otr:rolling",
-	"rhel":                "ghcr.io/ferret-linux/rhel-otr:stable",
-	"rocky":               "ghcr.io/ferret-linux/rocky-otr:stable",
-	"fedora":              "ghcr.io/ferret-linux/fedora-otr:stable",
-	"centos":              "ghcr.io/ferret-linux/centos-otr:stable",
-	"gentoo":              "ghcr.io/ferret-linux/gentoo-otr:stage3",
-	"ubuntu":              "ghcr.io/ferret-linux/ubuntu-otr:stable",
-	"debian":              "ghcr.io/ferret-linux/debian-otr:stable",
-	"alpine":              "ghcr.io/ferret-linux/alpine-otr:latest",
-	"oracle":              "ghcr.io/ferret-linux/oracle-otr:stable",
-	"void-musl":           "ghcr.io/ferret-linux/void-otr:musl",
-	"blackarch":           "ghcr.io/ferret-linux/blackarch-otr:latest",
-	"kali-edge":           "ghcr.io/ferret-linux/kali-otr:edge",
-	"ubuntu-lts":          "ghcr.io/ferret-linux/ubuntu-otr:lts",
-	"void-glibc":          "ghcr.io/ferret-linux/void-otr:glibc",
-	"alpine-edge":         "ghcr.io/ferret-linux/alpine-otr:edge",
-	"opensuse-leap":       "ghcr.io/ferret-linux/opensuse-otr:leap",
-	"fedora-rawhide":      "ghcr.io/ferret-linux/fedora-otr:rawhide",
-	"debian-testing":      "ghcr.io/ferret-linux/debian-otr:testing",
-	"debian-unstable":     "ghcr.io/ferret-linux/debian-otr:unstable",
-	"opensuse-tumbleweed": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
-}
-
-func resolveImage(image string) (string, error) {
-	if strings.ContainsAny(image, "/:") {
-		return image, nil
-	}
-	if resolved, ok := imageAliases[strings.ToLower(image)]; ok {
-		return resolved, nil
-	}
-	return "", fmt.Errorf("%w %q, use a full registry path or a valid alias", ErrUnknownImage, image)
-}
 
 type ContainerAlreadyExistsError struct {
 	ContainerName string
@@ -74,7 +38,6 @@ type CreateCommand struct {
 	containerManager containermanager.ContainerManager
 	generateEntryCmd *GenerateEntryCommand
 	progress         *ui.Progress
-	prompter         *ui.Prompter
 }
 
 type CreateOptions struct {
@@ -130,13 +93,12 @@ type CreateResult struct {
 	ContainerHostname string
 }
 
-func NewCreateCommand(cfg *config.Values, cm containermanager.ContainerManager, progress *ui.Progress, prompter *ui.Prompter) *CreateCommand {
+func NewCreateCommand(cfg *config.Values, cm containermanager.ContainerManager, progress *ui.Progress) *CreateCommand {
 	return &CreateCommand{
 		cfg:              cfg,
 		containerManager: cm,
 		generateEntryCmd: NewGenerateEntryCommand(NewListCommand(cm), cm),
 		progress:         progress,
-		prompter:         prompter,
 	}
 }
 
@@ -174,7 +136,7 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 		containerImage = cloneImage
 	}
 
-	if err := c.askPullImage(ctx, containerImage, opts); err != nil {
+	if err := registry.Pull(ctx, c.containerManager, containerImage, opts.ContainerPlatform, opts.ContainerAlwaysPull, c.progress); err != nil {
 		return nil, err
 	}
 
@@ -326,7 +288,11 @@ func (c *CreateCommand) makeContainerImage(opts *CreateOptions) (string, error) 
 		containerImage = c.cfg.DefaultContainerImage
 	}
 	if containerImage != "" && opts.ContainerClone == "" {
-		resolved, err := resolveImage(containerImage)
+		props, err := registry.Fetch()
+		if err != nil {
+			return "", err
+		}
+		resolved, err := registry.Resolve(props, containerImage)
 		if err != nil {
 			return "", err
 		}
@@ -358,7 +324,7 @@ func (c *CreateCommand) makeContainerName(opts *CreateOptions, containerImage st
 		containerName = c.cfg.DefaultContainerName
 	}
 	if containerName == "" {
-		if _, ok := imageAliases[strings.ToLower(opts.ContainerImage)]; ok {
+		if !strings.ContainsAny(opts.ContainerImage, "/:") {
 			containerName = "my-" + strings.ToLower(opts.ContainerImage)
 		} else {
 			base := path.Base(containerImage)
@@ -425,30 +391,6 @@ func (c *CreateCommand) clone(ctx context.Context, containerName string) (string
 	}
 
 	return commitTag, nil
-}
-
-func (c *CreateCommand) askPullImage(ctx context.Context, containerImage string, opts CreateOptions) error {
-	if opts.ContainerAlwaysPull || !c.containerManager.ImageExists(ctx, containerImage) {
-		skipConfirm := opts.NonInteractive || opts.ContainerAlwaysPull
-		if !skipConfirm {
-			ui.DefaultLogger.Warn("image '%s' not found on your system.", imageDisplayName(containerImage))
-			answer := c.prompter.Prompt("would you like to pull it?", true)
-			if !answer {
-				return ErrImagePullAbortedByUser
-			}
-		}
-
-		ui.DefaultLogger.Info("large images may take a while, please be patient...")
-		c.progress.Next("pulling '%s'...", containerImage)
-		err := c.containerManager.PullImage(ctx, containerImage, opts.ContainerPlatform)
-		if err != nil {
-			c.progress.Fail()
-			return fmt.Errorf("failed to pull image '%s': %w", containerImage, err)
-		}
-		c.progress.Done()
-	}
-
-	return nil
 }
 
 // splitFields word-splits each entry of in on whitespace. A single CLI

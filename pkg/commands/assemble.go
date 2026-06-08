@@ -50,12 +50,12 @@ func NewAssembleCommand(
 ) *AssembleCommand {
 	cmRoot := cm.CloneAsRoot()
 	return &AssembleCommand{
-		createCmd:     NewCreateCommand(cfg, cm, ui.NewDevNullProgress(), prompter),
+		createCmd:     NewCreateCommand(cfg, cm, ui.NewDevNullProgress()),
 		rmCmd:         NewRmCommand(cm, prompter),
 		lockCmd:       NewLockCommand(cm),
 		startCmd:      NewStartCommand(cm),
 		enterCmd:      NewEnterCommand(cm),
-		createCmdRoot: NewCreateCommand(cfg, cmRoot, ui.NewDevNullProgress(), prompter),
+		createCmdRoot: NewCreateCommand(cfg, cmRoot, ui.NewDevNullProgress()),
 		rmCmdRoot:     NewRmCommand(cmRoot, prompter),
 		lockCmdRoot:   NewLockCommand(cmRoot),
 		startCmdRoot:  NewStartCommand(cmRoot),

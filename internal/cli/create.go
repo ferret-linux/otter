@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"bufio"
 	"context"
 	"errors"
 	"fmt"
@@ -12,6 +11,7 @@ import (
 	"github.com/ferret-linux/otter/pkg/commands"
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/registry"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
@@ -160,9 +160,8 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 	}
 
 	progress := ui.NewProgress(os.Stderr)
-	prompter := ui.NewPrompter(*bufio.NewReader(os.Stdin), os.Stdout)
 
-	createCmd := commands.NewCreateCommand(cfg, containerManager, progress, prompter)
+	createCmd := commands.NewCreateCommand(cfg, containerManager, progress)
 	result, err := createCmd.Execute(ctx, opts)
 
 	var containerAlreadyExistsErr *commands.ContainerAlreadyExistsError
@@ -170,14 +169,8 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 		printContainerAlreadyExists(progress, containerAlreadyExistsErr.ContainerName, opts.Rootful)
 	}
 
-	if errors.Is(err, commands.ErrImagePullAbortedByUser) {
-		progress.Finalize("next time, pull the image first")
-		return nil
-	}
-
-	if errors.Is(err, commands.ErrUnknownImage) {
+	if errors.Is(err, registry.ErrUnknownImage) {
 		ui.DefaultLogger.Error("%s", err)
-		printFile("image_options")
 		return err
 	}
 
