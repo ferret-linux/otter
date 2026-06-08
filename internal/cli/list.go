@@ -25,7 +25,7 @@ func newListCommand(cfg *config.Values) *cli.Command {
 	}
 }
 
-func listAction(ctx context.Context, cmd *cli.Command) error {
+func listAction(ctx context.Context, _ *cli.Command) error {
 	containerManager, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 	if !ok {
 		return errors.New("container manager not found in context")
