@@ -9,7 +9,7 @@ import (
 	"github.com/ferret-linux/otter/pkg/netcheck"
 )
 
-const propertiesURL = "https://raw.githubusercontent.com/ferret-linux/otter/main/images/images-properties.json"
+const propertiesURL = "https://raw.githubusercontent.com/ferret-linux/otter/stable/images/images-properties.json"
 
 // ImageSize holds per-architecture size data for an image.
 type ImageSize struct {
