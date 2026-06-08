@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
@@ -42,6 +43,10 @@ func boolToSharedStr(b bool) string {
 func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error {
 	if opts.ContainerName == "" {
 		return fmt.Errorf("please specify a container name with --name/-n")
+	}
+
+	if strings.Contains(opts.ContainerName, ",") {
+		return fmt.Errorf("inspect only accepts a single container name")
 	}
 
 	if !c.containerManager.Exists(ctx, opts.ContainerName) {

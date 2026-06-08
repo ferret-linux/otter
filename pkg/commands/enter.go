@@ -3,6 +3,7 @@ package commands
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ui"
@@ -34,6 +35,10 @@ func NewEnterCommand(
 }
 
 func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterResult, error) {
+	if strings.Contains(opts.ContainerName, ",") {
+		return nil, fmt.Errorf("enter only accepts a single container name")
+	}
+
 	inspectResult, err := c.containerManager.InspectContainer(ctx, opts.ContainerName)
 	if err != nil {
 		return nil, fmt.Errorf("container '%s' not found", opts.ContainerName)

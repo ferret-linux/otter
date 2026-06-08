@@ -3,7 +3,6 @@ package cli
 import (
 	"context"
 	"errors"
-	"strings"
 
 	"github.com/urfave/cli/v3"
 
@@ -32,10 +31,6 @@ func inspectAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) er
 	cm, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 	if !ok {
 		return errors.New("container manager not found in context")
-	}
-
-	if strings.Contains(cmd.String("name"), ",") {
-		return errors.New("inspect only accepts a single container name")
 	}
 
 	inspectCmd := commands.NewInspectCommand(cfg, cm)

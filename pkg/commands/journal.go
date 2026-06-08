@@ -3,6 +3,7 @@ package commands
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
@@ -30,6 +31,10 @@ func NewJournalCommand(_ *config.Values, cm containermanager.ContainerManager) *
 func (c *JournalCommand) Execute(ctx context.Context, opts JournalOptions) error {
 	if opts.ContainerName == "" {
 		return fmt.Errorf("please specify a container name with --name/-n")
+	}
+
+	if strings.Contains(opts.ContainerName, ",") {
+		return fmt.Errorf("journal only accepts a single container name")
 	}
 
 	if !c.containerManager.Exists(ctx, opts.ContainerName) {
