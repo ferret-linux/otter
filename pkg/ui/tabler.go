@@ -43,16 +43,16 @@ type Table struct {
 }
 
 type tableRow struct {
-	cols  []string
-	color func(string) string
+	cols   []string
+	colors []func(string) string
 }
 
 func NewTable(w io.Writer, headers ...string) *Table {
 	return &Table{w: w, headers: headers}
 }
 
-func (t *Table) AddRow(colorFn func(string) string, cols ...string) {
-	t.rows = append(t.rows, tableRow{cols: cols, color: colorFn})
+func (t *Table) AddRow(cols []string, colors []func(string) string) {
+	t.rows = append(t.rows, tableRow{cols: cols, colors: colors})
 }
 
 func (t *Table) Render() {
@@ -110,12 +110,27 @@ func (t *Table) Render() {
 	//nolint:forbidigo
 	fmt.Fprintln(t.w, hline(tableWidth, middleLeft, middleRight))
 	for _, r := range t.rows {
-		line := renderRow(r.cols, false)
-		if r.color != nil {
-			line = r.color(line)
+		var sb strings.Builder
+		sb.WriteString(Cyan(vertical))
+		sb.WriteString(" ")
+		for i, col := range r.cols {
+			w := 0
+			if i < len(widths) {
+				w = widths[i]
+			}
+			cell := padRight(col, w)
+			if i < len(r.colors) && r.colors[i] != nil {
+				cell = r.colors[i](cell)
+			}
+			sb.WriteString(cell)
+			if i < len(r.cols)-1 {
+				sb.WriteString(strings.Repeat(" ", colGap))
+			}
 		}
+		sb.WriteString(" ")
+		sb.WriteString(Cyan(vertical))
 		//nolint:forbidigo
-		fmt.Fprintln(t.w, line)
+		fmt.Fprintln(t.w, sb.String())
 	}
 	//nolint:forbidigo
 	fmt.Fprintln(t.w, hline(tableWidth, bottomLeft, bottomRight))

@@ -51,14 +51,17 @@ func printResult(result *commands.ListResult) {
 	t := ui.NewTable(os.Stdout, "ID", "NAME", "STATUS", "IMAGE")
 	for _, c := range result.Containers {
 		status := "○ " + c.Status
-		colorFn := ui.Yellow
+		statusColor := ui.Yellow
 		if c.IsRunning() {
 			status = "● " + c.Status
-			colorFn = ui.Green
+			statusColor = ui.Green
 		} else if strings.Contains(strings.ToLower(c.Status), "exited") {
-			colorFn = ui.Dim
+			statusColor = ui.Red
 		}
-		t.AddRow(colorFn, c.ID, c.Name, status, c.Image)
+		t.AddRow(
+			[]string{c.ID, c.Name, status, c.Image},
+			[]func(string) string{ui.Dim, ui.Teal, statusColor, ui.Dim},
+		)
 	}
 	t.Render()
 }
