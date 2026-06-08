@@ -163,6 +163,8 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		withContainerManager,
 	)
 
+	registry := newRegistryCommand(cfg)
+
 	return []*cli.Command{
 		assemble,
 		create,
@@ -172,6 +174,7 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		journal,
 		list,
 		lock,
+		registry,
 		remove,
 		restart,
 		start,
