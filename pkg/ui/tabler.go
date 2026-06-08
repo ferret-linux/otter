@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-const tableWidth = 63
+const colGap = 3
 
 var (
 	topLeft     = "╭"
@@ -19,8 +19,20 @@ var (
 	middleRight = "┤"
 )
 
-func hline(left, right string) string {
-	return left + strings.Repeat(horizontal, tableWidth-2) + right
+func runeLen(s string) int {
+	return len([]rune(s))
+}
+
+func padRight(s string, w int) string {
+	l := runeLen(s)
+	if l >= w {
+		return s
+	}
+	return s + strings.Repeat(" ", w-l)
+}
+
+func hline(width int, left, right string) string {
+	return left + strings.Repeat(horizontal, width-2) + right
 }
 
 // Table is a multi-column table renderer.
@@ -44,51 +56,55 @@ func (t *Table) AddRow(colorFn func(string) string, cols ...string) {
 }
 
 func (t *Table) Render() {
-	// Calculate column widths
+	// Calculate column widths from content
 	widths := make([]int, len(t.headers))
 	for i, h := range t.headers {
-		widths[i] = len(h)
+		widths[i] = runeLen(h)
 	}
 	for _, r := range t.rows {
 		for i, c := range r.cols {
-			if i < len(widths) && len(c) > widths[i] {
-				widths[i] = len(c)
+			if i < len(widths) && runeLen(c) > widths[i] {
+				widths[i] = runeLen(c)
 			}
 		}
 	}
 
-	pad := func(s string, w int) string {
-		if len(s) >= w {
-			return s
+	// Calculate total table width from column widths
+	inner := 1 // leading space after │
+	for i, w := range widths {
+		inner += w
+		if i < len(widths)-1 {
+			inner += colGap
 		}
-		return s + strings.Repeat(" ", w-len(s))
 	}
+	inner++                 // trailing space before │
+	tableWidth := inner + 2 // +2 for the two │ borders
 
 	renderRow := func(cols []string) string {
 		var sb strings.Builder
 		sb.WriteString(vertical)
 		sb.WriteString(" ")
-		for i, h := range cols {
-			sb.WriteString(pad(h, widths[i]))
+		for i, col := range cols {
+			w := 0
+			if i < len(widths) {
+				w = widths[i]
+			}
+			sb.WriteString(padRight(col, w))
 			if i < len(cols)-1 {
-				sb.WriteString("   ")
+				sb.WriteString(strings.Repeat(" ", colGap))
 			}
 		}
-		// pad to table width
-		content := sb.String()
-		remaining := tableWidth - 1 - len([]rune(content))
-		if remaining > 0 {
-			content += strings.Repeat(" ", remaining)
-		}
-		return content + vertical
+		sb.WriteString(" ")
+		sb.WriteString(vertical)
+		return sb.String()
 	}
 
 	//nolint:forbidigo
-	fmt.Fprintln(t.w, hline(topLeft, topRight))
+	fmt.Fprintln(t.w, hline(tableWidth, topLeft, topRight))
 	//nolint:forbidigo
 	fmt.Fprintln(t.w, Bold(renderRow(t.headers)))
 	//nolint:forbidigo
-	fmt.Fprintln(t.w, hline(middleLeft, middleRight))
+	fmt.Fprintln(t.w, hline(tableWidth, middleLeft, middleRight))
 	for _, r := range t.rows {
 		line := renderRow(r.cols)
 		if r.color != nil {
@@ -98,7 +114,7 @@ func (t *Table) Render() {
 		fmt.Fprintln(t.w, line)
 	}
 	//nolint:forbidigo
-	fmt.Fprintln(t.w, hline(bottomLeft, bottomRight))
+	fmt.Fprintln(t.w, hline(tableWidth, bottomLeft, bottomRight))
 }
 
 // Panel is a key-value panel renderer with sections.
@@ -130,40 +146,57 @@ func PanelRow(key, value string) panelRow {
 }
 
 func (p *Panel) Render() {
-	pad := func(s string, w int) string {
-		if len(s) >= w {
-			return s
+	// Calculate key column width and table width from content
+	keyWidth := 0
+	for _, s := range p.sections {
+		for _, r := range s.rows {
+			if runeLen(r.key) > keyWidth {
+				keyWidth = runeLen(r.key)
+			}
 		}
-		return s + strings.Repeat(" ", w-len(s))
 	}
 
-	renderKV := func(key, value string) string {
-		content := vertical + " " + pad(key, 12) + " " + value
-		runes := []rune(content)
-		remaining := tableWidth - 1 - len(runes)
-		if remaining > 0 {
-			content += strings.Repeat(" ", remaining)
+	valueWidth := 0
+	for _, s := range p.sections {
+		if runeLen("▸ "+s.title+":") > valueWidth {
+			valueWidth = runeLen("▸ " + s.title + ":")
 		}
-		return content + vertical
+		for _, r := range s.rows {
+			if runeLen(r.value) > valueWidth {
+				valueWidth = runeLen(r.value)
+			}
+		}
+	}
+
+	// inner = │ + space + key + gap + value + space + │
+	tableWidth := 1 + 1 + keyWidth + colGap + valueWidth + 1 + 1
+
+	renderKV := func(key, value string) string {
+		var sb strings.Builder
+		sb.WriteString(vertical)
+		sb.WriteString(" ")
+		sb.WriteString(padRight(key, keyWidth))
+		sb.WriteString(strings.Repeat(" ", colGap))
+		sb.WriteString(padRight(value, valueWidth))
+		sb.WriteString(" ")
+		sb.WriteString(vertical)
+		return sb.String()
 	}
 
 	renderSection := func(title string) string {
-		content := vertical + " " + Teal("▸ "+title+":")
-		// Teal adds escape codes, calculate visible length
-		visible := vertical + "  ▸ " + title + ":"
-		remaining := tableWidth - 1 - len([]rune(visible))
-		if remaining > 0 {
-			content += strings.Repeat(" ", remaining)
-		}
-		return content + vertical
+		label := "▸ " + title + ":"
+		colored := Teal(label)
+		// pad using visible width only
+		padding := strings.Repeat(" ", keyWidth+colGap+valueWidth-runeLen(label))
+		return vertical + " " + colored + padding + " " + vertical
 	}
 
 	//nolint:forbidigo
-	fmt.Fprintln(p.w, hline(topLeft, topRight))
+	fmt.Fprintln(p.w, hline(tableWidth, topLeft, topRight))
 	for i, s := range p.sections {
 		if i > 0 {
 			//nolint:forbidigo
-			fmt.Fprintln(p.w, hline(middleLeft, middleRight))
+			fmt.Fprintln(p.w, hline(tableWidth, middleLeft, middleRight))
 		}
 		//nolint:forbidigo
 		fmt.Fprintln(p.w, renderSection(s.title))
@@ -173,5 +206,5 @@ func (p *Panel) Render() {
 		}
 	}
 	//nolint:forbidigo
-	fmt.Fprintln(p.w, hline(bottomLeft, bottomRight))
+	fmt.Fprintln(p.w, hline(tableWidth, bottomLeft, bottomRight))
 }
