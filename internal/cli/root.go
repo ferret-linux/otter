@@ -195,9 +195,12 @@ func firstName(args []string) string {
 
 // splitNames splits the first positional argument on commas and returns the resulting slice.
 // e.g. "foo,bar" -> ["foo", "bar"]
-func splitNames(args []string) []string {
+func splitNames(args []string) ([]string, error) {
 	if len(args) == 0 {
-		return nil
+		return nil, nil
+	}
+	if len(args) > 1 {
+		return nil, fmt.Errorf("multiple arguments are not supported, use comma-separated names instead (e.g. %s)", strings.Join(args, ","))
 	}
 	var names []string
 	for _, n := range strings.Split(args[0], ",") {
@@ -206,7 +209,7 @@ func splitNames(args []string) []string {
 			names = append(names, n)
 		}
 	}
-	return names
+	return names, nil
 }
 
 func withUsageErrorHandler(_ *config.Values, cmd *cli.Command) *cli.Command {

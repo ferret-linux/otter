@@ -38,13 +38,17 @@ func upgradeAction(ctx context.Context, cmd *cli.Command) error {
 		return errors.New("container manager not found in context")
 	}
 
+	names, err := splitNames(cmd.Args().Slice())
+	if err != nil {
+		return err
+	}
 	options := &commands.UpgradeOptions{
-		ContainerNames: splitNames(cmd.Args().Slice()),
+		ContainerNames: names,
 		All:            cmd.Bool("all"),
 		Running:        cmd.Bool("running"),
 	}
 
-	err := commands.NewUpgradeCommand(containerManager).Execute(ctx, options)
+	err = commands.NewUpgradeCommand(containerManager).Execute(ctx, options)
 	if errors.Is(err, commands.ErrEmptyContainerList) {
 		ui.DefaultLogger.Warn("No containers found.")
 		return nil

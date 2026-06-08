@@ -58,7 +58,11 @@ func generateEntryAction(ctx context.Context, cmd *cli.Command) error {
 	if cmd.Bool("all") {
 		opts.All = true
 	} else {
-		opts.ContainerNames = splitNames(cmd.Args().Slice())
+		names, err := splitNames(cmd.Args().Slice())
+		if err != nil {
+			return err
+		}
+		opts.ContainerNames = names
 		opts.Icon = cmd.String("icon")
 	}
 

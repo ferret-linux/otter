@@ -33,8 +33,12 @@ func startAction(ctx context.Context, cmd *cli.Command) error {
 		return errors.New("container manager not found in context")
 	}
 
+	names, err := splitNames(cmd.Args().Slice())
+	if err != nil {
+		return err
+	}
 	return commands.NewStartCommand(containerManager).Execute(ctx, &commands.StartOptions{
-		ContainerNames: splitNames(cmd.Args().Slice()),
+		ContainerNames: names,
 		All:            cmd.Bool("all"),
 	})
 }

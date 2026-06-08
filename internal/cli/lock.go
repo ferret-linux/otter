@@ -30,8 +30,12 @@ func newLockCommand(cfg *config.Values) *cli.Command {
 func lockAction(ctx context.Context, cmd *cli.Command) error {
 	cm := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 
+	names, err := splitNames(cmd.Args().Slice())
+	if err != nil {
+		return err
+	}
 	if err := commands.NewLockCommand(cm).Execute(ctx, commands.LockOptions{
-		ContainerNames: splitNames(cmd.Args().Slice()),
+		ContainerNames: names,
 		All:            cmd.Bool("all"),
 	}); err != nil {
 		return fmt.Errorf("failed to lock container: %w", err)
