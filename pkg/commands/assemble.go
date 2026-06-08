@@ -11,19 +11,28 @@ import (
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/manifest"
+	"github.com/ferret-linux/otter/pkg/rootful"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 const assembleCleanupTimeout = 30 * time.Second
 
+const defaultManifestPath = "./otter.ini"
+
 type AssembleOptions struct {
-	Items []manifest.Item
-	// Boxname is the name of the box to assemble
-	// If specified, the Assemble command will only assemble the given box
-	// If empty, the command will assemble all boxes defined in the manifest
+	// ManifestPath is the explicit path to the manifest file (from --file flag).
+	// If empty, ManifestArgs[0] is tried, then defaultManifestPath.
+	ManifestPath string
+	// ManifestArgs are the positional arguments passed to the command.
+	ManifestArgs []string
+	// SudoCommand is the sudo program to use for root validation.
+	SudoCommand string
+	// Boxname is the name of the box to assemble.
+	// If specified, the Assemble command will only assemble the given box.
+	// If empty, the command will assemble all boxes defined in the manifest.
 	Boxname string
-	// Delete indicates whether to delete the existing box before assembling
-	// true=delete, false=create or update
+	// Delete indicates whether to delete the existing box before assembling.
+	// true=delete, false=create or update.
 	Delete  bool
 	Replace bool
 }
@@ -65,20 +74,41 @@ func NewAssembleCommand(
 }
 
 func (ac *AssembleCommand) Execute(ctx context.Context, opts AssembleOptions) error {
-	var items []manifest.Item
+	manifestPath := opts.ManifestPath
+	if manifestPath == "" {
+		if len(opts.ManifestArgs) > 0 && opts.ManifestArgs[0] != "" {
+			manifestPath = opts.ManifestArgs[0]
+		} else {
+			manifestPath = defaultManifestPath
+		}
+	}
+
+	items, err := manifest.Parse(ctx, manifestPath)
+	if err != nil {
+		return fmt.Errorf("failed to parse manifest file: %w", err)
+	}
+
+	for _, item := range items {
+		if item.Root {
+			if err := rootful.Validate(ctx, opts.SudoCommand); err != nil {
+				return fmt.Errorf("cannot run in root mode: %w", err)
+			}
+			break
+		}
+	}
+
+	filteredItems := items
 	if opts.Boxname != "" {
-		idx := slices.IndexFunc(opts.Items, func(i manifest.Item) bool {
+		idx := slices.IndexFunc(items, func(i manifest.Item) bool {
 			return i.Name == opts.Boxname
 		})
 		if idx == -1 {
 			return fmt.Errorf("box '%s' not found in manifest", opts.Boxname)
 		}
-		items = []manifest.Item{opts.Items[idx]}
-	} else {
-		items = opts.Items
+		filteredItems = []manifest.Item{items[idx]}
 	}
 
-	for _, item := range items {
+	for _, item := range filteredItems {
 		switch {
 		case opts.Delete:
 			if err := ac.deleteItem(ctx, item); err != nil {

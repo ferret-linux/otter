@@ -77,7 +77,7 @@ func assembleAction(ctx context.Context, cmd *cli.Command, cfg *config.Values, d
 	progress := ui.NewProgress(os.Stderr)
 	assembleCmd := commands.NewAssembleCommand(cfg, containerManager, prompter, progress)
 
-	err = assembleCmd.Execute(ctx, opts)
+	err := assembleCmd.Execute(ctx, opts)
 	if err != nil {
 		return fmt.Errorf("failed to execute assemble command: %w", err)
 	}
