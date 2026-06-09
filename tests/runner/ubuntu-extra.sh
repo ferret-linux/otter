@@ -30,7 +30,8 @@ if [ "${MODE}" = "rootful" ]; then
     ROOT_FLAG="--root"
 fi
 
-OTTER="otter --container-manager ${BACKEND} ${ROOT_FLAG}"
+OTTER="otter"
+CM_FLAGS="--container-manager ${BACKEND} ${ROOT_FLAG}"
 
 pass() {
     printf "[PASS] %s\n" "$1" | tee -a "${REPORT_FILE}"
@@ -66,10 +67,10 @@ printf "Date: %s\n\n" "$(date -u)" | tee -a "${REPORT_FILE}"
 printf "\n--- Setup ---\n" | tee -a "${REPORT_FILE}"
 
 run "create" \
-    "${OTTER} create ${CONTAINER} --image ${IMAGE}"
+    "${OTTER} create ${CM_FLAGS} ${CONTAINER} --image ${IMAGE}"
 
 run "start" \
-    "${OTTER} start ${CONTAINER}"
+    "${OTTER} start ${CM_FLAGS} ${CONTAINER}"
 
 # ----------------------------------------------------------------------------
 # Lock / Unlock
@@ -78,16 +79,16 @@ run "start" \
 printf "\n--- Lock / Unlock ---\n" | tee -a "${REPORT_FILE}"
 
 run "lock basic" \
-    "${OTTER} lock ${CONTAINER}"
+    "${OTTER} lock ${CM_FLAGS} ${CONTAINER}"
 
 run "unlock basic" \
-    "${OTTER} unlock ${CONTAINER}"
+    "${OTTER} unlock ${CM_FLAGS} ${CONTAINER}"
 
 run "lock all" \
-    "${OTTER} lock --all"
+    "${OTTER} lock ${CM_FLAGS} --all"
 
 run "unlock all" \
-    "${OTTER} unlock --all"
+    "${OTTER} unlock ${CM_FLAGS} --all"
 
 # ----------------------------------------------------------------------------
 # Pause / Restart
@@ -96,16 +97,16 @@ run "unlock all" \
 printf "\n--- Pause / Restart ---\n" | tee -a "${REPORT_FILE}"
 
 run "pause basic" \
-    "${OTTER} pause ${CONTAINER}"
+    "${OTTER} pause ${CM_FLAGS} ${CONTAINER}"
 
 run "restart basic" \
-    "${OTTER} restart ${CONTAINER}"
+    "${OTTER} restart ${CM_FLAGS} ${CONTAINER}"
 
 run "pause all" \
-    "${OTTER} pause --all"
+    "${OTTER} pause ${CM_FLAGS} --all"
 
 run "restart all" \
-    "${OTTER} restart --all"
+    "${OTTER} restart ${CM_FLAGS} --all"
 
 # ----------------------------------------------------------------------------
 # Teardown
@@ -114,7 +115,7 @@ run "restart all" \
 printf "\n--- Teardown ---\n" | tee -a "${REPORT_FILE}"
 
 run "remove" \
-    "${OTTER} remove ${CONTAINER} --force"
+    "${OTTER} remove ${CM_FLAGS} ${CONTAINER} --force"
 
 # ----------------------------------------------------------------------------
 # Report

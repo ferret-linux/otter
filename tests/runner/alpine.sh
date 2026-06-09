@@ -31,7 +31,8 @@ if [ "${MODE}" = "rootful" ]; then
     ROOT_FLAG="--root"
 fi
 
-OTTER="otter --container-manager ${BACKEND} ${ROOT_FLAG}"
+OTTER="otter"
+CM_FLAGS="--container-manager ${BACKEND} ${ROOT_FLAG}"
 
 pass() {
     printf "[PASS] %s\n" "$1" | tee -a "${REPORT_FILE}"
@@ -67,22 +68,22 @@ printf "Date: %s\n\n" "$(date -u)" | tee -a "${REPORT_FILE}"
 printf "\n--- Basic lifecycle ---\n" | tee -a "${REPORT_FILE}"
 
 run "create basic" \
-    "${OTTER} create ${CONTAINER_BASIC} --image ${IMAGE}"
+    "${OTTER} create ${CM_FLAGS} ${CONTAINER_BASIC} --image ${IMAGE}"
 
 run "start basic" \
-    "${OTTER} start ${CONTAINER_BASIC}"
+    "${OTTER} start ${CM_FLAGS} ${CONTAINER_BASIC}"
 
 run "enter basic: echo hello" \
-    "${OTTER} enter ${CONTAINER_BASIC} --no-tty -- echo hello"
+    "${OTTER} enter ${CM_FLAGS} ${CONTAINER_BASIC} --no-tty -- echo hello"
 
 run "stop basic" \
-    "${OTTER} stop ${CONTAINER_BASIC}"
+    "${OTTER} stop ${CM_FLAGS} ${CONTAINER_BASIC}"
 
 run "upgrade basic" \
-    "${OTTER} upgrade ${CONTAINER_BASIC}"
+    "${OTTER} upgrade ${CM_FLAGS} ${CONTAINER_BASIC}"
 
 run "remove basic" \
-    "${OTTER} remove ${CONTAINER_BASIC} --force"
+    "${OTTER} remove ${CM_FLAGS} ${CONTAINER_BASIC} --force"
 
 # ----------------------------------------------------------------------------
 # Full-featured lifecycle
@@ -91,7 +92,7 @@ run "remove basic" \
 printf "\n--- Full-featured lifecycle ---\n" | tee -a "${REPORT_FILE}"
 
 run "create full" \
-    "${OTTER} create ${CONTAINER_FULL} \
+    "${OTTER} create ${CM_FLAGS} ${CONTAINER_FULL} \
         --image ${IMAGE} \
         --shell bash \
         --hostname otter-test-host \
@@ -103,19 +104,19 @@ run "create full" \
         --unshare-process"
 
 run "start full" \
-    "${OTTER} start ${CONTAINER_FULL}"
+    "${OTTER} start ${CM_FLAGS} ${CONTAINER_FULL}"
 
 run "enter full: uname -a" \
-    "${OTTER} enter ${CONTAINER_FULL} --no-tty --no-workdir --clean-path --empty-env -- uname -a"
+    "${OTTER} enter ${CM_FLAGS} ${CONTAINER_FULL} --no-tty --no-workdir --clean-path --empty-env -- uname -a"
 
 run "stop full" \
-    "${OTTER} stop ${CONTAINER_FULL}"
+    "${OTTER} stop ${CM_FLAGS} ${CONTAINER_FULL}"
 
 run "upgrade full: --all --running" \
-    "${OTTER} upgrade --all --running"
+    "${OTTER} upgrade ${CM_FLAGS} --all --running"
 
 run "remove full" \
-    "${OTTER} remove ${CONTAINER_FULL} --force --rm-home --bypass-lock"
+    "${OTTER} remove ${CM_FLAGS} ${CONTAINER_FULL} --force --rm-home --bypass-lock"
 
 # ----------------------------------------------------------------------------
 # Report
