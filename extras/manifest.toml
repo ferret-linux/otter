@@ -1,0 +1,140 @@
+# Fromat-1
+# Each group is expressed as repeated group.key = value lines.
+# Clean and readable for groups with many fields or array values that benefit from individual alignment.
+# Most explicit style — every key shows its full path. Good default choice for most manifests.
+
+[[container]]
+name       = ""
+image      = ""
+clone      = ""
+start-now  = false
+force-pull = false
+include    = ""
+
+additional.packages = []
+additional.volumes  = []
+additional.flags    = []
+
+exported.apps = []
+exported.bins = []
+exported.path = ""
+
+hooks.pre-init  = []
+hooks.post-init = []
+
+settings.lock        = false
+settings.entry       = false
+settings.shell       = ""
+settings.rootful     = false
+settings.init-system = false
+settings.hostname    = ""
+
+hardware.memory = ""
+hardware.nvidia = false
+hardware.cpu    = 0
+
+isolation.netns   = false
+isolation.ipc     = false
+isolation.process = false
+isolation.devsys  = false
+isolation.groups  = false
+isolation.all     = false
+
+# Format-2
+# Each group is a single line: group = { key = value, ... }.
+# Best for compact, flat groups with only scalar values like settings, hardware, and isolation.
+# Loses readability fast when arrays or many fields are involved, so avoid it for hooks or additional.
+
+[[container]]
+name       = ""
+image      = ""
+clone      = ""
+start-now  = false
+force-pull = false
+include    = ""
+
+additional = { packages = [], volumes = [], flags = [] }
+exported   = { apps = [], bins = [], path = "" }
+hooks      = { pre-init = [], post-init = [] }
+settings   = { lock = false, entry = false, shell = "", rootful = false, init-system = false, hostname = "" }
+hardware   = { memory = "", nvidia = false, cpu = 0 }
+isolation  = { netns = false, ipc = false, process = false, devsys = false, groups = false, all = false }
+
+# Format-3
+# Each group gets its own [container.group] header, turning it into a proper named section.
+# Most readable for large groups with many fields, especially hooks where multiline arrays need breathing room.
+# The only format with an ordering constraint — all [container.group] blocks must appear before the next [[container]] header.
+
+[[container]]
+name       = ""
+image      = ""
+clone      = ""
+start-now  = false
+force-pull = false
+include    = ""
+
+[container.additional]
+packages = []
+volumes  = []
+flags    = []
+
+[container.exported]
+apps = []
+bins = []
+path = ""
+
+[container.hooks]
+pre-init  = []
+post-init = []
+
+[container.settings]
+lock        = false
+entry       = false
+shell       = ""
+rootful     = false
+init-system = false
+hostname    = ""
+
+[container.hardware]
+memory = ""
+nvidia = false
+cpu    = 0
+
+[container.isolation]
+netns   = false
+ipc     = false
+process = false
+devsys  = false
+groups  = false
+all     = false
+
+# Format-4
+# Combines the best of the other three: 
+# dotted keys for groups with arrays and alignment needs, block subtables for hooks, inline tables for flat scalar groups.
+# No single rule — pick per-group based on what reads best. Recommended style for complex manifests.
+
+[[container]]
+name       = ""
+image      = ""
+clone      = ""
+start-now  = false
+force-pull = false
+include    = ""
+
+additional.packages = []
+additional.volumes  = []
+additional.flags    = []
+
+exported.apps = []
+exported.bins = []
+exported.path = ""
+
+[container.hooks]
+pre-init  = []
+post-init = []
+
+settings  = { lock = false, entry = false, shell = "", rootful = false, init-system = false, hostname = "" }
+hardware  = { memory = "", nvidia = false, cpu = 0 }
+isolation = { netns = false, ipc = false, process = false, devsys = false, groups = false, all = false }
+
+# NOTE : All four formats produce identical parsed output. The parser does not distinguish between them.

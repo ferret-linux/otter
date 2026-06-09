@@ -1,0 +1,165 @@
+# Fromat-1
+# Each group is expressed as repeated group.key = value lines.
+# Clean and readable for groups with many fields or array values that benefit from individual alignment.
+# Most explicit style — every key shows its full path. Good default choice for most manifests.
+
+[[container]]
+name        = "arch"
+image       = "arch"
+clone       = ""
+start-now   = true
+force-pull  = true
+include     = ""
+
+additional.packages = ["git", "vim", "tmux", "nodejs"]
+additional.volumes  = ["/tmp/test:/run/a", "/tmp/test:/run/b"]
+additional.flags    = ["--cap-add=SYS_PTRACE"]
+
+exported.apps = ["htop"]
+exported.bins = ["/usr/bin/htop", "/usr/bin/git"]
+exported.path = "~/.local/bin"
+
+hooks.pre-init  = ["touch /pre-init"]
+hooks.post-init = [
+  "touch /init-normal",
+  "ln -sf /usr/bin/otter-host-exec /usr/local/bin/docker",
+]
+
+settings.lock = false
+settings.entry = false
+settings.shell = "fish"
+settings.rootful = false
+settings.init-system = false
+settings.hostname = "arch-linux"
+
+hardware.memory = "512m"
+hardware.nvidia = false
+hardware.cpu    = 0
+
+isolation.netns   = true
+isolation.ipc     = true
+isolation.process = false
+isolation.devsys  = false
+isolation.groups  = false
+isolation.all     = false
+
+# Format-2
+# Each group is a single line: group = { key = value, ... }.
+# Best for compact, flat groups with only scalar values like settings, hardware, and isolation.
+# Loses readability fast when arrays or many fields are involved, so avoid it for hooks or additional.
+
+[[container]]
+name        = "arch"
+image       = "arch"
+clone       = ""
+start-now   = true
+force-pull  = true
+include     = ""
+
+additional = { packages = ["git", "vim", "tmux", "nodejs"], volumes = ["/tmp/test:/run/a", "/tmp/test:/run/b"], flags = ["--cap-add=SYS_PTRACE"] }
+exported = { apps = ["htop"], bins = ["/usr/bin/htop", "/usr/bin/git"], path = "~/.local/bin" }
+hooks = { pre-init = ["touch /pre-init"], post-init = ["touch /init-normal", "ln -sf /usr/bin/otter-host-exec /usr/local/bin/docker"] }
+settings = { lock = false, entry = false, shell = "fish", rootful = false, init-system = false, hostname = "arch-linux" }
+hardware = { memory = "512m", nvidia = false, cpu = 0 }
+isolation = { netns = true, ipc = true, process = false, devsys = false, groups = false, all = false }
+
+# Format-3
+# Each group gets its own [container.group] header, turning it into a proper named section.
+# Most readable for large groups with many fields, especially hooks where multiline arrays need breathing room.
+# The only format with an ordering constraint — all [container.group] blocks must appear before the next [[container]] header.
+
+[[container]]
+name       = "arch"
+image      = "arch"
+clone      = ""
+start-now  = true
+force-pull = true
+include    = ""
+
+[container.additional]
+packages = ["git", "vim", "tmux", "nodejs"]
+volumes  = ["/tmp/test:/run/a", "/tmp/test:/run/b"]
+flags    = ["--cap-add=SYS_PTRACE"]
+
+[container.exported]
+apps = ["htop"]
+bins = ["/usr/bin/htop", "/usr/bin/git"]
+path = "~/.local/bin"
+
+[container.hooks]
+pre-init  = ["touch /pre-init"]
+post-init = [
+  "touch /init-normal",
+  "ln -sf /usr/bin/otter-host-exec /usr/local/bin/docker",
+]
+
+[container.settings]
+lock        = false
+entry       = false
+shell       = "fish"
+rootful     = false
+init-system = false
+hostname    = "arch-linux"
+
+[container.hardware]
+memory = "512m"
+nvidia = false
+cpu    = 0
+
+[container.isolation]
+netns   = true
+ipc     = true
+process = false
+devsys  = false
+groups  = false
+all     = false
+
+[[container]]
+name  = "tumbleweed"
+image = "registry.opensuse.org/opensuse/tumbleweed"
+
+[[container]]
+name    = "archbased"
+include = "arch"
+
+# Format-4
+# Combines the best of the other three: 
+# dotted keys for groups with arrays and alignment needs, block subtables for hooks, inline tables for flat scalar groups.
+# No single rule — pick per-group based on what reads best. Recommended style for complex manifests.
+
+[[container]]
+name       = "arch"
+image      = "arch"
+clone      = ""
+start-now  = true
+force-pull = true
+include    = ""
+
+additional.packages = ["git", "vim", "tmux", "nodejs"]
+additional.volumes  = ["/tmp/test:/run/a", "/tmp/test:/run/b"]
+additional.flags    = ["--cap-add=SYS_PTRACE"]
+
+exported.apps = ["htop"]
+exported.bins = ["/usr/bin/htop", "/usr/bin/git"]
+exported.path = "~/.local/bin"
+
+[container.hooks]
+pre-init  = ["touch /pre-init"]
+post-init = [
+  "touch /init-normal",
+  "ln -sf /usr/bin/otter-host-exec /usr/local/bin/docker",
+]
+
+settings = { lock = false, entry = false, shell = "fish", rootful = false, init-system = false, hostname = "arch-linux" }
+hardware  = { memory = "512m", nvidia = false, cpu = 0 }
+isolation = { netns = true, ipc = true, process = false, devsys = false, groups = false, all = false }
+
+[[container]]
+name  = "tumbleweed"
+image = "registry.opensuse.org/opensuse/tumbleweed"
+
+[[container]]
+name    = "archbased"
+include = "arch"
+
+# NOTE : All four formats produce identical parsed output. The parser does not distinguish between them.
