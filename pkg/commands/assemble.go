@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"regexp"
 	"slices"
@@ -68,9 +69,10 @@ func NewAssembleCommand(
 	}
 }
 
+//nolint:gocognit // ignore cognitive complexity here, the function orchestrates multi-step manifest assembly
 func (ac *AssembleCommand) Execute(ctx context.Context, opts AssembleOptions) error {
 	if opts.ManifestPath == "" {
-		return fmt.Errorf("manifest path is required, use --file to specify it")
+		return errors.New("manifest path is required, use --file to specify it")
 	}
 
 	items, err := manifest.Parse(ctx, opts.ManifestPath)

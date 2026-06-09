@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"embed"
+	"errors"
 	"fmt"
 	"html/template"
 	"os"
@@ -24,6 +25,7 @@ var defaultIconData []byte
 //go:embed assets/distros
 var distroIconsFS embed.FS
 
+//nolint:gochecknoglobals // package-level distro icon lookup table is effectively a constant
 var distroIconMap = map[string]string{
 	"ol":                  "oracle-box.svg",
 	"arch":                "arch-box.svg",
@@ -66,6 +68,7 @@ func NewGenerateEntryCommand(listCommand *ListCommand, cm containermanager.Conta
 	}
 }
 
+//nolint:gocognit // ignore cognitive complexity here, the function orchestrates multi-step desktop entry generation
 func (c *GenerateEntryCommand) Execute(
 	ctx context.Context,
 	opts *GenerateEntryOptions) error {
@@ -101,7 +104,7 @@ func (c *GenerateEntryCommand) Execute(
 			icon = "auto"
 		}
 	default:
-		return fmt.Errorf("please specify a container name with --name/-n")
+		return errors.New("please specify a container name with --name/-n")
 	}
 
 	// Determine the desktop entry base dir

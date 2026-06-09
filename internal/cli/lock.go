@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/urfave/cli/v3"
@@ -11,7 +12,7 @@ import (
 	"github.com/ferret-linux/otter/pkg/containermanager"
 )
 
-func newLockCommand(cfg *config.Values) *cli.Command {
+func newLockCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "lock",
 		Aliases: []string{"lck"},
@@ -21,14 +22,15 @@ func newLockCommand(cfg *config.Values) *cli.Command {
 				Aliases: []string{"a"},
 			},
 		},
-		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return lockAction(ctx, cmd)
-		},
+		Action: lockAction,
 	}
 }
 
 func lockAction(ctx context.Context, cmd *cli.Command) error {
-	cm := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
+	cm, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
+	if !ok {
+		return errors.New("container manager not found in context")
+	}
 
 	names, err := splitNames(cmd.Args().Slice())
 	if err != nil {

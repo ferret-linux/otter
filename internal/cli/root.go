@@ -45,7 +45,7 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 			return ctx, nil
 		},
 		Commands: subcommands(cfg),
-		ExitErrHandler: func(ctx context.Context, cmd *cli.Command, err error) {
+		ExitErrHandler: func(_ context.Context, cmd *cli.Command, err error) {
 
 			if err == nil {
 				return
@@ -65,6 +65,7 @@ func printInvalidContainerManager(l *ui.Logger, containerManagerType string) {
 	l.Warn("The available choices are: 'autodetect', 'podman', 'nerdctl', 'docker'")
 }
 
+//nolint:funlen // function length is acceptable for CLI subcommand registration
 func subcommands(cfg *config.Values) []*cli.Command {
 	cc := &CommandComposer[config.Values]{cfg: cfg}
 

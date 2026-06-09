@@ -3,6 +3,7 @@ package cli
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/urfave/cli/v3"
 
@@ -12,7 +13,7 @@ import (
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
-func newPauseCommand(cfg *config.Values) *cli.Command {
+func newPauseCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "pause",
 		Aliases: []string{"frz"},
@@ -22,9 +23,7 @@ func newPauseCommand(cfg *config.Values) *cli.Command {
 				Aliases: []string{"a"},
 			},
 		},
-		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return pauseAction(ctx, cmd)
-		},
+		Action: pauseAction,
 	}
 }
 
@@ -47,5 +46,8 @@ func pauseAction(ctx context.Context, cmd *cli.Command) error {
 		ui.DefaultLogger.Warn("No containers found.")
 		return nil
 	}
-	return err
+	if err != nil {
+		return fmt.Errorf("failed to pause container: %w", err)
+	}
+	return nil
 }

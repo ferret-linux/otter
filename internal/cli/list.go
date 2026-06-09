@@ -15,13 +15,11 @@ import (
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
-func newListCommand(cfg *config.Values) *cli.Command {
+func newListCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "list",
 		Aliases: []string{"ls"},
-		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return listAction(ctx, cmd)
-		},
+		Action:  listAction,
 	}
 }
 

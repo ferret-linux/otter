@@ -15,7 +15,7 @@ import (
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
-func newRmCommand(cfg *config.Values) *cli.Command {
+func newRmCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "remove",
 		Aliases: []string{"rm"},
@@ -40,9 +40,7 @@ func newRmCommand(cfg *config.Values) *cli.Command {
 			},
 		},
 
-		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return rmAction(ctx, cmd)
-		},
+		Action: rmAction,
 	}
 }
 

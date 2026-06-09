@@ -3,6 +3,7 @@ package cli
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/urfave/cli/v3"
 
@@ -12,7 +13,7 @@ import (
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
-func newStopCommand(cfg *config.Values) *cli.Command {
+func newStopCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "stop",
 		Aliases: []string{"off"},
@@ -22,9 +23,7 @@ func newStopCommand(cfg *config.Values) *cli.Command {
 				Aliases: []string{"a"},
 			},
 		},
-		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return stopAction(ctx, cmd)
-		},
+		Action: stopAction,
 	}
 }
 
@@ -48,5 +47,8 @@ func stopAction(ctx context.Context, cmd *cli.Command) error {
 		ui.DefaultLogger.Warn("No containers found.")
 		return nil
 	}
-	return err
+	if err != nil {
+		return fmt.Errorf("failed to stop containers: %w", err)
+	}
+	return nil
 }
