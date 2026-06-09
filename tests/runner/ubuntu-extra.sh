@@ -67,7 +67,7 @@ printf "Date: %s\n\n" "$(date -u)" | tee -a "${REPORT_FILE}"
 printf "\n--- Setup ---\n" | tee -a "${REPORT_FILE}"
 
 run "registry pull" \
-    "${OTTER} registry pull ${CM_FLAGS} --name ${IMAGE}"
+    "${OTTER} registry pull ${CM_FLAGS} ${IMAGE}"
 
 run "create" \
     "${OTTER} create ${CM_FLAGS} ${CONTAINER} --image ${IMAGE}"
