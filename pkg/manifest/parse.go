@@ -3,99 +3,131 @@ package manifest
 import (
 	"bytes"
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
-	"strconv"
-	"strings"
 
-	"gopkg.in/ini.v1"
-
+	"github.com/BurntSushi/toml"
 	"github.com/ferret-linux/otter/internal/userenv"
 )
 
-// Item represents a single section in the manifest file.
-type Item struct {
-	Name               string
-	AdditionalFlags    []string
-	AdditionalPackages []string
-	Entry              bool
-	Home               string
-	Hostname           string
-	Image              string
-	Clone              string
-	Init               bool
-	Nvidia             bool
-	InitHooks          []string
-	PreInitHooks       []string
-	AlwaysPull         bool
-	Lock               bool
-	Root               bool
-	StartNow           bool
-	UnshareGroups      bool
-	UnshareIPC         bool
-	UnshareNetns       bool
-	UnshareProcess     bool
-	UnshareDevsys      bool
-	UnshareAll         bool
-	Volumes            []string
-	ExportedApps       []string
-	ExportedBins       []string
-	ExportedBinsPath   string
-	UserShell          string
-	Memory             string
-	CPUThreads         int
+// Additional holds additional container configuration.
+type Additional struct {
+	Packages []string `toml:"packages"`
+	Volumes  []string `toml:"volumes"`
+	Flags    []string `toml:"flags"`
 }
 
-// Parse reads and parses a manifest file from the given filepath or URL.
-// It supports 'include=' directives to include sections within the same file.
-// Returns a slice of Item structs representing each section in the manifest.
+// Exported holds exported apps and bins configuration.
+type Exported struct {
+	Apps []string `toml:"apps"`
+	Bins []string `toml:"bins"`
+	Path string   `toml:"path"`
+}
+
+// Hooks holds pre and post init hooks.
+type Hooks struct {
+	PreInit  []string `toml:"pre-init"`
+	PostInit []string `toml:"post-init"`
+}
+
+// Settings holds container behaviour settings.
+type Settings struct {
+	Lock       bool   `toml:"lock"`
+	Entry      bool   `toml:"entry"`
+	Shell      string `toml:"shell"`
+	Rootful    bool   `toml:"rootful"`
+	InitSystem bool   `toml:"init-system"`
+	Hostname   string `toml:"hostname"`
+}
+
+// Hardware holds resource and hardware settings.
+type Hardware struct {
+	Memory string `toml:"memory"`
+	Nvidia bool   `toml:"nvidia"`
+	CPU    int    `toml:"cpu"`
+}
+
+// Isolation holds namespace isolation settings.
+type Isolation struct {
+	Netns   bool `toml:"netns"`
+	IPC     bool `toml:"ipc"`
+	Process bool `toml:"process"`
+	Devsys  bool `toml:"devsys"`
+	Groups  bool `toml:"groups"`
+	All     bool `toml:"all"`
+}
+
+// Item represents a single [[container]] entry in the manifest file.
+type Item struct {
+	Name       string     `toml:"name"`
+	Image      string     `toml:"image"`
+	Clone      string     `toml:"clone"`
+	StartNow   bool       `toml:"start-now"`
+	ForcePull  bool       `toml:"force-pull"`
+	Include    string     `toml:"include"`
+	Additional Additional `toml:"additional"`
+	Exported   Exported   `toml:"exported"`
+	Hooks      Hooks      `toml:"hooks"`
+	Settings   Settings   `toml:"settings"`
+	Hardware   Hardware   `toml:"hardware"`
+	Isolation  Isolation  `toml:"isolation"`
+}
+
+// manifest is the top-level TOML structure.
+type manifest struct {
+	Containers []Item `toml:"container"`
+}
+
+// Parse reads and parses a TOML manifest file from the given filepath or URL.
+// It supports 'include' fields to inherit fields from another container in the same file.
+// Returns a slice of Item structs representing each [[container]] in the manifest.
 func Parse(ctx context.Context, filepath string) ([]Item, error) {
 	data, err := readData(ctx, filepath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read manifest: %w", err)
 	}
 
-	cfg, err := ini.LoadSources(ini.LoadOptions{AllowShadows: true}, data)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse INI: %w", err)
+	var m manifest
+	if err := toml.Unmarshal(data, &m); err != nil {
+		return nil, fmt.Errorf("failed to parse TOML: %w", err)
 	}
 
-	if len(cfg.Section(ini.DefaultSection).Keys()) > 0 {
-		return nil, errors.New("key-value pair found outside of a section")
-	}
-
-	if err := expandIncludes(cfg); err != nil {
-		return nil, fmt.Errorf("failed to expand includes: %w", err)
+	if err := resolveIncludes(m.Containers); err != nil {
+		return nil, fmt.Errorf("failed to resolve includes: %w", err)
 	}
 
 	env := userenv.LoadUserEnvironment(ctx)
-
-	items := make([]Item, 0, len(cfg.Sections())-1)
-	for _, section := range cfg.Sections() {
-		if section.Name() == ini.DefaultSection {
-			continue
+	for i := range m.Containers {
+		if m.Containers[i].Exported.Path == "" {
+			m.Containers[i].Exported.Path = env.Home + "/.local/bin"
 		}
-		items = append(items, sectionToItem(section, env))
 	}
 
-	return items, nil
+	return m.Containers, nil
 }
 
-// expandIncludes resolves include= directives by copying keys from referenced sections.
-func expandIncludes(cfg *ini.File) error {
-	processing := make(map[string]bool) // Currently in call stack (cycle detection)
-	processed := make(map[string]bool)  // Already fully resolved (skip duplicates)
-
-	for _, section := range cfg.Sections() {
-		if section.Name() == ini.DefaultSection {
-			continue
+// resolveIncludes merges included container fields into each item that declares include.
+// The including item's own non-zero fields take priority over the base.
+func resolveIncludes(items []Item) error {
+	index := make(map[string]int, len(items))
+	for i, item := range items {
+		if item.Name == "" {
+			return fmt.Errorf("container at index %d has no name", i)
 		}
+		if _, exists := index[item.Name]; exists {
+			return fmt.Errorf("duplicate container name '%s'", item.Name)
+		}
+		index[item.Name] = i
+	}
 
-		if err := resolveIncludes(cfg, section, processing, processed); err != nil {
+	processing := make(map[string]bool)
+	resolved := make(map[string]bool)
+
+	for i := range items {
+		if err := resolveOne(items, index, items[i].Name, processing, resolved); err != nil {
 			return err
 		}
 	}
@@ -103,138 +135,149 @@ func expandIncludes(cfg *ini.File) error {
 	return nil
 }
 
-func resolveIncludes(cfg *ini.File, section *ini.Section, processing, processed map[string]bool) error {
-	name := section.Name()
-
-	if processed[name] {
+func resolveOne(items []Item, index map[string]int, name string, processing, resolved map[string]bool) error {
+	if resolved[name] {
 		return nil
 	}
 	if processing[name] {
-		return fmt.Errorf("circular include detected: %s", name)
+		return fmt.Errorf("circular include detected: '%s'", name)
+	}
+
+	i, ok := index[name]
+	if !ok {
+		return fmt.Errorf("container '%s' not found", name)
+	}
+
+	includeName := items[i].Include
+	if includeName == "" {
+		resolved[name] = true
+		return nil
+	}
+
+	if _, ok := index[includeName]; !ok {
+		return fmt.Errorf("container '%s' includes '%s' which does not exist", name, includeName)
 	}
 
 	processing[name] = true
 
-	includes := section.Key("include").ValueWithShadows()
-	section.DeleteKey("include")
-
-	for _, includeName := range includes {
-		if includeName == "" {
-			continue
-		}
-
-		src := cfg.Section(includeName)
-		if src == nil || src.Name() == ini.DefaultSection {
-			return fmt.Errorf("included section [%s] not found", includeName)
-		}
-
-		if err := resolveIncludes(cfg, src, processing, processed); err != nil {
-			return err
-		}
-
-		for _, key := range src.Keys() {
-			for _, v := range key.ValueWithShadows() {
-				if _, err := section.NewKey(key.Name(), v); err != nil {
-					return fmt.Errorf("failed to copy key %s from section [%s]: %w", key.Name(), includeName, err)
-				}
-			}
-		}
+	if err := resolveOne(items, index, includeName, processing, resolved); err != nil {
+		return err
 	}
 
-	processed[name] = true
+	base := items[index[includeName]]
+	items[i] = mergeItems(base, items[i])
+	items[i].Include = ""
+
+	processing[name] = false
+	resolved[name] = true
 	return nil
 }
 
-// sectionToItem converts an ini.Section to an Item struct.
-func sectionToItem(section *ini.Section, env *userenv.UserEnvironment) Item { //nolint:funlen // Function length is acceptable here.
-	item := Item{Name: strings.TrimSpace(section.Name())}
+// mergeItems merges base into item, with item's own non-zero values taking priority.
+func mergeItems(base, item Item) Item {
+	if item.Image == "" {
+		item.Image = base.Image
+	}
+	if item.Clone == "" {
+		item.Clone = base.Clone
+	}
+	if !item.StartNow {
+		item.StartNow = base.StartNow
+	}
+	if !item.ForcePull {
+		item.ForcePull = base.ForcePull
+	}
 
-	// default, to be overridden by manifest value if provided
-	item.ExportedBinsPath = env.Home + "/.local/bin"
+	// Additional — append base first, item appended on top
+	item.Additional.Packages = mergeSlices(base.Additional.Packages, item.Additional.Packages)
+	item.Additional.Volumes = mergeSlices(base.Additional.Volumes, item.Additional.Volumes)
+	item.Additional.Flags = mergeSlices(base.Additional.Flags, item.Additional.Flags)
 
-	for _, key := range section.Keys() {
-		vals := key.ValueWithShadows()
-		last := vals[len(vals)-1]
+	// Exported
+	item.Exported.Apps = mergeSlices(base.Exported.Apps, item.Exported.Apps)
+	item.Exported.Bins = mergeSlices(base.Exported.Bins, item.Exported.Bins)
+	if item.Exported.Path == "" {
+		item.Exported.Path = base.Exported.Path
+	}
 
-		switch key.Name() {
-		case "image":
-			item.Image = last
-		case "clone":
-			item.Clone = last
-		case "home":
-			item.Home = last
-		case "hostname":
-			item.Hostname = last
-		case "exported_bins_path":
-			item.ExportedBinsPath = last
-		case "user_shell":
-			item.UserShell = last
-		case "memory":
-			item.Memory = last
-		case "cpu_threads":
-			if v, err := strconv.Atoi(last); err == nil {
-				item.CPUThreads = v
-			}
+	// Hooks — append base first
+	item.Hooks.PreInit = mergeSlices(base.Hooks.PreInit, item.Hooks.PreInit)
+	item.Hooks.PostInit = mergeSlices(base.Hooks.PostInit, item.Hooks.PostInit)
 
-		case "init":
-			item.Init = parseBool(last)
-		case "nvidia":
-			item.Nvidia = parseBool(last)
-		case "entry":
-			item.Entry = parseBool(last)
-		case "pull":
-			item.AlwaysPull = parseBool(last)
-		case "lock":
-			item.Lock = parseBool(last)
-		case "root":
-			item.Root = parseBool(last)
-		case "start_now":
-			item.StartNow = parseBool(last)
-		case "unshare_groups":
-			item.UnshareGroups = parseBool(last)
-		case "unshare_ipc":
-			item.UnshareIPC = parseBool(last)
-		case "unshare_netns":
-			item.UnshareNetns = parseBool(last)
-		case "unshare_process":
-			item.UnshareProcess = parseBool(last)
-		case "unshare_devsys":
-			item.UnshareDevsys = parseBool(last)
-		case "unshare_all":
-			item.UnshareAll = parseBool(last)
+	// Settings — item wins on non-zero
+	if !item.Settings.Lock {
+		item.Settings.Lock = base.Settings.Lock
+	}
+	if !item.Settings.Entry {
+		item.Settings.Entry = base.Settings.Entry
+	}
+	if item.Settings.Shell == "" {
+		item.Settings.Shell = base.Settings.Shell
+	}
+	if !item.Settings.Rootful {
+		item.Settings.Rootful = base.Settings.Rootful
+	}
+	if !item.Settings.InitSystem {
+		item.Settings.InitSystem = base.Settings.InitSystem
+	}
+	if item.Settings.Hostname == "" {
+		item.Settings.Hostname = base.Settings.Hostname
+	}
 
-		case "additional_flags":
-			for _, v := range vals {
-				item.AdditionalFlags = append(item.AdditionalFlags, strings.Fields(v)...)
-			}
-		case "additional_packages":
-			for _, v := range vals {
-				item.AdditionalPackages = append(item.AdditionalPackages, strings.Fields(v)...)
-			}
-		case "exported_apps":
-			for _, v := range vals {
-				item.ExportedApps = append(item.ExportedApps, strings.Fields(v)...)
-			}
-		case "exported_bins":
-			for _, v := range vals {
-				item.ExportedBins = append(item.ExportedBins, strings.Fields(v)...)
-			}
+	// Hardware — item wins on non-zero
+	if item.Hardware.Memory == "" {
+		item.Hardware.Memory = base.Hardware.Memory
+	}
+	if !item.Hardware.Nvidia {
+		item.Hardware.Nvidia = base.Hardware.Nvidia
+	}
+	if item.Hardware.CPU == 0 {
+		item.Hardware.CPU = base.Hardware.CPU
+	}
 
-		case "init_hooks":
-			item.InitHooks = append(item.InitHooks, vals...)
-		case "pre_init_hooks":
-			item.PreInitHooks = append(item.PreInitHooks, vals...)
-		case "volumes":
-			item.Volumes = append(item.Volumes, vals...)
-		}
+	// Isolation — item wins on non-zero
+	if !item.Isolation.Netns {
+		item.Isolation.Netns = base.Isolation.Netns
+	}
+	if !item.Isolation.IPC {
+		item.Isolation.IPC = base.Isolation.IPC
+	}
+	if !item.Isolation.Process {
+		item.Isolation.Process = base.Isolation.Process
+	}
+	if !item.Isolation.Devsys {
+		item.Isolation.Devsys = base.Isolation.Devsys
+	}
+	if !item.Isolation.Groups {
+		item.Isolation.Groups = base.Isolation.Groups
+	}
+	if !item.Isolation.All {
+		item.Isolation.All = base.Isolation.All
 	}
 
 	return item
 }
 
-// parseBool parses a string as a boolean (true/1).
-func parseBool(s string) bool {
-	return s == "true" || s == "1"
+// mergeSlices returns base followed by item, deduplicating entries already in base.
+func mergeSlices(base, item []string) []string {
+	if len(base) == 0 {
+		return item
+	}
+	if len(item) == 0 {
+		return base
+	}
+	seen := make(map[string]bool, len(base))
+	for _, v := range base {
+		seen[v] = true
+	}
+	result := make([]string, len(base), len(base)+len(item))
+	copy(result, base)
+	for _, v := range item {
+		if !seen[v] {
+			result = append(result, v)
+		}
+	}
+	return result
 }
 
 // readData reads data from a local file or a URL.

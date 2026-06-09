@@ -79,7 +79,7 @@ func (ac *AssembleCommand) Execute(ctx context.Context, opts AssembleOptions) er
 	}
 
 	for _, item := range items {
-		if item.Root {
+		if item.Settings.Rootful {
 			if err := rootful.Validate(ctx, opts.SudoCommand); err != nil {
 				return fmt.Errorf("cannot run in root mode: %w", err)
 			}
@@ -128,7 +128,7 @@ func (ac *AssembleCommand) deleteItem(ctx context.Context, item manifest.Item) e
 	}
 
 	rmCmd := ac.rmCmd
-	if item.Root {
+	if item.Settings.Rootful {
 		rmCmd = ac.rmCmdRoot
 	}
 
@@ -156,30 +156,30 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item) e
 		ContainerClone:          item.Clone,
 		ContainerName:           item.Name,
 		ContainerImage:          item.Image,
-		ContainerHostname:       item.Hostname,
-		UnshareNetNs:            item.UnshareNetns || item.UnshareAll,
-		UnshareDevsys:           item.UnshareDevsys || item.UnshareAll,
-		UnshareGroups:           item.UnshareGroups || item.UnshareAll || item.Init,
-		UnshareIpc:              item.UnshareIPC || item.UnshareAll,
-		UnshareProcess:          item.UnshareProcess || item.UnshareAll || item.Init,
-		AdditionalFlags:         item.AdditionalFlags,
-		AdditionalVolumes:       item.Volumes,
-		AdditionalPackages:      item.AdditionalPackages,
-		ContainerPreInitHook:    ac.joinHooks(item.PreInitHooks),
-		ContainerInitHook:       ac.joinHooks(item.InitHooks),
-		ContainerUserCustomHome: item.Home,
-		Init:                    item.Init,
-		Nvidia:                  item.Nvidia,
-		Memory:                  item.Memory,
-		CPUThreads:              item.CPUThreads,
-		GenerateEntry:           item.Entry,
-		Rootful:                 item.Root,
-		ContainerAlwaysPull:     item.AlwaysPull,
-		ContainerShell:          item.UserShell,
+		ContainerHostname:       item.Settings.Hostname,
+		UnshareNetNs:            item.Isolation.Netns || item.Isolation.All,
+		UnshareDevsys:           item.Isolation.Devsys || item.Isolation.All,
+		UnshareGroups:           item.Isolation.Groups || item.Isolation.All || item.Settings.InitSystem,
+		UnshareIpc:              item.Isolation.IPC || item.Isolation.All,
+		UnshareProcess:          item.Isolation.Process || item.Isolation.All || item.Settings.InitSystem,
+		AdditionalFlags:         item.Additional.Flags,
+		AdditionalVolumes:       item.Additional.Volumes,
+		AdditionalPackages:      item.Additional.Packages,
+		ContainerPreInitHook:    ac.joinHooks(item.Hooks.PreInit),
+		ContainerInitHook:       ac.joinHooks(item.Hooks.PostInit),
+		ContainerUserCustomHome: "",
+		Init:                    item.Settings.InitSystem,
+		Nvidia:                  item.Hardware.Nvidia,
+		Memory:                  item.Hardware.Memory,
+		CPUThreads:              item.Hardware.CPU,
+		GenerateEntry:           item.Settings.Entry,
+		Rootful:                 item.Settings.Rootful,
+		ContainerAlwaysPull:     item.ForcePull,
+		ContainerShell:          item.Settings.Shell,
 	}
 
 	createCmd := ac.createCmd
-	if item.Root {
+	if item.Settings.Rootful {
 		createCmd = ac.createCmdRoot
 	}
 	_, err := createCmd.Execute(ctx, opts)
@@ -196,13 +196,13 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item) e
 		cleanupCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), assembleCleanupTimeout)
 		defer cancel()
 		rmCmd := ac.rmCmd
-		if item.Root {
+		if item.Settings.Rootful {
 			rmCmd = ac.rmCmdRoot
 		}
 		if _, rmErr := rmCmd.Execute(cleanupCtx, RmOptions{
 			NoTTY:          true,
 			Force:          true,
-			Root:           item.Root,
+			Root:           item.Settings.Rootful,
 			ContainerNames: []string{item.Name},
 		}); rmErr != nil {
 			ui.DefaultLogger.Warn("%s: %s", item.Name, rmErr)
@@ -215,9 +215,9 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item) e
 		return err
 	}
 
-	if item.Lock {
+	if item.Settings.Lock {
 		lockCmd := ac.lockCmd
-		if item.Root {
+		if item.Settings.Rootful {
 			lockCmd = ac.lockCmdRoot
 		}
 		if err := lockCmd.Execute(ctx, LockOptions{ContainerNames: []string{item.Name}}); err != nil {
@@ -256,7 +256,7 @@ func (ac *AssembleCommand) joinHooks(hooks []string) string {
 func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) error {
 	startCmd := ac.startCmd
 	enterCmd := ac.enterCmd
-	if item.Root {
+	if item.Settings.Rootful {
 		startCmd = ac.startCmdRoot
 		enterCmd = ac.enterCmdRoot
 	}
@@ -277,12 +277,12 @@ func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) err
 
 	// validate app name to prevent command injection, since it's used in a custom command
 	var validAppName = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9._+\-]*$`)
-	for _, app := range item.ExportedApps {
+	for _, app := range item.Exported.Apps {
 		if !validAppName.MatchString(app) {
 			return fmt.Errorf("invalid app name '%s' for item '%s': must be alphanumeric (with dots, underscores, hyphens)", app, item.Name)
 		}
 	}
-	for _, app := range item.ExportedApps {
+	for _, app := range item.Exported.Apps {
 		_, err := enterCmd.Execute(ctx, EnterOptions{
 			ContainerName: item.Name,
 			NoTTY:         true,
@@ -295,20 +295,19 @@ func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) err
 
 	// validate bin path to prevent command injection, since it's used in a custom command
 	var validBinPath = regexp.MustCompile(`^/[a-zA-Z0-9._+\-/]+$`)
-	if len(item.ExportedBins) > 0 && !validBinPath.MatchString(item.ExportedBinsPath) {
-		return fmt.Errorf("invalid exported bins path '%s' for item '%s': must be an absolute path with alphanumeric characters, dots, underscores, or hyphens", item.ExportedBinsPath, item.Name)
+	if len(item.Exported.Bins) > 0 && !validBinPath.MatchString(item.Exported.Path) {
+		return fmt.Errorf("invalid exported bins path '%s' for item '%s': must be an absolute path with alphanumeric characters, dots, underscores, or hyphens", item.Exported.Path, item.Name)
 	}
-	// we allow slashes in bin paths, but we validate each path segment to prevent command injection
-	for _, bin := range item.ExportedBins {
+	for _, bin := range item.Exported.Bins {
 		if !validBinPath.MatchString(bin) {
 			return fmt.Errorf("invalid bin path '%s' for item '%s': must be an absolute path with alphanumeric characters, dots, underscores, or hyphens", bin, item.Name)
 		}
 	}
-	for _, bin := range item.ExportedBins {
+	for _, bin := range item.Exported.Bins {
 		_, err := enterCmd.Execute(ctx, EnterOptions{
 			ContainerName: item.Name,
 			NoTTY:         true,
-			CustomCommand: []string{"otter-export", "--bin", bin, "--export-path", item.ExportedBinsPath},
+			CustomCommand: []string{"otter-export", "--bin", bin, "--export-path", item.Exported.Path},
 		})
 		if err != nil {
 			return fmt.Errorf("failed to export bin '%s' for item '%s': %w", bin, item.Name, err)
