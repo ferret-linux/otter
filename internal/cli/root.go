@@ -147,6 +147,7 @@ func subcommands(cfg *config.Values) []*cli.Command {
 	journal := cc.apply(
 		newJournalCommand,
 		withUsageErrorHandler,
+		withRoot,
 		withContainerManager,
 	)
 
