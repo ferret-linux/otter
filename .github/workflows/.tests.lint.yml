@@ -1,0 +1,51 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the otter project:
+#    https://github.com/ferret-linux/otter
+# Copyright (C) 2026 otter contributors
+
+name: CI - Lint Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  golangci-lint:
+    name: Go Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Read golangci-lint version
+        id: lintversion
+        run: |
+          VERSION=$(grep '^version:' .golangci.yml | awk '{print $2}' | tr -d '"')
+          echo "version=v${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: ${{ steps.lintversion.outputs.version }}
+
+  shellcheck:
+    name: Shell Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run shellcheck
+        run: |
+          shellcheck \
+            internal/inside-container/assets/otter-init \
+            internal/inside-container/assets/otter-export \
+            internal/inside-container/assets/otter-host-exec \
+            images/scripts/setup-common.sh \
+            images/scripts/pkg-validator.sh
