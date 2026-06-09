@@ -6,7 +6,7 @@
 {2}│{R}  {5}otter create [options] [--image image]{R}                                             {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                                                          {2}│{R}
-{2}│{R}  {5}otter mk --image alpine --name my-alpinebox{R}                                        {2}│{R}
+{2}│{R}  {5}otter mk --image alpine my-alpinebox{R}                                               {2}│{R}
 {2}│{R}  {5}otter mk --init --volume /opt/my-dir:/usr/local/my-dir:rw{R}                          {2}│{R}
 {2}│{R}  {5}otter create --image centos:stream10 --pull --home ~/otter/centos10{R}                {2}│{R}
 {2}│{R}  {5}otter create --image alpine:latest --additional-packages "git tmux vim"{R}            {2}│{R}
@@ -15,7 +15,6 @@
 {2}│{R} {4}--yes{R}                 {2}┆{R} {4}-y{R}   {5}Non-interactive, pull images without asking{R}            {2}│{R}
 {2}│{R} {4}--home{R}                {2}┆{R} {4}-H{R}   {5}Custom HOME directory for the container{R}                {2}│{R}
 {2}│{R} {4}--init{R}                {2}┆{R} {4}-I{R}   {5}Use init system (e.g. systemd) inside the container{R}    {2}│{R}
-{2}│{R} {4}--name{R}                {2}┆{R} {4}-n{R}   {5}Name for the container{R}                                 {2}│{R}
 {2}│{R} {4}--pull{R}                {2}┆{R} {4}-p{R}   {5}Pull image even if it exists locally (implies --yes){R}   {2}│{R}
 {2}│{R} {4}--root{R}                {2}┆{R} {4}-r{R}   {5}Launch container manager with root privileges{R}          {2}│{R}
 {2}│{R} {4}--clone{R}               {2}┆{R} {4}-C{R}   {5}Name of container to use as base for new container{R}     {2}│{R}
