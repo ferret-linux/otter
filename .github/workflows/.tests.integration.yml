@@ -1,0 +1,91 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the otter project:
+#    https://github.com/ferret-linux/otter
+# Copyright (C) 2026 otter contributors
+
+name: CI - Integration Tests
+
+on:
+  schedule:
+    - cron: "54 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  integration:
+    name: "${{ matrix.image }} | ${{ matrix.backend }} | ${{ matrix.mode }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        backend: [podman, docker, nerdctl]
+        mode: [rootless, rootful]
+        image: [ubuntu, fedora, arch, alpine, void-glibc, opensuse-leap, rocky, gentoo]
+        exclude:
+          # nerdctl rootless is not supported
+          - backend: nerdctl
+            mode: rootless
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Build otter
+        run: |
+          go build -o /usr/local/bin/otter ./cmd/otter
+
+      - name: Run integration test
+        run: |
+          chmod +x tests/runner/${{ matrix.image }}.sh
+          tests/runner/${{ matrix.image }}.sh ${{ matrix.backend }} ${{ matrix.mode }}
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "report-${{ matrix.image }}-${{ matrix.backend }}-${{ matrix.mode }}"
+          path: "test-report-${{ matrix.image }}-${{ matrix.backend }}-${{ matrix.mode }}.txt"
+          if-no-files-found: warn
+
+  integration-ubuntu-extra:
+    name: "ubuntu-extra | ${{ matrix.backend }} | ${{ matrix.mode }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        backend: [podman, docker, nerdctl]
+        mode: [rootless, rootful]
+        exclude:
+          - backend: nerdctl
+            mode: rootless
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Build otter
+        run: |
+          go build -o /usr/local/bin/otter ./cmd/otter
+
+      - name: Run integration test
+        run: |
+          chmod +x tests/runner/ubuntu-extra.sh
+          tests/runner/ubuntu-extra.sh ${{ matrix.backend }} ${{ matrix.mode }}
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "report-ubuntu-extra-${{ matrix.backend }}-${{ matrix.mode }}"
+          path: "test-report-ubuntu-extra-${{ matrix.backend }}-${{ matrix.mode }}.txt"
+          if-no-files-found: warn
