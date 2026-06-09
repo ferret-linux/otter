@@ -60,10 +60,6 @@ func toStruct(configMap map[string]string) *Values {
 	}
 }
 
-func toBool(value string) bool {
-	return value == "true"
-}
-
 // getConfigFilePaths returns a list of configuration file paths in order of priority.
 func getConfigFilePaths() ([]string, error) {
 	execPath, err := os.Executable()
@@ -83,8 +79,6 @@ func getConfigFilePaths() ([]string, error) {
 		xdgConfigHome = filepath.Join(os.Getenv("HOME"), ".config")
 	}
 
-	home := os.Getenv("HOME")
-
 	// Source configuration files, this is done in an hierarchy so local files have
 	// priority over system defaults
 	// leave priority to environment variables.
@@ -94,12 +88,8 @@ func getConfigFilePaths() ([]string, error) {
 	return []string{
 		filepath.Join(selfDir, "..", "share", "otter", "otter.conf"), // for NixOS
 		"/usr/share/otter/otter.conf",
-		"/usr/share/defaults/otter/otter.conf",
-		"/usr/etc/otter/otter.conf",
-		"/usr/local/share/otter/otter.conf",
 		"/etc/otter/otter.conf",
 		filepath.Join(xdgConfigHome, "otter", "otter.conf"),
-		filepath.Join(home, ".otterrc"),
 	}, nil
 }
 
