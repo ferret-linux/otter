@@ -23,16 +23,10 @@ jobs:
         with:
           go-version-file: go.mod
 
-      - name: Read golangci-lint version
-        id: lintversion
-        run: |
-          VERSION=$(grep '^version:' .golangci.yml | awk '{print $2}' | tr -d '"')
-          echo "version=v${VERSION}" >> $GITHUB_OUTPUT
-
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
-          version: ${{ steps.lintversion.outputs.version }}
+          version: latest
 
   shellcheck:
     name: Shell Lint
