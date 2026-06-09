@@ -31,6 +31,9 @@ RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman --
     xdg-utils \
     pipewire \
     pipewire-jack \
+    fish \
+    zsh \
+    bash \
     pipewire-pulse \
     xdg-user-dirs \
     gst-plugins-base \

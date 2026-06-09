@@ -22,6 +22,9 @@ COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
     bash \
     bc \
+    fish \
+    bash \
+    zsh \
     bzip2 \
     coreutils \
     curl \

@@ -32,6 +32,9 @@ COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN dnf install -y --skip-broken $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
     bash-completion \
     bc \
+    fish \
+    bash \
+    zsh \
     bzip2 \
     cracklib-dicts \
     curl \

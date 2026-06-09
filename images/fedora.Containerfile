@@ -35,6 +35,9 @@ RUN dnf install -y $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
     bc \
     bzip2 \
     cracklib-dicts \
+    fish \
+    bash \
+    zsh \
     curl \
     diffutils \
     ffmpeg \

@@ -61,6 +61,9 @@ RUN emerge --ask=n --autounmask-continue --noreplace --quiet-build --getbinpkg -
     sys-apps/diffutils \
     sys-apps/findutils \
     sys-apps/less \
+    app-shells/zsh \ 
+    app-shells/bash \
+    app-shells/fish \
     sys-apps/shadow \
     sys-apps/openrc \
     sys-apps/util-linux \

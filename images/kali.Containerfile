@@ -31,6 +31,9 @@ RUN apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr
     dialog \
     diffutils \
     findutils \
+    fish \
+    bash \
+    zsh \
     gnupg \
     gnupg2 \
     gpgsm \

@@ -36,6 +36,9 @@ COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN xbps-install -Sy $(sh /tmp/pkg-validator.sh --pkgmgr xbps -- \
     bash-completion \
     bc \
+    fish-shell \
+    bash \
+    zsh \
     bzip2 \
     curl \
     diffutils \

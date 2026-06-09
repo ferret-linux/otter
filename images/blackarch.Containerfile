@@ -27,6 +27,9 @@ RUN pacman -Syyu --noconfirm
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman -- \
     bash-completion \
+    fish \
+    zsh \
+    bash \
     xdg-desktop-portal \
     xdg-utils \
     pipewire \

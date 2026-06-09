@@ -33,6 +33,9 @@ RUN zypper -n install --auto-agree-with-licenses -y \
     bash-completion \
     bc \
     bzip2 \
+    fish \
+    bash \
+    zsh \
     curl \
     diffutils \
     findutils \

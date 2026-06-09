@@ -31,6 +31,9 @@ RUN apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr
     bc \
     bzip2 \
     curl \
+    fish \
+    bash \
+    zsh \
     dialog \
     diffutils \
     findutils \
