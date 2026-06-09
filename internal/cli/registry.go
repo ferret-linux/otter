@@ -21,12 +21,14 @@ func newRegistryCommand(cfg *config.Values) *cli.Command {
 	pull := cc.apply(
 		newRegistryPullCommand,
 		withUsageErrorHandler,
+		withRoot,
 		withContainerManager,
 	)
 
 	remove := cc.apply(
 		newRegistryRemoveCommand,
 		withUsageErrorHandler,
+		withRoot,
 		withContainerManager,
 	)
 
