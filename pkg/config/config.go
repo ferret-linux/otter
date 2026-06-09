@@ -5,28 +5,60 @@ import (
 	"os"
 	"path/filepath"
 
-	"gopkg.in/ini.v1"
+	"github.com/BurntSushi/toml"
 )
+
+type containerConfig struct {
+	Hostname string `toml:"hostname"`
+	Image    string `toml:"image"`
+	Name     string `toml:"name"`
+}
+
+type settingsConfig struct {
+	Shell      string `toml:"shell"`
+	InitSystem bool   `toml:"init-system"`
+	Rootful    bool   `toml:"rootful"`
+}
+
+type preferencesConfig struct {
+	ContainerManager string `toml:"container-manager"`
+	SudoProgram      string `toml:"sudo-program"`
+	NoEntry          bool   `toml:"no-entry"`
+}
+
+type fileConfig struct {
+	Container   containerConfig   `toml:"container"`
+	Settings    settingsConfig    `toml:"settings"`
+	Preferences preferencesConfig `toml:"preferences"`
+}
 
 type Values struct {
 	ContainerManagerType  string
 	SudoProgram           string
 	DefaultContainerImage string
 	DefaultContainerName  string
+	DefaultHostname       string
+	DefaultShell          string
+	DefaultInitSystem     bool
+	DefaultRootful        bool
+	DefaultNoEntry        bool
 }
 
-func defaultsMap() map[string]string {
-	return map[string]string{
-		"container_manager": "podman",
-		"sudo_program":      "sudo",
-		// otter's ubuntu-lts is default container image
-		"container_image": "ghcr.io/ferret-linux/ubuntu-otr:lts",
-		"container_name":  "my-container",
+func defaults() fileConfig {
+	return fileConfig{
+		Container: containerConfig{
+			Image: "ghcr.io/ferret-linux/ubuntu-otr:lts",
+			Name:  "my-container",
+		},
+		Preferences: preferencesConfig{
+			ContainerManager: "autodetect",
+			SudoProgram:      "sudo",
+		},
 	}
 }
 
 func DefaultValues() *Values {
-	return toStruct(defaultsMap())
+	return toValues(defaults())
 }
 
 func LoadValues() (*Values, error) {
@@ -35,32 +67,31 @@ func LoadValues() (*Values, error) {
 		return nil, fmt.Errorf("failed to get config file paths: %w", err)
 	}
 
-	configMaps := []map[string]string{defaultsMap()}
+	cfg := defaults()
 
 	for _, file := range files {
-		config, err := readConfigFile(file)
-		if err != nil {
+		if err := readConfigFile(file, &cfg); err != nil {
 			return nil, fmt.Errorf("failed to read config file %q: %w", file, err)
 		}
-		configMaps = append(configMaps, config)
 	}
 
-	configMaps = append(configMaps, readEnv())
-
-	merged := mergeConfigMaps(configMaps...)
-	return toStruct(merged), nil
+	return toValues(cfg), nil
 }
 
-func toStruct(configMap map[string]string) *Values {
+func toValues(cfg fileConfig) *Values {
 	return &Values{
-		ContainerManagerType:  configMap["container_manager"],
-		SudoProgram:           configMap["sudo_program"],
-		DefaultContainerImage: configMap["container_image"],
-		DefaultContainerName:  configMap["container_name"],
+		ContainerManagerType:  cfg.Preferences.ContainerManager,
+		SudoProgram:           cfg.Preferences.SudoProgram,
+		DefaultContainerImage: cfg.Container.Image,
+		DefaultContainerName:  cfg.Container.Name,
+		DefaultHostname:       cfg.Container.Hostname,
+		DefaultShell:          cfg.Settings.Shell,
+		DefaultInitSystem:     cfg.Settings.InitSystem,
+		DefaultRootful:        cfg.Settings.Rootful,
+		DefaultNoEntry:        cfg.Preferences.NoEntry,
 	}
 }
 
-// getConfigFilePaths returns a list of configuration file paths in order of priority.
 func getConfigFilePaths() ([]string, error) {
 	execPath, err := os.Executable()
 	if err != nil {
@@ -93,45 +124,18 @@ func getConfigFilePaths() ([]string, error) {
 	}, nil
 }
 
-func mergeConfigMaps(maps ...map[string]string) map[string]string {
-	merged := make(map[string]string)
-	for _, m := range maps {
-		for k, v := range m {
-			merged[k] = v
-		}
-	}
-	return merged
-}
-
-func readConfigFile(filePath string) (map[string]string, error) {
-	cfg, err := ini.Load(filePath)
+func readConfigFile(filePath string, cfg *fileConfig) error {
+	data, err := os.ReadFile(filePath)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return make(map[string]string), nil
+			return nil
 		}
-		return nil, fmt.Errorf("failed to load config file %q: %w", filePath, err)
+		return fmt.Errorf("failed to read config file: %w", err)
 	}
 
-	config := make(map[string]string)
-	for _, key := range cfg.Section("").Keys() {
-		config[key.Name()] = key.String()
+	if err := toml.Unmarshal(data, cfg); err != nil {
+		return fmt.Errorf("failed to parse TOML: %w", err)
 	}
 
-	return config, nil
-}
-
-func readEnv() map[string]string {
-	envConfig := make(map[string]string)
-
-	if value, exists := os.LookupEnv("OTR_CONTAINER_MANAGER"); exists {
-		envConfig["container_manager"] = value
-	}
-	if value, exists := os.LookupEnv("OTR_SUDO_COMMAND"); exists {
-		envConfig["sudo_program"] = value
-	}
-	if value, exists := os.LookupEnv("OTR_SUDO_PROGRAM"); exists {
-		envConfig["sudo_program"] = value
-	}
-
-	return envConfig
+	return nil
 }

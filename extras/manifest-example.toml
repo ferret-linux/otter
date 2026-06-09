@@ -1,7 +1,4 @@
-# Fromat-1
-# Each group is expressed as repeated group.key = value lines.
-# Clean and readable for groups with many fields or array values that benefit from individual alignment.
-# Most explicit style — every key shows its full path. Good default choice for most manifests.
+# Format-1
 
 [[container]]
 name        = "arch"
@@ -44,9 +41,6 @@ isolation.groups  = false
 isolation.all     = false
 
 # Format-2
-# Each group is a single line: group = { key = value, ... }.
-# Best for compact, flat groups with only scalar values like settings, hardware, and isolation.
-# Loses readability fast when arrays or many fields are involved, so avoid it for hooks or additional.
 
 [[container]]
 name        = "arch"
@@ -64,9 +58,6 @@ hardware = { memory = "512m", nvidia = false, cpu = 0 }
 isolation = { netns = true, ipc = true, process = false, devsys = false, groups = false, all = false }
 
 # Format-3
-# Each group gets its own [container.group] header, turning it into a proper named section.
-# Most readable for large groups with many fields, especially hooks where multiline arrays need breathing room.
-# The only format with an ordering constraint — all [container.group] blocks must appear before the next [[container]] header.
 
 [[container]]
 name       = "arch"
@@ -123,9 +114,6 @@ name    = "archbased"
 include = "arch"
 
 # Format-4
-# Combines the best of the other three: 
-# dotted keys for groups with arrays and alignment needs, block subtables for hooks, inline tables for flat scalar groups.
-# No single rule — pick per-group based on what reads best. Recommended style for complex manifests.
 
 [[container]]
 name       = "arch"

@@ -148,7 +148,7 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 		ContainerPreInitHook:    cmd.String("pre-init-hooks"),
 		ContainerShell:          cmd.String("shell"),
 		ContainerPlatform:       cmd.String("platform"),
-		GenerateEntry:           !cmd.Bool("no-entry"),
+		GenerateEntry:           !cmd.Bool("no-entry") && !cfg.DefaultNoEntry,
 		Rootful:                 cmd.Bool("root"),
 		ContainerAlwaysPull:     cmd.Bool("pull"),
 	}
