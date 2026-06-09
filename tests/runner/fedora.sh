@@ -67,6 +67,9 @@ printf "Date: %s\n\n" "$(date -u)" | tee -a "${REPORT_FILE}"
 
 printf "\n--- Basic lifecycle ---\n" | tee -a "${REPORT_FILE}"
 
+run "registry pull" \
+    "${OTTER} registry pull ${CM_FLAGS} --name ${IMAGE}"
+
 run "create basic" \
     "${OTTER} create ${CM_FLAGS} ${CONTAINER_BASIC} --image ${IMAGE}"
 
@@ -90,6 +93,9 @@ run "remove basic" \
 # ----------------------------------------------------------------------------
 
 printf "\n--- Full-featured lifecycle ---\n" | tee -a "${REPORT_FILE}"
+
+run "registry pull (force)" \
+    "${OTTER} registry pull ${CM_FLAGS} --name ${IMAGE} --force"
 
 run "create full" \
     "${OTTER} create ${CM_FLAGS} ${CONTAINER_FULL} \
