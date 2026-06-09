@@ -31,6 +31,8 @@ tags
 TODO.txt
 
 # Code Review Files & TODO ( markdown)
+/pat*.md
+/PAT*.md
 /todo*.md
 /TODO*.md
 code*.md
