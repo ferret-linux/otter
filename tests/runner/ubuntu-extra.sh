@@ -18,7 +18,6 @@ BACKEND="${1:?backend argument required (podman|docker|nerdctl)}"
 MODE="${2:?mode argument required (rootless|rootful)}"
 IMAGE="ubuntu"
 CONTAINER="otter-test-ubuntu-extra"
-REPORT_FILE="test-report-ubuntu-extra-${BACKEND}-${MODE}.txt"
 FAILURES=0
 
 # ----------------------------------------------------------------------------
@@ -34,11 +33,11 @@ OTTER="otter"
 CM_FLAGS="--container-manager ${BACKEND} ${ROOT_FLAG}"
 
 pass() {
-    printf "[PASS] %s\n" "$1" | tee -a "${REPORT_FILE}"
+    printf "[PASS] %s\n" "$1" 
 }
 
 fail() {
-    printf "[FAIL] %s\n  => %s\n" "$1" "$2" | tee -a "${REPORT_FILE}"
+    printf "[FAIL] %s\n  => %s\n" "$1" "$2" 
     FAILURES=$((FAILURES + 1))
 }
 
@@ -57,14 +56,14 @@ run() {
 # ----------------------------------------------------------------------------
 
 printf "=== Integration Test: ubuntu-extra | backend=%s | mode=%s ===\n" \
-    "${BACKEND}" "${MODE}" | tee "${REPORT_FILE}"
-printf "Date: %s\n\n" "$(date -u)" | tee -a "${REPORT_FILE}"
+    "${BACKEND}" "${MODE}" 
+printf "Date: %s\n\n" "$(date -u)" 
 
 # ----------------------------------------------------------------------------
 # Setup
 # ----------------------------------------------------------------------------
 
-printf "\n--- Setup ---\n" | tee -a "${REPORT_FILE}"
+printf "\n--- Setup ---\n" 
 
 run "registry pull" \
     "${OTTER} registry pull ${CM_FLAGS} ${IMAGE}"
@@ -79,7 +78,7 @@ run "start" \
 # Lock / Unlock
 # ----------------------------------------------------------------------------
 
-printf "\n--- Lock / Unlock ---\n" | tee -a "${REPORT_FILE}"
+printf "\n--- Lock / Unlock ---\n" 
 
 run "lock basic" \
     "${OTTER} lock ${CM_FLAGS} ${CONTAINER}"
@@ -97,7 +96,7 @@ run "unlock all" \
 # Pause / Restart
 # ----------------------------------------------------------------------------
 
-printf "\n--- Pause / Restart ---\n" | tee -a "${REPORT_FILE}"
+printf "\n--- Pause / Restart ---\n" 
 
 run "pause basic" \
     "${OTTER} pause ${CM_FLAGS} ${CONTAINER}"
@@ -115,7 +114,7 @@ run "restart all" \
 # Teardown
 # ----------------------------------------------------------------------------
 
-printf "\n--- Teardown ---\n" | tee -a "${REPORT_FILE}"
+printf "\n--- Teardown ---\n" 
 
 run "remove" \
     "${OTTER} remove ${CM_FLAGS} ${CONTAINER} --force"
@@ -125,12 +124,12 @@ run "remove" \
 # ----------------------------------------------------------------------------
 
 printf "\n=== Results: ubuntu-extra | backend=%s | mode=%s ===\n" \
-    "${BACKEND}" "${MODE}" | tee -a "${REPORT_FILE}"
+    "${BACKEND}" "${MODE}" 
 
 if [ "${FAILURES}" -eq 0 ]; then
-    printf "All tests passed.\n" | tee -a "${REPORT_FILE}"
+    printf "All tests passed.\n" 
     exit 0
 else
-    printf "%d test(s) failed. See above for details.\n" "${FAILURES}" | tee -a "${REPORT_FILE}"
+    printf "%d test(s) failed. See above for details.\n" "${FAILURES}" 
     exit 1
 fi

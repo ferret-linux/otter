@@ -19,7 +19,6 @@ MODE="${2:?mode argument required (rootless|rootful)}"
 IMAGE="rocky"
 CONTAINER_BASIC="otter-test-rocky"
 CONTAINER_FULL="otter-test-rocky-full"
-REPORT_FILE="test-report-rocky-${BACKEND}-${MODE}.txt"
 FAILURES=0
 
 # ----------------------------------------------------------------------------
@@ -35,11 +34,11 @@ OTTER="otter"
 CM_FLAGS="--container-manager ${BACKEND} ${ROOT_FLAG}"
 
 pass() {
-    printf "[PASS] %s\n" "$1" | tee -a "${REPORT_FILE}"
+    printf "[PASS] %s\n" "$1" 
 }
 
 fail() {
-    printf "[FAIL] %s\n  => %s\n" "$1" "$2" | tee -a "${REPORT_FILE}"
+    printf "[FAIL] %s\n  => %s\n" "$1" "$2" 
     FAILURES=$((FAILURES + 1))
 }
 
@@ -58,14 +57,14 @@ run() {
 # ----------------------------------------------------------------------------
 
 printf "=== Integration Test: rocky | backend=%s | mode=%s ===\n" \
-    "${BACKEND}" "${MODE}" | tee "${REPORT_FILE}"
-printf "Date: %s\n\n" "$(date -u)" | tee -a "${REPORT_FILE}"
+    "${BACKEND}" "${MODE}" 
+printf "Date: %s\n\n" "$(date -u)" 
 
 # ----------------------------------------------------------------------------
 # Basic lifecycle
 # ----------------------------------------------------------------------------
 
-printf "\n--- Basic lifecycle ---\n" | tee -a "${REPORT_FILE}"
+printf "\n--- Basic lifecycle ---\n" 
 
 run "registry pull" \
     "${OTTER} registry pull ${CM_FLAGS} ${IMAGE}"
@@ -92,7 +91,7 @@ run "remove basic" \
 # Full-featured lifecycle
 # ----------------------------------------------------------------------------
 
-printf "\n--- Full-featured lifecycle ---\n" | tee -a "${REPORT_FILE}"
+printf "\n--- Full-featured lifecycle ---\n" 
 
 run "registry pull (force)" \
     "${OTTER} registry pull ${CM_FLAGS} ${IMAGE} --force"
@@ -129,12 +128,12 @@ run "remove full" \
 # ----------------------------------------------------------------------------
 
 printf "\n=== Results: rocky | backend=%s | mode=%s ===\n" \
-    "${BACKEND}" "${MODE}" | tee -a "${REPORT_FILE}"
+    "${BACKEND}" "${MODE}" 
 
 if [ "${FAILURES}" -eq 0 ]; then
-    printf "All tests passed.\n" | tee -a "${REPORT_FILE}"
+    printf "All tests passed.\n" 
     exit 0
 else
-    printf "%d test(s) failed. See above for details.\n" "${FAILURES}" | tee -a "${REPORT_FILE}"
+    printf "%d test(s) failed. See above for details.\n" "${FAILURES}" 
     exit 1
 fi

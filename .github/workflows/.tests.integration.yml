@@ -44,14 +44,6 @@ jobs:
           chmod +x tests/runner/${{ matrix.image }}.sh
           tests/runner/${{ matrix.image }}.sh ${{ matrix.backend }} ${{ matrix.mode }}
 
-      - name: Upload test report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: "report-${{ matrix.image }}-${{ matrix.backend }}-${{ matrix.mode }}"
-          path: "test-report-${{ matrix.image }}-${{ matrix.backend }}-${{ matrix.mode }}.txt"
-          if-no-files-found: warn
-
   integration-ubuntu-extra:
     name: "ubuntu-extra | ${{ matrix.backend }} | ${{ matrix.mode }}"
     runs-on: ubuntu-latest
@@ -82,10 +74,3 @@ jobs:
           chmod +x tests/runner/ubuntu-extra.sh
           tests/runner/ubuntu-extra.sh ${{ matrix.backend }} ${{ matrix.mode }}
 
-      - name: Upload test report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: "report-ubuntu-extra-${{ matrix.backend }}-${{ matrix.mode }}"
-          path: "test-report-ubuntu-extra-${{ matrix.backend }}-${{ matrix.mode }}.txt"
-          if-no-files-found: warn
