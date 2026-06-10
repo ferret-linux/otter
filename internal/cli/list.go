@@ -41,8 +41,7 @@ func listAction(ctx context.Context, _ *cli.Command) error {
 
 func printResult(result *commands.ListResult) {
 	if len(result.Containers) == 0 {
-		//nolint:forbidigo // Using fmt.Println is acceptable here for CLI output
-		fmt.Println("no containers found")
+		ui.DefaultLogger.Warn("No containers found.")
 		return
 	}
 
