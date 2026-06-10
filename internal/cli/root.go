@@ -45,7 +45,7 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 			return ctx, nil
 		},
 		Commands: subcommands(cfg),
-		ExitErrHandler: func(_ context.Context, cmd *cli.Command, err error) {
+		ExitErrHandler: func(_ context.Context, _ *cli.Command, err error) {
 
 			if err == nil {
 				return

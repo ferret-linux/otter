@@ -105,11 +105,8 @@ func (t *Table) Render() {
 		return sb.String()
 	}
 
-	//nolint:forbidigo // writing to an io.Writer, not stdout directly
 	fmt.Fprintln(t.w, hline(tableWidth, topLeft, topRight))
-	//nolint:forbidigo // writing to an io.Writer, not stdout directly
 	fmt.Fprintln(t.w, renderRow(t.headers, true))
-	//nolint:forbidigo // writing to an io.Writer, not stdout directly
 	fmt.Fprintln(t.w, hline(tableWidth, middleLeft, middleRight))
 	for _, r := range t.rows {
 		var sb strings.Builder
@@ -131,10 +128,8 @@ func (t *Table) Render() {
 		}
 		sb.WriteString(" ")
 		sb.WriteString(Cyan(vertical))
-		//nolint:forbidigo // writing to an io.Writer, not stdout directly
 		fmt.Fprintln(t.w, sb.String())
 	}
-	//nolint:forbidigo // writing to an io.Writer, not stdout directly
 	fmt.Fprintln(t.w, hline(tableWidth, bottomLeft, bottomRight))
 }
 
