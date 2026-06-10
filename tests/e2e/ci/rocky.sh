@@ -37,8 +37,9 @@ fi
 pass() { printf '%b✔ %s%b\n' "${GREEN}" "${1}" "${RESET}"; }
 fail() { printf '%b✘ %s%b\n' "${RED}" "${1}" "${RESET}"; FAILURES+=("${1}"); }
 
-# shellcheck disable=SC2329
+# shellcheck disable=SC2317,SC2329
 cleanup() {
+    "${OTTER[@]}" remove "${ROOT_FLAG[@]}" --force "${CONTAINER_NAME}-clone" 2>/dev/null || true
     "${OTTER[@]}" remove "${ROOT_FLAG[@]}" --force "${CONTAINER_NAME}" 2>/dev/null || true
 }
 trap cleanup EXIT
@@ -56,17 +57,20 @@ run_step() {
 printf "==> rocky | runtime=%s | mode=%s\n\n" "${RUNTIME}" "${MODE}"
 
 run_step "registry pull" "${OTTER[@]}" reg pull "${ROOT_FLAG[@]}" "${IMAGE}"
-run_step "create"        "${OTTER[@]}" create "${ROOT_FLAG[@]}" --image "${IMAGE}" "${CONTAINER_NAME}"
+run_step "create"        "${OTTER[@]}" create "${ROOT_FLAG[@]}" --image "${IMAGE}" --init --additional-packages "git" --shell bash "${CONTAINER_NAME}"
 run_step "start"         "${OTTER[@]}" start "${ROOT_FLAG[@]}" "${CONTAINER_NAME}"
 run_step "list"          "${OTTER[@]}" list "${ROOT_FLAG[@]}"
-run_step "info"          "${OTTER[@]}" inspect "${ROOT_FLAG[@]}" "${CONTAINER_NAME}"
-run_step "logs"          "${OTTER[@]}" journal "${ROOT_FLAG[@]}" "${CONTAINER_NAME}"
+run_step "inspect"       "${OTTER[@]}" inspect "${ROOT_FLAG[@]}" "${CONTAINER_NAME}"
+run_step "journal"       "${OTTER[@]}" journal "${ROOT_FLAG[@]}" --tail 20 --timestamps "${CONTAINER_NAME}"
 run_step "upgrade"       "${OTTER[@]}" upgrade "${ROOT_FLAG[@]}" "${CONTAINER_NAME}"
 run_step "restart"       "${OTTER[@]}" restart "${ROOT_FLAG[@]}" "${CONTAINER_NAME}"
+run_step "enter"         "${OTTER[@]}" enter "${ROOT_FLAG[@]}" --no-tty "${CONTAINER_NAME}" -- whoami
 run_step "pause"         "${OTTER[@]}" pause "${ROOT_FLAG[@]}" "${CONTAINER_NAME}"
 run_step "lock"          "${OTTER[@]}" lock "${ROOT_FLAG[@]}" "${CONTAINER_NAME}"
 run_step "unlock"        "${OTTER[@]}" unlock "${ROOT_FLAG[@]}" "${CONTAINER_NAME}"
 run_step "stop"          "${OTTER[@]}" stop "${ROOT_FLAG[@]}" "${CONTAINER_NAME}"
+run_step "clone"         "${OTTER[@]}" create "${ROOT_FLAG[@]}" --clone "${CONTAINER_NAME}" "${CONTAINER_NAME}-clone"
+run_step "remove clone"  "${OTTER[@]}" remove "${ROOT_FLAG[@]}" --force "${CONTAINER_NAME}-clone"
 run_step "remove"        "${OTTER[@]}" remove "${ROOT_FLAG[@]}" --force "${CONTAINER_NAME}"
 
 echo
