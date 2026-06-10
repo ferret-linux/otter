@@ -2,7 +2,6 @@
 package cli
 
 import (
-	"bufio"
 	"context"
 	"errors"
 	"fmt"
@@ -67,9 +66,8 @@ func assembleAction(ctx context.Context, cmd *cli.Command, cfg *config.Values, d
 		opts.Replace = cmd.Bool("replace")
 	}
 
-	prompter := ui.NewPrompter(*bufio.NewReader(os.Stdin), os.Stdout)
 	progress := ui.NewProgress(os.Stderr)
-	assembleCmd := commands.NewAssembleCommand(cfg, containerManager, prompter, progress)
+	assembleCmd := commands.NewAssembleCommand(cfg, containerManager, progress)
 
 	err := assembleCmd.Execute(ctx, opts)
 	if err != nil {

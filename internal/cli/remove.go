@@ -2,18 +2,15 @@
 package cli
 
 import (
-	"bufio"
 	"context"
 	"errors"
 	"fmt"
-	"os"
 
 	"github.com/urfave/cli/v3"
 
 	"github.com/ferret-linux/otter/pkg/commands"
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
-	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 func newRmCommand(_ *config.Values) *cli.Command {
@@ -28,10 +25,6 @@ func newRmCommand(_ *config.Values) *cli.Command {
 			&cli.BoolFlag{
 				Name:    "force",
 				Aliases: []string{"f"},
-			},
-			&cli.BoolFlag{
-				Name:    "yes",
-				Aliases: []string{"y"},
 			},
 			&cli.BoolFlag{
 				Name:    "rm-home",
@@ -58,7 +51,6 @@ func rmAction(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 	options := commands.RmOptions{
-		NoTTY:          cmd.Bool("yes"),
 		Force:          cmd.Bool("force"),
 		BypassLock:     cmd.Bool("bypass-lock"),
 		All:            cmd.Bool("all"),
@@ -67,9 +59,7 @@ func rmAction(ctx context.Context, cmd *cli.Command) error {
 		ContainerNames: names,
 	}
 
-	prompter := ui.NewPrompter(*bufio.NewReader(os.Stdin), os.Stdout)
-
-	if _, err := commands.NewRmCommand(containerManager, prompter).Execute(ctx, options); err != nil {
+	if _, err := commands.NewRmCommand(containerManager).Execute(ctx, options); err != nil {
 		return fmt.Errorf("failed to execute rm command: %w", err)
 	}
 	return nil

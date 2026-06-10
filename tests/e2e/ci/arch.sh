@@ -44,7 +44,7 @@ fail() { printf '%b✘ %s%b\n' "${RED}" "${1}" "${RESET}"; FAILURES+=("${1}"); }
 
 # shellcheck disable=SC2329
 cleanup() {
-    "${OTTER[@]}" remove "${ROOT_FLAG[@]}" --force --yes "${CONTAINER_NAME}" 2>/dev/null || true
+    "${OTTER[@]}" remove "${ROOT_FLAG[@]}" --force "${CONTAINER_NAME}" 2>/dev/null || true
 }
 trap cleanup EXIT
 
@@ -72,7 +72,7 @@ run_step "pause"         "${OTTER[@]}" pause "${ROOT_FLAG[@]}" "${CONTAINER_NAME
 run_step "lock"          "${OTTER[@]}" lock "${ROOT_FLAG[@]}" "${CONTAINER_NAME}"
 run_step "unlock"        "${OTTER[@]}" unlock "${ROOT_FLAG[@]}" "${CONTAINER_NAME}"
 run_step "stop"          "${OTTER[@]}" stop "${ROOT_FLAG[@]}" "${CONTAINER_NAME}"
-run_step "remove"        "${OTTER[@]}" remove "${ROOT_FLAG[@]}" --force --yes "${CONTAINER_NAME}"
+run_step "remove"        "${OTTER[@]}" remove "${ROOT_FLAG[@]}" --force "${CONTAINER_NAME}"
 
 echo
 if [[ ${#FAILURES[@]} -eq 0 ]]; then

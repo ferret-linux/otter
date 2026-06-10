@@ -13,7 +13,6 @@
 {2}├──────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                                    {2}│{R}
 {2}│{R} {4}--all{R}         {2}┆{R} {4}-a{R}  {5}Delete all otters{R}                        {2}│{R}
-{2}│{R} {4}--yes{R}         {2}┆{R} {4}-y{R}  {5}Non-interactive, skip confirmations{R}      {2}│{R}
 {2}│{R} {4}--root{R}        {2}┆{R} {4}-r{R}  {5}Launch container with root privileges{R}    {2}│{R}
 {2}│{R} {4}--force{R}       {2}┆{R} {4}-f{R}  {5}Force deletion of problematic containers{R} {2}│{R}
 {2}│{R} {4}--rm-home{R}     {2}┆{R} {4}-H{R}  {5}Remove container's custom home directory{R} {2}│{R}

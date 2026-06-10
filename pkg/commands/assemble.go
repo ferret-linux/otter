@@ -50,18 +50,17 @@ type AssembleCommand struct {
 func NewAssembleCommand(
 	cfg *config.Values,
 	cm containermanager.ContainerManager,
-	prompter *ui.Prompter,
 	progress *ui.Progress,
 ) *AssembleCommand {
 	cmRoot := cm.CloneAsRoot()
 	return &AssembleCommand{
 		createCmd:     NewCreateCommand(cfg, cm, ui.NewDevNullProgress()),
-		rmCmd:         NewRmCommand(cm, prompter),
+		rmCmd:         NewRmCommand(cm),
 		lockCmd:       NewLockCommand(cm),
 		startCmd:      NewStartCommand(cm),
 		enterCmd:      NewEnterCommand(cm),
 		createCmdRoot: NewCreateCommand(cfg, cmRoot, ui.NewDevNullProgress()),
-		rmCmdRoot:     NewRmCommand(cmRoot, prompter),
+		rmCmdRoot:     NewRmCommand(cmRoot),
 		lockCmdRoot:   NewLockCommand(cmRoot),
 		startCmdRoot:  NewStartCommand(cmRoot),
 		enterCmdRoot:  NewEnterCommand(cmRoot),
@@ -123,7 +122,6 @@ func (ac *AssembleCommand) Execute(ctx context.Context, opts AssembleOptions) er
 func (ac *AssembleCommand) deleteItem(ctx context.Context, item manifest.Item) error {
 	ac.progress.Next("Deleting %s...", item.Name)
 	opts := RmOptions{
-		NoTTY:          true,
 		Force:          true,
 		All:            false,
 		ContainerNames: []string{item.Name},
@@ -202,7 +200,6 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item) e
 			rmCmd = ac.rmCmdRoot
 		}
 		if _, rmErr := rmCmd.Execute(cleanupCtx, RmOptions{
-			NoTTY:          true,
 			Force:          true,
 			Root:           item.Settings.Rootful,
 			ContainerNames: []string{item.Name},

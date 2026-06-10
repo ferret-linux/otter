@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -22,11 +21,9 @@ type RmCommand struct {
 	containerManager containermanager.ContainerManager
 	listCmd          *ListCommand
 	generateEntryCmd *GenerateEntryCommand
-	prompter         *ui.Prompter
 }
 
 type RmOptions struct {
-	NoTTY          bool
 	Force          bool
 	BypassLock     bool
 	All            bool
@@ -35,26 +32,18 @@ type RmOptions struct {
 	ContainerNames []string
 }
 
-func NewRmCommand(
-	cm containermanager.ContainerManager,
-	prompter *ui.Prompter,
-) *RmCommand {
+func NewRmCommand(cm containermanager.ContainerManager) *RmCommand {
 	listCmd := NewListCommand(cm)
 	generateEntryCmd := NewGenerateEntryCommand(listCmd, cm)
 	return &RmCommand{
 		containerManager: cm,
 		listCmd:          listCmd,
 		generateEntryCmd: generateEntryCmd,
-		prompter:         prompter,
 	}
 }
 
 //nolint:gocognit // ignore cognitive complexity here, the function orchestrates multi-step container removal
 func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, error) {
-	if !options.NoTTY && c.prompter == nil {
-		return nil, errors.New("prompter is required for interactive mode")
-	}
-
 	listResult, err := c.listCmd.Execute(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed while listing contaiers: %w", err)
@@ -75,7 +64,7 @@ func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, 
 			ui.DefaultLogger.Error("'%s' is locked, run 'otter unlock %s' first", currentOtterContainer.Name, currentOtterContainer.Name)
 			continue
 		}
-		err := c.removeContainer(ctx, currentOtterContainer, options.Force, options.NoTTY, options.RemoveHome, userHome, options.Root)
+		err := c.removeContainer(ctx, currentOtterContainer, options.Force, options.RemoveHome, userHome, options.Root)
 		if err != nil {
 			ui.DefaultLogger.Error("failed deleting %s: %s", currentOtterContainer.Name, err)
 		} else {
@@ -110,20 +99,10 @@ func (c *RmCommand) removeContainer(
 	ctx context.Context,
 	container containermanager.Container,
 	force bool,
-	noTTY bool,
 	removeHome bool,
 	userHome string,
 	root bool,
 ) error {
-	forceRemove := force
-	if !forceRemove && !noTTY && strings.Contains(container.Status, "Up") {
-		if c.prompter.Prompt("Container is running, do you want to force delete it?", false) {
-			forceRemove = true
-		} else {
-			return nil
-		}
-	}
-
 	inspectOutput, err := c.containerManager.InspectContainer(ctx, container.Name)
 	if err != nil {
 		return fmt.Errorf("error inspecting the container: %w", err)
@@ -139,17 +118,10 @@ func (c *RmCommand) removeContainer(
 			ui.DefaultLogger.Warn("refusing to remove home '%s': unsafe path", inspectOutput.ContainerHome)
 		}
 		removeHome = false
-	} else if !removeHome && !noTTY {
-		question := fmt.Sprintf(
-			"Do you really want to remove custom home of container %s (%s)?",
-			container.Name,
-			inspectOutput.ContainerHome,
-		)
-		removeHome = c.prompter.Prompt(question, false)
 	}
 
 	cmOptions := containermanager.RmOptions{
-		Force:         forceRemove,
+		Force:         force,
 		RemoveHome:    removeHome,
 		ContainerHome: inspectOutput.ContainerHome,
 	}

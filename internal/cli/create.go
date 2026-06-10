@@ -44,10 +44,6 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 				Name:    "pull",
 				Aliases: []string{"p"},
 			},
-			&cli.BoolFlag{
-				Name:    "yes",
-				Aliases: []string{"y"},
-			},
 			&cli.StringFlag{
 				Name:    "clone",
 				Aliases: []string{"C"},
