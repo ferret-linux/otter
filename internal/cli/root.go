@@ -31,13 +31,9 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 				Hidden: true,
 				Value:  cfg.SudoProgram,
 			},
-			&cli.BoolFlag{
-				Name:    "no-color",
-				Aliases: []string{"nc"},
-			},
 		},
 		Before: func(ctx context.Context, cmd *cli.Command) (context.Context, error) {
-			if cmd.Bool("no-color") {
+			if os.Getenv("NO_COLOR") != "" {
 				ui.SetNoColor(true)
 			} else {
 				ui.DisableIfNotTerminal()
