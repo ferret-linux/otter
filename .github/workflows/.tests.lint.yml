@@ -39,8 +39,8 @@ jobs:
       - name: Run shellcheck
         run: |
           shellcheck \
-            internal/inside-container/assets/otter-init \
-            internal/inside-container/assets/otter-export \
-            internal/inside-container/assets/otter-host-exec \
+            internal/insidecontainer/assets/otter-init \
+            internal/insidecontainer/assets/otter-export \
+            internal/insidecontainer/assets/otter-host-exec \
             images/scripts/setup-common.sh \
             images/scripts/pkg-validator.sh

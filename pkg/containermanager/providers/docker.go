@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	insideContainer "github.com/ferret-linux/otter/internal/inside-container" //nolint:importas // alias kept for readability
+	insidecontainer "github.com/ferret-linux/otter/internal/insidecontainer"
 	"github.com/ferret-linux/otter/internal/userenv"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ui"
@@ -104,7 +104,7 @@ func (d *Docker) Create(
 ) error {
 	userEnv := userenv.LoadUserEnvironment(ctx)
 
-	scriptsDir, _, err := insideContainer.ProvisionScripts()
+	scriptsDir, _, err := insidecontainer.ProvisionScripts()
 	if err != nil {
 		return fmt.Errorf("failed to provision scripts: %w", err)
 	}

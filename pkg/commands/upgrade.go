@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	insideContainer "github.com/ferret-linux/otter/internal/inside-container" //nolint:importas // alias kept for readability
+	insidecontainer "github.com/ferret-linux/otter/internal/insidecontainer"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/netcheck"
 	"github.com/ferret-linux/otter/pkg/ui"
@@ -97,7 +97,7 @@ func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string) erro
 		ui.DefaultLogger.Warn("%s", err)
 		return nil
 	}
-	if _, updated, err := insideContainer.ProvisionScripts(); err != nil {
+	if _, updated, err := insidecontainer.ProvisionScripts(); err != nil {
 		ui.DefaultLogger.Warn("failed to provision scripts: %s", err)
 	} else if updated {
 		ui.DefaultLogger.Info("otter scripts updated")
