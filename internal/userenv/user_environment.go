@@ -28,7 +28,7 @@ type UserEnvironment struct {
 // - HOME
 // - SHELL
 //
-//nolint:gocognit
+//nolint:gocognit // ignore cognitive complexity here, the function orchestrates multi-source user environment resolution with fallbacks
 func LoadUserEnvironment(ctx context.Context) *UserEnvironment {
 	env := &UserEnvironment{}
 
