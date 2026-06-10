@@ -2,12 +2,12 @@
 {2}│{R}{1}⦿ Start an otter managed container environment     {R}{2}│{R}
 {2}├───────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                           {2}│{R}
-{2}│{R}  {5}otter boot  [options] [container]{R}                {2}│{R}
+{2}│{R}  {5}otter up    [options] [container]{R}                {2}│{R}
 {2}│{R}  {5}otter start [options] [container]{R}                {2}│{R}
 {2}├───────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                        {2}│{R}
-{2}│{R}  {5}otter boot my-box{R}                                {2}│{R}
-{2}│{R}  {5}otter boot --all{R}                                 {2}│{R}
+{2}│{R}  {5}otter up --all{R}                                   {2}│{R}
+{2}│{R}  {5}otter up my-box{R}                                  {2}│{R}
 {2}│{R}  {5}otter start my-box{R}                               {2}│{R}
 {2}│{R}  {5}otter start --root my-box{R}                        {2}│{R}
 {2}├───────────────────────────────────────────────────┤{R}

@@ -20,7 +20,7 @@ func newAssembleCommand(cfg *config.Values) *cli.Command {
 	fileFlag := &cli.StringFlag{Name: "file", Aliases: []string{"f"}}
 	return &cli.Command{
 		Name:    "assemble",
-		Aliases: []string{"spec"},
+		Aliases: []string{"dmf"},
 		Commands: []*cli.Command{
 			{
 				Name:    "create",

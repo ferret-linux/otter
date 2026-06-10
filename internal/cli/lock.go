@@ -16,7 +16,7 @@ import (
 func newLockCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "lock",
-		Aliases: []string{"lck"},
+		Aliases: []string{"lk"},
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",

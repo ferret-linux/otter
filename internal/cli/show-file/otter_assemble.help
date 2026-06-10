@@ -2,12 +2,12 @@
 {2}│{R}{1}⦿ Manage otter containers using manifest files             {R}{2}│{R}
 {2}├───────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                                   {2}│{R}
-{2}│{R}  {5}otter spec     <create|remove> [options]{R}                 {2}│{R}
+{2}│{R}  {5}otter dmf      <create|remove> [options]{R}                 {2}│{R}
 {2}│{R}  {5}otter assemble <create|remove> [options]{R}                 {2}│{R}
 {2}├───────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                                {2}│{R}
-{2}│{R}  {5}otter spec mk --replace --file /path/to/file.ini{R}         {2}│{R}
-{2}│{R}  {5}otter spec rm --name my-box --file /path/to/file.ini{R}     {2}│{R}
+{2}│{R}  {5}otter dmf mk --replace --file /path/to/file.ini{R}          {2}│{R}
+{2}│{R}  {5}otter dmf rm --name my-box --file /path/to/file.ini{R}      {2}│{R}
 {2}│{R}  {5}otter assemble create --file /path/to/file.ini{R}           {2}│{R}
 {2}│{R}  {5}otter assemble remove --file /path/to/file.ini{R}           {2}│{R}
 {2}├───────────────────────────────────────────────────────────┤{R}

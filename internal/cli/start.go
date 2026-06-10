@@ -16,7 +16,7 @@ import (
 func newStartCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "start",
-		Aliases: []string{"boot"},
+		Aliases: []string{"up"},
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",

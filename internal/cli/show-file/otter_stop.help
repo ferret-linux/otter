@@ -2,12 +2,12 @@
 {2}│{R}{1}⦿ Stop an otter managed running container environment{R}{2}│{R}
 {2}├─────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                             {2}│{R}
-{2}│{R}  {5}otter off  [options] [container]{R}                   {2}│{R}
+{2}│{R}  {5}otter dn   [options] [container]{R}                   {2}│{R}
 {2}│{R}  {5}otter stop [options] [container]{R}                   {2}│{R}
 {2}├─────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                          {2}│{R}
-{2}│{R}  {5}otter off my-box{R}                                   {2}│{R}
-{2}│{R}  {5}otter off --all{R}                                    {2}│{R}
+{2}│{R}  {5}otter dn my-box{R}                                    {2}│{R}
+{2}│{R}  {5}otter dn --all{R}                                     {2}│{R}
 {2}│{R}  {5}otter stop --yes my-box{R}                            {2}│{R}
 {2}│{R}  {5}otter stop --all --root{R}                            {2}│{R}
 {2}├─────────────────────────────────────────────────────┤{R}

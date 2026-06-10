@@ -17,7 +17,7 @@ import (
 func newRestartCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "restart",
-		Aliases: []string{"reboot"},
+		Aliases: []string{"rbt"},
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",

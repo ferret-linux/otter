@@ -17,7 +17,7 @@ import (
 func newPauseCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "pause",
-		Aliases: []string{"pz"},
+		Aliases: []string{"zz"},
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",

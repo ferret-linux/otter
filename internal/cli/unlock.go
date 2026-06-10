@@ -16,7 +16,7 @@ import (
 func newUnlockCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "unlock",
-		Aliases: []string{"ulck"},
+		Aliases: []string{"ulk"},
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",

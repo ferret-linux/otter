@@ -3,21 +3,21 @@
 {2}├──────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Commands:{R}                                           {2}│{R}
 {2}│{R} {0}ls{R}    {2}┆{R} {0}list{R}           {5}List all containers{R}           {2}│{R}
+{2}│{R} {0}dn{R}    {2}┆{R} {0}stop{R}           {5}Stop running containers{R}       {2}│{R}
+{2}│{R} {0}lk{R}    {2}┆{R} {0}lock{R}           {5}Lock an unlocked container{R}    {2}│{R}
+{2}│{R} {0}up{R}    {2}┆{R} {0}start{R}          {5}Start containers{R}              {2}│{R}
+{2}│{R} {0}zz{R}    {2}┆{R} {0}pause{R}          {5}Pause running containers{R}      {2}│{R}
 {2}│{R} {0}sh{R}    {2}┆{R} {0}enter{R}          {5}Enter running containers{R}      {2}│{R}
 {2}│{R} {0}mk{R}    {2}┆{R} {0}create{R}         {5}Create new containers{R}         {2}│{R}
 {2}│{R} {0}rm{R}    {2}┆{R} {0}remove{R}         {5}Remove containers{R}             {2}│{R}
-{2}│{R} {0}off{R}   {2}┆{R} {0}stop{R}           {5}Stop running containers{R}       {2}│{R}
-{2}│{R} {0}pz{R}    {2}┆{R} {0}pause{R}          {5}Pause running containers{R}      {2}│{R}
-{2}│{R} {0}lck{R}   {2}┆{R} {0}lock{R}           {5}Lock an unlocked container{R}    {2}│{R}
+{2}│{R} {0}ulk{R}   {2}┆{R} {0}unlock{R}         {5}Unlock a locked container{R}     {2}│{R}
+{2}│{R} {0}syu{R}   {2}┆{R} {0}upgrade{R}        {5}Update packages in containers{R} {2}│{R}
+{2}│{R} {0}rbt{R}   {2}┆{R} {0}restart{R}        {5}Restart containers{R}            {2}│{R}
 {2}│{R} {0}reg{R}   {2}┆{R} {0}registry{R}       {5}Browse and manage otter images{R}{2}│{R}
-{2}│{R} {0}boot{R}  {2}┆{R} {0}start{R}          {5}Start containers{R}              {2}│{R}
-{2}│{R} {0}ulck{R}  {2}┆{R} {0}unlock{R}         {5}Unlock a locked container{R}     {2}│{R}
+{2}│{R} {0}dmk{R}   {2}┆{R} {0}assemble{R}       {5}Manage containers from a spec{R} {2}│{R}
+{2}│{R} {0}pin{R}   {2}┆{R} {0}generate-entry{R} {5}Create clickable desktop entry{R}{2}│{R}
 {2}│{R} {0}logs{R}  {2}┆{R} {0}journal{R}        {5}Show logs of a container{R}      {2}│{R}
 {2}│{R} {0}info{R}  {2}┆{R} {0}inspect{R}        {5}Show info of a container{R}      {2}│{R}
-{2}│{R} {0}sync{R}  {2}┆{R} {0}upgrade{R}        {5}Update packages in containers{R} {2}│{R}
-{2}│{R} {0}spec{R}  {2}┆{R} {0}assemble{R}       {5}Manage containers from a spec{R} {2}│{R}
-{2}│{R} {0}ge{R}    {2}┆{R} {0}generate-entry{R} {5}Create clickable desktop entry{R}{2}│{R}
-{2}│{R} {0}reboot{R}{2}┆{R} {0}restart{R}        {5}Restart containers{R}            {2}│{R}
 {2}├───────┴──────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                             {2}│{R}
 {2}│{R}  {4}--help{R}    {2}┆{R} {4}-h{R} {5}Show this help message{R}               {2}│{R}

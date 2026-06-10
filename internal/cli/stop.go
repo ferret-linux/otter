@@ -17,7 +17,7 @@ import (
 func newStopCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "stop",
-		Aliases: []string{"off"},
+		Aliases: []string{"dn"},
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",
