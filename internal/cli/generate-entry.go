@@ -21,7 +21,7 @@ func newGenerateEntryCommand(_ *config.Values) *cli.Command {
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "delete",
-				Aliases: []string{"del"},
+				Aliases: []string{"d"},
 			},
 			&cli.StringFlag{
 				Name:    "icon",
