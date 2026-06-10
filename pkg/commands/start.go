@@ -6,8 +6,6 @@ import (
 	"fmt"
 
 	"github.com/ferret-linux/otter/pkg/containermanager"
-	"github.com/ferret-linux/otter/pkg/netcheck"
-	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 type StartOptions struct {
@@ -28,10 +26,6 @@ func NewStartCommand(cm containermanager.ContainerManager) *StartCommand {
 }
 
 func (c *StartCommand) Execute(ctx context.Context, opts *StartOptions) error {
-	if err := netcheck.Check(ctx); err != nil {
-		ui.DefaultLogger.Warn("%s", err)
-		return nil
-	}
 	if opts.All {
 		containers, err := c.listCmd.Execute(ctx)
 		if err != nil {
