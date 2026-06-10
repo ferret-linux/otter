@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-
 )
 
 const propertiesURL = "https://raw.githubusercontent.com/ferret-linux/otter/stable/images/images-properties.json"
