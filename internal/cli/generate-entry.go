@@ -17,7 +17,7 @@ import (
 func newGenerateEntryCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "generate-entry",
-		Aliases: []string{"gety"},
+		Aliases: []string{"ge"},
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "delete",

@@ -2,12 +2,12 @@
 {2}│{R}{1}⦿ Pause an otter managed running container{R}   {2}│{R}
 {2}├─────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                     {2}│{R}
-{2}│{R}  {5}otter frz   [options] [container]{R}          {2}│{R}
+{2}│{R}  {5}otter pz    [options] [container]{R}          {2}│{R}
 {2}│{R}  {5}otter pause [options] [container]{R}          {2}│{R}
 {2}├─────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                  {2}│{R}
-{2}│{R}  {5}otter frz my-box{R}                           {2}│{R}
-{2}│{R}  {5}otter frz --all{R}                            {2}│{R}
+{2}│{R}  {5}otter pz my-box{R}                           {2}│{R}
+{2}│{R}  {5}otter pz --all{R}                            {2}│{R}
 {2}│{R}  {5}otter pause ubuntu,fedora{R}                  {2}│{R}
 {2}│{R}  {5}otter pause --all --root{R}                   {2}│{R}
 {2}├─────────────────────────────────────────────┤{R}
