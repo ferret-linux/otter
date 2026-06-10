@@ -70,6 +70,21 @@ jobs:
         with:
           go-version-file: go.mod
 
+      - name: Get nerdctl version
+        if: matrix.runtime == 'nerdctl'
+        id: nerdctl_version
+        run: |
+          VERSION=$(curl -fsSL -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/containerd/nerdctl/releases/latest \
+            | grep '"tag_name"' | cut -d '"' -f 4 | sed 's/^v//')
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Install nerdctl
+        if: matrix.runtime == 'nerdctl'
+        run: |
+          curl -fsSL https://github.com/containerd/nerdctl/releases/download/v${{ steps.nerdctl_version.outputs.version }}/nerdctl-${{ steps.nerdctl_version.outputs.version }}-linux-amd64.tar.gz \
+            | sudo tar -xz -C /usr/local/bin nerdctl
+
       - name: Build otter
         run: |
           go build -o ./bin/otter ./cmd/otter
