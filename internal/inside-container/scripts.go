@@ -48,7 +48,7 @@ func ProvisionScripts() (string, bool, error) {
 				continue
 			}
 		}
-		//nolint:gosec // 0755 is the same as from distrobox v1, let's keep it for compatibility
+		//nolint:gosec // 0755 is required: scripts must be executable by the container runtime
 		if err := os.WriteFile(destFilePath, []byte(script.content), 0755); err != nil {
 			return "", false, fmt.Errorf("failed to write script %s: %w", script.name, err)
 		}
