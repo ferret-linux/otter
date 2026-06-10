@@ -1,3 +1,4 @@
+//nolint:goconst // CLI flag strings are intentionally repeated per-command; they may diverge independently
 package cli
 
 import (
@@ -13,14 +14,14 @@ import (
 	"github.com/ferret-linux/otter/pkg/containermanager"
 )
 
-func newGenerateEntryCommand(cfg *config.Values) *cli.Command {
+func newGenerateEntryCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "generate-entry",
-		Aliases: []string{"gety"},
+		Aliases: []string{"ge"},
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "delete",
-				Aliases: []string{"del"},
+				Aliases: []string{"d"},
 			},
 			&cli.StringFlag{
 				Name:    "icon",
@@ -32,9 +33,7 @@ func newGenerateEntryCommand(cfg *config.Values) *cli.Command {
 				Aliases: []string{"a"},
 			},
 		},
-		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return generateEntryAction(ctx, cmd)
-		},
+		Action: generateEntryAction,
 	}
 }
 
@@ -66,5 +65,8 @@ func generateEntryAction(ctx context.Context, cmd *cli.Command) error {
 		opts.Icon = cmd.String("icon")
 	}
 
-	return commands.NewGenerateEntryCommand(commands.NewListCommand(containerManager), containerManager).Execute(ctx, opts)
+	if err := commands.NewGenerateEntryCommand(commands.NewListCommand(containerManager), containerManager).Execute(ctx, opts); err != nil {
+		return fmt.Errorf("failed to generate entry: %w", err)
+	}
+	return nil
 }

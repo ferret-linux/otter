@@ -1,8 +1,10 @@
+//nolint:goconst // CLI flag strings are intentionally repeated per-command; they may diverge independently
 package cli
 
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/urfave/cli/v3"
 
@@ -11,7 +13,7 @@ import (
 	"github.com/ferret-linux/otter/pkg/containermanager"
 )
 
-func newStartCommand(cfg *config.Values) *cli.Command {
+func newStartCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "start",
 		Aliases: []string{"boot"},
@@ -21,9 +23,7 @@ func newStartCommand(cfg *config.Values) *cli.Command {
 				Aliases: []string{"a"},
 			},
 		},
-		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return startAction(ctx, cmd)
-		},
+		Action: startAction,
 	}
 }
 
@@ -37,8 +37,11 @@ func startAction(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
-	return commands.NewStartCommand(containerManager).Execute(ctx, &commands.StartOptions{
+	if err := commands.NewStartCommand(containerManager).Execute(ctx, &commands.StartOptions{
 		ContainerNames: names,
 		All:            cmd.Bool("all"),
-	})
+	}); err != nil {
+		return fmt.Errorf("failed to start containers: %w", err)
+	}
+	return nil
 }

@@ -1,12 +1,11 @@
 package registry
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
-
-	"github.com/ferret-linux/otter/pkg/netcheck"
 )
 
 const propertiesURL = "https://raw.githubusercontent.com/ferret-linux/otter/stable/images/images-properties.json"
@@ -35,15 +34,14 @@ type ImagesProperties struct {
 }
 
 // Fetch retrieves and parses images-properties.json from the upstream repository.
-// It calls netcheck before making any network request.
-func Fetch() (*ImagesProperties, error) {
-	if err := netcheck.Check(); err != nil {
-		return nil, fmt.Errorf("registry unavailable: %w", err)
-	}
-
+func Fetch(ctx context.Context) (*ImagesProperties, error) {
 	client := &http.Client{Timeout: 10 * time.Second}
 
-	resp, err := client.Get(propertiesURL)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, propertiesURL, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch image properties: %w", err)
 	}

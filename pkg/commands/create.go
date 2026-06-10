@@ -101,24 +101,25 @@ func NewCreateCommand(cfg *config.Values, cm containermanager.ContainerManager, 
 	}
 }
 
+//nolint:gocognit,funlen // ignore cognitive complexity here, the function orchestrates multi-step container creation
 func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*CreateResult, error) {
 	opts.ContainerShell = c.makeContainerShell(&opts)
 
 	if err := validateMemory(opts.Memory); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("memory validation failed: %w", err)
 	}
 	if err := validateCPUThreads(opts.CPUThreads); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cpu-threads validation failed: %w", err)
 	}
 
-	containerImage, err := c.makeContainerImage(&opts)
+	containerImage, err := c.makeContainerImage(ctx, &opts)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to resolve container image: %w", err)
 	}
 	containerName := c.makeContainerName(&opts, containerImage)
 	containerHostname, err := c.makeContainerHostname(&opts)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to resolve container hostname: %w", err)
 	}
 
 	containerUserCustomHome := c.makeContainerUserCustomHome(&opts, containerName)
@@ -140,11 +141,11 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 			return nil, fmt.Errorf("image '%s' is not present locally, pull it first with:\n  otter img pull -n %s", imageDisplayName(containerImage), opts.ContainerImage)
 		}
 		if err := registry.Pull(ctx, c.containerManager, containerImage, opts.ContainerPlatform, true, c.progress); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to pull image '%s': %w", containerImage, err)
 		}
 	} else if opts.ContainerAlwaysPull {
 		if err := registry.Pull(ctx, c.containerManager, containerImage, opts.ContainerPlatform, true, c.progress); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to pull image '%s': %w", containerImage, err)
 		}
 	}
 
@@ -223,7 +224,7 @@ func validateMemory(memory string) error {
 	}
 	matched, _ := regexp.MatchString(`^[0-9]+(m|g)$`, memory)
 	if !matched {
-		return fmt.Errorf("invalid memory format, use m or g suffix (e.g. 512m, 2g)")
+		return errors.New("invalid memory format, use m or g suffix (e.g. 512m, 2g)")
 	}
 	data, err := os.ReadFile("/proc/meminfo")
 	if err != nil {
@@ -232,7 +233,9 @@ func validateMemory(memory string) error {
 	var totalKB uint64
 	for _, line := range strings.Split(string(data), "\n") {
 		if strings.HasPrefix(line, "MemTotal:") {
-			fmt.Sscanf(line, "MemTotal: %d kB", &totalKB)
+			if _, err := fmt.Sscanf(line, "MemTotal: %d kB", &totalKB); err != nil {
+				return fmt.Errorf("failed to parse MemTotal: %w", err)
+			}
 			break
 		}
 	}
@@ -256,7 +259,7 @@ func validateCPUThreads(threads int) error {
 		return nil
 	}
 	if threads < 0 {
-		return fmt.Errorf("cpu-threads must be greater than 0")
+		return errors.New("cpu-threads must be greater than 0")
 	}
 	data, err := os.ReadFile("/sys/devices/system/cpu/present")
 	if err != nil {
@@ -264,12 +267,12 @@ func validateCPUThreads(threads int) error {
 	}
 	parts := strings.SplitN(strings.TrimSpace(string(data)), "-", 2)
 	if len(parts) != 2 {
-		return fmt.Errorf("failed to parse cpu info")
+		return errors.New("failed to parse cpu info")
 	}
 	start, err1 := strconv.Atoi(parts[0])
 	end, err2 := strconv.Atoi(parts[1])
 	if err1 != nil || err2 != nil {
-		return fmt.Errorf("failed to parse cpu info")
+		return errors.New("failed to parse cpu info")
 	}
 	hostThreads := end - start + 1
 	if threads > hostThreads {
@@ -290,19 +293,19 @@ func (c *CreateCommand) makeContainerShell(opts *CreateOptions) string {
 	}
 }
 
-func (c *CreateCommand) makeContainerImage(opts *CreateOptions) (string, error) {
+func (c *CreateCommand) makeContainerImage(ctx context.Context, opts *CreateOptions) (string, error) {
 	containerImage := opts.ContainerImage
 	if opts.ContainerClone == "" && containerImage == "" {
 		containerImage = c.cfg.DefaultContainerImage
 	}
 	if containerImage != "" && opts.ContainerClone == "" {
-		props, err := registry.Fetch()
+		props, err := registry.Fetch(ctx)
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("failed to fetch registry properties: %w", err)
 		}
 		resolved, err := registry.Resolve(props, containerImage)
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("failed to resolve image '%s': %w", containerImage, err)
 		}
 		containerImage = resolved
 	}

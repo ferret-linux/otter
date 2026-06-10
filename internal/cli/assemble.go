@@ -1,3 +1,4 @@
+//nolint:goconst // CLI flag strings are intentionally repeated per-command; they may diverge independently
 package cli
 
 import (
@@ -16,7 +17,7 @@ import (
 )
 
 func newAssembleCommand(cfg *config.Values) *cli.Command {
-	fileFlag := &cli.StringFlag{Name: "file"}
+	fileFlag := &cli.StringFlag{Name: "file", Aliases: []string{"f"}}
 	return &cli.Command{
 		Name:    "assemble",
 		Aliases: []string{"spec"},

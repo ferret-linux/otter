@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -30,22 +31,25 @@ func NewJournalCommand(_ *config.Values, cm containermanager.ContainerManager) *
 
 func (c *JournalCommand) Execute(ctx context.Context, opts JournalOptions) error {
 	if opts.ContainerName == "" {
-		return fmt.Errorf("please specify a container name with --name/-n")
+		return errors.New("please specify a container name with --name/-n")
 	}
 
 	if strings.Contains(opts.ContainerName, ",") {
-		return fmt.Errorf("journal only accepts a single container name")
+		return errors.New("journal only accepts a single container name")
 	}
 
 	if !c.containerManager.Exists(ctx, opts.ContainerName) {
 		return fmt.Errorf("container '%s' not found", opts.ContainerName)
 	}
 
-	return c.containerManager.Journal(ctx, opts.ContainerName, containermanager.JournalOptions{
+	if err := c.containerManager.Journal(ctx, opts.ContainerName, containermanager.JournalOptions{
 		Follow:     opts.Follow,
 		Since:      opts.Since,
 		Until:      opts.Until,
 		Timestamps: opts.Timestamps,
 		Tail:       opts.Tail,
-	})
+	}); err != nil {
+		return fmt.Errorf("failed to get container journal: %w", err)
+	}
+	return nil
 }

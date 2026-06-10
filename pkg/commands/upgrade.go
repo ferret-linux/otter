@@ -2,16 +2,18 @@ package commands
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
-	insideContainer "github.com/ferret-linux/otter/internal/inside-container"
+	"github.com/ferret-linux/otter/internal/insidecontainer"
 	"github.com/ferret-linux/otter/pkg/containermanager"
-	"github.com/ferret-linux/otter/pkg/netcheck"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
-//nolint:lll // upgrade command mirrors the shell version
-const upgradeScript = `command -v su-exec 2>/dev/null && su-exec root /usr/lib/otter/scripts/otter-init --upgrade || command -v doas 2>/dev/null && doas /usr/lib/otter/scripts/otter-init --upgrade || sudo -S /usr/lib/otter/scripts/otter-init --upgrade`
+const upgradeScript = "" +
+	"command -v su-exec 2>/dev/null && su-exec root /usr/lib/otter/scripts/otter-init --upgrade || " +
+	"command -v doas 2>/dev/null && doas /usr/lib/otter/scripts/otter-init --upgrade || " +
+	"sudo -S /usr/lib/otter/scripts/otter-init --upgrade"
 
 type UpgradeOptions struct {
 	ContainerNames []string
@@ -37,6 +39,7 @@ func NewUpgradeCommand(
 	}
 }
 
+//nolint:gocognit // ignore cognitive complexity here, the function orchestrates multi-step container upgrade
 func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) error {
 	var containerNames []string
 
@@ -66,7 +69,7 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 	case len(opts.ContainerNames) > 0:
 		containerNames = opts.ContainerNames
 	default:
-		return fmt.Errorf("please specify a container name with --name/-n")
+		return errors.New("please specify a container name with --name/-n")
 	}
 
 	var lastErr error
@@ -89,11 +92,7 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 }
 
 func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string) error {
-	if err := netcheck.Check(); err != nil {
-		ui.DefaultLogger.Warn("%s", err)
-		return nil
-	}
-	if _, updated, err := insideContainer.ProvisionScripts(); err != nil {
+	if _, updated, err := insidecontainer.ProvisionScripts(); err != nil {
 		ui.DefaultLogger.Warn("failed to provision scripts: %s", err)
 	} else if updated {
 		ui.DefaultLogger.Info("otter scripts updated")
@@ -104,7 +103,7 @@ func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string) erro
 	if err := c.startCmd.Execute(ctx, &StartOptions{
 		ContainerNames: []string{name},
 	}); err != nil {
-		return err
+		return fmt.Errorf("failed to start container '%s' for upgrade: %w", name, err)
 	}
 
 	enterOpts := EnterOptions{

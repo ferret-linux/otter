@@ -16,6 +16,7 @@ import (
 //go:embed show-file
 var printFS embed.FS
 
+//nolint:gochecknoglobals // package-level color slot table is effectively a constant
 var colorSlots = []string{
 	"\033[32m", // {0} green   — command names
 	"\033[96m", // {1} teal   — tagline/messages
@@ -25,7 +26,9 @@ var colorSlots = []string{
 	"\033[37m", // {5} dim     — descriptions/info text
 }
 
+//nolint:gochecknoinits // required to hook urfave/cli help printer before command execution
 func init() {
+	//nolint:reassign // intentional: hooks urfave/cli HelpPrinter for custom help rendering
 	ucli.HelpPrinter = func(_ io.Writer, _ string, data any) {
 		cmd, ok := data.(*ucli.Command)
 		if !ok {
@@ -49,7 +52,8 @@ func renderColors(s string) string {
 	return strings.ReplaceAll(s, "{R}", "\033[0m")
 }
 
-func contentWidth(raw string) (width int) {
+func contentWidth(raw string) int {
+	width := 0
 	for _, line := range strings.Split(raw, "\n") {
 		clean := line
 		for i := range colorSlots {
@@ -60,7 +64,7 @@ func contentWidth(raw string) (width int) {
 			width = runes
 		}
 	}
-	return
+	return width
 }
 
 func printFile(name string) {

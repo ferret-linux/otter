@@ -2,8 +2,10 @@ package commands
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/ferret-linux/otter/pkg/config"
@@ -42,11 +44,11 @@ func boolToSharedStr(b bool) string {
 
 func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error {
 	if opts.ContainerName == "" {
-		return fmt.Errorf("please specify a container name with --name/-n")
+		return errors.New("please specify a container name with --name/-n")
 	}
 
 	if strings.Contains(opts.ContainerName, ",") {
-		return fmt.Errorf("inspect only accepts a single container name")
+		return errors.New("inspect only accepts a single container name")
 	}
 
 	if !c.containerManager.Exists(ctx, opts.ContainerName) {
@@ -87,8 +89,8 @@ func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error
 		ui.PanelRow("Hostname", result.ContainerHostname),
 		ui.PanelRow("Shell", result.ContainerShell),
 		ui.PanelRow("Home", result.ContainerHome),
-		ui.PanelRow("Locked", fmt.Sprintf("%v", locked)),
-		ui.PanelRow("Rootful", fmt.Sprintf("%v", result.Rootful)),
+		ui.PanelRow("Locked", strconv.FormatBool(locked)),
+		ui.PanelRow("Rootful", strconv.FormatBool(result.Rootful)),
 		ui.PanelRow("Manager", opts.Manager),
 	)
 	p.AddSection("Resources",

@@ -3,6 +3,7 @@ package cli
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/urfave/cli/v3"
 
@@ -11,26 +12,27 @@ import (
 	"github.com/ferret-linux/otter/pkg/containermanager"
 )
 
-func newInspectCommand(cfg *config.Values) *cli.Command {
+func newInspectCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "inspect",
 		Aliases: []string{"info"},
 		Flags:   []cli.Flag{},
-		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return inspectAction(ctx, cmd, cfg)
-		},
+		Action:  inspectAction,
 	}
 }
 
-func inspectAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
+func inspectAction(ctx context.Context, cmd *cli.Command) error {
 	cm, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 	if !ok {
 		return errors.New("container manager not found in context")
 	}
 
-	inspectCmd := commands.NewInspectCommand(cfg, cm)
-	return inspectCmd.Execute(ctx, commands.InspectOptions{
+	inspectCmd := commands.NewInspectCommand(nil, cm)
+	if err := inspectCmd.Execute(ctx, commands.InspectOptions{
 		ContainerName: firstName(cmd.Args().Slice()),
 		Manager:       cm.Name(),
-	})
+	}); err != nil {
+		return fmt.Errorf("failed to inspect container: %w", err)
+	}
+	return nil
 }

@@ -1,3 +1,4 @@
+//nolint:goconst // CLI flag strings are intentionally repeated per-command; they may diverge independently
 package cli
 
 import (
@@ -34,22 +35,20 @@ func newRegistryCommand(cfg *config.Values) *cli.Command {
 
 	return &cli.Command{
 		Name:    "registry",
-		Aliases: []string{"img"},
+		Aliases: []string{"reg"},
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
 			},
 		},
-		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return registryAction(ctx, cmd)
-		},
+		Action:   registryAction,
 		Commands: []*cli.Command{pull, remove},
 	}
 }
 
-func registryAction(_ context.Context, cmd *cli.Command) error {
-	props, err := registry.Fetch()
+func registryAction(ctx context.Context, cmd *cli.Command) error {
+	props, err := registry.Fetch(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to fetch registry: %w", err)
 	}
@@ -71,9 +70,7 @@ func newRegistryPullCommand(_ *config.Values) *cli.Command {
 				Aliases: []string{"f"},
 			},
 		},
-		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return registryPullAction(ctx, cmd)
-		},
+		Action: registryPullAction,
 	}
 }
 
@@ -88,14 +85,14 @@ func registryPullAction(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	props, err := registry.Fetch()
+	props, err := registry.Fetch(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to fetch registry: %w", err)
 	}
 
 	progress := ui.NewProgress(os.Stderr)
 
-	return commands.RegistryPull(
+	if err := commands.RegistryPull(
 		ctx,
 		containerManager,
 		props,
@@ -103,7 +100,10 @@ func registryPullAction(ctx context.Context, cmd *cli.Command) error {
 		cmd.Bool("all"),
 		cmd.Bool("force"),
 		progress,
-	)
+	); err != nil {
+		return fmt.Errorf("failed to pull from registry: %w", err)
+	}
+	return nil
 }
 
 func newRegistryRemoveCommand(_ *config.Values) *cli.Command {
@@ -120,9 +120,7 @@ func newRegistryRemoveCommand(_ *config.Values) *cli.Command {
 				Aliases: []string{"f"},
 			},
 		},
-		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return registryRemoveAction(ctx, cmd)
-		},
+		Action: registryRemoveAction,
 	}
 }
 
@@ -137,17 +135,20 @@ func registryRemoveAction(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	props, err := registry.Fetch()
+	props, err := registry.Fetch(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to fetch registry: %w", err)
 	}
 
-	return commands.RegistryRemove(
+	if err := commands.RegistryRemove(
 		ctx,
 		containerManager,
 		props,
 		names,
 		cmd.Bool("all"),
 		cmd.Bool("force"),
-	)
+	); err != nil {
+		return fmt.Errorf("failed to remove from registry: %w", err)
+	}
+	return nil
 }

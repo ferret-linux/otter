@@ -1,3 +1,4 @@
+//nolint:goconst // CLI flag strings are intentionally repeated per-provider; they may diverge independently
 package providers
 
 import (
@@ -13,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	insideContainer "github.com/ferret-linux/otter/internal/inside-container"
+	"github.com/ferret-linux/otter/internal/insidecontainer"
 	"github.com/ferret-linux/otter/internal/userenv"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ui"
@@ -103,7 +104,7 @@ func (d *Docker) Create(
 ) error {
 	userEnv := userenv.LoadUserEnvironment(ctx)
 
-	scriptsDir, _, err := insideContainer.ProvisionScripts()
+	scriptsDir, _, err := insidecontainer.ProvisionScripts()
 	if err != nil {
 		return fmt.Errorf("failed to provision scripts: %w", err)
 	}
@@ -155,7 +156,7 @@ func (d *Docker) Create(
 
 // makeCreateCommand builds the docker create command with all necessary options.
 //
-//nolint:gocognit,funlen // ignore cognitive complexity here, the function is mostly imperative option appending
+//nolint:gocognit,funlen,gocyclo,cyclop // ignore cognitive complexity here, the function is mostly imperative option appending
 func (d *Docker) makeCreateCommand(
 	containerName string,
 	containerImage string,
@@ -409,8 +410,8 @@ func (d *Docker) makeCreateCommand(
 		hostname, _ := os.Hostname()
 		if containerHostname == hostname {
 			hostnameFile := "/etc/hostname"
-			if real, err := filepath.EvalSymlinks(hostnameFile); err == nil {
-				hostnameFile = real
+			if resolved, err := filepath.EvalSymlinks(hostnameFile); err == nil {
+				hostnameFile = resolved
 			}
 			options = append(options, "--volume", fmt.Sprintf("%s:/etc/hostname:ro", hostnameFile))
 		}
@@ -1029,7 +1030,7 @@ func (d *Docker) Journal(ctx context.Context, containerName string, opts contain
 		args = append(args, "--timestamps")
 	}
 	if opts.Tail >= 0 {
-		args = append(args, "--tail", fmt.Sprintf("%d", opts.Tail))
+		args = append(args, "--tail", strconv.Itoa(opts.Tail))
 	}
 	args = append(args, containerName)
 	_, err := d.run(ctx, args, runOptions{Interactive: true})

@@ -1,3 +1,4 @@
+//nolint:goconst // CLI flag strings are intentionally repeated per-command; they may diverge independently
 package cli
 
 import (
@@ -13,7 +14,7 @@ import (
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
-func newUpgradeCommand(cfg *config.Values) *cli.Command {
+func newUpgradeCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "upgrade",
 		Aliases: []string{"sync"},
@@ -23,12 +24,11 @@ func newUpgradeCommand(cfg *config.Values) *cli.Command {
 				Aliases: []string{"a"},
 			},
 			&cli.BoolFlag{
-				Name: "running",
+				Name:    "running",
+				Aliases: []string{"R"},
 			},
 		},
-		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return upgradeAction(ctx, cmd)
-		},
+		Action: upgradeAction,
 	}
 }
 

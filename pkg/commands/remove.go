@@ -49,6 +49,7 @@ func NewRmCommand(
 	}
 }
 
+//nolint:gocognit // ignore cognitive complexity here, the function orchestrates multi-step container removal
 func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, error) {
 	if !options.NoTTY && c.prompter == nil {
 		return nil, errors.New("prompter is required for interactive mode")
@@ -128,7 +129,17 @@ func (c *RmCommand) removeContainer(
 		return fmt.Errorf("error inspecting the container: %w", err)
 	}
 
-	if !removeHome && !noTTY && inspectOutput.ContainerHome != userHome {
+	// Hard safety guard: never allow removing home if it is empty,
+	// equals the host home, or is a known dangerous path.
+	dangerousPaths := []string{"/", "/home", "/root", "/usr"}
+	if inspectOutput.ContainerHome == "" ||
+		inspectOutput.ContainerHome == userHome ||
+		slices.Contains(dangerousPaths, inspectOutput.ContainerHome) {
+		if removeHome {
+			ui.DefaultLogger.Warn("refusing to remove home '%s': unsafe path", inspectOutput.ContainerHome)
+		}
+		removeHome = false
+	} else if !removeHome && !noTTY {
 		question := fmt.Sprintf(
 			"Do you really want to remove custom home of container %s (%s)?",
 			container.Name,

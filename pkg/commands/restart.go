@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/ferret-linux/otter/pkg/containermanager"
@@ -44,7 +45,7 @@ func (c *RestartCommand) Execute(ctx context.Context, opts *RestartOptions) erro
 	case len(opts.ContainerNames) > 0:
 		containerNames = opts.ContainerNames
 	default:
-		return fmt.Errorf("please specify a container name with --name/-n")
+		return errors.New("please specify a container name with --name/-n")
 	}
 
 	for _, name := range containerNames {

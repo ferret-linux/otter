@@ -1,3 +1,4 @@
+//nolint:goconst // CLI flag strings are intentionally repeated per-command; they may diverge independently
 package cli
 
 import (
@@ -15,7 +16,7 @@ import (
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
-func newRmCommand(cfg *config.Values) *cli.Command {
+func newRmCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "remove",
 		Aliases: []string{"rm"},
@@ -33,16 +34,16 @@ func newRmCommand(cfg *config.Values) *cli.Command {
 				Aliases: []string{"y"},
 			},
 			&cli.BoolFlag{
-				Name: "rm-home",
+				Name:    "rm-home",
+				Aliases: []string{"H"},
 			},
 			&cli.BoolFlag{
-				Name: "bypass-lock",
+				Name:    "bypass-lock",
+				Aliases: []string{"B"},
 			},
 		},
 
-		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return rmAction(ctx, cmd)
-		},
+		Action: rmAction,
 	}
 }
 

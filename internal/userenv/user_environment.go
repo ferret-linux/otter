@@ -28,7 +28,7 @@ type UserEnvironment struct {
 // - HOME
 // - SHELL
 //
-//nolint:gocognit
+//nolint:gocognit // ignore cognitive complexity here, the function orchestrates multi-source user environment resolution with fallbacks
 func LoadUserEnvironment(ctx context.Context) *UserEnvironment {
 	env := &UserEnvironment{}
 
@@ -98,6 +98,7 @@ func LoadUserEnvironment(ctx context.Context) *UserEnvironment {
 // getPasswdFields returns all fields from passwd entry for a user
 func getPasswdFields(ctx context.Context, userName string) []string {
 	// Use getent passwd (handles LDAP, NIS, local users)
+	//nolint:gosec // G702: userName comes from the OS user lookup, not untrusted user input
 	output, err := exec.CommandContext(ctx, "getent", "passwd", userName).Output()
 	if err != nil {
 		return nil

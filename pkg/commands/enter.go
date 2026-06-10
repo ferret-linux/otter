@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -36,7 +37,7 @@ func NewEnterCommand(
 
 func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterResult, error) {
 	if strings.Contains(opts.ContainerName, ",") {
-		return nil, fmt.Errorf("enter only accepts a single container name")
+		return nil, errors.New("enter only accepts a single container name")
 	}
 
 	inspectResult, err := c.containerManager.InspectContainer(ctx, opts.ContainerName)
@@ -77,7 +78,7 @@ func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterRe
 	}
 
 	if !opts.NoTTY {
-		fmt.Println()
+		fmt.Println() //nolint:forbidigo // blank line separator after interactive session output
 		ui.DefaultLogger.Info("container still running — use 'otter stop %s' to stop it", opts.ContainerName)
 	}
 

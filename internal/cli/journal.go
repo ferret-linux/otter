@@ -3,6 +3,7 @@ package cli
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/urfave/cli/v3"
 
@@ -11,7 +12,7 @@ import (
 	"github.com/ferret-linux/otter/pkg/containermanager"
 )
 
-func newJournalCommand(cfg *config.Values) *cli.Command {
+func newJournalCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "journal",
 		Aliases: []string{"logs"},
@@ -21,39 +22,43 @@ func newJournalCommand(cfg *config.Values) *cli.Command {
 				Aliases: []string{"f"},
 			},
 			&cli.StringFlag{
-				Name: "since",
+				Name:    "since",
+				Aliases: []string{"s"},
 			},
 			&cli.StringFlag{
-				Name: "until",
+				Name:    "until",
+				Aliases: []string{"u"},
 			},
 			&cli.BoolFlag{
 				Name:    "timestamps",
 				Aliases: []string{"t"},
 			},
 			&cli.IntFlag{
-				Name:  "tail",
-				Value: -1,
+				Name:    "tail",
+				Aliases: []string{"n"},
+				Value:   -1,
 			},
 		},
-		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return journalAction(ctx, cmd, cfg)
-		},
+		Action: journalAction,
 	}
 }
 
-func journalAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
+func journalAction(ctx context.Context, cmd *cli.Command) error {
 	cm, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 	if !ok {
 		return errors.New("container manager not found in context")
 	}
 
-	journalCmd := commands.NewJournalCommand(cfg, cm)
-	return journalCmd.Execute(ctx, commands.JournalOptions{
+	journalCmd := commands.NewJournalCommand(nil, cm)
+	if err := journalCmd.Execute(ctx, commands.JournalOptions{
 		ContainerName: firstName(cmd.Args().Slice()),
 		Follow:        cmd.Bool("follow"),
 		Since:         cmd.String("since"),
 		Until:         cmd.String("until"),
 		Timestamps:    cmd.Bool("timestamps"),
 		Tail:          cmd.Int("tail"),
-	})
+	}); err != nil {
+		return fmt.Errorf("failed to get journal: %w", err)
+	}
+	return nil
 }

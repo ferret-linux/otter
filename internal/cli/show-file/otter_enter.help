@@ -8,16 +8,15 @@
 {2}│{R}{3}▸ Examples:{R}                                                              {2}│{R}
 {2}│{R}  {5}otter sh my-box --root{R}                                                 {2}│{R}
 {2}│{R}  {5}otter sh my-alpine -- sh -l{R}                                            {2}│{R}
-{2}│{R}  {5}otter enter --name fedora-44 -- bash -l{R}                                {2}│{R}
-{2}│{R}  {5}otter enter --additional-flags "--preserve-fds" --name test -- bash -l{R} {2}│{R}
+{2}│{R}  {5}otter enter fedora-44 -- bash -l{R}                                {2}│{R}
+{2}│{R}  {5}otter enter --additional-flags "--preserve-fds" test -- bash -l{R} {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                                               {2}│{R}
 {2}│{R} {4}--{R}          {5}              Command to execute into the container{R}         {2}│{R}
-{2}│{R} {4}--name{R}             {2}┆{R} {4}-n{R}   {5}Name of the container to enter{R}                {2}│{R}
 {2}│{R} {4}--root{R}             {2}┆{R} {4}-r{R}   {5}Launch container manager with root privileges{R} {2}│{R}
 {2}│{R} {4}--no-tty{R}           {2}┆{R} {4}-T{R}   {5}Do not instantiate a tty{R}                      {2}│{R}
-{2}│{R} {4}--add-env{R}                 {5}Comma-separated list of host env vars to copy{R} {2}│{R}
-{2}│{R} {4}--empty-env{R}               {5}Don't auto copy host environment variables{R}    {2}│{R}
+{2}│{R} {4}--add-env{R}          {2}┆{R} {4}-e{R}   {5}Comma-separated list of host env vars to copy{R} {2}│{R}
+{2}│{R} {4}--empty-env{R}        {2}┆{R} {4}-E{R}   {5}Don't auto copy host environment variables{R}    {2}│{R}
 {2}│{R} {4}--clean-path{R}          {5}    Reset PATH inside container to FHS standard{R}   {2}│{R}
 {2}│{R} {4}--no-workdir{R}       {2}┆{R} {4}-nw{R}  {5}Always start from container's home directory{R}  {2}│{R}
 {2}│{R} {4}--auto-start{R}       {2}┆{R} {4}-S{R}   {5}Start container if stopped, then enter{R}        {2}│{R}
@@ -30,7 +29,4 @@
 {2}│{R} {4}--root{R}  {5}Preferred over 'sudo otter' when root is needed. To use a{R}       {2}│{R}
 {2}│{R}         {5}program other than sudo, set OTR_SUDO_PROGRAM or the{R}            {2}│{R}
 {2}│{R}         {5}'otter_sudo_program' config variable.{R}                           {2}│{R}
-{2}│{R}                                                                         {2}│{R}
-{2}│{R} {4}--name{R}  {5}The container name can also be passed as a positional{R}           {2}│{R}
-{2}│{R}         {5}argument instead of using --name.{R}                               {2}│{R}
 {2}╰─────────────────────────────────────────────────────────────────────────╯{R}

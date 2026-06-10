@@ -15,13 +15,11 @@ import (
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
-func newListCommand(cfg *config.Values) *cli.Command {
+func newListCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "list",
 		Aliases: []string{"ls"},
-		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return listAction(ctx, cmd)
-		},
+		Action:  listAction,
 	}
 }
 
@@ -43,8 +41,7 @@ func listAction(ctx context.Context, _ *cli.Command) error {
 
 func printResult(result *commands.ListResult) {
 	if len(result.Containers) == 0 {
-		//nolint:forbidigo // Using fmt.Println is acceptable here for CLI output
-		fmt.Println("no containers found")
+		ui.DefaultLogger.Warn("No containers found.")
 		return
 	}
 
