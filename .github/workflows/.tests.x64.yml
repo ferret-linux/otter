@@ -1,0 +1,79 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the otter project:
+#    https://github.com/ferret-linux/otter
+# Copyright (C) 2026 otter contributors
+
+name: ci-e2e-x64-test (internal)
+
+on:
+  workflow_call:
+
+jobs:
+  e2e:
+    name: ${{ matrix.distro }} | ${{ matrix.runtime }} | ${{ matrix.mode }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { distro: ubuntu,     runtime: podman,  mode: rootless }
+          - { distro: ubuntu,     runtime: podman,  mode: rootful  }
+          - { distro: ubuntu,     runtime: docker,  mode: rootless }
+          - { distro: ubuntu,     runtime: docker,  mode: rootful  }
+          - { distro: ubuntu,     runtime: nerdctl, mode: rootful  }
+          - { distro: fedora,     runtime: podman,  mode: rootless }
+          - { distro: fedora,     runtime: podman,  mode: rootful  }
+          - { distro: fedora,     runtime: docker,  mode: rootless }
+          - { distro: fedora,     runtime: docker,  mode: rootful  }
+          - { distro: fedora,     runtime: nerdctl, mode: rootful  }
+          - { distro: alpine,     runtime: podman,  mode: rootless }
+          - { distro: alpine,     runtime: podman,  mode: rootful  }
+          - { distro: alpine,     runtime: docker,  mode: rootless }
+          - { distro: alpine,     runtime: docker,  mode: rootful  }
+          - { distro: alpine,     runtime: nerdctl, mode: rootful  }
+          - { distro: arch,       runtime: podman,  mode: rootless }
+          - { distro: arch,       runtime: podman,  mode: rootful  }
+          - { distro: arch,       runtime: docker,  mode: rootless }
+          - { distro: arch,       runtime: docker,  mode: rootful  }
+          - { distro: arch,       runtime: nerdctl, mode: rootful  }
+          - { distro: rocky,      runtime: podman,  mode: rootless }
+          - { distro: rocky,      runtime: podman,  mode: rootful  }
+          - { distro: rocky,      runtime: docker,  mode: rootless }
+          - { distro: rocky,      runtime: docker,  mode: rootful  }
+          - { distro: rocky,      runtime: nerdctl, mode: rootful  }
+          - { distro: gentoo,     runtime: podman,  mode: rootless }
+          - { distro: gentoo,     runtime: podman,  mode: rootful  }
+          - { distro: gentoo,     runtime: docker,  mode: rootless }
+          - { distro: gentoo,     runtime: docker,  mode: rootful  }
+          - { distro: gentoo,     runtime: nerdctl, mode: rootful  }
+          - { distro: void,       runtime: podman,  mode: rootless }
+          - { distro: void,       runtime: podman,  mode: rootful  }
+          - { distro: void,       runtime: docker,  mode: rootless }
+          - { distro: void,       runtime: docker,  mode: rootful  }
+          - { distro: void,       runtime: nerdctl, mode: rootful  }
+          - { distro: tumbleweed, runtime: podman,  mode: rootless }
+          - { distro: tumbleweed, runtime: podman,  mode: rootful  }
+          - { distro: tumbleweed, runtime: docker,  mode: rootless }
+          - { distro: tumbleweed, runtime: docker,  mode: rootful  }
+          - { distro: tumbleweed, runtime: nerdctl, mode: rootful  }
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Set up Go
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
+        with:
+          go-version-file: go.mod
+
+      - name: Build otter
+        run: |
+          go build -o ./bin/otter ./cmd/otter
+          echo "$GITHUB_WORKSPACE/bin" >> $GITHUB_PATH
+
+      - name: Run e2e
+        run: bash tests/e2e/ci/${{ matrix.distro }}.sh ${{ matrix.runtime }} ${{ matrix.mode }}

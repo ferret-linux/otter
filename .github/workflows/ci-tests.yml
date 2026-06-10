@@ -1,0 +1,39 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the otter project:
+#    https://github.com/ferret-linux/otter
+# Copyright (C) 2026 otter contributors
+
+name: 4.CI Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    uses: ./.github/workflows/.tests.build.yml
+    permissions:
+      contents: read
+
+  lint:
+    uses: ./.github/workflows/.tests.lint.yml
+    permissions:
+      contents: read
+
+  security:
+    uses: ./.github/workflows/.tests.security.yml
+    permissions:
+      contents: read
+
+  e2e-x64:
+    needs: [build]
+    uses: ./.github/workflows/.tests.x64.yml
+    permissions:
+      contents: read
+
+  e2e-arm:
+    needs: [build]
+    uses: ./.github/workflows/.tests.arm.yml
+    permissions:
+      contents: read
