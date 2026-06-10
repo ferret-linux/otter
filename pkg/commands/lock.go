@@ -74,10 +74,10 @@ func (c *LockCommand) lockOne(ctx context.Context, name string) error {
 	if err != nil {
 		return fmt.Errorf("failed to create lock file: %w", err)
 	}
+	defer os.Remove(f.Name())
 	if err := f.Close(); err != nil {
 		return fmt.Errorf("failed to close temp lock file: %w", err)
 	}
-	defer os.Remove(f.Name())
 
 	if err := c.containerManager.WriteToContainer(ctx, name, f.Name(), lockFilePath); err != nil {
 		return fmt.Errorf("failed to write lock file into '%s': %w", name, err)
@@ -94,10 +94,10 @@ func isLocked(ctx context.Context, cm containermanager.ContainerManager, contain
 	if err != nil {
 		return false
 	}
+	defer os.Remove(tmp.Name())
 	if err := tmp.Close(); err != nil {
 		return false
 	}
-	defer os.Remove(tmp.Name())
 
 	return cm.CopyFromContainer(ctx, containerName, lockFilePath, tmp.Name()) == nil
 }
