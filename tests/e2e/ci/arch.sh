@@ -52,7 +52,8 @@ trap cleanup EXIT
 run_step() {
     local name="${1}"
     shift
-    if "$@" > /dev/null 2>&1; then
+    printf '  $ %s\n' "$*"
+    if "$@" 2>&1; then
         pass "${name}"
     else
         fail "${name}"
