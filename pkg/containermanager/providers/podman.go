@@ -625,6 +625,18 @@ func (p *Podman) Remove(
 }
 
 func (p *Podman) Stop(ctx context.Context, containerNames []string) error {
+	for _, name := range containerNames {
+		inspectResult, err := p.InspectContainer(ctx, name)
+		if err != nil {
+			return fmt.Errorf("container '%s' not found", name)
+		}
+		if inspectResult.ContainerStatus == containermanager.PausedStatus {
+			if err := p.Unpause(ctx, name); err != nil {
+				return err
+			}
+		}
+	}
+
 	args := []string{"stop"}
 	args = append(args, containerNames...)
 

@@ -609,6 +609,18 @@ func (d *Docker) Remove(
 }
 
 func (d *Docker) Stop(ctx context.Context, containerNames []string) error {
+	for _, name := range containerNames {
+		inspectResult, err := d.InspectContainer(ctx, name)
+		if err != nil {
+			return fmt.Errorf("container '%s' not found", name)
+		}
+		if inspectResult.ContainerStatus == containermanager.PausedStatus {
+			if err := d.Unpause(ctx, name); err != nil {
+				return err
+			}
+		}
+	}
+
 	args := []string{"stop"}
 	args = append(args, containerNames...)
 
