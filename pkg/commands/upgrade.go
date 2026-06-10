@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	insidecontainer "github.com/ferret-linux/otter/internal/insidecontainer"
+	"github.com/ferret-linux/otter/internal/insidecontainer"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/netcheck"
 	"github.com/ferret-linux/otter/pkg/ui"

@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	insidecontainer "github.com/ferret-linux/otter/internal/insidecontainer"
+	"github.com/ferret-linux/otter/internal/insidecontainer"
 	"github.com/ferret-linux/otter/internal/userenv"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ui"
