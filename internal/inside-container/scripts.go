@@ -24,7 +24,7 @@ var otterScript string
 // It returns the path to the directory where the scripts are stored, and whether any scripts were updated.
 func ProvisionScripts() (string, bool, error) {
 	dir := hostDir()
-	//nolint:gosec // 0755 is the same as from distrobox v1, let's keep it for compatibility
+	//nolint:gosec // 0755 is correct for directories: executable bit grants traversal permission to all users
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return "", false, fmt.Errorf("failed to create scripts directory: %w", err)
 	}
