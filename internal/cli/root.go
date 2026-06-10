@@ -31,6 +31,11 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 				Hidden: true,
 				Value:  cfg.SudoProgram,
 			},
+			&cli.StringFlag{
+				Name:   "container-manager",
+				Hidden: true,
+				Value:  cfg.ContainerManagerType,
+			},
 		},
 		Before: func(ctx context.Context, _ *cli.Command) (context.Context, error) {
 			if os.Getenv("NO_COLOR") != "" {
@@ -255,16 +260,10 @@ func withRoot(_ *config.Values, cmd *cli.Command) *cli.Command {
 }
 
 // withContainerManager builds the container manager for a command and stores
-// it in the context. It reads --root from the command (zero value if the flag
-// is not declared), so commands without withRootSupport always get a rootless
-// manager.
-func withContainerManager(cfg *config.Values, cmd *cli.Command) *cli.Command {
-	cmd.Flags = append(cmd.Flags, &cli.StringFlag{
-		Name:   "container-manager",
-		Hidden: true,
-		Value:  cfg.ContainerManagerType,
-	})
-
+// it in the context. It reads --container-manager and --sudo-command from the
+// root command, and --root from the current command (zero value if the flag
+// is not declared), so commands without withRoot always get a rootless manager.
+func withContainerManager(_ *config.Values, cmd *cli.Command) *cli.Command {
 	prev := cmd.Before
 	cmd.Before = func(ctx context.Context, c *cli.Command) (context.Context, error) {
 		if prev != nil {
@@ -276,8 +275,8 @@ func withContainerManager(cfg *config.Values, cmd *cli.Command) *cli.Command {
 		}
 		cm, err := buildContainerManager(
 			ctx,
-			c.String("container-manager"),
-			c.String("sudo-command"),
+			c.Root().String("container-manager"),
+			c.Root().String("sudo-command"),
 			c.Bool("root"),
 		)
 		if err != nil {
