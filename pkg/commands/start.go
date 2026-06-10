@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/ferret-linux/otter/pkg/containermanager"
@@ -27,7 +28,7 @@ func NewStartCommand(cm containermanager.ContainerManager) *StartCommand {
 }
 
 func (c *StartCommand) Execute(ctx context.Context, opts *StartOptions) error {
-	if err := netcheck.Check(); err != nil {
+	if err := netcheck.Check(ctx); err != nil {
 		ui.DefaultLogger.Warn("%s", err)
 		return nil
 	}
@@ -40,7 +41,7 @@ func (c *StartCommand) Execute(ctx context.Context, opts *StartOptions) error {
 			return ErrEmptyContainerList
 		}
 		for _, container := range containers.Containers {
-			if err := c.startOne(ctx, container.Name, opts); err != nil {
+			if err := c.startOne(ctx, container.Name); err != nil {
 				return err
 			}
 		}
@@ -48,20 +49,19 @@ func (c *StartCommand) Execute(ctx context.Context, opts *StartOptions) error {
 	}
 
 	if len(opts.ContainerNames) == 0 {
-		return fmt.Errorf("please specify a container name with --name/-n")
+		return errors.New("please specify a container name with --name/-n")
 	}
 	for _, name := range opts.ContainerNames {
-		if err := c.startOne(ctx, name, opts); err != nil {
+		if err := c.startOne(ctx, name); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (c *StartCommand) startOne(ctx context.Context, containerName string, opts *StartOptions) error {
+func (c *StartCommand) startOne(ctx context.Context, containerName string) error {
 	if err := c.containerManager.Start(ctx, containerName); err != nil {
-		return err
+		return fmt.Errorf("failed to start container '%s': %w", containerName, err)
 	}
-
 	return nil
 }

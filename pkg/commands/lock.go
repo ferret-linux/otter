@@ -48,12 +48,12 @@ func (c *LockCommand) Execute(ctx context.Context, opts LockOptions) error {
 	case len(opts.ContainerNames) > 0:
 		containerNames = opts.ContainerNames
 	default:
-		return fmt.Errorf("please specify a container name with --name/-n")
+		return errors.New("please specify a container name with --name/-n")
 	}
 
 	var lastErr error
 	for _, name := range containerNames {
-		if err := c.lockOne(ctx, name, opts); err != nil {
+		if err := c.lockOne(ctx, name); err != nil {
 			ui.DefaultLogger.Error("failed to lock '%s': %s", name, err)
 			lastErr = err
 		}
@@ -61,7 +61,7 @@ func (c *LockCommand) Execute(ctx context.Context, opts LockOptions) error {
 	return lastErr
 }
 
-func (c *LockCommand) lockOne(ctx context.Context, name string, opts LockOptions) error {
+func (c *LockCommand) lockOne(ctx context.Context, name string) error {
 	if !c.containerManager.Exists(ctx, name) {
 		return fmt.Errorf("container '%s' not found", name)
 	}
@@ -74,7 +74,9 @@ func (c *LockCommand) lockOne(ctx context.Context, name string, opts LockOptions
 	if err != nil {
 		return fmt.Errorf("failed to create lock file: %w", err)
 	}
-	f.Close()
+	if err := f.Close(); err != nil {
+		return fmt.Errorf("failed to close temp lock file: %w", err)
+	}
 	defer os.Remove(f.Name())
 
 	if err := c.containerManager.WriteToContainer(ctx, name, f.Name(), lockFilePath); err != nil {
@@ -92,7 +94,9 @@ func isLocked(ctx context.Context, cm containermanager.ContainerManager, contain
 	if err != nil {
 		return false
 	}
-	tmp.Close()
+	if err := tmp.Close(); err != nil {
+		return false
+	}
 	defer os.Remove(tmp.Name())
 
 	return cm.CopyFromContainer(ctx, containerName, lockFilePath, tmp.Name()) == nil

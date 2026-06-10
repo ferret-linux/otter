@@ -1,6 +1,7 @@
 package netcheck
 
 import (
+	"context"
 	"errors"
 	"sync"
 
@@ -18,7 +19,7 @@ var errAllFailed = errors.New("all targets failed")
 //   - If HTTPS passes, report success immediately.
 //   - If HTTP passes, wait for HTTPS; if HTTPS fails, report fail.
 //   - If both HTTP and HTTPS fail, report fail.
-func Check() error {
+func Check(ctx context.Context) error {
 	type result struct {
 		name string
 		err  error
@@ -31,10 +32,10 @@ func Check() error {
 
 	ui.DefaultLogger.Info("verifying network availability...")
 
-	go func() { dnsResult <- result{"DNS", checkDNS()} }()
-	go func() { tcpResult <- result{"TCP", checkTCP()} }()
-	go func() { httpResult <- result{"HTTP", checkHTTP()} }()
-	go func() { httpsResult <- result{"HTTPS", checkHTTPS()} }()
+	go func() { dnsResult <- result{"DNS", checkDNS(ctx)} }()
+	go func() { tcpResult <- result{"TCP", checkTCP(ctx)} }()
+	go func() { httpResult <- result{"HTTP", checkHTTP(ctx)} }()
+	go func() { httpsResult <- result{"HTTPS", checkHTTPS(ctx)} }()
 
 	dns := <-dnsResult
 	tcp := <-tcpResult

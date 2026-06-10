@@ -46,8 +46,8 @@ func newRegistryCommand(cfg *config.Values) *cli.Command {
 	}
 }
 
-func registryAction(_ context.Context, cmd *cli.Command) error {
-	props, err := registry.Fetch()
+func registryAction(ctx context.Context, cmd *cli.Command) error {
+	props, err := registry.Fetch(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to fetch registry: %w", err)
 	}
@@ -84,7 +84,7 @@ func registryPullAction(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	props, err := registry.Fetch()
+	props, err := registry.Fetch(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to fetch registry: %w", err)
 	}
@@ -134,7 +134,7 @@ func registryRemoveAction(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	props, err := registry.Fetch()
+	props, err := registry.Fetch(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to fetch registry: %w", err)
 	}

@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/ferret-linux/otter/pkg/containermanager"
@@ -51,12 +52,12 @@ func (c *PauseCommand) Execute(ctx context.Context, opts *PauseOptions) error {
 	case len(opts.ContainerNames) > 0:
 		containerNames = opts.ContainerNames
 	default:
-		return fmt.Errorf("please specify a container name or use --all")
+		return errors.New("please specify a container name or use --all")
 	}
 
 	for _, name := range containerNames {
 		if err := c.containerManager.Pause(ctx, name); err != nil {
-			return err
+			return fmt.Errorf("failed to pause container '%s': %w", name, err)
 		}
 		ui.DefaultLogger.Ok("paused '%s'", name)
 	}

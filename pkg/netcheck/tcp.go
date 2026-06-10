@@ -1,10 +1,13 @@
 package netcheck
 
 import (
+	"context"
+	"fmt"
 	"net"
 	"time"
 )
 
+//nolint:gochecknoglobals // package-level TCP target list is effectively a constant
 var tcpTargets = []string{
 	"1.1.1.1:443",
 	"8.8.8.8:443",
@@ -12,12 +15,16 @@ var tcpTargets = []string{
 	"185.199.108.133:443",
 }
 
-func checkTCP() error {
+func checkTCP(ctx context.Context) error {
+	dialer := &net.Dialer{Timeout: 3 * time.Second}
 	return firstSuccess(len(tcpTargets), func(i int) error {
-		conn, err := net.DialTimeout("tcp", tcpTargets[i], 3*time.Second)
-		if err == nil {
-			conn.Close()
+		conn, err := dialer.DialContext(ctx, "tcp", tcpTargets[i])
+		if err != nil {
+			return fmt.Errorf("TCP check failed for %s: %w", tcpTargets[i], err)
 		}
-		return err
+		if err := conn.Close(); err != nil {
+			return fmt.Errorf("failed to close TCP connection: %w", err)
+		}
+		return nil
 	})
 }

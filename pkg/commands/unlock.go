@@ -45,12 +45,12 @@ func (c *UnlockCommand) Execute(ctx context.Context, opts UnlockOptions) error {
 	case len(opts.ContainerNames) > 0:
 		containerNames = opts.ContainerNames
 	default:
-		return fmt.Errorf("please specify a container name with --name/-n")
+		return errors.New("please specify a container name with --name/-n")
 	}
 
 	var lastErr error
 	for _, name := range containerNames {
-		if err := c.unlockOne(ctx, name, opts); err != nil {
+		if err := c.unlockOne(ctx, name); err != nil {
 			ui.DefaultLogger.Error("failed to unlock '%s': %s", name, err)
 			lastErr = err
 		}
@@ -58,7 +58,7 @@ func (c *UnlockCommand) Execute(ctx context.Context, opts UnlockOptions) error {
 	return lastErr
 }
 
-func (c *UnlockCommand) unlockOne(ctx context.Context, name string, opts UnlockOptions) error {
+func (c *UnlockCommand) unlockOne(ctx context.Context, name string) error {
 	if !c.containerManager.Exists(ctx, name) {
 		return fmt.Errorf("container '%s' not found", name)
 	}

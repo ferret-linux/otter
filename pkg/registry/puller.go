@@ -25,7 +25,7 @@ func Pull(
 		return nil
 	}
 
-	if err := netcheck.Check(); err != nil {
+	if err := netcheck.Check(ctx); err != nil {
 		return fmt.Errorf("cannot pull image: %w", err)
 	}
 

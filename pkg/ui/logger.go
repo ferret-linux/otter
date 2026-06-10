@@ -15,6 +15,8 @@ func NewLogger(writer io.Writer) *Logger {
 }
 
 // DefaultLogger writes to stderr
+//
+//nolint:gochecknoglobals // singleton: process-wide logger instance
 var DefaultLogger = NewLogger(os.Stderr)
 
 func (l *Logger) Ok(msg string, a ...any) {

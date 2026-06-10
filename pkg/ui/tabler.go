@@ -8,6 +8,7 @@ import (
 
 const colGap = 3
 
+//nolint:gochecknoglobals // box-drawing character set is effectively a constant
 var (
 	topLeft     = "╭"
 	topRight    = "╮"
@@ -55,6 +56,7 @@ func (t *Table) AddRow(cols []string, colors []func(string) string) {
 	t.rows = append(t.rows, tableRow{cols: cols, colors: colors})
 }
 
+//nolint:gocognit // ignore cognitive complexity here, Render orchestrates table layout and drawing
 func (t *Table) Render() {
 	// Calculate column widths from content
 	widths := make([]int, len(t.headers))
@@ -103,11 +105,11 @@ func (t *Table) Render() {
 		return sb.String()
 	}
 
-	//nolint:forbidigo
+	//nolint:forbidigo // writing to an io.Writer, not stdout directly
 	fmt.Fprintln(t.w, hline(tableWidth, topLeft, topRight))
-	//nolint:forbidigo
+	//nolint:forbidigo // writing to an io.Writer, not stdout directly
 	fmt.Fprintln(t.w, renderRow(t.headers, true))
-	//nolint:forbidigo
+	//nolint:forbidigo // writing to an io.Writer, not stdout directly
 	fmt.Fprintln(t.w, hline(tableWidth, middleLeft, middleRight))
 	for _, r := range t.rows {
 		var sb strings.Builder
@@ -129,10 +131,10 @@ func (t *Table) Render() {
 		}
 		sb.WriteString(" ")
 		sb.WriteString(Cyan(vertical))
-		//nolint:forbidigo
+		//nolint:forbidigo // writing to an io.Writer, not stdout directly
 		fmt.Fprintln(t.w, sb.String())
 	}
-	//nolint:forbidigo
+	//nolint:forbidigo // writing to an io.Writer, not stdout directly
 	fmt.Fprintln(t.w, hline(tableWidth, bottomLeft, bottomRight))
 }
 
@@ -210,20 +212,20 @@ func (p *Panel) Render() {
 		return Cyan(vertical) + " " + colored + padding + " " + Cyan(vertical)
 	}
 
-	//nolint:forbidigo
+	//nolint:forbidigo // writing to an io.Writer, not stdout directly
 	fmt.Fprintln(p.w, hline(tableWidth, topLeft, topRight))
 	for i, s := range p.sections {
 		if i > 0 {
-			//nolint:forbidigo
+			//nolint:forbidigo // writing to an io.Writer, not stdout directly
 			fmt.Fprintln(p.w, hline(tableWidth, middleLeft, middleRight))
 		}
-		//nolint:forbidigo
+		//nolint:forbidigo // writing to an io.Writer, not stdout directly
 		fmt.Fprintln(p.w, renderSection(s.title))
 		for _, r := range s.rows {
-			//nolint:forbidigo
+			//nolint:forbidigo // writing to an io.Writer, not stdout directly
 			fmt.Fprintln(p.w, renderKV(r.key, r.value))
 		}
 	}
-	//nolint:forbidigo
+	//nolint:forbidigo // writing to an io.Writer, not stdout directly
 	fmt.Fprintln(p.w, hline(tableWidth, bottomLeft, bottomRight))
 }

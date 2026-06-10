@@ -112,7 +112,7 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 		return nil, fmt.Errorf("cpu-threads validation failed: %w", err)
 	}
 
-	containerImage, err := c.makeContainerImage(&opts)
+	containerImage, err := c.makeContainerImage(ctx, &opts)
 	if err != nil {
 		return nil, fmt.Errorf("failed to resolve container image: %w", err)
 	}
@@ -293,13 +293,13 @@ func (c *CreateCommand) makeContainerShell(opts *CreateOptions) string {
 	}
 }
 
-func (c *CreateCommand) makeContainerImage(opts *CreateOptions) (string, error) {
+func (c *CreateCommand) makeContainerImage(ctx context.Context, opts *CreateOptions) (string, error) {
 	containerImage := opts.ContainerImage
 	if opts.ContainerClone == "" && containerImage == "" {
 		containerImage = c.cfg.DefaultContainerImage
 	}
 	if containerImage != "" && opts.ContainerClone == "" {
-		props, err := registry.Fetch()
+		props, err := registry.Fetch(ctx)
 		if err != nil {
 			return "", fmt.Errorf("failed to fetch registry properties: %w", err)
 		}

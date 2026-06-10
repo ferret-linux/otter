@@ -1,4 +1,4 @@
-package insideContainer
+package insidecontainer
 
 import (
 	"crypto/sha256"

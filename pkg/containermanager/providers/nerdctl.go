@@ -1,3 +1,4 @@
+//nolint:goconst // CLI flag strings are intentionally repeated per-provider; they may diverge independently
 package providers
 
 import (
@@ -12,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	insideContainer "github.com/ferret-linux/otter/internal/inside-container"
+	insideContainer "github.com/ferret-linux/otter/internal/inside-container" //nolint:importas // alias kept for readability
 	"github.com/ferret-linux/otter/internal/userenv"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ui"
@@ -278,8 +279,8 @@ func (n *Nerdctl) makeCreateCommand(
 		hostname, _ := os.Hostname()
 		if containerHostname == hostname {
 			hostnameFile := "/etc/hostname"
-			if real, err := filepath.EvalSymlinks(hostnameFile); err == nil {
-				hostnameFile = real
+			if resolved, err := filepath.EvalSymlinks(hostnameFile); err == nil {
+				hostnameFile = resolved
 			}
 			options = append(options, "--volume", fmt.Sprintf("%s:/etc/hostname:ro", hostnameFile))
 		}
@@ -811,7 +812,7 @@ func (n *Nerdctl) Journal(ctx context.Context, containerName string, opts contai
 		args = append(args, "--timestamps")
 	}
 	if opts.Tail >= 0 {
-		args = append(args, "--tail", fmt.Sprintf("%d", opts.Tail))
+		args = append(args, "--tail", strconv.Itoa(opts.Tail))
 	}
 	args = append(args, containerName)
 	_, err := n.run(ctx, args, runOptions{Interactive: true})

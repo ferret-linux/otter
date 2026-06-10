@@ -1,7 +1,12 @@
 package netcheck
 
-import "net"
+import (
+	"context"
+	"fmt"
+	"net"
+)
 
+//nolint:gochecknoglobals // package-level DNS target list is effectively a constant
 var dnsTargets = []string{
 	"cloudflare.com",
 	"google.com",
@@ -9,9 +14,13 @@ var dnsTargets = []string{
 	"ghcr.io",
 }
 
-func checkDNS() error {
+func checkDNS(ctx context.Context) error {
+	resolver := &net.Resolver{}
 	return firstSuccess(len(dnsTargets), func(i int) error {
-		_, err := net.LookupHost(dnsTargets[i])
-		return err
+		_, err := resolver.LookupHost(ctx, dnsTargets[i])
+		if err != nil {
+			return fmt.Errorf("DNS lookup failed for %s: %w", dnsTargets[i], err)
+		}
+		return nil
 	})
 }

@@ -10,6 +10,7 @@ import (
 	"os"
 
 	"github.com/BurntSushi/toml"
+
 	"github.com/ferret-linux/otter/internal/userenv"
 )
 

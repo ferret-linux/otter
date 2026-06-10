@@ -2,9 +2,10 @@ package commands
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
-	insideContainer "github.com/ferret-linux/otter/internal/inside-container"
+	insideContainer "github.com/ferret-linux/otter/internal/inside-container" //nolint:importas // alias kept for readability
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/netcheck"
 	"github.com/ferret-linux/otter/pkg/ui"
@@ -37,6 +38,7 @@ func NewUpgradeCommand(
 	}
 }
 
+//nolint:gocognit // ignore cognitive complexity here, the function orchestrates multi-step container upgrade
 func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) error {
 	var containerNames []string
 
@@ -66,7 +68,7 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 	case len(opts.ContainerNames) > 0:
 		containerNames = opts.ContainerNames
 	default:
-		return fmt.Errorf("please specify a container name with --name/-n")
+		return errors.New("please specify a container name with --name/-n")
 	}
 
 	var lastErr error
@@ -89,7 +91,7 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 }
 
 func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string) error {
-	if err := netcheck.Check(); err != nil {
+	if err := netcheck.Check(ctx); err != nil {
 		ui.DefaultLogger.Warn("%s", err)
 		return nil
 	}
@@ -104,7 +106,7 @@ func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string) erro
 	if err := c.startCmd.Execute(ctx, &StartOptions{
 		ContainerNames: []string{name},
 	}); err != nil {
-		return err
+		return fmt.Errorf("failed to start container '%s' for upgrade: %w", name, err)
 	}
 
 	enterOpts := EnterOptions{

@@ -49,6 +49,7 @@ func NewRmCommand(
 	}
 }
 
+//nolint:gocognit // ignore cognitive complexity here, the function orchestrates multi-step container removal
 func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, error) {
 	if !options.NoTTY && c.prompter == nil {
 		return nil, errors.New("prompter is required for interactive mode")

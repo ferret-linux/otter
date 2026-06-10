@@ -13,6 +13,7 @@ const (
 	colorReset  = "\033[0m"
 )
 
+//nolint:gochecknoglobals // process-wide color toggle, set once at startup via SetNoColor
 var noColor bool
 
 func SetNoColor(v bool) {
