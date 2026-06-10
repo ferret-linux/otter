@@ -42,7 +42,6 @@ func NewRmCommand(cm containermanager.ContainerManager) *RmCommand {
 	}
 }
 
-//nolint:gocognit // ignore cognitive complexity here, the function orchestrates multi-step container removal
 func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, error) {
 	listResult, err := c.listCmd.Execute(ctx)
 	if err != nil {
