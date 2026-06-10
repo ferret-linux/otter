@@ -6,8 +6,8 @@
 {2}│{R}  {5}otter pause [options] [container]{R}          {2}│{R}
 {2}├─────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                  {2}│{R}
-{2}│{R}  {5}otter pz my-box{R}                           {2}│{R}
-{2}│{R}  {5}otter pz --all{R}                            {2}│{R}
+{2}│{R}  {5}otter pz my-box{R}                            {2}│{R}
+{2}│{R}  {5}otter pz --all{R}                             {2}│{R}
 {2}│{R}  {5}otter pause ubuntu,fedora{R}                  {2}│{R}
 {2}│{R}  {5}otter pause --all --root{R}                   {2}│{R}
 {2}├─────────────────────────────────────────────┤{R}
