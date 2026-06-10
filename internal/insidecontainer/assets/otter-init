@@ -29,7 +29,7 @@
 
 # Network check: verify connectivity before doing anything else.
 # Runs before the borked trap so a failed check does not mark the container as borked.
-if ! ping -c1 -W3 1.1.1.1 > /dev/null 2>&1 && ! ping -c1 -W3 8.8.8.8 > /dev/null 2>&1; then
+if ! getent hosts one.one.one.one > /dev/null 2>&1; then
 	printf "Error: no network connectivity, otter-init requires network access\n"
 	exit 1
 fi
