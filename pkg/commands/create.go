@@ -101,7 +101,7 @@ func NewCreateCommand(cfg *config.Values, cm containermanager.ContainerManager, 
 	}
 }
 
-//nolint:gocognit // ignore cognitive complexity here, the function orchestrates multi-step container creation
+//nolint:gocognit,funlen // ignore cognitive complexity here, the function orchestrates multi-step container creation
 func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*CreateResult, error) {
 	opts.ContainerShell = c.makeContainerShell(&opts)
 

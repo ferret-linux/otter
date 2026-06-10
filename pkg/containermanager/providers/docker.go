@@ -156,7 +156,7 @@ func (d *Docker) Create(
 
 // makeCreateCommand builds the docker create command with all necessary options.
 //
-//nolint:gocognit,funlen,gocyclo // ignore cognitive complexity here, the function is mostly imperative option appending
+//nolint:gocognit,funlen,gocyclo,cyclop // ignore cognitive complexity here, the function is mostly imperative option appending
 func (d *Docker) makeCreateCommand(
 	containerName string,
 	containerImage string,

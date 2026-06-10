@@ -1,3 +1,4 @@
+//nolint:goconst // CLI flag strings are intentionally repeated per-command; they may diverge independently
 package cli
 
 import (

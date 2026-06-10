@@ -12,7 +12,7 @@ import (
 	"github.com/ferret-linux/otter/pkg/containermanager"
 )
 
-func newEnterCommand(cfg *config.Values) *cli.Command {
+func newEnterCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "enter",
 		Aliases: []string{"sh"},
@@ -44,9 +44,7 @@ func newEnterCommand(cfg *config.Values) *cli.Command {
 				Aliases: []string{"S"},
 			},
 		},
-		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return enterAction(ctx, cmd)
-		},
+		Action: enterAction,
 	}
 }
 

@@ -157,6 +157,7 @@ func (p *Panel) AddSection(title string, rows ...panelRow) {
 	p.sections = append(p.sections, panelSection{title: title, rows: rows})
 }
 
+//nolint:revive // unexported return is intentional; callers always pass the result directly into AddSection
 func PanelRow(key, value string) panelRow {
 	return panelRow{key: key, value: value}
 }
@@ -207,20 +208,15 @@ func (p *Panel) Render() {
 		return Cyan(vertical) + " " + colored + padding + " " + Cyan(vertical)
 	}
 
-	//nolint:forbidigo // writing to an io.Writer, not stdout directly
 	fmt.Fprintln(p.w, hline(tableWidth, topLeft, topRight))
 	for i, s := range p.sections {
 		if i > 0 {
-			//nolint:forbidigo // writing to an io.Writer, not stdout directly
 			fmt.Fprintln(p.w, hline(tableWidth, middleLeft, middleRight))
 		}
-		//nolint:forbidigo // writing to an io.Writer, not stdout directly
 		fmt.Fprintln(p.w, renderSection(s.title))
 		for _, r := range s.rows {
-			//nolint:forbidigo // writing to an io.Writer, not stdout directly
 			fmt.Fprintln(p.w, renderKV(r.key, r.value))
 		}
 	}
-	//nolint:forbidigo // writing to an io.Writer, not stdout directly
 	fmt.Fprintln(p.w, hline(tableWidth, bottomLeft, bottomRight))
 }

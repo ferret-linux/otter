@@ -1,3 +1,4 @@
+//nolint:goconst // "auto" is a sentinel value used in multiple places independently
 package commands
 
 import (
