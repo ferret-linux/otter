@@ -34,10 +34,12 @@ func newRmCommand(_ *config.Values) *cli.Command {
 				Aliases: []string{"y"},
 			},
 			&cli.BoolFlag{
-				Name: "rm-home",
+				Name:    "rm-home",
+				Aliases: []string{"H"},
 			},
 			&cli.BoolFlag{
-				Name: "bypass-lock",
+				Name:    "bypass-lock",
+				Aliases: []string{"B"},
 			},
 		},
 

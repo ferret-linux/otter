@@ -25,7 +25,8 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 				Aliases: []string{"i"},
 			},
 			&cli.StringFlag{
-				Name: "hostname",
+				Name:    "hostname",
+				Aliases: []string{"n"},
 			},
 			&cli.StringFlag{
 				Name:    "shell",
@@ -56,7 +57,8 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 				Aliases: []string{"H"},
 			},
 			&cli.StringSliceFlag{
-				Name: "volume",
+				Name:    "volume",
+				Aliases: []string{"v"},
 			},
 			&cli.StringSliceFlag{
 				Name:    "additional-flags",
@@ -67,47 +69,60 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 				Aliases: []string{"ap"},
 			},
 			&cli.StringFlag{
-				Name: "init-hooks",
+				Name:    "init-hooks",
+				Aliases: []string{"ih"},
 			},
 			&cli.StringFlag{
-				Name: "pre-init-hooks",
+				Name:    "pre-init-hooks",
+				Aliases: []string{"ph"},
 			},
 			&cli.BoolFlag{
 				Name:    "init",
 				Aliases: []string{"I"},
 			},
 			&cli.StringFlag{
-				Name: "memory",
+				Name:    "memory",
+				Aliases: []string{"m"},
 			},
 			&cli.IntFlag{
-				Name: "cpu-threads",
+				Name:    "cpu-threads",
+				Aliases: []string{"t"},
 			},
 			&cli.BoolFlag{
-				Name: "nvidia",
+				Name:    "nvidia",
+				Aliases: []string{"N"},
 			},
 			&cli.StringFlag{
-				Name: "platform",
+				Name:    "platform",
+				Aliases: []string{"P"},
 			},
 			&cli.BoolFlag{
-				Name: "unshare-devsys",
+				Name:    "unshare-devsys",
+				Aliases: []string{"ud"},
 			},
 			&cli.BoolFlag{
-				Name: "unshare-groups",
+				Name:    "unshare-groups",
+				Aliases: []string{"ug"},
 			},
 			&cli.BoolFlag{
-				Name: "unshare-ipc",
+				Name:    "unshare-ipc",
+				Aliases: []string{"ui"},
 			},
 			&cli.BoolFlag{
-				Name: "unshare-netns",
+				Name:    "unshare-netns",
+				Aliases: []string{"un"},
 			},
 			&cli.BoolFlag{
-				Name: "unshare-process",
+				Name:    "unshare-process",
+				Aliases: []string{"up"},
 			},
 			&cli.BoolFlag{
-				Name: "unshare-all",
+				Name:    "unshare-all",
+				Aliases: []string{"ua"},
 			},
 			&cli.BoolFlag{
-				Name: "no-entry",
+				Name:    "no-entry",
+				Aliases: []string{"E"},
 			},
 			&cli.BoolFlag{
 				Name: "absolutely-disable-root-password-i-am-really-positively-sure",

@@ -22,18 +22,21 @@ func newJournalCommand(_ *config.Values) *cli.Command {
 				Aliases: []string{"f"},
 			},
 			&cli.StringFlag{
-				Name: "since",
+				Name:    "since",
+				Aliases: []string{"s"},
 			},
 			&cli.StringFlag{
-				Name: "until",
+				Name:    "until",
+				Aliases: []string{"u"},
 			},
 			&cli.BoolFlag{
 				Name:    "timestamps",
 				Aliases: []string{"t"},
 			},
 			&cli.IntFlag{
-				Name:  "tail",
-				Value: -1,
+				Name:    "tail",
+				Aliases: []string{"n"},
+				Value:   -1,
 			},
 		},
 		Action: journalAction,

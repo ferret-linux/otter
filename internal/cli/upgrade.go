@@ -24,7 +24,8 @@ func newUpgradeCommand(_ *config.Values) *cli.Command {
 				Aliases: []string{"a"},
 			},
 			&cli.BoolFlag{
-				Name: "running",
+				Name:    "running",
+				Aliases: []string{"R"},
 			},
 		},
 		Action: upgradeAction,

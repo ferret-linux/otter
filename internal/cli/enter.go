@@ -34,10 +34,12 @@ func newEnterCommand(_ *config.Values) *cli.Command {
 				Aliases: []string{"nw"},
 			},
 			&cli.StringSliceFlag{
-				Name: "add-env",
+				Name:    "add-env",
+				Aliases: []string{"e"},
 			},
 			&cli.BoolFlag{
-				Name: "empty-env",
+				Name:    "empty-env",
+				Aliases: []string{"E"},
 			},
 			&cli.BoolFlag{
 				Name:    "auto-start",
