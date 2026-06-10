@@ -67,12 +67,11 @@ run_step "start"         "${OTTER[@]}" start "${ROOT_FLAG[@]}" "${CONTAINER_NAME
 run_step "list"          "${OTTER[@]}" list "${ROOT_FLAG[@]}"
 run_step "inspect"       "${OTTER[@]}" inspect "${ROOT_FLAG[@]}" "${CONTAINER_NAME}"
 run_step "journal"       "${OTTER[@]}" journal "${ROOT_FLAG[@]}" --tail 20 --timestamps "${CONTAINER_NAME}"
-run_step "upgrade"       "${OTTER[@]}" upgrade "${ROOT_FLAG[@]}" "${CONTAINER_NAME}"
 run_step "restart"       "${OTTER[@]}" restart "${ROOT_FLAG[@]}" "${CONTAINER_NAME}"
 run_step "enter"         "${OTTER[@]}" enter "${ROOT_FLAG[@]}" --no-tty "${CONTAINER_NAME}" -- whoami
-run_step "pause"         "${OTTER[@]}" pause "${ROOT_FLAG[@]}" "${CONTAINER_NAME}"
 run_step "lock"          "${OTTER[@]}" lock "${ROOT_FLAG[@]}" "${CONTAINER_NAME}"
 run_step "unlock"        "${OTTER[@]}" unlock "${ROOT_FLAG[@]}" "${CONTAINER_NAME}"
+run_step "pause"         "${OTTER[@]}" pause "${ROOT_FLAG[@]}" "${CONTAINER_NAME}"
 run_step "stop"          "${OTTER[@]}" stop "${ROOT_FLAG[@]}" "${CONTAINER_NAME}"
 run_step "clone"         "${OTTER[@]}" create "${ROOT_FLAG[@]}" --clone "${CONTAINER_NAME}" "${CONTAINER_NAME}-clone"
 run_step "remove clone"  "${OTTER[@]}" remove "${ROOT_FLAG[@]}" --force "${CONTAINER_NAME}-clone"
