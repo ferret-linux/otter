@@ -32,7 +32,7 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 				Value:  cfg.SudoProgram,
 			},
 		},
-		Before: func(ctx context.Context, cmd *cli.Command) (context.Context, error) {
+		Before: func(ctx context.Context, _ *cli.Command) (context.Context, error) {
 			if os.Getenv("NO_COLOR") != "" {
 				ui.SetNoColor(true)
 			} else {
