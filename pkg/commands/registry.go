@@ -15,7 +15,13 @@ import (
 // RegistryList renders a table of available images from props.
 // If all is false, disabled images are omitted.
 func RegistryList(props *registry.ImagesProperties, all bool) {
-	t := ui.NewTable(os.Stdout, "NAME", "ARCH", "STATUS", "IMAGE")
+	var t *ui.Table
+	if all {
+		t = ui.NewTable(os.Stdout, "NAME", "ARCH", "STATUS", "IMAGE")
+	} else {
+		t = ui.NewTable(os.Stdout, "NAME", "ARCH", "IMAGE")
+	}
+
 	for _, entry := range props.Images {
 		if !all && !entry.Enabled {
 			continue
@@ -37,10 +43,17 @@ func RegistryList(props *registry.ImagesProperties, all bool) {
 
 		arch := strings.Join(entry.Architecture, ", ")
 
-		t.AddRow(
-			[]string{entry.Name, arch, status, imageRef},
-			[]func(string) string{ui.Teal, ui.Dim, statusColor, ui.Dim},
-		)
+		if all {
+			t.AddRow(
+				[]string{entry.Name, arch, status, imageRef},
+				[]func(string) string{ui.Teal, ui.Dim, statusColor, ui.Dim},
+			)
+		} else {
+			t.AddRow(
+				[]string{entry.Name, arch, imageRef},
+				[]func(string) string{ui.Teal, ui.Dim, ui.Dim},
+			)
+		}
 	}
 	t.Render()
 }
