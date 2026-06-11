@@ -13,8 +13,6 @@ import (
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
-const ghcrPrefix = "ghcr.io/ferret-linux/"
-
 // relativeTime returns a human-readable relative time string for an RFC3339 timestamp.
 func relativeTime(s string) string {
 	if s == "" {
@@ -97,7 +95,7 @@ func RegistryList(props *registry.ImagesProperties, all bool) {
 		}
 
 		arch := strings.Join(entry.Architecture, ", ")
-		imageRef = strings.TrimPrefix(imageRef, ghcrPrefix)
+		imageRef = ui.TrimImageRef(imageRef)
 
 		if all {
 			t.AddRow(

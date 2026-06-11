@@ -56,7 +56,7 @@ func printResult(result *commands.ListResult) {
 			statusColor = ui.Red
 		}
 		t.AddRow(
-			[]string{c.ID, c.Name, status, c.Image},
+			[]string{c.ID, c.Name, status, ui.TrimImageRef(c.Image)},
 			[]func(string) string{ui.Dim, ui.Teal, statusColor, ui.Dim},
 		)
 	}
