@@ -61,7 +61,6 @@ type dockerContainer struct {
 
 type runOptions struct {
 	Interactive bool
-	Detach      bool
 }
 
 type inspectOutput struct {
@@ -510,14 +509,6 @@ func (d *Docker) run(ctx context.Context, args []string, opts runOptions) (strin
 		return "", nil
 	}
 
-	if opts.Detach {
-		if err := cmd.Start(); err != nil {
-			return "", fmt.Errorf("error starting detached command: %w", err)
-		}
-		_ = cmd.Process.Release() // best-effort: release OS resources for detached process
-		return "", nil
-	}
-
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
@@ -563,7 +554,7 @@ func (d *Docker) Enter(
 
 	runOpt := runOptions{Interactive: true}
 	if options.NoTTY {
-		runOpt = runOptions{Detach: true}
+		runOpt = runOptions{}
 	}
 	if _, err := d.run(ctx, append(command, commandArgs...), runOpt); err != nil {
 		return err
