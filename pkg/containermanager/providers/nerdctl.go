@@ -539,7 +539,7 @@ func (n *Nerdctl) Enter(
 
 	runOpt := runOptions{Interactive: true}
 	if options.NoTTY {
-		runOpt = runOptions{Detach: true}
+		runOpt = runOptions{}
 	}
 	if _, err := n.run(ctx, append(command, commandArgs...), runOpt); err != nil {
 		return err

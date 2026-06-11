@@ -549,7 +549,7 @@ func (p *Podman) Enter(
 
 	runOpt := runOptions{Interactive: true}
 	if options.NoTTY {
-		runOpt = runOptions{Detach: true}
+		runOpt = runOptions{}
 	}
 	if _, err := p.run(ctx, append(command, commandArgs...), runOpt); err != nil {
 		return err
