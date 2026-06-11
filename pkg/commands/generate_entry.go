@@ -298,7 +298,10 @@ func (c *GenerateEntryCommand) getIconPath(ctx context.Context, containerName st
 	destPath := filepath.Join(iconsDir, destFileName)
 	if _, err := os.Stat(destPath); os.IsNotExist(err) {
 		//nolint:gosec // 644 is standard for icon files
-		_ = os.WriteFile(destPath, iconData, 0644)
+		if err := os.WriteFile(destPath, iconData, 0644); err != nil {
+			ui.DefaultLogger.Warn("failed to write icon file: %v", err)
+			return ""
+		}
 	}
 
 	return destPath
@@ -330,7 +333,9 @@ func (c *GenerateEntryCommand) readDistroID(ctx context.Context, containerName s
 		}
 	}
 
-	_ = scanner.Err()
+	if err := scanner.Err(); err != nil {
+		ui.DefaultLogger.Warn("failed to read os-release: %v", err)
+	}
 
 	return ""
 }

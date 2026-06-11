@@ -514,7 +514,7 @@ func (d *Docker) run(ctx context.Context, args []string, opts runOptions) (strin
 		if err := cmd.Start(); err != nil {
 			return "", fmt.Errorf("error starting detached command: %w", err)
 		}
-		_ = cmd.Process.Release()
+		_ = cmd.Process.Release() // best-effort: release OS resources for detached process
 		return "", nil
 	}
 

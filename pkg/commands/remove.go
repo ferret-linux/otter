@@ -281,7 +281,7 @@ func findIconFiles(userHome, iconName string) []string {
 
 	var files []string
 
-	_ = filepath.WalkDir(iconsDir, func(path string, d os.DirEntry, err error) error {
+	if err := filepath.WalkDir(iconsDir, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
 			return nil //nolint:nilerr // skip unreadable directories
 		}
@@ -298,7 +298,9 @@ func findIconFiles(userHome, iconName string) []string {
 		}
 
 		return nil
-	})
+	}); err != nil && !os.IsNotExist(err) {
+		ui.DefaultLogger.Warn("failed to walk icons dir: %v", err)
+	}
 
 	return files
 }
