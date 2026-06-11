@@ -25,26 +25,20 @@ jobs:
 
       - name: Collect image sizes and build properties
         run: |
-          built_at="${{ github.event.repository.updated_at }}"
           built_at=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-
-          output=$(jq -c '.images' images/images-properties.json)
 
           result="[]"
 
           while IFS= read -r entry; do
-            name=$(echo "$entry" | jq -r '.name')
-            official_image=$(echo "$entry" | jq -r '.official_image')
-            fallback_vendor_image=$(echo "$entry" | jq -r '.fallback_vendor_image')
-            architecture=$(echo "$entry" | jq -c '.architecture')
+            display_name=$(echo "$entry" | jq -r '.display_name')
+            otr_name=$(echo "$entry" | jq -r '.name')
+            otr_tag=$(echo "$entry" | jq -r '.tag')
+            fallback_vendor_image=$(echo "$entry" | jq -r '.image')
+            architecture=$(echo "$entry" | jq -c '.arches')
             enabled=$(echo "$entry" | jq -r '.enabled')
 
+            official_image="ghcr.io/ferret-linux/${otr_name}:${otr_tag}"
             sizes="{}"
-
-            # Extract otr name and tag from official_image
-            # e.g. ghcr.io/ferret-linux/ubuntu-otr:stable -> ubuntu-otr, stable
-            otr_name=$(echo "$official_image" | sed 's|ghcr.io/ferret-linux/||' | cut -d: -f1)
-            otr_tag=$(echo "$official_image" | cut -d: -f2)
 
             for arch in $(echo "$architecture" | jq -r '.[]'); do
               arch_image="ghcr.io/ferret-linux/${otr_name}:${otr_tag}-${arch}"
@@ -62,7 +56,7 @@ jobs:
             done
 
             entry_updated=$(jq -n \
-              --arg name "$name" \
+              --arg name "$display_name" \
               --arg official_image "$official_image" \
               --arg fallback_vendor_image "$fallback_vendor_image" \
               --argjson architecture "$architecture" \
@@ -80,7 +74,7 @@ jobs:
               }')
 
             result=$(echo "$result" | jq --argjson e "$entry_updated" '. + [$e]')
-          done < <(echo "$output" | jq -c '.[]')
+          done < <(jq -c '.[]' images/images.json)
 
           jq -n \
             --argjson images "$result" \

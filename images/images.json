@@ -4,7 +4,11 @@
     "containerfile": "ubuntu.Containerfile",
     "name": "ubuntu-otr",
     "tag": "stable",
-    "arches": ["amd64", "arm64"],
+    "display_name": "ubuntu",
+    "arches": [
+      "amd64",
+      "arm64"
+    ],
     "enabled": true,
     "grype_distro": "ubuntu"
   },
@@ -13,7 +17,11 @@
     "containerfile": "ubuntu.Containerfile",
     "name": "ubuntu-otr",
     "tag": "lts",
-    "arches": ["amd64", "arm64"],
+    "display_name": "ubuntu-lts",
+    "arches": [
+      "amd64",
+      "arm64"
+    ],
     "enabled": true,
     "grype_distro": "ubuntu"
   },
@@ -22,7 +30,11 @@
     "containerfile": "debian.Containerfile",
     "name": "debian-otr",
     "tag": "stable",
-    "arches": ["amd64", "arm64"],
+    "display_name": "debian",
+    "arches": [
+      "amd64",
+      "arm64"
+    ],
     "enabled": true,
     "grype_distro": "debian"
   },
@@ -31,7 +43,11 @@
     "containerfile": "debian.Containerfile",
     "name": "debian-otr",
     "tag": "testing",
-    "arches": ["amd64", "arm64"],
+    "display_name": "debian-testing",
+    "arches": [
+      "amd64",
+      "arm64"
+    ],
     "enabled": true,
     "grype_distro": "debian"
   },
@@ -40,7 +56,11 @@
     "containerfile": "debian.Containerfile",
     "name": "debian-otr",
     "tag": "unstable",
-    "arches": ["amd64", "arm64"],
+    "display_name": "debian-unstable",
+    "arches": [
+      "amd64",
+      "arm64"
+    ],
     "enabled": true,
     "grype_distro": "debian"
   },
@@ -49,7 +69,11 @@
     "containerfile": "fedora.Containerfile",
     "name": "fedora-otr",
     "tag": "stable",
-    "arches": ["amd64", "arm64"],
+    "display_name": "fedora",
+    "arches": [
+      "amd64",
+      "arm64"
+    ],
     "enabled": true,
     "grype_distro": "fedora"
   },
@@ -58,7 +82,11 @@
     "containerfile": "fedora.Containerfile",
     "name": "fedora-otr",
     "tag": "rawhide",
-    "arches": ["amd64", "arm64"],
+    "display_name": "fedora-rawhide",
+    "arches": [
+      "amd64",
+      "arm64"
+    ],
     "enabled": true,
     "grype_distro": "fedora"
   },
@@ -67,7 +95,10 @@
     "containerfile": "archlinux.Containerfile",
     "name": "arch-otr",
     "tag": "latest",
-    "arches": ["amd64"],
+    "display_name": "arch",
+    "arches": [
+      "amd64"
+    ],
     "enabled": true,
     "grype_distro": "archlinux"
   },
@@ -76,7 +107,10 @@
     "containerfile": "blackarch.Containerfile",
     "name": "blackarch-otr",
     "tag": "latest",
-    "arches": ["amd64"],
+    "display_name": "blackarch",
+    "arches": [
+      "amd64"
+    ],
     "enabled": true
   },
   {
@@ -84,7 +118,11 @@
     "containerfile": "gentoo.Containerfile",
     "name": "gentoo-otr",
     "tag": "stage3",
-    "arches": ["amd64", "arm64"],
+    "display_name": "gentoo",
+    "arches": [
+      "amd64",
+      "arm64"
+    ],
     "enabled": true,
     "grype_distro": "gentoo"
   },
@@ -93,7 +131,11 @@
     "containerfile": "rhel-family.Containerfile",
     "name": "alma-otr",
     "tag": "stable",
-    "arches": ["amd64", "arm64"],
+    "display_name": "alma",
+    "arches": [
+      "amd64",
+      "arm64"
+    ],
     "enabled": true,
     "grype_distro": "almalinux"
   },
@@ -102,7 +144,11 @@
     "containerfile": "rhel-family.Containerfile",
     "name": "rocky-otr",
     "tag": "stable",
-    "arches": ["amd64", "arm64"],
+    "display_name": "rocky",
+    "arches": [
+      "amd64",
+      "arm64"
+    ],
     "enabled": true,
     "grype_distro": "rockylinux"
   },
@@ -111,7 +157,11 @@
     "containerfile": "rhel-family.Containerfile",
     "name": "centos-otr",
     "tag": "stable",
-    "arches": ["amd64", "arm64"],
+    "display_name": "centos",
+    "arches": [
+      "amd64",
+      "arm64"
+    ],
     "enabled": true,
     "grype_distro": "centos"
   },
@@ -120,7 +170,11 @@
     "containerfile": "rhel-family.Containerfile",
     "name": "oracle-otr",
     "tag": "stable",
-    "arches": ["amd64", "arm64"],
+    "display_name": "oracle",
+    "arches": [
+      "amd64",
+      "arm64"
+    ],
     "enabled": true,
     "grype_distro": "oraclelinux"
   },
@@ -129,7 +183,11 @@
     "containerfile": "rhel.Containerfile",
     "name": "rhel-otr",
     "tag": "stable",
-    "arches": ["amd64", "arm64"],
+    "display_name": "rhel",
+    "arches": [
+      "amd64",
+      "arm64"
+    ],
     "enabled": true,
     "grype_distro": "redhat"
   },
@@ -138,7 +196,11 @@
     "containerfile": "opensuse.Containerfile",
     "name": "opensuse-otr",
     "tag": "leap",
-    "arches": ["amd64", "arm64"],
+    "display_name": "opensuse-leap",
+    "arches": [
+      "amd64",
+      "arm64"
+    ],
     "enabled": true,
     "grype_distro": "opensuseleap"
   },
@@ -147,7 +209,11 @@
     "containerfile": "opensuse.Containerfile",
     "name": "opensuse-otr",
     "tag": "tumbleweed",
-    "arches": ["amd64", "arm64"],
+    "display_name": "opensuse-tumbleweed",
+    "arches": [
+      "amd64",
+      "arm64"
+    ],
     "enabled": true
   },
   {
@@ -155,7 +221,11 @@
     "containerfile": "alpine.Containerfile",
     "name": "alpine-otr",
     "tag": "latest",
-    "arches": ["amd64", "arm64"],
+    "display_name": "alpine",
+    "arches": [
+      "amd64",
+      "arm64"
+    ],
     "enabled": true,
     "grype_distro": "alpine"
   },
@@ -164,7 +234,11 @@
     "containerfile": "alpine.Containerfile",
     "name": "alpine-otr",
     "tag": "edge",
-    "arches": ["amd64", "arm64"],
+    "display_name": "alpine-edge",
+    "arches": [
+      "amd64",
+      "arm64"
+    ],
     "enabled": true,
     "grype_distro": "alpine"
   },
@@ -173,7 +247,11 @@
     "containerfile": "kali.Containerfile",
     "name": "kali-otr",
     "tag": "rolling",
-    "arches": ["amd64", "arm64"],
+    "display_name": "kali",
+    "arches": [
+      "amd64",
+      "arm64"
+    ],
     "enabled": true
   },
   {
@@ -181,7 +259,11 @@
     "containerfile": "kali.Containerfile",
     "name": "kali-otr",
     "tag": "edge",
-    "arches": ["amd64", "arm64"],
+    "display_name": "kali-edge",
+    "arches": [
+      "amd64",
+      "arm64"
+    ],
     "enabled": true
   },
   {
@@ -189,7 +271,11 @@
     "containerfile": "void.Containerfile",
     "name": "void-otr",
     "tag": "glibc",
-    "arches": ["amd64", "arm64"],
+    "display_name": "void-glibc",
+    "arches": [
+      "amd64",
+      "arm64"
+    ],
     "enabled": true
   },
   {
@@ -197,7 +283,11 @@
     "containerfile": "void.Containerfile",
     "name": "void-otr",
     "tag": "musl",
-    "arches": ["amd64", "arm64"],
+    "display_name": "void-musl",
+    "arches": [
+      "amd64",
+      "arm64"
+    ],
     "enabled": true
   }
 ]
