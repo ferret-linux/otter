@@ -6,18 +6,73 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/registry"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
+const ghcrPrefix = "ghcr.io/ferret-linux/"
+
+// relativeTime returns a human-readable relative time string for an RFC3339 timestamp.
+func relativeTime(s string) string {
+	if s == "" {
+		return "unknown"
+	}
+	t, err := time.Parse(time.RFC3339, s)
+	if err != nil {
+		return "unknown"
+	}
+	d := time.Since(t)
+	switch {
+	case d < time.Minute:
+		return "just now"
+	case d < time.Hour:
+		m := int(d.Minutes())
+		if m == 1 {
+			return "1 minute ago"
+		}
+		return fmt.Sprintf("%d minutes ago", m)
+	case d < 24*time.Hour:
+		h := int(d.Hours())
+		if h == 1 {
+			return "1 hour ago"
+		}
+		return fmt.Sprintf("%d hours ago", h)
+	case d < 7*24*time.Hour:
+		day := int(d.Hours() / 24)
+		if day == 1 {
+			return "1 day ago"
+		}
+		return fmt.Sprintf("%d days ago", day)
+	case d < 30*24*time.Hour:
+		w := int(d.Hours() / 24 / 7)
+		if w == 1 {
+			return "1 week ago"
+		}
+		return fmt.Sprintf("%d weeks ago", w)
+	case d < 365*24*time.Hour:
+		mo := int(d.Hours() / 24 / 30)
+		if mo == 1 {
+			return "1 month ago"
+		}
+		return fmt.Sprintf("%d months ago", mo)
+	default:
+		y := int(d.Hours() / 24 / 365)
+		if y == 1 {
+			return "1 year ago"
+		}
+		return fmt.Sprintf("%d years ago", y)
+	}
+}
+
 // RegistryList renders a table of available images from props.
-// If all is false, disabled images are omitted.
+// If all is false, disabled images are omitted and STATUS/BUILT columns are hidden.
 func RegistryList(props *registry.ImagesProperties, all bool) {
 	var t *ui.Table
 	if all {
-		t = ui.NewTable(os.Stdout, "NAME", "ARCH", "STATUS", "IMAGE")
+		t = ui.NewTable(os.Stdout, "NAME", "ARCH", "STATUS", "BUILT", "IMAGE")
 	} else {
 		t = ui.NewTable(os.Stdout, "NAME", "ARCH", "IMAGE")
 	}
@@ -42,11 +97,12 @@ func RegistryList(props *registry.ImagesProperties, all bool) {
 		}
 
 		arch := strings.Join(entry.Architecture, ", ")
+		imageRef = strings.TrimPrefix(imageRef, ghcrPrefix)
 
 		if all {
 			t.AddRow(
-				[]string{entry.Name, arch, status, imageRef},
-				[]func(string) string{ui.Teal, ui.Dim, statusColor, ui.Dim},
+				[]string{entry.Name, arch, status, relativeTime(entry.BuiltAt), imageRef},
+				[]func(string) string{ui.Teal, ui.Dim, statusColor, ui.Dim, ui.Dim},
 			)
 		} else {
 			t.AddRow(
