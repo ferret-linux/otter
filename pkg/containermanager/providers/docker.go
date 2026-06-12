@@ -659,15 +659,8 @@ func parseContainerList(output string) ([]containermanager.Container, error) {
 			return nil, fmt.Errorf("failed to parse container JSON: %w", err)
 		}
 
-		const containerIDMaxLength = 12
-
-		id := dc.ID
-		if len(id) > containerIDMaxLength {
-			id = id[:containerIDMaxLength]
-		}
-
 		containers = append(containers, containermanager.Container{
-			ID:     id,
+			ID:     dc.ID,
 			Image:  dc.Image,
 			Name:   dc.Names,
 			Status: dc.Status,

@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -15,15 +16,23 @@ import (
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
+const containerIDDisplayLength = 12
+
 func newListCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "list",
 		Aliases: []string{"ls"},
-		Action:  listAction,
+		Flags: []cli.Flag{
+			&cli.BoolFlag{
+				Name:    "json",
+				Aliases: []string{"j"},
+			},
+		},
+		Action: listAction,
 	}
 }
 
-func listAction(ctx context.Context, _ *cli.Command) error {
+func listAction(ctx context.Context, cmd *cli.Command) error {
 	containerManager, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 	if !ok {
 		return errors.New("container manager not found in context")
@@ -34,9 +43,36 @@ func listAction(ctx context.Context, _ *cli.Command) error {
 		return fmt.Errorf("failed to execute list command: %w", err)
 	}
 
+	if cmd.Bool("json") {
+		return printResultJSON(result)
+	}
+
 	printResult(result)
 
 	return nil
+}
+
+func printResultJSON(result *commands.ListResult) error {
+	type containerJSON struct {
+		ID     string `json:"id"`
+		Name   string `json:"name"`
+		Status string `json:"status"`
+		Image  string `json:"image"`
+	}
+
+	out := make([]containerJSON, 0, len(result.Containers))
+	for _, c := range result.Containers {
+		out = append(out, containerJSON{
+			ID:     c.ID,
+			Name:   c.Name,
+			Status: c.Status,
+			Image:  c.Image,
+		})
+	}
+
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	return enc.Encode(out)
 }
 
 func printResult(result *commands.ListResult) {
@@ -47,6 +83,10 @@ func printResult(result *commands.ListResult) {
 
 	t := ui.NewTable(os.Stdout, "ID", "NAME", "STATUS", "IMAGE")
 	for _, c := range result.Containers {
+		id := c.ID
+		if len(id) > containerIDDisplayLength {
+			id = id[:containerIDDisplayLength]
+		}
 		status := "○ " + c.Status
 		statusColor := ui.Yellow
 		if c.IsRunning() {
@@ -56,7 +96,7 @@ func printResult(result *commands.ListResult) {
 			statusColor = ui.Red
 		}
 		t.AddRow(
-			[]string{c.ID, c.Name, status, ui.TrimImageRef(c.Image)},
+			[]string{id, c.Name, status, ui.TrimImageRef(c.Image)},
 			[]func(string) string{ui.Dim, ui.Teal, statusColor, ui.Dim},
 		)
 	}

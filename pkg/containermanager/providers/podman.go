@@ -660,21 +660,14 @@ func parsePodmanContainerList(output string) ([]containermanager.Container, erro
 		return nil, fmt.Errorf("failed to parse container JSON: %w", err)
 	}
 
-	const containerIDMaxLength = 12
-
 	for _, c := range pc {
-		id := c.ID
-		if len(id) > containerIDMaxLength {
-			id = id[:containerIDMaxLength]
-		}
-
 		name := ""
 		if len(c.Names) > 0 {
 			name = c.Names[0]
 		}
 
 		containers = append(containers, containermanager.Container{
-			ID:     id,
+			ID:     c.ID,
 			Image:  c.Image,
 			Name:   name,
 			Status: c.Status,

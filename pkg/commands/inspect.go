@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -16,6 +17,7 @@ import (
 type InspectOptions struct {
 	ContainerName string
 	Manager       string
+	JSON          bool
 }
 
 type InspectCommand struct {
@@ -42,6 +44,58 @@ func boolToSharedStr(b bool) string {
 	return "shared"
 }
 
+func printInspectJSON(result *containermanager.InspectResult, locked bool, opts InspectOptions) error {
+	out := struct {
+		ID             string `json:"id"`
+		Name           string `json:"name"`
+		Created        string `json:"created"`
+		Status         string `json:"status"`
+		Image          string `json:"image"`
+		Platform       string `json:"platform"`
+		Hostname       string `json:"hostname"`
+		Shell          string `json:"shell"`
+		Home           string `json:"home"`
+		Locked         bool   `json:"locked"`
+		Rootful        bool   `json:"rootful"`
+		Manager        string `json:"manager"`
+		Memory         string `json:"memory"`
+		CPUThreads     int    `json:"cpu_threads"`
+		Init           bool   `json:"init"`
+		Nvidia         bool   `json:"nvidia"`
+		UnshareIPC     bool   `json:"unshare_ipc"`
+		UnshareNetNS   bool   `json:"unshare_netns"`
+		UnshareProcess bool   `json:"unshare_process"`
+		UnshareDevsys  bool   `json:"unshare_devsys"`
+		UnshareGroups  bool   `json:"unshare_groups"`
+	}{
+		ID:             result.ContainerID,
+		Name:           opts.ContainerName,
+		Created:        result.ContainerCreated,
+		Status:         result.ContainerStatus,
+		Image:          result.ContainerImage,
+		Platform:       result.ContainerPlatform,
+		Hostname:       result.ContainerHostname,
+		Shell:          result.ContainerShell,
+		Home:           result.ContainerHome,
+		Locked:         locked,
+		Rootful:        result.Rootful,
+		Manager:        opts.Manager,
+		Memory:         result.Memory,
+		CPUThreads:     result.CPUThreads,
+		Init:           result.Init,
+		Nvidia:         result.Nvidia,
+		UnshareIPC:     result.UnshareIPC,
+		UnshareNetNS:   result.UnshareNetNS,
+		UnshareProcess: result.UnshareProcess,
+		UnshareDevsys:  result.UnshareDevsys,
+		UnshareGroups:  result.UnshareGroups,
+	}
+
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	return enc.Encode(out)
+}
+
 func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error {
 	if opts.ContainerName == "" {
 		return errors.New("please specify a container name with --name/-n")
@@ -62,6 +116,10 @@ func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error
 
 	locked := isLocked(ctx, c.containerManager, opts.ContainerName)
 
+	if opts.JSON {
+		return printInspectJSON(result, locked, opts)
+	}
+
 	// Trim Created timestamp to readable format
 	created := result.ContainerCreated
 	if len(created) > 19 {
@@ -78,10 +136,16 @@ func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error
 		cpuThreads = fmt.Sprintf("%d threads", result.CPUThreads)
 	}
 
+	const containerIDDisplayLength = 12
+	id := result.ContainerID
+	if len(id) > containerIDDisplayLength {
+		id = id[:containerIDDisplayLength]
+	}
+
 	p := ui.NewPanel(os.Stdout)
 	p.AddSection("General",
 		ui.PanelRow("Name", opts.ContainerName),
-		ui.PanelRow("ID", result.ContainerID),
+		ui.PanelRow("ID", id),
 		ui.PanelRow("Created", created),
 		ui.PanelRow("Status", result.ContainerStatus),
 		ui.PanelRow("Image", result.ContainerImage),
