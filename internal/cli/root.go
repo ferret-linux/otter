@@ -275,7 +275,7 @@ func withContainerManager(_ *config.Values, cmd *cli.Command) *cli.Command {
 		cm, err := buildContainerManager(
 			ctx,
 			c.Root().String("container-manager"),
-			sudoCmd(c.Root().String("sudo-command")),
+			c.Root().String("sudo-command"),
 			c.Bool("root"),
 		)
 		if err != nil {
@@ -284,17 +284,6 @@ func withContainerManager(_ *config.Values, cmd *cli.Command) *cli.Command {
 		return context.WithValue(ctx, containerManagerKey, cm), nil
 	}
 	return cmd
-}
-
-
-// sudoCmd returns the resolved privilege escalator binary name.
-// If autodetect was used, rootcheck.Resolved() returns the actual binary.
-// Otherwise the configured value is returned as-is.
-func sudoCmd(configured string) string {
-	if resolved := rootcheck.Resolved(); resolved != "" {
-		return resolved
-	}
-	return configured
 }
 
 func buildContainerManager(

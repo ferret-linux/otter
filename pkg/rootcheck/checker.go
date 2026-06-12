@@ -12,10 +12,9 @@ import (
 
 //nolint:gochecknoglobals // singleton: process-wide memoization is the intent
 var (
-	validateOnce        sync.Once
-	errValidate         error
-	cachedSudoCommand   string
-	resolvedSudoCommand string
+	validateOnce      sync.Once
+	errValidate       error
+	cachedSudoCommand string
 )
 
 // autodetectOrder is the order in which privilege escalators are tried during autodetection.
@@ -35,45 +34,38 @@ func Validate(ctx context.Context, sudoCommand string) error {
 	}
 	validateOnce.Do(func() {
 		cachedSudoCommand = sudoCommand
-		resolvedSudoCommand, errValidate = resolve(ctx, sudoCommand)
+		errValidate = check(ctx, sudoCommand)
 	})
 	return errValidate
 }
 
-// Resolved returns the actual binary name after Validate has been called.
-// If autodetect was used, this returns the discovered binary (e.g. "sudo").
-// Returns empty string if Validate has not been called yet.
-func Resolved() string {
-	return resolvedSudoCommand
-}
-
-func resolve(ctx context.Context, sudoCommand string) (string, error) {
+func check(ctx context.Context, sudoCommand string) error {
 	if sudoCommand == "autodetect" || sudoCommand == "" {
 		return autodetect(ctx)
 	}
 	name := filepath.Base(sudoCommand)
 	switch name {
 	case "pkexec":
-		return sudoCommand, checkPkexec(sudoCommand)
+		return checkPkexec(sudoCommand)
 	case "run0":
-		return sudoCommand, checkRun0(sudoCommand)
+		return checkRun0(sudoCommand)
 	case "sudo", "sudo-rs":
-		return sudoCommand, checkSudo(ctx, sudoCommand)
+		return checkSudo(ctx, sudoCommand)
 	case "doas":
-		return sudoCommand, checkDoas(ctx, sudoCommand)
+		return checkDoas(ctx, sudoCommand)
 	case "su":
-		return sudoCommand, checkSu(sudoCommand)
+		return checkSu(sudoCommand)
 	default:
 		ui.DefaultLogger.Warn("unknown privilege escalator %q, skipping validation — ensure it works correctly", sudoCommand)
-		return sudoCommand, nil
+		return nil
 	}
 }
 
-func autodetect(ctx context.Context) (string, error) {
+func autodetect(ctx context.Context) error {
 	for _, name := range autodetectOrder {
-		if resolved, err := resolve(ctx, name); err == nil {
-			return resolved, nil
+		if err := check(ctx, name); err == nil {
+			return nil
 		}
 	}
-	return "", fmt.Errorf("no supported privilege escalator found (tried: %v)", autodetectOrder)
+	return fmt.Errorf("no supported privilege escalator found (tried: %v)", autodetectOrder)
 }
