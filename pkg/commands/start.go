@@ -27,7 +27,7 @@ func NewStartCommand(cm containermanager.ContainerManager) *StartCommand {
 
 func (c *StartCommand) Execute(ctx context.Context, opts *StartOptions) error {
 	if opts.All {
-		containers, err := c.listCmd.Execute(ctx)
+		containers, err := c.listCmd.Execute(ctx, ListOptions{})
 		if err != nil {
 			return fmt.Errorf("failed to list containers: %w", err)
 		}

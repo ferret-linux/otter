@@ -32,7 +32,7 @@ func (c *UnlockCommand) Execute(ctx context.Context, opts UnlockOptions) error {
 	var containerNames []string
 	switch {
 	case opts.All:
-		listResult, err := c.listCmd.Execute(ctx)
+		listResult, err := c.listCmd.Execute(ctx, ListOptions{})
 		if err != nil {
 			return fmt.Errorf("failed to list containers: %w", err)
 		}

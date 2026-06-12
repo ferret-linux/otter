@@ -31,7 +31,7 @@ func (c *PauseCommand) Execute(ctx context.Context, opts *PauseOptions) error {
 
 	switch {
 	case opts.All:
-		containers, err := c.listCmd.Execute(ctx)
+		containers, err := c.listCmd.Execute(ctx, ListOptions{})
 		if err != nil {
 			return fmt.Errorf("failed to list containers: %w", err)
 		}
