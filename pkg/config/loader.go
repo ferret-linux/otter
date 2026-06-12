@@ -8,59 +8,6 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-type containerConfig struct {
-	Hostname string `toml:"hostname"`
-	Image    string `toml:"image"`
-	Name     string `toml:"name"`
-}
-
-type settingsConfig struct {
-	Shell      string `toml:"shell"`
-	InitSystem bool   `toml:"init-system"`
-	Rootful    bool   `toml:"rootful"`
-}
-
-type preferencesConfig struct {
-	ContainerManager string `toml:"container-manager"`
-	SudoProgram      string `toml:"sudo-program"`
-	NoEntry          bool   `toml:"no-entry"`
-}
-
-type fileConfig struct {
-	Container   containerConfig   `toml:"container"`
-	Settings    settingsConfig    `toml:"settings"`
-	Preferences preferencesConfig `toml:"preferences"`
-}
-
-type Values struct {
-	ContainerManagerType  string
-	SudoProgram           string
-	DefaultContainerImage string
-	DefaultContainerName  string
-	DefaultHostname       string
-	DefaultShell          string
-	DefaultInitSystem     bool
-	DefaultRootful        bool
-	DefaultNoEntry        bool
-}
-
-func defaults() fileConfig {
-	return fileConfig{
-		Container: containerConfig{
-			Image: "ghcr.io/ferret-linux/ubuntu-otr:lts",
-			Name:  "my-container",
-		},
-		Preferences: preferencesConfig{
-			ContainerManager: "autodetect",
-			SudoProgram:      "autodetect",
-		},
-	}
-}
-
-func DefaultValues() *Values {
-	return toValues(defaults())
-}
-
 func LoadValues() (*Values, error) {
 	files, err := getConfigFilePaths()
 	if err != nil {
@@ -76,20 +23,6 @@ func LoadValues() (*Values, error) {
 	}
 
 	return toValues(cfg), nil
-}
-
-func toValues(cfg fileConfig) *Values {
-	return &Values{
-		ContainerManagerType:  cfg.Preferences.ContainerManager,
-		SudoProgram:           cfg.Preferences.SudoProgram,
-		DefaultContainerImage: cfg.Container.Image,
-		DefaultContainerName:  cfg.Container.Name,
-		DefaultHostname:       cfg.Container.Hostname,
-		DefaultShell:          cfg.Settings.Shell,
-		DefaultInitSystem:     cfg.Settings.InitSystem,
-		DefaultRootful:        cfg.Settings.Rootful,
-		DefaultNoEntry:        cfg.Preferences.NoEntry,
-	}
 }
 
 func getConfigFilePaths() ([]string, error) {
