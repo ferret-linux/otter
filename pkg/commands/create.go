@@ -254,7 +254,7 @@ func validateShell(shell string) error {
 		return nil
 	}
 	switch shell {
-	case "bash", "zsh", "fish":
+	case "bash", "zsh", "fish": //nolint:goconst // shell name literals are self-documenting
 		return nil
 	default:
 		return fmt.Errorf("invalid shell %q, must be one of: bash, zsh, fish", shell)
