@@ -14,7 +14,6 @@ import (
 	"github.com/ferret-linux/otter/pkg/containermanager/providers"
 	"github.com/ferret-linux/otter/pkg/rootful"
 	"github.com/ferret-linux/otter/pkg/ui"
-	"github.com/ferret-linux/otter/pkg/version"
 )
 
 type contextKey string
@@ -24,7 +23,7 @@ const containerManagerKey contextKey = "containerManager"
 func NewRootCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "otter",
-		Version: version.Version,
+		Version: "1.0.0",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:   "sudo-command",

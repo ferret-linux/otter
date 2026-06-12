@@ -1,11 +1,9 @@
 GOOS ?= $(shell go env GOOS)
 GO_BUILD_ENV := CGO_ENABLED=0 GOOS=$(GOOS)
-VERSION ?= $(shell git describe --tags --always 2>/dev/null || echo "dev")
-LDFLAGS := -ldflags "-X github.com/ferret-linux/otter/pkg/version.Version=$(VERSION)"
 
 .PHONY: build
 build:
-	$(GO_BUILD_ENV) go build $(LDFLAGS) -o ./bin/otter ./cmd/otter
+	$(GO_BUILD_ENV) go build -o ./bin/otter ./cmd/otter
 
 .PHONY: test
 test: vet
