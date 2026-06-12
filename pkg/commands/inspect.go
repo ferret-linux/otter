@@ -93,7 +93,10 @@ func printInspectJSON(result *containermanager.InspectResult, locked bool, opts 
 
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "  ")
-	return enc.Encode(out)
+	if err := enc.Encode(out); err != nil {
+		return fmt.Errorf("failed to encode inspect output as JSON: %w", err)
+	}
+	return nil
 }
 
 func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error {

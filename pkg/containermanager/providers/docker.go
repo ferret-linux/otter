@@ -774,7 +774,7 @@ func (d *Docker) inspectImage(ctx context.Context, imageID string) (*InspectImag
 	}
 	var images []InspectImageOutput
 	if err := json.Unmarshal([]byte(out), &images); err != nil || len(images) == 0 {
-		return nil, fmt.Errorf("failed to parse image inspect output")
+		return nil, errors.New("failed to parse image inspect output")
 	}
 	return &images[0], nil
 }

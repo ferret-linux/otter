@@ -72,7 +72,10 @@ func printResultJSON(result *commands.ListResult) error {
 
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "  ")
-	return enc.Encode(out)
+	if err := enc.Encode(out); err != nil {
+		return fmt.Errorf("failed to encode list output as JSON: %w", err)
+	}
+	return nil
 }
 
 func printResult(result *commands.ListResult) {
