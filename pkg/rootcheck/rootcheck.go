@@ -1,6 +1,5 @@
-// Package rootful provides utilities for running operations that require
-// root privileges via a configurable sudo command.
-package rootful
+// Package rootcheck validates privilege escalation programs before root-mode operations.
+package rootcheck
 
 import (
 	"context"

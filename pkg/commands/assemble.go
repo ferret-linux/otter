@@ -13,7 +13,7 @@ import (
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/manifest"
-	"github.com/ferret-linux/otter/pkg/rootful"
+	"github.com/ferret-linux/otter/pkg/rootcheck"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
@@ -81,7 +81,7 @@ func (ac *AssembleCommand) Execute(ctx context.Context, opts AssembleOptions) er
 
 	for _, item := range items {
 		if item.Settings.Rootful {
-			if err := rootful.Validate(ctx, opts.SudoCommand); err != nil {
+			if err := rootcheck.Validate(ctx, opts.SudoCommand); err != nil {
 				return fmt.Errorf("cannot run in root mode: %w", err)
 			}
 			break
