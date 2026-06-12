@@ -93,6 +93,9 @@ type CreateResult struct {
 }
 
 func NewCreateCommand(cfg *config.Values, cm containermanager.ContainerManager, progress *ui.Progress) *CreateCommand {
+	if progress == nil {
+		progress = ui.NewProgress(os.Stderr)
+	}
 	return &CreateCommand{
 		cfg:              cfg,
 		containerManager: cm,

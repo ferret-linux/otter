@@ -4,14 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"os"
 
 	"github.com/urfave/cli/v3"
 
 	"github.com/ferret-linux/otter/pkg/commands"
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
-	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 //nolint:funlen // function length is acceptable for CLI command definition
@@ -156,9 +154,7 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 		ContainerAlwaysPull:     cmd.Bool("pull"),
 	}
 
-	progress := ui.NewProgress(os.Stderr)
-
-	createCmd := commands.NewCreateCommand(cfg, containerManager, progress)
+	createCmd := commands.NewCreateCommand(cfg, containerManager, nil)
 	if _, err := createCmd.Execute(ctx, opts); err != nil {
 		return fmt.Errorf("create command failed: %w", err)
 	}

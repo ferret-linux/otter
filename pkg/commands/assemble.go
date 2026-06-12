@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"regexp"
 	"slices"
 	"strings"
@@ -50,7 +51,6 @@ type AssembleCommand struct {
 func NewAssembleCommand(
 	cfg *config.Values,
 	cm containermanager.ContainerManager,
-	progress *ui.Progress,
 ) *AssembleCommand {
 	cmRoot := cm.CloneAsRoot()
 	return &AssembleCommand{
@@ -64,7 +64,7 @@ func NewAssembleCommand(
 		lockCmdRoot:   NewLockCommand(cmRoot),
 		startCmdRoot:  NewStartCommand(cmRoot),
 		enterCmdRoot:  NewEnterCommand(cmRoot),
-		progress:      progress,
+		progress:      ui.NewProgress(os.Stderr),
 	}
 }
 
