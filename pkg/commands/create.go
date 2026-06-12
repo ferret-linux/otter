@@ -128,6 +128,7 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 	containerUserCustomHome := c.makeContainerUserCustomHome(&opts, containerName)
 
 	if c.containerManager.Exists(ctx, containerName) {
+		printContainerAlreadyExists(c.progress, containerName, opts.Rootful)
 		return &CreateResult{ContainerName: containerName, AlreadyExisted: true}, nil
 	}
 
@@ -206,11 +207,35 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 		}
 	}
 
-	return &CreateResult{
+	result := &CreateResult{
 		ContainerName:     containerName,
 		ContainerImage:    containerImage,
 		ContainerHostname: containerHostname,
-	}, nil
+	}
+
+	printCreateCompleted(c.progress, result.ContainerName, opts.Rootful)
+
+	return result, nil
+}
+
+func printCreateCompleted(progress *ui.Progress, containerName string, rootful bool) {
+	rootFlag := ""
+	if rootful {
+		rootFlag = "--root "
+	}
+
+	progress.Finalize("Otter '%s' successfully created.", containerName)
+	ui.DefaultLogger.Info("To enter, run: otter enter %s%s", rootFlag, containerName)
+}
+
+func printContainerAlreadyExists(progress *ui.Progress, containerName string, rootful bool) {
+	rootFlag := ""
+	if rootful {
+		rootFlag = "--root "
+	}
+
+	progress.Finalize("Container named '%s' already exists.", containerName)
+	ui.DefaultLogger.Info("To enter, run: otter enter %s%s", rootFlag, containerName)
 }
 
 // Determine right containerImage to use

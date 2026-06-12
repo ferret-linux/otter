@@ -159,37 +159,9 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 	progress := ui.NewProgress(os.Stderr)
 
 	createCmd := commands.NewCreateCommand(cfg, containerManager, progress)
-	result, err := createCmd.Execute(ctx, opts)
-	if err != nil {
+	if _, err := createCmd.Execute(ctx, opts); err != nil {
 		return fmt.Errorf("create command failed: %w", err)
 	}
 
-	if result.AlreadyExisted {
-		printContainerAlreadyExists(progress, result.ContainerName, opts.Rootful)
-		return nil
-	}
-
-	printCreateCompleted(progress, result.ContainerName, opts.Rootful)
-
 	return nil
-}
-
-func printCreateCompleted(progress *ui.Progress, containerName string, rootful bool) {
-	rootFlag := ""
-	if rootful {
-		rootFlag = "--root "
-	}
-
-	progress.Finalize("Otter '%s' successfully created.", containerName)
-	ui.DefaultLogger.Info("To enter, run: otter enter %s%s", rootFlag, containerName)
-}
-
-func printContainerAlreadyExists(progress *ui.Progress, containerName string, rootful bool) {
-	rootFlag := ""
-	if rootful {
-		rootFlag = "--root "
-	}
-
-	progress.Finalize("Container named '%s' already exists.", containerName)
-	ui.DefaultLogger.Info("To enter, run: otter enter %s%s", rootFlag, containerName)
 }
