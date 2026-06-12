@@ -65,9 +65,101 @@ func relativeTime(s string) string {
 	}
 }
 
-// RegistryList renders a table of available images from props.
+type RegistryListOptions struct {
+	All bool
+}
+
+type RegistryListCommand struct{}
+
+func NewRegistryListCommand() *RegistryListCommand {
+	return &RegistryListCommand{}
+}
+
+func (c *RegistryListCommand) Execute(ctx context.Context, opts RegistryListOptions) error {
+	props, err := registry.Fetch(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to fetch registry: %w", err)
+	}
+	registryList(props, opts.All)
+	return nil
+}
+
+type RegistryPullOptions struct {
+	Names []string
+	All   bool
+	Force bool
+}
+
+type RegistryPullCommand struct {
+	containerManager containermanager.ContainerManager
+	progress         *ui.Progress
+}
+
+func NewRegistryPullCommand(cm containermanager.ContainerManager, progress *ui.Progress) *RegistryPullCommand {
+	return &RegistryPullCommand{
+		containerManager: cm,
+		progress:         progress,
+	}
+}
+
+func (c *RegistryPullCommand) Execute(ctx context.Context, opts RegistryPullOptions) error {
+	props, err := registry.Fetch(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to fetch registry: %w", err)
+	}
+	targets, err := resolvePullTargets(ctx, c.containerManager, props, opts.Names, opts.All, opts.Force)
+	if err != nil {
+		return fmt.Errorf("failed to resolve pull targets: %w", err)
+	}
+	for _, ref := range targets {
+		if err := registry.Pull(ctx, c.containerManager, ref, "", opts.Force, c.progress); err != nil {
+			return fmt.Errorf("failed to pull image '%s': %w", ref, err)
+		}
+	}
+	return nil
+}
+
+type RegistryRemoveOptions struct {
+	Names []string
+	All   bool
+	Force bool
+}
+
+type RegistryRemoveCommand struct {
+	containerManager containermanager.ContainerManager
+}
+
+func NewRegistryRemoveCommand(cm containermanager.ContainerManager) *RegistryRemoveCommand {
+	return &RegistryRemoveCommand{
+		containerManager: cm,
+	}
+}
+
+func (c *RegistryRemoveCommand) Execute(ctx context.Context, opts RegistryRemoveOptions) error {
+	props, err := registry.Fetch(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to fetch registry: %w", err)
+	}
+	targets, err := resolveRemoveTargets(ctx, c.containerManager, props, opts.Names, opts.All)
+	if err != nil {
+		return fmt.Errorf("failed to resolve remove targets: %w", err)
+	}
+	for _, ref := range targets {
+		if !c.containerManager.ImageExists(ctx, ref) {
+			ui.DefaultLogger.Warn("image '%s' not found locally, skipping", ref)
+			continue
+		}
+		if err := c.containerManager.RemoveImage(ctx, ref, opts.Force); err != nil {
+			return fmt.Errorf("failed to remove image '%s': %w", ref, err)
+		}
+		ui.DefaultLogger.Info("removed '%s'", ref)
+	}
+	return nil
+}
+
+// registryList renders a table of available images from props.
 // If all is false, disabled images are omitted and STATUS/BUILT columns are hidden.
-func RegistryList(props *registry.ImagesProperties, all bool) {
+func registryList(props *registry.ImagesProperties, all bool) {
 	var t *ui.Table
 	if all {
 		t = ui.NewTable(os.Stdout, "NAME", "ARCH", "STATUS", "BUILT", "IMAGE")
@@ -110,60 +202,6 @@ func RegistryList(props *registry.ImagesProperties, all bool) {
 		}
 	}
 	t.Render()
-}
-
-// RegistryPull pulls the given image names using the container manager.
-// Names may be comma-separated and are split before resolution.
-// If all is true, all enabled images not yet locally present are pulled.
-// force pulls even if already present.
-func RegistryPull(
-	ctx context.Context,
-	cm containermanager.ContainerManager,
-	props *registry.ImagesProperties,
-	names []string,
-	all bool,
-	force bool,
-	progress *ui.Progress,
-) error {
-	targets, err := resolvePullTargets(ctx, cm, props, names, all, force)
-	if err != nil {
-		return fmt.Errorf("failed to resolve pull targets: %w", err)
-	}
-	for _, ref := range targets {
-		if err := registry.Pull(ctx, cm, ref, "", force, progress); err != nil {
-			return fmt.Errorf("failed to pull image '%s': %w", ref, err)
-		}
-	}
-	return nil
-}
-
-// RegistryRemove removes the given image names from the local container manager.
-// Names may be comma-separated and are split before resolution.
-// If all is true, all locally present otter images are removed.
-// force removes even if the image is in use.
-func RegistryRemove(
-	ctx context.Context,
-	cm containermanager.ContainerManager,
-	props *registry.ImagesProperties,
-	names []string,
-	all bool,
-	force bool,
-) error {
-	targets, err := resolveRemoveTargets(ctx, cm, props, names, all)
-	if err != nil {
-		return fmt.Errorf("failed to resolve remove targets: %w", err)
-	}
-	for _, ref := range targets {
-		if !cm.ImageExists(ctx, ref) {
-			ui.DefaultLogger.Warn("image '%s' not found locally, skipping", ref)
-			continue
-		}
-		if err := cm.RemoveImage(ctx, ref, force); err != nil {
-			return fmt.Errorf("failed to remove image '%s': %w", ref, err)
-		}
-		ui.DefaultLogger.Info("removed '%s'", ref)
-	}
-	return nil
 }
 
 // resolvePullTargets returns the list of image refs to pull.

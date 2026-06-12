@@ -12,7 +12,6 @@ import (
 	"github.com/ferret-linux/otter/pkg/commands"
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
-	"github.com/ferret-linux/otter/pkg/registry"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
@@ -48,11 +47,11 @@ func newRegistryCommand(cfg *config.Values) *cli.Command {
 }
 
 func registryAction(ctx context.Context, cmd *cli.Command) error {
-	props, err := registry.Fetch(ctx)
-	if err != nil {
-		return fmt.Errorf("failed to fetch registry: %w", err)
+	if err := commands.NewRegistryListCommand().Execute(ctx, commands.RegistryListOptions{
+		All: cmd.Bool("all"),
+	}); err != nil {
+		return fmt.Errorf("failed to list registry: %w", err)
 	}
-	commands.RegistryList(props, cmd.Bool("all"))
 	return nil
 }
 
@@ -85,22 +84,13 @@ func registryPullAction(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	props, err := registry.Fetch(ctx)
-	if err != nil {
-		return fmt.Errorf("failed to fetch registry: %w", err)
-	}
-
 	progress := ui.NewProgress(os.Stderr)
 
-	if err := commands.RegistryPull(
-		ctx,
-		containerManager,
-		props,
-		names,
-		cmd.Bool("all"),
-		cmd.Bool("force"),
-		progress,
-	); err != nil {
+	if err := commands.NewRegistryPullCommand(containerManager, progress).Execute(ctx, commands.RegistryPullOptions{
+		Names: names,
+		All:   cmd.Bool("all"),
+		Force: cmd.Bool("force"),
+	}); err != nil {
 		return fmt.Errorf("failed to pull from registry: %w", err)
 	}
 	return nil
@@ -135,19 +125,11 @@ func registryRemoveAction(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	props, err := registry.Fetch(ctx)
-	if err != nil {
-		return fmt.Errorf("failed to fetch registry: %w", err)
-	}
-
-	if err := commands.RegistryRemove(
-		ctx,
-		containerManager,
-		props,
-		names,
-		cmd.Bool("all"),
-		cmd.Bool("force"),
-	); err != nil {
+	if err := commands.NewRegistryRemoveCommand(containerManager).Execute(ctx, commands.RegistryRemoveOptions{
+		Names: names,
+		All:   cmd.Bool("all"),
+		Force: cmd.Bool("force"),
+	}); err != nil {
 		return fmt.Errorf("failed to remove from registry: %w", err)
 	}
 	return nil
