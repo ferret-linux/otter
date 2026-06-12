@@ -3,6 +3,7 @@ package rootcheck
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"path/filepath"
 	"sync"
@@ -48,7 +49,7 @@ func check(ctx context.Context, sudoCommand string) (string, error) {
 				return resolved, nil
 			}
 		}
-		return "", fmt.Errorf("no privilege escalation program found; install one of: run0, sudo, sudo-rs, doas")
+		return "", errors.New("no privilege escalation program found; install one of: run0, sudo, sudo-rs, doas")
 	case "run0":
 		return sudoCommand, checkRun0(sudoCommand)
 	case "sudo", "sudo-rs":

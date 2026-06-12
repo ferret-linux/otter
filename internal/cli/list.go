@@ -38,7 +38,10 @@ func listAction(ctx context.Context, cmd *cli.Command) error {
 	}
 
 	if cmd.Bool("json") {
-		return commands.PrintListJSON(result)
+		if err := commands.PrintListJSON(result); err != nil {
+			return fmt.Errorf("failed to print list as JSON: %w", err)
+		}
+		return nil
 	}
 
 	commands.PrintList(result)

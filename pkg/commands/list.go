@@ -30,7 +30,7 @@ func NewListCommand(cm containermanager.ContainerManager) *ListCommand {
 	}
 }
 
-func (c *ListCommand) Execute(ctx context.Context, opts ListOptions) (*ListResult, error) {
+func (c *ListCommand) Execute(ctx context.Context, _ ListOptions) (*ListResult, error) {
 	containers, err := c.containerManager.ListContainers(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed while listing contaiers: %w", err)
