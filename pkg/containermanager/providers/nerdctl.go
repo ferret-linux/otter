@@ -356,6 +356,18 @@ func (n *Nerdctl) ImageExists(ctx context.Context, imageName string) bool {
 	return inspect.ID != ""
 }
 
+func (n *Nerdctl) inspectImage(ctx context.Context, imageID string) (*InspectImageOutput, error) {
+	out, err := n.run(ctx, []string{"image", "inspect", "--format", "json", imageID}, runOptions{})
+	if err != nil {
+		return nil, err
+	}
+	var images []InspectImageOutput
+	if err := json.Unmarshal([]byte(out), &images); err != nil || len(images) == 0 {
+		return nil, fmt.Errorf("failed to parse image inspect output")
+	}
+	return &images[0], nil
+}
+
 func (n *Nerdctl) PullImage(ctx context.Context, imageName string, platform string) error {
 	var args []string
 	if platform != "" {
@@ -472,7 +484,10 @@ func (n *Nerdctl) InspectContainer(ctx context.Context, containerName string) (*
 	config.ContainerCreated = inspect.Created
 	config.ContainerImage = inspect.Config.Image
 	config.ContainerHostname = inspect.Config.Hostname
-	config.ContainerPlatform = inspect.Os + "/" + inspect.Architecture
+	imageOut, err := n.inspectImage(ctx, inspect.Image)
+	if err == nil {
+		config.ContainerPlatform = imageOut.Os + "/" + imageOut.Architecture
+	}
 
 	if inspect.HostConfig.Memory > 0 {
 		config.Memory = fmt.Sprintf("%dmb", inspect.HostConfig.Memory/1024/1024)

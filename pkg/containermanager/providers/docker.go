@@ -64,11 +64,10 @@ type runOptions struct {
 }
 
 type inspectOutput struct {
-	ID           string `json:"Id"`
-	Created      string `json:"Created"`
-	Os           string `json:"Os"`
-	Architecture string `json:"Architecture"`
-	State        struct {
+	ID      string `json:"Id"`
+	Created string `json:"Created"`
+	Image   string `json:"Image"`
+	State   struct {
 		Status string `json:"Status"`
 	} `json:"State"`
 	Config struct {
@@ -85,6 +84,7 @@ type inspectOutput struct {
 
 type InspectImageOutput struct {
 	ID           string `json:"ID"`
+	Os           string `json:"Os"`
 	Architecture string `json:"Architecture"`
 }
 
@@ -709,7 +709,10 @@ func (d *Docker) InspectContainer(ctx context.Context, containerName string) (*c
 	config.ContainerCreated = inspect.Created
 	config.ContainerImage = inspect.Config.Image
 	config.ContainerHostname = inspect.Config.Hostname
-	config.ContainerPlatform = inspect.Os + "/" + inspect.Architecture
+	imageOut, err := d.inspectImage(ctx, inspect.Image)
+	if err == nil {
+		config.ContainerPlatform = imageOut.Os + "/" + imageOut.Architecture
+	}
 
 	if inspect.HostConfig.Memory > 0 {
 		config.Memory = fmt.Sprintf("%dmb", inspect.HostConfig.Memory/1024/1024)
@@ -759,6 +762,18 @@ func (d *Docker) ImageExists(ctx context.Context, imageName string) bool {
 	}
 
 	return true
+}
+
+func (d *Docker) inspectImage(ctx context.Context, imageID string) (*InspectImageOutput, error) {
+	out, err := d.run(ctx, []string{"image", "inspect", "--format", "json", imageID}, runOptions{})
+	if err != nil {
+		return nil, err
+	}
+	var images []InspectImageOutput
+	if err := json.Unmarshal([]byte(out), &images); err != nil || len(images) == 0 {
+		return nil, fmt.Errorf("failed to parse image inspect output")
+	}
+	return &images[0], nil
 }
 
 func (d *Docker) PullImage(ctx context.Context, imageName string, platform string) error {
