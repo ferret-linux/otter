@@ -17,15 +17,9 @@ var (
 	cachedSudoCommand string
 )
 
-// autodetectOrder is the order in which privilege escalators are tried during autodetection.
-//
-//nolint:gochecknoglobals // package-level detection order is effectively a constant
-var autodetectOrder = []string{"pkexec", "run0", "sudo", "doas", "su"}
-
 // Validate ensures that the given privilege escalation program is available
 // and, for known programs, that the user can elevate privileges.
-// If sudoCommand is "autodetect" or empty, the first available escalator
-// from the autodetect order is used.
+// Known programs (pkexec, run0, sudo, doas, su) are checked specifically.
 // Unknown programs trigger a warning and proceed without validation.
 // The check runs at most once per process; subsequent calls return the cached result.
 func Validate(ctx context.Context, sudoCommand string) error {
@@ -40,9 +34,6 @@ func Validate(ctx context.Context, sudoCommand string) error {
 }
 
 func check(ctx context.Context, sudoCommand string) error {
-	if sudoCommand == "autodetect" || sudoCommand == "" {
-		return autodetect(ctx)
-	}
 	name := filepath.Base(sudoCommand)
 	switch name {
 	case "pkexec":
@@ -59,13 +50,4 @@ func check(ctx context.Context, sudoCommand string) error {
 		ui.DefaultLogger.Warn("unknown privilege escalator %q, skipping validation — ensure it works correctly", sudoCommand)
 		return nil
 	}
-}
-
-func autodetect(ctx context.Context) error {
-	for _, name := range autodetectOrder {
-		if err := check(ctx, name); err == nil {
-			return nil
-		}
-	}
-	return fmt.Errorf("no supported privilege escalator found (tried: %v)", autodetectOrder)
 }
