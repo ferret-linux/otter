@@ -52,7 +52,7 @@ func defaults() fileConfig {
 		},
 		Preferences: preferencesConfig{
 			ContainerManager: "autodetect",
-			SudoProgram:      "sudo",
+			SudoProgram:      "autodetect",
 		},
 	}
 }
