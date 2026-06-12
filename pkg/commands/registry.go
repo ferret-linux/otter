@@ -95,10 +95,10 @@ type RegistryPullCommand struct {
 	progress         *ui.Progress
 }
 
-func NewRegistryPullCommand(cm containermanager.ContainerManager, progress *ui.Progress) *RegistryPullCommand {
+func NewRegistryPullCommand(cm containermanager.ContainerManager) *RegistryPullCommand {
 	return &RegistryPullCommand{
 		containerManager: cm,
-		progress:         progress,
+		progress:         ui.NewProgress(os.Stderr),
 	}
 }
 

@@ -5,14 +5,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"os"
 
 	"github.com/urfave/cli/v3"
 
 	"github.com/ferret-linux/otter/pkg/commands"
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
-	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 func newRegistryCommand(cfg *config.Values) *cli.Command {
@@ -84,9 +82,7 @@ func registryPullAction(ctx context.Context, cmd *cli.Command) error {
 		return err
 	}
 
-	progress := ui.NewProgress(os.Stderr)
-
-	if err := commands.NewRegistryPullCommand(containerManager, progress).Execute(ctx, commands.RegistryPullOptions{
+	if err := commands.NewRegistryPullCommand(containerManager).Execute(ctx, commands.RegistryPullOptions{
 		Names: names,
 		All:   cmd.Bool("all"),
 		Force: cmd.Bool("force"),
