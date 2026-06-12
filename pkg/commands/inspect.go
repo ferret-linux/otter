@@ -148,7 +148,7 @@ func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error
 		ui.PanelRow("ID", id),
 		ui.PanelRow("Created", created),
 		ui.PanelRow("Status", result.ContainerStatus),
-		ui.PanelRow("Image", result.ContainerImage),
+		ui.PanelRow("Image", ui.TrimImageRef(result.ContainerImage)),
 		ui.PanelRow("Platform", result.ContainerPlatform),
 		ui.PanelRow("Hostname", result.ContainerHostname),
 		ui.PanelRow("Shell", result.ContainerShell),
