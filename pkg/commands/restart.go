@@ -11,6 +11,7 @@ import (
 type RestartOptions struct {
 	ContainerNames []string
 	All            bool
+	Force          bool
 }
 
 type RestartCommand struct {
@@ -51,6 +52,7 @@ func (c *RestartCommand) Execute(ctx context.Context, opts *RestartOptions) erro
 	for _, name := range containerNames {
 		if err := c.stopCmd.Execute(ctx, &StopOptions{
 			ContainerNames: []string{name},
+			Force:          opts.Force,
 		}); err != nil {
 			return fmt.Errorf("failed to stop '%s': %w", name, err)
 		}

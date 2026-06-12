@@ -23,6 +23,10 @@ func newRestartCommand(_ *config.Values) *cli.Command {
 				Name:    "all",
 				Aliases: []string{"a"},
 			},
+			&cli.BoolFlag{
+				Name:    "force",
+				Aliases: []string{"f"},
+			},
 		},
 		Action: restartAction,
 	}
@@ -41,6 +45,7 @@ func restartAction(ctx context.Context, cmd *cli.Command) error {
 	options := &commands.RestartOptions{
 		ContainerNames: names,
 		All:            cmd.Bool("all"),
+		Force:          cmd.Bool("force"),
 	}
 
 	err = commands.NewRestartCommand(containerManager).Execute(ctx, options)

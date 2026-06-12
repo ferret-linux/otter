@@ -124,7 +124,7 @@ type ContainerManager interface {
 	Exists(ctx context.Context, containerName string) bool
 	ImageExists(ctx context.Context, imageName string) bool
 	Start(ctx context.Context, containerName string) error
-	Stop(ctx context.Context, containerNames []string) error
+	Stop(ctx context.Context, containerNames []string, force bool) error
 	InspectContainer(ctx context.Context, containerName string) (*InspectResult, error)
 	PullImage(ctx context.Context, imageName string, platform string) error
 	RemoveImage(ctx context.Context, imageName string, force bool) error

@@ -23,6 +23,10 @@ func newStopCommand(_ *config.Values) *cli.Command {
 				Name:    "all",
 				Aliases: []string{"a"},
 			},
+			&cli.BoolFlag{
+				Name:    "force",
+				Aliases: []string{"f"},
+			},
 		},
 		Action: stopAction,
 	}
@@ -41,6 +45,7 @@ func stopAction(ctx context.Context, cmd *cli.Command) error {
 	options := &commands.StopOptions{
 		ContainerNames: names,
 		All:            cmd.Bool("all"),
+		Force:          cmd.Bool("force"),
 	}
 
 	err = commands.NewStopCommand(containerManager).Execute(ctx, options)

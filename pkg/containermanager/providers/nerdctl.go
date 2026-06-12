@@ -415,7 +415,7 @@ func (n *Nerdctl) Remove(
 	return nil
 }
 
-func (n *Nerdctl) Stop(ctx context.Context, containerNames []string) error {
+func (n *Nerdctl) Stop(ctx context.Context, containerNames []string, force bool) error {
 	for _, name := range containerNames {
 		inspectResult, err := n.InspectContainer(ctx, name)
 		if err != nil {
@@ -429,6 +429,9 @@ func (n *Nerdctl) Stop(ctx context.Context, containerNames []string) error {
 	}
 
 	args := []string{"stop"}
+	if force {
+		args = append(args, "-t", "0")
+	}
 	args = append(args, containerNames...)
 
 	_, err := n.run(ctx, args, runOptions{})
