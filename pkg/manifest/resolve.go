@@ -1,86 +1,13 @@
 package manifest
 
 import (
-	"bytes"
 	"context"
 	"fmt"
-	"io"
-	"net/http"
-	"net/url"
-	"os"
 
 	"github.com/BurntSushi/toml"
 
 	"github.com/ferret-linux/otter/internal/userenv"
 )
-
-// Additional holds additional container configuration.
-type Additional struct {
-	Packages []string `toml:"packages"`
-	Volumes  []string `toml:"volumes"`
-	Flags    []string `toml:"flags"`
-}
-
-// Exported holds exported apps and bins configuration.
-type Exported struct {
-	Apps []string `toml:"apps"`
-	Bins []string `toml:"bins"`
-	Path string   `toml:"path"`
-}
-
-// Hooks holds pre and post init hooks.
-type Hooks struct {
-	PreInit  []string `toml:"pre-init"`
-	PostInit []string `toml:"post-init"`
-}
-
-// Settings holds container behaviour settings.
-type Settings struct {
-	Lock       bool   `toml:"lock"`
-	Entry      bool   `toml:"entry"`
-	Shell      string `toml:"shell"`
-	Rootful    bool   `toml:"rootful"`
-	InitSystem bool   `toml:"init-system"`
-	Hostname   string `toml:"hostname"`
-}
-
-// Hardware holds resource and hardware settings.
-type Hardware struct {
-	Memory string `toml:"memory"`
-	Nvidia bool   `toml:"nvidia"`
-	CPU    int    `toml:"cpu"`
-}
-
-// Isolation holds namespace isolation settings.
-type Isolation struct {
-	Netns   bool `toml:"netns"`
-	IPC     bool `toml:"ipc"`
-	Process bool `toml:"process"`
-	Devsys  bool `toml:"devsys"`
-	Groups  bool `toml:"groups"`
-	All     bool `toml:"all"`
-}
-
-// Item represents a single [[container]] entry in the manifest file.
-type Item struct {
-	Name       string     `toml:"name"`
-	Image      string     `toml:"image"`
-	Clone      string     `toml:"clone"`
-	StartNow   bool       `toml:"start-now"`
-	ForcePull  bool       `toml:"force-pull"`
-	Include    string     `toml:"include"`
-	Additional Additional `toml:"additional"`
-	Exported   Exported   `toml:"exported"`
-	Hooks      Hooks      `toml:"hooks"`
-	Settings   Settings   `toml:"settings"`
-	Hardware   Hardware   `toml:"hardware"`
-	Isolation  Isolation  `toml:"isolation"`
-}
-
-// manifest is the top-level TOML structure.
-type manifest struct {
-	Containers []Item `toml:"container"`
-}
 
 // Parse reads and parses a TOML manifest file from the given filepath or URL.
 // It supports 'include' fields to inherit fields from another container in the same file.
@@ -279,41 +206,4 @@ func mergeSlices(base, item []string) []string {
 		}
 	}
 	return result
-}
-
-// readData reads data from a local file or a URL.
-func readData(ctx context.Context, path string) ([]byte, error) {
-	if u, err := url.Parse(path); err == nil && u.Scheme != "" && u.Host != "" {
-		return fetchURL(ctx, path)
-	}
-
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read file: %w", err)
-	}
-
-	return data, nil
-}
-
-// fetchURL retrieves data from the specified URL.
-func fetchURL(ctx context.Context, u string) ([]byte, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create HTTP request: %w", err)
-	}
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("failed to fetch URL: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("HTTP %d", resp.StatusCode)
-	}
-
-	var buf bytes.Buffer
-	_, err = io.Copy(&buf, resp.Body)
-
-	return buf.Bytes(), err
 }
