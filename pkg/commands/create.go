@@ -105,6 +105,9 @@ func NewCreateCommand(cfg *config.Values, cm containermanager.ContainerManager, 
 func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*CreateResult, error) {
 	opts.ContainerShell = c.makeContainerShell(&opts)
 
+	if err := validateShell(opts.ContainerShell); err != nil {
+		return nil, fmt.Errorf("shell validation failed: %w", err)
+	}
 	if err := validateMemory(opts.Memory); err != nil {
 		return nil, fmt.Errorf("memory validation failed: %w", err)
 	}
@@ -218,6 +221,18 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 // set a default name for the container, that is distinguishable from the default
 // toolbx one. This will avoid problems when using both toolbx and otter on
 // the same system.
+func validateShell(shell string) error {
+	if shell == "" {
+		return nil
+	}
+	switch shell {
+	case "bash", "zsh", "fish":
+		return nil
+	default:
+		return fmt.Errorf("invalid shell %q, must be one of: bash, zsh, fish", shell)
+	}
+}
+
 func validateMemory(memory string) error {
 	if memory == "" {
 		return nil
