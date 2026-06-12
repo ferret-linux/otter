@@ -12,7 +12,7 @@ import (
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/containermanager/providers"
-	"github.com/ferret-linux/otter/pkg/rootcheck"
+	"github.com/ferret-linux/otter/pkg/rootful"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
@@ -249,7 +249,7 @@ func withRoot(_ *config.Values, cmd *cli.Command) *cli.Command {
 			}
 		}
 		if c.Bool("root") {
-			if err := rootcheck.Validate(ctx, c.String("sudo-command")); err != nil {
+			if err := rootful.Validate(ctx, c.String("sudo-command")); err != nil {
 				return nil, fmt.Errorf("cannot run in root mode: %w", err)
 			}
 		}
