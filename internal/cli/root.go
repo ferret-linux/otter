@@ -249,7 +249,7 @@ func withRoot(_ *config.Values, cmd *cli.Command) *cli.Command {
 			}
 		}
 		if c.Bool("root") {
-			if err := rootcheck.Validate(ctx, c.String("sudo-command")); err != nil {
+			if _, err := rootcheck.Validate(ctx, c.String("sudo-command")); err != nil {
 				return nil, fmt.Errorf("cannot run in root mode: %w", err)
 			}
 		}
@@ -287,12 +287,20 @@ func withContainerManager(_ *config.Values, cmd *cli.Command) *cli.Command {
 }
 
 func buildContainerManager(
-	_ context.Context,
+	ctx context.Context,
 	containerManagerType string,
 	sudoCommand string,
 	root bool,
 ) (containermanager.ContainerManager, error) {
 	errLogger := ui.NewLogger(os.Stderr)
+
+	if sudoCommand == "autodetect" {
+		resolved, err := rootcheck.Validate(ctx, sudoCommand)
+		if err != nil {
+			return nil, fmt.Errorf("failed to auto-detect sudo program: %w", err)
+		}
+		sudoCommand = resolved
+	}
 
 	switch containerManagerType {
 	case "docker":

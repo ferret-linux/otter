@@ -15,6 +15,7 @@ var (
 	validateOnce      sync.Once
 	errValidate       error
 	cachedSudoCommand string
+	resolvedCommand   string
 )
 
 // Validate ensures that the given privilege escalation program is available
@@ -22,27 +23,40 @@ var (
 // Known programs (run0, sudo, sudo-rs, doas) are checked specifically.
 // Unknown programs trigger a warning and proceed without validation.
 // The check runs at most once per process; subsequent calls return the cached result.
-func Validate(ctx context.Context, sudoCommand string) error {
+// Validate ensures that the given privilege escalation program is available
+// and, for known programs, that the user can elevate privileges.
+// Known programs (run0, sudo, sudo-rs, doas) are checked specifically.
+// Unknown programs trigger a warning and proceed without validation.
+// The check runs at most once per process; subsequent calls return the cached result.
+// Returns the resolved program name (useful when sudoCommand is "autodetect").
+func Validate(ctx context.Context, sudoCommand string) (string, error) {
 	if cachedSudoCommand != "" && cachedSudoCommand != sudoCommand {
-		return fmt.Errorf("sudoCommand mismatch: already validated with %q, got %q", cachedSudoCommand, sudoCommand)
+		return "", fmt.Errorf("sudoCommand mismatch: already validated with %q, got %q", cachedSudoCommand, sudoCommand)
 	}
 	validateOnce.Do(func() {
 		cachedSudoCommand = sudoCommand
-		errValidate = check(ctx, sudoCommand)
+		resolvedCommand, errValidate = check(ctx, sudoCommand)
 	})
-	return errValidate
+	return resolvedCommand, errValidate
 }
 
-func check(ctx context.Context, sudoCommand string) error {
+func check(ctx context.Context, sudoCommand string) (string, error) {
 	switch filepath.Base(sudoCommand) {
+	case "autodetect":
+		for _, name := range []string{"run0", "sudo", "sudo-rs", "doas"} {
+			if resolved, err := check(ctx, name); err == nil {
+				return resolved, nil
+			}
+		}
+		return "", fmt.Errorf("no privilege escalation program found; install one of: run0, sudo, sudo-rs, doas")
 	case "run0":
-		return checkRun0(sudoCommand)
+		return sudoCommand, checkRun0(sudoCommand)
 	case "sudo", "sudo-rs":
-		return checkSudo(ctx, sudoCommand)
+		return sudoCommand, checkSudo(ctx, sudoCommand)
 	case "doas":
-		return checkDoas(ctx, sudoCommand)
+		return sudoCommand, checkDoas(ctx, sudoCommand)
 	default:
 		ui.DefaultLogger.Warn("unknown privilege escalator %q, skipping validation — ensure it works correctly", sudoCommand)
-		return nil
+		return sudoCommand, nil
 	}
 }

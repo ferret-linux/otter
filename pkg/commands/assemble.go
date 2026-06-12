@@ -81,7 +81,7 @@ func (ac *AssembleCommand) Execute(ctx context.Context, opts AssembleOptions) er
 
 	for _, item := range items {
 		if item.Settings.Rootful {
-			if err := rootcheck.Validate(ctx, opts.SudoCommand); err != nil {
+			if _, err := rootcheck.Validate(ctx, opts.SudoCommand); err != nil {
 				return fmt.Errorf("cannot run in root mode: %w", err)
 			}
 			break
