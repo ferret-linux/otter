@@ -2,12 +2,21 @@ package commands
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"os"
 	"slices"
 	"strings"
 
 	"github.com/ferret-linux/otter/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/ui"
 )
+
+const containerIDDisplayLength = 12
+
+type ListOptions struct {
+	JSON bool
+}
 
 type ListResult struct {
 	Containers []containermanager.Container
@@ -23,7 +32,7 @@ func NewListCommand(cm containermanager.ContainerManager) *ListCommand {
 	}
 }
 
-func (c *ListCommand) Execute(ctx context.Context) (*ListResult, error) {
+func (c *ListCommand) Execute(ctx context.Context, opts ListOptions) (*ListResult, error) {
 	containers, err := c.containerManager.ListContainers(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed while listing contaiers: %w", err)
@@ -41,5 +50,67 @@ func (c *ListCommand) Execute(ctx context.Context) (*ListResult, error) {
 		return strings.Compare(a.Name, b.Name)
 	})
 
-	return &ListResult{Containers: otterContainers}, nil
+	result := &ListResult{Containers: otterContainers}
+
+	if opts.JSON {
+		return result, printListJSON(result)
+	}
+
+	printList(result)
+
+	return result, nil
+}
+
+func printListJSON(result *ListResult) error {
+	type containerJSON struct {
+		ID     string `json:"id"`
+		Name   string `json:"name"`
+		Status string `json:"status"`
+		Image  string `json:"image"`
+	}
+
+	out := make([]containerJSON, 0, len(result.Containers))
+	for _, c := range result.Containers {
+		out = append(out, containerJSON{
+			ID:     c.ID,
+			Name:   c.Name,
+			Status: c.Status,
+			Image:  c.Image,
+		})
+	}
+
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	if err := enc.Encode(out); err != nil {
+		return fmt.Errorf("failed to encode list output as JSON: %w", err)
+	}
+	return nil
+}
+
+func printList(result *ListResult) {
+	if len(result.Containers) == 0 {
+		ui.DefaultLogger.Warn("No containers found.")
+		return
+	}
+
+	t := ui.NewTable(os.Stdout, "ID", "NAME", "STATUS", "IMAGE")
+	for _, c := range result.Containers {
+		id := c.ID
+		if len(id) > containerIDDisplayLength {
+			id = id[:containerIDDisplayLength]
+		}
+		status := "○ " + c.Status
+		statusColor := ui.Yellow
+		if c.IsRunning() {
+			status = "● " + c.Status
+			statusColor = ui.Green
+		} else if strings.Contains(strings.ToLower(c.Status), "exited") {
+			statusColor = ui.Red
+		}
+		t.AddRow(
+			[]string{id, c.Name, status, ui.TrimImageRef(c.Image)},
+			[]func(string) string{ui.Dim, ui.Teal, statusColor, ui.Dim},
+		)
+	}
+	t.Render()
 }
