@@ -32,12 +32,15 @@ func listAction(ctx context.Context, cmd *cli.Command) error {
 		return errors.New("container manager not found in context")
 	}
 
-	_, err := commands.NewListCommand(containerManager).Execute(ctx, commands.ListOptions{
-		JSON: cmd.Bool("json"),
-	})
+	result, err := commands.NewListCommand(containerManager).Execute(ctx, commands.ListOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to execute list command: %w", err)
 	}
 
+	if cmd.Bool("json") {
+		return commands.PrintListJSON(result)
+	}
+
+	commands.PrintList(result)
 	return nil
 }

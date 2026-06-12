@@ -14,9 +14,7 @@ import (
 
 const containerIDDisplayLength = 12
 
-type ListOptions struct {
-	JSON bool
-}
+type ListOptions struct{}
 
 type ListResult struct {
 	Containers []containermanager.Container
@@ -52,16 +50,10 @@ func (c *ListCommand) Execute(ctx context.Context, opts ListOptions) (*ListResul
 
 	result := &ListResult{Containers: otterContainers}
 
-	if opts.JSON {
-		return result, printListJSON(result)
-	}
-
-	printList(result)
-
 	return result, nil
 }
 
-func printListJSON(result *ListResult) error {
+func PrintListJSON(result *ListResult) error {
 	type containerJSON struct {
 		ID     string `json:"id"`
 		Name   string `json:"name"`
@@ -87,7 +79,7 @@ func printListJSON(result *ListResult) error {
 	return nil
 }
 
-func printList(result *ListResult) {
+func PrintList(result *ListResult) {
 	if len(result.Containers) == 0 {
 		ui.DefaultLogger.Warn("No containers found.")
 		return
