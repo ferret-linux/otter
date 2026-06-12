@@ -11,15 +11,6 @@ import (
 	"strings"
 )
 
-type UserEnvironment struct {
-	User                string
-	UserID              string
-	GroupID             string
-	Home                string
-	Shell               string
-	DesktopEntryBaseDir string
-}
-
 // LoadUserEnvironment loads the user environment variables
 // Data is sourced from environment variables, and falls back to system calls
 // if the environment variables are not set
