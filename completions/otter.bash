@@ -14,10 +14,9 @@ _otter() {
     local cur prev words cword
     _init_completion -n "=:" || return
 
-    local global_flags="--root -r --help -h --version"
+    local global_flags="--root --help --version"
     local commands="assemble create enter generate-entry inspect journal list lock pause registry remove restart start stop unlock upgrade"
 
-    # Depth-1: what is the subcommand?
     local subcommand=""
     local i
     # shellcheck disable=SC2249
@@ -57,19 +56,19 @@ _otter() {
                 create)
                     # shellcheck disable=SC2249
                     case "${prev}" in
-                        --file|-f) _filedir '*.toml'; return ;;
+                        --file) _filedir '*.toml'; return ;;
                     esac
-                    mapfile -t COMPREPLY < <(compgen -W "--file -f --replace -R --help -h" -- "${cur}")
+                    mapfile -t COMPREPLY < <(compgen -W "--file --replace --help" -- "${cur}")
                     ;;
                 remove)
                     # shellcheck disable=SC2249
                     case "${prev}" in
-                        --file|-f) _filedir '*.toml'; return ;;
+                        --file) _filedir '*.toml'; return ;;
                     esac
-                    mapfile -t COMPREPLY < <(compgen -W "--file -f --help -h" -- "${cur}")
+                    mapfile -t COMPREPLY < <(compgen -W "--file --help" -- "${cur}")
                     ;;
                 *)
-                    mapfile -t COMPREPLY < <(compgen -W "create remove --help -h" -- "${cur}")
+                    mapfile -t COMPREPLY < <(compgen -W "create remove --help" -- "${cur}")
                     ;;
             esac
             ;;
@@ -77,64 +76,64 @@ _otter() {
         create)
             # shellcheck disable=SC2249
             case "${prev}" in
-                --image|-i)
+                --image)
                     local images
                     images=$(_otter_registry_images)
                     mapfile -t COMPREPLY < <(compgen -W "${images}" -- "${cur}")
                     return
                     ;;
-                --shell|-s)
+                --shell)
                     mapfile -t COMPREPLY < <(compgen -W "bash zsh fish" -- "${cur}")
                     return
                     ;;
-                --platform|-P)
+                --platform)
                     mapfile -t COMPREPLY < <(compgen -W "linux/amd64 linux/arm64 linux/arm/v7 linux/386" -- "${cur}")
                     return
                     ;;
-                --clone|-C)
+                --clone)
                     local containers
                     containers=$(_otter_containers)
                     mapfile -t COMPREPLY < <(compgen -W "${containers}" -- "${cur}")
                     return
                     ;;
-                --home|-H|--volume|-v|--additional-flags|-a|--additional-packages|-ap| \
-                --init-hooks|-ih|--pre-init-hooks|-ph|--memory|-m|--cpu-threads|-t|--hostname|-n)
+                --home|--volume|--additional-flags|--additional-packages| \
+                --init-hooks|--pre-init-hooks|--memory|--cpu-threads|--hostname)
                     return
                     ;;
             esac
             mapfile -t COMPREPLY < <(compgen -W "
-                --image -i
-                --hostname -n
-                --shell -s
-                --pull -p
-                --clone -C
-                --home -H
-                --volume -v
-                --additional-flags -a
-                --additional-packages -ap
-                --init-hooks -ih
-                --pre-init-hooks -ph
-                --init -I
-                --memory -m
-                --cpu-threads -t
-                --nvidia -N
-                --platform -P
-                --unshare-devsys -ud
-                --unshare-groups -ug
-                --unshare-ipc -ui
-                --unshare-netns -un
-                --unshare-process -up
-                --unshare-all -ua
-                --no-entry -E
-                --root -r
-                --help -h
+                --image
+                --hostname
+                --shell
+                --pull
+                --clone
+                --home
+                --volume
+                --additional-flags
+                --additional-packages
+                --init-hooks
+                --pre-init-hooks
+                --init
+                --memory
+                --cpu-threads
+                --nvidia
+                --platform
+                --unshare-devsys
+                --unshare-groups
+                --unshare-ipc
+                --unshare-netns
+                --unshare-process
+                --unshare-all
+                --no-entry
+                --root
+                --help
             " -- "${cur}")
             ;;
 
         enter)
             # shellcheck disable=SC2249
             case "${prev}" in
-                --additional-flags|-a|--add-env|-e) return ;;
+                --additional-flags|--add-env) return ;;
             esac
             local has_container=0
             for (( i=1; i < cword; i++ )); do
@@ -147,22 +146,22 @@ _otter() {
                 return
             fi
             mapfile -t COMPREPLY < <(compgen -W "
-                --clean-path -c
-                --additional-flags -a
-                --no-tty -T
-                --no-workdir -nw
-                --add-env -e
-                --empty-env -E
-                --auto-start -S
-                --root -r
-                --help -h
+                --clean-path
+                --additional-flags
+                --no-tty
+                --no-workdir
+                --add-env
+                --empty-env
+                --auto-start
+                --root
+                --help
             " -- "${cur}")
             ;;
 
         generate-entry)
             # shellcheck disable=SC2249
             case "${prev}" in
-                --icon|-i) return ;;
+                --icon) return ;;
             esac
             if [[ "${cur}" != -* ]]; then
                 local containers
@@ -170,7 +169,7 @@ _otter() {
                 mapfile -t COMPREPLY < <(compgen -W "${containers}" -- "${cur}")
                 return
             fi
-            mapfile -t COMPREPLY < <(compgen -W "--delete -d --icon -i --all -a --root -r --help -h" -- "${cur}")
+            mapfile -t COMPREPLY < <(compgen -W "--delete --icon --all --root --help" -- "${cur}")
             ;;
 
         inspect)
@@ -180,13 +179,13 @@ _otter() {
                 mapfile -t COMPREPLY < <(compgen -W "${containers}" -- "${cur}")
                 return
             fi
-            mapfile -t COMPREPLY < <(compgen -W "--json -j --root -r --help -h" -- "${cur}")
+            mapfile -t COMPREPLY < <(compgen -W "--json --root --help" -- "${cur}")
             ;;
 
         journal)
             # shellcheck disable=SC2249
             case "${prev}" in
-                --since|-s|--until|-u|--tail|-n) return ;;
+                --since|--until|--tail) return ;;
             esac
             if [[ "${cur}" != -* ]]; then
                 local containers
@@ -195,18 +194,18 @@ _otter() {
                 return
             fi
             mapfile -t COMPREPLY < <(compgen -W "
-                --follow -f
-                --since -s
-                --until -u
-                --timestamps -t
-                --tail -n
-                --root -r
-                --help -h
+                --follow
+                --since
+                --until
+                --timestamps
+                --tail
+                --root
+                --help
             " -- "${cur}")
             ;;
 
         list)
-            mapfile -t COMPREPLY < <(compgen -W "--json -j --root -r --help -h" -- "${cur}")
+            mapfile -t COMPREPLY < <(compgen -W "--json --root --help" -- "${cur}")
             ;;
 
         lock)
@@ -216,7 +215,7 @@ _otter() {
                 mapfile -t COMPREPLY < <(compgen -W "${containers}" -- "${cur}")
                 return
             fi
-            mapfile -t COMPREPLY < <(compgen -W "--all -a --root -r --help -h" -- "${cur}")
+            mapfile -t COMPREPLY < <(compgen -W "--all --root --help" -- "${cur}")
             ;;
 
         pause)
@@ -226,7 +225,7 @@ _otter() {
                 mapfile -t COMPREPLY < <(compgen -W "${containers}" -- "${cur}")
                 return
             fi
-            mapfile -t COMPREPLY < <(compgen -W "--all -a --root -r --help -h" -- "${cur}")
+            mapfile -t COMPREPLY < <(compgen -W "--all --root --help" -- "${cur}")
             ;;
 
         registry)
@@ -240,13 +239,13 @@ _otter() {
             done
             case "${reg_sub}" in
                 pull)
-                    mapfile -t COMPREPLY < <(compgen -W "--all -a --force -f --root -r --help -h" -- "${cur}")
+                    mapfile -t COMPREPLY < <(compgen -W "--all --force --root --help" -- "${cur}")
                     ;;
                 remove)
-                    mapfile -t COMPREPLY < <(compgen -W "--all -a --force -f --root -r --help -h" -- "${cur}")
+                    mapfile -t COMPREPLY < <(compgen -W "--all --force --root --help" -- "${cur}")
                     ;;
                 *)
-                    mapfile -t COMPREPLY < <(compgen -W "pull remove --all -a --help -h" -- "${cur}")
+                    mapfile -t COMPREPLY < <(compgen -W "pull remove --all --help" -- "${cur}")
                     ;;
             esac
             ;;
@@ -259,12 +258,12 @@ _otter() {
                 return
             fi
             mapfile -t COMPREPLY < <(compgen -W "
-                --all -a
-                --force -f
-                --rm-home -H
-                --bypass-lock -B
-                --root -r
-                --help -h
+                --all
+                --force
+                --rm-home
+                --bypass-lock
+                --root
+                --help
             " -- "${cur}")
             ;;
 
@@ -275,7 +274,7 @@ _otter() {
                 mapfile -t COMPREPLY < <(compgen -W "${containers}" -- "${cur}")
                 return
             fi
-            mapfile -t COMPREPLY < <(compgen -W "--all -a --force -f --root -r --help -h" -- "${cur}")
+            mapfile -t COMPREPLY < <(compgen -W "--all --force --root --help" -- "${cur}")
             ;;
 
         start)
@@ -285,7 +284,7 @@ _otter() {
                 mapfile -t COMPREPLY < <(compgen -W "${containers}" -- "${cur}")
                 return
             fi
-            mapfile -t COMPREPLY < <(compgen -W "--all -a --root -r --help -h" -- "${cur}")
+            mapfile -t COMPREPLY < <(compgen -W "--all --root --help" -- "${cur}")
             ;;
 
         stop)
@@ -295,7 +294,7 @@ _otter() {
                 mapfile -t COMPREPLY < <(compgen -W "${containers}" -- "${cur}")
                 return
             fi
-            mapfile -t COMPREPLY < <(compgen -W "--all -a --force -f --root -r --help -h" -- "${cur}")
+            mapfile -t COMPREPLY < <(compgen -W "--all --force --root --help" -- "${cur}")
             ;;
 
         unlock)
@@ -305,7 +304,7 @@ _otter() {
                 mapfile -t COMPREPLY < <(compgen -W "${containers}" -- "${cur}")
                 return
             fi
-            mapfile -t COMPREPLY < <(compgen -W "--all -a --root -r --help -h" -- "${cur}")
+            mapfile -t COMPREPLY < <(compgen -W "--all --root --help" -- "${cur}")
             ;;
 
         upgrade)
@@ -315,7 +314,7 @@ _otter() {
                 mapfile -t COMPREPLY < <(compgen -W "${containers}" -- "${cur}")
                 return
             fi
-            mapfile -t COMPREPLY < <(compgen -W "--all -a --running -R --root -r --help -h" -- "${cur}")
+            mapfile -t COMPREPLY < <(compgen -W "--all --running --root --help" -- "${cur}")
             ;;
 
         *)
