@@ -56,6 +56,8 @@ _otter() {
     esac
 }
 
+compdef _otter otter
+
 _otter_subcommands() {
     local -a subcmds
     subcmds=(
@@ -312,5 +314,3 @@ _otter_upgrade() {
         '(--help -h)'{--help,-h}'[show help]' \
         '1:container:_otter_container_names'
 }
-
-_otter "$@"
