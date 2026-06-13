@@ -45,48 +45,28 @@ complete -c otter -n __otter_no_subcommand -l help    -s h -d 'Show help'
 complete -c otter -n __otter_no_subcommand -l version       -d 'Show version'
 
 # ── Top-level subcommands ─────────────────────────────────────────────────────
-complete -c otter -n __otter_no_subcommand -a assemble       -d 'Apply a manifest file'
-complete -c otter -n __otter_no_subcommand -a dmf            -d 'Apply a manifest file (alias: assemble)'
-complete -c otter -n __otter_no_subcommand -a create         -d 'Create a new container'
-complete -c otter -n __otter_no_subcommand -a mk             -d 'Create a new container (alias: create)'
-complete -c otter -n __otter_no_subcommand -a enter          -d 'Enter a container shell'
-complete -c otter -n __otter_no_subcommand -a sh             -d 'Enter a container shell (alias: enter)'
-complete -c otter -n __otter_no_subcommand -a generate-entry -d 'Create a desktop entry'
-complete -c otter -n __otter_no_subcommand -a pin            -d 'Create a desktop entry (alias: generate-entry)'
-complete -c otter -n __otter_no_subcommand -a inspect        -d 'Show container details'
-complete -c otter -n __otter_no_subcommand -a info           -d 'Show container details (alias: inspect)'
-complete -c otter -n __otter_no_subcommand -a journal        -d 'Show container logs'
-complete -c otter -n __otter_no_subcommand -a logs           -d 'Show container logs (alias: journal)'
-complete -c otter -n __otter_no_subcommand -a list           -d 'List otter containers'
-complete -c otter -n __otter_no_subcommand -a ls             -d 'List otter containers (alias: list)'
-complete -c otter -n __otter_no_subcommand -a lock           -d 'Lock a container'
-complete -c otter -n __otter_no_subcommand -a lk             -d 'Lock a container (alias: lock)'
-complete -c otter -n __otter_no_subcommand -a pause          -d 'Pause a container'
-complete -c otter -n __otter_no_subcommand -a zz             -d 'Pause a container (alias: pause)'
-complete -c otter -n __otter_no_subcommand -a registry       -d 'Manage otter images'
-complete -c otter -n __otter_no_subcommand -a reg            -d 'Manage otter images (alias: registry)'
-complete -c otter -n __otter_no_subcommand -a remove         -d 'Remove a container'
-complete -c otter -n __otter_no_subcommand -a rm             -d 'Remove a container (alias: remove)'
-complete -c otter -n __otter_no_subcommand -a restart        -d 'Restart a container'
-complete -c otter -n __otter_no_subcommand -a rbt            -d 'Restart a container (alias: restart)'
-complete -c otter -n __otter_no_subcommand -a start          -d 'Start a container'
-complete -c otter -n __otter_no_subcommand -a up             -d 'Start a container (alias: start)'
-complete -c otter -n __otter_no_subcommand -a stop           -d 'Stop a container'
-complete -c otter -n __otter_no_subcommand -a dn             -d 'Stop a container (alias: stop)'
-complete -c otter -n __otter_no_subcommand -a unlock         -d 'Unlock a container'
-complete -c otter -n __otter_no_subcommand -a ulk            -d 'Unlock a container (alias: unlock)'
-complete -c otter -n __otter_no_subcommand -a upgrade        -d 'Upgrade packages in a container'
-complete -c otter -n __otter_no_subcommand -a syu            -d 'Upgrade packages in a container (alias: upgrade)'
+complete -c otter -n __otter_no_subcommand -a assemble       -d 'Apply a manifest file (alias: dmf)'
+complete -c otter -n __otter_no_subcommand -a create         -d 'Create a new container (alias: mk)'
+complete -c otter -n __otter_no_subcommand -a enter          -d 'Enter a container shell (alias: sh)'
+complete -c otter -n __otter_no_subcommand -a generate-entry -d 'Create a desktop entry (alias: pin)'
+complete -c otter -n __otter_no_subcommand -a inspect        -d 'Show container details (alias: info)'
+complete -c otter -n __otter_no_subcommand -a journal        -d 'Show container logs (alias: logs)'
+complete -c otter -n __otter_no_subcommand -a list           -d 'List otter containers (alias: ls)'
+complete -c otter -n __otter_no_subcommand -a lock           -d 'Lock a container (alias: lk)'
+complete -c otter -n __otter_no_subcommand -a pause          -d 'Pause a container (alias: zz)'
+complete -c otter -n __otter_no_subcommand -a registry       -d 'Manage otter images (alias: reg)'
+complete -c otter -n __otter_no_subcommand -a remove         -d 'Remove a container (alias: rm)'
+complete -c otter -n __otter_no_subcommand -a restart        -d 'Restart a container (alias: rbt)'
+complete -c otter -n __otter_no_subcommand -a start          -d 'Start a container (alias: up)'
+complete -c otter -n __otter_no_subcommand -a stop           -d 'Stop a container (alias: dn)'
+complete -c otter -n __otter_no_subcommand -a unlock         -d 'Unlock a container (alias: ulk)'
+complete -c otter -n __otter_no_subcommand -a upgrade        -d 'Upgrade packages in a container (alias: syu)'
 
 # ── assemble ──────────────────────────────────────────────────────────────────
 complete -c otter -n '__otter_using_subcommand assemble dmf; and not __fish_seen_subcommand_from create mk remove rm' \
-    -a create -d 'Create containers from manifest'
+    -a create -d 'Create containers from manifest (alias: mk)'
 complete -c otter -n '__otter_using_subcommand assemble dmf; and not __fish_seen_subcommand_from create mk remove rm' \
-    -a mk     -d 'Create containers from manifest (alias: create)'
-complete -c otter -n '__otter_using_subcommand assemble dmf; and not __fish_seen_subcommand_from create mk remove rm' \
-    -a remove -d 'Remove containers from manifest'
-complete -c otter -n '__otter_using_subcommand assemble dmf; and not __fish_seen_subcommand_from create mk remove rm' \
-    -a rm     -d 'Remove containers from manifest (alias: remove)'
+    -a remove -d 'Remove containers from manifest (alias: rm)'
 
 complete -c otter -n '__otter_using_subcommand assemble dmf; and __fish_seen_subcommand_from create mk' \
     -l file    -s f -d 'Manifest file' -r -F
@@ -243,13 +223,9 @@ complete -c otter -n '__otter_using_subcommand pause zz' \
 
 # ── registry ──────────────────────────────────────────────────────────────────
 complete -c otter -n '__otter_using_subcommand registry reg; and not __fish_seen_subcommand_from pull get remove rm' \
-    -a pull   -d 'Pull an image from the registry'
+    -a pull   -d 'Pull an image from the registry (alias: get)'
 complete -c otter -n '__otter_using_subcommand registry reg; and not __fish_seen_subcommand_from pull get remove rm' \
-    -a get    -d 'Pull an image from the registry (alias: pull)'
-complete -c otter -n '__otter_using_subcommand registry reg; and not __fish_seen_subcommand_from pull get remove rm' \
-    -a remove -d 'Remove a local image'
-complete -c otter -n '__otter_using_subcommand registry reg; and not __fish_seen_subcommand_from pull get remove rm' \
-    -a rm     -d 'Remove a local image (alias: remove)'
+    -a remove -d 'Remove a local image (alias: rm)'
 complete -c otter -n '__otter_using_subcommand registry reg' \
     -l all  -s a -d 'Show/apply to all images'
 complete -c otter -n '__otter_using_subcommand registry reg' \
