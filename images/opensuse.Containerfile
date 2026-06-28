@@ -22,9 +22,6 @@ RUN mkdir -p /etc/zypp/zypp.conf.d \
 # Lock parallel-printer-support as it can't be installed in rootless containers
 RUN zypper al parallel-printer-support
 
-# Upgrade all packages
-RUN zypper dup -y --from packman --allow-vendor-change || zypper dup -y
-
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN zypper -n install --auto-agree-with-licenses -y \
