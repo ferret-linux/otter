@@ -201,7 +201,7 @@
       "amd64",
       "arm64"
     ],
-    "enabled": true,
+    "enabled": false,
     "grype_distro": "opensuseleap"
   },
   {
