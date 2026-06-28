@@ -45,7 +45,7 @@ func NewRmCommand(cm containermanager.ContainerManager) *RmCommand {
 func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, error) {
 	listResult, err := c.listCmd.Execute(ctx, ListOptions{})
 	if err != nil {
-		return nil, fmt.Errorf("failed while listing contaiers: %w", err)
+		return nil, fmt.Errorf("failed while listing containers: %w", err)
 	}
 
 	otterContainersToRemove := getContainersToRemove(listResult.Containers, options.ContainerNames, options.All)
