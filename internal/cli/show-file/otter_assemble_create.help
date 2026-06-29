@@ -1,0 +1,22 @@
+{2}╭──────────────────────────────────────────────────────────────╮{R}
+{2}│{R}{1}⦿ Create or update otters defined in a manifest file          {R}{2}│{R}
+{2}├──────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Usage:{R}                                                      {2}│{R}
+{2}│{R}  {5}otter dmf mk     --file manifest.toml [box]{R}                 {2}│{R}
+{2}│{R}  {5}otter assemble create --file manifest.toml [box]{R}            {2}│{R}
+{2}├──────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                                   {2}│{R}
+{2}│{R}  {5}otter dmf mk --file manifest.toml{R}                           {2}│{R}
+{2}│{R}  {5}otter assemble create --file manifest.toml my-box{R}           {2}│{R}
+{2}│{R}  {5}otter assemble create -f manifest.toml --replace my-box{R}     {2}│{R}
+{2}├──────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Options:{R}                                                    {2}│{R}
+{2}│{R} {4}--file{R}    {2}┆{R} {4}-f{R}  {5}Path to the manifest file (required){R}         {2}│{R}
+{2}│{R} {4}--replace{R} {2}┆{R} {4}-R{R}  {5}Delete and recreate boxes that already exist{R} {2}│{R}
+{2}├──────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                                     {2}│{R}
+{2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}                       {2}│{R}
+{2}├──────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Notes:{R}                                                      {2}│{R}
+{2}│{R} {5}When no [box] argument, all boxes in manifest are processed.{R} {2}│{R}
+{2}╰──────────────────────────────────────────────────────────────╯{R}
