@@ -21,6 +21,7 @@ type EnterOptions struct {
 	CleanPath       bool
 	EmptyEnv        bool
 	AutoStart       bool
+	NoWorkDir       bool
 }
 
 type EnterCommand struct {
@@ -66,6 +67,7 @@ func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterRe
 		NoTTY:           opts.NoTTY,
 		CleanPath:       opts.CleanPath,
 		EmptyEnv:        opts.EmptyEnv,
+		NoWorkDir:       opts.NoWorkDir,
 	}
 
 	if !opts.NoTTY {

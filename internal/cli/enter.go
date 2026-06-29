@@ -65,6 +65,7 @@ func enterAction(ctx context.Context, cmd *cli.Command) error {
 		CleanPath:       cmd.Bool("clean-path"),
 		EmptyEnv:        cmd.Bool("empty-env"),
 		AutoStart:       cmd.Bool("auto-start"),
+		NoWorkDir:       cmd.Bool("no-workdir"),
 	}
 
 	_, err := commands.NewEnterCommand(containerManager).Execute(ctx, options)
