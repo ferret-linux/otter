@@ -196,7 +196,7 @@ func (n *Nerdctl) makeCreateCommand(
 		"TERMINFO_DIRS=/usr/share/terminfo:/run/host/usr/share/terminfo",
 	)
 	options = append(options, "--env", fmt.Sprintf("CONTAINER_ID=%s", containerName))
-	options = append(options, "--volume", "/tmp:/tmp:rslave")
+	options = append(options, "--volume", "/tmp:/tmp"+containermanager.BindPropagation())
 	options = append(options, "--volume", fmt.Sprintf("%s:%s", otterExportPath, "/usr/lib/otter/scripts/otter-export:ro"))
 	options = append(
 		options,
@@ -204,12 +204,12 @@ func (n *Nerdctl) makeCreateCommand(
 		fmt.Sprintf("%s:%s", otterHostexecPath, "/usr/lib/otter/scripts/otter-host-exec:ro"),
 	)
 	options = append(options, "--volume", fmt.Sprintf("%s:%s", otterPath, "/usr/bin/otter:ro"))
-	options = append(options, "--volume", fmt.Sprintf("%s:%s:rslave", containerUserHome, containerUserHome))
-	options = append(options, "--volume", "/:/run/host/:rslave")
+	options = append(options, "--volume", fmt.Sprintf("%s:%s%s", containerUserHome, containerUserHome, containermanager.BindPropagation()))
+	options = append(options, "--volume", "/:/run/host/"+containermanager.BindPropagation())
 
 	if !unshareDevsys {
-		options = append(options, "--volume", "/dev:/dev:rslave")
-		options = append(options, "--volume", "/sys:/sys:rslave")
+		options = append(options, "--volume", "/dev:/dev"+containermanager.BindPropagation())
+		options = append(options, "--volume", "/sys:/sys"+containermanager.BindPropagation())
 	}
 
 	if init {
@@ -256,18 +256,18 @@ func (n *Nerdctl) makeCreateCommand(
 		options = append(
 			options,
 			"--volume",
-			fmt.Sprintf("%s:%s:rslave", containerUserCustomHome, containerUserCustomHome),
+			fmt.Sprintf("%s:%s%s", containerUserCustomHome, containerUserCustomHome, containermanager.BindPropagation()),
 		)
 	}
 
 	homePath := fmt.Sprintf("/var/home/%s", containerUserName)
 	if containerUserHome != homePath && containermanager.PathExists(homePath) {
-		options = append(options, "--volume", fmt.Sprintf("%s:%s:rslave", homePath, homePath))
+		options = append(options, "--volume", fmt.Sprintf("%s:%s%s", homePath, homePath, containermanager.BindPropagation()))
 	}
 
 	xdgRuntimeDir := fmt.Sprintf("/run/user/%s", containerUserUID)
 	if containermanager.PathExists(xdgRuntimeDir) && !init {
-		options = append(options, "--volume", fmt.Sprintf("%s:%s:rslave", xdgRuntimeDir, xdgRuntimeDir))
+		options = append(options, "--volume", fmt.Sprintf("%s:%s%s", xdgRuntimeDir, xdgRuntimeDir, containermanager.BindPropagation()))
 	}
 
 	if !unshareNetNS {
