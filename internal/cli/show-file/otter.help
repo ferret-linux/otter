@@ -15,7 +15,7 @@
 {2}│{R} {0}journal{R}        {2}┆{R} {0}logs{R} {5}Show logs of a container{R}       {2}│{R}
 {2}│{R} {0}restart{R}        {2}┆{R} {0}rbt{R}  {5}Restart containers{R}             {2}│{R}
 {2}│{R} {0}upgrade{R}        {2}┆{R} {0}syu{R}  {5}Update packages in containers{R}  {2}│{R}
-{2}│{R} {0}assemble{R}       {2}┆{R} {0}dmk{R}  {5}Manage containers from a spec{R}  {2}│{R}
+{2}│{R} {0}assemble{R}       {2}┆{R} {0}dmf{R}  {5}Manage containers from a spec{R}  {2}│{R}
 {2}│{R} {0}registry{R}       {2}┆{R} {0}reg{R}  {5}Browse and manage otter images{R} {2}│{R}
 {2}│{R} {0}generate-entry{R} {2}┆{R} {0}pin{R}  {5}Create clickable desktop entry{R} {2}│{R}
 {2}├────────────────┴─────────────────────────────────────┤{R}
