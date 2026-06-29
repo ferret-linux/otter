@@ -836,6 +836,7 @@ func (d *Docker) generateEnterCommand(
 	}
 
 	cmd = append(cmd, fmt.Sprintf("--workdir=%s", workdir))
+	cmd = append(cmd, fmt.Sprintf("--env=PWD=%s", workdir))
 
 	executablePath, err := os.Executable()
 	if err != nil {
