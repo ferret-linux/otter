@@ -34,7 +34,7 @@ func init() {
 		if !ok {
 			return
 		}
-		printFile("otter_" + cmd.Name)
+		printFile(strings.ReplaceAll(cmd.FullName(), " ", "_"))
 	}
 }
 
