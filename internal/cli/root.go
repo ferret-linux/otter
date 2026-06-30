@@ -233,7 +233,7 @@ func withUsageErrorHandler(_ *config.Values, cmd *cli.Command) *cli.Command {
 // withRoot declares the --root flag on a command and, when it is set,
 // validates that sudo is usable. The actual root-mode container manager is
 // built by withContainerManager, which reads the same flag.
-func withRoot(_ *config.Values, cmd *cli.Command) *cli.Command {
+func withRoot(cfg *config.Values, cmd *cli.Command) *cli.Command {
 	cmd.Flags = append(cmd.Flags, &cli.BoolFlag{
 		Name:    "root",
 		Aliases: []string{"r"},
@@ -248,7 +248,7 @@ func withRoot(_ *config.Values, cmd *cli.Command) *cli.Command {
 				return nil, err
 			}
 		}
-		if c.Bool("root") {
+		if c.Bool("root") || cfg.DefaultRootful {
 			if _, err := rootcheck.Validate(ctx, c.String("sudo-command")); err != nil {
 				return nil, fmt.Errorf("cannot run in root mode: %w", err)
 			}
@@ -262,7 +262,7 @@ func withRoot(_ *config.Values, cmd *cli.Command) *cli.Command {
 // it in the context. It reads --container-manager and --sudo-command from the
 // root command, and --root from the current command (zero value if the flag
 // is not declared), so commands without withRoot always get a rootless manager.
-func withContainerManager(_ *config.Values, cmd *cli.Command) *cli.Command {
+func withContainerManager(cfg *config.Values, cmd *cli.Command) *cli.Command {
 	prev := cmd.Before
 	cmd.Before = func(ctx context.Context, c *cli.Command) (context.Context, error) {
 		if prev != nil {
@@ -276,7 +276,7 @@ func withContainerManager(_ *config.Values, cmd *cli.Command) *cli.Command {
 			ctx,
 			c.Root().String("container-manager"),
 			c.Root().String("sudo-command"),
-			c.Bool("root"),
+			c.Bool("root") || cfg.DefaultRootful,
 		)
 		if err != nil {
 			return nil, err
