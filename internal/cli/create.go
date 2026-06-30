@@ -115,7 +115,7 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 				Aliases: []string{"E"},
 			},
 			&cli.BoolFlag{
-				Name: "absolutely-disable-root-password-i-am-really-positively-sure",
+				Name: "disable-root-password-i-fully-understand-the-risks-and-accept-the-responsibilities",
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
