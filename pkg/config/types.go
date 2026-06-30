@@ -7,9 +7,10 @@ type containerConfig struct {
 }
 
 type settingsConfig struct {
-	Shell      string `toml:"shell"`
-	InitSystem bool   `toml:"init-system"`
-	Rootful    bool   `toml:"rootful"`
+	Shell         string `toml:"shell"`
+	InitSystem    bool   `toml:"init-system"`
+	Rootful       bool   `toml:"rootful"`
+	UsernsNoLimit bool   `toml:"userns-nolimit"`
 }
 
 type preferencesConfig struct {
@@ -34,4 +35,5 @@ type Values struct {
 	DefaultInitSystem     bool
 	DefaultRootful        bool
 	DefaultNoEntry        bool
+	DefaultUsernsNoLimit  bool
 }

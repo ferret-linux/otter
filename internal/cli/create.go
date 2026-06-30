@@ -146,7 +146,7 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 		ContainerUserCustomHome: cmd.String("home"),
 		Init:                    cmd.Bool("init"),
 		Nvidia:                  cmd.Bool("nvidia"),
-		NoUsernsLimit:           cmd.Bool("no-userns-limit"),
+		NoUsernsLimit:           cmd.Bool("no-userns-limit") || cfg.DefaultUsernsNoLimit,
 		Memory:                  cmd.String("memory"),
 		CPUThreads:              cmd.Int("cpu-threads"),
 		ContainerInitHook:       cmd.String("init-hooks"),

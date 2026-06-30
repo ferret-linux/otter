@@ -28,5 +28,6 @@ func toValues(cfg fileConfig) *Values {
 		DefaultInitSystem:     cfg.Settings.InitSystem,
 		DefaultRootful:        cfg.Settings.Rootful,
 		DefaultNoEntry:        cfg.Preferences.NoEntry,
+		DefaultUsernsNoLimit:  cfg.Settings.UsernsNoLimit,
 	}
 }
