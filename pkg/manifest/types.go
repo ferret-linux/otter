@@ -39,12 +39,13 @@ type Hardware struct {
 
 // Isolation holds namespace isolation settings.
 type Isolation struct {
-	Netns   bool `toml:"netns"`
-	IPC     bool `toml:"ipc"`
-	Process bool `toml:"process"`
-	Devsys  bool `toml:"devsys"`
-	Groups  bool `toml:"groups"`
-	All     bool `toml:"all"`
+	Netns         bool `toml:"netns"`
+	IPC           bool `toml:"ipc"`
+	Process       bool `toml:"process"`
+	Devsys        bool `toml:"devsys"`
+	Groups        bool `toml:"groups"`
+	All           bool `toml:"all"`
+	UsernsNoLimit bool `toml:"userns-nolimit"`
 }
 
 // Item represents a single [[container]] entry in the manifest file.

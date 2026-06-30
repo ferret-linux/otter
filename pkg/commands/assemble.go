@@ -170,6 +170,7 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item) e
 		ContainerUserCustomHome: "",
 		Init:                    item.Settings.InitSystem,
 		Nvidia:                  item.Hardware.Nvidia,
+		NoUsernsLimit:           item.Isolation.UsernsNoLimit,
 		Memory:                  item.Hardware.Memory,
 		CPUThreads:              item.Hardware.CPU,
 		GenerateEntry:           item.Settings.Entry,

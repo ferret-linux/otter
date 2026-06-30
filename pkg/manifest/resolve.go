@@ -182,6 +182,9 @@ func mergeItems(base, item Item) Item {
 	if !item.Isolation.All {
 		item.Isolation.All = base.Isolation.All
 	}
+	if !item.Isolation.UsernsNoLimit {
+		item.Isolation.UsernsNoLimit = base.Isolation.UsernsNoLimit
+	}
 
 	return item
 }
