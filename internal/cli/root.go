@@ -230,9 +230,11 @@ func withUsageErrorHandler(_ *config.Values, cmd *cli.Command) *cli.Command {
 	return cmd
 }
 
-// withRoot declares the --root flag on a command and, when it is set,
-// validates that sudo is usable. The actual root-mode container manager is
-// built by withContainerManager, which reads the same flag.
+// withRoot declares the --root flag on a command, resolves its effective
+// value against cfg.DefaultRootful, and persists the resolved value back
+// onto the flag so every downstream reader of --root (this command's own
+// action, and withContainerManager) sees a single consistent answer.
+// When it resolves to true, it also validates that sudo is usable.
 func withRoot(cfg *config.Values, cmd *cli.Command) *cli.Command {
 	cmd.Flags = append(cmd.Flags, &cli.BoolFlag{
 		Name:    "root",
@@ -248,7 +250,12 @@ func withRoot(cfg *config.Values, cmd *cli.Command) *cli.Command {
 				return nil, err
 			}
 		}
-		if c.Bool("root") || cfg.DefaultRootful {
+		if !c.Bool("root") && cfg.DefaultRootful {
+			if err := c.Set("root", "true"); err != nil {
+				return nil, fmt.Errorf("failed to apply rootful default: %w", err)
+			}
+		}
+		if c.Bool("root") {
 			if _, err := rootcheck.Validate(ctx, c.String("sudo-command")); err != nil {
 				return nil, fmt.Errorf("cannot run in root mode: %w", err)
 			}
@@ -262,7 +269,7 @@ func withRoot(cfg *config.Values, cmd *cli.Command) *cli.Command {
 // it in the context. It reads --container-manager and --sudo-command from the
 // root command, and --root from the current command (zero value if the flag
 // is not declared), so commands without withRoot always get a rootless manager.
-func withContainerManager(cfg *config.Values, cmd *cli.Command) *cli.Command {
+func withContainerManager(_ *config.Values, cmd *cli.Command) *cli.Command {
 	prev := cmd.Before
 	cmd.Before = func(ctx context.Context, c *cli.Command) (context.Context, error) {
 		if prev != nil {
@@ -276,7 +283,7 @@ func withContainerManager(cfg *config.Values, cmd *cli.Command) *cli.Command {
 			ctx,
 			c.Root().String("container-manager"),
 			c.Root().String("sudo-command"),
-			c.Bool("root") || cfg.DefaultRootful,
+			c.Bool("root"),
 		)
 		if err != nil {
 			return nil, err
