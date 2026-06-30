@@ -67,6 +67,7 @@ func printInspectJSON(result *containermanager.InspectResult, locked bool, opts 
 		UnshareProcess bool   `json:"unshare_process"`
 		UnshareDevsys  bool   `json:"unshare_devsys"`
 		UnshareGroups  bool   `json:"unshare_groups"`
+		UsernsNoLimit  bool   `json:"userns_nolimit"`
 	}{
 		ID:             result.ContainerID,
 		Name:           opts.ContainerName,
@@ -89,6 +90,7 @@ func printInspectJSON(result *containermanager.InspectResult, locked bool, opts 
 		UnshareProcess: result.UnshareProcess,
 		UnshareDevsys:  result.UnshareDevsys,
 		UnshareGroups:  result.UnshareGroups,
+		UsernsNoLimit:  result.UsernsNoLimit,
 	}
 
 	enc := json.NewEncoder(os.Stdout)
@@ -174,6 +176,7 @@ func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error
 		ui.PanelRow("Process", boolToSharedStr(result.UnshareProcess)),
 		ui.PanelRow("Devices", boolToSharedStr(result.UnshareDevsys)),
 		ui.PanelRow("Groups", boolToSharedStr(result.UnshareGroups)),
+		ui.PanelRow("Userns No Limit", boolToEnabledStr(result.UsernsNoLimit)),
 	)
 	p.Render()
 

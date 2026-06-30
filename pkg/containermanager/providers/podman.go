@@ -229,6 +229,7 @@ func (p *Podman) makeCreateCommand(
 	options = append(options, "--label", fmt.Sprintf("otter.init=%d", containermanager.Btoi(init)))
 	options = append(options, "--label", fmt.Sprintf("otter.nvidia=%d", containermanager.Btoi(nvidia)))
 	options = append(options, "--label", fmt.Sprintf("otter.rootful=%d", containermanager.Btoi(p.root)))
+	options = append(options, "--label", fmt.Sprintf("otter.userns_nolimit=%d", containermanager.Btoi(noUsernsLimit)))
 	options = append(options, "--env", fmt.Sprintf("SHELL=%s", shellFilepath))
 	options = append(options, "--env", fmt.Sprintf("HOME=%s", containerUserHome))
 	options = append(options, "--env", "container=podman")
@@ -847,6 +848,7 @@ func (p *Podman) InspectContainer(ctx context.Context, containerName string) (*c
 	config.Init = labels["otter.init"] == "1"
 	config.Nvidia = labels["otter.nvidia"] == "1"
 	config.Rootful = labels["otter.rootful"] == "1"
+	config.UsernsNoLimit = labels["otter.userns_nolimit"] == "1"
 
 	for _, env := range inspect.Config.Env {
 		switch {

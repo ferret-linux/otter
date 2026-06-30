@@ -30,6 +30,7 @@ type InspectResult struct {
 	Init              bool
 	Nvidia            bool
 	Rootful           bool
+	UsernsNoLimit     bool
 }
 
 type CreateOptions struct {
