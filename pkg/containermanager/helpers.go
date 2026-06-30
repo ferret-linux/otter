@@ -55,6 +55,7 @@ func Btoi(b bool) int {
 	return 0
 }
 
+//nolint:goconst // standard FHS paths are clearer inline than as named constants
 func BuildContainerPath(cleanPath bool, hostPath string, containerPath string) string {
 	standardPaths := []string{"/usr/local/sbin", "/usr/local/bin", "/usr/sbin", "/usr/bin", "/sbin", "/bin"}
 
