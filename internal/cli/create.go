@@ -79,7 +79,8 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 				Aliases: []string{"N"},
 			},
 			&cli.BoolFlag{
-				Name: "no-userns-limit",
+				Name:    "no-userns-limit",
+				Aliases: []string{"ul"},
 			},
 			&cli.StringFlag{
 				Name:    "platform",

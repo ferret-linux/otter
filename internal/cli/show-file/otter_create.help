@@ -34,6 +34,7 @@
 {2}│{R} {4}--unshare-groups{R}      {2}┆{R} {4}-ug{R}  {5}Do not forward user's additional groups into container{R} {2}│{R}
 {2}│{R} {4}--unshare-devsys{R}      {2}┆{R} {4}-ud{R}  {5}Do not share host devices and sysfs dirs{R}               {2}│{R}
 {2}│{R} {4}--unshare-process{R}     {2}┆{R} {4}-up{R}  {5}Do not share process namespace with host{R}               {2}│{R}
+{2}│{R} {4}--no-userns-limit{R}     {2}┆{R} {4}-ul{R}  {5}Skip the size-capped userns range for podman{R}           {2}│{R}
 {2}│{R} {4}--additional-flags{R}    {2}┆{R} {4}-a{R}   {5}Additional flags to pass to the container manager{R}      {2}│{R}
 {2}│{R} {4}--additional-packages{R} {2}┆{R} {4}-ap{R}  {5}Additional packages to install during container setup{R}  {2}│{R}
 {2}├───────────────────────┴─────────────────────────────────────────────────────────────┤{R}
