@@ -144,7 +144,7 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 		AdditionalPackages:      cmd.StringSlice("additional-packages"),
 		Nopasswd:                cmd.Bool("absolutely-disable-root-password-i-am-really-positively-sure"),
 		ContainerUserCustomHome: cmd.String("home"),
-		Init:                    cmd.Bool("init"),
+		Init:                    cmd.Bool("init") || cfg.DefaultInitSystem,
 		Nvidia:                  cmd.Bool("nvidia"),
 		NoUsernsLimit:           cmd.Bool("no-userns-limit") || cfg.DefaultUsernsNoLimit,
 		Memory:                  cmd.String("memory"),
