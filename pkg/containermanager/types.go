@@ -54,6 +54,7 @@ type CreateOptions struct {
 	ContainerInitHook       string
 	Init                    bool
 	Nvidia                  bool
+	NoUsernsLimit           bool
 	Memory                  string
 	CPUThreads              int
 }

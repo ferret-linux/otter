@@ -75,9 +75,10 @@ type CreateOptions struct {
 	ContainerHomePrefix     string
 	Init                    bool
 
-	Nvidia     bool
-	Memory     string
-	CPUThreads int
+	Nvidia        bool
+	NoUsernsLimit bool
+	Memory        string
+	CPUThreads    int
 
 	GenerateEntry bool
 	Rootful       bool
@@ -185,6 +186,7 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 			ContainerInitHook:       opts.ContainerInitHook,
 			Init:                    opts.Init,
 			Nvidia:                  opts.Nvidia,
+			NoUsernsLimit:           opts.NoUsernsLimit,
 			Memory:                  opts.Memory,
 			CPUThreads:              opts.CPUThreads,
 		},

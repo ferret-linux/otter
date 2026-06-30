@@ -117,6 +117,7 @@ func (p *Podman) Create(
 		opts.ContainerPreInitHook,
 		opts.ContainerInitHook,
 		opts.Nvidia,
+		opts.NoUsernsLimit,
 		opts.Memory,
 		opts.CPUThreads,
 		opts.UnshareDevsys,
@@ -156,6 +157,7 @@ func (p *Podman) makeCreateCommand(
 	containerPreInitHook string,
 	containerInitHook string,
 	nvidia bool,
+	noUsernsLimit bool,
 	memory string,
 	cpuThreads int,
 	unshareDevsys bool,
@@ -423,7 +425,7 @@ func (p *Podman) makeCreateCommand(
 
 	// Use keep-id only if going rootless.
 	if !p.root {
-		if p.supportsKeepIDSize(ctx, containerImage) {
+		if !noUsernsLimit && p.supportsKeepIDSize(ctx, containerImage) {
 			options = append(options, "--userns", "keep-id:size=65536")
 		} else {
 			options = append(options, "--userns", "keep-id")
