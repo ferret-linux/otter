@@ -29,6 +29,7 @@ go.work.sum
 tags
 *.vim
 TODO.txt
+.vscode
 
 # Code Review Files & TODO ( markdown)
 /pat*.md
