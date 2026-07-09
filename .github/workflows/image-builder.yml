@@ -8,9 +8,21 @@ name: 1.Image Builder (IB)
 
 on:
   schedule:
-    - cron: '27 08 */1 * *'
-    - cron: '32 10 */2 * *'
-    - cron: '43 16 */3 * *'
+    - cron: '11 08 */1 * *'
+    - cron: '21 10 */1 * *'
+    - cron: '31 08 */1 * *'
+    - cron: '41 10 */1 * *'
+    - cron: '51 16 */1 * *'
+    - cron: '12 08 */2 * *'
+    - cron: '22 10 */2 * *'
+    - cron: '32 08 */2 * *'
+    - cron: '42 10 */2 * *'
+    - cron: '52 16 */2 * *'
+    - cron: '13 08 */3 * *'
+    - cron: '23 10 */3 * *'
+    - cron: '33 08 */3 * *'
+    - cron: '43 10 */3 * *'
+    - cron: '53 16 */3 * *'
   workflow_dispatch:
 
 jobs:
