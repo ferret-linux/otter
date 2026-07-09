@@ -214,7 +214,7 @@
       "amd64",
       "arm64"
     ],
-    "enabled": true
+    "enabled": false
   },
   {
     "image": "docker.io/library/alpine:latest",
