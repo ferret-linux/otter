@@ -1,5 +1,5 @@
 {
-  "images_available": true,
+  "images_available": false,
   "images": [
     {
       "name": "ubuntu",
