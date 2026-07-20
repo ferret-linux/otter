@@ -2224,9 +2224,9 @@ elif [ ! -e /etc/passwd.done ]; then
 		if ! usermod --append --groups "${additional_groups}" "${current_user_name}"; then
 			printf "Warning: usermod --groups failed, trying manual modification\n"
 			for group in ${additional_groups}; do
-				if ! grep -q "^${group}.*${current_user_name}.*" /etc/group; then
-					group_line="$(grep "^${group}.*" /etc/group)"
-					if grep -q "^${group}.*:$" /etc/group; then
+				if grep -q "^${group}:" /etc/group && ! grep -q "^${group}.*${current_user_name}.*" /etc/group; then
+					group_line="$(grep "^${group}:" /etc/group)"
+					if grep -q "^${group}:.*:$" /etc/group; then
 						sed -i "s|${group_line}|${group_line}${current_user_name}|g" /etc/group
 					else
 						sed -i "s|${group_line}|${group_line},${current_user_name}|g" /etc/group
