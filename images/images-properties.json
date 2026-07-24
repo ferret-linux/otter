@@ -10,15 +10,15 @@
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-07-23T19:42:24Z",
+      "built_at": "2026-07-24T13:06:53Z",
       "sizes": {
         "amd64": {
-          "compressed_size": 1402329563,
-          "disk_size": 1402329563
+          "compressed_size": 1402411995,
+          "disk_size": 1402411995
         },
         "arm64": {
-          "compressed_size": 1441967594,
-          "disk_size": 1441967594
+          "compressed_size": 1442042348,
+          "disk_size": 1442042348
         }
       }
     },
@@ -31,15 +31,15 @@
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-07-23T19:42:24Z",
+      "built_at": "2026-07-24T13:06:53Z",
       "sizes": {
         "amd64": {
-          "compressed_size": 1402330074,
-          "disk_size": 1402330074
+          "compressed_size": 1402411992,
+          "disk_size": 1402411992
         },
         "arm64": {
-          "compressed_size": 1441968107,
-          "disk_size": 1441968107
+          "compressed_size": 1442042346,
+          "disk_size": 1442042346
         }
       }
     },
@@ -52,15 +52,15 @@
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-07-23T19:42:24Z",
+      "built_at": "2026-07-24T13:06:53Z",
       "sizes": {
         "amd64": {
           "compressed_size": 1461040292,
           "disk_size": 1461040292
         },
         "arm64": {
-          "compressed_size": 1413888180,
-          "disk_size": 1413888180
+          "compressed_size": 1413888179,
+          "disk_size": 1413888179
         }
       }
     },
@@ -73,15 +73,15 @@
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-07-23T19:42:24Z",
+      "built_at": "2026-07-24T13:06:53Z",
       "sizes": {
         "amd64": {
           "compressed_size": 1592783527,
           "disk_size": 1592783527
         },
         "arm64": {
-          "compressed_size": 1572543668,
-          "disk_size": 1572543668
+          "compressed_size": 1572542646,
+          "disk_size": 1572542646
         }
       }
     },
@@ -94,15 +94,15 @@
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-07-23T19:42:24Z",
+      "built_at": "2026-07-24T13:06:53Z",
       "sizes": {
         "amd64": {
-          "compressed_size": 1605754025,
-          "disk_size": 1605754025
+          "compressed_size": 1605788840,
+          "disk_size": 1605788840
         },
         "arm64": {
-          "compressed_size": 1580961975,
-          "disk_size": 1580961975
+          "compressed_size": 1581033655,
+          "disk_size": 1581033655
         }
       }
     },
@@ -115,15 +115,11 @@
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-07-23T19:42:24Z",
+      "built_at": "2026-07-24T13:06:53Z",
       "sizes": {
         "amd64": {
-          "compressed_size": 2049735418,
-          "disk_size": 2049735418
-        },
-        "arm64": {
-          "compressed_size": 1942131461,
-          "disk_size": 1942131461
+          "compressed_size": 2049384697,
+          "disk_size": 2049384697
         }
       }
     },
@@ -136,17 +132,8 @@
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-07-23T19:42:24Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1999350532,
-          "disk_size": 1999350532
-        },
-        "arm64": {
-          "compressed_size": 1892720399,
-          "disk_size": 1892720399
-        }
-      }
+      "built_at": "2026-07-24T13:06:53Z",
+      "sizes": {}
     },
     {
       "name": "arch",
@@ -156,13 +143,8 @@
         "amd64"
       ],
       "enabled": true,
-      "built_at": "2026-07-23T19:42:24Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 2491120457,
-          "disk_size": 2491120457
-        }
-      }
+      "built_at": "2026-07-24T13:06:53Z",
+      "sizes": {}
     },
     {
       "name": "blackarch",
@@ -172,13 +154,8 @@
         "amd64"
       ],
       "enabled": true,
-      "built_at": "2026-07-23T19:42:24Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 2983172780,
-          "disk_size": 2983172780
-        }
-      }
+      "built_at": "2026-07-24T13:06:53Z",
+      "sizes": {}
     },
     {
       "name": "gentoo",
@@ -189,17 +166,8 @@
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-07-23T19:42:24Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 5002265498,
-          "disk_size": 5002265498
-        },
-        "arm64": {
-          "compressed_size": 3478015382,
-          "disk_size": 3478015382
-        }
-      }
+      "built_at": "2026-07-24T13:06:53Z",
+      "sizes": {}
     },
     {
       "name": "alma",
@@ -210,17 +178,8 @@
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-07-23T19:42:24Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1819342333,
-          "disk_size": 1819342333
-        },
-        "arm64": {
-          "compressed_size": 1814088204,
-          "disk_size": 1814088204
-        }
-      }
+      "built_at": "2026-07-24T13:06:53Z",
+      "sizes": {}
     },
     {
       "name": "rocky",
@@ -231,17 +190,8 @@
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-07-23T19:42:24Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1885141037,
-          "disk_size": 1885141037
-        },
-        "arm64": {
-          "compressed_size": 1871131704,
-          "disk_size": 1871131704
-        }
-      }
+      "built_at": "2026-07-24T13:06:53Z",
+      "sizes": {}
     },
     {
       "name": "centos",
@@ -252,17 +202,8 @@
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-07-23T19:42:24Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1978161651,
-          "disk_size": 1978161651
-        },
-        "arm64": {
-          "compressed_size": 1933402116,
-          "disk_size": 1933402116
-        }
-      }
+      "built_at": "2026-07-24T13:06:53Z",
+      "sizes": {}
     },
     {
       "name": "oracle",
@@ -273,17 +214,8 @@
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-07-23T19:42:24Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 2079299602,
-          "disk_size": 2079299602
-        },
-        "arm64": {
-          "compressed_size": 1928152592,
-          "disk_size": 1928152592
-        }
-      }
+      "built_at": "2026-07-24T13:06:53Z",
+      "sizes": {}
     },
     {
       "name": "rhel",
@@ -294,17 +226,8 @@
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-07-23T19:42:24Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1345839675,
-          "disk_size": 1345839675
-        },
-        "arm64": {
-          "compressed_size": 1240384589,
-          "disk_size": 1240384589
-        }
-      }
+      "built_at": "2026-07-24T13:06:53Z",
+      "sizes": {}
     },
     {
       "name": "opensuse-leap",
@@ -315,7 +238,7 @@
         "arm64"
       ],
       "enabled": false,
-      "built_at": "2026-07-23T19:42:24Z",
+      "built_at": "2026-07-24T13:06:53Z",
       "sizes": {}
     },
     {
@@ -327,7 +250,7 @@
         "arm64"
       ],
       "enabled": false,
-      "built_at": "2026-07-23T19:42:24Z",
+      "built_at": "2026-07-24T13:06:53Z",
       "sizes": {}
     },
     {
@@ -339,17 +262,8 @@
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-07-23T19:42:24Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 633767035,
-          "disk_size": 633767035
-        },
-        "arm64": {
-          "compressed_size": 631368331,
-          "disk_size": 631368331
-        }
-      }
+      "built_at": "2026-07-24T13:06:53Z",
+      "sizes": {}
     },
     {
       "name": "alpine-edge",
@@ -360,17 +274,8 @@
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-07-23T19:42:24Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 631971965,
-          "disk_size": 631971965
-        },
-        "arm64": {
-          "compressed_size": 627352715,
-          "disk_size": 627352715
-        }
-      }
+      "built_at": "2026-07-24T13:06:53Z",
+      "sizes": {}
     },
     {
       "name": "kali",
@@ -381,17 +286,8 @@
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-07-23T19:42:24Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1587948948,
-          "disk_size": 1587948948
-        },
-        "arm64": {
-          "compressed_size": 1561022358,
-          "disk_size": 1561022358
-        }
-      }
+      "built_at": "2026-07-24T13:06:53Z",
+      "sizes": {}
     },
     {
       "name": "kali-edge",
@@ -402,17 +298,8 @@
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-07-23T19:42:24Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1588020729,
-          "disk_size": 1588020729
-        },
-        "arm64": {
-          "compressed_size": 1561085435,
-          "disk_size": 1561085435
-        }
-      }
+      "built_at": "2026-07-24T13:06:53Z",
+      "sizes": {}
     },
     {
       "name": "void-glibc",
@@ -423,17 +310,8 @@
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-07-23T19:42:24Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1243325437,
-          "disk_size": 1243325437
-        },
-        "arm64": {
-          "compressed_size": 1216451583,
-          "disk_size": 1216451583
-        }
-      }
+      "built_at": "2026-07-24T13:06:53Z",
+      "sizes": {}
     },
     {
       "name": "void-musl",
@@ -444,17 +322,8 @@
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-07-23T19:42:24Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1182815222,
-          "disk_size": 1182815222
-        },
-        "arm64": {
-          "compressed_size": 1150852596,
-          "disk_size": 1150852596
-        }
-      }
+      "built_at": "2026-07-24T13:06:53Z",
+      "sizes": {}
     }
   ]
 }
