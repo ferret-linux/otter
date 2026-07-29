@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"runtime"
 	"strings"
 
 	"github.com/urfave/cli/v3"
@@ -20,7 +21,22 @@ type contextKey string
 
 const containerManagerKey contextKey = "containerManager"
 
+// commit and buildTime are injected at build time via -ldflags (see Makefile).
+// They stay at these defaults for builds that don't go through `make build`.
+var (
+	commit    = "unknown"
+	buildTime = "unknown"
+)
+
 func NewRootCommand(cfg *config.Values) *cli.Command {
+	cli.VersionPrinter = func(cmd *cli.Command) {
+		root := cmd.Root()
+		fmt.Fprintf(root.Writer, "%s %s\n\nInfo\n", root.Name, root.Version)
+		fmt.Fprintf(root.Writer, "  - commit: %s\n", commit)
+		fmt.Fprintf(root.Writer, "  - version: %s\n", root.Version)
+		fmt.Fprintf(root.Writer, "  - go version: %s\n", runtime.Version())
+		fmt.Fprintf(root.Writer, "  - build time: %s\n", buildTime)
+	}
 	return &cli.Command{
 		Name:    "otter",
 		Version: "0.0.3",

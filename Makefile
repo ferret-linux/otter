@@ -1,6 +1,10 @@
 GOOS ?= $(shell go env GOOS)
 GO_BUILD_ENV := CGO_ENABLED=0 GOOS=$(GOOS)
 
+COMMIT ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo unknown)
+BUILD_TIME ?= $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
+LDFLAGS := -X github.com/ferret-linux/otter/internal/cli.commit=$(COMMIT) -X github.com/ferret-linux/otter/internal/cli.buildTime=$(BUILD_TIME)
+
 .PHONY: version
 version:
 	sed -i 's/Version: "[^"]*"/Version: "$(word 2, $(MAKECMDGOALS))"/' internal/cli/root.go
@@ -13,7 +17,7 @@ version:
 
 .PHONY: build
 build:
-	$(GO_BUILD_ENV) go build -o ./bin/otter ./cmd/otter
+	$(GO_BUILD_ENV) go build -ldflags "$(LDFLAGS)" -o ./bin/otter ./cmd/otter
 
 .PHONY: test
 test: vet
