@@ -5,6 +5,7 @@ import (
 	"os"
 	"regexp"
 	"runtime"
+	"slices"
 	"strings"
 	"time"
 )
@@ -72,10 +73,10 @@ func BuildContainerPath(cleanPath bool, hostPath string, containerPath string) s
 	}
 
 	// Add standard paths not in host PATH
+	hostSegments := strings.Split(hostPath, ":")
 	var additionalPaths []string
 	for _, sp := range standardPaths {
-		pattern := regexp.MustCompile(`(:|^)` + regexp.QuoteMeta(sp) + `(:|$)`)
-		if !pattern.MatchString(hostPath) {
+		if !slices.Contains(hostSegments, sp) {
 			additionalPaths = append(additionalPaths, sp)
 		}
 	}
@@ -111,8 +112,7 @@ func reorderFHSPath(path string) string {
 	// If /usr/bin or /usr/sbin were absent, their local counterparts were
 	// skipped above; re-add any that went missing (prepended, like the shell).
 	for _, lp := range []string{"/usr/local/bin", "/usr/local/sbin"} {
-		pattern := regexp.MustCompile(`(:|^)` + regexp.QuoteMeta(lp) + `(:|$)`)
-		if !pattern.MatchString(result) {
+		if !slices.Contains(strings.Split(result, ":"), lp) {
 			result = lp + ":" + result
 		}
 	}
@@ -124,10 +124,9 @@ func BuildXDGPaths(envVar string, standardPaths []string) string {
 	containerPaths := os.Getenv(envVar)
 
 	for _, sp := range standardPaths {
-		pattern := regexp.MustCompile(`(:|^)` + regexp.QuoteMeta(sp) + `(:|$)`)
 		if containerPaths == "" {
 			containerPaths = sp
-		} else if !pattern.MatchString(containerPaths) {
+		} else if !slices.Contains(strings.Split(containerPaths, ":"), sp) {
 			containerPaths = containerPaths + ":" + sp
 		}
 	}
