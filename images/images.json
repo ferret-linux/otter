@@ -289,5 +289,63 @@
       "arm64"
     ],
     "enabled": true
+  },
+  {
+    "image": "docker.io/chimeralinux/chimera:latest",
+    "containerfile": "chimera.Containerfile",
+    "name": "chimera-otr",
+    "tag": "latest",
+    "display_name": "chimera",
+    "arches": [
+      "amd64",
+      "arm64"
+    ],
+    "enabled": true
+  },
+  {
+    "image": "docker.io/devuan/devuan:stable",
+    "containerfile": "devuan.Containerfile",
+    "name": "devuan-otr",
+    "tag": "stable",
+    "display_name": "devuan",
+    "arches": [
+      "amd64"
+    ],
+    "enabled": true
+  },
+  {
+    "image": "docker.io/devuan/devuan:testing",
+    "containerfile": "devuan.Containerfile",
+    "name": "devuan-otr",
+    "tag": "testing",
+    "display_name": "devuan-testing",
+    "arches": [
+      "amd64"
+    ],
+    "enabled": true
+  },
+  {
+    "image": "docker.io/devuan/devuan:unstable",
+    "containerfile": "devuan.Containerfile",
+    "name": "devuan-otr",
+    "tag": "unstable",
+    "display_name": "devuan-unstable",
+    "arches": [
+      "amd64"
+    ],
+    "enabled": true
+  },
+  {
+    "image": "cgr.dev/chainguard/wolfi-base:latest",
+    "containerfile": "wolfi.Containerfile",
+    "name": "wolfi-otr",
+    "tag": "latest",
+    "display_name": "wolfi",
+    "arches": [
+      "amd64",
+      "arm64"
+    ],
+    "enabled": true,
+    "grype_distro": "wolfi"
   }
 ]
