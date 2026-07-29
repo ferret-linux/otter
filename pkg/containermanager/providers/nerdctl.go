@@ -296,6 +296,15 @@ func (n *Nerdctl) makeCreateCommand(
 		options = append(options, "--volume", "/dev/null:/run/.nopasswd:ro")
 	}
 
+	// nerdctl's default runtime (runc) has no run.oci.keep_original_groups
+	// equivalent (that's a crun-specific annotation), so device-node access
+	// via supplementary groups needs the same explicit forwarding as docker.
+	if groups, err := os.Getgroups(); err == nil {
+		for _, gid := range groups {
+			options = append(options, "--group-add", strconv.Itoa(gid))
+		}
+	}
+
 	options = append(options, containerAdditionalFlags...)
 
 	for _, vol := range containerAdditionalVolumes {
