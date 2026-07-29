@@ -23,12 +23,15 @@ const containerManagerKey contextKey = "containerManager"
 
 // commit and buildTime are injected at build time via -ldflags (see Makefile).
 // They stay at these defaults for builds that don't go through `make build`.
+//
+//nolint:gochecknoglobals // required so `-ldflags -X` can inject values at build time
 var (
 	commit    = "unknown"
 	buildTime = "unknown"
 )
 
 func NewRootCommand(cfg *config.Values) *cli.Command {
+	//nolint:reassign // urfave/cli's documented mechanism for customizing version output
 	cli.VersionPrinter = func(cmd *cli.Command) {
 		root := cmd.Root()
 		fmt.Fprintf(root.Writer, "%s %s\n\nInfo\n", root.Name, root.Version)

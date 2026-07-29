@@ -113,7 +113,7 @@ func (n *Nerdctl) Create(
 	return nil
 }
 
-//nolint:gocognit,funlen // ignore cognitive complexity here, the function is mostly imperative option appending
+//nolint:gocognit,funlen,gocyclo,cyclop // ignore cognitive complexity here, the function is mostly imperative option appending
 func (n *Nerdctl) makeCreateCommand(
 	containerName string,
 	containerImage string,
