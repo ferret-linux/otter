@@ -33,12 +33,13 @@ hardware.memory = ""     # max memory, e.g. 512m | 2g
 hardware.nvidia = false  # true | false — enable nvidia gpu passthrough
 hardware.cpu    = 0      # max number of cpu threads, 0 means unlimited
 
-isolation.netns   = false  # true | false — isolate network namespace
-isolation.ipc     = false  # true | false — isolate ipc namespace
-isolation.process = false  # true | false — isolate process namespace
-isolation.devsys  = false  # true | false — isolate devices and sysfs
-isolation.groups  = false  # true | false — do not forward host user groups
-isolation.all     = false  # true | false — enable all isolation options above
+isolation.netns           = false  # true | false — isolate network namespace
+isolation.ipc             = false  # true | false — isolate ipc namespace
+isolation.process         = false  # true | false — isolate process namespace
+isolation.devsys          = false  # true | false — isolate devices and sysfs
+isolation.groups          = false  # true | false — do not forward host user groups
+isolation.all             = false  # true | false — enable all isolation options above
+isolation.userns-nolimit  = false  # true | false — disable the rootless uid/gid range limit for user namespaces
 
 # Format-2
 # Each group is a single line: group = { key = value, ... }.
@@ -58,7 +59,7 @@ exported   = { apps = [], bins = [], path = "" }
 hooks      = { pre-init = [], post-init = [] }
 settings   = { lock = false, entry = false, shell = "", rootful = false, init-system = false, hostname = "" }
 hardware   = { memory = "", nvidia = false, cpu = 0 }
-isolation  = { netns = false, ipc = false, process = false, devsys = false, groups = false, all = false }
+isolation  = { netns = false, ipc = false, process = false, devsys = false, groups = false, all = false, userns-nolimit = false }
 
 # Format-3
 # Each group gets its own [container.group] header, turning it into a proper named section.
@@ -101,12 +102,13 @@ nvidia = false
 cpu    = 0
 
 [container.isolation]
-netns   = false
-ipc     = false
-process = false
-devsys  = false
-groups  = false
-all     = false
+netns            = false
+ipc              = false
+process          = false
+devsys           = false
+groups           = false
+all              = false
+userns-nolimit   = false
 
 # Format-4
 # Combines the best of the other three:
@@ -135,6 +137,6 @@ post-init = []
 
 settings  = { lock = false, entry = false, shell = "", rootful = false, init-system = false, hostname = "" }
 hardware  = { memory = "", nvidia = false, cpu = 0 }
-isolation = { netns = false, ipc = false, process = false, devsys = false, groups = false, all = false }
+isolation = { netns = false, ipc = false, process = false, devsys = false, groups = false, all = false, userns-nolimit = false }
 
 # NOTE : All four formats produce identical parsed output. The parser does not distinguish between them.

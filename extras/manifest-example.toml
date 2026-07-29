@@ -33,12 +33,13 @@ hardware.memory = "512m"
 hardware.nvidia = false
 hardware.cpu    = 0
 
-isolation.netns   = true
-isolation.ipc     = true
-isolation.process = false
-isolation.devsys  = false
-isolation.groups  = false
-isolation.all     = false
+isolation.netns            = true
+isolation.ipc              = true
+isolation.process          = false
+isolation.devsys           = false
+isolation.groups           = false
+isolation.all              = false
+isolation.userns-nolimit   = false
 
 # Format-2
 
@@ -55,7 +56,7 @@ exported = { apps = ["htop"], bins = ["/usr/bin/htop", "/usr/bin/git"], path = "
 hooks = { pre-init = ["touch /pre-init"], post-init = ["touch /init-normal", "ln -sf /usr/bin/otter-host-exec /usr/local/bin/docker"] }
 settings = { lock = false, entry = false, shell = "fish", rootful = false, init-system = false, hostname = "arch-linux" }
 hardware = { memory = "512m", nvidia = false, cpu = 0 }
-isolation = { netns = true, ipc = true, process = false, devsys = false, groups = false, all = false }
+isolation = { netns = true, ipc = true, process = false, devsys = false, groups = false, all = false, userns-nolimit = false }
 
 # Format-3
 
@@ -98,12 +99,13 @@ nvidia = false
 cpu    = 0
 
 [container.isolation]
-netns   = true
-ipc     = true
-process = false
-devsys  = false
-groups  = false
-all     = false
+netns            = true
+ipc              = true
+process          = false
+devsys           = false
+groups           = false
+all              = false
+userns-nolimit   = false
 
 [[container]]
 name  = "tumbleweed"
@@ -140,7 +142,7 @@ post-init = [
 
 settings = { lock = false, entry = false, shell = "fish", rootful = false, init-system = false, hostname = "arch-linux" }
 hardware  = { memory = "512m", nvidia = false, cpu = 0 }
-isolation = { netns = true, ipc = true, process = false, devsys = false, groups = false, all = false }
+isolation = { netns = true, ipc = true, process = false, devsys = false, groups = false, all = false, userns-nolimit = false }
 
 [[container]]
 name  = "tumbleweed"
