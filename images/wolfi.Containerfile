@@ -37,66 +37,66 @@ COPY --from=dinit-builder /dinit-out/usr/ /usr/
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
+    bc \
+    xz \
+    zsh \
+    gpg \
+    zip \
     bash \
     fish \
-    zsh \
-    bc \
-    busybox \
-    bzip2 \
-    coreutils \
     curl \
-    diffutils \
-    ffmpeg \
-    findmnt \
-    findutils \
-    gnupg \
-    gnutar \
-    gpg \
-    gst-plugins-base \
-    gst-plugins-bad \
-    gst-plugins-ugly \
-    gst-plugins-good \
-    iproute2 \
-    iputils \
-    keyutils \
     less \
+    mesa \
+    pigz \
+    sudo \
+    tree \
+    wget \
+    bzip2 \
+    gnupg \
+    mount \
+    rsync \
+    unzip \
+    xauth \
+    ffmpeg \
+    gnutar \
     libcap \
     man-db \
-    mesa \
-    mount \
-    ncurses \
-    ncurses-terminfo \
-    net-tools \
-    openssh-client \
-    pigz \
-    pinentry \
-    pipewire \
-    pipewire-jack \
-    pipewire-pulse \
-    posix-libc-utils \
     procps \
-    python3 \
-    rsync \
     script \
     shadow \
-    sudo \
-    tcpdump \
-    tree \
     tzdata \
     umount \
-    unzip \
-    util-linux \
-    util-linux-login \
-    util-linux-misc \
-    vpl-gpu-rt \
-    vulkan-loader \
-    wget \
-    xauth \
-    xdg-desktop-portal \
-    xdg-user-dirs \
+    busybox \
+    findmnt \
+    iputils \
+    ncurses \
+    python3 \
+    tcpdump \
+    iproute2 \
+    keyutils \
+    pinentry \
+    pipewire \
+    coreutils \
+    diffutils \
+    findutils \
+    net-tools \
     xdg-utils \
-    xz \
-    zip)
+    util-linux \
+    vpl-gpu-rt \
+    pipewire-jack \
+    vulkan-loader \
+    xdg-user-dirs \
+    openssh-client \
+    pipewire-pulse \
+    gst-plugins-bad \
+    util-linux-misc \
+    gst-plugins-base \
+    gst-plugins-ugly \
+    gst-plugins-good \
+    ncurses-terminfo \
+    posix-libc-utils \
+    util-linux-login \
+    xdg-desktop-portal)
 
 # Timezone default
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \

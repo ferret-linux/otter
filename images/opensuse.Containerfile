@@ -26,79 +26,79 @@ RUN zypper al parallel-printer-support
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN zypper -n install --auto-agree-with-licenses -y \
     $(sh /tmp/pkg-validator.sh --pkgmgr zypper -- \
-    Mesa-dri \
-    bash-completion \
     bc \
-    bzip2 \
+    zsh \
+    man \
+    mtr \
+    pam \
+    zip \
     fish \
     bash \
-    zsh \
     curl \
-    diffutils \
-    findutils \
-    glibc-locale \
-    glibc-locale-base \
-    gnupg \
-    hostname \
-    iputils \
-    keyutils \
     less \
-    libvulkan1 \
-    libvulkan_intel \
-    libvulkan_radeon \
     lsof \
-    man \
-    man-pages \
-    mtr \
-    ncurses \
-    nss-mdns \
-    openssh-clients \
-    pam \
-    pam-extra \
     pigz \
-    systemd \
-    pinentry \
-    procps \
-    glibc \
-    glibc-i18n \
-    glibc-i18ndata \
-    glibc-locale-source \
-    python3 \
-    rsync \
-    shadow \
     sudo \
-    system-group-wheel \
     time \
-    timezone \
     tree \
-    unzip \
-    util-linux \
-    util-linux-systemd \
     wget \
+    Mesa \
+    bzip2 \
+    gnupg \
+    glibc \
+    rsync \
+    unzip \
     words \
     xauth \
-    zip \
-    pipewire \
-    pipewire-pulseaudio \
-    wireplumber \
+    procps \
+    shadow \
     ffmpeg \
-    gstreamer \
-    gstreamer-plugins-base \
-    gstreamer-plugins-good \
-    gstreamer-plugins-bad \
-    gstreamer-plugins-ugly \
-    gstreamer-plugins-libav \
+    libva2 \
+    iputils \
+    ncurses \
+    systemd \
+    python3 \
     libvpx2 \
+    Mesa-dri \
+    hostname \
+    keyutils \
+    nss-mdns \
+    pinentry \
+    timezone \
+    pipewire \
+    libopus0 \
+    diffutils \
+    findutils \
+    man-pages \
+    pam-extra \
+    gstreamer \
+    libFLAC12 \
+    libvulkan1 \
+    glibc-i18n \
+    util-linux \
+    mesa-libva \
+    wireplumber \
     libx264-164 \
     libx265-215 \
-    libopus0 \
-    libFLAC12 \
-    Mesa \
+    glibc-locale \
+    glibc-i18ndata \
     Mesa-dri-devel \
+    bash-completion \
+    libvulkan_intel \
+    openssh-clients \
+    libvulkan_radeon \
+    glibc-locale-base \
+    system-group-wheel \
+    util-linux-systemd \
     intel-media-driver \
     libva-intel-driver \
-    mesa-libva \
-    libva2) || [ ${?} = 106 ]
+    glibc-locale-source \
+    pipewire-pulseaudio \
+    gstreamer-plugins-bad \
+    gstreamer-plugins-base \
+    gstreamer-plugins-good \
+    gstreamer-plugins-ugly \
+    gstreamer-plugins-libav) || [ ${?} = 106 ]
 
 # Locale setup — glibc-locale (installed via pkg script) pre-builds locales on Leap;
 # localedef requires glibc-i18ndata charmap files which are not available on Leap 15.x

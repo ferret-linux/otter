@@ -31,69 +31,69 @@ RUN dnf upgrade -y --refresh
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN dnf install -y $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
-    bash-completion \
     bc \
-    bzip2 \
-    cracklib-dicts \
+    xz \
+    zsh \
+    mtr \
+    pam \
+    zip \
     fish \
     bash \
-    zsh \
     curl \
-    diffutils \
-    ffmpeg \
-    mesa-va-drivers-freeworld \
-    rpmfusion-free-release-tainted \
-    rpmfusion-nonfree-release-tainted \
-    dnf-plugins-core \
-    findutils \
-    glibc-all-langpacks \
-    glibc-common \
-    glibc-locale-source \
-    gnupg2 \
-    gnupg2-smime \
-    hostname \
-    iproute \
-    iputils \
-    keyutils \
-    krb5-libs \
     less \
     lsof \
-    man-db \
-    man-pages \
-    mesa-dri-drivers \
-    mesa-vulkan-drivers \
-    mtr \
-    ncurses \
-    nss-mdns \
-    openssh-clients \
-    pam \
-    passwd \
     pigz \
-    pinentry \
-    procps-ng \
-    python3 \
-    rsync \
-    shadow-utils \
     sudo \
-    tcpdump \
     time \
-    traceroute \
-    systemd \
     tree \
-    tzdata \
-    unzip \
-    util-linux \
-    util-linux-script \
-    vte-profile \
-    vulkan \
     wget \
-    wget2-wget \
+    bzip2 \
+    rsync \
+    unzip \
     which \
     whois \
     words \
+    ffmpeg \
+    gnupg2 \
+    man-db \
+    passwd \
+    tzdata \
+    vulkan \
+    iproute \
+    iputils \
+    ncurses \
+    python3 \
+    tcpdump \
+    systemd \
+    hostname \
+    keyutils \
+    nss-mdns \
+    pinentry \
+    diffutils \
+    findutils \
+    krb5-libs \
+    man-pages \
+    procps-ng \
+    traceroute \
+    util-linux \
+    wget2-wget \
+    vte-profile \
+    glibc-common \
+    gnupg2-smime \
+    shadow-utils \
+    cracklib-dicts \
     xorg-x11-xauth \
-    xz \
-    zip)
+    bash-completion \
+    openssh-clients \
+    dnf-plugins-core \
+    mesa-dri-drivers \
+    util-linux-script \
+    glibc-all-langpacks \
+    glibc-locale-source \
+    mesa-vulkan-drivers \
+    mesa-va-drivers-freeworld \
+    rpmfusion-free-release-tainted \
+    rpmfusion-nonfree-release-tainted)
 
 # Locale setup
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8

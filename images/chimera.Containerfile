@@ -23,74 +23,74 @@ RUN apk add chimera-repo-user && apk update
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
-    bash \
-    bash-completion \
-    fish \
-    zsh \
-    base-full-man \
     bc \
+    xz \
+    zsh \
+    gpg \
+    vte \
+    zip \
+    bash \
+    fish \
+    curl \
+    gtar \
+    less \
+    lsof \
+    pigz \
+    sudo \
+    tree \
+    wget \
     bc-gh \
     bzip2 \
-    coreutils \
-    curl \
-    ffmpeg \
-    xdg-utils \
-    xdg-user-dirs \
-    gst-plugins-base \
-    gst-plugins-bad \
-    gst-plugins-ugly \
-    gst-plugins-good \
-    xdg-desktop-portal \
-    pipewire \
-    pipewire-jack \
-    pipewire-pulse \
-    vpl-gpu-rt \
-    diffutils \
-    findmnt \
-    findutils \
     gnupg \
-    gpg \
-    gtar \
-    iproute2 \
-    iputils \
-    keyutils \
-    less \
-    libarchive-progs \
-    libcap \
-    libcap-progs \
-    lsof \
-    mesa-dri \
     mount \
-    ncurses \
-    ncurses-term \
-    ncurses-terminfo \
-    net-tools \
-    opendoas \
-    openssh \
-    pigz \
-    pinentry \
-    python3 \
     rsync \
-    shadow \
-    sudo \
-    tcpdump \
-    tree \
-    tzdata \
     dinit \
-    dinit-chimera \
-    umount \
     unzip \
-    util-linux \
-    util-linux-login \
-    util-linux-misc \
-    util-linux-mount \
-    vte \
-    vulkan-loader \
-    wget \
     wget2 \
     xauth \
-    xz \
-    zip)
+    ffmpeg \
+    libcap \
+    shadow \
+    tzdata \
+    umount \
+    findmnt \
+    iputils \
+    ncurses \
+    openssh \
+    python3 \
+    tcpdump \
+    pipewire \
+    iproute2 \
+    keyutils \
+    mesa-dri \
+    opendoas \
+    pinentry \
+    coreutils \
+    xdg-utils \
+    diffutils \
+    findutils \
+    net-tools \
+    vpl-gpu-rt \
+    util-linux \
+    libcap-progs \
+    ncurses-term \
+    base-full-man \
+    xdg-user-dirs \
+    pipewire-jack \
+    dinit-chimera \
+    vulkan-loader \
+    pipewire-pulse \
+    bash-completion \
+    gst-plugins-bad \
+    util-linux-misc \
+    gst-plugins-base \
+    gst-plugins-ugly \
+    gst-plugins-good \
+    libarchive-progs \
+    ncurses-terminfo \
+    util-linux-login \
+    util-linux-mount \
+    xdg-desktop-portal)
 
 # Timezone default
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \

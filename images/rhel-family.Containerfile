@@ -30,83 +30,83 @@ RUN dnf upgrade -y
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN dnf install -y --skip-broken $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
-    bash-completion \
     bc \
+    xz \
+    zsh \
+    mtr \
+    pam \
+    zip \
     fish \
     bash \
-    zsh \
-    bzip2 \
-    cracklib-dicts \
     curl \
-    diffutils \
-    dnf-plugins-core \
-    findutils \
-    mscore-fonts-all \
-    glibc-all-langpacks \
-    glibc-common \
-    glibc-locale-source \
-    gnupg2 \
-    gnupg2-smime \
-    hostname \
-    iproute \
-    iputils \
-    keyutils \
-    krb5-libs \
     less \
     lsof \
-    man-db \
-    man-pages \
-    mesa-dri-drivers \
-    mesa-vulkan-drivers \
-    mtr \
-    ncurses \
-    nss-mdns \
-    openssh-clients \
-    pam \
-    passwd \
     pigz \
-    pinentry \
-    procps-ng \
-    python3 \
-    rsync \
-    shadow-utils \
     sudo \
-    tcpdump \
     time \
-    systemd \
-    traceroute \
     tree \
-    tzdata \
-    unzip \
-    util-linux \
-    util-linux-script \
-    vte-profile \
-    vulkan \
     wget \
-    which \
-    whois \
-    words \
-    xorg-x11-xauth \
-    xz \
-    zip \
-    pipewire \
-    pipewire-pulseaudio \
-    wireplumber \
-    ffmpeg \
-    gstreamer1 \
-    gstreamer1-plugins-base \
-    gstreamer1-plugins-good \
-    gstreamer1-plugins-bad-free \
-    gstreamer1-plugins-bad-nonfree \
-    gstreamer1-plugins-ugly \
-    gstreamer1-plugin-libav \
-    mesa-va-drivers-freeworld \
-    mesa-vdpau-drivers-freeworld \
-    libvpx \
     x264 \
     x265 \
     lame \
-    opus)
+    opus \
+    bzip2 \
+    rsync \
+    unzip \
+    which \
+    whois \
+    words \
+    gnupg2 \
+    man-db \
+    passwd \
+    tzdata \
+    vulkan \
+    ffmpeg \
+    libvpx \
+    iproute \
+    iputils \
+    ncurses \
+    python3 \
+    tcpdump \
+    systemd \
+    hostname \
+    keyutils \
+    nss-mdns \
+    pinentry \
+    pipewire \
+    diffutils \
+    findutils \
+    krb5-libs \
+    man-pages \
+    procps-ng \
+    traceroute \
+    util-linux \
+    gstreamer1 \
+    vte-profile \
+    wireplumber \
+    glibc-common \
+    gnupg2-smime \
+    shadow-utils \
+    cracklib-dicts \
+    xorg-x11-xauth \
+    bash-completion \
+    openssh-clients \
+    dnf-plugins-core \
+    mscore-fonts-all \
+    mesa-dri-drivers \
+    util-linux-script \
+    glibc-all-langpacks \
+    glibc-locale-source \
+    mesa-vulkan-drivers \
+    pipewire-pulseaudio \
+    gstreamer1-plugins-base \
+    gstreamer1-plugins-good \
+    gstreamer1-plugins-ugly \
+    gstreamer1-plugin-libav \
+    mesa-va-drivers-freeworld \
+    gstreamer1-plugins-bad-free \
+    mesa-vdpau-drivers-freeworld \
+    gstreamer1-plugins-bad-nonfree)
 
 # Locale setup
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8

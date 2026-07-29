@@ -26,65 +26,65 @@ RUN echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula sele
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr apt -- \
-    apt-utils \
-    bash-completion \
     bc \
-    bzip2 \
+    zsh \
+    mtr \
+    zip \
     curl \
-    dialog \
-    diffutils \
-    findutils \
-    systemd \
     fish \
     bash \
-    zsh \
+    less \
+    lsof \
+    pigz \
+    sudo \
+    time \
+    tree \
+    wget \
+    bzip2 \
     gnupg \
-    gnupg2 \
     gpgsm \
+    rsync \
+    unzip \
+    xauth \
+    dialog \
+    gnupg2 \
+    libgl1 \
+    man-db \
+    passwd \
+    procps \
+    tzdata \
+    systemd \
+    libegl1 \
+    locales \
+    python3 \
+    tcpdump \
     hostname \
     iproute2 \
-    iputils-ping \
     keyutils \
-    language-pack-en \
-    less \
-    libcap2-bin \
-    libkrb5-3 \
-    libegl-mesa0 \
-    libegl1 \
-    libgl1 \
-    libgl1-mesa-glx \
-    libglx-mesa0 \
-    libnss-mdns \
-    libnss-myhostname \
-    libvulkan1 \
-    locales \
-    lsof \
-    man-db \
     manpages \
-    mesa-vulkan-drivers \
-    mtr \
+    xz-utils \
+    apt-utils \
+    diffutils \
+    findutils \
+    libkrb5-3 \
+    libvulkan1 \
+    traceroute \
+    util-linux \
+    libcap2-bin \
+    libnss-mdns \
+    iputils-ping \
+    libegl-mesa0 \
+    libglx-mesa0 \
     ncurses-base \
     openssh-client \
-    passwd \
-    pigz \
+    bash-completion \
+    libgl1-mesa-glx \
     pinentry-curses \
-    procps \
-    python3 \
-    rsync \
-    sudo \
+    language-pack-en \
+    libnss-myhostname \
+    mesa-vulkan-drivers \
     ubuntu-restricted-extras \
-    ubuntu-restricted-addons \
-    tcpdump \
-    time \
-    traceroute \
-    tree \
-    tzdata \
-    unzip \
-    util-linux \
-    wget \
-    xauth \
-    xz-utils \
-    zip)
+    ubuntu-restricted-addons)
 
 # Locale setup
 RUN sed -i "s|# en_US.UTF-8|en_US.UTF-8|g" /etc/locale.gen \

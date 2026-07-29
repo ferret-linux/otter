@@ -26,68 +26,68 @@ RUN pacman -Syyu --noconfirm
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman -- \
-    bash-completion \
-    xdg-desktop-portal \
-    xdg-utils \
-    pipewire \
-    pipewire-jack \
-    fish \
+    bc \
     zsh \
-    bash \
-    pipewire-pulse \
-    xdg-user-dirs \
-    gst-plugins-base \
-    gst-plugins-good \
-    gst-plugins-bad \
-    gst-plugins-ugly \
-    vpl-gpu-rt \
-    ffmpeg \
-    base-devel \
     git \
     tar \
-    fakeroot \
-    bc \
+    mtr \
+    zip \
+    fish \
+    bash \
     curl \
-    diffutils \
-    findutils \
-    glibc \
-    gnupg \
-    systemd \
-    iputils \
-    inetutils \
-    keyutils \
     less \
     lsof \
-    man-db \
-    man-pages \
-    mlocate \
     mesa \
-    mtr \
-    ncurses \
-    nss-mdns \
-    openssh \
     pigz \
-    pinentry \
-    procps-ng \
-    python \
-    rsync \
-    shadow \
     sudo \
-    tcpdump \
     time \
-    traceroute \
     tree \
-    tzdata \
-    unzip \
-    util-linux \
-    util-linux-libs \
-    vte-common \
-    vulkan-intel \
-    vulkan-radeon \
     wget \
+    glibc \
+    gnupg \
+    rsync \
+    unzip \
     words \
+    ffmpeg \
+    man-db \
+    python \
+    shadow \
+    tzdata \
+    systemd \
+    iputils \
+    mlocate \
+    ncurses \
+    openssh \
+    tcpdump \
+    pipewire \
+    fakeroot \
+    keyutils \
+    nss-mdns \
+    pinentry \
+    xdg-utils \
+    diffutils \
+    findutils \
+    inetutils \
+    man-pages \
+    procps-ng \
+    vpl-gpu-rt \
+    base-devel \
+    traceroute \
+    util-linux \
+    vte-common \
     xorg-xauth \
-    zip)
+    vulkan-intel \
+    pipewire-jack \
+    xdg-user-dirs \
+    vulkan-radeon \
+    pipewire-pulse \
+    bash-completion \
+    gst-plugins-bad \
+    util-linux-libs \
+    gst-plugins-base \
+    gst-plugins-good \
+    gst-plugins-ugly \
+    xdg-desktop-portal)
 
 # Timezone default
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \

@@ -23,84 +23,84 @@ RUN apt-get update && apt-get upgrade -y
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr apt -- \
-    apt-utils \
-    bash-completion \
     bc \
-    bzip2 \
+    zsh \
+    mtr \
+    zip \
     curl \
-    dialog \
-    diffutils \
-    findutils \
     fish \
     bash \
-    zsh \
+    less \
+    lsof \
+    pigz \
+    sudo \
+    time \
+    tree \
+    wget \
+    bzip2 \
     gnupg \
-    gnupg2 \
     gpgsm \
+    unrar \
+    rsync \
+    unzip \
+    xauth \
+    dialog \
+    gnupg2 \
+    ffmpeg \
+    libgl1 \
+    man-db \
+    passwd \
+    procps \
+    tzdata \
+    libvpx9 \
+    libegl1 \
+    locales \
+    systemd \
+    python3 \
+    tcpdump \
     hostname \
     iproute2 \
-    iputils-ping \
     keyutils \
-    less \
-    libcap2-bin \
     pipewire \
-    pipewire-pulse \
-    wireplumber \
-    libpipewire-0.3-0 \
-    ffmpeg \
-    gstreamer1.0-tools \
-    gstreamer1.0-plugins-base \
-    gstreamer1.0-plugins-good \
-    gstreamer1.0-plugins-bad \
-    gstreamer1.0-plugins-ugly \
-    gstreamer1.0-libav \
-    libavcodec-extra \
-    unrar \
-    libvpx9 \
-    libx264-164 \
-    libx265-199 \
     libopus0 \
+    manpages \
+    xz-utils \
+    apt-utils \
+    diffutils \
+    findutils \
     libflac12 \
-    libmp3lame0 \
-    libgl1-mesa-dri \
-    intel-media-va-driver-non-free \
     libvdpau1 \
     libkrb5-3 \
-    libegl-mesa0 \
-    libegl1 \
-    libgl1 \
-    libgl1-mesa-glx \
-    libglx-mesa0 \
-    libnss-mdns \
-    libnss-myhostname \
     libvulkan1 \
-    locales \
-    lsof \
-    man-db \
-    manpages \
-    mesa-vulkan-drivers \
-    mtr \
-    ncurses-base \
-    openssh-client \
-    systemd \
-    passwd \
-    pigz \
-    pinentry-curses \
-    procps \
-    python3 \
-    rsync \
-    sudo \
-    tcpdump \
-    time \
     traceroute \
-    tree \
-    tzdata \
-    unzip \
     util-linux \
-    wget \
-    xauth \
-    xz-utils \
-    zip)
+    libcap2-bin \
+    wireplumber \
+    libx264-164 \
+    libx265-199 \
+    libmp3lame0 \
+    libnss-mdns \
+    iputils-ping \
+    libegl-mesa0 \
+    libglx-mesa0 \
+    ncurses-base \
+    pipewire-pulse \
+    openssh-client \
+    bash-completion \
+    libgl1-mesa-dri \
+    libgl1-mesa-glx \
+    pinentry-curses \
+    libavcodec-extra \
+    libpipewire-0.3-0 \
+    libnss-myhostname \
+    gstreamer1.0-tools \
+    gstreamer1.0-libav \
+    mesa-vulkan-drivers \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-ugly \
+    intel-media-va-driver-non-free)
 
 # Locale setup
 RUN sed -i "s|# en_US.UTF-8|en_US.UTF-8|g" /etc/locale.gen \

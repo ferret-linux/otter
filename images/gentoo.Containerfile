@@ -33,46 +33,46 @@ RUN emerge --ask=n --autounmask-continue --quiet-build --getbinpkg -uDN @world
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN emerge --ask=n --autounmask-continue --noreplace --quiet-build --getbinpkg --keep-going $(sh /tmp/pkg-validator.sh --pkgmgr emerge -- \
-    app-crypt/gnupg \
-    app-crypt/pinentry \
-    app-shells/bash-completion \
+    sys-devel/bc \
     app-text/tree \
-    dev-lang/python \
-    app-arch/unrar \
     net-misc/curl \
     net-misc/wget \
     app-arch/pigz \
-    media-video/pipewire \
-    media-video/wireplumber \
-    media-video/ffmpeg \
-    media-libs/gstreamer \
-    media-libs/gst-plugins-base \
-    media-libs/gst-plugins-good \
-    media-libs/gst-plugins-bad \
-    media-libs/gst-plugins-ugly \
-    media-libs/gst-libav \
+    sys-apps/less \
+    app-arch/unrar \
+    app-shells/zsh \
+    app-admin/sudo \
+    x11-apps/xauth \
+    app-crypt/gnupg \
+    dev-lang/python \
     media-libs/x264 \
-    media-libs/libvpx \
     media-libs/x265 \
     media-libs/opus \
     media-libs/flac \
-    media-sound/lame \
     media-libs/mesa \
-    sys-apps/diffutils \
-    sys-apps/findutils \
-    sys-apps/less \
-    app-shells/zsh \ 
     app-shells/bash \
     app-shells/fish \
     sys-apps/shadow \
     sys-apps/openrc \
-    sys-apps/util-linux \
-    sys-devel/bc \
+    media-sound/lame \
     sys-libs/ncurses \
     sys-process/lsof \
+    media-libs/libvpx \
+    app-crypt/pinentry \
+    media-video/ffmpeg \
+    sys-apps/diffutils \
+    sys-apps/findutils \
     sys-process/procps \
-    app-admin/sudo \
-    x11-apps/xauth)
+    sys-apps/util-linux \
+    media-video/pipewire \
+    media-libs/gstreamer \
+    media-libs/gst-libav \
+    media-video/wireplumber \
+    app-shells/bash-completion \
+    media-libs/gst-plugins-bad \
+    media-libs/gst-plugins-base \
+    media-libs/gst-plugins-good \
+    media-libs/gst-plugins-ugly)
 
 # Locale setup
 RUN sed -i "s|#.*en_US.UTF-8|en_US.UTF-8|g" /etc/locale.gen \

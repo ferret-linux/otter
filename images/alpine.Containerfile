@@ -20,62 +20,62 @@ RUN apk update && apk upgrade
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
-    bash \
     bc \
+    xz \
+    zsh \
+    gpg \
+    zip \
+    bash \
     fish \
     bash \
-    zsh \
-    bzip2 \
-    coreutils \
     curl \
-    ffmpeg \
-    xdg-utils \
-    xdg-user-dirs \
-    gst-plugins-base \
-    gst-plugins-bad \
-    gst-plugins-ugly \
-    gst-plugins-good \
-    xdg-desktop-portal \
-    pipewire \
-    pipewire-jack \
-    pipewire-pulse \
-    vpl-gpu-rt \
-    diffutils \
-    findmnt \
-    findutils \
-    gnupg \
-    gpg \
-    iproute2 \
-    iputils \
-    keyutils \
     less \
-    libcap \
     lsof \
-    mount \
-    ncurses \
-    ncurses-terminfo \
-    net-tools \
-    openssh-client-default \
     pigz \
-    pinentry \
-    python3 \
-    rsync \
-    shadow \
     sudo \
-    tcpdump \
     tree \
+    wget \
+    bzip2 \
+    gnupg \
+    mount \
+    rsync \
+    unzip \
+    xauth \
+    ffmpeg \
+    libcap \
+    shadow \
     tzdata \
     umount \
     openrc \
-    unzip \
+    findmnt \
+    iputils \
+    ncurses \
+    python3 \
+    tcpdump \
+    pipewire \
+    iproute2 \
+    keyutils \
+    pinentry \
+    coreutils \
+    xdg-utils \
+    diffutils \
+    findutils \
+    net-tools \
+    vpl-gpu-rt \
     util-linux \
-    util-linux-login \
-    util-linux-misc \
+    xdg-user-dirs \
+    pipewire-jack \
     vulkan-loader \
-    wget \
-    xauth \
-    xz \
-    zip)
+    pipewire-pulse \
+    gst-plugins-bad \
+    util-linux-misc \
+    gst-plugins-base \
+    gst-plugins-ugly \
+    gst-plugins-good \
+    ncurses-terminfo \
+    util-linux-login \
+    xdg-desktop-portal \
+    openssh-client-default)
 
 # Timezone default
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
