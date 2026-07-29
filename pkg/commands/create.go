@@ -189,6 +189,7 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 			NoUsernsLimit:           opts.NoUsernsLimit,
 			Memory:                  opts.Memory,
 			CPUThreads:              opts.CPUThreads,
+			ScriptsDir:              c.cfg.ScriptsDir,
 		},
 	)
 

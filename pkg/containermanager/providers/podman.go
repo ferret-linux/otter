@@ -87,7 +87,7 @@ func (p *Podman) Create(
 ) error {
 	userEnv := userenv.LoadUserEnvironment(ctx)
 
-	scriptsDir, _, err := insidecontainer.ProvisionScripts()
+	scriptsDir, _, err := insidecontainer.ProvisionScripts(opts.ScriptsDir)
 	if err != nil {
 		return fmt.Errorf("failed to provision scripts: %w", err)
 	}

@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/ferret-linux/otter/internal/insidecontainer"
+	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
@@ -22,6 +23,7 @@ type UpgradeOptions struct {
 }
 
 type UpgradeCommand struct {
+	cfg              *config.Values
 	containerManager containermanager.ContainerManager
 	listCmd          *ListCommand
 	startCmd         *StartCommand
@@ -29,9 +31,11 @@ type UpgradeCommand struct {
 }
 
 func NewUpgradeCommand(
+	cfg *config.Values,
 	cm containermanager.ContainerManager,
 ) *UpgradeCommand {
 	return &UpgradeCommand{
+		cfg:              cfg,
 		containerManager: cm,
 		listCmd:          NewListCommand(cm),
 		startCmd:         NewStartCommand(cm),
@@ -92,7 +96,7 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 }
 
 func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string) error {
-	if _, updated, err := insidecontainer.ProvisionScripts(); err != nil {
+	if _, updated, err := insidecontainer.ProvisionScripts(c.cfg.ScriptsDir); err != nil {
 		ui.DefaultLogger.Warn("failed to provision scripts: %s", err)
 	} else if updated {
 		ui.DefaultLogger.Info("otter scripts updated")

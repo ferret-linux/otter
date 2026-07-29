@@ -14,7 +14,7 @@ import (
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
-func newUpgradeCommand(_ *config.Values) *cli.Command {
+func newUpgradeCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "upgrade",
 		Aliases: []string{"syu"},
@@ -28,11 +28,13 @@ func newUpgradeCommand(_ *config.Values) *cli.Command {
 				Aliases: []string{"R"},
 			},
 		},
-		Action: upgradeAction,
+		Action: func(ctx context.Context, cmd *cli.Command) error {
+			return upgradeAction(ctx, cmd, cfg)
+		},
 	}
 }
 
-func upgradeAction(ctx context.Context, cmd *cli.Command) error {
+func upgradeAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
 	containerManager, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
 	if !ok {
 		return errors.New("container manager not found in context")
@@ -48,7 +50,7 @@ func upgradeAction(ctx context.Context, cmd *cli.Command) error {
 		Running:        cmd.Bool("running"),
 	}
 
-	err = commands.NewUpgradeCommand(containerManager).Execute(ctx, options)
+	err = commands.NewUpgradeCommand(cfg, containerManager).Execute(ctx, options)
 	if errors.Is(err, commands.ErrEmptyContainerList) {
 		ui.DefaultLogger.Warn("No containers found.")
 		return nil

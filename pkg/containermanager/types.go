@@ -58,6 +58,7 @@ type CreateOptions struct {
 	NoUsernsLimit           bool
 	Memory                  string
 	CPUThreads              int
+	ScriptsDir              string
 }
 
 type EnterOptions struct {

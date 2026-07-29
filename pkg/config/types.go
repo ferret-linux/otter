@@ -11,6 +11,7 @@ type settingsConfig struct {
 	InitSystem    bool   `toml:"init-system"`
 	Rootful       bool   `toml:"rootful"`
 	UsernsNoLimit bool   `toml:"userns-nolimit"`
+	ScriptsDir    string `toml:"scripts-dir"`
 }
 
 type preferencesConfig struct {
@@ -36,4 +37,5 @@ type Values struct {
 	DefaultRootful        bool
 	DefaultNoEntry        bool
 	DefaultUsernsNoLimit  bool
+	ScriptsDir            string
 }

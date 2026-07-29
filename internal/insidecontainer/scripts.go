@@ -3,6 +3,7 @@ package insidecontainer
 import (
 	"crypto/sha256"
 	_ "embed"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -20,10 +21,14 @@ var exportScripts string
 //go:embed assets/otter
 var otterScript string
 
-// ProvisionScripts ensures that all necessary scripts are created in the host directory.
+// ProvisionScripts ensures that all necessary scripts are created in the given host directory.
 // It returns the path to the directory where the scripts are stored, and whether any scripts were updated.
-func ProvisionScripts() (string, bool, error) {
-	dir := hostDir()
+func ProvisionScripts(scriptsDir string) (string, bool, error) {
+	if scriptsDir == "" {
+		return "", false, errors.New("scripts directory could not be determined: set 'scripts-dir' in otter.conf or ensure HOME is set")
+	}
+
+	dir := scriptsDir
 	//nolint:gosec // 0755 is correct for directories: executable bit grants traversal permission to all users
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return "", false, fmt.Errorf("failed to create scripts directory: %w", err)
@@ -56,21 +61,4 @@ func ProvisionScripts() (string, bool, error) {
 	}
 
 	return dir, updated, nil
-}
-
-// hostDir returns the directory path where the scripts should be stored.
-// Evaluates OTR_SCRIPTS_DIR env var first, then HOME env var, and falls back to default path.
-func hostDir() string {
-	// First check OTR_SCRIPTS_DIR env var
-	if dir := os.Getenv("OTR_SCRIPTS_DIR"); dir != "" {
-		return dir
-	}
-
-	// Then, check HOME env var
-	if home := os.Getenv("HOME"); home != "" {
-		return filepath.Join(home, ".local", "share", "otter")
-	}
-
-	// Fallback to default path
-	return "/var/lib/otter"
 }
