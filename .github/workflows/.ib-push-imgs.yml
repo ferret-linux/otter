@@ -81,6 +81,9 @@ jobs:
           success=0
           for i in 1 2 3; do
             podman push \
+              --retry 3 \
+              --compression-format=zstd:chunked \
+              --compression-level=20 \
               ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 && success=1 && break
             echo "Attempt $i/3 failed, retrying in 15s..."
             sleep 15
