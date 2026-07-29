@@ -241,6 +241,18 @@ if [ -f /usr/lib/otter/container.bootstrapped ]; then
 	init_hook=""
 fi
 
+# ensure the directory is present for otter to not break
+# All otter images include this directory by default
+# But its kept as a fallback for non-official otter images
+mkdir -p /usr/lib/otter
+
+# Warn if this container was not built from an official otter image.
+# Only warn once per container lifetime, tracked via container.user-warned.
+if [ ! -f /usr/lib/otter/container.official ] && [ ! -f /usr/lib/otter/container.user-warned ]; then
+	printf "Warning: this container was not built from an official otter image, your experience may vary\n"
+	touch /usr/lib/otter/container.user-warned
+fi
+
 # Check we're running inside a container and not on the host
 if [ ! -f /run/.containerenv ] && [ ! -f /.dockerenv ] && [ -z "${container:-}" ]; then
 	printf >&2 "You must run %s inside a container!\n" " $(basename "$0")"
@@ -266,8 +278,7 @@ rm -f /usr/lib/otter/container.ready
 if [ "${upgrade}" -ne 0 ]; then
 	trap 'if [ $? -eq 0 ]; then touch /usr/lib/otter/container.ready; fi' EXIT
 fi
-# ensure the directory is present for otter to not break
-mkdir -p /usr/lib/otter
+# Add container type markers
 if [ "${rootful}" -eq 1 ]; then
 	touch /usr/lib/otter/container.rootful
 	rm -f /usr/lib/otter/container.rootless
