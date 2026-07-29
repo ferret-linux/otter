@@ -5,6 +5,20 @@
 # Copyright (C) 2026 otter contributors
 
 ARG IMAGE
+
+# Build stage: compile dinit from source, since Wolfi does not package
+# any init system (by design - see chainguard's own Wolfi FAQ).
+# Built against the same base image to keep glibc ABI consistent with
+# the final image the binaries will run in.
+FROM ${IMAGE} AS dinit-builder
+RUN apk update && apk add --no-cache build-base git curl m4
+RUN DINIT_TAG="$(curl -fsSL https://api.github.com/repos/davmac314/dinit/releases/latest | grep '"tag_name"' | head -1 | cut -d'"' -f4)"; \
+    if [ -z "${DINIT_TAG}" ]; then DINIT_TAG="v0.22.1"; fi; \
+    echo "Building dinit ${DINIT_TAG}"; \
+    git clone --branch "${DINIT_TAG}" --depth 1 https://github.com/davmac314/dinit /usr/src/dinit
+WORKDIR /usr/src/dinit
+RUN make mconfig && make -j$(nproc) && make DESTDIR=/dinit-out install
+
 FROM ${IMAGE}
 
 # Pre-create otter dirs
@@ -16,6 +30,9 @@ RUN touch /usr/lib/otter/container.wolfi
 
 # Upgrade all packages
 RUN apk update && apk upgrade
+
+# Install dinit, built in the dinit-builder stage above (not packaged by Wolfi)
+COPY --from=dinit-builder /dinit-out/usr/ /usr/
 
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
