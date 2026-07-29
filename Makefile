@@ -1,6 +1,16 @@
 GOOS ?= $(shell go env GOOS)
 GO_BUILD_ENV := CGO_ENABLED=0 GOOS=$(GOOS)
 
+.PHONY: version
+version:
+	sed -i 's/Version: "[^"]*"/Version: "$(word 2, $(MAKECMDGOALS))"/' internal/cli/root.go
+	for f in internal/insidecontainer/assets/*; do \
+		sed -i 's/^\(VERSION[[:space:]]*=[[:space:]]*\)"[^"]*"/\1"$(word 2, $(MAKECMDGOALS))"/; s/^\(version=\)"[^"]*"/\1"$(word 2, $(MAKECMDGOALS))"/' "$$f"; \
+	done
+
+%:
+	@:
+
 .PHONY: build
 build:
 	$(GO_BUILD_ENV) go build -o ./bin/otter ./cmd/otter

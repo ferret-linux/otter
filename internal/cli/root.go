@@ -23,7 +23,7 @@ const containerManagerKey contextKey = "containerManager"
 func NewRootCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "otter",
-		Version: "1.0.0",
+		Version: "0.0.3",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:   "sudo-command",
