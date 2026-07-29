@@ -49,31 +49,35 @@ jobs:
 
       - name: Create and Push Manifest
         run: |
+          success=0
           for i in 1 2 3; do
             ARCHES='${{ toJson(matrix.arches) }}'
             if echo "$ARCHES" | jq -e 'contains(["arm64"])' > /dev/null; then
               podman manifest create \
                 ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} \
                 ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 \
-                ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64
+                ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64 || { echo "Attempt $i/3 failed, retrying in 15s..."; podman manifest rm ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} 2>/dev/null || true; sleep 15; continue; }
             else
               podman manifest create \
                 ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} \
-                ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64
+                ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 || { echo "Attempt $i/3 failed, retrying in 15s..."; podman manifest rm ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} 2>/dev/null || true; sleep 15; continue; }
             fi
             podman manifest push \
               ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} \
-              docker://ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} && break
+              docker://ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} && success=1 && break
             echo "Attempt $i/3 failed, retrying in 15s..."
             podman manifest rm ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} 2>/dev/null || true
             sleep 15
           done
+          [ "$success" -eq 1 ] || exit 1
 
       - name: Sign
         run: |
+          success=0
           for i in 1 2 3; do
             cosign sign --yes \
-              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} && break
+              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} && success=1 && break
             echo "Attempt $i/3 failed, retrying in 15s..."
             sleep 15
           done
+          [ "$success" -eq 1 ] || exit 1

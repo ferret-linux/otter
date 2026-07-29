@@ -59,22 +59,26 @@ jobs:
 
       - name: Verify arch-specific signature
         run: |
+          success=0
           for i in 1 2 3; do
             cosign verify \
               --certificate-identity-regexp="https://github.com/ferret-linux/otter/.*" \
               --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
-              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 && break
+              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 && success=1 && break
             echo "Attempt $i/3 failed, retrying in 15s..."
             sleep 15
           done
+          [ "$success" -eq 1 ] || exit 1
 
       - name: Pull arch-specific image
         run: |
+          success=0
           for i in 1 2 3; do
-            podman pull ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 && break
+            podman pull ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 && success=1 && break
             echo "Attempt $i/3 failed, retrying in 15s..."
             sleep 15
           done
+          [ "$success" -eq 1 ] || exit 1
 
       - name: Run arch-specific image
         run: |
@@ -82,22 +86,26 @@ jobs:
 
       - name: Verify manifest signature
         run: |
+          success=0
           for i in 1 2 3; do
             cosign verify \
               --certificate-identity-regexp="https://github.com/ferret-linux/otter/.*" \
               --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
-              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} && break
+              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} && success=1 && break
             echo "Attempt $i/3 failed, retrying in 15s..."
             sleep 15
           done
+          [ "$success" -eq 1 ] || exit 1
 
       - name: Pull manifest image
         run: |
+          success=0
           for i in 1 2 3; do
-            podman pull ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} && break
+            podman pull ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} && success=1 && break
             echo "Attempt $i/3 failed, retrying in 15s..."
             sleep 15
           done
+          [ "$success" -eq 1 ] || exit 1
 
       - name: Run manifest image
         run: |
@@ -124,22 +132,26 @@ jobs:
 
       - name: Verify arch-specific signature
         run: |
+          success=0
           for i in 1 2 3; do
             cosign verify \
               --certificate-identity-regexp="https://github.com/ferret-linux/otter/.*" \
               --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
-              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64 && break
+              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64 && success=1 && break
             echo "Attempt $i/3 failed, retrying in 15s..."
             sleep 15
           done
+          [ "$success" -eq 1 ] || exit 1
 
       - name: Pull arch-specific image
         run: |
+          success=0
           for i in 1 2 3; do
-            podman pull ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64 && break
+            podman pull ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64 && success=1 && break
             echo "Attempt $i/3 failed, retrying in 15s..."
             sleep 15
           done
+          [ "$success" -eq 1 ] || exit 1
 
       - name: Run arch-specific image
         run: |
@@ -147,22 +159,26 @@ jobs:
 
       - name: Verify manifest signature
         run: |
+          success=0
           for i in 1 2 3; do
             cosign verify \
               --certificate-identity-regexp="https://github.com/ferret-linux/otter/.*" \
               --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
-              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} && break
+              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} && success=1 && break
             echo "Attempt $i/3 failed, retrying in 15s..."
             sleep 15
           done
+          [ "$success" -eq 1 ] || exit 1
 
       - name: Pull manifest image
         run: |
+          success=0
           for i in 1 2 3; do
-            podman pull ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} && break
+            podman pull ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }} && success=1 && break
             echo "Attempt $i/3 failed, retrying in 15s..."
             sleep 15
           done
+          [ "$success" -eq 1 ] || exit 1
 
       - name: Run manifest image
         run: |

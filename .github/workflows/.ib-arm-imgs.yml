@@ -45,24 +45,28 @@ jobs:
 
       - name: Pull Base Image
         run: |
+          success=0
           for i in 1 2 3; do
-            podman pull ${{ matrix.image }} && break
+            podman pull ${{ matrix.image }} && success=1 && break
             echo "Attempt $i/3 failed, retrying in 15s..."
             sleep 15
           done
+          [ "$success" -eq 1 ] || exit 1
 
       - name: Build
         run: |
+          success=0
           for i in 1 2 3; do
             podman build \
               --build-arg IMAGE=${{ matrix.image }} \
               --file images/${{ matrix.containerfile }} \
               --tag ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64 \
-              . && break
+              . && success=1 && break
             echo "Attempt $i/3 failed, pruning and retrying in 30s..."
             podman system prune -af
             sleep 30
           done
+          [ "$success" -eq 1 ] || exit 1
 
       - name: Save Image
         run: |

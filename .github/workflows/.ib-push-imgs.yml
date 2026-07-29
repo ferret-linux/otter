@@ -78,21 +78,25 @@ jobs:
 
       - name: Push
         run: |
+          success=0
           for i in 1 2 3; do
             podman push \
-              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 && break
+              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 && success=1 && break
             echo "Attempt $i/3 failed, retrying in 15s..."
             sleep 15
           done
+          [ "$success" -eq 1 ] || exit 1
 
       - name: Sign
         run: |
+          success=0
           for i in 1 2 3; do
             cosign sign --yes \
-              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 && break
+              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-amd64 && success=1 && break
             echo "Attempt $i/3 failed, retrying in 15s..."
             sleep 15
           done
+          [ "$success" -eq 1 ] || exit 1
 
   push-arm64:
     needs: load-matrix-arm64
@@ -134,18 +138,22 @@ jobs:
 
       - name: Push
         run: |
+          success=0
           for i in 1 2 3; do
             podman push \
-              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64 && break
+              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64 && success=1 && break
             echo "Attempt $i/3 failed, retrying in 15s..."
             sleep 15
           done
+          [ "$success" -eq 1 ] || exit 1
 
       - name: Sign
         run: |
+          success=0
           for i in 1 2 3; do
             cosign sign --yes \
-              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64 && break
+              ghcr.io/ferret-linux/${{ matrix.name }}:${{ matrix.tag }}-arm64 && success=1 && break
             echo "Attempt $i/3 failed, retrying in 15s..."
             sleep 15
           done
+          [ "$success" -eq 1 ] || exit 1
