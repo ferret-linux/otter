@@ -19,82 +19,46 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-amd64:
-    uses: ./.github/workflows/.ib-x64-imgs.yml
-    permissions:
-      contents: read
-      packages: write
+  load-matrix:
+    runs-on: ubuntu-26.04
+    outputs:
+      matrix: ${{ steps.filter.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
 
-  build-arm64:
-    uses: ./.github/workflows/.ib-arm-imgs.yml
-    permissions:
-      contents: read
-      packages: write
+      - name: Filter enabled images
+        id: filter
+        run: |
+          matrix=$(jq -c '[.[] | select(.enabled == true)]' images/images.json)
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
 
-  sbom-scan:
-    needs: [build-amd64, build-arm64]
-    uses: ./.github/workflows/.ib-sbom-scan.yml
+  image-pipeline:
+    needs: load-matrix
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.load-matrix.outputs.matrix) }}
+    uses: ./.github/workflows/.ib-image-pipeline.yml
+    with:
+      name: ${{ matrix.name }}
+      tag: ${{ matrix.tag }}
+      image: ${{ matrix.image }}
+      containerfile: ${{ matrix.containerfile }}
+      arches: ${{ toJson(matrix.arches) }}
+      display_name: ${{ matrix.display_name }}
+      grype_distro: ${{ matrix.grype_distro }}
     permissions:
-      contents: read
-
-  grype:
-    needs: [sbom-scan]
-    uses: ./.github/workflows/.ib-grype.yml
-    permissions:
-      contents: read
-
-  push:
-    needs: [grype]
-    uses: ./.github/workflows/.ib-push-imgs.yml
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-
-  attest:
-    needs: [push]
-    uses: ./.github/workflows/.ib-attest.yml
-    permissions:
-      contents: read
+      contents: write
       packages: write
       id-token: write
-
-  merge:
-    needs: [attest]
-    uses: ./.github/workflows/.ib-merge-imgs.yml
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-
-  verify:
-    needs: [merge]
-    uses: ./.github/workflows/.ib-verify-imgs.yml
-    permissions:
-      contents: read
-      packages: read
+    secrets: inherit
 
   update-props:
-    needs: [verify]
+    needs: [image-pipeline]
+    if: always()
     uses: ./.github/workflows/.ib-update-props.yml
     permissions:
       contents: write
       packages: read
-    secrets: inherit
-
-  purge:
-    needs: [push, attest, merge, verify]
-    if: |
-      always() && (
-        needs.push.result == 'failure' ||
-        (needs.push.result == 'success' && (
-          needs.attest.result == 'failure' ||
-          needs.merge.result == 'failure' ||
-          needs.verify.result == 'failure'
-        ))
-      )
-    uses: ./.github/workflows/.ib-purge-imgs.yml
-    permissions:
-      contents: write
-      packages: write
     secrets: inherit

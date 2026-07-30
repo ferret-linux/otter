@@ -13,7 +13,6 @@ var ErrUnknownImage = errors.New("unknown image")
 //
 // If the name already contains '/' or ':', it is a full registry path and is
 // returned as-is. Otherwise the name is looked up in props:
-//   - images_available false  → fallback_vendor_image
 //   - entry enabled false     → fallback_vendor_image
 //   - otherwise               → official_image
 //
@@ -30,7 +29,7 @@ func Resolve(props *ImagesProperties, name string) (string, error) {
 		if entry.Name != lower {
 			continue
 		}
-		if !props.ImagesAvailable || !entry.Enabled {
+		if !entry.Enabled {
 			return entry.FallbackVendorImage, nil
 		}
 		return entry.OfficialImage, nil

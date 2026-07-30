@@ -176,11 +176,7 @@ func registryList(props *registry.ImagesProperties, all bool) {
 		statusColor := ui.Green
 		imageRef := entry.OfficialImage
 
-		if !props.ImagesAvailable {
-			status = "offline"
-			statusColor = ui.Red
-			imageRef = entry.FallbackVendorImage
-		} else if !entry.Enabled {
+		if !entry.Enabled {
 			status = "disabled"
 			statusColor = ui.Yellow
 			imageRef = entry.FallbackVendorImage

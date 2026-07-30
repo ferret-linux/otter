@@ -29,8 +29,7 @@ type ImageEntry struct {
 
 // ImagesProperties is the top-level structure of images-properties.json.
 type ImagesProperties struct {
-	ImagesAvailable bool         `json:"images_available"`
-	Images          []ImageEntry `json:"images"`
+	Images []ImageEntry `json:"images"`
 }
 
 // Fetch retrieves and parses images-properties.json from the upstream repository.

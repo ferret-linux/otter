@@ -78,7 +78,7 @@ jobs:
 
           jq -n \
             --argjson images "$result" \
-            '{"images_available": true, "images": $images}' > images/images-properties.json
+            '{"images": $images}' > images/images-properties.json
 
       - name: Commit and push
         run: |
