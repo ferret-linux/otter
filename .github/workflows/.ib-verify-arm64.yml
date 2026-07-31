@@ -1,0 +1,85 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the otter project:
+#    https://github.com/ferret-linux/otter
+# Copyright (C) 2026 otter contributors
+
+name: ib-verify-arm64 (internal)
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        required: true
+        type: string
+      tag:
+        required: true
+        type: string
+
+jobs:
+  verify-arm64:
+    runs-on: ubuntu-26.04-arm
+    permissions:
+      contents: read
+      packages: read
+
+    steps:
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+
+      - name: Verify arch-specific signature
+        run: |
+          success=0
+          for i in 1 2 3; do
+            cosign verify \
+              --certificate-identity-regexp="https://github.com/ferret-linux/otter/.*" \
+              --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
+              ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64 && success=1 && break
+            echo "Attempt $i/3 failed, retrying in 15s..."
+            sleep 15
+          done
+          [ "$success" -eq 1 ] || exit 1
+
+      - name: Pull arch-specific image
+        run: |
+          success=0
+          for i in 1 2 3; do
+            podman pull ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64 && success=1 && break
+            echo "Attempt $i/3 failed, retrying in 15s..."
+            sleep 15
+          done
+          [ "$success" -eq 1 ] || exit 1
+
+      - name: Run arch-specific image
+        run: |
+          podman run --rm ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64 echo ok
+
+      - name: Verify manifest signature
+        run: |
+          success=0
+          for i in 1 2 3; do
+            cosign verify \
+              --certificate-identity-regexp="https://github.com/ferret-linux/otter/.*" \
+              --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
+              ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} && success=1 && break
+            echo "Attempt $i/3 failed, retrying in 15s..."
+            sleep 15
+          done
+          [ "$success" -eq 1 ] || exit 1
+
+      - name: Pull manifest image
+        run: |
+          success=0
+          for i in 1 2 3; do
+            podman pull ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} && success=1 && break
+            echo "Attempt $i/3 failed, retrying in 15s..."
+            sleep 15
+          done
+          [ "$success" -eq 1 ] || exit 1
+
+      - name: Run manifest image
+        run: |
+          podman run --rm ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} echo ok

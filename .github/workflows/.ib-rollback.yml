@@ -1,0 +1,76 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the otter project:
+#    https://github.com/ferret-linux/otter
+# Copyright (C) 2026 otter contributors
+
+name: ib-rollback (internal)
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        required: true
+        type: string
+      tag:
+        required: true
+        type: string
+      image_amd64_old_digest:
+        required: false
+        type: string
+        default: ""
+      image_arm64_old_digest:
+        required: false
+        type: string
+        default: ""
+      merge_old_digest:
+        required: false
+        type: string
+        default: ""
+
+jobs:
+  rollback:
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Rollback amd64 tag
+        if: inputs.image_amd64_old_digest != ''
+        run: |
+          podman pull ghcr.io/ferret-linux/${{ inputs.name }}@${{ inputs.image_amd64_old_digest }}
+          podman tag ghcr.io/ferret-linux/${{ inputs.name }}@${{ inputs.image_amd64_old_digest }} ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64
+          podman push ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64
+
+      - name: Rollback arm64 tag
+        if: inputs.image_arm64_old_digest != ''
+        run: |
+          podman pull ghcr.io/ferret-linux/${{ inputs.name }}@${{ inputs.image_arm64_old_digest }}
+          podman tag ghcr.io/ferret-linux/${{ inputs.name }}@${{ inputs.image_arm64_old_digest }} ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64
+          podman push ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64
+
+      - name: Rollback merged manifest tag
+        if: inputs.merge_old_digest != ''
+        run: |
+          podman pull ghcr.io/ferret-linux/${{ inputs.name }}@${{ inputs.merge_old_digest }}
+          podman tag ghcr.io/ferret-linux/${{ inputs.name }}@${{ inputs.merge_old_digest }} ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}
+          podman push ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}
+
+      - name: Delete broken versions
+        run: |
+          for suffix in "-amd64" "-arm64" ""; do
+            tagname="${{ inputs.tag }}${suffix}"
+            version_id=$(gh api "/orgs/ferret-linux/packages/container/${{ inputs.name }}/versions" \
+              --paginate | jq -r --arg tag "$tagname" \
+              '.[] | select(.metadata.container.tags[]? == $tag) | .id' | head -n1)
+            if [ -n "$version_id" ]; then
+              gh api --method DELETE \
+                "/orgs/ferret-linux/packages/container/${{ inputs.name }}/versions/${version_id}" || true
+            fi
+          done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

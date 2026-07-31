@@ -30,159 +30,32 @@ on:
 
 jobs:
   image-amd64:
-    if: contains(fromJson(inputs.arches), 'amd64')
-    runs-on: ubuntu-26.04
+    uses: ./.github/workflows/.ib-image-amd64.yml
+    with:
+      name: ${{ inputs.name }}
+      tag: ${{ inputs.tag }}
+      image: ${{ inputs.image }}
+      containerfile: ${{ inputs.containerfile }}
+      arches: ${{ inputs.arches }}
     permissions:
       contents: read
       packages: write
       id-token: write
-    outputs:
-      old_digest: ${{ steps.old-digest.outputs.digest }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
-
-      - name: Login to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Capture Old Digest
-        id: old-digest
-        run: |
-          digest=$(podman manifest inspect docker://ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64 2>/dev/null | jq -r '.manifests[0].digest // empty')
-          echo "digest=$digest" >> $GITHUB_OUTPUT
-
-      - name: Pull Base Image
-        run: |
-          success=0
-          for i in 1 2 3; do
-            podman pull ${{ inputs.image }} && success=1 && break
-            echo "Attempt $i/3 failed, retrying in 15s..."
-            sleep 15
-          done
-          [ "$success" -eq 1 ] || exit 1
-
-      - name: Build
-        run: |
-          success=0
-          for i in 1 2 3; do
-            podman build \
-              --build-arg IMAGE=${{ inputs.image }} \
-              --file images/${{ inputs.containerfile }} \
-              --tag ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64 \
-              . && success=1 && break
-            echo "Attempt $i/3 failed, pruning and retrying in 30s..."
-            podman system prune -af
-            sleep 30
-          done
-          [ "$success" -eq 1 ] || exit 1
-
-      - name: Install Cosign
-        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
-
-      - name: Login to GHCR (Cosign)
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | cosign login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Push
-        run: |
-          success=0
-          for i in 1 2 3; do
-            podman push \
-              --retry 3 \
-              --compression-format=zstd:chunked \
-              --compression-level=20 \
-              ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64 && success=1 && break
-            echo "Attempt $i/3 failed, retrying in 15s..."
-            sleep 15
-          done
-          [ "$success" -eq 1 ] || exit 1
-
-      - name: Sign
-        run: |
-          success=0
-          for i in 1 2 3 4 5; do
-            cosign sign --yes \
-              ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64 && success=1 && break
-            echo "Attempt $i/5 failed, retrying in 45s..."
-            sleep 45
-          done
-          [ "$success" -eq 1 ] || exit 1
+    secrets: inherit
 
   image-arm64:
-    if: contains(fromJson(inputs.arches), 'arm64')
-    runs-on: ubuntu-26.04-arm
+    uses: ./.github/workflows/.ib-image-arm64.yml
+    with:
+      name: ${{ inputs.name }}
+      tag: ${{ inputs.tag }}
+      image: ${{ inputs.image }}
+      containerfile: ${{ inputs.containerfile }}
+      arches: ${{ inputs.arches }}
     permissions:
       contents: read
       packages: write
       id-token: write
-    outputs:
-      old_digest: ${{ steps.old-digest.outputs.digest }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
-
-      - name: Login to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Capture Old Digest
-        id: old-digest
-        run: |
-          digest=$(podman manifest inspect docker://ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64 2>/dev/null | jq -r '.manifests[0].digest // empty')
-          echo "digest=$digest" >> $GITHUB_OUTPUT
-
-      - name: Pull Base Image
-        run: |
-          success=0
-          for i in 1 2 3; do
-            podman pull ${{ inputs.image }} && success=1 && break
-            echo "Attempt $i/3 failed, retrying in 15s..."
-            sleep 15
-          done
-          [ "$success" -eq 1 ] || exit 1
-
-      - name: Build
-        run: |
-          success=0
-          for i in 1 2 3; do
-            podman build \
-              --build-arg IMAGE=${{ inputs.image }} \
-              --file images/${{ inputs.containerfile }} \
-              --tag ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64 \
-              . && success=1 && break
-            echo "Attempt $i/3 failed, pruning and retrying in 30s..."
-            podman system prune -af
-            sleep 30
-          done
-          [ "$success" -eq 1 ] || exit 1
-
-      - name: Install Cosign
-        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
-
-      - name: Login to GHCR (Cosign)
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | cosign login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Push
-        run: |
-          success=0
-          for i in 1 2 3; do
-            podman push \
-              ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64 && success=1 && break
-            echo "Attempt $i/3 failed, retrying in 15s..."
-            sleep 15
-          done
-          [ "$success" -eq 1 ] || exit 1
-
-      - name: Sign
-        run: |
-          success=0
-          for i in 1 2 3 4 5; do
-            cosign sign --yes \
-              ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64 && success=1 && break
-            echo "Attempt $i/5 failed, retrying in 45s..."
-            sleep 45
-          done
-          [ "$success" -eq 1 ] || exit 1
+    secrets: inherit
 
   merge:
     needs: [image-amd64, image-arm64]
@@ -190,202 +63,40 @@ jobs:
       always() &&
       (needs.image-amd64.result == 'success' || needs.image-amd64.result == 'skipped') &&
       (needs.image-arm64.result == 'success' || needs.image-arm64.result == 'skipped')
-    runs-on: ubuntu-26.04
+    uses: ./.github/workflows/.ib-merge.yml
+    with:
+      name: ${{ inputs.name }}
+      tag: ${{ inputs.tag }}
+      arches: ${{ inputs.arches }}
     permissions:
       contents: read
       packages: write
       id-token: write
-    outputs:
-      old_digest: ${{ steps.old-digest.outputs.digest }}
-
-    steps:
-      - name: Login to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Capture Old Digest
-        id: old-digest
-        run: |
-          digest=$(podman manifest inspect docker://ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} 2>/dev/null | jq -r '.manifests[0].digest // empty')
-          echo "digest=$digest" >> $GITHUB_OUTPUT
-
-      - name: Install Cosign
-        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
-
-      - name: Login to GHCR (Cosign)
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | cosign login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Create and Push Manifest
-        run: |
-          success=0
-          for i in 1 2 3; do
-            ARCHES='${{ inputs.arches }}'
-            if echo "$ARCHES" | jq -e 'contains(["arm64"])' > /dev/null; then
-              podman manifest create \
-                ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} \
-                ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64 \
-                ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64 || { echo "Attempt $i/3 failed, retrying in 15s..."; podman manifest rm ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} 2>/dev/null || true; sleep 15; continue; }
-            else
-              podman manifest create \
-                ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} \
-                ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64 || { echo "Attempt $i/3 failed, retrying in 15s..."; podman manifest rm ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} 2>/dev/null || true; sleep 15; continue; }
-            fi
-            podman manifest push \
-              ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} \
-              docker://ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} && success=1 && break
-            echo "Attempt $i/3 failed, retrying in 15s..."
-            podman manifest rm ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} 2>/dev/null || true
-            sleep 15
-          done
-          [ "$success" -eq 1 ] || exit 1
-
-      - name: Sign
-        run: |
-          success=0
-          for i in 1 2 3 4 5; do
-            cosign sign --yes \
-              ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} && success=1 && break
-            echo "Attempt $i/5 failed, retrying in 45s..."
-            sleep 45
-          done
-          [ "$success" -eq 1 ] || exit 1
+    secrets: inherit
 
   verify-amd64:
     if: contains(fromJson(inputs.arches), 'amd64')
     needs: merge
-    runs-on: ubuntu-26.04
+    uses: ./.github/workflows/.ib-verify-amd64.yml
+    with:
+      name: ${{ inputs.name }}
+      tag: ${{ inputs.tag }}
     permissions:
       contents: read
       packages: read
-
-    steps:
-      - name: Login to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Install Cosign
-        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
-
-      - name: Verify arch-specific signature
-        run: |
-          success=0
-          for i in 1 2 3; do
-            cosign verify \
-              --certificate-identity-regexp="https://github.com/ferret-linux/otter/.*" \
-              --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
-              ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64 && success=1 && break
-            echo "Attempt $i/3 failed, retrying in 15s..."
-            sleep 15
-          done
-          [ "$success" -eq 1 ] || exit 1
-
-      - name: Pull arch-specific image
-        run: |
-          success=0
-          for i in 1 2 3; do
-            podman pull ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64 && success=1 && break
-            echo "Attempt $i/3 failed, retrying in 15s..."
-            sleep 15
-          done
-          [ "$success" -eq 1 ] || exit 1
-
-      - name: Run arch-specific image
-        run: |
-          podman run --rm ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64 echo ok
-
-      - name: Verify manifest signature
-        run: |
-          success=0
-          for i in 1 2 3; do
-            cosign verify \
-              --certificate-identity-regexp="https://github.com/ferret-linux/otter/.*" \
-              --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
-              ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} && success=1 && break
-            echo "Attempt $i/3 failed, retrying in 15s..."
-            sleep 15
-          done
-          [ "$success" -eq 1 ] || exit 1
-
-      - name: Pull manifest image
-        run: |
-          success=0
-          for i in 1 2 3; do
-            podman pull ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} && success=1 && break
-            echo "Attempt $i/3 failed, retrying in 15s..."
-            sleep 15
-          done
-          [ "$success" -eq 1 ] || exit 1
-
-      - name: Run manifest image
-        run: |
-          podman run --rm ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} echo ok
+    secrets: inherit
 
   verify-arm64:
     if: contains(fromJson(inputs.arches), 'arm64')
     needs: merge
-    runs-on: ubuntu-26.04-arm
+    uses: ./.github/workflows/.ib-verify-arm64.yml
+    with:
+      name: ${{ inputs.name }}
+      tag: ${{ inputs.tag }}
     permissions:
       contents: read
       packages: read
-
-    steps:
-      - name: Login to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Install Cosign
-        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
-
-      - name: Verify arch-specific signature
-        run: |
-          success=0
-          for i in 1 2 3; do
-            cosign verify \
-              --certificate-identity-regexp="https://github.com/ferret-linux/otter/.*" \
-              --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
-              ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64 && success=1 && break
-            echo "Attempt $i/3 failed, retrying in 15s..."
-            sleep 15
-          done
-          [ "$success" -eq 1 ] || exit 1
-
-      - name: Pull arch-specific image
-        run: |
-          success=0
-          for i in 1 2 3; do
-            podman pull ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64 && success=1 && break
-            echo "Attempt $i/3 failed, retrying in 15s..."
-            sleep 15
-          done
-          [ "$success" -eq 1 ] || exit 1
-
-      - name: Run arch-specific image
-        run: |
-          podman run --rm ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64 echo ok
-
-      - name: Verify manifest signature
-        run: |
-          success=0
-          for i in 1 2 3; do
-            cosign verify \
-              --certificate-identity-regexp="https://github.com/ferret-linux/otter/.*" \
-              --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
-              ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} && success=1 && break
-            echo "Attempt $i/3 failed, retrying in 15s..."
-            sleep 15
-          done
-          [ "$success" -eq 1 ] || exit 1
-
-      - name: Pull manifest image
-        run: |
-          success=0
-          for i in 1 2 3; do
-            podman pull ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} && success=1 && break
-            echo "Attempt $i/3 failed, retrying in 15s..."
-            sleep 15
-          done
-          [ "$success" -eq 1 ] || exit 1
-
-      - name: Run manifest image
-        run: |
-          podman run --rm ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} echo ok
+    secrets: inherit
 
   rollback:
     needs: [image-amd64, image-arm64, merge, verify-amd64, verify-arm64]
@@ -393,50 +104,17 @@ jobs:
       always() &&
       needs.merge.result == 'success' &&
       (needs.verify-amd64.result == 'failure' || needs.verify-arm64.result == 'failure')
-    runs-on: ubuntu-26.04
+    uses: ./.github/workflows/.ib-rollback.yml
+    with:
+      name: ${{ inputs.name }}
+      tag: ${{ inputs.tag }}
+      image_amd64_old_digest: ${{ needs.image-amd64.outputs.old_digest }}
+      image_arm64_old_digest: ${{ needs.image-arm64.outputs.old_digest }}
+      merge_old_digest: ${{ needs.merge.outputs.old_digest }}
     permissions:
       contents: write
       packages: write
-
-    steps:
-      - name: Login to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Rollback amd64 tag
-        if: needs.image-amd64.outputs.old_digest != ''
-        run: |
-          podman pull ghcr.io/ferret-linux/${{ inputs.name }}@${{ needs.image-amd64.outputs.old_digest }}
-          podman tag ghcr.io/ferret-linux/${{ inputs.name }}@${{ needs.image-amd64.outputs.old_digest }} ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64
-          podman push ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64
-
-      - name: Rollback arm64 tag
-        if: needs.image-arm64.outputs.old_digest != ''
-        run: |
-          podman pull ghcr.io/ferret-linux/${{ inputs.name }}@${{ needs.image-arm64.outputs.old_digest }}
-          podman tag ghcr.io/ferret-linux/${{ inputs.name }}@${{ needs.image-arm64.outputs.old_digest }} ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64
-          podman push ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64
-
-      - name: Rollback merged manifest tag
-        if: needs.merge.outputs.old_digest != ''
-        run: |
-          podman pull ghcr.io/ferret-linux/${{ inputs.name }}@${{ needs.merge.outputs.old_digest }}
-          podman tag ghcr.io/ferret-linux/${{ inputs.name }}@${{ needs.merge.outputs.old_digest }} ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}
-          podman push ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}
-
-      - name: Delete broken versions
-        run: |
-          for suffix in "-amd64" "-arm64" ""; do
-            tagname="${{ inputs.tag }}${suffix}"
-            version_id=$(gh api "/orgs/ferret-linux/packages/container/${{ inputs.name }}/versions" \
-              --paginate | jq -r --arg tag "$tagname" \
-              '.[] | select(.metadata.container.tags[]? == $tag) | .id' | head -n1)
-            if [ -n "$version_id" ]; then
-              gh api --method DELETE \
-                "/orgs/ferret-linux/packages/container/${{ inputs.name }}/versions/${version_id}" || true
-            fi
-          done
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    secrets: inherit
 
   update-props:
     needs: [merge, verify-amd64, verify-arm64]
@@ -445,95 +123,14 @@ jobs:
       needs.merge.result == 'success' &&
       (needs.verify-amd64.result == 'success' || needs.verify-amd64.result == 'skipped') &&
       (needs.verify-arm64.result == 'success' || needs.verify-arm64.result == 'skipped')
-    runs-on: ubuntu-26.04
+    uses: ./.github/workflows/.ib-update-props.yml
+    with:
+      name: ${{ inputs.name }}
+      tag: ${{ inputs.tag }}
+      image: ${{ inputs.image }}
+      arches: ${{ inputs.arches }}
+      display_name: ${{ inputs.display_name }}
     permissions:
       contents: write
       packages: read
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
-
-      - name: Login to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Collect image sizes and build entry
-        run: |
-          built_at=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-
-          display_name="${{ inputs.display_name }}"
-          otr_name="${{ inputs.name }}"
-          otr_tag="${{ inputs.tag }}"
-          fallback_vendor_image="${{ inputs.image }}"
-          architecture='${{ inputs.arches }}'
-
-          official_image="ghcr.io/ferret-linux/${otr_name}:${otr_tag}"
-          sizes="{}"
-
-          for arch in $(echo "$architecture" | jq -r '.[]'); do
-            arch_image="ghcr.io/ferret-linux/${otr_name}:${otr_tag}-${arch}"
-
-            podman pull "$arch_image" 2>/dev/null || continue
-
-            compressed=$(podman image inspect "$arch_image" --format '{{.Size}}' 2>/dev/null || echo 0)
-            virtual=$(podman image inspect "$arch_image" --format '{{.VirtualSize}}' 2>/dev/null || echo 0)
-
-            sizes=$(echo "$sizes" | jq \
-              --arg arch "$arch" \
-              --argjson compressed "$compressed" \
-              --argjson disk "$virtual" \
-              '. + {($arch): {"compressed_size": $compressed, "disk_size": $disk}}')
-          done
-
-          jq -n \
-            --arg name "$display_name" \
-            --arg official_image "$official_image" \
-            --arg fallback_vendor_image "$fallback_vendor_image" \
-            --argjson architecture "$architecture" \
-            --argjson enabled true \
-            --arg built_at "$built_at" \
-            --argjson sizes "$sizes" \
-            '{
-              name: $name,
-              official_image: $official_image,
-              fallback_vendor_image: $fallback_vendor_image,
-              architecture: $architecture,
-              enabled: $enabled,
-              built_at: $built_at,
-              sizes: $sizes
-            }' > /tmp/entry.json
-
-      - name: Upsert entry and push
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          official_image="ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}"
-
-          success=0
-          for i in 1 2 3 4 5; do
-            git fetch origin ${{ github.ref_name }}
-            git checkout -B ${{ github.ref_name }} origin/${{ github.ref_name }}
-
-            jq --slurpfile entry /tmp/entry.json \
-              --arg official_image "$official_image" \
-              '.images = ((.images // []) | map(select(.official_image != $official_image)) + $entry)' \
-              images/images-properties.json > /tmp/images-properties.json.tmp
-            mv /tmp/images-properties.json.tmp images/images-properties.json
-
-            git add images/images-properties.json
-            if git diff --cached --quiet; then
-              echo "No changes to commit"
-              success=1
-              break
-            fi
-
-            git commit -m "chore: update images-properties.json for ${{ inputs.name }}:${{ inputs.tag }} [skip ci]"
-            if git push origin HEAD:${{ github.ref_name }}; then
-              success=1
-              break
-            fi
-            echo "Attempt $i/5 failed to push, retrying in 10s..."
-            sleep 10
-          done
-          [ "$success" -eq 1 ] || exit 1
+    secrets: inherit

@@ -1,0 +1,107 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the otter project:
+#    https://github.com/ferret-linux/otter
+# Copyright (C) 2026 otter contributors
+
+name: ib-image-arm64 (internal)
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        required: true
+        type: string
+      tag:
+        required: true
+        type: string
+      image:
+        required: true
+        type: string
+      containerfile:
+        required: true
+        type: string
+      arches:
+        required: true
+        type: string
+    outputs:
+      old_digest:
+        description: Digest of the previous arm64 image, if any
+        value: ${{ jobs.image-arm64.outputs.old_digest }}
+
+jobs:
+  image-arm64:
+    if: contains(fromJson(inputs.arches), 'arm64')
+    runs-on: ubuntu-26.04-arm
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    outputs:
+      old_digest: ${{ steps.old-digest.outputs.digest }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Capture Old Digest
+        id: old-digest
+        run: |
+          digest=$(podman manifest inspect docker://ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64 2>/dev/null | jq -r '.manifests[0].digest // empty')
+          echo "digest=$digest" >> $GITHUB_OUTPUT
+
+      - name: Pull Base Image
+        run: |
+          success=0
+          for i in 1 2 3; do
+            podman pull ${{ inputs.image }} && success=1 && break
+            echo "Attempt $i/3 failed, retrying in 15s..."
+            sleep 15
+          done
+          [ "$success" -eq 1 ] || exit 1
+
+      - name: Build
+        run: |
+          success=0
+          for i in 1 2 3; do
+            podman build \
+              --build-arg IMAGE=${{ inputs.image }} \
+              --file images/${{ inputs.containerfile }} \
+              --tag ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64 \
+              . && success=1 && break
+            echo "Attempt $i/3 failed, pruning and retrying in 30s..."
+            podman system prune -af
+            sleep 30
+          done
+          [ "$success" -eq 1 ] || exit 1
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+
+      - name: Login to GHCR (Cosign)
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | cosign login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Push
+        run: |
+          success=0
+          for i in 1 2 3; do
+            podman push \
+              ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64 && success=1 && break
+            echo "Attempt $i/3 failed, retrying in 15s..."
+            sleep 15
+          done
+          [ "$success" -eq 1 ] || exit 1
+
+      - name: Sign
+        run: |
+          success=0
+          for i in 1 2 3 4 5; do
+            cosign sign --yes \
+              ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64 && success=1 && break
+            echo "Attempt $i/5 failed, retrying in 45s..."
+            sleep 45
+          done
+          [ "$success" -eq 1 ] || exit 1
