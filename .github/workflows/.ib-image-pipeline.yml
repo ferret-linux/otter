@@ -81,13 +81,19 @@ jobs:
           done
           [ "$success" -eq 1 ] || exit 1
 
+      - name: Save Image
+        run: |
+          podman image save \
+            ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64 \
+            -o /tmp/${{ inputs.name }}-${{ inputs.tag }}-amd64.tar
+
       - name: Install Syft
         uses: anchore/sbom-action/download-syft@e22c389904149dbc22b58101806040fa8d37a610 # v0
 
       - name: Generate SBOM
         run: |
           syft \
-            docker-daemon:ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64 \
+            docker-archive:/tmp/${{ inputs.name }}-${{ inputs.tag }}-amd64.tar \
             --output spdx-json \
             --file /tmp/${{ inputs.name }}-${{ inputs.tag }}-amd64.spdx.json
 
@@ -206,13 +212,19 @@ jobs:
           done
           [ "$success" -eq 1 ] || exit 1
 
+      - name: Save Image
+        run: |
+          podman image save \
+            ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64 \
+            -o /tmp/${{ inputs.name }}-${{ inputs.tag }}-arm64.tar
+
       - name: Install Syft
         uses: anchore/sbom-action/download-syft@e22c389904149dbc22b58101806040fa8d37a610 # v0
 
       - name: Generate SBOM
         run: |
           syft \
-            docker-daemon:ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64 \
+            docker-archive:/tmp/${{ inputs.name }}-${{ inputs.tag }}-arm64.tar \
             --output spdx-json \
             --file /tmp/${{ inputs.name }}-${{ inputs.tag }}-arm64.spdx.json
 
