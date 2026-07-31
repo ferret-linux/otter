@@ -141,7 +141,7 @@
     "tag": "leap",
     "display_name": "opensuse-leap",
     "arches": ["amd64", "arm64"],
-    "enabled": false
+    "enabled": true
   },
   {
     "image": "registry.opensuse.org/opensuse/tumbleweed:latest",
@@ -150,7 +150,7 @@
     "tag": "tumbleweed",
     "display_name": "opensuse-tumbleweed",
     "arches": ["amd64", "arm64"],
-    "enabled": false
+    "enabled": true
   },
   {
     "image": "docker.io/library/alpine:latest",
