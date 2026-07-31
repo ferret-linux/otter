@@ -51,6 +51,7 @@ RUN apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
     sudo \
     tree \
     wget \
+    which \
     bzip2 \
     gnupg \
     mount \
@@ -81,6 +82,7 @@ RUN apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
     findutils \
     net-tools \
     xdg-utils \
+    wolfi-base \
     util-linux \
     vpl-gpu-rt \
     pipewire-jack \
@@ -88,6 +90,7 @@ RUN apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
     xdg-user-dirs \
     openssh-client \
     pipewire-pulse \
+    bash-completion \
     gst-plugins-bad \
     util-linux-misc \
     gst-plugins-base \

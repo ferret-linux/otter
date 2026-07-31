@@ -39,6 +39,7 @@ RUN apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
     sudo \
     tree \
     wget \
+    which \
     bc-gh \
     bzip2 \
     gnupg \
@@ -80,6 +81,7 @@ RUN apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
     dinit-chimera \
     vulkan-loader \
     pipewire-pulse \
+    base-bootstrap \
     bash-completion \
     gst-plugins-bad \
     util-linux-misc \

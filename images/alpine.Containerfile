@@ -22,6 +22,7 @@ COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
     bc \
     xz \
+    tar \
     zsh \
     gpg \
     zip \
@@ -29,12 +30,15 @@ RUN apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
     fish \
     bash \
     curl \
+    docs \
     less \
     lsof \
     pigz \
     sudo \
     tree \
+    vte3 \
     wget \
+    which \
     bzip2 \
     gnupg \
     mount \
@@ -44,9 +48,11 @@ RUN apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
     ffmpeg \
     libcap \
     shadow \
+    mandoc \
     tzdata \
     umount \
     openrc \
+    gcompat \
     findmnt \
     iputils \
     ncurses \
@@ -56,6 +62,7 @@ RUN apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
     iproute2 \
     keyutils \
     pinentry \
+    man-pages \
     coreutils \
     xdg-utils \
     diffutils \
@@ -63,10 +70,13 @@ RUN apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
     net-tools \
     vpl-gpu-rt \
     util-linux \
+    musl-utils \
+    alpine-base \
     xdg-user-dirs \
     pipewire-jack \
     vulkan-loader \
     pipewire-pulse \
+    bash-completion \
     gst-plugins-bad \
     util-linux-misc \
     gst-plugins-base \
