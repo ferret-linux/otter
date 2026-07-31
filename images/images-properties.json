@@ -143,27 +143,6 @@
       }
     },
     {
-      "name": "centos",
-      "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
-      "fallback_vendor_image": "quay.io/centos/centos:stream10",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-07-31T05:29:28Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1977006495,
-          "disk_size": 1977006495
-        },
-        "arm64": {
-          "compressed_size": 1931797573,
-          "disk_size": 1931797573
-        }
-      }
-    },
-    {
       "name": "oracle",
       "official_image": "ghcr.io/ferret-linux/oracle-otr:stable",
       "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10",
@@ -542,6 +521,27 @@
         "arm64": {
           "compressed_size": 1892585253,
           "disk_size": 1892585253
+        }
+      }
+    },
+    {
+      "name": "centos",
+      "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
+      "fallback_vendor_image": "quay.io/centos/centos:stream10",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-07-31T07:26:15Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1977007007,
+          "disk_size": 1977007007
+        },
+        "arm64": {
+          "compressed_size": 1931798089,
+          "disk_size": 1931798089
         }
       }
     }
