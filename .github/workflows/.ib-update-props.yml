@@ -24,6 +24,9 @@ on:
       display_name:
         required: true
         type: string
+      build_number:
+        required: true
+        type: string
 
 jobs:
   update-props:
@@ -67,6 +70,8 @@ jobs:
               '. + {($arch): {"compressed_size": $compressed, "disk_size": $disk}}')
           done
 
+          build_number="${{ inputs.build_number }}"
+
           jq -n \
             --arg name "$display_name" \
             --arg official_image "$official_image" \
@@ -75,6 +80,7 @@ jobs:
             --argjson enabled true \
             --arg built_at "$built_at" \
             --argjson sizes "$sizes" \
+            --argjson build_number "$build_number" \
             '{
               name: $name,
               official_image: $official_image,
@@ -82,7 +88,8 @@ jobs:
               architecture: $architecture,
               enabled: $enabled,
               built_at: $built_at,
-              sizes: $sizes
+              sizes: $sizes,
+              build_number: $build_number
             }' > /tmp/entry.json
 
       - name: Upsert entry and push

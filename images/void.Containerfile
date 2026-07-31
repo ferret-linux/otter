@@ -7,6 +7,9 @@
 ARG IMAGE
 FROM ${IMAGE}
 
+ARG OTTER_BUILD_NUMBER
+LABEL otter.image_build=${OTTER_BUILD_NUMBER}
+
 # Pre-create otter dirs
 RUN mkdir -p \
     /etc/profile.d \

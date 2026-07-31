@@ -24,6 +24,9 @@ on:
       arches:
         required: true
         type: string
+      build_number:
+        required: true
+        type: string
     outputs:
       old_digest:
         description: Digest of the previous amd64 image, if any
@@ -69,6 +72,7 @@ jobs:
           for i in 1 2 3; do
             podman build \
               --build-arg IMAGE=${{ inputs.image }} \
+              --build-arg OTTER_BUILD_NUMBER=${{ inputs.build_number }} \
               --file images/${{ inputs.containerfile }} \
               --tag ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64 \
               . && success=1 && break

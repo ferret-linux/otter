@@ -29,7 +29,27 @@ on:
         type: string
 
 jobs:
+  prepare:
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
+    outputs:
+      build_number: ${{ steps.compute.outputs.build_number }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Compute Next Build Number
+        id: compute
+        run: |
+          official_image="ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}"
+          current=$(jq -r --arg official_image "$official_image" \
+            '((.images // []) | map(select(.official_image == $official_image)) | .[0].build_number) // 0' \
+            images/images-properties.json)
+          echo "build_number=$((current + 1))" >> $GITHUB_OUTPUT
+
   image-amd64:
+    needs: prepare
     uses: ./.github/workflows/.ib-image-amd64.yml
     with:
       name: ${{ inputs.name }}
@@ -37,6 +57,7 @@ jobs:
       image: ${{ inputs.image }}
       containerfile: ${{ inputs.containerfile }}
       arches: ${{ inputs.arches }}
+      build_number: ${{ needs.prepare.outputs.build_number }}
     permissions:
       contents: read
       packages: write
@@ -44,6 +65,7 @@ jobs:
     secrets: inherit
 
   image-arm64:
+    needs: prepare
     uses: ./.github/workflows/.ib-image-arm64.yml
     with:
       name: ${{ inputs.name }}
@@ -51,6 +73,7 @@ jobs:
       image: ${{ inputs.image }}
       containerfile: ${{ inputs.containerfile }}
       arches: ${{ inputs.arches }}
+      build_number: ${{ needs.prepare.outputs.build_number }}
     permissions:
       contents: read
       packages: write
@@ -117,7 +140,7 @@ jobs:
     secrets: inherit
 
   update-props:
-    needs: [merge, verify-amd64, verify-arm64]
+    needs: [prepare, merge, verify-amd64, verify-arm64]
     if: |
       always() &&
       needs.merge.result == 'success' &&
@@ -130,6 +153,7 @@ jobs:
       image: ${{ inputs.image }}
       arches: ${{ inputs.arches }}
       display_name: ${{ inputs.display_name }}
+      build_number: ${{ needs.prepare.outputs.build_number }}
     permissions:
       contents: write
       packages: read
