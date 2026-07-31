@@ -437,3 +437,103 @@ jobs:
           done
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  update-props:
+    needs: [merge, verify-amd64, verify-arm64]
+    if: |
+      always() &&
+      needs.merge.result == 'success' &&
+      (needs.verify-amd64.result == 'success' || needs.verify-amd64.result == 'skipped') &&
+      (needs.verify-arm64.result == 'success' || needs.verify-arm64.result == 'skipped')
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: write
+      packages: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Collect image sizes and build entry
+        run: |
+          built_at=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+          display_name="${{ inputs.display_name }}"
+          otr_name="${{ inputs.name }}"
+          otr_tag="${{ inputs.tag }}"
+          fallback_vendor_image="${{ inputs.image }}"
+          architecture='${{ inputs.arches }}'
+
+          official_image="ghcr.io/ferret-linux/${otr_name}:${otr_tag}"
+          sizes="{}"
+
+          for arch in $(echo "$architecture" | jq -r '.[]'); do
+            arch_image="ghcr.io/ferret-linux/${otr_name}:${otr_tag}-${arch}"
+
+            podman pull "$arch_image" 2>/dev/null || continue
+
+            compressed=$(podman image inspect "$arch_image" --format '{{.Size}}' 2>/dev/null || echo 0)
+            virtual=$(podman image inspect "$arch_image" --format '{{.VirtualSize}}' 2>/dev/null || echo 0)
+
+            sizes=$(echo "$sizes" | jq \
+              --arg arch "$arch" \
+              --argjson compressed "$compressed" \
+              --argjson disk "$virtual" \
+              '. + {($arch): {"compressed_size": $compressed, "disk_size": $disk}}')
+          done
+
+          jq -n \
+            --arg name "$display_name" \
+            --arg official_image "$official_image" \
+            --arg fallback_vendor_image "$fallback_vendor_image" \
+            --argjson architecture "$architecture" \
+            --argjson enabled true \
+            --arg built_at "$built_at" \
+            --argjson sizes "$sizes" \
+            '{
+              name: $name,
+              official_image: $official_image,
+              fallback_vendor_image: $fallback_vendor_image,
+              architecture: $architecture,
+              enabled: $enabled,
+              built_at: $built_at,
+              sizes: $sizes
+            }' > /tmp/entry.json
+
+      - name: Upsert entry and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          official_image="ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}"
+
+          success=0
+          for i in 1 2 3 4 5; do
+            git fetch origin ${{ github.ref_name }}
+            git checkout -B ${{ github.ref_name }} origin/${{ github.ref_name }}
+
+            jq --slurpfile entry /tmp/entry.json \
+              --arg official_image "$official_image" \
+              '.images = ((.images // []) | map(select(.official_image != $official_image)) + $entry)' \
+              images/images-properties.json > /tmp/images-properties.json.tmp
+            mv /tmp/images-properties.json.tmp images/images-properties.json
+
+            git add images/images-properties.json
+            if git diff --cached --quiet; then
+              echo "No changes to commit"
+              success=1
+              break
+            fi
+
+            git commit -m "chore: update images-properties.json for ${{ inputs.name }}:${{ inputs.tag }} [skip ci]"
+            if git push origin HEAD:${{ github.ref_name }}; then
+              success=1
+              break
+            fi
+            echo "Attempt $i/5 failed to push, retrying in 10s..."
+            sleep 10
+          done
+          [ "$success" -eq 1 ] || exit 1

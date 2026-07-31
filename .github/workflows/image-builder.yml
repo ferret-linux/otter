@@ -52,12 +52,3 @@ jobs:
       packages: write
       id-token: write
     secrets: inherit
-
-  update-props:
-    needs: [image-pipeline]
-    if: always()
-    uses: ./.github/workflows/.ib-update-props.yml
-    permissions:
-      contents: write
-      packages: read
-    secrets: inherit
