@@ -47,7 +47,6 @@ jobs:
       containerfile: ${{ matrix.containerfile }}
       arches: ${{ toJson(matrix.arches) }}
       display_name: ${{ matrix.display_name }}
-      grype_distro: ${{ matrix.grype_distro }}
     permissions:
       contents: write
       packages: write

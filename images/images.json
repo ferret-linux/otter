@@ -5,12 +5,8 @@
     "name": "ubuntu-otr",
     "tag": "stable",
     "display_name": "ubuntu",
-    "arches": [
-      "amd64",
-      "arm64"
-    ],
-    "enabled": true,
-    "grype_distro": "ubuntu"
+    "arches": ["amd64", "arm64"],
+    "enabled": true
   },
   {
     "image": "docker.io/library/ubuntu:26.04",
@@ -18,12 +14,8 @@
     "name": "ubuntu-otr",
     "tag": "lts",
     "display_name": "ubuntu-lts",
-    "arches": [
-      "amd64",
-      "arm64"
-    ],
-    "enabled": true,
-    "grype_distro": "ubuntu"
+    "arches": ["amd64", "arm64"],
+    "enabled": true
   },
   {
     "image": "docker.io/library/debian:stable",
@@ -31,12 +23,8 @@
     "name": "debian-otr",
     "tag": "stable",
     "display_name": "debian",
-    "arches": [
-      "amd64",
-      "arm64"
-    ],
-    "enabled": true,
-    "grype_distro": "debian"
+    "arches": ["amd64", "arm64"],
+    "enabled": true
   },
   {
     "image": "docker.io/library/debian:testing",
@@ -44,12 +32,8 @@
     "name": "debian-otr",
     "tag": "testing",
     "display_name": "debian-testing",
-    "arches": [
-      "amd64",
-      "arm64"
-    ],
-    "enabled": true,
-    "grype_distro": "debian"
+    "arches": ["amd64", "arm64"],
+    "enabled": true
   },
   {
     "image": "docker.io/library/debian:unstable",
@@ -57,12 +41,8 @@
     "name": "debian-otr",
     "tag": "unstable",
     "display_name": "debian-unstable",
-    "arches": [
-      "amd64",
-      "arm64"
-    ],
-    "enabled": true,
-    "grype_distro": "debian"
+    "arches": ["amd64", "arm64"],
+    "enabled": true
   },
   {
     "image": "quay.io/fedora/fedora:44",
@@ -70,12 +50,8 @@
     "name": "fedora-otr",
     "tag": "stable",
     "display_name": "fedora",
-    "arches": [
-      "amd64",
-      "arm64"
-    ],
-    "enabled": true,
-    "grype_distro": "fedora"
+    "arches": ["amd64", "arm64"],
+    "enabled": true
   },
   {
     "image": "quay.io/fedora/fedora:rawhide",
@@ -83,12 +59,8 @@
     "name": "fedora-otr",
     "tag": "rawhide",
     "display_name": "fedora-rawhide",
-    "arches": [
-      "amd64",
-      "arm64"
-    ],
-    "enabled": true,
-    "grype_distro": "fedora"
+    "arches": ["amd64", "arm64"],
+    "enabled": true
   },
   {
     "image": "docker.io/library/archlinux:latest",
@@ -96,11 +68,8 @@
     "name": "arch-otr",
     "tag": "latest",
     "display_name": "arch",
-    "arches": [
-      "amd64"
-    ],
-    "enabled": true,
-    "grype_distro": "archlinux"
+    "arches": ["amd64"],
+    "enabled": true
   },
   {
     "image": "docker.io/blackarchlinux/blackarch:latest",
@@ -108,9 +77,7 @@
     "name": "blackarch-otr",
     "tag": "latest",
     "display_name": "blackarch",
-    "arches": [
-      "amd64"
-    ],
+    "arches": ["amd64"],
     "enabled": true
   },
   {
@@ -119,12 +86,8 @@
     "name": "gentoo-otr",
     "tag": "stage3",
     "display_name": "gentoo",
-    "arches": [
-      "amd64",
-      "arm64"
-    ],
-    "enabled": true,
-    "grype_distro": "gentoo"
+    "arches": ["amd64", "arm64"],
+    "enabled": true
   },
   {
     "image": "docker.io/library/almalinux:latest",
@@ -132,12 +95,8 @@
     "name": "alma-otr",
     "tag": "stable",
     "display_name": "alma",
-    "arches": [
-      "amd64",
-      "arm64"
-    ],
-    "enabled": true,
-    "grype_distro": "almalinux"
+    "arches": ["amd64", "arm64"],
+    "enabled": true
   },
   {
     "image": "docker.io/rockylinux/rockylinux:10-ubi-init",
@@ -145,12 +104,8 @@
     "name": "rocky-otr",
     "tag": "stable",
     "display_name": "rocky",
-    "arches": [
-      "amd64",
-      "arm64"
-    ],
-    "enabled": true,
-    "grype_distro": "rockylinux"
+    "arches": ["amd64", "arm64"],
+    "enabled": true
   },
   {
     "image": "quay.io/centos/centos:stream10",
@@ -158,12 +113,8 @@
     "name": "centos-otr",
     "tag": "stable",
     "display_name": "centos",
-    "arches": [
-      "amd64",
-      "arm64"
-    ],
-    "enabled": true,
-    "grype_distro": "centos"
+    "arches": ["amd64", "arm64"],
+    "enabled": true
   },
   {
     "image": "container-registry.oracle.com/os/oraclelinux:10",
@@ -171,12 +122,8 @@
     "name": "oracle-otr",
     "tag": "stable",
     "display_name": "oracle",
-    "arches": [
-      "amd64",
-      "arm64"
-    ],
-    "enabled": true,
-    "grype_distro": "oraclelinux"
+    "arches": ["amd64", "arm64"],
+    "enabled": true
   },
   {
     "image": "registry.access.redhat.com/ubi10/ubi-init:latest",
@@ -184,12 +131,8 @@
     "name": "rhel-otr",
     "tag": "stable",
     "display_name": "rhel",
-    "arches": [
-      "amd64",
-      "arm64"
-    ],
-    "enabled": true,
-    "grype_distro": "redhat"
+    "arches": ["amd64", "arm64"],
+    "enabled": true
   },
   {
     "image": "registry.opensuse.org/opensuse/leap:latest",
@@ -197,12 +140,8 @@
     "name": "opensuse-otr",
     "tag": "leap",
     "display_name": "opensuse-leap",
-    "arches": [
-      "amd64",
-      "arm64"
-    ],
-    "enabled": false,
-    "grype_distro": "opensuseleap"
+    "arches": ["amd64", "arm64"],
+    "enabled": false
   },
   {
     "image": "registry.opensuse.org/opensuse/tumbleweed:latest",
@@ -210,10 +149,7 @@
     "name": "opensuse-otr",
     "tag": "tumbleweed",
     "display_name": "opensuse-tumbleweed",
-    "arches": [
-      "amd64",
-      "arm64"
-    ],
+    "arches": ["amd64", "arm64"],
     "enabled": false
   },
   {
@@ -222,12 +158,8 @@
     "name": "alpine-otr",
     "tag": "latest",
     "display_name": "alpine",
-    "arches": [
-      "amd64",
-      "arm64"
-    ],
-    "enabled": true,
-    "grype_distro": "alpine"
+    "arches": ["amd64", "arm64"],
+    "enabled": true
   },
   {
     "image": "docker.io/library/alpine:edge",
@@ -235,12 +167,8 @@
     "name": "alpine-otr",
     "tag": "edge",
     "display_name": "alpine-edge",
-    "arches": [
-      "amd64",
-      "arm64"
-    ],
-    "enabled": true,
-    "grype_distro": "alpine"
+    "arches": ["amd64", "arm64"],
+    "enabled": true
   },
   {
     "image": "docker.io/kalilinux/kali-rolling:latest",
@@ -248,10 +176,7 @@
     "name": "kali-otr",
     "tag": "rolling",
     "display_name": "kali",
-    "arches": [
-      "amd64",
-      "arm64"
-    ],
+    "arches": ["amd64", "arm64"],
     "enabled": true
   },
   {
@@ -260,10 +185,7 @@
     "name": "kali-otr",
     "tag": "edge",
     "display_name": "kali-edge",
-    "arches": [
-      "amd64",
-      "arm64"
-    ],
+    "arches": ["amd64", "arm64"],
     "enabled": true
   },
   {
@@ -272,10 +194,7 @@
     "name": "void-otr",
     "tag": "glibc",
     "display_name": "void-glibc",
-    "arches": [
-      "amd64",
-      "arm64"
-    ],
+    "arches": ["amd64", "arm64"],
     "enabled": true
   },
   {
@@ -284,10 +203,7 @@
     "name": "void-otr",
     "tag": "musl",
     "display_name": "void-musl",
-    "arches": [
-      "amd64",
-      "arm64"
-    ],
+    "arches": ["amd64", "arm64"],
     "enabled": true
   },
   {
@@ -296,10 +212,7 @@
     "name": "chimera-otr",
     "tag": "latest",
     "display_name": "chimera",
-    "arches": [
-      "amd64",
-      "arm64"
-    ],
+    "arches": ["amd64", "arm64"],
     "enabled": true
   },
   {
@@ -308,9 +221,7 @@
     "name": "devuan-otr",
     "tag": "stable",
     "display_name": "devuan",
-    "arches": [
-      "amd64"
-    ],
+    "arches": ["amd64"],
     "enabled": true
   },
   {
@@ -319,9 +230,7 @@
     "name": "devuan-otr",
     "tag": "testing",
     "display_name": "devuan-testing",
-    "arches": [
-      "amd64"
-    ],
+    "arches": ["amd64"],
     "enabled": true
   },
   {
@@ -330,9 +239,7 @@
     "name": "devuan-otr",
     "tag": "unstable",
     "display_name": "devuan-unstable",
-    "arches": [
-      "amd64"
-    ],
+    "arches": ["amd64"],
     "enabled": true
   },
   {
@@ -341,11 +248,7 @@
     "name": "wolfi-otr",
     "tag": "latest",
     "display_name": "wolfi",
-    "arches": [
-      "amd64",
-      "arm64"
-    ],
-    "enabled": true,
-    "grype_distro": "wolfi"
+    "arches": ["amd64", "arm64"],
+    "enabled": true
   }
 ]
