@@ -156,28 +156,6 @@
       "build_number": 1
     },
     {
-      "name": "debian",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:stable",
-      "fallback_vendor_image": "docker.io/library/debian:stable",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-07-31T18:58:53Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1460664334,
-          "disk_size": 1460664334
-        },
-        "arm64": {
-          "compressed_size": 1413489389,
-          "disk_size": 1413489389
-        }
-      },
-      "build_number": 1
-    },
-    {
       "name": "void-glibc",
       "official_image": "ghcr.io/ferret-linux/void-otr:glibc",
       "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest",
@@ -576,6 +554,28 @@
         "arm64": {
           "compressed_size": 1571176946,
           "disk_size": 1571176946
+        }
+      },
+      "build_number": 2
+    },
+    {
+      "name": "debian",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:stable",
+      "fallback_vendor_image": "docker.io/library/debian:stable",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-07-31T22:50:49Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1460664336,
+          "disk_size": 1460664336
+        },
+        "arm64": {
+          "compressed_size": 1413489387,
+          "disk_size": 1413489387
         }
       },
       "build_number": 2
