@@ -3,12 +3,12 @@
 {2}├──────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                                  {2}│{R}
 {2}│{R}  {5}otter reg pull      [options] [image...]{R}                {2}│{R}
-{2}│{R}  {5}otter registry get [options] [image...]{R}                 {2}│{R}
+{2}│{R}  {5}otter registry pl [options] [image...]{R}                  {2}│{R}
 {2}├──────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                               {2}│{R}
 {2}│{R}  {5}otter reg pull fedora{R}                                   {2}│{R}
 {2}│{R}  {5}otter reg pull --force alpine{R}                           {2}│{R}
-{2}│{R}  {5}otter registry get --all{R}                                {2}│{R}
+{2}│{R}  {5}otter registry pl --all{R}                                 {2}│{R}
 {2}│{R}  {5}otter registry pull --all --force{R}                       {2}│{R}
 {2}├──────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                                {2}│{R}

@@ -15,8 +15,8 @@
 {2}│{R}  {5}examples: otter reg ls [options] or otter registry list{R}     {2}│{R}
 {2}│{R} {4}--all{R}     {2}┆{R} {4}-a{R}  {5}Include disabled images in the table{R}         {2}│{R}
 {2}├──────────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Pull / Get:{R}                                                 {2}│{R}
-{2}│{R}  {5}examples: otter reg get [options] or otter registry pull{R}    {2}│{R}
+{2}│{R}{3}▸ Pull / Pl:{R}                                                  {2}│{R}
+{2}│{R}  {5}examples: otter reg pl [options] or otter registry pull{R}     {2}│{R}
 {2}│{R} {4}--all{R}     {2}┆{R} {4}-a{R}  {5}Pull all enabled images not yet present{R}      {2}│{R}
 {2}│{R} {4}--force{R}   {2}┆{R} {4}-f{R}  {5}Pull even if already present and current{R}     {2}│{R}
 {2}├──────────────────────────────────────────────────────────────┤{R}
