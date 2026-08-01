@@ -20,7 +20,7 @@ func relativeTime(s string) string {
 	}
 	t, err := time.Parse(time.RFC3339, s)
 	if err != nil {
-		return "unknown" //nolint:goconst // trivial literal, not worth a shared constant
+		return "unknown"
 	}
 	d := time.Since(t)
 	switch {
@@ -230,9 +230,9 @@ func localStatus(
 	case registry.StalenessAhead:
 		return "ahead", ui.Yellow
 	case registry.StalenessUnknown, registry.StalenessNotOtterImage:
-		return "unknown", ui.Dim //nolint:goconst // trivial literal, not worth a shared constant
+		return "unknown", ui.Dim
 	default:
-		return "unknown", ui.Dim //nolint:goconst // trivial literal, not worth a shared constant
+		return "unknown", ui.Dim
 	}
 }
 
