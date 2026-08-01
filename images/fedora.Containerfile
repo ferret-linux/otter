@@ -20,10 +20,8 @@ RUN touch /usr/lib/otter/container.fedora
 # Re-enable docs
 RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf 2>/dev/null || true
 
-# Install rpm-fusion repos
-RUN dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
-    https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
-    dnf5-plugins -y --refresh
+# Install DNF plugins
+RUN dnf install dnf5-plugins -y --refresh
 
 # Enable Openh264 repos
 RUN dnf config-manager setopt fedora-cisco-openh264.enabled=1
@@ -56,7 +54,6 @@ RUN dnf install -y $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
     which \
     whois \
     words \
-    ffmpeg \
     gnupg2 \
     man-db \
     passwd \
@@ -93,10 +90,7 @@ RUN dnf install -y $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
     util-linux-script \
     glibc-all-langpacks \
     glibc-locale-source \
-    mesa-vulkan-drivers \
-    mesa-va-drivers-freeworld \
-    rpmfusion-free-release-tainted \
-    rpmfusion-nonfree-release-tainted)
+    mesa-vulkan-drivers)
 
 # Locale setup
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8
