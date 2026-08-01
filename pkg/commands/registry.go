@@ -16,11 +16,11 @@ import (
 // relativeTime returns a human-readable relative time string for an RFC3339 timestamp.
 func relativeTime(s string) string {
 	if s == "" {
-		return "unknown"
+		return "unknown" //nolint:goconst // trivial literal, not worth a shared constant
 	}
 	t, err := time.Parse(time.RFC3339, s)
 	if err != nil {
-		return "unknown"
+		return "unknown" //nolint:goconst // trivial literal, not worth a shared constant
 	}
 	d := time.Since(t)
 	switch {
@@ -230,9 +230,9 @@ func localStatus(
 	case registry.StalenessAhead:
 		return "ahead", ui.Yellow
 	case registry.StalenessUnknown, registry.StalenessNotOtterImage:
-		return "unknown", ui.Dim
+		return "unknown", ui.Dim //nolint:goconst // trivial literal, not worth a shared constant
 	default:
-		return "unknown", ui.Dim
+		return "unknown", ui.Dim //nolint:goconst // trivial literal, not worth a shared constant
 	}
 }
 
