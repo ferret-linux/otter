@@ -236,6 +236,40 @@ func localStatus(
 	}
 }
 
+// resolvePullCandidates returns the set of image refs eligible for pulling,
+// before any local-existence or staleness filtering is applied: either all
+// enabled registry entries, or the explicitly named ones.
+func resolvePullCandidates(props *registry.ImagesProperties, names []string, all bool) ([]string, error) {
+	if all {
+		var candidates []string
+		for _, entry := range props.Images {
+			if !entry.Enabled {
+				continue
+			}
+			ref, err := registry.Resolve(props, entry.Name)
+			if err != nil {
+				continue
+			}
+			candidates = append(candidates, ref)
+		}
+		return candidates, nil
+	}
+
+	split := splitNames(names)
+	if len(split) == 0 {
+		return nil, errors.New("specify at least one image name with --name or use --all")
+	}
+	candidates := make([]string, 0, len(split))
+	for _, name := range split {
+		ref, err := registry.Resolve(props, name)
+		if err != nil {
+			return nil, fmt.Errorf("failed to resolve image '%s': %w", name, err)
+		}
+		candidates = append(candidates, ref)
+	}
+	return candidates, nil
+}
+
 // resolvePullTargets returns the list of image refs to pull. A ref is
 // skipped only if it already exists locally and is not stale; --force
 // bypasses this check entirely. This applies uniformly whether targets come
@@ -248,31 +282,9 @@ func resolvePullTargets(
 	all bool,
 	force bool,
 ) ([]string, error) {
-	var candidates []string
-
-	if all {
-		for _, entry := range props.Images {
-			if !entry.Enabled {
-				continue
-			}
-			ref, err := registry.Resolve(props, entry.Name)
-			if err != nil {
-				continue
-			}
-			candidates = append(candidates, ref)
-		}
-	} else {
-		split := splitNames(names)
-		if len(split) == 0 {
-			return nil, errors.New("specify at least one image name with --name or use --all")
-		}
-		for _, name := range split {
-			ref, err := registry.Resolve(props, name)
-			if err != nil {
-				return nil, fmt.Errorf("failed to resolve image '%s': %w", name, err)
-			}
-			candidates = append(candidates, ref)
-		}
+	candidates, err := resolvePullCandidates(props, names, all)
+	if err != nil {
+		return nil, err
 	}
 
 	refs := make([]string, 0, len(candidates))
