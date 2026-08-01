@@ -56,7 +56,7 @@ func registryAction(ctx context.Context, cmd *cli.Command) error {
 func newRegistryPullCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "pull",
-		Aliases: []string{"get"},
+		Aliases: []string{"pl"},
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",
