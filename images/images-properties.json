@@ -56,23 +56,6 @@
       "build_number": 3
     },
     {
-      "name": "devuan-testing",
-      "official_image": "ghcr.io/ferret-linux/devuan-otr:testing",
-      "fallback_vendor_image": "docker.io/devuan/devuan:testing",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-01T03:35:11Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1527973761,
-          "disk_size": 1527973761
-        }
-      },
-      "build_number": 3
-    },
-    {
       "name": "blackarch",
       "official_image": "ghcr.io/ferret-linux/blackarch-otr:latest",
       "fallback_vendor_image": "docker.io/blackarchlinux/blackarch:latest",
@@ -576,6 +559,23 @@
         "arm64": {
           "compressed_size": 1580047601,
           "disk_size": 1580047601
+        }
+      },
+      "build_number": 4
+    },
+    {
+      "name": "devuan-testing",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:testing",
+      "fallback_vendor_image": "docker.io/devuan/devuan:testing",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-01T07:50:48Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1527973763,
+          "disk_size": 1527973763
         }
       },
       "build_number": 4
