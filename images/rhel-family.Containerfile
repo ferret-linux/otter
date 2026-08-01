@@ -23,10 +23,7 @@ RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf 2>/dev/null || \
 
 
 # Install epel repos
-RUN dnf install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm" \
-    "https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm" \
-    "https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm"
-
+RUN dnf install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm"
 # Upgrade all packages
 RUN dnf upgrade -y
 
@@ -64,7 +61,6 @@ RUN dnf install -y --skip-broken $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
     passwd \
     tzdata \
     vulkan \
-    ffmpeg \
     libvpx \
     iproute \
     iputils \
@@ -95,21 +91,12 @@ RUN dnf install -y --skip-broken $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
     bash-completion \
     openssh-clients \
     dnf-plugins-core \
-    mscore-fonts-all \
     mesa-dri-drivers \
     util-linux-script \
     glibc-all-langpacks \
     glibc-locale-source \
     mesa-vulkan-drivers \
-    pipewire-pulseaudio \
-    gstreamer1-plugins-base \
-    gstreamer1-plugins-good \
-    gstreamer1-plugins-ugly \
-    gstreamer1-plugin-libav \
-    mesa-va-drivers-freeworld \
-    gstreamer1-plugins-bad-free \
-    mesa-vdpau-drivers-freeworld \
-    gstreamer1-plugins-bad-nonfree)
+    pipewire-pulseaudio)
 
 # Locale setup
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8

@@ -15,7 +15,7 @@ COPY images/scripts/setup-common.sh /tmp/setup-common.sh
 RUN sh /tmp/setup-common.sh
 
 # Add otter image identifiers
-RUN touch /usr/lib/otter/container.rhel-family
+RUN touch /usr/lib/otter/container.rhel-official
 
 # Re-enable docs
 RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf 2>/dev/null || \
@@ -58,7 +58,6 @@ RUN dnf install -y --skip-broken $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
     passwd \
     tzdata \
     vulkan \
-    ffmpeg \
     libvpx \
     iproute \
     iputils \
@@ -95,15 +94,7 @@ RUN dnf install -y --skip-broken $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
     glibc-all-langpacks \
     glibc-locale-source \
     mesa-vulkan-drivers \
-    pipewire-pulseaudio \
-    gstreamer1-plugins-base \
-    gstreamer1-plugins-good \
-    gstreamer1-plugins-ugly \
-    gstreamer1-plugin-libav \
-    mesa-va-drivers-freeworld \
-    gstreamer1-plugins-bad-free \
-    mesa-vdpau-drivers-freeworld \
-    gstreamer1-plugins-bad-nonfree)
+    pipewire-pulseaudio)
 
 # Locale setup
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8
