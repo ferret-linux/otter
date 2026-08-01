@@ -1,0 +1,22 @@
+{2}╭──────────────────────────────────────────────────────────╮{R}
+{2}│{R}{1}⦿ List otter images and their local status{R}                {2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Usage:{R}                                                  {2}│{R}
+{2}│{R}  {5}otter reg ls [options]{R}                                  {2}│{R}
+{2}│{R}  {5}otter registry list [options]{R}                           {2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                               {2}│{R}
+{2}│{R}  {5}otter reg list{R}                                          {2}│{R}
+{2}│{R}  {5}otter reg ls --all{R}                                      {2}│{R}
+{2}│{R}  {5}otter registry list --all{R}                               {2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Options:{R}                                                {2}│{R}
+{2}│{R} {4}--all    {R}┆ {4}-a {R} {5}Include disabled images in the table{R}      {2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                                 {2}│{R}
+{2}│{R} {4}--help   {R}┆ {4}-h {R} {5}Show this help message{R}                    {2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Notes:{R}                                                  {2}│{R}
+{2}│{R} {5}Disabled images are hidden from the table unless --all.{R}  {2}│{R}
+{2}│{R} {5}LOCAL shows: not pulled, up to date, N behind, or ahead.{R} {2}│{R}
+{2}╰──────────────────────────────────────────────────────────╯{R}
