@@ -8,13 +8,12 @@
 {2}│{R}{3}▸ Examples:{R}                                                                          {2}│{R}
 {2}│{R}  {5}otter mk --image alpine my-alpinebox{R}                                               {2}│{R}
 {2}│{R}  {5}otter mk --init --volume /opt/my-dir:/usr/local/my-dir:rw{R}                          {2}│{R}
-{2}│{R}  {5}otter create --image centos:stream10 --pull --home ~/otter/centos10{R}                {2}│{R}
 {2}│{R}  {5}otter create --image alpine:latest --additional-packages "git tmux vim"{R}            {2}│{R}
+{2}│{R}  {5}otter create --image centos:stream10 --always-pull --home ~/otter/centos10{R}         {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                                                           {2}│{R}
 {2}│{R} {4}--home{R}                {2}┆{R} {4}-H{R}   {5}Custom HOME directory for the container{R}                {2}│{R}
 {2}│{R} {4}--init{R}                {2}┆{R} {4}-I{R}   {5}Use init system (e.g. systemd) inside the container{R}    {2}│{R}
-{2}│{R} {4}--pull{R}                {2}┆{R} {4}-p{R}   {5}Pull image even if it exists locally{R}                   {2}│{R}
 {2}│{R} {4}--root{R}                {2}┆{R} {4}-r{R}   {5}Launch container manager with root privileges{R}          {2}│{R}
 {2}│{R} {4}--clone{R}               {2}┆{R} {4}-C{R}   {5}Name of container to use as base for new container{R}     {2}│{R}
 {2}│{R} {4}--image{R}               {2}┆{R} {4}-i{R}   {5}Image to use for the container{R}                         {2}│{R}
@@ -29,6 +28,7 @@
 {2}│{R} {4}--cpu-threads{R}         {2}┆{R} {4}-t{R}   {5}Number of CPU threads the container can use{R}            {2}│{R}
 {2}│{R} {4}--unshare-ipc{R}         {2}┆{R} {4}-ui{R}  {5}Do not share IPC namespace with host{R}                   {2}│{R}
 {2}│{R} {4}--unshare-all{R}         {2}┆{R} {4}-ua{R}  {5}Activate all unshare flags{R}                             {2}│{R}
+{2}│{R} {4}--always-pull{R}         {2}┆{R} {4}-p{R}   {5}Pull image even if it exists locally{R}                   {2}│{R}
 {2}│{R} {4}--unshare-netns{R}       {2}┆{R} {4}-un{R}  {5}Do not share net namespace with host{R}                   {2}│{R}
 {2}│{R} {4}--pre-init-hooks{R}      {2}┆{R} {4}-ph{R}  {5}Commands to run at start of container initialization{R}   {2}│{R}
 {2}│{R} {4}--unshare-groups{R}      {2}┆{R} {4}-ug{R}  {5}Do not forward user's additional groups into container{R} {2}│{R}
