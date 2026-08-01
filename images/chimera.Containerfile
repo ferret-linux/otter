@@ -19,6 +19,7 @@ RUN touch /usr/lib/otter/container.chimera
 
 # Upgrade all packages
 RUN apk update && apk upgrade
+RUN apk add base-bootstrap && apk upgrade -Ua
 
 # Enable Chimera's user repo for additional packages
 RUN apk add chimera-repo-user && apk update

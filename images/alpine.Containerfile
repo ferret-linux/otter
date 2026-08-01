@@ -19,6 +19,8 @@ RUN touch /usr/lib/otter/container.alpine
 
 # Upgrade all packages
 RUN apk update && apk upgrade
+RUN apk add alpine-base
+RUN apk update && apk upgrade -Ua
 
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
@@ -31,7 +33,6 @@ RUN apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
     zip \
     bash \
     fish \
-    bash \
     curl \
     docs \
     less \

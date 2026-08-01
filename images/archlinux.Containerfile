@@ -24,7 +24,8 @@ RUN sed -i "s|NoExtract.*||g" /etc/pacman.conf \
     && sed -i '0,/^\[options\]/s/^\[options\]/\[options\]\nColor\nILoveCandy/' /etc/pacman.conf
 
 # Upgrade all packages
-RUN pacman -Syyu --noconfirm
+RUN pacman -Sy --noconfirm --needed archlinux-keyring
+RUN pacman -Syyu --noconfirm --needed
 
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh

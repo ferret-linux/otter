@@ -33,6 +33,8 @@ RUN touch /usr/lib/otter/container.wolfi
 
 # Upgrade all packages
 RUN apk update && apk upgrade
+RUN apk add wolfi-base
+RUN apk update && apk upgrade -Ua
 
 # Install dinit, built in the dinit-builder stage above (not packaged by Wolfi)
 COPY --from=dinit-builder /dinit-out/usr/ /usr/
