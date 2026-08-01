@@ -101,7 +101,7 @@ RUN zypper -n install --auto-agree-with-licenses -y \
     gstreamer-plugins-base \
     gstreamer-plugins-good \
     gstreamer-plugins-ugly \
-    gstreamer-plugins-libav) || [ ${?} = 106 ]
+    gstreamer-plugins-libav) || { rc=${?}; [ "${rc}" -ge 100 ] && [ "${rc}" -lt 200 ] && [ "${rc}" -ne 105 ]; }
 
 # Locale setup — glibc-locale (installed via pkg script) pre-builds locales on Leap;
 # localedef requires glibc-i18ndata charmap files which are not available on Leap 15.x
