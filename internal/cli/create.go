@@ -143,7 +143,7 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 		AdditionalFlags:         cmd.StringSlice("additional-flags"),
 		AdditionalVolumes:       cmd.StringSlice("volume"),
 		AdditionalPackages:      cmd.StringSlice("additional-packages"),
-		Nopasswd:                cmd.Bool("absolutely-disable-root-password-i-am-really-positively-sure"),
+		Nopasswd:                cmd.Bool("disable-root-password-i-fully-understand-the-risks-and-accept-the-responsibilities"),
 		ContainerUserCustomHome: cmd.String("home"),
 		Init:                    cmd.Bool("init") || cfg.DefaultInitSystem,
 		Nvidia:                  cmd.Bool("nvidia"),
@@ -156,7 +156,7 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 		ContainerPlatform:       cmd.String("platform"),
 		GenerateEntry:           !cmd.Bool("no-entry") && !cfg.DefaultNoEntry,
 		Rootful:                 cmd.Bool("root"),
-		ContainerAlwaysPull:     cmd.Bool("pull"),
+		ContainerAlwaysPull:     cmd.Bool("always-pull"),
 	}
 
 	createCmd := commands.NewCreateCommand(cfg, containerManager, nil)

@@ -30,22 +30,41 @@ func newRegistryCommand(cfg *config.Values) *cli.Command {
 		withContainerManager,
 	)
 
+	list := cc.apply(
+		newRegistryListCommand,
+		withUsageErrorHandler,
+		withRoot,
+		withContainerManager,
+	)
+
 	return &cli.Command{
-		Name:    "registry",
-		Aliases: []string{"reg"},
+		Name:     "registry",
+		Aliases:  []string{"reg"},
+		Commands: []*cli.Command{list, pull, remove},
+	}
+}
+
+func newRegistryListCommand(_ *config.Values) *cli.Command {
+	return &cli.Command{
+		Name:    "list",
+		Aliases: []string{"ls"},
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
 			},
 		},
-		Action:   registryAction,
-		Commands: []*cli.Command{pull, remove},
+		Action: registryListAction,
 	}
 }
 
-func registryAction(ctx context.Context, cmd *cli.Command) error {
-	if err := commands.NewRegistryListCommand().Execute(ctx, commands.RegistryListOptions{
+func registryListAction(ctx context.Context, cmd *cli.Command) error {
+	containerManager, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
+	if !ok {
+		return errors.New("container manager not found in context")
+	}
+
+	if err := commands.NewRegistryListCommand(containerManager).Execute(ctx, commands.RegistryListOptions{
 		All: cmd.Bool("all"),
 	}); err != nil {
 		return fmt.Errorf("failed to list registry: %w", err)

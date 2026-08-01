@@ -119,7 +119,7 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 		return nil, fmt.Errorf("cpu-threads validation failed: %w", err)
 	}
 
-	containerImage, err := c.makeContainerImage(ctx, &opts)
+	containerImage, imageProps, err := c.makeContainerImage(ctx, &opts)
 	if err != nil {
 		return nil, fmt.Errorf("failed to resolve container image: %w", err)
 	}
@@ -144,16 +144,19 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 		containerImage = cloneImage
 	}
 
-	if !c.containerManager.ImageExists(ctx, containerImage) {
-		if !opts.ContainerAlwaysPull {
-			return nil, fmt.Errorf("image '%s' is not present locally, pull it first with:\n  otter img pull -n %s", imageDisplayName(containerImage), opts.ContainerImage)
-		}
+	switch {
+	case !c.containerManager.ImageExists(ctx, containerImage):
+		// Missing image always auto-pulls unconditionally.
 		if err := registry.Pull(ctx, c.containerManager, containerImage, opts.ContainerPlatform, true, c.progress); err != nil {
 			return nil, fmt.Errorf("failed to pull image '%s': %w", containerImage, err)
 		}
-	} else if opts.ContainerAlwaysPull {
+	case opts.ContainerAlwaysPull:
 		if err := registry.Pull(ctx, c.containerManager, containerImage, opts.ContainerPlatform, true, c.progress); err != nil {
 			return nil, fmt.Errorf("failed to pull image '%s': %w", containerImage, err)
+		}
+	case imageProps != nil:
+		if err := c.checkImageStaleness(ctx, imageProps, containerImage, opts); err != nil {
+			return nil, err
 		}
 	}
 
@@ -339,7 +342,7 @@ func (c *CreateCommand) makeContainerShell(opts *CreateOptions) string {
 	}
 }
 
-func (c *CreateCommand) makeContainerImage(ctx context.Context, opts *CreateOptions) (string, error) {
+func (c *CreateCommand) makeContainerImage(ctx context.Context, opts *CreateOptions) (string, *registry.ImagesProperties, error) {
 	containerImage := opts.ContainerImage
 	if opts.ContainerClone == "" && containerImage == "" {
 		containerImage = c.cfg.DefaultContainerImage
@@ -347,16 +350,54 @@ func (c *CreateCommand) makeContainerImage(ctx context.Context, opts *CreateOpti
 	if containerImage != "" && opts.ContainerClone == "" {
 		props, err := registry.Fetch(ctx)
 		if err != nil {
-			return "", fmt.Errorf("failed to fetch registry properties: %w", err)
+			return "", nil, fmt.Errorf("failed to fetch registry properties: %w", err)
 		}
 		resolved, err := registry.Resolve(props, containerImage)
 		if err != nil {
-			return "", fmt.Errorf("failed to resolve image '%s': %w", containerImage, err)
+			return "", nil, fmt.Errorf("failed to resolve image '%s': %w", containerImage, err)
 		}
 		containerImage = resolved
+		return containerImage, props, nil
 	}
 
-	return containerImage, nil
+	return containerImage, nil, nil
+}
+
+// checkImageStaleness compares the locally present image against the latest
+// known remote build and warns or auto-pulls per the configured thresholds.
+// Only called when the image already exists locally and ContainerAlwaysPull
+// is not set.
+func (c *CreateCommand) checkImageStaleness(
+	ctx context.Context,
+	props *registry.ImagesProperties,
+	containerImage string,
+	opts CreateOptions,
+) error {
+	st := registry.CheckStaleness(ctx, c.containerManager, props, containerImage)
+
+	switch st.State {
+	case registry.StalenessBehind:
+		switch {
+		case c.cfg.StalenessAutopullThreshold > 0 && st.Diff >= c.cfg.StalenessAutopullThreshold:
+			if err := registry.Pull(ctx, c.containerManager, containerImage, opts.ContainerPlatform, true, c.progress); err != nil {
+				return fmt.Errorf("failed to pull image '%s': %w", containerImage, err)
+			}
+		case c.cfg.StalenessWarnThreshold > 0 && st.Diff >= c.cfg.StalenessWarnThreshold:
+			ui.DefaultLogger.Warn("image '%s' is behind upstream (local: %d, latest: %d)", imageDisplayName(containerImage), st.LocalBuild, st.RemoteBuild)
+		}
+	case registry.StalenessAhead:
+		ui.DefaultLogger.Warn("image '%s' is ahead of upstream (local: %d, latest: %d)", imageDisplayName(containerImage), st.LocalBuild, st.RemoteBuild)
+	case registry.StalenessUnknown:
+		// Local build label missing or unreadable — treat like a missing
+		// image and pull to heal, no special-casing for pre-feature images.
+		if err := registry.Pull(ctx, c.containerManager, containerImage, opts.ContainerPlatform, true, c.progress); err != nil {
+			return fmt.Errorf("failed to pull image '%s': %w", containerImage, err)
+		}
+	case registry.StalenessCurrent, registry.StalenessNotOtterImage:
+		// nothing to do
+	}
+
+	return nil
 }
 
 // Determine right containerName to use

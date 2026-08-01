@@ -377,6 +377,18 @@ func (n *Nerdctl) inspectImage(ctx context.Context, imageID string) (*InspectIma
 	return &images[0], nil
 }
 
+func (n *Nerdctl) ImageLabel(ctx context.Context, imageName, key string) (string, bool) {
+	info, err := n.inspectImage(ctx, imageName)
+	if err != nil {
+		return "", false
+	}
+	value, ok := info.Config.Labels[key]
+	if !ok {
+		return "", false
+	}
+	return value, true
+}
+
 func (n *Nerdctl) PullImage(ctx context.Context, imageName string, platform string) error {
 	var args []string
 	if platform != "" {

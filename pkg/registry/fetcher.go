@@ -24,6 +24,7 @@ type ImageEntry struct {
 	Architecture        []string             `json:"architecture"`
 	Enabled             bool                 `json:"enabled"`
 	BuiltAt             string               `json:"built_at"`
+	BuildNumber         int                  `json:"build_number"`
 	Sizes               map[string]ImageSize `json:"sizes"`
 }
 

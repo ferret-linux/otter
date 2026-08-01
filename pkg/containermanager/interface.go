@@ -21,6 +21,11 @@ type ContainerManager interface {
 	Remove(ctx context.Context, containerName string, opts RmOptions) error
 	Exists(ctx context.Context, containerName string) bool
 	ImageExists(ctx context.Context, imageName string) bool
+	// ImageLabel returns the value of the given label on a locally present
+	// image. It returns ("", false) if the image doesn't exist locally, the
+	// engine call fails, or the label isn't set — no error, matching the
+	// ImageExists precedent.
+	ImageLabel(ctx context.Context, imageName, key string) (string, bool)
 	Start(ctx context.Context, containerName string) error
 	Stop(ctx context.Context, containerNames []string, force bool) error
 	InspectContainer(ctx context.Context, containerName string) (*InspectResult, error)

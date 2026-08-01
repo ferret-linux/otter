@@ -86,6 +86,9 @@ type InspectImageOutput struct {
 	ID           string `json:"ID"`
 	Os           string `json:"Os"`
 	Architecture string `json:"Architecture"`
+	Config       struct {
+		Labels map[string]string `json:"Labels"`
+	} `json:"Config"`
 }
 
 func (d *Docker) ListContainers(ctx context.Context) ([]containermanager.Container, error) {
@@ -787,6 +790,18 @@ func (d *Docker) inspectImage(ctx context.Context, imageID string) (*InspectImag
 		return nil, errors.New("failed to parse image inspect output")
 	}
 	return &images[0], nil
+}
+
+func (d *Docker) ImageLabel(ctx context.Context, imageName, key string) (string, bool) {
+	info, err := d.inspectImage(ctx, imageName)
+	if err != nil {
+		return "", false
+	}
+	value, ok := info.Config.Labels[key]
+	if !ok {
+		return "", false
+	}
+	return value, true
 }
 
 func (d *Docker) PullImage(ctx context.Context, imageName string, platform string) error {

@@ -69,10 +69,12 @@ type RegistryListOptions struct {
 	All bool
 }
 
-type RegistryListCommand struct{}
+type RegistryListCommand struct {
+	containerManager containermanager.ContainerManager
+}
 
-func NewRegistryListCommand() *RegistryListCommand {
-	return &RegistryListCommand{}
+func NewRegistryListCommand(cm containermanager.ContainerManager) *RegistryListCommand {
+	return &RegistryListCommand{containerManager: cm}
 }
 
 func (c *RegistryListCommand) Execute(ctx context.Context, opts RegistryListOptions) error {
@@ -80,7 +82,7 @@ func (c *RegistryListCommand) Execute(ctx context.Context, opts RegistryListOpti
 	if err != nil {
 		return fmt.Errorf("failed to fetch registry: %w", err)
 	}
-	registryList(props, opts.All)
+	registryList(ctx, c.containerManager, props, opts.All)
 	return nil
 }
 
@@ -159,12 +161,14 @@ func (c *RegistryRemoveCommand) Execute(ctx context.Context, opts RegistryRemove
 
 // registryList renders a table of available images from props.
 // If all is false, disabled images are omitted and STATUS/BUILT columns are hidden.
-func registryList(props *registry.ImagesProperties, all bool) {
+// A LOCAL column is shown for enabled entries, reflecting whether the image
+// is pulled and, if so, how it compares to the latest known remote build.
+func registryList(ctx context.Context, cm containermanager.ContainerManager, props *registry.ImagesProperties, all bool) {
 	var t *ui.Table
 	if all {
-		t = ui.NewTable(os.Stdout, "NAME", "ARCH", "STATUS", "BUILT", "IMAGE")
+		t = ui.NewTable(os.Stdout, "NAME", "ARCH", "STATUS", "BUILT", "LOCAL", "IMAGE")
 	} else {
-		t = ui.NewTable(os.Stdout, "NAME", "ARCH", "IMAGE")
+		t = ui.NewTable(os.Stdout, "NAME", "ARCH", "LOCAL", "IMAGE")
 	}
 
 	for _, entry := range props.Images {
@@ -182,25 +186,60 @@ func registryList(props *registry.ImagesProperties, all bool) {
 			imageRef = entry.FallbackVendorImage
 		}
 
+		local, localColor := "", ui.Dim
+		if entry.Enabled {
+			local, localColor = localStatus(ctx, cm, props, imageRef)
+		}
+
 		arch := strings.Join(entry.Architecture, ", ")
 		imageRef = ui.TrimImageRef(imageRef)
 
 		if all {
 			t.AddRow(
-				[]string{entry.Name, arch, status, relativeTime(entry.BuiltAt), imageRef},
-				[]func(string) string{ui.Teal, ui.Dim, statusColor, ui.Dim, ui.Dim},
+				[]string{entry.Name, arch, status, relativeTime(entry.BuiltAt), local, imageRef},
+				[]func(string) string{ui.Teal, ui.Dim, statusColor, ui.Dim, localColor, ui.Dim},
 			)
 		} else {
 			t.AddRow(
-				[]string{entry.Name, arch, imageRef},
-				[]func(string) string{ui.Teal, ui.Dim, ui.Dim},
+				[]string{entry.Name, arch, local, imageRef},
+				[]func(string) string{ui.Teal, ui.Dim, localColor, ui.Dim},
 			)
 		}
 	}
 	t.Render()
 }
 
-// resolvePullTargets returns the list of image refs to pull.
+// localStatus returns a human-readable LOCAL column value and its color for
+// an enabled registry entry's official image ref.
+func localStatus(
+	ctx context.Context,
+	cm containermanager.ContainerManager,
+	props *registry.ImagesProperties,
+	imageRef string,
+) (string, func(string) string) {
+	if !cm.ImageExists(ctx, imageRef) {
+		return "not pulled", ui.Dim
+	}
+
+	st := registry.CheckStaleness(ctx, cm, props, imageRef)
+	switch st.State {
+	case registry.StalenessCurrent:
+		return "up to date", ui.Green
+	case registry.StalenessBehind:
+		return fmt.Sprintf("%d behind", st.Diff), ui.Yellow
+	case registry.StalenessAhead:
+		return "ahead", ui.Yellow
+	case registry.StalenessUnknown, registry.StalenessNotOtterImage:
+		return "unknown", ui.Dim
+	default:
+		return "unknown", ui.Dim
+	}
+}
+
+// resolvePullTargets returns the list of image refs to pull. A ref is
+// skipped only if it already exists locally and is not stale; --force
+// bypasses this check entirely. This applies uniformly whether targets come
+// from --all or from explicitly named images.
 func resolvePullTargets(
 	ctx context.Context,
 	cm containermanager.ContainerManager,
@@ -209,8 +248,9 @@ func resolvePullTargets(
 	all bool,
 	force bool,
 ) ([]string, error) {
+	var candidates []string
+
 	if all {
-		var refs []string
 		for _, entry := range props.Images {
 			if !entry.Enabled {
 				continue
@@ -219,24 +259,30 @@ func resolvePullTargets(
 			if err != nil {
 				continue
 			}
-			if !force && cm.ImageExists(ctx, ref) {
+			candidates = append(candidates, ref)
+		}
+	} else {
+		split := splitNames(names)
+		if len(split) == 0 {
+			return nil, errors.New("specify at least one image name with --name or use --all")
+		}
+		for _, name := range split {
+			ref, err := registry.Resolve(props, name)
+			if err != nil {
+				return nil, fmt.Errorf("failed to resolve image '%s': %w", name, err)
+			}
+			candidates = append(candidates, ref)
+		}
+	}
+
+	refs := make([]string, 0, len(candidates))
+	for _, ref := range candidates {
+		if !force && cm.ImageExists(ctx, ref) {
+			st := registry.CheckStaleness(ctx, cm, props, ref)
+			if st.State != registry.StalenessBehind && st.State != registry.StalenessUnknown {
+				ui.DefaultLogger.Info("skipping '%s', already up to date", ref)
 				continue
 			}
-			refs = append(refs, ref)
-		}
-		return refs, nil
-	}
-
-	split := splitNames(names)
-	if len(split) == 0 {
-		return nil, errors.New("specify at least one image name with --name or use --all")
-	}
-
-	refs := make([]string, 0, len(split))
-	for _, name := range split {
-		ref, err := registry.Resolve(props, name)
-		if err != nil {
-			return nil, fmt.Errorf("failed to resolve image '%s': %w", name, err)
 		}
 		refs = append(refs, ref)
 	}

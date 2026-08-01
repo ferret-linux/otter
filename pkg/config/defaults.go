@@ -8,8 +8,12 @@ import (
 func defaults() fileConfig {
 	return fileConfig{
 		Container: containerConfig{
-			Image: "ghcr.io/ferret-linux/ubuntu-otr:lts",
-			Name:  "my-container",
+			Name: "my-container",
+		},
+		Images: imagesConfig{
+			Default:                    "ghcr.io/ferret-linux/ubuntu-otr:lts",
+			StalenessWarnThreshold:     1,
+			StalenessAutopullThreshold: 3,
 		},
 		Preferences: preferencesConfig{
 			ContainerManager: "autodetect",
@@ -24,17 +28,19 @@ func DefaultValues() *Values {
 
 func toValues(cfg fileConfig) *Values {
 	return &Values{
-		ContainerManagerType:  cfg.Preferences.ContainerManager,
-		SudoProgram:           cfg.Preferences.SudoProgram,
-		DefaultContainerImage: cfg.Container.Image,
-		DefaultContainerName:  cfg.Container.Name,
-		DefaultHostname:       cfg.Container.Hostname,
-		DefaultShell:          cfg.Settings.Shell,
-		DefaultInitSystem:     cfg.Settings.InitSystem,
-		DefaultRootful:        cfg.Settings.Rootful,
-		DefaultNoEntry:        cfg.Preferences.NoEntry,
-		DefaultUsernsNoLimit:  cfg.Settings.UsernsNoLimit,
-		ScriptsDir:            resolveScriptsDir(cfg.Settings.ScriptsDir),
+		ContainerManagerType:       cfg.Preferences.ContainerManager,
+		SudoProgram:                cfg.Preferences.SudoProgram,
+		DefaultContainerImage:      cfg.Images.Default,
+		DefaultContainerName:       cfg.Container.Name,
+		DefaultHostname:            cfg.Container.Hostname,
+		DefaultShell:               cfg.Settings.Shell,
+		DefaultInitSystem:          cfg.Settings.InitSystem,
+		DefaultRootful:             cfg.Settings.Rootful,
+		DefaultNoEntry:             cfg.Preferences.NoEntry,
+		DefaultUsernsNoLimit:       cfg.Settings.UsernsNoLimit,
+		ScriptsDir:                 resolveScriptsDir(cfg.Settings.ScriptsDir),
+		StalenessWarnThreshold:     cfg.Images.StalenessWarnThreshold,
+		StalenessAutopullThreshold: cfg.Images.StalenessAutopullThreshold,
 	}
 }
 
