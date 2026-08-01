@@ -42,7 +42,7 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 	}
 	return &cli.Command{
 		Name:    "otter",
-		Version: "0.0.3",
+		Version: "0.0.4",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:   "sudo-command",
