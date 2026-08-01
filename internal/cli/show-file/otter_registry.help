@@ -1,35 +1,34 @@
 {2}╭──────────────────────────────────────────────────────────────╮{R}
-{2}│{R}{1}⦿ Browse and manage otter images from the registry{R}            {2}│{R}
+{2}│{R}{1}⦿ Browse and manage otter images from the registry            {R}{2}│{R}
 {2}├──────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                                      {2}│{R}
-{2}│{R}  {5}otter reg      < ls | pl |  rm  > [options]{R}                 {2}│{R}
-{2}│{R}  {5}otter registry <list|pull|remove> [options]{R}                 {2}│{R}
+{2}│{R}  {5}otter reg        <list|pull|remove> [options]{R}               {2}│{R}
+{2}│{R}  {5}otter registry   <list|pull|remove> [options]{R}               {2}│{R}
 {2}├──────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                                   {2}│{R}
-{2}│{R}  {5}otter reg list --all{R}                                        {2}│{R}
+{2}│{R}  {5}otter reg ls --all{R}                                          {2}│{R}
 {2}│{R}  {5}otter reg pull --all --force{R}                                {2}│{R}
-{2}│{R}  {5}otter registry pull fedora{R}                                  {2}│{R}
+{2}│{R}  {5}otter registry list{R}                                         {2}│{R}
 {2}│{R}  {5}otter registry remove --all --force{R}                         {2}│{R}
 {2}├──────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ List / Ls:{R}                                                  {2}│{R}
 {2}│{R}  {5}examples: otter reg ls [options] or otter registry list{R}     {2}│{R}
-{2}│{R} {4}--all    {R}┆ {4}-a {R} {5}Include disabled images in the table{R}          {2}│{R}
+{2}│{R} {4}--all{R}     {2}┆{R} {4}-a{R}  {5}Include disabled images in the table{R}         {2}│{R}
 {2}├──────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Pull / Get:{R}                                                 {2}│{R}
-{2}│{R}  {5}examples: otter reg pl [options] or otter registry pull{R}     {2}│{R}
-{2}│{R} {4}--all    {R}┆ {4}-a {R} {5}Pull all enabled images not yet present{R}       {2}│{R}
-{2}│{R} {4}--force  {R}┆ {4}-f {R} {5}Pull even if image already up to date{R}         {2}│{R}
+{2}│{R}  {5}examples: otter reg get [options] or otter registry pull{R}    {2}│{R}
+{2}│{R} {4}--all{R}     {2}┆{R} {4}-a{R}  {5}Pull all enabled images not yet present{R}      {2}│{R}
+{2}│{R} {4}--force{R}   {2}┆{R} {4}-f{R}  {5}Pull even if already present and current{R}     {2}│{R}
 {2}├──────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Remove / Rm:{R}                                                {2}│{R}
 {2}│{R}  {5}examples: otter reg rm [options] or otter registry remove{R}   {2}│{R}
-{2}│{R} {4}--all    {R}┆ {4}-a {R} {5}Remove all locally present otter images{R}       {2}│{R}
-{2}│{R} {4}--force  {R}┆ {4}-f {R} {5}Remove even if image is in use{R}                {2}│{R}
+{2}│{R} {4}--all{R}     {2}┆{R} {4}-a{R}  {5}Remove all locally present otter images{R}      {2}│{R}
+{2}│{R} {4}--force{R}   {2}┆{R} {4}-f{R}  {5}Remove even if image is in use{R}               {2}│{R}
 {2}├──────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                                     {2}│{R}
-{2}│{R} {4}--help   {R}┆ {4}-h {R} {5}Show this help message{R}                        {2}│{R}
+{2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}                       {2}│{R}
 {2}├──────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Notes:{R}                                                      {2}│{R}
 {2}│{R} {5}Images marked offline use fallback vendor images on pull.{R}    {2}│{R}
 {2}│{R} {5}Disabled images are hidden from the table unless --all.{R}      {2}│{R}
-{2}│{R} {5}'list' shows a LOCAL column: pulled state and staleness.{R}     {2}│{R}
 {2}╰──────────────────────────────────────────────────────────────╯{R}

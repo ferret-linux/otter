@@ -56,8 +56,12 @@
 {2}│{R} {4}--nvidia{R}  {5}Best effort attempt to integrate host nvidia drivers into the container.{R}  {2}│{R}
 {2}│{R}           {5}For a better experience consider nvidia's nvidia-container-toolkit,{R}       {2}│{R}
 {2}│{R}           {5}the official way to use nvidia cards inside containers.{R}                   {2}│{R}
+{2}│{R}                                                                                     {2}│{R}
+{2}│{R} {4}Pulling{R}   {5}A missing image is always pulled automatically. An existing{R}               {2}│{R}
+{2}│{R}           {5}image is warned about, or auto-pulled, once it falls behind{R}               {2}│{R}
+{2}│{R}           {5}upstream by the configured thresholds (see: otter registry).{R}              {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Images:{R}                                                                            {2}│{R}
 {2}│{R}  {5}To browse available images run:{R}                                                    {2}│{R}
-{2}│{R}  {5}otter registry{R}                                                                     {2}│{R}
+{2}│{R}  {5}otter registry list{R}                                                                {2}│{R}
 {2}╰─────────────────────────────────────────────────────────────────────────────────────╯{R}
