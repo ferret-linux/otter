@@ -343,6 +343,9 @@ func (c *CreateCommand) makeContainerImage(ctx context.Context, opts *CreateOpti
 		containerImage = c.cfg.DefaultContainerImage
 	}
 	if containerImage != "" && opts.ContainerClone == "" {
+		if strings.ContainsAny(containerImage, "/:") {
+			return containerImage, nil, nil
+		}
 		props, err := registry.Fetch(ctx)
 		if err != nil {
 			return "", nil, fmt.Errorf("failed to fetch registry properties: %w", err)
