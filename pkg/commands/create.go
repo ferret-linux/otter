@@ -381,10 +381,10 @@ func (c *CreateCommand) checkImageStaleness(
 				return fmt.Errorf("failed to pull image '%s': %w", containerImage, err)
 			}
 		case c.cfg.StalenessWarnThreshold > 0 && st.Diff >= c.cfg.StalenessWarnThreshold:
-			ui.DefaultLogger.Warn("image '%s' is behind upstream (local: %d, latest: %d)", imageDisplayName(containerImage), st.LocalBuild, st.RemoteBuild)
+			ui.DefaultLogger.Warn("image '%s' is behind upstream (local: %d, latest: %d)", ui.TrimImageRef(containerImage), st.LocalBuild, st.RemoteBuild)
 		}
 	case registry.StalenessAhead:
-		ui.DefaultLogger.Warn("image '%s' is ahead of upstream (local: %d, latest: %d)", imageDisplayName(containerImage), st.LocalBuild, st.RemoteBuild)
+		ui.DefaultLogger.Warn("image '%s' is ahead of upstream (local: %d, latest: %d)", ui.TrimImageRef(containerImage), st.LocalBuild, st.RemoteBuild)
 	case registry.StalenessUnknown:
 		// Local build label missing or unreadable — treat like a missing
 		// image and pull to heal, no special-casing for pre-feature images.
@@ -499,25 +499,4 @@ func splitFields(in []string) []string {
 		out = append(out, strings.Fields(v)...)
 	}
 	return out
-}
-
-// imageDisplayName strips the registry host prefix from a fully qualified image
-// reference for cleaner user-facing output.
-// e.g. "ghcr.io/ferret-linux/ubuntu-otr:stable" -> "ubuntu-otr:stable"
-//
-//	"docker.io/library/ubuntu:latest" -> "ubuntu:latest"
-func imageDisplayName(image string) string {
-	// strip registry host (everything up to and including the first slash that
-	// follows a dot or colon, i.e. the host portion)
-	if i := strings.Index(image, "/"); i != -1 {
-		rest := image[i+1:]
-		// strip org/user prefix too if it's a ghcr/quay style path
-		if j := strings.Index(rest, "/"); j != -1 {
-			return rest[j+1:]
-		}
-		// docker.io/library/ubuntu -> already handled above, but for
-		// single-level paths like "docker.io/ubuntu" just return rest
-		return rest
-	}
-	return image
 }
