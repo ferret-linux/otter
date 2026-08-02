@@ -39,11 +39,13 @@ type AssembleCommand struct {
 	rmCmd         *RmCommand
 	lockCmd       *LockCommand
 	startCmd      *StartCommand
+	stopCmd       *StopCommand
 	enterCmd      *EnterCommand
 	createCmdRoot *CreateCommand
 	rmCmdRoot     *RmCommand
 	lockCmdRoot   *LockCommand
 	startCmdRoot  *StartCommand
+	stopCmdRoot   *StopCommand
 	enterCmdRoot  *EnterCommand
 	progress      *ui.Progress
 }
@@ -58,11 +60,13 @@ func NewAssembleCommand(
 		rmCmd:         NewRmCommand(cm),
 		lockCmd:       NewLockCommand(cm),
 		startCmd:      NewStartCommand(cm),
+		stopCmd:       NewStopCommand(cm),
 		enterCmd:      NewEnterCommand(cm),
 		createCmdRoot: NewCreateCommand(cfg, cmRoot, ui.NewDevNullProgress()),
 		rmCmdRoot:     NewRmCommand(cmRoot),
 		lockCmdRoot:   NewLockCommand(cmRoot),
 		startCmdRoot:  NewStartCommand(cmRoot),
+		stopCmdRoot:   NewStopCommand(cmRoot),
 		enterCmdRoot:  NewEnterCommand(cmRoot),
 		progress:      ui.NewProgress(os.Stderr),
 	}
@@ -254,14 +258,20 @@ func (ac *AssembleCommand) joinHooks(hooks []string) string {
 
 func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) error {
 	startCmd := ac.startCmd
+	stopCmd := ac.stopCmd
 	enterCmd := ac.enterCmd
 	if item.Settings.Rootful {
 		startCmd = ac.startCmdRoot
+		stopCmd = ac.stopCmdRoot
 		enterCmd = ac.enterCmdRoot
 	}
 
-	if err := startCmd.Execute(ctx, &StartOptions{ContainerNames: []string{item.Name}}); err != nil {
-		return err
+	hasExports := len(item.Exported.Apps) > 0 || len(item.Exported.Bins) > 0
+
+	if item.StartNow || hasExports {
+		if err := startCmd.Execute(ctx, &StartOptions{ContainerNames: []string{item.Name}}); err != nil {
+			return err
+		}
 	}
 	if item.StartNow {
 		_, err := enterCmd.Execute(ctx, EnterOptions{
@@ -310,6 +320,12 @@ func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) err
 		})
 		if err != nil {
 			return fmt.Errorf("failed to export bin '%s' for item '%s': %w", bin, item.Name, err)
+		}
+	}
+
+	if hasExports && !item.StartNow {
+		if err := stopCmd.Execute(ctx, &StopOptions{ContainerNames: []string{item.Name}}); err != nil {
+			return fmt.Errorf("failed to stop container '%s' after exporting: %w", item.Name, err)
 		}
 	}
 
