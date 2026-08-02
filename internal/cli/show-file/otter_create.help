@@ -2,8 +2,8 @@
 {2}│{R}{1}⦿ Create native distro like container environments using otter                       {R}{2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                                                             {2}│{R}
-{2}│{R}  {5}otter mk     [options] [--image image]{R}                                             {2}│{R}
-{2}│{R}  {5}otter create [options] [--image image]{R}                                             {2}│{R}
+{2}│{R}  {5}otter mk     [container] [options] [--image image]{R}                                 {2}│{R}
+{2}│{R}  {5}otter create [container] [options] [--image image]{R}                                 {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                                                          {2}│{R}
 {2}│{R}  {5}otter mk --image alpine my-alpinebox{R}                                               {2}│{R}
@@ -47,8 +47,8 @@
 {2}│{R}           {5}other than sudo, set OTR_SUDO_PROGRAM or 'otter_sudo_program' config var.{R} {2}│{R}
 {2}│{R}                                                                                     {2}│{R}
 {2}│{R} {4}--init{R}    {5}Makes host processes not visible from within the container, assumes{R}       {2}│{R}
-{2}│{R}           {5}--unshare-process. May require additional packages depending on the image{R} {2}│{R}
-{2}│{R}           {5},like systemd, runit or openrc.{R}                                           {2}│{R}
+{2}│{R}           {5}--unshare-process and --unshare-groups. May require additional packages{R}   {2}│{R}
+{2}│{R}           {5}depending on the image, like systemd, runit or openrc.{R}                    {2}│{R}
 {2}│{R}                                                                                     {2}│{R}
 {2}│{R} {4}--clone{R}   {5}Useful to rename an existing container or create multiple copies of the{R}   {2}│{R}
 {2}│{R}           {5}same container environment.{R}                                               {2}│{R}
