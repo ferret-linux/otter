@@ -124,6 +124,7 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 		return nil, fmt.Errorf("failed to resolve container image: %w", err)
 	}
 	containerName := c.makeContainerName(&opts, containerImage)
+	opts.ContainerName = containerName
 	containerHostname, err := c.makeContainerHostname(&opts)
 	if err != nil {
 		return nil, fmt.Errorf("failed to resolve container hostname: %w", err)
