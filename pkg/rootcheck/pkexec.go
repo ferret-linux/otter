@@ -1,6 +1,7 @@
 package rootcheck
 
 import (
+	"context"
 	"fmt"
 	"os/exec"
 )
@@ -11,7 +12,7 @@ import (
 // would trigger a real polkit authentication attempt, which depends on an
 // authentication agent being registered for the session — unreliable in
 // headless/non-desktop contexts. So this only checks that the binary exists.
-func checkPkexec(name string) error {
+func checkPkexec(_ context.Context, name string) error {
 	if _, err := exec.LookPath(name); err != nil {
 		return fmt.Errorf("failed to validate %q: %w", name, err)
 	}

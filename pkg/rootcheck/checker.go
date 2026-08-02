@@ -46,9 +46,9 @@ func check(ctx context.Context, sudoCommand string) (string, error) {
 		}
 		return "", errors.New("no privilege escalation program found; install one of: sudo, sudo-rs, doas, run0, pkexec")
 	case "run0":
-		return sudoCommand, checkRun0(sudoCommand)
+		return sudoCommand, checkRun0(ctx, sudoCommand)
 	case "pkexec":
-		return sudoCommand, checkPkexec(sudoCommand)
+		return sudoCommand, checkPkexec(ctx, sudoCommand)
 	case "sudo", "sudo-rs":
 		return sudoCommand, checkSudo(ctx, sudoCommand)
 	case "doas":
