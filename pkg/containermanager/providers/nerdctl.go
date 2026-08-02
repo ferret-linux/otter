@@ -641,6 +641,8 @@ func (n *Nerdctl) generateEnterCommand(
 		cmd = append(cmd, "--detach")
 	} else {
 		cmd = append(cmd, "--interactive")
+		// nerdctl exec has no --detach-keys equivalent (unlike docker/podman);
+		// see nerdctl's own docs: "Unimplemented docker exec flags: --detach-keys".
 	}
 
 	containerConfig, err := n.InspectContainer(ctx, containerName)
