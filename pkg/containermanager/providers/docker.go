@@ -284,7 +284,7 @@ func (d *Docker) makeCreateCommand(
 	//	/tmp
 	//	/var/lib/journal
 	//	/sys/fs/cgroup/systemd <- this one is done by cgroupns=host
-	if init && strings.Contains(containerManager, "docker") {
+	if init {
 		// In case of docker we're actually rootful, so we need to use hosts cgroups
 		options = append(options, "--cgroupns", "host")
 		// In case of all other non-podman container managers, we can do this
