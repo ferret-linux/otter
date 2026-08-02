@@ -46,7 +46,7 @@ func (c *StopCommand) Execute(ctx context.Context, opts *StopOptions) error {
 	case len(opts.ContainerNames) > 0:
 		containerNames = opts.ContainerNames
 	default:
-		return errors.New("please specify a container name with --name/-n")
+		return errors.New("please specify a container name or use --all")
 	}
 
 	for _, name := range containerNames {

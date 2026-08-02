@@ -103,7 +103,7 @@ func printInspectJSON(result *containermanager.InspectResult, locked bool, opts 
 
 func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error {
 	if opts.ContainerName == "" {
-		return errors.New("please specify a container name with --name/-n")
+		return errors.New("please specify a container name")
 	}
 
 	if strings.Contains(opts.ContainerName, ",") {

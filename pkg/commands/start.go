@@ -43,7 +43,7 @@ func (c *StartCommand) Execute(ctx context.Context, opts *StartOptions) error {
 	}
 
 	if len(opts.ContainerNames) == 0 {
-		return errors.New("please specify a container name with --name/-n")
+		return errors.New("please specify a container name or use --all")
 	}
 	for _, name := range opts.ContainerNames {
 		if err := c.startOne(ctx, name); err != nil {

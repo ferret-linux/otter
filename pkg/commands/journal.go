@@ -31,7 +31,7 @@ func NewJournalCommand(_ *config.Values, cm containermanager.ContainerManager) *
 
 func (c *JournalCommand) Execute(ctx context.Context, opts JournalOptions) error {
 	if opts.ContainerName == "" {
-		return errors.New("please specify a container name with --name/-n")
+		return errors.New("please specify a container name")
 	}
 
 	if strings.Contains(opts.ContainerName, ",") {

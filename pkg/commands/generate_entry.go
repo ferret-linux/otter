@@ -107,7 +107,7 @@ func (c *GenerateEntryCommand) Execute(
 			icon = "auto"
 		}
 	default:
-		return errors.New("please specify a container name with --name/-n")
+		return errors.New("please specify a container name or use --all")
 	}
 
 	// Determine the desktop entry base dir
