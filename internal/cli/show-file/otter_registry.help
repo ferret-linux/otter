@@ -8,8 +8,9 @@
 {2}│{R}{3}▸ Examples:{R}                                                   {2}│{R}
 {2}│{R}  {5}otter reg ls --all{R}                                          {2}│{R}
 {2}│{R}  {5}otter reg pull --all --force{R}                                {2}│{R}
+{2}│{R}  {5}otter reg pull alpine,fedora{R}                                {2}│{R}
 {2}│{R}  {5}otter registry list{R}                                         {2}│{R}
-{2}│{R}  {5}otter registry remove --all --force{R}                         {2}│{R}
+{2}│{R}  {5}otter registry remove alpine,fedora{R}                         {2}│{R}
 {2}├──────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ List / Ls:{R}                                                  {2}│{R}
 {2}│{R}  {5}examples: otter reg ls [options] or otter registry list{R}     {2}│{R}
@@ -26,9 +27,10 @@
 {2}│{R} {4}--force{R}   {2}┆{R} {4}-f{R}  {5}Remove even if image is in use{R}               {2}│{R}
 {2}├──────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                                     {2}│{R}
+{2}│{R} {4}--root{R}    {2}┆{R} {4}-r{R}  {5}Use rootful containers{R}                       {2}│{R}
 {2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}                       {2}│{R}
 {2}├──────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Notes:{R}                                                      {2}│{R}
-{2}│{R} {5}Images marked offline use fallback vendor images on pull.{R}    {2}│{R}
+{2}│{R} {5}Disabled images use fallback vendor images on pull.{R}          {2}│{R}
 {2}│{R} {5}Disabled images are hidden from the table unless --all.{R}      {2}│{R}
 {2}╰──────────────────────────────────────────────────────────────╯{R}

@@ -6,10 +6,10 @@
 {2}│{R}  {5}otter assemble <create|remove> [options]{R}                 {2}│{R}
 {2}├───────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                                {2}│{R}
+{2}│{R}  {5}otter dmf rm my-box --file /path/to/file.ini{R}             {2}│{R}
 {2}│{R}  {5}otter dmf mk --replace --file /path/to/file.ini{R}          {2}│{R}
-{2}│{R}  {5}otter dmf rm --name my-box --file /path/to/file.ini{R}      {2}│{R}
-{2}│{R}  {5}otter assemble create --file /path/to/file.ini{R}           {2}│{R}
-{2}│{R}  {5}otter assemble remove --file /path/to/file.ini{R}           {2}│{R}
+{2}│{R}  {5}otter assemble create -R --file /path/to/file.ini{R}        {2}│{R}
+{2}│{R}  {5}otter assemble remove my-box --file /path/to/file.ini{R}    {2}│{R}
 {2}├───────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Commands:{R}                                                {2}│{R}
 {2}│{R}  {0}create{R}   {2}┆{R} {0}mk{R} {5}Create Container defined in manifest{R}       {2}│{R}
@@ -23,6 +23,6 @@
 {2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R} {5}Show this help message{R}                     {2}│{R}
 {2}├───────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Notes:{R}                                                   {2}│{R}
-{2}│{R} {4}--file{R}  {5}The manifest file can also be passed as a         {R}{2}│{R}
-{2}│{R}         {5}positional argument instead of using --file.{R}      {2}│{R}
+{2}│{R} {4}--file{R}  {5}Required. The positional argument is used for the{R} {2}│{R}
+{2}│{R}         {5}box name to target, not the manifest path.{R}        {2}│{R}
 {2}╰───────────────────────────────────────────────────────────╯{R}

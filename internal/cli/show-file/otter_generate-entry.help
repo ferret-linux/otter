@@ -2,8 +2,8 @@
 {2}│{R}{1}⦿ Generate desktop entry for containers    {R}{2}│{R}
 {2}├───────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                   {2}│{R}
-{2}│{R}  {5}otter pin            [options] [name]{R}    {2}│{R}
-{2}│{R}  {5}otter generate-entry [options] [name]{R}    {2}│{R}
+{2}│{R}  {5}otter pin            [options] [name...]{R} {2}│{R}
+{2}│{R}  {5}otter generate-entry [options] [name...]{R} {2}│{R}
 {2}├───────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                {2}│{R}
 {2}│{R}  {5}otter pin --all{R}                          {2}│{R}
@@ -21,6 +21,7 @@
 {2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}    {2}│{R}
 {2}├───────────┴───────────────────────────────┤{R}
 {2}│{R}{3}▸ Notes:{R}                                   {2}│{R}
+{2}│{R} {5}--icon is ignored when --all is used.{R}     {2}│{R}
 {2}│{R} {5}Generates a desktop entry for a container,{R}{2}│{R}
 {2}│{R} {5}creating a clickable launcher that opens{R}  {2}│{R}
 {2}│{R} {5}the container in your terminal.{R}           {2}│{R}

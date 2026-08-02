@@ -2,8 +2,8 @@
 {2}│{R}{1}⦿ Pause an otter managed running container{R}   {2}│{R}
 {2}├─────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                     {2}│{R}
-{2}│{R}  {5}otter zz    [options] [container]{R}          {2}│{R}
-{2}│{R}  {5}otter pause [options] [container]{R}          {2}│{R}
+{2}│{R}  {5}otter zz    [options] [container...]{R}       {2}│{R}
+{2}│{R}  {5}otter pause [options] [container...]{R}       {2}│{R}
 {2}├─────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                  {2}│{R}
 {2}│{R}  {5}otter zz my-box{R}                            {2}│{R}
@@ -12,7 +12,7 @@
 {2}│{R}  {5}otter pause --all --root{R}                   {2}│{R}
 {2}├─────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                   {2}│{R}
-{2}│{R} {4}--all{R}     {2}┆{R} {4}-a{R}  {5}Pause all running otters{R}    {2}│{R}
+{2}│{R} {4}--all{R}     {2}┆{R} {4}-a{R}  {5}Pause all active containers{R} {2}│{R}
 {2}│{R} {4}--root{R}    {2}┆{R} {4}-r{R}  {5}Pause rootful containers{R}    {2}│{R}
 {2}├───────────┴─────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                    {2}│{R}

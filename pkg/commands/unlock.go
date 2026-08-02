@@ -51,6 +51,10 @@ func (c *UnlockCommand) Execute(ctx context.Context, opts UnlockOptions) error {
 	var lastErr error
 	for _, name := range containerNames {
 		if err := c.unlockOne(ctx, name); err != nil {
+			if errors.Is(err, ErrNotLocked) {
+				ui.DefaultLogger.Warn("'%s' is already unlocked, skipping", name)
+				continue
+			}
 			ui.DefaultLogger.Error("failed to unlock '%s': %s", name, err)
 			lastErr = err
 		}

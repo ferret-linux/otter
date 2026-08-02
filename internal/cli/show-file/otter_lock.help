@@ -2,8 +2,8 @@
 {2}│{R}{1}⦿ Lock a container to prevent removal or upgrades {R}{2}│{R}
 {2}├──────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                          {2}│{R}
-{2}│{R}  {5}otter lk   [options] [container]{R}                {2}│{R}
-{2}│{R}  {5}otter lock [options] [container]{R}                {2}│{R}
+{2}│{R}  {5}otter lk   [options] [container...]{R}             {2}│{R}
+{2}│{R}  {5}otter lock [options] [container...]{R}             {2}│{R}
 {2}├──────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                       {2}│{R}
 {2}│{R}  {5}otter lk my-box{R}                                 {2}│{R}

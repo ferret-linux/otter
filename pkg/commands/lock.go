@@ -54,6 +54,10 @@ func (c *LockCommand) Execute(ctx context.Context, opts LockOptions) error {
 	var lastErr error
 	for _, name := range containerNames {
 		if err := c.lockOne(ctx, name); err != nil {
+			if errors.Is(err, ErrAlreadyLocked) {
+				ui.DefaultLogger.Warn("'%s' is already locked, skipping", name)
+				continue
+			}
 			ui.DefaultLogger.Error("failed to lock '%s': %s", name, err)
 			lastErr = err
 		}

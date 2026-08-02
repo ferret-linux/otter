@@ -257,7 +257,7 @@ func resolvePullCandidates(props *registry.ImagesProperties, names []string, all
 
 	split := splitNames(names)
 	if len(split) == 0 {
-		return nil, errors.New("specify at least one image name with --name or use --all")
+		return nil, errors.New("specify at least one image name or use --all")
 	}
 	candidates := make([]string, 0, len(split))
 	for _, name := range split {
@@ -325,7 +325,7 @@ func resolveRemoveTargets(
 
 	split := splitNames(names)
 	if len(split) == 0 {
-		return nil, errors.New("specify at least one image name with --name or use --all")
+		return nil, errors.New("specify at least one image name or use --all")
 	}
 
 	refs := make([]string, 0, len(split))

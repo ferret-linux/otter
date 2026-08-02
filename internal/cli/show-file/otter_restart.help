@@ -2,8 +2,8 @@
 {2}│{R}{1}⦿ Restart an otter managed container environment   {R}{2}│{R}
 {2}├───────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                           {2}│{R}
-{2}│{R}  {5}otter rbt     [options] [container]{R}              {2}│{R}
-{2}│{R}  {5}otter restart [options] [container]{R}              {2}│{R}
+{2}│{R}  {5}otter rbt     [options] [container...]{R}           {2}│{R}
+{2}│{R}  {5}otter restart [options] [container...]{R}           {2}│{R}
 {2}├───────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                        {2}│{R}
 {2}│{R}  {5}otter rbt my-box{R}                                 {2}│{R}

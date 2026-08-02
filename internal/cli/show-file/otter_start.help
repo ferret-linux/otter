@@ -2,8 +2,8 @@
 {2}│{R}{1}⦿ Start an otter managed container environment     {R}{2}│{R}
 {2}├───────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                           {2}│{R}
-{2}│{R}  {5}otter up    [options] [container]{R}                {2}│{R}
-{2}│{R}  {5}otter start [options] [container]{R}                {2}│{R}
+{2}│{R}  {5}otter up    [options] [container...]{R}             {2}│{R}
+{2}│{R}  {5}otter start [options] [container...]{R}             {2}│{R}
 {2}├───────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                        {2}│{R}
 {2}│{R}  {5}otter up --all{R}                                   {2}│{R}

@@ -12,8 +12,8 @@
 {2}│{R}  {5}otter remove --all --root --force --rm-home{R}                 {2}│{R}
 {2}├──────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                                    {2}│{R}
-{2}│{R} {4}--all{R}         {2}┆{R} {4}-a{R}  {5}Delete all otters{R}                        {2}│{R}
-{2}│{R} {4}--root{R}        {2}┆{R} {4}-r{R}  {5}Launch container with root privileges{R}    {2}│{R}
+{2}│{R} {4}--all{R}         {2}┆{R} {4}-a{R}  {5}Delete all otter containers{R}              {2}│{R}
+{2}│{R} {4}--root{R}        {2}┆{R} {4}-r{R}  {5}Remove a rootful container{R}               {2}│{R}
 {2}│{R} {4}--force{R}       {2}┆{R} {4}-f{R}  {5}Force deletion of problematic containers{R} {2}│{R}
 {2}│{R} {4}--rm-home{R}     {2}┆{R} {4}-H{R}  {5}Remove container's custom home directory{R} {2}│{R}
 {2}│{R} {4}--bypass-lock{R} {2}┆{R} {4}-B{R}  {5}Remove container even if it is locked{R}    {2}│{R}
@@ -27,6 +27,7 @@
 {2}├──────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                                   {2}│{R}
 {2}│{R} {5}Rootful containers need '--root' to work with 'remove' .{R}     {2}│{R}
-{2}│{R} {5}Locked containers are skipped. Use 'otter unlock' first.{R}     {2}│{R}
-{2}│{R} {5}Use '--bypass-lock' to remove locked/borked containers. {R}     {2}│{R}
+{2}│{R} {5}Locked containers are skipped when using --all;{R}              {2}│{R}
+{2}│{R} {5}an explicitly named locked container logs an error.{R}          {2}│{R}
+{2}│{R} {5}Use 'otter unlock' first, or pass --bypass-lock.{R}             {2}│{R}
 {2}╰──────────────────────────────────────────────────────────────╯{R}
