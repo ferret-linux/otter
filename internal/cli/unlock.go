@@ -11,6 +11,7 @@ import (
 	"github.com/ferret-linux/otter/pkg/commands"
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 func newUnlockCommand(_ *config.Values) *cli.Command {
@@ -37,10 +38,15 @@ func unlockAction(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
-	if err := commands.NewUnlockCommand(cm).Execute(ctx, commands.UnlockOptions{
+	err = commands.NewUnlockCommand(cm).Execute(ctx, commands.UnlockOptions{
 		ContainerNames: names,
 		All:            cmd.Bool("all"),
-	}); err != nil {
+	})
+	if errors.Is(err, commands.ErrEmptyContainerList) {
+		ui.DefaultLogger.Warn("No containers found.")
+		return nil
+	}
+	if err != nil {
 		return fmt.Errorf("failed to unlock container: %w", err)
 	}
 	return nil

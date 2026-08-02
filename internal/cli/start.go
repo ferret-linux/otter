@@ -11,6 +11,7 @@ import (
 	"github.com/ferret-linux/otter/pkg/commands"
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 func newStartCommand(_ *config.Values) *cli.Command {
@@ -37,10 +38,15 @@ func startAction(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
-	if err := commands.NewStartCommand(containerManager).Execute(ctx, &commands.StartOptions{
+	err = commands.NewStartCommand(containerManager).Execute(ctx, &commands.StartOptions{
 		ContainerNames: names,
 		All:            cmd.Bool("all"),
-	}); err != nil {
+	})
+	if errors.Is(err, commands.ErrEmptyContainerList) {
+		ui.DefaultLogger.Warn("No containers found.")
+		return nil
+	}
+	if err != nil {
 		return fmt.Errorf("failed to start containers: %w", err)
 	}
 	return nil
