@@ -43,9 +43,9 @@ func getConfigFilePaths() ([]string, error) {
 		xdgConfigHome = filepath.Join(os.Getenv("HOME"), ".config")
 	}
 
-	// Source configuration files, this is done in an hierarchy so local files have
-	// priority over system defaults
-	// leave priority to environment variables.
+	// Source configuration files in increasing priority order: each later
+	// file's values override earlier ones for any key it sets, giving the
+	// user's own local config priority over system-wide defaults.
 	//
 	// On NixOS, for the otter derivation to pick up a static config file shipped
 	// by the package maintainer the path must be relative to the script itself.
