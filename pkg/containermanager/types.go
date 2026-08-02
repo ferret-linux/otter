@@ -97,5 +97,8 @@ func (c Container) IsOtterContainer() bool {
 
 func (c Container) IsRunning() bool {
 	s := strings.ToLower(c.Status)
+	if strings.Contains(s, "paused") {
+		return false
+	}
 	return strings.Contains(s, "up") || strings.Contains(s, "running")
 }
