@@ -35,7 +35,6 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 	cli.VersionPrinter = func(cmd *cli.Command) {
 		root := cmd.Root()
 		fmt.Fprintf(root.Writer, "%s %s\n\nInfo\n", root.Name, root.Version)
-		fmt.Fprintf(root.Writer, "  → os         : %s\n", runtime.GOOS)
 		fmt.Fprintf(root.Writer, "  → version    : %s\n", root.Version)
 		fmt.Fprintf(root.Writer, "  → platform   : %s\n", runtime.GOARCH)
 		fmt.Fprintf(root.Writer, "  → git commit : %s\n", commit)
