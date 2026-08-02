@@ -32,7 +32,7 @@ func (c *StartCommand) Execute(ctx context.Context, opts *StartOptions) error {
 			return fmt.Errorf("failed to list containers: %w", err)
 		}
 		if len(containers.Containers) == 0 {
-			return ErrEmptyContainerList
+			return ErrNoContainersFound
 		}
 		for _, container := range containers.Containers {
 			if err := c.startOne(ctx, container.Name); err != nil {

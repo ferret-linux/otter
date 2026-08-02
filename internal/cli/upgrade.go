@@ -51,7 +51,7 @@ func upgradeAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) er
 	}
 
 	err = commands.NewUpgradeCommand(cfg, containerManager).Execute(ctx, options)
-	if errors.Is(err, commands.ErrEmptyContainerList) {
+	if errors.Is(err, commands.ErrNoContainersFound) {
 		ui.DefaultLogger.Warn("No containers found.")
 		return nil
 	}

@@ -36,7 +36,7 @@ func (c *PauseCommand) Execute(ctx context.Context, opts *PauseOptions) error {
 			return fmt.Errorf("failed to list containers: %w", err)
 		}
 		if len(containers.Containers) == 0 {
-			return ErrEmptyContainerList
+			return ErrNoContainersFound
 		}
 		containerNames = make([]string, 0, len(containers.Containers))
 		for _, container := range containers.Containers {
@@ -47,7 +47,7 @@ func (c *PauseCommand) Execute(ctx context.Context, opts *PauseOptions) error {
 			containerNames = append(containerNames, container.Name)
 		}
 		if len(containerNames) == 0 {
-			return ErrEmptyContainerList
+			return ErrNoContainersFound
 		}
 	case len(opts.ContainerNames) > 0:
 		containerNames = opts.ContainerNames

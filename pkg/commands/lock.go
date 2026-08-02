@@ -40,7 +40,7 @@ func (c *LockCommand) Execute(ctx context.Context, opts LockOptions) error {
 			return fmt.Errorf("failed to list containers: %w", err)
 		}
 		if len(listResult.Containers) == 0 {
-			return ErrEmptyContainerList
+			return ErrNoContainersFound
 		}
 		for _, container := range listResult.Containers {
 			containerNames = append(containerNames, container.Name)

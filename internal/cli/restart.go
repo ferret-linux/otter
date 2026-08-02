@@ -49,7 +49,7 @@ func restartAction(ctx context.Context, cmd *cli.Command) error {
 	}
 
 	err = commands.NewRestartCommand(containerManager).Execute(ctx, options)
-	if errors.Is(err, commands.ErrEmptyContainerList) {
+	if errors.Is(err, commands.ErrNoContainersFound) {
 		ui.DefaultLogger.Warn("No containers found.")
 		return nil
 	}

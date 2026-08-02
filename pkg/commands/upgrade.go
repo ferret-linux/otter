@@ -55,7 +55,7 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 		}
 
 		if len(containers.Containers) == 0 {
-			return ErrEmptyContainerList
+			return ErrNoContainersFound
 		}
 
 		containerNames = make([]string, 0, len(containers.Containers))
@@ -68,7 +68,7 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 		}
 
 		if len(containerNames) == 0 {
-			return ErrEmptyContainerList
+			return ErrNoContainersFound
 		}
 	case len(opts.ContainerNames) > 0:
 		containerNames = opts.ContainerNames

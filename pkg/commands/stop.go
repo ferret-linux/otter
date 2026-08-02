@@ -19,7 +19,7 @@ type StopOptions struct {
 	Force          bool
 }
 
-var ErrEmptyContainerList = errors.New("cannot find containers to stop")
+var ErrNoContainersFound = errors.New("no containers found")
 
 func NewStopCommand(cm containermanager.ContainerManager) *StopCommand {
 	return &StopCommand{
@@ -37,7 +37,7 @@ func (c *StopCommand) Execute(ctx context.Context, opts *StopOptions) error {
 			return fmt.Errorf("failed to list containers: %w", err)
 		}
 		if len(containers.Containers) == 0 {
-			return ErrEmptyContainerList
+			return ErrNoContainersFound
 		}
 		containerNames = make([]string, 0, len(containers.Containers))
 		for _, container := range containers.Containers {
