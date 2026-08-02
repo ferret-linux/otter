@@ -358,12 +358,12 @@ func (n *Nerdctl) ImageExists(ctx context.Context, imageName string) bool {
 		return false
 	}
 
-	var inspect inspectOutput
-	if err := json.Unmarshal([]byte(output), &inspect); err != nil {
+	var inspects []inspectOutput
+	if err := json.Unmarshal([]byte(output), &inspects); err != nil {
 		return false
 	}
 
-	return inspect.ID != ""
+	return len(inspects) > 0
 }
 
 func (n *Nerdctl) inspectImage(ctx context.Context, imageID string) (*InspectImageOutput, error) {
