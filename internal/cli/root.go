@@ -321,7 +321,7 @@ func buildContainerManager(
 ) (containermanager.ContainerManager, error) {
 	errLogger := ui.NewLogger(os.Stderr)
 
-	if sudoCommand == "autodetect" {
+	if root && sudoCommand == "autodetect" {
 		resolved, err := rootcheck.Validate(ctx, sudoCommand)
 		if err != nil {
 			return nil, fmt.Errorf("failed to auto-detect sudo program: %w", err)
