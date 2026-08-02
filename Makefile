@@ -57,7 +57,7 @@ lint-fix:
 
 .PHONY: completions
 completions:
-	python3 tools/gencompletions/gen_bash.py
-	python3 tools/gencompletions/gen_zsh.py
-	python3 tools/gencompletions/gen_fish.py
+	PYTHONDONTWRITEBYTECODE=1 python3 tools/gencompletions/gen_bash.py
+	PYTHONDONTWRITEBYTECODE=1 python3 tools/gencompletions/gen_zsh.py
+	PYTHONDONTWRITEBYTECODE=1 python3 tools/gencompletions/gen_fish.py
 	tools/gencompletions/test_completions.sh

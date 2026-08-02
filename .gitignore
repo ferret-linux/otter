@@ -31,6 +31,10 @@ tags
 TODO.txt
 .vscode
 
+# Python bytecode cache (tools/gencompletions)
+__pycache__/
+*/__pycache__/*
+
 # Code Review Files & TODO ( markdown)
 /pat*.md
 /PAT*.md
