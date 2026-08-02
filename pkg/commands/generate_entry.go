@@ -95,9 +95,11 @@ func (c *GenerateEntryCommand) Execute(
 		// Set icon to auto for all entries
 		icon = "auto"
 	case len(opts.ContainerNames) > 0:
-		for _, name := range opts.ContainerNames {
-			if _, err := c.containerManager.InspectContainer(ctx, name); err != nil {
-				return fmt.Errorf("container '%s' not found", name)
+		if !opts.Delete {
+			for _, name := range opts.ContainerNames {
+				if _, err := c.containerManager.InspectContainer(ctx, name); err != nil {
+					return fmt.Errorf("container '%s' not found", name)
+				}
 			}
 		}
 		containerNames = opts.ContainerNames
