@@ -355,28 +355,6 @@
       "build_number": 7
     },
     {
-      "name": "void-glibc",
-      "official_image": "ghcr.io/ferret-linux/void-otr:glibc",
-      "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-02T03:37:28Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1242988019,
-          "disk_size": 1242988019
-        },
-        "arm64": {
-          "compressed_size": 1218671188,
-          "disk_size": 1218671188
-        }
-      },
-      "build_number": 7
-    },
-    {
       "name": "kali",
       "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
       "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest",
@@ -587,6 +565,28 @@
         "amd64": {
           "compressed_size": 1427862399,
           "disk_size": 1427862399
+        }
+      },
+      "build_number": 8
+    },
+    {
+      "name": "void-glibc",
+      "official_image": "ghcr.io/ferret-linux/void-otr:glibc",
+      "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-02T08:59:43Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1242988015,
+          "disk_size": 1242988015
+        },
+        "arm64": {
+          "compressed_size": 1218671188,
+          "disk_size": 1218671188
         }
       },
       "build_number": 8
