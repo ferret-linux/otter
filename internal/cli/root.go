@@ -341,12 +341,14 @@ func buildContainerManager(
 		if err != nil {
 			if errors.Is(err, providers.ErrNoContainerManager) {
 				printMissingContainerManager(errLogger)
+				os.Exit(1)
 			}
 			return nil, fmt.Errorf("failed to auto-detect container manager: %w", err)
 		}
 		return cm, nil
 	default:
 		printInvalidContainerManager(errLogger, containerManagerType)
+		os.Exit(1)
 		return nil, fmt.Errorf("invalid input %s", containerManagerType)
 	}
 }
