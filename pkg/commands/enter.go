@@ -47,7 +47,7 @@ func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterRe
 	}
 	if inspectResult.ContainerStatus != containermanager.RunningStatus {
 		if opts.AutoStart {
-			ui.DefaultLogger.Info("starting '%s'...\n", opts.ContainerName)
+			ui.DefaultLogger.Info("starting '%s'...", opts.ContainerName)
 			if err := c.containerManager.Start(ctx, opts.ContainerName); err != nil {
 				return nil, fmt.Errorf("failed to start container '%s': %w", opts.ContainerName, err)
 			}
@@ -71,7 +71,7 @@ func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterRe
 	}
 
 	if !opts.NoTTY {
-		ui.DefaultLogger.Info("entering '%s'...\n", opts.ContainerName)
+		ui.DefaultLogger.Info("entering '%s'...", opts.ContainerName)
 	}
 
 	err = c.containerManager.Enter(ctx, cmdOpts)
