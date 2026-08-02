@@ -21,12 +21,12 @@ var (
 
 // Validate ensures that the given privilege escalation program is available
 // and, for known programs, that the user can elevate privileges.
-// Known programs (run0, sudo, sudo-rs, doas) are checked specifically.
+// Known programs (sudo, sudo-rs, doas, run0) are checked specifically.
 // Unknown programs trigger a warning and proceed without validation.
 // The check runs at most once per process; subsequent calls return the cached result.
 // Validate ensures that the given privilege escalation program is available
 // and, for known programs, that the user can elevate privileges.
-// Known programs (run0, sudo, sudo-rs, doas) are checked specifically.
+// Known programs (sudo, sudo-rs, doas, run0) are checked specifically.
 // Unknown programs trigger a warning and proceed without validation.
 // The check runs at most once per process; subsequent calls return the cached result.
 // Returns the resolved program name (useful when sudoCommand is "autodetect").
@@ -44,12 +44,12 @@ func Validate(ctx context.Context, sudoCommand string) (string, error) {
 func check(ctx context.Context, sudoCommand string) (string, error) {
 	switch filepath.Base(sudoCommand) {
 	case "autodetect":
-		for _, name := range []string{"run0", "sudo", "sudo-rs", "doas"} {
+		for _, name := range []string{"sudo", "sudo-rs", "doas", "run0"} {
 			if resolved, err := check(ctx, name); err == nil {
 				return resolved, nil
 			}
 		}
-		return "", errors.New("no privilege escalation program found; install one of: run0, sudo, sudo-rs, doas")
+		return "", errors.New("no privilege escalation program found; install one of: sudo, sudo-rs, doas, run0")
 	case "run0":
 		return sudoCommand, checkRun0(sudoCommand)
 	case "sudo", "sudo-rs":
