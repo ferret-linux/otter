@@ -407,11 +407,14 @@ func (c *CreateCommand) checkImageStaleness(
 // the same system.
 //
 // If no container_name is declared, we build our container name starting from the
-// container image specified.
+// container image specified. Short image names (no registry path or tag) get a
+// "my-" prefix so multiple containers built from bare distro names remain
+// distinguishable from the default toolbx naming; images with an explicit
+// registry path or tag are derived directly from their last path segment.
 //
 // Examples:
 //
-//	alpine -> alpine
+//	alpine -> my-alpine
 //	ubuntu:20.04 -> ubuntu-20.04
 //	registry.fedoraproject.org/fedora-toolbox:39 -> fedora-toolbox-39
 //	ghcr.io/void-linux/void-linux:latest-full-x86_64 -> void-linux-latest-full-x86_64
@@ -426,7 +429,6 @@ func (c *CreateCommand) makeContainerName(opts *CreateOptions, containerImage st
 		} else {
 			base := path.Base(containerImage)
 			base = strings.ReplaceAll(base, ":", "-")
-			base = strings.ReplaceAll(base, ".", "-")
 			containerName = base
 		}
 	}
