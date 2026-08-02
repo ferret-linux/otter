@@ -163,6 +163,7 @@ func (n *Nerdctl) makeCreateCommand(
 	options = append(options, "--privileged")
 	options = append(options, "--security-opt", "label=disable")
 	options = append(options, "--security-opt", "apparmor=unconfined")
+	options = append(options, "--pids-limit=-1")
 	options = append(options, "--user", "root:root")
 
 	if !unshareIPC {
