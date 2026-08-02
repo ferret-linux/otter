@@ -54,3 +54,7 @@ lint:
 .PHONY: lint-fix
 lint-fix:
 	$(GO_BUILD_ENV) golangci-lint run --fix
+
+.PHONY: completions
+completions:
+	python3 tools/gencompletions/generate_completions.py
