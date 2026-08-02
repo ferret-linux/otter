@@ -247,14 +247,6 @@ func printContainerAlreadyExists(progress *ui.Progress, containerName string, ro
 	ui.DefaultLogger.Info("To enter, run: otter enter %s%s", rootFlag, containerName)
 }
 
-// Determine right containerImage to use
-//
-// If no clone option and no container image, let's choose a default image to use.
-//
-// If no name is specified and we're using the default container_image, then let's
-// set a default name for the container, that is distinguishable from the default
-// toolbx one. This will avoid problems when using both toolbx and otter on
-// the same system.
 func validateShell(shell string) error {
 	if shell == "" {
 		return nil
@@ -342,6 +334,9 @@ func (c *CreateCommand) makeContainerShell(opts *CreateOptions) string {
 	}
 }
 
+// Determine right containerImage to use
+//
+// If no clone option and no container image, let's choose a default image to use.
 func (c *CreateCommand) makeContainerImage(ctx context.Context, opts *CreateOptions) (string, *registry.ImagesProperties, error) {
 	containerImage := opts.ContainerImage
 	if opts.ContainerClone == "" && containerImage == "" {
