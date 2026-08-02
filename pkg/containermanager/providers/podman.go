@@ -898,7 +898,7 @@ func (p *Podman) generateEnterCommand(
 
 	containerConfig, err := p.InspectContainer(ctx, containerName)
 	if err != nil {
-		return nil, nil, fmt.Errorf("container '%s' not found — are you it was created?", containerName)
+		return nil, nil, fmt.Errorf("container '%s' not found — are you sure it was created?", containerName)
 	}
 	// User selection
 	if containerConfig.UnshareGroups {

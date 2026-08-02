@@ -44,5 +44,7 @@ code*.md
 /CODE*.md
 /review*.md
 /REVIEW*.md
+/ISSUES*.md
+/issues*.md
 /prompt*.md
 /PROMPT*.md
