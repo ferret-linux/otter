@@ -475,7 +475,7 @@ func (c *CreateCommand) clone(ctx context.Context, containerName string) (string
 		return "", fmt.Errorf("failed to inspect container status: %w", err)
 	}
 
-	if i.ContainerStatus == "running" {
+	if i.ContainerStatus == containermanager.RunningStatus {
 		return "", errors.New("cannot clone running container, name: " + containerName)
 	}
 
