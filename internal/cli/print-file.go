@@ -39,8 +39,7 @@ func init() {
 }
 
 func renderColors(s string) string {
-	noColor := os.Getenv("NO_COLOR") != "" || os.Getenv("TERM") == "dumb"
-	if noColor {
+	if ui.NoColor() {
 		for i := range colorSlots {
 			s = strings.ReplaceAll(s, fmt.Sprintf("{%d}", i), "")
 		}

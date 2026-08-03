@@ -57,11 +57,7 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 			},
 		},
 		Before: func(ctx context.Context, _ *cli.Command) (context.Context, error) {
-			if os.Getenv("NO_COLOR") != "" {
-				ui.SetNoColor(true)
-			} else {
-				ui.DisableIfNotTerminal()
-			}
+			ui.SetNoColor(ui.ShouldDisableColor(os.Stdout))
 			return ctx, nil
 		},
 		Commands: subcommands(cfg),

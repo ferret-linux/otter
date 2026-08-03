@@ -20,29 +20,29 @@ func NewLogger(writer io.Writer) *Logger {
 var DefaultLogger = NewLogger(os.Stderr)
 
 func (l *Logger) Ok(msg string, a ...any) {
-	icon := colorGreen + "[✓]" + colorReset
+	icon := Green("[✓]")
 	fmt.Fprintf(l.writer, "%s %s\n", icon, fmt.Sprintf(msg, a...))
 }
 
 func (l *Logger) Error(msg string, a ...any) {
-	icon := colorRed + "[✗]" + colorReset
-	text := colorRed + fmt.Sprintf(msg, a...) + colorReset
+	icon := Red("[✗]")
+	text := Red(fmt.Sprintf(msg, a...))
 	fmt.Fprintf(l.writer, "%s %s\n", icon, text)
 }
 
 func (l *Logger) Warn(msg string, a ...any) {
-	icon := colorYellow + "[⚠]" + colorReset
+	icon := Yellow("[⚠]")
 	fmt.Fprintf(l.writer, "%s %s\n", icon, fmt.Sprintf(msg, a...))
 }
 
 func (l *Logger) Info(msg string, a ...any) {
-	icon := colorCyan + "[i]" + colorReset
-	text := colorDim + fmt.Sprintf(msg, a...) + colorReset
+	icon := Cyan("[i]")
+	text := Dim(fmt.Sprintf(msg, a...))
 	fmt.Fprintf(l.writer, "%s %s\n", icon, text)
 }
 
 func (l *Logger) Notice(msg string, a ...any) {
-	icon := colorTeal + "[‣]" + colorReset
-	text := colorDim + fmt.Sprintf(msg, a...) + colorReset
+	icon := Teal("[‣]")
+	text := Dim(fmt.Sprintf(msg, a...))
 	fmt.Fprintf(l.writer, "%s %s\n", icon, text)
 }
