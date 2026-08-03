@@ -813,7 +813,11 @@ func (p *Podman) CopyFromContainer(ctx context.Context, containerName string, sr
 }
 
 func (p *Podman) WriteToContainer(ctx context.Context, containerName string, srcPath string, destPath string) error {
-	dir := destPath[:strings.LastIndex(destPath, "/")]
+	idx := strings.LastIndex(destPath, "/")
+	if idx == -1 {
+		return fmt.Errorf("invalid destPath %q: must be an absolute path", destPath)
+	}
+	dir := destPath[:idx]
 	if _, err := p.run(ctx, []string{"exec", containerName, "mkdir", "-p", dir}, runOptions{}); err != nil {
 		return fmt.Errorf("failed to create directory %s: %w", dir, err)
 	}
