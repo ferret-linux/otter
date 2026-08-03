@@ -224,7 +224,7 @@ func GetWorkDir(containerHome string, noWorkDir bool) (string, error) {
 		return containerHome, nil
 	}
 
-	if !strings.Contains(workDir, containerHome) {
+	if workDir != containerHome && !strings.HasPrefix(workDir, containerHome+"/") {
 		return "/run/host" + workDir, nil
 	}
 
