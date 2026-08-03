@@ -140,7 +140,6 @@ func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error
 		cpuThreads = fmt.Sprintf("%d threads", result.CPUThreads)
 	}
 
-	const containerIDDisplayLength = 12
 	id := result.ContainerID
 	if len(id) > containerIDDisplayLength {
 		id = id[:containerIDDisplayLength]
