@@ -3,6 +3,7 @@ package ui
 import (
 	"fmt"
 	"io"
+	"os"
 )
 
 type Progress struct {
@@ -45,6 +46,14 @@ func (p *Progress) Finalize(message string, a ...any) {
 	}
 }
 
+// isTerminalWriter reports whether w is an *os.File pointing at an
+// interactive terminal. Non-*os.File writers (e.g. buffers in tests) and
+// redirected files/pipes both report false.
+func isTerminalWriter(w io.Writer) bool {
+	f, ok := w.(*os.File)
+	return ok && isTerminal(f)
+}
+
 func (p *Progress) Done() {
 	if !p.pending {
 		return
@@ -52,7 +61,9 @@ func (p *Progress) Done() {
 
 	p.pending = false
 	if p.writer != io.Discard {
-		fmt.Fprintf(p.writer, "\033[1A\r\033[2K")
+		if isTerminalWriter(p.writer) {
+			fmt.Fprintf(p.writer, "\033[1A\r\033[2K")
+		}
 		DefaultLogger.Ok("%s", p.lastMessage)
 	}
 }

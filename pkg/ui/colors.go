@@ -30,17 +30,22 @@ func SetNoColor(v bool) {
 	noColorForced = true
 }
 
+// isTerminal reports whether f is an interactive terminal (character device).
+func isTerminal(f *os.File) bool {
+	stat, err := f.Stat()
+	if err != nil {
+		return false
+	}
+	return stat.Mode()&os.ModeCharDevice != 0
+}
+
 // ShouldDisableColor reports whether color output should be disabled for
 // writes to f: either NO_COLOR is set, TERM=dumb, or f is not a terminal.
 func ShouldDisableColor(f *os.File) bool {
 	if os.Getenv("NO_COLOR") != "" || os.Getenv("TERM") == "dumb" {
 		return true
 	}
-	stat, err := f.Stat()
-	if err != nil {
-		return false
-	}
-	return stat.Mode()&os.ModeCharDevice == 0
+	return !isTerminal(f)
 }
 
 // NoColor reports whether color output should be suppressed. Unless
