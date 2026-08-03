@@ -206,7 +206,7 @@ func IsTTY() bool {
 	return true
 }
 
-func GetWorkDir(containerHome string, noWorkDir bool) (string, error) {
+func GetWorkDir(hostHome, containerHome string, noWorkDir bool) (string, error) {
 	workDir, err := os.Getwd()
 	if err != nil {
 		return "", fmt.Errorf("error getting working dir: %w", err)
@@ -216,7 +216,7 @@ func GetWorkDir(containerHome string, noWorkDir bool) (string, error) {
 		return containerHome, nil
 	}
 
-	if workDir == "" && containerHome == "" {
+	if workDir == "" && hostHome == "" {
 		return "/", nil
 	}
 
@@ -224,11 +224,15 @@ func GetWorkDir(containerHome string, noWorkDir bool) (string, error) {
 		return containerHome, nil
 	}
 
-	if workDir != containerHome && !strings.HasPrefix(workDir, containerHome+"/") {
-		return "/run/host" + workDir, nil
+	if workDir == hostHome {
+		return containerHome, nil
 	}
 
-	return workDir, nil
+	if prefix := hostHome + "/"; strings.HasPrefix(workDir, prefix) {
+		return containerHome + "/" + strings.TrimPrefix(workDir, prefix), nil
+	}
+
+	return "/run/host" + workDir, nil
 }
 
 func BuildCommandArgs(customCommand []string, user string, noTTY bool, unshareGroups bool) []string {

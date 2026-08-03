@@ -176,6 +176,7 @@ func (p *Podman) makeCreateCommand(
 	containerUserUID := userEnv.UserID
 	containerUserGID := userEnv.GroupID
 	shellFilepath := filepath.Base(userEnv.Shell)
+	canonicalHome := fmt.Sprintf("/home/%s", containerUserName)
 
 	var options []string
 
@@ -247,7 +248,9 @@ func (p *Podman) makeCreateCommand(
 		fmt.Sprintf("%s:%s", otterHostexecPath, "/usr/lib/otter/scripts/otter-host-exec:ro"),
 	)
 	options = append(options, "--volume", fmt.Sprintf("%s:%s", otterPath, "/usr/bin/otter:ro"))
-	options = append(options, "--volume", fmt.Sprintf("%s:%s%s", containerUserHome, containerUserHome, containermanager.BindPropagation()))
+	if containerUserCustomHome == "" {
+		options = append(options, "--volume", fmt.Sprintf("%s:%s%s", containerUserHome, containerUserHome, containermanager.BindPropagation()))
+	}
 
 	// Due to breaking change in https://github.com/opencontainers/runc/commit/d4b670fca6d0ac606777376440ffe49686ce15f4
 	// now we cannot mount /:/run/host as before, as it will try to mount RO partitions as RW thus breaking things.
@@ -337,24 +340,31 @@ func (p *Podman) makeCreateCommand(
 	}
 
 	// If we have a custom home to use,
-	//	1- override the HOME env variable
-	//	2- export the OTTER_HOST_HOME env variable pointing to original HOME
-	// 	3- mount the custom home inside the container.
+	//	1- override the HOME env variable to the canonical in-container path
+	//	2- export OTTER_HOST_HOME pointing to the default (non-custom) host home
+	//	3- export OTTER_CUSTOM_HOME pointing to the real host source of the custom
+	//	   home, so that `otter rm --rm-home` can find the correct host path later
+	//	4- mount the custom home's host directory at the canonical path
 	if containerUserCustomHome != "" {
-		options = append(options, "--env", fmt.Sprintf("HOME=%s", containerUserCustomHome))
+		options = append(options, "--env", fmt.Sprintf("HOME=%s", canonicalHome))
 		options = append(options, "--env", fmt.Sprintf("OTTER_HOST_HOME=%s", containerUserHome))
+		options = append(options, "--env", fmt.Sprintf("OTTER_CUSTOM_HOME=%s", containerUserCustomHome))
 		options = append(
 			options,
 			"--volume",
-			fmt.Sprintf("%s:%s%s", containerUserCustomHome, containerUserCustomHome, containermanager.BindPropagation()),
+			fmt.Sprintf("%s:%s%s", containerUserCustomHome, canonicalHome, containermanager.BindPropagation()),
 		)
 	}
 
 	// Mount also the /var/home dir on ostree based systems
-	// do this only if $HOME was not already set to /var/home/username
-	homePath := fmt.Sprintf("/var/home/%s", containerUserName)
-	if containerUserHome != homePath && containermanager.PathExists(homePath) {
-		options = append(options, "--volume", fmt.Sprintf("%s:%s%s", homePath, homePath, containermanager.BindPropagation()))
+	// do this only if $HOME was not already set to /var/home/username, and only
+	// when not using a custom home, since a custom home should stay isolated
+	// from the real host home entirely.
+	if containerUserCustomHome == "" {
+		homePath := fmt.Sprintf("/var/home/%s", containerUserName)
+		if containerUserHome != homePath && containermanager.PathExists(homePath) {
+			options = append(options, "--volume", fmt.Sprintf("%s:%s%s", homePath, homePath, containermanager.BindPropagation()))
+		}
 	}
 
 	// Mount also the XDG_RUNTIME_DIR to ensure functionality of the apps.
@@ -450,7 +460,7 @@ func (p *Podman) makeCreateCommand(
 	// The arguments will be passed to otter-init as the entrypoint
 	homeToUse := containerUserHome
 	if containerUserCustomHome != "" {
-		homeToUse = containerUserCustomHome
+		homeToUse = canonicalHome
 	}
 	args := []string{
 		"--verbose",
@@ -866,6 +876,8 @@ func (p *Podman) InspectContainer(ctx context.Context, containerName string) (*c
 		switch {
 		case strings.HasPrefix(env, "HOME="):
 			config.ContainerHome = strings.TrimPrefix(env, "HOME=")
+		case strings.HasPrefix(env, "OTTER_CUSTOM_HOME="):
+			config.ContainerCustomHomeSource = strings.TrimPrefix(env, "OTTER_CUSTOM_HOME=")
 		case strings.HasPrefix(env, "PATH="):
 			config.ContainerPath = strings.TrimPrefix(env, "PATH=")
 		case strings.HasPrefix(env, "SHELL="):
@@ -916,7 +928,11 @@ func (p *Podman) generateEnterCommand(
 	}
 
 	// Working directory
-	workdir, err := containermanager.GetWorkDir(containerConfig.ContainerHome, noWorkDir)
+	hostHome := containerConfig.ContainerHome
+	if containerConfig.ContainerCustomHomeSource != "" {
+		hostHome = containerConfig.ContainerCustomHomeSource
+	}
+	workdir, err := containermanager.GetWorkDir(hostHome, containerConfig.ContainerHome, noWorkDir)
 	if err != nil {
 		return nil, nil, fmt.Errorf("error getting the workdir: %w", err)
 	}

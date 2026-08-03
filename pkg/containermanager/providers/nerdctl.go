@@ -146,6 +146,7 @@ func (n *Nerdctl) makeCreateCommand(
 	containerUserUID := userEnv.UserID
 	containerUserGID := userEnv.GroupID
 	shellFilepath := filepath.Base(userEnv.Shell)
+	canonicalHome := fmt.Sprintf("/home/%s", containerUserName)
 
 	var options []string
 
@@ -205,7 +206,9 @@ func (n *Nerdctl) makeCreateCommand(
 		fmt.Sprintf("%s:%s", otterHostexecPath, "/usr/lib/otter/scripts/otter-host-exec:ro"),
 	)
 	options = append(options, "--volume", fmt.Sprintf("%s:%s", otterPath, "/usr/bin/otter:ro"))
-	options = append(options, "--volume", fmt.Sprintf("%s:%s%s", containerUserHome, containerUserHome, containermanager.BindPropagation()))
+	if containerUserCustomHome == "" {
+		options = append(options, "--volume", fmt.Sprintf("%s:%s%s", containerUserHome, containerUserHome, containermanager.BindPropagation()))
+	}
 	options = append(options, "--volume", "/:/run/host/"+containermanager.BindPropagation())
 
 	if !unshareDevsys {
@@ -252,18 +255,21 @@ func (n *Nerdctl) makeCreateCommand(
 	}
 
 	if containerUserCustomHome != "" {
-		options = append(options, "--env", fmt.Sprintf("HOME=%s", containerUserCustomHome))
+		options = append(options, "--env", fmt.Sprintf("HOME=%s", canonicalHome))
 		options = append(options, "--env", fmt.Sprintf("OTTER_HOST_HOME=%s", containerUserHome))
+		options = append(options, "--env", fmt.Sprintf("OTTER_CUSTOM_HOME=%s", containerUserCustomHome))
 		options = append(
 			options,
 			"--volume",
-			fmt.Sprintf("%s:%s%s", containerUserCustomHome, containerUserCustomHome, containermanager.BindPropagation()),
+			fmt.Sprintf("%s:%s%s", containerUserCustomHome, canonicalHome, containermanager.BindPropagation()),
 		)
 	}
 
-	homePath := fmt.Sprintf("/var/home/%s", containerUserName)
-	if containerUserHome != homePath && containermanager.PathExists(homePath) {
-		options = append(options, "--volume", fmt.Sprintf("%s:%s%s", homePath, homePath, containermanager.BindPropagation()))
+	if containerUserCustomHome == "" {
+		homePath := fmt.Sprintf("/var/home/%s", containerUserName)
+		if containerUserHome != homePath && containermanager.PathExists(homePath) {
+			options = append(options, "--volume", fmt.Sprintf("%s:%s%s", homePath, homePath, containermanager.BindPropagation()))
+		}
 	}
 
 	xdgRuntimeDir := fmt.Sprintf("/run/user/%s", containerUserUID)
@@ -317,7 +323,7 @@ func (n *Nerdctl) makeCreateCommand(
 
 	homeToUse := containerUserHome
 	if containerUserCustomHome != "" {
-		homeToUse = containerUserCustomHome
+		homeToUse = canonicalHome
 	}
 	args := []string{
 		"--verbose",
@@ -535,6 +541,8 @@ func (n *Nerdctl) InspectContainer(ctx context.Context, containerName string) (*
 		switch {
 		case strings.HasPrefix(env, "HOME="):
 			config.ContainerHome = strings.TrimPrefix(env, "HOME=")
+		case strings.HasPrefix(env, "OTTER_CUSTOM_HOME="):
+			config.ContainerCustomHomeSource = strings.TrimPrefix(env, "OTTER_CUSTOM_HOME=")
 		case strings.HasPrefix(env, "PATH="):
 			config.ContainerPath = strings.TrimPrefix(env, "PATH=")
 		case strings.HasPrefix(env, "SHELL="):
@@ -661,7 +669,11 @@ func (n *Nerdctl) generateEnterCommand(
 		cmd = append(cmd, "--tty")
 	}
 
-	workdir, err := containermanager.GetWorkDir(containerConfig.ContainerHome, noWorkDir)
+	hostHome := containerConfig.ContainerHome
+	if containerConfig.ContainerCustomHomeSource != "" {
+		hostHome = containerConfig.ContainerCustomHomeSource
+	}
+	workdir, err := containermanager.GetWorkDir(hostHome, containerConfig.ContainerHome, noWorkDir)
 	if err != nil {
 		return nil, nil, fmt.Errorf("error getting the workdir: %w", err)
 	}

@@ -54,6 +54,7 @@ func printInspectJSON(result *containermanager.InspectResult, locked bool, opts 
 		Hostname       string `json:"hostname"`
 		Shell          string `json:"shell"`
 		Home           string `json:"home"`
+		HostHome       string `json:"host_home,omitempty"`
 		Locked         bool   `json:"locked"`
 		Rootful        bool   `json:"rootful"`
 		Manager        string `json:"manager"`
@@ -77,6 +78,7 @@ func printInspectJSON(result *containermanager.InspectResult, locked bool, opts 
 		Hostname:       result.ContainerHostname,
 		Shell:          result.ContainerShell,
 		Home:           result.ContainerHome,
+		HostHome:       result.ContainerCustomHomeSource,
 		Locked:         locked,
 		Rootful:        result.Rootful,
 		Manager:        opts.Manager,
@@ -156,6 +158,7 @@ func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error
 		ui.PanelRow("Hostname", result.ContainerHostname),
 		ui.PanelRow("Shell", result.ContainerShell),
 		ui.PanelRow("Home", result.ContainerHome),
+		ui.PanelRow("Host Home", result.ContainerCustomHomeSource),
 		ui.PanelRow("Locked", strconv.FormatBool(locked)),
 		ui.PanelRow("Rootful", strconv.FormatBool(result.Rootful)),
 		ui.PanelRow("Manager", opts.Manager),

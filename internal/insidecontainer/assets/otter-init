@@ -1780,8 +1780,10 @@ printf "otter: Setting up read-write mounts...\n"
 
 # On some ostree systems, home is in /var/home, but most of the software expects
 # it to be in /home. In the hosts systems this is fixed by using a symlink.
-# Do something similar here with a bind mount.
-if [ -e "/var/home/${container_user_name}" ]; then
+# Do something similar here with a bind mount. Skip this entirely when a custom
+# home is in use (OTTER_HOST_HOME set), since a custom home should stay isolated
+# from the real host home.
+if [ -z "${OTTER_HOST_HOME-}" ] && [ -e "/var/home/${container_user_name}" ]; then
 	if ! mount_bind "/run/host/var/home/${container_user_name}" "/home/${container_user_name}"; then
 		printf "Warning: Cannot bind mount %s to /run/host%s\n" "/var/home" "/home"
 	fi
@@ -2539,6 +2541,22 @@ if [ -n "${OTTER_HOST_HOME-}" ] && [ -d "/etc/skel" ]; then
 		fi
 
 	done
+fi
+###############################################################################
+
+###############################################################################
+# A fresh custom home has none of the standard XDG user directories
+# (Documents, Downloads, etc.) that a real host home would already have.
+# Seed them here, custom-home only, matching the skel-seeding logic above.
+if [ -n "${OTTER_HOST_HOME-}" ] && command -v xdg-user-dirs-update > /dev/null 2>&1; then
+	printf "otter: Setting up XDG user dirs...\n"
+
+	# A recursive chown (rather than a hardcoded English directory-name list) is
+	# used here since xdg-user-dirs-update localizes directory names based on
+	# the container's locale (e.g. "Dokumente" instead of "Documents").
+	if HOME="${container_user_home}" xdg-user-dirs-update; then
+		chown -R "${container_user_uid}":"${container_user_gid}" "${container_user_home}"
+	fi
 fi
 ###############################################################################
 

@@ -107,14 +107,22 @@ func (c *RmCommand) removeContainer(
 		return fmt.Errorf("error inspecting the container: %w", err)
 	}
 
+	// For custom-home containers, ContainerHome is now the canonical in-container
+	// path (e.g. /home/ferret), not a real host path, so the actual host directory
+	// to remove is ContainerCustomHomeSource instead, when present.
+	homeToRemove := inspectOutput.ContainerHome
+	if inspectOutput.ContainerCustomHomeSource != "" {
+		homeToRemove = inspectOutput.ContainerCustomHomeSource
+	}
+
 	// Hard safety guard: never allow removing home if it is empty,
 	// equals the host home, or is a known dangerous path.
 	dangerousPaths := []string{"/", "/home", "/root", "/usr"}
-	if inspectOutput.ContainerHome == "" ||
-		inspectOutput.ContainerHome == userHome ||
-		slices.Contains(dangerousPaths, inspectOutput.ContainerHome) {
+	if homeToRemove == "" ||
+		homeToRemove == userHome ||
+		slices.Contains(dangerousPaths, homeToRemove) {
 		if removeHome {
-			ui.DefaultLogger.Warn("refusing to remove home '%s': unsafe path", inspectOutput.ContainerHome)
+			ui.DefaultLogger.Warn("refusing to remove home '%s': unsafe path", homeToRemove)
 		}
 		removeHome = false
 	}
@@ -122,7 +130,7 @@ func (c *RmCommand) removeContainer(
 	cmOptions := containermanager.RmOptions{
 		Force:         force,
 		RemoveHome:    removeHome,
-		ContainerHome: inspectOutput.ContainerHome,
+		ContainerHome: homeToRemove,
 	}
 
 	err = c.containerManager.Remove(ctx, container.Name, cmOptions)
