@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 )
 
@@ -23,7 +22,7 @@ type JournalCommand struct {
 	containerManager containermanager.ContainerManager
 }
 
-func NewJournalCommand(_ *config.Values, cm containermanager.ContainerManager) *JournalCommand {
+func NewJournalCommand(cm containermanager.ContainerManager) *JournalCommand {
 	return &JournalCommand{
 		containerManager: cm,
 	}

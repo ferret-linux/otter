@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
@@ -24,7 +23,7 @@ type InspectCommand struct {
 	containerManager containermanager.ContainerManager
 }
 
-func NewInspectCommand(_ *config.Values, cm containermanager.ContainerManager) *InspectCommand {
+func NewInspectCommand(cm containermanager.ContainerManager) *InspectCommand {
 	return &InspectCommand{
 		containerManager: cm,
 	}

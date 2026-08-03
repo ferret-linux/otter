@@ -32,7 +32,7 @@ func inspectAction(ctx context.Context, cmd *cli.Command) error {
 		return errors.New("container manager not found in context")
 	}
 
-	inspectCmd := commands.NewInspectCommand(nil, cm)
+	inspectCmd := commands.NewInspectCommand(cm)
 	if err := inspectCmd.Execute(ctx, commands.InspectOptions{
 		ContainerName: firstName(cmd.Args().Slice()),
 		Manager:       cm.Name(),

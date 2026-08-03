@@ -49,7 +49,7 @@ func journalAction(ctx context.Context, cmd *cli.Command) error {
 		return errors.New("container manager not found in context")
 	}
 
-	journalCmd := commands.NewJournalCommand(nil, cm)
+	journalCmd := commands.NewJournalCommand(cm)
 	if err := journalCmd.Execute(ctx, commands.JournalOptions{
 		ContainerName: firstName(cmd.Args().Slice()),
 		Follow:        cmd.Bool("follow"),
