@@ -42,7 +42,7 @@ if not os.environ.get("SHELL"):
     os.environ["SHELL"] = getpwnam(os.environ["USER"]).pw_shell
 
 # Defaults
-HOST_SPAWN_VERSION = "v1.6.0"
+HOST_SPAWN_VERSION = "v1.6.2"
 VERSION = "0.0.5"
 
 try:
