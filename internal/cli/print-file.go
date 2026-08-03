@@ -73,7 +73,7 @@ func printFile(name string) {
 		return
 	}
 
-	termW, _, err := term.GetSize(int(os.Stderr.Fd()))
+	termW, _, err := term.GetSize(int(os.Stdout.Fd()))
 	if err == nil {
 		needW := contentWidth(string(b))
 		if termW < needW {
