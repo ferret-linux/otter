@@ -255,12 +255,11 @@ func resolvePullCandidates(props *registry.ImagesProperties, names []string, all
 		return candidates, nil
 	}
 
-	split := splitNames(names)
-	if len(split) == 0 {
+	if len(names) == 0 {
 		return nil, errors.New("specify at least one image name or use --all")
 	}
-	candidates := make([]string, 0, len(split))
-	for _, name := range split {
+	candidates := make([]string, 0, len(names))
+	for _, name := range names {
 		ref, err := registry.Resolve(props, name)
 		if err != nil {
 			return nil, fmt.Errorf("failed to resolve image '%s': %w", name, err)
@@ -326,13 +325,12 @@ func resolveRemoveTargets(
 		return refs, nil
 	}
 
-	split := splitNames(names)
-	if len(split) == 0 {
+	if len(names) == 0 {
 		return nil, errors.New("specify at least one image name or use --all")
 	}
 
-	refs := make([]string, 0, len(split))
-	for _, name := range split {
+	refs := make([]string, 0, len(names))
+	for _, name := range names {
 		ref, err := registry.Resolve(props, name)
 		if err != nil {
 			return nil, fmt.Errorf("failed to resolve image '%s': %w", name, err)
@@ -340,19 +338,4 @@ func resolveRemoveTargets(
 		refs = append(refs, ref)
 	}
 	return refs, nil
-}
-
-// splitNames splits a slice of potentially comma-separated name strings
-// into individual trimmed name tokens.
-func splitNames(names []string) []string {
-	var out []string
-	for _, n := range names {
-		for _, part := range strings.Split(n, ",") {
-			part = strings.TrimSpace(part)
-			if part != "" {
-				out = append(out, part)
-			}
-		}
-	}
-	return out
 }
