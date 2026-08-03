@@ -312,6 +312,9 @@ func resolveRemoveTargets(
 	if all {
 		var refs []string
 		for _, entry := range props.Images {
+			if !entry.Enabled {
+				continue
+			}
 			ref, err := registry.Resolve(props, entry.Name)
 			if err != nil {
 				continue
