@@ -954,15 +954,6 @@ func (p *Podman) generateEnterCommand(
 			cmd = append(cmd, fmt.Sprintf("--env=%s", env))
 		}
 	}
-	for _, env := range addEnv {
-		if strings.Contains(env, "=") {
-			cmd = append(cmd, fmt.Sprintf("--env=%s", env))
-		} else if val, ok := os.LookupEnv(env); ok {
-			cmd = append(cmd, fmt.Sprintf("--env=%s=%s", env, val))
-		} else {
-			ui.DefaultLogger.Warn("env-var '%s' not found on host, skipping", env)
-		}
-	}
 	// PATH handling
 	containerPaths := containermanager.BuildContainerPath(cleanPath, os.Getenv("PATH"), containerConfig.ContainerPath)
 	cmd = append(cmd, fmt.Sprintf("--env=PATH=%s", containerPaths))
@@ -980,6 +971,18 @@ func (p *Podman) generateEnterCommand(
 	cmd = append(cmd, fmt.Sprintf("--env=XDG_CONFIG_HOME=%s/.config", containerConfig.ContainerHome))
 	cmd = append(cmd, fmt.Sprintf("--env=XDG_DATA_HOME=%s/.local/share", containerConfig.ContainerHome))
 	cmd = append(cmd, fmt.Sprintf("--env=XDG_STATE_HOME=%s/.local/state", containerConfig.ContainerHome))
+
+	// Explicit --add-env values are applied last so they take precedence
+	// over otter's own auto-computed PATH/XDG_* values above.
+	for _, env := range addEnv {
+		if strings.Contains(env, "=") {
+			cmd = append(cmd, fmt.Sprintf("--env=%s", env))
+		} else if val, ok := os.LookupEnv(env); ok {
+			cmd = append(cmd, fmt.Sprintf("--env=%s=%s", env, val))
+		} else {
+			ui.DefaultLogger.Warn("env-var '%s' not found on host, skipping", env)
+		}
+	}
 
 	// Additional flags
 	if len(additionalFlags) > 0 {
