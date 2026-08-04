@@ -18,28 +18,6 @@
       "build_number": 16
     },
     {
-      "name": "fedora",
-      "official_image": "ghcr.io/ferret-linux/fedora-otr:stable",
-      "fallback_vendor_image": "quay.io/fedora/fedora:44",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-04T10:04:34Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1497783339,
-          "disk_size": 1497783339
-        },
-        "arm64": {
-          "compressed_size": 1429057679,
-          "disk_size": 1429057679
-        }
-      },
-      "build_number": 16
-    },
-    {
       "name": "opensuse-tumbleweed",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
@@ -590,6 +568,28 @@
         }
       },
       "build_number": 14
+    },
+    {
+      "name": "fedora",
+      "official_image": "ghcr.io/ferret-linux/fedora-otr:stable",
+      "fallback_vendor_image": "quay.io/fedora/fedora:44",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-04T13:12:05Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1497792548,
+          "disk_size": 1497792548
+        },
+        "arm64": {
+          "compressed_size": 1429085843,
+          "disk_size": 1429085843
+        }
+      },
+      "build_number": 17
     }
   ]
 }
