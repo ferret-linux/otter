@@ -43,6 +43,16 @@ func boolToSharedStr(b bool) string {
 	return "shared"
 }
 
+// inspectHomeValue returns the single home path a container is actually
+// using: the real host directory backing a custom home, if one is set,
+// otherwise the container's normal home.
+func inspectHomeValue(result *containermanager.InspectResult) string {
+	if result.ContainerCustomHomeSource != "" {
+		return result.ContainerCustomHomeSource
+	}
+	return result.ContainerHome
+}
+
 func printInspectJSON(result *containermanager.InspectResult, locked bool, opts InspectOptions) error {
 	out := struct {
 		ID             string `json:"id"`
@@ -54,7 +64,6 @@ func printInspectJSON(result *containermanager.InspectResult, locked bool, opts 
 		Hostname       string `json:"hostname"`
 		Shell          string `json:"shell"`
 		Home           string `json:"home"`
-		HostHome       string `json:"host_home,omitempty"`
 		Locked         bool   `json:"locked"`
 		Rootful        bool   `json:"rootful"`
 		Manager        string `json:"manager"`
@@ -77,8 +86,7 @@ func printInspectJSON(result *containermanager.InspectResult, locked bool, opts 
 		Platform:       result.ContainerPlatform,
 		Hostname:       result.ContainerHostname,
 		Shell:          result.ContainerShell,
-		Home:           result.ContainerHome,
-		HostHome:       result.ContainerCustomHomeSource,
+		Home:           inspectHomeValue(result),
 		Locked:         locked,
 		Rootful:        result.Rootful,
 		Manager:        opts.Manager,
@@ -157,8 +165,7 @@ func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error
 		ui.PanelRow("Platform", result.ContainerPlatform),
 		ui.PanelRow("Hostname", result.ContainerHostname),
 		ui.PanelRow("Shell", result.ContainerShell),
-		ui.PanelRow("Home", result.ContainerHome),
-		ui.PanelRow("Host Home", result.ContainerCustomHomeSource),
+		ui.PanelRow("Home", inspectHomeValue(result)),
 		ui.PanelRow("Locked", strconv.FormatBool(locked)),
 		ui.PanelRow("Rootful", strconv.FormatBool(result.Rootful)),
 		ui.PanelRow("Manager", opts.Manager),
