@@ -77,16 +77,23 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 	}
 
 	var lastErr error
+	var attempted, lockedCount int
 
 	for _, name := range containerNames {
 		if isLocked(ctx, c.containerManager, name) {
+			lockedCount++
 			ui.DefaultLogger.Warn("'%s' is locked, skipping", name)
 			continue
 		}
+		attempted++
 		if err := c.upgradeContainer(ctx, name); err != nil {
 			lastErr = fmt.Errorf("failed while upgrading %s: %w", name, err)
 			continue
 		}
+	}
+
+	if attempted == 0 && lockedCount > 0 {
+		return errors.New("all requested containers are locked, run 'otter unlock' first")
 	}
 
 	return lastErr
