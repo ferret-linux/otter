@@ -214,6 +214,7 @@ func (n *Nerdctl) makeCreateCommand(
 		"TERMINFO_DIRS=/usr/share/terminfo:/run/host/usr/share/terminfo",
 	)
 	options = append(options, "--env", fmt.Sprintf("CONTAINER_ID=%s", containerName))
+	options = append(options, "--env", fmt.Sprintf("OTTER_HOST_UID=%s", containerUserUID))
 	options = append(options, "--volume", "/tmp:/tmp"+containermanager.BindPropagation())
 	options = append(options, "--volume", fmt.Sprintf("%s:%s", otterExportPath, "/usr/lib/otter/scripts/otter-export:ro"))
 	options = append(
