@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -43,6 +44,10 @@ func NewRmCommand(cm containermanager.ContainerManager) *RmCommand {
 }
 
 func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, error) {
+	if !options.All && len(options.ContainerNames) == 0 {
+		return nil, errors.New("please specify a container name or use --all")
+	}
+
 	listResult, err := c.listCmd.Execute(ctx, ListOptions{})
 	if err != nil {
 		return nil, fmt.Errorf("failed while listing containers: %w", err)
