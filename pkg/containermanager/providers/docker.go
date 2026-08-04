@@ -166,7 +166,7 @@ func (d *Docker) makeCreateCommand(
 	containerHostname string,
 	containerAdditionalPackages []string,
 	containerAdditionalVolumes []string,
-	containerUserCustomHome string,
+	customHome string,
 	containerPlatform string,
 	nopasswd bool,
 	init bool,
@@ -188,12 +188,28 @@ func (d *Docker) makeCreateCommand(
 ) []string {
 	containerManager := d.Name()
 
-	containerUserHome := userEnv.Home
 	containerUserName := userEnv.User
 	containerUserUID := userEnv.UserID
 	containerUserGID := userEnv.GroupID
 	shellFilepath := filepath.Base(userEnv.Shell)
-	canonicalHome := fmt.Sprintf("/home/%s", containerUserName)
+
+	// hostHome is the real host home directory (e.g. /home/alice, or
+	// /var/home/alice on ostree-based systems).
+	//
+	// customHome is an optional host-side override path for this
+	// container's home (empty string means "no override, use hostHome").
+	//
+	// effectiveHome is what $HOME actually resolves to for THIS container:
+	// the canonical /home/<user> path when a custom home is mounted there,
+	// otherwise hostHome unchanged. It's computed once here and reused
+	// everywhere HOME is needed (the --env HOME= below, the custom-home
+	// mount target, and the otter-init --home arg) so it's never
+	// set/computed more than once.
+	hostHome := userEnv.Home
+	effectiveHome := hostHome
+	if customHome != "" {
+		effectiveHome = fmt.Sprintf("/home/%s", containerUserName)
+	}
 
 	var options []string
 
@@ -248,7 +264,7 @@ func (d *Docker) makeCreateCommand(
 	options = append(options, "--label", fmt.Sprintf("otter.nvidia=%d", containermanager.Btoi(nvidia)))
 	options = append(options, "--label", fmt.Sprintf("otter.rootful=%d", containermanager.Btoi(d.root)))
 	options = append(options, "--env", fmt.Sprintf("SHELL=%s", shellFilepath))
-	options = append(options, "--env", fmt.Sprintf("HOME=%s", containerUserHome))
+	options = append(options, "--env", fmt.Sprintf("HOME=%s", effectiveHome))
 	options = append(options, "--env", fmt.Sprintf("container=%s", containerManager))
 	options = append(
 		options,
@@ -264,8 +280,8 @@ func (d *Docker) makeCreateCommand(
 		fmt.Sprintf("%s:%s", otterHostexecPath, "/usr/lib/otter/scripts/otter-host-exec:ro"),
 	)
 	options = append(options, "--volume", fmt.Sprintf("%s:%s", otterPath, "/usr/bin/otter:ro"))
-	if containerUserCustomHome == "" {
-		options = append(options, "--volume", fmt.Sprintf("%s:%s%s", containerUserHome, containerUserHome, containermanager.BindPropagation()))
+	if customHome == "" {
+		options = append(options, "--volume", fmt.Sprintf("%s:%s%s", hostHome, hostHome, containermanager.BindPropagation()))
 	}
 	options = append(options, "--volume", "/:/run/host/"+containermanager.BindPropagation())
 
@@ -368,19 +384,20 @@ func (d *Docker) makeCreateCommand(
 	}
 
 	// If we have a custom home to use,
-	//	1- override the HOME env variable to the canonical in-container path
-	//	2- export OTTER_HOST_HOME pointing to the default (non-custom) host home
-	//	3- export OTTER_CUSTOM_HOME pointing to the real host source of the custom
+	//	1- export OTTER_HOST_HOME pointing to the default (non-custom) host home
+	//	2- export OTTER_CUSTOM_HOME pointing to the real host source of the custom
 	//	   home, so that `otter rm --rm-home` can find the correct host path later
-	//	4- mount the custom home's host directory at the canonical path
-	if containerUserCustomHome != "" {
-		options = append(options, "--env", fmt.Sprintf("HOME=%s", canonicalHome))
-		options = append(options, "--env", fmt.Sprintf("OTTER_HOST_HOME=%s", containerUserHome))
-		options = append(options, "--env", fmt.Sprintf("OTTER_CUSTOM_HOME=%s", containerUserCustomHome))
+	//	3- mount the custom home's host directory at effectiveHome (the canonical
+	//	   in-container path)
+	// HOME itself was already set to effectiveHome above, so it does not need
+	// to be set again here.
+	if customHome != "" {
+		options = append(options, "--env", fmt.Sprintf("OTTER_HOST_HOME=%s", hostHome))
+		options = append(options, "--env", fmt.Sprintf("OTTER_CUSTOM_HOME=%s", customHome))
 		options = append(
 			options,
 			"--volume",
-			fmt.Sprintf("%s:%s%s", containerUserCustomHome, canonicalHome, containermanager.BindPropagation()),
+			fmt.Sprintf("%s:%s%s", customHome, effectiveHome, containermanager.BindPropagation()),
 		)
 	}
 
@@ -388,9 +405,9 @@ func (d *Docker) makeCreateCommand(
 	// do this only if $HOME was not already set to /var/home/username, and only
 	// when not using a custom home, since a custom home should stay isolated
 	// from the real host home entirely.
-	if containerUserCustomHome == "" {
+	if customHome == "" {
 		homePath := fmt.Sprintf("/var/home/%s", containerUserName)
-		if containerUserHome != homePath && containermanager.PathExists(homePath) {
+		if hostHome != homePath && containermanager.PathExists(homePath) {
 			options = append(options, "--volume", fmt.Sprintf("%s:%s%s", homePath, homePath, containermanager.BindPropagation()))
 		}
 	}
@@ -473,16 +490,12 @@ func (d *Docker) makeCreateCommand(
 	// Build the rest of the arguments for otter-init
 	//
 	// The arguments will be passed to otter-init as the entrypoint
-	homeToUse := containerUserHome
-	if containerUserCustomHome != "" {
-		homeToUse = canonicalHome
-	}
 	args := []string{
 		"--verbose",
 		"--name", containerUserName,
 		"--user", containerUserUID,
 		"--group", containerUserGID,
-		"--home", homeToUse,
+		"--home", effectiveHome,
 		"--init", strconv.Itoa(containermanager.Btoi(init)),
 		"--nvidia", strconv.Itoa(containermanager.Btoi(nvidia)),
 		"--pre-init-hooks", containerPreInitHook,
