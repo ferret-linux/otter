@@ -129,6 +129,10 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 	if err != nil {
 		return nil, fmt.Errorf("failed to resolve container hostname: %w", err)
 	}
+	// Capture whether --hostname was explicitly passed before any defaulting
+	// happens, so providers can rely on this instead of comparing the
+	// resolved hostname string against the host's current hostname.
+	containerHostnameExplicit := opts.ContainerHostname != ""
 
 	containerUserCustomHome := c.makeContainerUserCustomHome(&opts, containerName)
 
@@ -170,30 +174,31 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 	err = c.containerManager.Create(
 		ctx,
 		containermanager.CreateOptions{
-			ContainerName:           containerName,
-			ContainerImage:          containerImage,
-			ContainerClone:          opts.ContainerClone,
-			ContainerUserCustomHome: containerUserCustomHome,
-			ContainerHostname:       containerHostname,
-			ContainerShell:          opts.ContainerShell,
-			ContainerPlatform:       opts.ContainerPlatform,
-			Nopasswd:                opts.Nopasswd,
-			UnshareDevsys:           opts.UnshareDevsys,
-			UnshareGroups:           opts.UnshareGroups,
-			UnshareIPC:              opts.UnshareIpc,
-			UnshareNetNS:            opts.UnshareNetNs,
-			UnshareProcess:          opts.UnshareProcess,
-			AdditionalFlags:         splitFields(opts.AdditionalFlags),
-			AdditionalVolumes:       opts.AdditionalVolumes,
-			AdditionalPackages:      opts.AdditionalPackages,
-			ContainerPreInitHook:    opts.ContainerPreInitHook,
-			ContainerInitHook:       opts.ContainerInitHook,
-			Init:                    opts.Init,
-			Nvidia:                  opts.Nvidia,
-			NoUsernsLimit:           opts.NoUsernsLimit,
-			Memory:                  opts.Memory,
-			CPUThreads:              opts.CPUThreads,
-			ScriptsDir:              c.cfg.ScriptsDir,
+			ContainerName:             containerName,
+			ContainerImage:            containerImage,
+			ContainerClone:            opts.ContainerClone,
+			ContainerUserCustomHome:   containerUserCustomHome,
+			ContainerHostname:         containerHostname,
+			ContainerHostnameExplicit: containerHostnameExplicit,
+			ContainerShell:            opts.ContainerShell,
+			ContainerPlatform:         opts.ContainerPlatform,
+			Nopasswd:                  opts.Nopasswd,
+			UnshareDevsys:             opts.UnshareDevsys,
+			UnshareGroups:             opts.UnshareGroups,
+			UnshareIPC:                opts.UnshareIpc,
+			UnshareNetNS:              opts.UnshareNetNs,
+			UnshareProcess:            opts.UnshareProcess,
+			AdditionalFlags:           splitFields(opts.AdditionalFlags),
+			AdditionalVolumes:         opts.AdditionalVolumes,
+			AdditionalPackages:        opts.AdditionalPackages,
+			ContainerPreInitHook:      opts.ContainerPreInitHook,
+			ContainerInitHook:         opts.ContainerInitHook,
+			Init:                      opts.Init,
+			Nvidia:                    opts.Nvidia,
+			NoUsernsLimit:             opts.NoUsernsLimit,
+			Memory:                    opts.Memory,
+			CPUThreads:                opts.CPUThreads,
+			ScriptsDir:                c.cfg.ScriptsDir,
 		},
 	)
 

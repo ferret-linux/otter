@@ -40,26 +40,33 @@ type CreateOptions struct {
 	ContainerClone          string
 	ContainerUserCustomHome string
 	ContainerHostname       string
-	ContainerPlatform       string
-	ContainerShell          string
-	ContainerUserHome       string
-	Nopasswd                bool
-	UnshareDevsys           bool
-	UnshareGroups           bool
-	UnshareIPC              bool
-	UnshareNetNS            bool
-	UnshareProcess          bool
-	AdditionalFlags         []string
-	AdditionalVolumes       []string
-	AdditionalPackages      []string
-	ContainerPreInitHook    string
-	ContainerInitHook       string
-	Init                    bool
-	Nvidia                  bool
-	NoUsernsLimit           bool
-	Memory                  string
-	CPUThreads              int
-	ScriptsDir              string
+	// ContainerHostnameExplicit is true when the user explicitly passed
+	// --hostname, as opposed to ContainerHostname being a computed default.
+	// This is the real signal for "is this hostname custom", instead of
+	// guessing by comparing the resolved hostname string against the host's
+	// current hostname (which breaks if a user's explicit --hostname
+	// coincidentally matches the host's hostname at creation time).
+	ContainerHostnameExplicit bool
+	ContainerPlatform         string
+	ContainerShell            string
+	ContainerUserHome         string
+	Nopasswd                  bool
+	UnshareDevsys             bool
+	UnshareGroups             bool
+	UnshareIPC                bool
+	UnshareNetNS              bool
+	UnshareProcess            bool
+	AdditionalFlags           []string
+	AdditionalVolumes         []string
+	AdditionalPackages        []string
+	ContainerPreInitHook      string
+	ContainerInitHook         string
+	Init                      bool
+	Nvidia                    bool
+	NoUsernsLimit             bool
+	Memory                    string
+	CPUThreads                int
+	ScriptsDir                string
 }
 
 type EnterOptions struct {

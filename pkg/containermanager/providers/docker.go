@@ -126,6 +126,7 @@ func (d *Docker) Create(
 		opts.ContainerImage,
 		opts.AdditionalFlags,
 		opts.ContainerHostname,
+		opts.ContainerHostnameExplicit,
 		opts.AdditionalPackages,
 		opts.AdditionalVolumes,
 		opts.ContainerUserCustomHome,
@@ -164,6 +165,7 @@ func (d *Docker) makeCreateCommand(
 	containerImage string,
 	containerAdditionalFlags []string,
 	containerHostname string,
+	hostnameExplicit bool,
 	containerAdditionalPackages []string,
 	containerAdditionalVolumes []string,
 	customHome string,
@@ -435,10 +437,17 @@ func (d *Docker) makeCreateCommand(
 			"/etc/resolv.conf",
 		}
 
-		// If container_hostname is custom, we skip mounting /etc/hostname, else
-		// we want to keep it in sync
-		hostname, _ := os.Hostname()
-		if containerHostname == hostname {
+		// If the user explicitly passed --hostname, treat it as a fixed,
+		// intentional choice and never bind-mount /etc/hostname over it —
+		// otherwise the container's hostname would silently start tracking
+		// the host's hostname if it's ever renamed. Only sync /etc/hostname
+		// when the container's hostname was left at its computed default.
+		//
+		// Previously this was decided by comparing containerHostname against
+		// the host's current hostname, which broke when an explicit
+		// --hostname happened to coincide with the host's hostname at
+		// creation time.
+		if !hostnameExplicit {
 			hostnameFile := "/etc/hostname"
 			if resolved, err := filepath.EvalSymlinks(hostnameFile); err == nil {
 				hostnameFile = resolved
