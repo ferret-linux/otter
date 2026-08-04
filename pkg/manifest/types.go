@@ -21,40 +21,52 @@ type Hooks struct {
 }
 
 // Settings holds container behaviour settings.
+//
+// Lock, Entry, Rootful, and InitSystem are *bool rather than bool so that
+// mergeItems (resolve.go) can distinguish "not set in this entry's TOML" (nil)
+// from "explicitly set to false" (non-nil pointer to false). Parse guarantees
+// these are non-nil by the time Item values are returned to callers.
 type Settings struct {
-	Lock       bool   `toml:"lock"`
-	Entry      bool   `toml:"entry"`
+	Lock       *bool  `toml:"lock"`
+	Entry      *bool  `toml:"entry"`
 	Shell      string `toml:"shell"`
-	Rootful    bool   `toml:"rootful"`
-	InitSystem bool   `toml:"init-system"`
+	Rootful    *bool  `toml:"rootful"`
+	InitSystem *bool  `toml:"init-system"`
 	Hostname   string `toml:"hostname"`
 }
 
 // Hardware holds resource and hardware settings.
+//
+// Nvidia is *bool for the same reason as the Settings booleans above.
 type Hardware struct {
 	Memory string `toml:"memory"`
-	Nvidia bool   `toml:"nvidia"`
+	Nvidia *bool  `toml:"nvidia"`
 	CPU    int    `toml:"cpu"`
 }
 
 // Isolation holds namespace isolation settings.
+//
+// All fields are *bool for the same reason as the Settings booleans above.
 type Isolation struct {
-	Netns         bool `toml:"netns"`
-	IPC           bool `toml:"ipc"`
-	Process       bool `toml:"process"`
-	Devsys        bool `toml:"devsys"`
-	Groups        bool `toml:"groups"`
-	All           bool `toml:"all"`
-	UsernsNoLimit bool `toml:"userns-nolimit"`
+	Netns         *bool `toml:"netns"`
+	IPC           *bool `toml:"ipc"`
+	Process       *bool `toml:"process"`
+	Devsys        *bool `toml:"devsys"`
+	Groups        *bool `toml:"groups"`
+	All           *bool `toml:"all"`
+	UsernsNoLimit *bool `toml:"userns-nolimit"`
 }
 
 // Item represents a single [[container]] entry in the manifest file.
+//
+// StartNow and ForcePull are *bool for the same reason as the Settings
+// booleans above.
 type Item struct {
 	Name       string     `toml:"name"`
 	Image      string     `toml:"image"`
 	Clone      string     `toml:"clone"`
-	StartNow   bool       `toml:"start-now"`
-	ForcePull  bool       `toml:"force-pull"`
+	StartNow   *bool      `toml:"start-now"`
+	ForcePull  *bool      `toml:"force-pull"`
 	Include    string     `toml:"include"`
 	Additional Additional `toml:"additional"`
 	Exported   Exported   `toml:"exported"`

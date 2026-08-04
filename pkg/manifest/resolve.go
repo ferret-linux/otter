@@ -32,9 +32,59 @@ func Parse(ctx context.Context, filepath string) ([]Item, error) {
 		if m.Containers[i].Exported.Path == "" {
 			m.Containers[i].Exported.Path = env.Home + "/.local/bin"
 		}
+		finalizeBoolDefaults(&m.Containers[i])
 	}
 
 	return m.Containers, nil
+}
+
+// finalizeBoolDefaults ensures every *bool field on item is non-nil before
+// Parse returns, so callers never have to nil-check them. Any field still
+// nil at this point was never set by this item or any base it includes, so
+// it defaults to false — new(bool) conveniently yields a pointer to false.
+func finalizeBoolDefaults(item *Item) {
+	if item.StartNow == nil {
+		item.StartNow = new(bool)
+	}
+	if item.ForcePull == nil {
+		item.ForcePull = new(bool)
+	}
+	if item.Settings.Lock == nil {
+		item.Settings.Lock = new(bool)
+	}
+	if item.Settings.Entry == nil {
+		item.Settings.Entry = new(bool)
+	}
+	if item.Settings.Rootful == nil {
+		item.Settings.Rootful = new(bool)
+	}
+	if item.Settings.InitSystem == nil {
+		item.Settings.InitSystem = new(bool)
+	}
+	if item.Hardware.Nvidia == nil {
+		item.Hardware.Nvidia = new(bool)
+	}
+	if item.Isolation.Netns == nil {
+		item.Isolation.Netns = new(bool)
+	}
+	if item.Isolation.IPC == nil {
+		item.Isolation.IPC = new(bool)
+	}
+	if item.Isolation.Process == nil {
+		item.Isolation.Process = new(bool)
+	}
+	if item.Isolation.Devsys == nil {
+		item.Isolation.Devsys = new(bool)
+	}
+	if item.Isolation.Groups == nil {
+		item.Isolation.Groups = new(bool)
+	}
+	if item.Isolation.All == nil {
+		item.Isolation.All = new(bool)
+	}
+	if item.Isolation.UsernsNoLimit == nil {
+		item.Isolation.UsernsNoLimit = new(bool)
+	}
 }
 
 // resolveIncludes merges included container fields into each item that declares include.
@@ -111,10 +161,10 @@ func mergeItems(base, item Item) Item {
 	if item.Clone == "" {
 		item.Clone = base.Clone
 	}
-	if !item.StartNow {
+	if item.StartNow == nil {
 		item.StartNow = base.StartNow
 	}
-	if !item.ForcePull {
+	if item.ForcePull == nil {
 		item.ForcePull = base.ForcePull
 	}
 
@@ -134,57 +184,57 @@ func mergeItems(base, item Item) Item {
 	item.Hooks.PreInit = mergeSlices(base.Hooks.PreInit, item.Hooks.PreInit)
 	item.Hooks.PostInit = mergeSlices(base.Hooks.PostInit, item.Hooks.PostInit)
 
-	// Settings — item wins on non-zero
-	if !item.Settings.Lock {
+	// Settings — item wins if explicitly set (nil means never set)
+	if item.Settings.Lock == nil {
 		item.Settings.Lock = base.Settings.Lock
 	}
-	if !item.Settings.Entry {
+	if item.Settings.Entry == nil {
 		item.Settings.Entry = base.Settings.Entry
 	}
 	if item.Settings.Shell == "" {
 		item.Settings.Shell = base.Settings.Shell
 	}
-	if !item.Settings.Rootful {
+	if item.Settings.Rootful == nil {
 		item.Settings.Rootful = base.Settings.Rootful
 	}
-	if !item.Settings.InitSystem {
+	if item.Settings.InitSystem == nil {
 		item.Settings.InitSystem = base.Settings.InitSystem
 	}
 	if item.Settings.Hostname == "" {
 		item.Settings.Hostname = base.Settings.Hostname
 	}
 
-	// Hardware — item wins on non-zero
+	// Hardware — item wins if explicitly set (nil means never set)
 	if item.Hardware.Memory == "" {
 		item.Hardware.Memory = base.Hardware.Memory
 	}
-	if !item.Hardware.Nvidia {
+	if item.Hardware.Nvidia == nil {
 		item.Hardware.Nvidia = base.Hardware.Nvidia
 	}
 	if item.Hardware.CPU == 0 {
 		item.Hardware.CPU = base.Hardware.CPU
 	}
 
-	// Isolation — item wins on non-zero
-	if !item.Isolation.Netns {
+	// Isolation — item wins if explicitly set (nil means never set)
+	if item.Isolation.Netns == nil {
 		item.Isolation.Netns = base.Isolation.Netns
 	}
-	if !item.Isolation.IPC {
+	if item.Isolation.IPC == nil {
 		item.Isolation.IPC = base.Isolation.IPC
 	}
-	if !item.Isolation.Process {
+	if item.Isolation.Process == nil {
 		item.Isolation.Process = base.Isolation.Process
 	}
-	if !item.Isolation.Devsys {
+	if item.Isolation.Devsys == nil {
 		item.Isolation.Devsys = base.Isolation.Devsys
 	}
-	if !item.Isolation.Groups {
+	if item.Isolation.Groups == nil {
 		item.Isolation.Groups = base.Isolation.Groups
 	}
-	if !item.Isolation.All {
+	if item.Isolation.All == nil {
 		item.Isolation.All = base.Isolation.All
 	}
-	if !item.Isolation.UsernsNoLimit {
+	if item.Isolation.UsernsNoLimit == nil {
 		item.Isolation.UsernsNoLimit = base.Isolation.UsernsNoLimit
 	}
 

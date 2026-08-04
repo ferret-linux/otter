@@ -84,7 +84,7 @@ func (ac *AssembleCommand) Execute(ctx context.Context, opts AssembleOptions) er
 	}
 
 	for _, item := range items {
-		if item.Settings.Rootful {
+		if *item.Settings.Rootful {
 			if _, err := rootcheck.Validate(ctx, opts.SudoCommand); err != nil {
 				return fmt.Errorf("cannot run in root mode: %w", err)
 			}
@@ -132,7 +132,7 @@ func (ac *AssembleCommand) deleteItem(ctx context.Context, item manifest.Item) e
 	}
 
 	rmCmd := ac.rmCmd
-	if item.Settings.Rootful {
+	if *item.Settings.Rootful {
 		rmCmd = ac.rmCmdRoot
 	}
 
@@ -161,30 +161,30 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item) e
 		ContainerName:           item.Name,
 		ContainerImage:          item.Image,
 		ContainerHostname:       item.Settings.Hostname,
-		UnshareNetNs:            item.Isolation.Netns || item.Isolation.All,
-		UnshareDevsys:           item.Isolation.Devsys || item.Isolation.All,
-		UnshareGroups:           item.Isolation.Groups || item.Isolation.All || item.Settings.InitSystem,
-		UnshareIpc:              item.Isolation.IPC || item.Isolation.All,
-		UnshareProcess:          item.Isolation.Process || item.Isolation.All || item.Settings.InitSystem,
+		UnshareNetNs:            *item.Isolation.Netns || *item.Isolation.All,
+		UnshareDevsys:           *item.Isolation.Devsys || *item.Isolation.All,
+		UnshareGroups:           *item.Isolation.Groups || *item.Isolation.All || *item.Settings.InitSystem,
+		UnshareIpc:              *item.Isolation.IPC || *item.Isolation.All,
+		UnshareProcess:          *item.Isolation.Process || *item.Isolation.All || *item.Settings.InitSystem,
 		AdditionalFlags:         item.Additional.Flags,
 		AdditionalVolumes:       item.Additional.Volumes,
 		AdditionalPackages:      item.Additional.Packages,
 		ContainerPreInitHook:    ac.joinHooks(item.Hooks.PreInit),
 		ContainerInitHook:       ac.joinHooks(item.Hooks.PostInit),
 		ContainerUserCustomHome: "",
-		Init:                    item.Settings.InitSystem,
-		Nvidia:                  item.Hardware.Nvidia,
-		NoUsernsLimit:           item.Isolation.UsernsNoLimit,
+		Init:                    *item.Settings.InitSystem,
+		Nvidia:                  *item.Hardware.Nvidia,
+		NoUsernsLimit:           *item.Isolation.UsernsNoLimit,
 		Memory:                  item.Hardware.Memory,
 		CPUThreads:              item.Hardware.CPU,
-		GenerateEntry:           item.Settings.Entry,
-		Rootful:                 item.Settings.Rootful,
-		ContainerAlwaysPull:     item.ForcePull,
+		GenerateEntry:           *item.Settings.Entry,
+		Rootful:                 *item.Settings.Rootful,
+		ContainerAlwaysPull:     *item.ForcePull,
 		ContainerShell:          item.Settings.Shell,
 	}
 
 	createCmd := ac.createCmd
-	if item.Settings.Rootful {
+	if *item.Settings.Rootful {
 		createCmd = ac.createCmdRoot
 	}
 	_, err := createCmd.Execute(ctx, opts)
@@ -201,12 +201,12 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item) e
 		cleanupCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), assembleCleanupTimeout)
 		defer cancel()
 		rmCmd := ac.rmCmd
-		if item.Settings.Rootful {
+		if *item.Settings.Rootful {
 			rmCmd = ac.rmCmdRoot
 		}
 		if _, rmErr := rmCmd.Execute(cleanupCtx, RmOptions{
 			Force:          true,
-			Root:           item.Settings.Rootful,
+			Root:           *item.Settings.Rootful,
 			ContainerNames: []string{item.Name},
 		}); rmErr != nil {
 			ui.DefaultLogger.Warn("%s: %s", item.Name, rmErr)
@@ -219,9 +219,9 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item) e
 		return err
 	}
 
-	if item.Settings.Lock {
+	if *item.Settings.Lock {
 		lockCmd := ac.lockCmd
-		if item.Settings.Rootful {
+		if *item.Settings.Rootful {
 			lockCmd = ac.lockCmdRoot
 		}
 		if err := lockCmd.Execute(ctx, LockOptions{ContainerNames: []string{item.Name}}); err != nil {
@@ -260,7 +260,7 @@ func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) err
 	startCmd := ac.startCmd
 	stopCmd := ac.stopCmd
 	enterCmd := ac.enterCmd
-	if item.Settings.Rootful {
+	if *item.Settings.Rootful {
 		startCmd = ac.startCmdRoot
 		stopCmd = ac.stopCmdRoot
 		enterCmd = ac.enterCmdRoot
@@ -268,12 +268,12 @@ func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) err
 
 	hasExports := len(item.Exported.Apps) > 0 || len(item.Exported.Bins) > 0
 
-	if item.StartNow || hasExports {
+	if *item.StartNow || hasExports {
 		if err := startCmd.Execute(ctx, &StartOptions{ContainerNames: []string{item.Name}}); err != nil {
 			return err
 		}
 	}
-	if item.StartNow {
+	if *item.StartNow {
 		_, err := enterCmd.Execute(ctx, EnterOptions{
 			ContainerName: item.Name,
 			NoTTY:         true,
@@ -323,7 +323,7 @@ func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) err
 		}
 	}
 
-	if hasExports && !item.StartNow {
+	if hasExports && !*item.StartNow {
 		if err := stopCmd.Execute(ctx, &StopOptions{ContainerNames: []string{item.Name}}); err != nil {
 			return fmt.Errorf("failed to stop container '%s' after exporting: %w", item.Name, err)
 		}
