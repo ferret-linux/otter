@@ -86,7 +86,7 @@ pre_init_hook=""
 rootful=0
 upgrade=0
 verbose=0
-version="0.0.5"
+version="0.0.6"
 
 # show_help will print usage to stdout.
 # Arguments:
