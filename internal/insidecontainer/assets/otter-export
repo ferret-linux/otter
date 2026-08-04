@@ -158,6 +158,16 @@ dest_path        = args.dest_path
 extra_flags      = args.extra_flags
 enter_flags      = args.enter_flags
 
+# dest_path is the export destination as a *host* path — it's what
+# generate_script() embeds for otter-host-exec (which runs on the real
+# host, where /run/host doesn't exist) and what we show the user in
+# messages. Any actual filesystem I/O from inside the container must go
+# through the /run/host mirror instead: on a custom-home container the
+# real host home is bind-mounted only at /run/host<path>, not at its own
+# literal path, so writing to the bare dest_path silently lands in the
+# container's own ephemeral filesystem instead of the real host directory.
+dest_path_container = f"/run/host{dest_path}"
+
 if args.list_apps:
     export_action = "list-apps"
 elif args.list_binaries:
@@ -168,7 +178,7 @@ elif exported_bin:
     export_action = "bin"
 
 # Ensure we can write stuff there
-Path(dest_path).mkdir(parents=True, exist_ok=True)
+Path(dest_path_container).mkdir(parents=True, exist_ok=True)
 
 # Check we're running inside a container and not on the host
 if (
@@ -271,9 +281,9 @@ def export_binary():
         return 127
 
     bin_suffix = f"rootful-{container_name}" if rootful else container_name
-    dest_file = Path(dest_path) / f"{os.path.basename(exported_bin)}-{bin_suffix}"
+    dest_file = Path(dest_path_container) / f"{os.path.basename(exported_bin)}-{bin_suffix}"
 
-    Path(dest_path).mkdir(parents=True, exist_ok=True)
+    Path(dest_path_container).mkdir(parents=True, exist_ok=True)
 
     if exported_delete:
         if "otter_binary" not in dest_file.read_text():
@@ -516,7 +526,7 @@ def list_exported_applications():
 
 def list_exported_binaries():
     result = subprocess.run(
-        ["find", dest_path, "-type", "f", "-print"],
+        ["find", dest_path_container, "-type", "f", "-print"],
         capture_output=True, text=True
     )
     container_id = os.environ.get("CONTAINER_ID", "")
