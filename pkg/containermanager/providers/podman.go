@@ -275,6 +275,14 @@ func (p *Podman) makeCreateCommand(
 	//
 	// This happens ONLY with podman+runc, docker & nerdctl is unaffected,
 	// so let's do this only if we have podman AND runc.
+	//
+	// Note: hostRootMountsForRunc enumerates the host's top-level directories once,
+	// at container creation time, and bakes one --volume flag per directory into the
+	// container. If a new top-level directory is added under host / afterward (e.g. a
+	// new drive mounted at /data), it will NOT be visible inside an existing
+	// Podman+runc container at /run/host/data — the container must be recreated to
+	// pick it up. Docker/nerdctl/Podman-without-runc, which use a single
+	// /:/run/host mount, don't have this limitation.
 	if p.usesRunc(ctx) {
 		options = append(options, hostRootMountsForRunc(ctx)...)
 	} else {
