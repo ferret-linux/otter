@@ -12,8 +12,8 @@ func defaults() fileConfig {
 		},
 		Images: imagesConfig{
 			Default:                    "ghcr.io/ferret-linux/ubuntu-otr:lts",
-			StalenessWarnThreshold:     1,
-			StalenessAutopullThreshold: 3,
+			StalenessWarnThreshold:     5,
+			StalenessAutopullThreshold: 10,
 		},
 		Preferences: preferencesConfig{
 			ContainerManager: "autodetect",
