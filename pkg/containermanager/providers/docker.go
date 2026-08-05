@@ -17,6 +17,7 @@ import (
 	"github.com/ferret-linux/otter/internal/insidecontainer"
 	"github.com/ferret-linux/otter/internal/userenv"
 	"github.com/ferret-linux/otter/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/ttyutil"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
@@ -889,7 +890,7 @@ func (d *Docker) generateEnterCommand(
 
 	// TTY allocation — auto-detect headless mode like the shell version:
 	// if stdin or stdout is not a terminal, skip --tty.
-	if !noTTY && containermanager.IsTTY() {
+	if !noTTY && ttyutil.IsTTY() {
 		cmd = append(cmd, "--tty")
 	}
 

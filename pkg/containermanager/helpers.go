@@ -194,18 +194,6 @@ func FilterEnvVars() []string {
 	return result
 }
 
-// IsTTY returns true if both stdin and stdout are terminals.
-// Mirrors the shell's: if [ ! -t 0 ] || [ ! -t 1 ]; then headless=1; fi
-func IsTTY() bool {
-	if fi, err := os.Stdin.Stat(); err != nil || fi.Mode()&os.ModeCharDevice == 0 {
-		return false
-	}
-	if fi, err := os.Stdout.Stat(); err != nil || fi.Mode()&os.ModeCharDevice == 0 {
-		return false
-	}
-	return true
-}
-
 func GetWorkDir(hostHome, containerHome string, noWorkDir bool) (string, error) {
 	workDir, err := os.Getwd()
 	if err != nil {

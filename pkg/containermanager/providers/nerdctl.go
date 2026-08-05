@@ -16,6 +16,7 @@ import (
 	"github.com/ferret-linux/otter/internal/insidecontainer"
 	"github.com/ferret-linux/otter/internal/userenv"
 	"github.com/ferret-linux/otter/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/ttyutil"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
@@ -704,7 +705,7 @@ func (n *Nerdctl) generateEnterCommand(
 		cmd = append(cmd, fmt.Sprintf("--user=%s", userEnv.User))
 	}
 
-	if !noTTY && containermanager.IsTTY() {
+	if !noTTY && ttyutil.IsTTY() {
 		cmd = append(cmd, "--tty")
 	}
 
