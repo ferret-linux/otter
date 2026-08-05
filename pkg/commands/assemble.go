@@ -35,19 +35,17 @@ type AssembleOptions struct {
 }
 
 type AssembleCommand struct {
-	createCmd     *CreateCommand
-	rmCmd         *RmCommand
-	lockCmd       *LockCommand
-	startCmd      *StartCommand
-	stopCmd       *StopCommand
-	enterCmd      *EnterCommand
-	createCmdRoot *CreateCommand
-	rmCmdRoot     *RmCommand
-	lockCmdRoot   *LockCommand
-	startCmdRoot  *StartCommand
-	stopCmdRoot   *StopCommand
-	enterCmdRoot  *EnterCommand
-	progress      *ui.Progress
+	createCmd            *CreateCommand
+	rmCmd                *RmCommand
+	lockCmd              *LockCommand
+	containerManager     containermanager.ContainerManager
+	enterCmd             *EnterCommand
+	createCmdRoot        *CreateCommand
+	rmCmdRoot            *RmCommand
+	lockCmdRoot          *LockCommand
+	containerManagerRoot containermanager.ContainerManager
+	enterCmdRoot         *EnterCommand
+	progress             *ui.Progress
 }
 
 func NewAssembleCommand(
@@ -56,19 +54,17 @@ func NewAssembleCommand(
 ) *AssembleCommand {
 	cmRoot := cm.CloneAsRoot()
 	return &AssembleCommand{
-		createCmd:     NewCreateCommand(cfg, cm, ui.NewDevNullProgress()),
-		rmCmd:         NewRmCommand(cm),
-		lockCmd:       NewLockCommand(cm),
-		startCmd:      NewStartCommand(cm),
-		stopCmd:       NewStopCommand(cm),
-		enterCmd:      NewEnterCommand(cm),
-		createCmdRoot: NewCreateCommand(cfg, cmRoot, ui.NewDevNullProgress()),
-		rmCmdRoot:     NewRmCommand(cmRoot),
-		lockCmdRoot:   NewLockCommand(cmRoot),
-		startCmdRoot:  NewStartCommand(cmRoot),
-		stopCmdRoot:   NewStopCommand(cmRoot),
-		enterCmdRoot:  NewEnterCommand(cmRoot),
-		progress:      ui.NewProgress(os.Stderr),
+		createCmd:            NewCreateCommand(cfg, cm, ui.NewDevNullProgress()),
+		rmCmd:                NewRmCommand(cm),
+		lockCmd:              NewLockCommand(cm),
+		containerManager:     cm,
+		enterCmd:             NewEnterCommand(cm),
+		createCmdRoot:        NewCreateCommand(cfg, cmRoot, ui.NewDevNullProgress()),
+		rmCmdRoot:            NewRmCommand(cmRoot),
+		lockCmdRoot:          NewLockCommand(cmRoot),
+		containerManagerRoot: cmRoot,
+		enterCmdRoot:         NewEnterCommand(cmRoot),
+		progress:             ui.NewProgress(os.Stderr),
 	}
 }
 
@@ -257,20 +253,18 @@ func (ac *AssembleCommand) joinHooks(hooks []string) string {
 }
 
 func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) error {
-	startCmd := ac.startCmd
-	stopCmd := ac.stopCmd
+	cm := ac.containerManager
 	enterCmd := ac.enterCmd
 	if *item.Settings.Rootful {
-		startCmd = ac.startCmdRoot
-		stopCmd = ac.stopCmdRoot
+		cm = ac.containerManagerRoot
 		enterCmd = ac.enterCmdRoot
 	}
 
 	hasExports := len(item.Exported.Apps) > 0 || len(item.Exported.Bins) > 0
 
 	if *item.StartNow || hasExports {
-		if err := startCmd.Execute(ctx, &StartOptions{ContainerNames: []string{item.Name}}); err != nil {
-			return err
+		if err := cm.Start(ctx, item.Name); err != nil {
+			return fmt.Errorf("failed to start container '%s': %w", item.Name, err)
 		}
 	}
 	if *item.StartNow {
@@ -324,7 +318,7 @@ func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) err
 	}
 
 	if hasExports && !*item.StartNow {
-		if err := stopCmd.Execute(ctx, &StopOptions{ContainerNames: []string{item.Name}}); err != nil {
+		if err := cm.Stop(ctx, []string{item.Name}, false); err != nil {
 			return fmt.Errorf("failed to stop container '%s' after exporting: %w", item.Name, err)
 		}
 	}
