@@ -16,16 +16,14 @@ type RestartOptions struct {
 }
 
 type RestartCommand struct {
-	stopCmd  *StopCommand
-	startCmd *StartCommand
-	listCmd  *ListCommand
+	containerManager containermanager.ContainerManager
+	listCmd          *ListCommand
 }
 
 func NewRestartCommand(cm containermanager.ContainerManager) *RestartCommand {
 	return &RestartCommand{
-		stopCmd:  NewStopCommand(cm),
-		startCmd: NewStartCommand(cm),
-		listCmd:  NewListCommand(cm),
+		containerManager: cm,
+		listCmd:          NewListCommand(cm),
 	}
 }
 
@@ -51,16 +49,11 @@ func (c *RestartCommand) Execute(ctx context.Context, opts *RestartOptions) erro
 	}
 
 	outcome := runBatch(ctx, containerNames, func(ctx context.Context, name string) (bool, error) {
-		if err := c.stopCmd.Execute(ctx, &StopOptions{
-			ContainerNames: []string{name},
-			Force:          opts.Force,
-		}); err != nil {
+		if err := c.containerManager.Stop(ctx, []string{name}, opts.Force); err != nil {
 			ui.DefaultLogger.Error("failed to restart '%s': %s", name, err)
 			return false, err
 		}
-		if err := c.startCmd.Execute(ctx, &StartOptions{
-			ContainerNames: []string{name},
-		}); err != nil {
+		if err := c.containerManager.Start(ctx, name); err != nil {
 			ui.DefaultLogger.Error("failed to restart '%s': %s", name, err)
 			return false, err
 		}

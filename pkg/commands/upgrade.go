@@ -26,7 +26,6 @@ type UpgradeCommand struct {
 	cfg              *config.Values
 	containerManager containermanager.ContainerManager
 	listCmd          *ListCommand
-	startCmd         *StartCommand
 	enterCmd         *EnterCommand
 }
 
@@ -38,7 +37,6 @@ func NewUpgradeCommand(
 		cfg:              cfg,
 		containerManager: cm,
 		listCmd:          NewListCommand(cm),
-		startCmd:         NewStartCommand(cm),
 		enterCmd:         NewEnterCommand(cm),
 	}
 }
@@ -105,9 +103,7 @@ func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string) erro
 		ui.DefaultLogger.Info("otter scripts already up to date")
 	}
 
-	if err := c.startCmd.Execute(ctx, &StartOptions{
-		ContainerNames: []string{name},
-	}); err != nil {
+	if err := c.containerManager.Start(ctx, name); err != nil {
 		return fmt.Errorf("failed to start container '%s' for upgrade: %w", name, err)
 	}
 
