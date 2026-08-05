@@ -150,28 +150,6 @@
       "build_number": 22
     },
     {
-      "name": "centos",
-      "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
-      "fallback_vendor_image": "quay.io/centos/centos:stream10",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-05T12:43:02Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1582868423,
-          "disk_size": 1582868423
-        },
-        "arm64": {
-          "compressed_size": 1557323885,
-          "disk_size": 1557323885
-        }
-      },
-      "build_number": 22
-    },
-    {
       "name": "alma",
       "official_image": "ghcr.io/ferret-linux/alma-otr:stable",
       "fallback_vendor_image": "docker.io/library/almalinux:latest",
@@ -590,6 +568,28 @@
         }
       },
       "build_number": 22
+    },
+    {
+      "name": "centos",
+      "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
+      "fallback_vendor_image": "quay.io/centos/centos:stream10",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-05T13:30:06Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1582869447,
+          "disk_size": 1582869447
+        },
+        "arm64": {
+          "compressed_size": 1557325938,
+          "disk_size": 1557325938
+        }
+      },
+      "build_number": 23
     }
   ]
 }
