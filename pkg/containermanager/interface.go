@@ -1,6 +1,9 @@
 package containermanager
 
-import "context"
+import (
+	"context"
+	"io"
+)
 
 const (
 	RunningStatus = "running"
@@ -9,6 +12,15 @@ const (
 
 //nolint:revive // ContainerManagerType is intentionally named for clarity despite the stutter
 type ContainerManagerType string
+
+// PullOutput is where PullImage streams its pull output when the caller
+// wants it rendered live, and reports the terminal size that output
+// should be sized to. A nil PullOutput means "no live rendering" — today's
+// buffered, silent-until-error behavior.
+type PullOutput interface {
+	io.Writer
+	Size() (cols, rows int)
+}
 
 type ContainerManager interface {
 	Name() string
@@ -29,7 +41,7 @@ type ContainerManager interface {
 	Start(ctx context.Context, containerName string) error
 	Stop(ctx context.Context, containerNames []string, force bool) error
 	InspectContainer(ctx context.Context, containerName string) (*InspectResult, error)
-	PullImage(ctx context.Context, imageName string, platform string) error
+	PullImage(ctx context.Context, imageName string, platform string, out PullOutput) error
 	RemoveImage(ctx context.Context, imageName string, force bool) error
 	Commit(ctx context.Context, containerID string, imageTag string) error
 	// CopyFromContainer copies a file from the container filesystem to the host.

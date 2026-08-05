@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/ferret-linux/otter/internal/insidecontainer"
+	"github.com/ferret-linux/otter/internal/ptyrun"
 	"github.com/ferret-linux/otter/internal/userenv"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ttyutil"
@@ -844,15 +845,26 @@ func (d *Docker) ImageLabel(ctx context.Context, imageName, key string) (string,
 	return value, true
 }
 
-func (d *Docker) PullImage(ctx context.Context, imageName string, platform string) error {
+func (d *Docker) PullImage(ctx context.Context, imageName string, platform string, out containermanager.PullOutput) error {
 	var args []string
 	if platform != "" {
 		args = []string{"pull", "--platform", platform, imageName}
 	} else {
 		args = []string{"pull", imageName}
 	}
-	_, err := d.run(ctx, args, runOptions{})
-	return err
+
+	if out == nil {
+		_, err := d.run(ctx, args, runOptions{})
+		return err
+	}
+
+	command := d.binary
+	if d.root {
+		args = append([]string{command}, args...)
+		command = d.sudoCommand
+	}
+	cmd := exec.CommandContext(ctx, command, args...) //nolint:gosec // command/args are resolved the same way run() resolves them above
+	return ptyrun.Run(cmd, out, out)
 }
 
 func (d *Docker) generateEnterCommand(

@@ -3,8 +3,10 @@ package registry
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/ferret-linux/otter/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/ttyutil"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
@@ -27,7 +29,20 @@ func Pull(
 	ui.DefaultLogger.Info("large images may take a while, please be patient...")
 	progress.Next("pulling '%s'...", imageRef)
 
-	if err := cm.PullImage(ctx, imageRef, platform); err != nil {
+	var out containermanager.PullOutput
+	var box *ui.LiveBox
+	if ttyutil.IsInteractive() {
+		box = ui.NewLiveBox(os.Stderr)
+		box.Start()
+		out = box
+	}
+
+	err := cm.PullImage(ctx, imageRef, platform, out)
+	if box != nil {
+		box.Close()
+	}
+
+	if err != nil {
 		progress.Fail()
 		return fmt.Errorf("failed to pull image '%s': %w", imageRef, err)
 	}

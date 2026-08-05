@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/ferret-linux/otter/internal/insidecontainer"
+	"github.com/ferret-linux/otter/internal/ptyrun"
 	"github.com/ferret-linux/otter/internal/userenv"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ttyutil"
@@ -646,15 +647,26 @@ func (p *Podman) ImageLabel(ctx context.Context, imageName, key string) (string,
 	return value, true
 }
 
-func (p *Podman) PullImage(ctx context.Context, imageName string, platform string) error {
+func (p *Podman) PullImage(ctx context.Context, imageName string, platform string, out containermanager.PullOutput) error {
 	var args []string
 	if platform != "" {
 		args = []string{"pull", "--platform", platform, imageName}
 	} else {
 		args = []string{"pull", imageName}
 	}
-	_, err := p.run(ctx, args, runOptions{})
-	return err
+
+	if out == nil {
+		_, err := p.run(ctx, args, runOptions{})
+		return err
+	}
+
+	command := p.binary
+	if p.root {
+		args = append([]string{command}, args...)
+		command = p.sudoCommand
+	}
+	cmd := exec.CommandContext(ctx, command, args...) //nolint:gosec // command/args are resolved the same way run() resolves them above
+	return ptyrun.Run(cmd, out, out)
 }
 
 func (p *Podman) RemoveImage(ctx context.Context, imageName string, force bool) error {

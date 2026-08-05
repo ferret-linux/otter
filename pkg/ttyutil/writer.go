@@ -12,3 +12,12 @@ func IsTerminalWriter(w io.Writer) bool {
 	f, ok := w.(*os.File)
 	return ok && IsTerminal(f)
 }
+
+// IsInteractive reports whether the process's real stderr is an
+// interactive terminal. Unlike a Progress's own writer (which callers may
+// point at io.Discard to silence status messages), this checks the real
+// terminal independently, so callers can show terminal-only UI (like a
+// live-updating box) even while Progress itself stays silent.
+func IsInteractive() bool {
+	return IsTerminal(os.Stderr)
+}
