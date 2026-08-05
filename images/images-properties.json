@@ -238,23 +238,6 @@
       "build_number": 22
     },
     {
-      "name": "devuan",
-      "official_image": "ghcr.io/ferret-linux/devuan-otr:stable",
-      "fallback_vendor_image": "docker.io/devuan/devuan:stable",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-05T18:29:16Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1428003915,
-          "disk_size": 1428003915
-        }
-      },
-      "build_number": 23
-    },
-    {
       "name": "rhel",
       "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
       "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest",
@@ -590,6 +573,23 @@
         }
       },
       "build_number": 25
+    },
+    {
+      "name": "devuan",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:stable",
+      "fallback_vendor_image": "docker.io/devuan/devuan:stable",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-05T23:00:47Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1428003913,
+          "disk_size": 1428003913
+        }
+      },
+      "build_number": 24
     }
   ]
 }
