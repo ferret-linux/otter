@@ -47,6 +47,7 @@ RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman --
     time \
     tree \
     wget \
+    base \
     glibc \
     gnupg \
     rsync \

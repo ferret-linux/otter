@@ -19,10 +19,12 @@ RUN touch /usr/lib/otter/container.chimera
 
 # Upgrade all packages
 RUN apk update && apk upgrade
-RUN apk add base-bootstrap && apk upgrade -Ua
-
 # Enable Chimera's user repo for additional packages
 RUN apk add chimera-repo-user && apk update
+# Add bootstrap packages
+RUN apk add base-bootstrap && apk upgrade -Ua
+# Upgrade all packages
+RUN apk update && apk upgrade
 
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
