@@ -21,6 +21,8 @@ RUN touch /usr/lib/otter/container.rhel-official
 RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf 2>/dev/null || \
     sed -i '/tsflags=nodocs/d' /etc/yum.conf 2>/dev/null || true
 
+# Install epel repos
+RUN dnf install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm"
 # Upgrade all packages
 RUN dnf upgrade -y
 
