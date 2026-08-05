@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/ferret-linux/otter/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 type StartOptions struct {
@@ -26,7 +27,9 @@ func NewStartCommand(cm containermanager.ContainerManager) *StartCommand {
 }
 
 func (c *StartCommand) Execute(ctx context.Context, opts *StartOptions) error {
-	if opts.All {
+	var containerNames []string
+	switch {
+	case opts.All:
 		containers, err := c.listCmd.Execute(ctx, ListOptions{})
 		if err != nil {
 			return fmt.Errorf("failed to list containers: %w", err)
@@ -35,22 +38,26 @@ func (c *StartCommand) Execute(ctx context.Context, opts *StartOptions) error {
 			return ErrNoContainersFound
 		}
 		for _, container := range containers.Containers {
-			if err := c.startOne(ctx, container.Name); err != nil {
-				return err
-			}
+			containerNames = append(containerNames, container.Name)
 		}
-		return nil
-	}
-
-	if len(opts.ContainerNames) == 0 {
+	case len(opts.ContainerNames) > 0:
+		containerNames = opts.ContainerNames
+	default:
 		return errors.New("please specify a container name or use --all")
 	}
-	for _, name := range opts.ContainerNames {
+
+	outcome := runBatch(ctx, containerNames, func(ctx context.Context, name string) (bool, error) {
 		if err := c.startOne(ctx, name); err != nil {
-			return err
+			ui.DefaultLogger.Error("%s", err)
+			return false, err
 		}
-	}
-	return nil
+		return false, nil
+	})
+
+	return summarizeBatch(outcome, batchSummaryConfig{
+		PastVerb: "started",
+		BaseVerb: "start",
+	})
 }
 
 func (c *StartCommand) startOne(ctx context.Context, containerName string) error {

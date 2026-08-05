@@ -48,18 +48,22 @@ func (c *UnlockCommand) Execute(ctx context.Context, opts UnlockOptions) error {
 		return errors.New("please specify a container name or use --all")
 	}
 
-	var lastErr error
-	for _, name := range containerNames {
+	outcome := runBatch(ctx, containerNames, func(ctx context.Context, name string) (bool, error) {
 		if err := c.unlockOne(ctx, name); err != nil {
 			if errors.Is(err, ErrNotLocked) {
 				ui.DefaultLogger.Warn("'%s' is already unlocked, skipping", name)
-				continue
+				return true, nil
 			}
 			ui.DefaultLogger.Error("failed to unlock '%s': %s", name, err)
-			lastErr = err
+			return false, err
 		}
-	}
-	return lastErr
+		return false, nil
+	})
+
+	return summarizeBatch(outcome, batchSummaryConfig{
+		PastVerb: "unlocked",
+		BaseVerb: "unlock",
+	})
 }
 
 func (c *UnlockCommand) unlockOne(ctx context.Context, name string) error {

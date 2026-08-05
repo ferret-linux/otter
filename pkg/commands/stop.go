@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/ferret-linux/otter/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 type StopCommand struct {
@@ -49,15 +50,23 @@ func (c *StopCommand) Execute(ctx context.Context, opts *StopOptions) error {
 		return errors.New("please specify a container name or use --all")
 	}
 
-	for _, name := range containerNames {
+	outcome := runBatch(ctx, containerNames, func(ctx context.Context, name string) (bool, error) {
 		if _, err := c.containerManager.InspectContainer(ctx, name); err != nil {
-			return fmt.Errorf("container '%s' not found", name)
+			err = fmt.Errorf("container '%s' not found", name)
+			ui.DefaultLogger.Error("%s", err)
+			return false, err
 		}
-	}
+		if err := c.containerManager.Stop(ctx, []string{name}, opts.Force); err != nil {
+			err = fmt.Errorf("failed to stop '%s': %w", name, err)
+			ui.DefaultLogger.Error("%s", err)
+			return false, err
+		}
+		ui.DefaultLogger.Ok("stopped '%s'", name)
+		return false, nil
+	})
 
-	if err := c.containerManager.Stop(ctx, containerNames, opts.Force); err != nil {
-		return fmt.Errorf("failed to stop containers: %w", err)
-	}
-
-	return nil
+	return summarizeBatch(outcome, batchSummaryConfig{
+		PastVerb: "stopped",
+		BaseVerb: "stop",
+	})
 }

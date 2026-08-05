@@ -51,18 +51,22 @@ func (c *LockCommand) Execute(ctx context.Context, opts LockOptions) error {
 		return errors.New("please specify a container name or use --all")
 	}
 
-	var lastErr error
-	for _, name := range containerNames {
+	outcome := runBatch(ctx, containerNames, func(ctx context.Context, name string) (bool, error) {
 		if err := c.lockOne(ctx, name); err != nil {
 			if errors.Is(err, ErrAlreadyLocked) {
 				ui.DefaultLogger.Warn("'%s' is already locked, skipping", name)
-				continue
+				return true, nil
 			}
 			ui.DefaultLogger.Error("failed to lock '%s': %s", name, err)
-			lastErr = err
+			return false, err
 		}
-	}
-	return lastErr
+		return false, nil
+	})
+
+	return summarizeBatch(outcome, batchSummaryConfig{
+		PastVerb: "locked",
+		BaseVerb: "lock",
+	})
 }
 
 func (c *LockCommand) lockOne(ctx context.Context, name string) error {

@@ -76,27 +76,24 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 		return errors.New("please specify a container name or use --all")
 	}
 
-	var lastErr error
-	var attempted, lockedCount int
-
-	for _, name := range containerNames {
+	outcome := runBatch(ctx, containerNames, func(ctx context.Context, name string) (bool, error) {
 		if isLocked(ctx, c.containerManager, name) {
-			lockedCount++
 			ui.DefaultLogger.Warn("'%s' is locked, skipping", name)
-			continue
+			return true, nil
 		}
-		attempted++
 		if err := c.upgradeContainer(ctx, name); err != nil {
-			lastErr = fmt.Errorf("failed while upgrading %s: %w", name, err)
-			continue
+			ui.DefaultLogger.Error("failed while upgrading '%s': %s", name, err)
+			return false, err
 		}
-	}
+		return false, nil
+	})
 
-	if attempted == 0 && lockedCount > 0 {
-		return errors.New("all requested containers are locked, run 'otter unlock' first")
-	}
-
-	return lastErr
+	return summarizeBatch(outcome, batchSummaryConfig{
+		PastVerb:          "upgraded",
+		BaseVerb:          "upgrade",
+		AllSkippedMessage: "all requested containers are locked, run 'otter unlock' first",
+		AllSkippedIsError: true,
+	})
 }
 
 func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string) error {

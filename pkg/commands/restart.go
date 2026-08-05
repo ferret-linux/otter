@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/ferret-linux/otter/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 type RestartOptions struct {
@@ -49,19 +50,26 @@ func (c *RestartCommand) Execute(ctx context.Context, opts *RestartOptions) erro
 		return errors.New("please specify a container name or use --all")
 	}
 
-	for _, name := range containerNames {
+	outcome := runBatch(ctx, containerNames, func(ctx context.Context, name string) (bool, error) {
 		if err := c.stopCmd.Execute(ctx, &StopOptions{
 			ContainerNames: []string{name},
 			Force:          opts.Force,
 		}); err != nil {
-			return fmt.Errorf("failed to stop '%s': %w", name, err)
+			ui.DefaultLogger.Error("failed to restart '%s': %s", name, err)
+			return false, err
 		}
 		if err := c.startCmd.Execute(ctx, &StartOptions{
 			ContainerNames: []string{name},
 		}); err != nil {
-			return fmt.Errorf("failed to start '%s': %w", name, err)
+			ui.DefaultLogger.Error("failed to restart '%s': %s", name, err)
+			return false, err
 		}
-	}
+		ui.DefaultLogger.Ok("restarted '%s'", name)
+		return false, nil
+	})
 
-	return nil
+	return summarizeBatch(outcome, batchSummaryConfig{
+		PastVerb: "restarted",
+		BaseVerb: "restart",
+	})
 }

@@ -58,23 +58,28 @@ func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, 
 	userEnv := userenv.LoadUserEnvironment(ctx)
 	userHome := userEnv.Home
 
-	var removedOtterContainers []containermanager.Container
-	for _, currentOtterContainer := range otterContainersToRemove {
-		if !options.BypassLock && isLocked(ctx, c.containerManager, currentOtterContainer.Name) {
-			if options.All {
-				ui.DefaultLogger.Warn("'%s' is locked, skipping", currentOtterContainer.Name)
-				continue
-			}
-			ui.DefaultLogger.Error("'%s' is locked, run 'otter unlock %s' first", currentOtterContainer.Name, currentOtterContainer.Name)
-			continue
-		}
-		err := c.removeContainer(ctx, currentOtterContainer, options.Force, options.RemoveHome, userHome, options.Root)
-		if err != nil {
-			ui.DefaultLogger.Error("failed deleting %s: %s", currentOtterContainer.Name, err)
-		} else {
-			removedOtterContainers = append(removedOtterContainers, currentOtterContainer)
-		}
+	containersByName := make(map[string]containermanager.Container, len(otterContainersToRemove))
+	containerNames := make([]string, 0, len(otterContainersToRemove))
+	for _, container := range otterContainersToRemove {
+		containersByName[container.Name] = container
+		containerNames = append(containerNames, container.Name)
 	}
+
+	var removedOtterContainers []containermanager.Container
+	outcome := runBatch(ctx, containerNames, func(ctx context.Context, name string) (bool, error) {
+		container := containersByName[name]
+		if !options.BypassLock && isLocked(ctx, c.containerManager, name) {
+			ui.DefaultLogger.Warn("'%s' is locked, run 'otter unlock %s' first, skipping", name, name)
+			return true, nil
+		}
+		if err := c.removeContainer(ctx, container, options.Force, options.RemoveHome, userHome, options.Root); err != nil {
+			ui.DefaultLogger.Error("failed to remove '%s': %s", name, err)
+			return false, err
+		}
+		removedOtterContainers = append(removedOtterContainers, container)
+		ui.DefaultLogger.Ok("removed '%s'", name)
+		return false, nil
+	})
 
 	if len(otterContainersToRemove) == 0 && options.All {
 		ui.DefaultLogger.Warn("no containers found to remove")
@@ -88,15 +93,18 @@ func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, 
 		}
 	}
 
-	if len(removedOtterContainers) > 0 {
-		names := make([]string, len(removedOtterContainers))
-		for i, c := range removedOtterContainers {
-			names[i] = c.Name
-		}
-		ui.DefaultLogger.Ok("removed, %s", strings.Join(names, " "))
+	if len(containerNames) == 0 {
+		return &RmResult{Containers: removedOtterContainers}, nil
 	}
 
-	return &RmResult{Containers: removedOtterContainers}, nil
+	err = summarizeBatch(outcome, batchSummaryConfig{
+		PastVerb:          "removed",
+		BaseVerb:          "remove",
+		AllSkippedMessage: "all requested containers are locked, run 'otter unlock' first",
+		AllSkippedIsError: true,
+	})
+
+	return &RmResult{Containers: removedOtterContainers}, err
 }
 
 func (c *RmCommand) removeContainer(
