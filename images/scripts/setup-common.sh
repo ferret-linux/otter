@@ -10,11 +10,13 @@
 
 # Make common otter specific dir's
 mkdir -p \
+    /usr/libexec/ \
     /etc/profile.d \
     /etc/sudoers.d \
     /usr/lib/otter \
     /usr/local/bin \
-    /usr/libexec/
+    /usr/lib/otter/scripts \
+    /usr/lib/otter/helpers 
 
 # Add generic image identifier
 touch /usr/lib/otter/container.official
