@@ -111,6 +111,12 @@ RUN echo "LANG=en_US.UTF-8" > /etc/locale.conf
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
     && echo "UTC" > /etc/timezone
 
+# Zypper cleanup
+RUN zypper refresh && \
+    zypper update -y && \
+    zypper remove-orphans && \
+    zypper clean
+
 # Cleanup
 RUN zypper clean --all \
     && rm -rf \

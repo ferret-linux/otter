@@ -70,6 +70,7 @@ RUN emerge --ask=n --autounmask-continue --noreplace --quiet-build --getbinpkg -
     media-video/pipewire \
     media-libs/gstreamer \
     media-libs/gst-libav \
+    app-portage/gentoolkit \
     media-video/wireplumber \
     app-shells/bash-completion \
     media-libs/gst-plugins-bad \
@@ -85,6 +86,13 @@ RUN sed -i "s|#.*en_US.UTF-8|en_US.UTF-8|g" /etc/locale.gen \
 # Timezone default
 RUN echo "UTC" > /etc/timezone \
     && emerge --config sys-libs/timezone-data
+
+# Portage cleanup
+RUN emerge --sync && \
+    emerge -uDN @world && \
+    emerge --depclean && \
+    eclean distfiles && \
+    eclean packages
 
 # Cleanup
 RUN rm -rf \

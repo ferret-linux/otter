@@ -114,6 +114,13 @@ RUN sed -i "s|# en_US.UTF-8|en_US.UTF-8|g" /etc/locale.gen \
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
     && echo "UTC" > /etc/timezone
 
+# Apt cleanup
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get autoremove -y && \
+    apt-get autoclean && \
+    apt-get clean
+
 # Cleanup
 RUN apt-get clean \
     && rm -rf \

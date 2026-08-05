@@ -110,6 +110,11 @@ RUN if [ -f /etc/default/libc-locales ]; then \
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
     && echo "UTC" > /etc/timezone
 
+# Xbps cleanup
+RUN xbps-install -Su && \
+    xbps-remove -O && \
+    xbps-remove -o
+
 # Cleanup
 RUN rm -rf \
     /var/cache/xbps/* \

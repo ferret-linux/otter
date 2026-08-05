@@ -99,6 +99,11 @@ RUN localedef -i en_US -f UTF-8 en_US.UTF-8
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
     && echo "UTC" > /etc/timezone
 
+# Dnf cleanup
+RUN dnf upgrade -y && \
+    dnf autoremove -y && \
+    dnf clean all
+
 # Cleanup
 RUN dnf clean all \
     && rm -rf \

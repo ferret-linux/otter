@@ -95,6 +95,11 @@ RUN apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
     && echo "UTC" > /etc/timezone
 
+# Apk cleanup
+RUN apk update && \
+    apk upgrade && \
+    apk cache clean
+
 # Cleanup
 RUN rm -rf \
     /var/cache/apk/* \

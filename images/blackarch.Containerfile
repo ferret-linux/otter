@@ -97,6 +97,11 @@ RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman --
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
     && echo "UTC" > /etc/timezone
 
+# Pacman cleanup
+RUN pacman -Syy && \
+    pacman -Syu && \
+    pacman -Scc
+
 # Cleanup
 RUN rm -rf \
     /var/cache/pacman/pkg/* \
