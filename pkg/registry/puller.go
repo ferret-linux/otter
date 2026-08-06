@@ -8,6 +8,9 @@ import (
 	"strings"
 	"sync"
 
+	"charm.land/lipgloss/v2"
+	"golang.org/x/term"
+
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ttyutil"
 	"github.com/ferret-linux/otter/pkg/ui"
@@ -35,12 +38,25 @@ type scrollWindow struct {
 	lines   []string // fixed-size ring, oldest-to-newest, blank-padded
 	partial []byte   // bytes received since the last '\n'
 	drawn   bool
+
+	style      lipgloss.Style // bordered box style, fixed at 50% of the terminal width
+	innerWidth int            // content width inside the box's border and padding
 }
 
 func newScrollWindow(w io.Writer) *scrollWindow {
+	width := 80
+	if ww, _, err := term.GetSize(int(os.Stderr.Fd())); err == nil {
+		width = ww
+	}
+
+	boxWidth := width / 2
+	style := ui.BorderStyle(boxWidth)
+
 	return &scrollWindow{
-		w:     w,
-		lines: make([]string, pullWindowLines),
+		w:          w,
+		lines:      make([]string, pullWindowLines),
+		style:      style,
+		innerWidth: boxWidth - style.GetHorizontalFrameSize(),
 	}
 }
 
@@ -51,17 +67,28 @@ func (s *scrollWindow) Start() {
 	s.redrawLocked()
 }
 
-// Close flushes any trailing partial line as a final line, redraws once
-// more to show it, and leaves the window's last frame on screen (it is
-// not erased — the completed output remains visible).
+// Close finalizes the pull box: any trailing partial line is discarded,
+// and the box is erased entirely, with the cursor restored to the row it
+// started on. The box is a transient progress indicator, not output
+// meant to remain on screen once the pull is done.
 func (s *scrollWindow) Close() {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	if len(s.partial) > 0 {
-		s.pushLineLocked(string(s.partial))
-		s.partial = nil
-		s.redrawLocked()
+
+	if !s.drawn {
+		return
 	}
+
+	total := len(s.lines) + 2
+	fmt.Fprintf(s.w, "\033[%dA", total)
+	for i := 0; i < total; i++ {
+		fmt.Fprint(s.w, "\033[2K")
+		if i < total-1 {
+			fmt.Fprint(s.w, "\n")
+		}
+	}
+	fmt.Fprintf(s.w, "\033[%dA", total-1)
+	s.drawn = false
 }
 
 // Write implements io.Writer. Complete lines (terminated by '\n') are
@@ -107,13 +134,37 @@ func (s *scrollWindow) pushLineLocked(line string) {
 // clears each line, and reprints. Must be called with s.mu held.
 func (s *scrollWindow) redrawLocked() {
 	if s.drawn {
-		fmt.Fprintf(s.w, "\033[%dA", len(s.lines))
+		fmt.Fprintf(s.w, "\033[%dA", len(s.lines)+2)
 	}
-	for _, line := range s.lines {
+
+	truncated := make([]string, len(s.lines))
+	for i, line := range s.lines {
+		truncated[i] = truncateLine(line, s.innerWidth)
+	}
+	box := s.style.Render(strings.Join(truncated, "\n"))
+
+	for _, line := range strings.Split(box, "\n") {
 		fmt.Fprint(s.w, "\033[2K")
 		fmt.Fprintln(s.w, line)
 	}
 	s.drawn = true
+}
+
+// truncateLine truncates s to at most width terminal cells, appending an
+// ellipsis when truncation occurs. Cell width (not byte or rune count) is
+// used so wide characters and ANSI sequences are measured correctly.
+func truncateLine(s string, width int) string {
+	if width <= 0 {
+		return ""
+	}
+	if lipgloss.Width(s) <= width {
+		return s
+	}
+	r := []rune(s)
+	for len(r) > 0 && lipgloss.Width(string(r))+1 > width {
+		r = r[:len(r)-1]
+	}
+	return string(r) + "…"
 }
 
 func indexByte(b []byte, c byte) int {

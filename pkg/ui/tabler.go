@@ -26,6 +26,17 @@ func tableBorderColorStyle() lipgloss.Style {
 	return lipgloss.NewStyle().Foreground(themeColor(lipgloss.Cyan))
 }
 
+// BorderStyle returns a themed bordered box style of the given total width
+// (including border and padding), used to frame live terminal output such
+// as streamed pull progress.
+func BorderStyle(width int) lipgloss.Style {
+	return lipgloss.NewStyle().
+		Border(lipgloss.NormalBorder()).
+		BorderForeground(themeColor(lipgloss.Cyan)).
+		Padding(0, 1).
+		Width(width)
+}
+
 // Table is a multi-column table renderer, rendered as a single
 // square-cornered box via lipgloss/table.
 type Table struct {
