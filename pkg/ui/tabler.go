@@ -4,21 +4,52 @@ import (
 	"fmt"
 	"io"
 	"strings"
+
+	"image/color"
+
+	"charm.land/lipgloss/v2"
+	"charm.land/lipgloss/v2/table"
 )
 
 const colGap = 3
 
-//nolint:gochecknoglobals // box-drawing character set is effectively a constant
-var (
-	topLeft     = "╭"
-	topRight    = "╮"
-	bottomLeft  = "╰"
-	bottomRight = "╯"
-	horizontal  = "─"
-	vertical    = "│"
-	middleLeft  = "├"
-	middleRight = "┤"
-)
+// themeColor returns c unless color output is disabled (NoColor), in
+// which case it returns lipgloss.NoColor{} so the element renders in
+// the terminal's plain default color instead. This routes lipgloss
+// coloring through the same NO_COLOR/non-tty decision the rest of
+// otter's output already uses (see NoColor in colors.go), instead of
+// introducing a second, separate color-detection path.
+func themeColor(c color.Color) color.Color {
+	if NoColor() {
+		return lipgloss.NoColor{}
+	}
+	return c
+}
+
+// borderStyle is the shared *lipgloss.Style* used for the outer border
+// of Panel (and the color of Table's border, applied separately via
+// table.Table.BorderStyle — see Table.Render): a rounded border colored
+// with lipgloss's named Cyan constant (one of the standard 16 ANSI
+// colors), matching the cyan otter has always used for box borders
+// elsewhere. Because it's a named ANSI-16 color rather than a
+// hex/truecolor value, the terminal's own theme still determines the
+// exact shade — it isn't hardcoded to a fixed RGB.
+func borderStyle() lipgloss.Style {
+	return lipgloss.NewStyle().
+		BorderStyle(lipgloss.RoundedBorder()).
+		BorderForeground(themeColor(lipgloss.Cyan))
+}
+
+// tableBorderColorStyle is the color-only style passed to
+// table.Table.BorderStyle. Unlike borderStyle (used for Panel, a plain
+// lipgloss.Style with its own border shape), this must NOT itself carry
+// a border shape: table.Table.Border sets the shape and
+// table.Table.BorderStyle sets only the color of that shape. Passing a
+// style that also declares a border (as borderStyle does) here would
+// conflict with Table.Border's own shape setting.
+func tableBorderColorStyle() lipgloss.Style {
+	return lipgloss.NewStyle().Foreground(themeColor(lipgloss.Cyan))
+}
 
 func runeLen(s string) int {
 	return len([]rune(s))
@@ -32,11 +63,8 @@ func padRight(s string, w int) string {
 	return s + strings.Repeat(" ", w-l)
 }
 
-func hline(width int, left, right string) string {
-	return Cyan(left + strings.Repeat(horizontal, width-2) + right)
-}
-
-// Table is a multi-column table renderer.
+// Table is a multi-column table renderer, rendered as a single rounded
+// box via lipgloss/table.
 type Table struct {
 	w       io.Writer
 	headers []string
@@ -52,88 +80,50 @@ func NewTable(w io.Writer, headers ...string) *Table {
 	return &Table{w: w, headers: headers}
 }
 
+// AddRow adds a row. colors, if non-nil, supplies one coloring function
+// per column (e.g. ui.Yellow, ui.Dim) applied to that column's cell
+// text; a nil entry (or a colors slice shorter than cols) leaves that
+// cell uncolored. Coloring is applied to the cell text itself (via
+// these functions, which already respect NoColor — see colors.go)
+// before the cell reaches the table renderer, so it composes with
+// lipgloss's own column width/padding logic without a second,
+// conflicting color layer.
 func (t *Table) AddRow(cols []string, colors []func(string) string) {
 	t.rows = append(t.rows, tableRow{cols: cols, colors: colors})
 }
 
-//nolint:gocognit // ignore cognitive complexity here, Render orchestrates table layout and drawing
+// Render prints the table to t.w as a single rounded-corner box.
 func (t *Table) Render() {
-	// Calculate column widths from content
-	widths := make([]int, len(t.headers))
+	tbl := table.New().
+		Border(lipgloss.RoundedBorder()).
+		BorderStyle(tableBorderColorStyle()).
+		StyleFunc(func(row, col int) lipgloss.Style {
+			return lipgloss.NewStyle().Padding(0, 1)
+		})
+
+	headerCells := make([]string, len(t.headers))
 	for i, h := range t.headers {
-		widths[i] = runeLen(h)
+		headerCells[i] = Yellow(h)
 	}
+	tbl.Headers(headerCells...)
+
 	for _, r := range t.rows {
+		cells := make([]string, len(r.cols))
 		for i, c := range r.cols {
-			if i < len(widths) && runeLen(c) > widths[i] {
-				widths[i] = runeLen(c)
-			}
-		}
-	}
-
-	// Calculate total table width from column widths
-	inner := 1 // leading space after │
-	for i, w := range widths {
-		inner += w
-		if i < len(widths)-1 {
-			inner += colGap
-		}
-	}
-	inner++                 // trailing space before │
-	tableWidth := inner + 2 // +2 for the two │ borders
-
-	renderRow := func(cols []string, colored bool) string {
-		var sb strings.Builder
-		sb.WriteString(Cyan(vertical))
-		sb.WriteString(" ")
-		for i, col := range cols {
-			w := 0
-			if i < len(widths) {
-				w = widths[i]
-			}
-			if colored {
-				sb.WriteString(Yellow(padRight(col, w)))
-			} else {
-				sb.WriteString(padRight(col, w))
-			}
-			if i < len(cols)-1 {
-				sb.WriteString(strings.Repeat(" ", colGap))
-			}
-		}
-		sb.WriteString(" ")
-		sb.WriteString(Cyan(vertical))
-		return sb.String()
-	}
-
-	fmt.Fprintln(t.w, hline(tableWidth, topLeft, topRight))
-	fmt.Fprintln(t.w, renderRow(t.headers, true))
-	fmt.Fprintln(t.w, hline(tableWidth, middleLeft, middleRight))
-	for _, r := range t.rows {
-		var sb strings.Builder
-		sb.WriteString(Cyan(vertical))
-		sb.WriteString(" ")
-		for i, col := range r.cols {
-			w := 0
-			if i < len(widths) {
-				w = widths[i]
-			}
-			cell := padRight(col, w)
 			if i < len(r.colors) && r.colors[i] != nil {
-				cell = r.colors[i](cell)
-			}
-			sb.WriteString(cell)
-			if i < len(r.cols)-1 {
-				sb.WriteString(strings.Repeat(" ", colGap))
+				cells[i] = r.colors[i](c)
+			} else {
+				cells[i] = c
 			}
 		}
-		sb.WriteString(" ")
-		sb.WriteString(Cyan(vertical))
-		fmt.Fprintln(t.w, sb.String())
+		tbl.Row(cells...)
 	}
-	fmt.Fprintln(t.w, hline(tableWidth, bottomLeft, bottomRight))
+
+	fmt.Fprintln(t.w, tbl.String())
 }
 
-// Panel is a key-value panel renderer with sections.
+// Panel is a key-value panel renderer with sections, rendered as a
+// single rounded box.
 type Panel struct {
 	w        io.Writer
 	sections []panelSection
@@ -162,8 +152,9 @@ func PanelRow(key, value string) panelRow {
 	return panelRow{key: key, value: value}
 }
 
+// Render prints the panel to p.w as a single rounded-corner box, with a
+// horizontal divider between sections.
 func (p *Panel) Render() {
-	// Calculate key column width and table width from content
 	keyWidth := 0
 	for _, s := range p.sections {
 		for _, r := range s.rows {
@@ -185,38 +176,30 @@ func (p *Panel) Render() {
 		}
 	}
 
-	// inner = │ + space + key + gap + value + space + │
-	tableWidth := 1 + 1 + keyWidth + colGap + valueWidth + 1 + 1
+	contentWidth := keyWidth + colGap + valueWidth
 
-	renderKV := func(key, value string) string {
-		var sb strings.Builder
-		sb.WriteString(Cyan(vertical))
-		sb.WriteString(" ")
-		sb.WriteString(Teal(padRight(key, keyWidth)))
-		sb.WriteString(strings.Repeat(" ", colGap))
-		sb.WriteString(Dim(padRight(value, valueWidth)))
-		sb.WriteString(" ")
-		sb.WriteString(Cyan(vertical))
-		return sb.String()
-	}
-
-	renderSection := func(title string) string {
-		label := "▸ " + title + ":"
-		colored := Yellow(label)
-		// pad using visible width only
-		padding := strings.Repeat(" ", keyWidth+colGap+valueWidth-runeLen(label))
-		return Cyan(vertical) + " " + colored + padding + " " + Cyan(vertical)
-	}
-
-	fmt.Fprintln(p.w, hline(tableWidth, topLeft, topRight))
+	dividerStyle := lipgloss.NewStyle().Foreground(themeColor(lipgloss.Cyan))
+	var body strings.Builder
 	for i, s := range p.sections {
 		if i > 0 {
-			fmt.Fprintln(p.w, hline(tableWidth, middleLeft, middleRight))
+			body.WriteString(dividerStyle.Render(strings.Repeat("─", contentWidth)))
+			body.WriteString("\n")
 		}
-		fmt.Fprintln(p.w, renderSection(s.title))
+		label := "▸ " + s.title + ":"
+		body.WriteString(Yellow(label))
+		body.WriteString(strings.Repeat(" ", contentWidth-runeLen(label)))
+		body.WriteString("\n")
 		for _, r := range s.rows {
-			fmt.Fprintln(p.w, renderKV(r.key, r.value))
+			body.WriteString(Teal(padRight(r.key, keyWidth)))
+			body.WriteString(strings.Repeat(" ", colGap))
+			body.WriteString(Dim(padRight(r.value, valueWidth)))
+			body.WriteString("\n")
 		}
 	}
-	fmt.Fprintln(p.w, hline(tableWidth, bottomLeft, bottomRight))
+
+	box := borderStyle().
+		Padding(0, 1).
+		Render(strings.TrimRight(body.String(), "\n"))
+
+	fmt.Fprintln(p.w, box)
 }
