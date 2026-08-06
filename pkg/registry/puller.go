@@ -1,6 +1,7 @@
 package registry
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"io"
@@ -15,11 +16,6 @@ import (
 	"github.com/ferret-linux/otter/pkg/ttyutil"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
-
-// pullWindowLines is the number of trailing output lines kept on screen
-// at once while streaming pull progress. Older lines scroll off the top
-// of this fixed-size window instead of the window growing.
-const pullWindowLines = 10
 
 // scrollWindow is an io.Writer that renders the most recent N lines
 // written to it in a fixed-size region of the real terminal, redrawing
@@ -44,17 +40,23 @@ type scrollWindow struct {
 }
 
 func newScrollWindow(w io.Writer) *scrollWindow {
-	width := 80
-	if ww, _, err := term.GetSize(int(os.Stderr.Fd())); err == nil {
+	width, height := 80, 24
+	if ww, hh, err := term.GetSize(int(os.Stderr.Fd())); err == nil {
 		width = ww
+		height = hh
 	}
 
-	boxWidth := width / 2
+	windowLines := height * 33 / 100
+	if windowLines < 1 {
+		windowLines = 1
+	}
+
+	boxWidth := width * 40 / 100
 	style := ui.BorderStyle(boxWidth)
 
 	return &scrollWindow{
 		w:          w,
-		lines:      make([]string, pullWindowLines),
+		lines:      make([]string, windowLines),
 		style:      style,
 		innerWidth: boxWidth - style.GetHorizontalFrameSize(),
 	}
@@ -106,7 +108,7 @@ func (s *scrollWindow) Write(p []byte) (int, error) {
 
 	pushed := false
 	for {
-		idx := indexByte(data, '\n')
+		idx := bytes.IndexByte(data, '\n')
 		if idx < 0 {
 			s.partial = append([]byte(nil), data...)
 			break
@@ -150,9 +152,9 @@ func (s *scrollWindow) redrawLocked() {
 	s.drawn = true
 }
 
-// truncateLine truncates s to at most width terminal cells, appending an
-// ellipsis when truncation occurs. Cell width (not byte or rune count) is
-// used so wide characters and ANSI sequences are measured correctly.
+// truncateLine truncates s to at most width terminal cells. Cell width
+// (not byte or rune count) is used so wide characters and ANSI sequences
+// are measured correctly.
 func truncateLine(s string, width int) string {
 	if width <= 0 {
 		return ""
@@ -161,19 +163,10 @@ func truncateLine(s string, width int) string {
 		return s
 	}
 	r := []rune(s)
-	for len(r) > 0 && lipgloss.Width(string(r))+1 > width {
+	for len(r) > 0 && lipgloss.Width(string(r)) > width {
 		r = r[:len(r)-1]
 	}
-	return string(r) + "…"
-}
-
-func indexByte(b []byte, c byte) int {
-	for i, v := range b {
-		if v == c {
-			return i
-		}
-	}
-	return -1
+	return string(r)
 }
 
 // Pull pulls the given image ref using the provided container manager.
@@ -196,17 +189,14 @@ func Pull(
 	progress.Next("pulling '%s'...", imageRef)
 
 	var out containermanager.PullOutput
-	var win *scrollWindow
 	if ttyutil.IsInteractive() {
-		win = newScrollWindow(os.Stderr)
+		win := newScrollWindow(os.Stderr)
 		win.Start()
+		defer win.Close()
 		out = win
 	}
 
 	err := cm.PullImage(ctx, imageRef, platform, out)
-	if win != nil {
-		win.Close()
-	}
 
 	if err != nil {
 		progress.Fail()
