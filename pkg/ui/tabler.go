@@ -3,15 +3,12 @@ package ui
 import (
 	"fmt"
 	"io"
-	"strings"
 
 	"image/color"
 
 	"charm.land/lipgloss/v2"
 	"charm.land/lipgloss/v2/table"
 )
-
-const colGap = 3
 
 // themeColor returns c unless color output is disabled (NoColor), in
 // which case it returns lipgloss.NoColor{} so the element renders in
@@ -26,45 +23,17 @@ func themeColor(c color.Color) color.Color {
 	return c
 }
 
-// borderStyle is the shared *lipgloss.Style* used for the outer border
-// of Panel (and the color of Table's border, applied separately via
-// table.Table.BorderStyle — see Table.Render): a rounded border colored
-// with lipgloss's named Cyan constant (one of the standard 16 ANSI
-// colors), matching the cyan otter has always used for box borders
-// elsewhere. Because it's a named ANSI-16 color rather than a
-// hex/truecolor value, the terminal's own theme still determines the
-// exact shade — it isn't hardcoded to a fixed RGB.
-func borderStyle() lipgloss.Style {
-	return lipgloss.NewStyle().
-		BorderStyle(lipgloss.RoundedBorder()).
-		BorderForeground(themeColor(lipgloss.Cyan))
-}
-
 // tableBorderColorStyle is the color-only style passed to
-// table.Table.BorderStyle. Unlike borderStyle (used for Panel, a plain
-// lipgloss.Style with its own border shape), this must NOT itself carry
-// a border shape: table.Table.Border sets the shape and
-// table.Table.BorderStyle sets only the color of that shape. Passing a
-// style that also declares a border (as borderStyle does) here would
-// conflict with Table.Border's own shape setting.
+// table.Table.BorderStyle. table.Table.Border sets the border shape
+// (lipgloss.NormalBorder(), a plain square-cornered single-line border)
+// and table.Table.BorderStyle sets only the color of that shape, so this
+// style must not itself declare a border.
 func tableBorderColorStyle() lipgloss.Style {
 	return lipgloss.NewStyle().Foreground(themeColor(lipgloss.Cyan))
 }
 
-func runeLen(s string) int {
-	return len([]rune(s))
-}
-
-func padRight(s string, w int) string {
-	l := runeLen(s)
-	if l >= w {
-		return s
-	}
-	return s + strings.Repeat(" ", w-l)
-}
-
-// Table is a multi-column table renderer, rendered as a single rounded
-// box via lipgloss/table.
+// Table is a multi-column table renderer, rendered as a single
+// square-cornered box via lipgloss/table.
 type Table struct {
 	w       io.Writer
 	headers []string
@@ -92,10 +61,10 @@ func (t *Table) AddRow(cols []string, colors []func(string) string) {
 	t.rows = append(t.rows, tableRow{cols: cols, colors: colors})
 }
 
-// Render prints the table to t.w as a single rounded-corner box.
+// Render prints the table to t.w as a single square-cornered box.
 func (t *Table) Render() {
 	tbl := table.New().
-		Border(lipgloss.RoundedBorder()).
+		Border(lipgloss.NormalBorder()).
 		BorderStyle(tableBorderColorStyle()).
 		StyleFunc(func(row, col int) lipgloss.Style {
 			return lipgloss.NewStyle().Padding(0, 1)
@@ -120,86 +89,4 @@ func (t *Table) Render() {
 	}
 
 	fmt.Fprintln(t.w, tbl.String())
-}
-
-// Panel is a key-value panel renderer with sections, rendered as a
-// single rounded box.
-type Panel struct {
-	w        io.Writer
-	sections []panelSection
-}
-
-type panelSection struct {
-	title string
-	rows  []panelRow
-}
-
-type panelRow struct {
-	key   string
-	value string
-}
-
-func NewPanel(w io.Writer) *Panel {
-	return &Panel{w: w}
-}
-
-func (p *Panel) AddSection(title string, rows ...panelRow) {
-	p.sections = append(p.sections, panelSection{title: title, rows: rows})
-}
-
-//nolint:revive // unexported return is intentional; callers always pass the result directly into AddSection
-func PanelRow(key, value string) panelRow {
-	return panelRow{key: key, value: value}
-}
-
-// Render prints the panel to p.w as a single rounded-corner box, with a
-// horizontal divider between sections.
-func (p *Panel) Render() {
-	keyWidth := 0
-	for _, s := range p.sections {
-		for _, r := range s.rows {
-			if runeLen(r.key) > keyWidth {
-				keyWidth = runeLen(r.key)
-			}
-		}
-	}
-
-	valueWidth := 0
-	for _, s := range p.sections {
-		if runeLen("▸ "+s.title+":") > valueWidth {
-			valueWidth = runeLen("▸ " + s.title + ":")
-		}
-		for _, r := range s.rows {
-			if runeLen(r.value) > valueWidth {
-				valueWidth = runeLen(r.value)
-			}
-		}
-	}
-
-	contentWidth := keyWidth + colGap + valueWidth
-
-	dividerStyle := lipgloss.NewStyle().Foreground(themeColor(lipgloss.Cyan))
-	var body strings.Builder
-	for i, s := range p.sections {
-		if i > 0 {
-			body.WriteString(dividerStyle.Render(strings.Repeat("─", contentWidth)))
-			body.WriteString("\n")
-		}
-		label := "▸ " + s.title + ":"
-		body.WriteString(Yellow(label))
-		body.WriteString(strings.Repeat(" ", contentWidth-runeLen(label)))
-		body.WriteString("\n")
-		for _, r := range s.rows {
-			body.WriteString(Teal(padRight(r.key, keyWidth)))
-			body.WriteString(strings.Repeat(" ", colGap))
-			body.WriteString(Dim(padRight(r.value, valueWidth)))
-			body.WriteString("\n")
-		}
-	}
-
-	box := borderStyle().
-		Padding(0, 1).
-		Render(strings.TrimRight(body.String(), "\n"))
-
-	fmt.Fprintln(p.w, box)
 }

@@ -155,38 +155,52 @@ func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error
 		id = id[:containerIDDisplayLength]
 	}
 
-	p := ui.NewPanel(os.Stdout)
-	p.AddSection("General",
-		ui.PanelRow("Name", opts.ContainerName),
-		ui.PanelRow("ID", id),
-		ui.PanelRow("Created", created),
-		ui.PanelRow("Status", result.ContainerStatus),
-		ui.PanelRow("Image", ui.TrimImageRef(result.ContainerImage)),
-		ui.PanelRow("Platform", result.ContainerPlatform),
-		ui.PanelRow("Hostname", result.ContainerHostname),
-		ui.PanelRow("Shell", result.ContainerShell),
-		ui.PanelRow("Home", inspectHomeValue(result)),
-		ui.PanelRow("Locked", strconv.FormatBool(locked)),
-		ui.PanelRow("Rootful", strconv.FormatBool(result.Rootful)),
-		ui.PanelRow("Manager", opts.Manager),
-	)
-	p.AddSection("Resources",
-		ui.PanelRow("Memory", memory),
-		ui.PanelRow("CPU", cpuThreads),
-	)
-	p.AddSection("Features",
-		ui.PanelRow("Init", boolToEnabledStr(result.Init)),
-		ui.PanelRow("Nvidia", boolToEnabledStr(result.Nvidia)),
-	)
-	p.AddSection("Isolation",
-		ui.PanelRow("IPC", boolToSharedStr(result.UnshareIPC)),
-		ui.PanelRow("Network", boolToSharedStr(result.UnshareNetNS)),
-		ui.PanelRow("Process", boolToSharedStr(result.UnshareProcess)),
-		ui.PanelRow("Devices", boolToSharedStr(result.UnshareDevsys)),
-		ui.PanelRow("Groups", boolToSharedStr(result.UnshareGroups)),
-		ui.PanelRow("Userns No Limit", boolToEnabledStr(result.UsernsNoLimit)),
-	)
-	p.Render()
+	type inspectRow struct {
+		section string
+		key     string
+		value   string
+	}
+
+	rows := []inspectRow{
+		{"General", "Name", opts.ContainerName},
+		{"General", "ID", id},
+		{"General", "Created", created},
+		{"General", "Status", result.ContainerStatus},
+		{"General", "Image", ui.TrimImageRef(result.ContainerImage)},
+		{"General", "Platform", result.ContainerPlatform},
+		{"General", "Hostname", result.ContainerHostname},
+		{"General", "Shell", result.ContainerShell},
+		{"General", "Home", inspectHomeValue(result)},
+		{"General", "Locked", strconv.FormatBool(locked)},
+		{"General", "Rootful", strconv.FormatBool(result.Rootful)},
+		{"General", "Manager", opts.Manager},
+		{"Resources", "Memory", memory},
+		{"Resources", "CPU", cpuThreads},
+		{"Features", "Init", boolToEnabledStr(result.Init)},
+		{"Features", "Nvidia", boolToEnabledStr(result.Nvidia)},
+		{"Isolation", "IPC", boolToSharedStr(result.UnshareIPC)},
+		{"Isolation", "Network", boolToSharedStr(result.UnshareNetNS)},
+		{"Isolation", "Process", boolToSharedStr(result.UnshareProcess)},
+		{"Isolation", "Devices", boolToSharedStr(result.UnshareDevsys)},
+		{"Isolation", "Groups", boolToSharedStr(result.UnshareGroups)},
+		{"Isolation", "Userns No Limit", boolToEnabledStr(result.UsernsNoLimit)},
+	}
+
+	t := ui.NewTable(os.Stdout, "SECTION", "KEY", "VALUE")
+	lastSection := ""
+	for _, r := range rows {
+		section := r.section
+		if section == lastSection {
+			section = ""
+		} else {
+			lastSection = section
+		}
+		t.AddRow(
+			[]string{section, r.key, r.value},
+			[]func(string) string{ui.Yellow, ui.Teal, ui.Dim},
+		)
+	}
+	t.Render()
 
 	return nil
 }
