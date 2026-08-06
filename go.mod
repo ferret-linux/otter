@@ -4,7 +4,6 @@ go 1.26.5
 
 require (
 	github.com/BurntSushi/toml v1.6.0
-	github.com/creack/pty v1.1.24
 	github.com/urfave/cli/v3 v3.10.0
 	golang.org/x/term v0.44.0
 )
