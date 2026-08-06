@@ -8,8 +8,8 @@
 {2}│{R}{3}▸ Examples:{R}                                                              {2}│{R}
 {2}│{R}  {5}otter sh my-box --root{R}                                                 {2}│{R}
 {2}│{R}  {5}otter sh my-alpine -- sh -l{R}                                            {2}│{R}
-{2}│{R}  {5}otter enter fedora-44 -- bash -l{R}                                {2}│{R}
-{2}│{R}  {5}otter enter --additional-flags "--preserve-fds" test -- bash -l{R} {2}│{R}
+{2}│{R}  {5}otter enter fedora-44 -- bash -l{R}                                       {2}│{R}
+{2}│{R}  {5}otter enter --additional-flags "--preserve-fds" test -- bash -l{R}        {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                                               {2}│{R}
 {2}│{R} {4}--{R}          {5}              Command to execute into the container{R}         {2}│{R}
