@@ -451,10 +451,7 @@ func (n *Nerdctl) PullImage(ctx context.Context, imageName string, platform stri
 		command = n.sudoCommand
 	}
 	cmd := exec.CommandContext(ctx, command, args...) //nolint:gosec // command/args are resolved the same way run() resolves them above
-	box, ok := out.(*ui.LiveBox)
-	if !ok {
-		return fmt.Errorf("nerdctl: unsupported PullOutput implementation %T", out)
-	}
+	box := out.(*ui.LiveBox)
 	return ui.RunInBox(cmd, box)
 }
 

@@ -14,12 +14,10 @@ const (
 type ContainerManagerType string
 
 // PullOutput is where PullImage streams its pull output when the caller
-// wants it rendered live, and reports the terminal size that output
-// should be sized to. A nil PullOutput means "no live rendering" — today's
-// buffered, silent-until-error behavior.
+// wants it rendered live. A nil PullOutput means "no live rendering" —
+// today's buffered, silent-until-error behavior.
 type PullOutput interface {
 	io.Writer
-	Size() (cols, rows int)
 }
 
 type ContainerManager interface {
