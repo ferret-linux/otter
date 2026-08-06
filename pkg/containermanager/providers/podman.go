@@ -665,8 +665,9 @@ func (p *Podman) PullImage(ctx context.Context, imageName string, platform strin
 		command = p.sudoCommand
 	}
 	cmd := exec.CommandContext(ctx, command, args...) //nolint:gosec // command/args are resolved the same way run() resolves them above
-	box := out.(*ui.LiveBox)
-	return ui.RunInBox(cmd, box)
+	cmd.Stdout = out
+	cmd.Stderr = out
+	return cmd.Run()
 }
 
 func (p *Podman) RemoveImage(ctx context.Context, imageName string, force bool) error {
