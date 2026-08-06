@@ -101,7 +101,6 @@ func (t *Table) Render() {
 	}
 	tbl.Headers(headerCells...)
 
-	hasSeparators := false
 	for _, r := range t.rows {
 		cells := make([]string, len(r.cols))
 		for i, c := range r.cols {
@@ -112,36 +111,22 @@ func (t *Table) Render() {
 			}
 		}
 		tbl.Row(cells...)
-		if r.sepBefore {
-			hasSeparators = true
-		}
 	}
 
-	out := tbl.String()
-	if !hasSeparators {
-		fmt.Fprintln(t.w, out)
-		return
-	}
-
-	// This assumes a top border and a header (both defaults of
-	// table.New(), and both always set by NewTable/Render above): line 0
-	// is the top border, line 1 is the header cells, line 2 is the
-	// header/data separator, and lines 3..3+len(rows)-1 are the data
-	// rows, followed by the bottom border as the final line.
-	lines := strings.Split(out, "\n")
-	divider := lines[2]
-	const dataStart = 3
-
-	var body strings.Builder
+	// table.Table only supports a divider between every row (BorderRow)
+	// or none — nothing in between. Rows marked via AddSeparator get one
+	// spliced in here, reusing the table's own header-separator line
+	// (lines[2]) so it matches the real column widths. Assumes the
+	// default top border + header, both always set above.
+	lines := strings.Split(tbl.String(), "\n")
+	out := append([]string{}, lines[:3]...)
 	for i, r := range t.rows {
 		if r.sepBefore && i > 0 {
-			body.WriteString(divider)
-			body.WriteString("\n")
+			out = append(out, lines[2])
 		}
-		body.WriteString(lines[dataStart+i])
-		body.WriteString("\n")
+		out = append(out, lines[3+i])
 	}
+	out = append(out, lines[len(lines)-1])
 
-	fmt.Fprintln(t.w, lines[0]+"\n"+lines[1]+"\n"+lines[2]+"\n"+
-		strings.TrimSuffix(body.String(), "\n")+"\n"+lines[len(lines)-1])
+	fmt.Fprintln(t.w, strings.Join(out, "\n"))
 }
