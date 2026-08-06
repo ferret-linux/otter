@@ -188,11 +188,14 @@ func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error
 
 	t := ui.NewTable(os.Stdout, "SECTION", "KEY", "VALUE")
 	lastSection := ""
-	for _, r := range rows {
+	for i, r := range rows {
 		section := r.section
 		if section == lastSection {
 			section = ""
 		} else {
+			if i > 0 {
+				t.AddSeparator()
+			}
 			lastSection = section
 		}
 		t.AddRow(
