@@ -35,14 +35,15 @@ const (
 type LiveBox struct {
 	w io.Writer // real terminal LiveBox draws into (e.g. os.Stderr)
 
-	mu      sync.Mutex
-	cols    int // interior content width, in cells
-	rows    int // interior content height, in lines
-	screen  []string
-	cursor  int
-	drawn   bool
-	drawnH  int // total lines currently occupied on screen (border + content)
-	pending []byte
+	mu             sync.Mutex
+	cols           int // interior content width, in cells
+	rows           int // interior content height, in lines
+	screen         []string
+	cursor         int
+	pendingAdvance bool
+	drawn          bool
+	drawnH         int // total lines currently occupied on screen (border + content)
+	pending        []byte
 }
 
 // NewLiveBox creates a LiveBox that renders into w, which must be the
@@ -119,10 +120,18 @@ func (b *LiveBox) Write(p []byte) (int, error) {
 				i++
 				continue
 			}
+			b.flushPendingAdvanceLocked()
 			b.screen[b.cursor] = ""
 			i++
 		case c == '\n':
-			b.advanceLineLocked()
+			if b.pendingAdvance {
+				// A second consecutive \n (blank line in the stream):
+				// flush the first pending advance for real before
+				// scheduling another one, so blank lines aren't
+				// collapsed away.
+				b.flushPendingAdvanceLocked()
+			}
+			b.pendingAdvance = true
 			i++
 		case c == '\b':
 			// Backspace-driven spinners aren't emulated; docker/podman/
@@ -135,6 +144,7 @@ func (b *LiveBox) Write(p []byte) (int, error) {
 				i++
 				continue
 			}
+			b.flushPendingAdvanceLocked()
 			b.screen[b.cursor] += string(r)
 			i += size
 		}
@@ -142,6 +152,21 @@ func (b *LiveBox) Write(p []byte) (int, error) {
 
 	b.redrawLocked()
 	return len(p), nil
+}
+
+// flushPendingAdvanceLocked performs a deferred line advance, if one is
+// owed. \n only schedules an advance (sets pendingAdvance) instead of
+// moving the cursor immediately, so that a newline at the very end of
+// the stream — which is indistinguishable from any other newline at the
+// time it's seen — doesn't permanently leave an empty row pre-allocated
+// below the last real content. The advance actually happens here, lazily,
+// right before something is about to occupy the next line.
+func (b *LiveBox) flushPendingAdvanceLocked() {
+	if !b.pendingAdvance {
+		return
+	}
+	b.pendingAdvance = false
+	b.advanceLineLocked()
 }
 
 func (b *LiveBox) advanceLineLocked() {
@@ -201,6 +226,7 @@ func (b *LiveBox) applyEscapeLocked(seq []byte) {
 	params := string(seq[2 : len(seq)-1])
 
 	if final == 'm' {
+		b.flushPendingAdvanceLocked()
 		b.screen[b.cursor] += string(seq)
 		return
 	}
@@ -218,23 +244,28 @@ func (b *LiveBox) applyEscapeLocked(seq []byte) {
 
 	switch final {
 	case 'A':
+		b.pendingAdvance = false
 		b.cursor -= firstParam(1)
 		if b.cursor < 0 {
 			b.cursor = 0
 		}
 	case 'B':
+		b.pendingAdvance = false
 		b.cursor += firstParam(1)
 		if b.cursor >= len(b.screen) {
 			b.cursor = len(b.screen) - 1
 		}
 	case 'K':
+		b.flushPendingAdvanceLocked()
 		b.screen[b.cursor] = ""
 	case 'J':
+		b.pendingAdvance = false
 		for i := range b.screen {
 			b.screen[i] = ""
 		}
 		b.cursor = 0
 	case 'H', 'f':
+		b.pendingAdvance = false
 		row := firstParam(1) - 1
 		if row < 0 {
 			row = 0
