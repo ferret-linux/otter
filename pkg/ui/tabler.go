@@ -31,14 +31,14 @@ func tableBorderColorStyle() lipgloss.Style {
 // as streamed pull progress.
 func BorderStyle(width int) lipgloss.Style {
 	return lipgloss.NewStyle().
-		Border(lipgloss.NormalBorder()).
+		Border(lipgloss.RoundedBorder()).
 		BorderForeground(themeColor(lipgloss.Cyan)).
 		Padding(0, 1).
 		Width(width)
 }
 
 // Table is a multi-column table renderer, rendered as a single
-// square-cornered box via lipgloss/table.
+// rounded-corner box via lipgloss/table.
 type Table struct {
 	w       io.Writer
 	headers []string
@@ -74,10 +74,10 @@ func (t *Table) AddSeparator() {
 	t.pendingSeparator = true
 }
 
-// Render prints the table to t.w as a single square-cornered box.
+// Render prints the table to t.w as a single rounded-corner box.
 func (t *Table) Render() {
 	tbl := table.New().
-		Border(lipgloss.NormalBorder()).
+		Border(lipgloss.RoundedBorder()).
 		BorderStyle(tableBorderColorStyle()).
 		StyleFunc(func(row, col int) lipgloss.Style {
 			return lipgloss.NewStyle().Padding(0, 1)
