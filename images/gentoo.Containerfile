@@ -87,6 +87,11 @@ RUN sed -i "s|#.*en_US.UTF-8|en_US.UTF-8|g" /etc/locale.gen \
 RUN echo "UTC" > /etc/timezone \
     && emerge --config sys-libs/timezone-data
 
+# Ensure a python3 binary is resolvable (Wolfi ships versioned
+# python3.X only, no unversioned symlink)
+COPY images/scripts/python-fix.sh /tmp/python-fix.sh
+RUN sh /tmp/python-fix.sh
+
 # Portage cleanup
 RUN emerge --sync && \
     emerge -uDN @world && \

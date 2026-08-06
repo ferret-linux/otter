@@ -95,6 +95,11 @@ RUN apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
     && echo "UTC" > /etc/timezone
 
+# Ensure a python3 binary is resolvable (Wolfi ships versioned
+# python3.X only, no unversioned symlink)
+COPY images/scripts/python-fix.sh /tmp/python-fix.sh
+RUN sh /tmp/python-fix.sh
+
 # Apk cleanup
 RUN apk update && \
     apk upgrade && \

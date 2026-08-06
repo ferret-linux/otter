@@ -111,6 +111,11 @@ RUN echo "LANG=en_US.UTF-8" > /etc/locale.conf
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
     && echo "UTC" > /etc/timezone
 
+# Ensure a python3 binary is resolvable (Wolfi ships versioned
+# python3.X only, no unversioned symlink)
+COPY images/scripts/python-fix.sh /tmp/python-fix.sh
+RUN sh /tmp/python-fix.sh
+
 # Zypper cleanup
 RUN zypper refresh && \
     zypper update -y && \
