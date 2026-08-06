@@ -15,7 +15,6 @@ import (
 	"time"
 
 	"github.com/ferret-linux/otter/internal/insidecontainer"
-	"github.com/ferret-linux/otter/internal/ptyrun"
 	"github.com/ferret-linux/otter/internal/userenv"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ttyutil"
@@ -666,7 +665,11 @@ func (p *Podman) PullImage(ctx context.Context, imageName string, platform strin
 		command = p.sudoCommand
 	}
 	cmd := exec.CommandContext(ctx, command, args...) //nolint:gosec // command/args are resolved the same way run() resolves them above
-	return ptyrun.Run(cmd, out, out)
+	box, ok := out.(*ui.LiveBox)
+	if !ok {
+		return fmt.Errorf("podman: unsupported PullOutput implementation %T", out)
+	}
+	return ui.RunInBox(cmd, box)
 }
 
 func (p *Podman) RemoveImage(ctx context.Context, imageName string, force bool) error {

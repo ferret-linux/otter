@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/ferret-linux/otter/internal/insidecontainer"
-	"github.com/ferret-linux/otter/internal/ptyrun"
 	"github.com/ferret-linux/otter/internal/userenv"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ttyutil"
@@ -452,7 +451,11 @@ func (n *Nerdctl) PullImage(ctx context.Context, imageName string, platform stri
 		command = n.sudoCommand
 	}
 	cmd := exec.CommandContext(ctx, command, args...) //nolint:gosec // command/args are resolved the same way run() resolves them above
-	return ptyrun.Run(cmd, out, out)
+	box, ok := out.(*ui.LiveBox)
+	if !ok {
+		return fmt.Errorf("nerdctl: unsupported PullOutput implementation %T", out)
+	}
+	return ui.RunInBox(cmd, box)
 }
 
 func (n *Nerdctl) RemoveImage(ctx context.Context, imageName string, force bool) error {
