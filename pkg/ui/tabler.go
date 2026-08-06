@@ -11,12 +11,8 @@ import (
 	"charm.land/lipgloss/v2/table"
 )
 
-// themeColor returns c unless color output is disabled (NoColor), in
-// which case it returns lipgloss.NoColor{} so the element renders in
-// the terminal's plain default color instead. This routes lipgloss
-// coloring through the same NO_COLOR/non-tty decision the rest of
-// otter's output already uses (see NoColor in colors.go), instead of
-// introducing a second, separate color-detection path.
+// themeColor returns c unless color is disabled, in which case it
+// falls back to the terminal's default color (see NoColor in colors.go).
 func themeColor(c color.Color) color.Color {
 	if NoColor() {
 		return lipgloss.NoColor{}
@@ -24,11 +20,8 @@ func themeColor(c color.Color) color.Color {
 	return c
 }
 
-// tableBorderColorStyle is the color-only style passed to
-// table.Table.BorderStyle. table.Table.Border sets the border shape
-// (lipgloss.NormalBorder(), a plain square-cornered single-line border)
-// and table.Table.BorderStyle sets only the color of that shape, so this
-// style must not itself declare a border.
+// tableBorderColorStyle is the color-only style for table.Table.BorderStyle;
+// the border shape itself is set separately via table.Table.Border.
 func tableBorderColorStyle() lipgloss.Style {
 	return lipgloss.NewStyle().Foreground(themeColor(lipgloss.Cyan))
 }
@@ -40,8 +33,7 @@ type Table struct {
 	headers []string
 	rows    []tableRow
 
-	// pendingSeparator is set by AddSeparator and consumed by the next
-	// AddRow call, marking that row as the start of a new group.
+	// pendingSeparator is consumed by the next AddRow call.
 	pendingSeparator bool
 }
 
@@ -49,10 +41,7 @@ type tableRow struct {
 	cols   []string
 	colors []func(string) string
 
-	// sepBefore marks this row as the first row of a new group: Render
-	// draws a horizontal divider above it, reusing the table's own
-	// header-separator line so the divider lines up with the real
-	// column widths.
+	// sepBefore draws a divider above this row in Render.
 	sepBefore bool
 }
 
@@ -61,32 +50,20 @@ func NewTable(w io.Writer, headers ...string) *Table {
 }
 
 // AddRow adds a row. colors, if non-nil, supplies one coloring function
-// per column (e.g. ui.Yellow, ui.Dim) applied to that column's cell
-// text; a nil entry (or a colors slice shorter than cols) leaves that
-// cell uncolored. Coloring is applied to the cell text itself (via
-// these functions, which already respect NoColor — see colors.go)
-// before the cell reaches the table renderer, so it composes with
-// lipgloss's own column width/padding logic without a second,
-// conflicting color layer.
+// per column; a nil entry leaves that cell uncolored.
 func (t *Table) AddRow(cols []string, colors []func(string) string) {
 	t.rows = append(t.rows, tableRow{cols: cols, colors: colors, sepBefore: t.pendingSeparator})
 	t.pendingSeparator = false
 }
 
-// AddSeparator marks the next row added via AddRow as the start of a new
-// group, so Render draws a horizontal divider above it. Useful for
-// grouping related rows (e.g. by section) within a single table, since
-// lipgloss's table.Table only supports a divider between every row
-// (BorderRow) or none at all, not a divider between specific rows.
+// AddSeparator marks the next AddRow as the start of a new group, so
+// Render draws a divider above it (table.Table only supports a divider
+// between every row or none, not specific rows).
 func (t *Table) AddSeparator() {
 	t.pendingSeparator = true
 }
 
-// Render prints the table to t.w as a single square-cornered box. If any
-// row was marked via AddSeparator, a horizontal divider is drawn above
-// it by reusing the table's own rendered header-separator line, so the
-// divider's column boundaries always match the real (auto-sized) column
-// widths instead of being computed separately.
+// Render prints the table to t.w as a single square-cornered box.
 func (t *Table) Render() {
 	tbl := table.New().
 		Border(lipgloss.NormalBorder()).
@@ -113,11 +90,8 @@ func (t *Table) Render() {
 		tbl.Row(cells...)
 	}
 
-	// table.Table only supports a divider between every row (BorderRow)
-	// or none — nothing in between. Rows marked via AddSeparator get one
-	// spliced in here, reusing the table's own header-separator line
-	// (lines[2]) so it matches the real column widths. Assumes the
-	// default top border + header, both always set above.
+	// Splice a divider (reusing the rendered header-separator line, so
+	// it matches the real column widths) before each sepBefore row.
 	lines := strings.Split(tbl.String(), "\n")
 	out := append([]string{}, lines[:3]...)
 	for i, r := range t.rows {
