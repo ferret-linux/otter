@@ -108,6 +108,21 @@ func (b *LiveBox) Write(p []byte) (int, error) {
 			b.applyEscapeLocked(data[i : i+n])
 			i += n
 		case c == '\r':
+			if i+1 == len(data) {
+				// Could be a bare redraw-in-place \r, or the first half
+				// of a \r\n line ending split across two Write calls —
+				// can't tell without the next byte, so hold it back.
+				b.pending = append([]byte(nil), data[i])
+				i++
+				continue
+			}
+			if data[i+1] == '\n' {
+				// \r\n is a normal line ending (pty ONLCR rewrites every
+				// \n the child writes into \r\n), not a redraw-in-place:
+				// don't clear, just fall through to \n's handling.
+				i++
+				continue
+			}
 			b.screen[b.cursor] = ""
 			i++
 		case c == '\n':
