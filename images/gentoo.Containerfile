@@ -25,7 +25,7 @@ RUN echo 'FEATURES="getbinpkg"' >> /etc/portage/make.conf && \
 RUN emerge-webrsync && getuto
 
 # Upgrade Python first in its own layer
-RUN emerge --ask=n --quiet-build --getbinpkg -uDN dev-lang/python
+RUN emerge --ask=n --quiet-build --getbinpkg -uDN dev-lang/python dev-lang/rust-bin
 
 # Upgrade portage in a separate layer so it starts with the new Python already in place
 RUN emerge --ask=n --quiet-build --getbinpkg -uDN sys-apps/portage
