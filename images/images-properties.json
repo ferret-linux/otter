@@ -89,23 +89,6 @@
       "build_number": 33
     },
     {
-      "name": "devuan-testing",
-      "official_image": "ghcr.io/ferret-linux/devuan-otr:testing",
-      "fallback_vendor_image": "docker.io/devuan/devuan:testing",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-07T14:21:22Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1519041755,
-          "disk_size": 1519041755
-        }
-      },
-      "build_number": 33
-    },
-    {
       "name": "oracle",
       "official_image": "ghcr.io/ferret-linux/oracle-otr:stable",
       "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10",
@@ -590,6 +573,23 @@
         }
       },
       "build_number": 33
+    },
+    {
+      "name": "devuan-testing",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:testing",
+      "fallback_vendor_image": "docker.io/devuan/devuan:testing",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-07T18:56:47Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1519041750,
+          "disk_size": 1519041750
+        }
+      },
+      "build_number": 34
     }
   ]
 }
