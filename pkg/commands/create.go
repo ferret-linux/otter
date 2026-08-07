@@ -152,11 +152,11 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 	switch {
 	case !c.containerManager.ImageExists(ctx, containerImage):
 		// Missing image always auto-pulls unconditionally.
-		if err := registry.Pull(ctx, c.containerManager, containerImage, opts.ContainerPlatform, true, c.progress); err != nil {
+		if err := registry.Pull(ctx, c.containerManager, containerImage, opts.ContainerPlatform, c.progress); err != nil {
 			return nil, fmt.Errorf("failed to pull image '%s': %w", containerImage, err)
 		}
 	case opts.ContainerAlwaysPull:
-		if err := registry.Pull(ctx, c.containerManager, containerImage, opts.ContainerPlatform, true, c.progress); err != nil {
+		if err := registry.Pull(ctx, c.containerManager, containerImage, opts.ContainerPlatform, c.progress); err != nil {
 			return nil, fmt.Errorf("failed to pull image '%s': %w", containerImage, err)
 		}
 	case imageProps != nil:
@@ -383,7 +383,7 @@ func (c *CreateCommand) checkImageStaleness(
 	case registry.StalenessBehind:
 		switch {
 		case c.cfg.StalenessAutopullThreshold > 0 && st.Diff >= c.cfg.StalenessAutopullThreshold:
-			if err := registry.Pull(ctx, c.containerManager, containerImage, opts.ContainerPlatform, true, c.progress); err != nil {
+			if err := registry.Pull(ctx, c.containerManager, containerImage, opts.ContainerPlatform, c.progress); err != nil {
 				return fmt.Errorf("failed to pull image '%s': %w", containerImage, err)
 			}
 		case c.cfg.StalenessWarnThreshold > 0 && st.Diff >= c.cfg.StalenessWarnThreshold:
@@ -394,7 +394,7 @@ func (c *CreateCommand) checkImageStaleness(
 	case registry.StalenessUnknown:
 		// Local build label missing or unreadable — treat like a missing
 		// image and pull to heal, no special-casing for pre-feature images.
-		if err := registry.Pull(ctx, c.containerManager, containerImage, opts.ContainerPlatform, true, c.progress); err != nil {
+		if err := registry.Pull(ctx, c.containerManager, containerImage, opts.ContainerPlatform, c.progress); err != nil {
 			return fmt.Errorf("failed to pull image '%s': %w", containerImage, err)
 		}
 	case registry.StalenessCurrent, registry.StalenessNotOtterImage:
