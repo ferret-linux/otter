@@ -158,6 +158,13 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		withContainerManager,
 	)
 
+	tui := cc.apply(
+		newTUICommand,
+		withUsageErrorHandler,
+		withRoot,
+		withContainerManager,
+	)
+
 	upgrade := cc.apply(
 		newUpgradeCommand,
 		withUsageErrorHandler,
@@ -210,6 +217,7 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		restart,
 		start,
 		stop,
+		tui,
 		unlock,
 		upgrade,
 	}
