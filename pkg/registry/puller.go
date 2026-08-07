@@ -169,22 +169,16 @@ func truncateLine(s string, width int) string {
 	return string(r)
 }
 
-// Pull pulls the given image ref using the provided container manager.
-//
-// If force is false and the image is already present locally, the pull is
-// skipped.
+// Pull unconditionally pulls the given image ref using the provided
+// container manager. Callers are responsible for deciding whether a pull
+// is needed (e.g. via ImageExists or staleness checks) before calling Pull.
 func Pull(
 	ctx context.Context,
 	cm containermanager.ContainerManager,
 	imageRef string,
 	platform string,
-	force bool,
 	progress *ui.Progress,
 ) error {
-	if !force && cm.ImageExists(ctx, imageRef) {
-		return nil
-	}
-
 	ui.DefaultLogger.Info("large images may take a while, please be patient...")
 	progress.Next("pulling '%s'...", imageRef)
 

@@ -114,7 +114,7 @@ func (c *RegistryPullCommand) Execute(ctx context.Context, opts RegistryPullOpti
 		return fmt.Errorf("failed to resolve pull targets: %w", err)
 	}
 	for _, ref := range targets {
-		if err := registry.Pull(ctx, c.containerManager, ref, "", opts.Force, c.progress); err != nil {
+		if err := registry.Pull(ctx, c.containerManager, ref, "", c.progress); err != nil {
 			return fmt.Errorf("failed to pull image '%s': %w", ref, err)
 		}
 	}
