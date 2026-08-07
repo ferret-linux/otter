@@ -43,7 +43,7 @@ func lockAction(ctx context.Context, cmd *cli.Command) error {
 		All:            cmd.Bool("all"),
 	})
 	if errors.Is(err, commands.ErrNoContainersFound) {
-		ui.DefaultLogger.Warn("No containers found.")
+		ui.DefaultLogger.Warn("no containers found")
 		return nil
 	}
 	if err != nil {

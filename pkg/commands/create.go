@@ -169,7 +169,7 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 	if displayImage == "" {
 		displayImage = c.cfg.DefaultContainerImage
 	}
-	c.progress.Next("Creating '%s' using image '%s'", containerName, displayImage)
+	c.progress.Next("creating '%s' using image '%s'", containerName, displayImage)
 
 	err = c.containerManager.Create(
 		ctx,
@@ -239,8 +239,8 @@ func printCreateCompleted(progress *ui.Progress, containerName string, rootful b
 		rootFlag = "--root "
 	}
 
-	progress.Finalize("Otter '%s' successfully created.", containerName)
-	ui.DefaultLogger.Info(fmt.Sprintf("To enter, run: otter enter %s%s", rootFlag, containerName))
+	progress.Finalize("'%s' successfully created", containerName)
+	ui.DefaultLogger.Info(fmt.Sprintf("to enter, run: otter enter %s%s", rootFlag, containerName))
 }
 
 func printContainerAlreadyExists(progress *ui.Progress, containerName string, rootful bool) {
@@ -249,8 +249,8 @@ func printContainerAlreadyExists(progress *ui.Progress, containerName string, ro
 		rootFlag = "--root "
 	}
 
-	progress.Finalize("Container named '%s' already exists.", containerName)
-	ui.DefaultLogger.Info(fmt.Sprintf("To enter, run: otter enter %s%s", rootFlag, containerName))
+	progress.Finalize("container named '%s' already exists", containerName)
+	ui.DefaultLogger.Info(fmt.Sprintf("to enter, run: otter enter %s%s", rootFlag, containerName))
 }
 
 func validateShell(shell string) error {

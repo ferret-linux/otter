@@ -81,7 +81,7 @@ func PrintListJSON(result *ListResult) error {
 
 func PrintList(result *ListResult) {
 	if len(result.Containers) == 0 {
-		ui.DefaultLogger.Warn("No containers found.")
+		ui.DefaultLogger.Warn("no containers found")
 		return
 	}
 

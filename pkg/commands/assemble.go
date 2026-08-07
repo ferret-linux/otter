@@ -120,7 +120,7 @@ func (ac *AssembleCommand) Execute(ctx context.Context, opts AssembleOptions) er
 }
 
 func (ac *AssembleCommand) deleteItem(ctx context.Context, item manifest.Item) error {
-	ac.progress.Next("Deleting %s...", item.Name)
+	ac.progress.Next("deleting %s...", item.Name)
 	opts := RmOptions{
 		Force:          true,
 		All:            false,
@@ -151,7 +151,7 @@ func (ac *AssembleCommand) replaceItem(ctx context.Context, item manifest.Item) 
 }
 
 func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item) error {
-	ac.progress.Next("Creating %s...", item.Name)
+	ac.progress.Next("creating %s...", item.Name)
 	opts := CreateOptions{
 		ContainerClone:          item.Clone,
 		ContainerName:           item.Name,

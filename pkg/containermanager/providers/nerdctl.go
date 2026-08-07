@@ -829,7 +829,7 @@ func (n *Nerdctl) Start(ctx context.Context, containerName string) error {
 		return fmt.Errorf("could not start entrypoint.\n%s", logs)
 	}
 
-	progress.Next("Starting container...")
+	progress.Next("starting container...")
 
 	userEnv := userenv.LoadUserEnvironment(ctx)
 
@@ -847,7 +847,7 @@ func (n *Nerdctl) Start(ctx context.Context, containerName string) error {
 		return err
 	}
 
-	progress.Finalize("Container Setup Complete!")
+	progress.Finalize("container setup complete!")
 	return nil
 }
 
