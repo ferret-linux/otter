@@ -111,28 +111,6 @@
       "build_number": 31
     },
     {
-      "name": "fedora",
-      "official_image": "ghcr.io/ferret-linux/fedora-otr:stable",
-      "fallback_vendor_image": "quay.io/fedora/fedora:44",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-07T05:19:49Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1515244590,
-          "disk_size": 1515244590
-        },
-        "arm64": {
-          "compressed_size": 1447062496,
-          "disk_size": 1447062496
-        }
-      },
-      "build_number": 31
-    },
-    {
       "name": "void-glibc",
       "official_image": "ghcr.io/ferret-linux/void-otr:glibc",
       "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest",
@@ -587,6 +565,28 @@
         "arm64": {
           "compressed_size": 1438408171,
           "disk_size": 1438408171
+        }
+      },
+      "build_number": 32
+    },
+    {
+      "name": "fedora",
+      "official_image": "ghcr.io/ferret-linux/fedora-otr:stable",
+      "fallback_vendor_image": "quay.io/fedora/fedora:44",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-07T09:25:21Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1498487850,
+          "disk_size": 1498487850
+        },
+        "arm64": {
+          "compressed_size": 1430616032,
+          "disk_size": 1430616032
         }
       },
       "build_number": 32
