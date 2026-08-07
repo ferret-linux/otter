@@ -119,7 +119,7 @@ RUN sh /tmp/python-fix.sh
 # Zypper cleanup
 RUN zypper refresh && \
     zypper update -y && \
-    zypper remove-orphans && \
+    zypper rm $(zypper packages --orphaned -i | awk -F'|' '/^i/{print $3}') && \
     zypper clean
 
 # Cleanup
