@@ -20,7 +20,6 @@ type EnterOptions struct {
 	NoTTY           bool
 	CleanPath       bool
 	EmptyEnv        bool
-	AutoStart       bool
 	NoWorkDir       bool
 }
 
@@ -46,13 +45,9 @@ func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterRe
 		return nil, fmt.Errorf("container '%s' not found", opts.ContainerName)
 	}
 	if inspectResult.ContainerStatus != containermanager.RunningStatus {
-		if opts.AutoStart {
-			ui.DefaultLogger.Info("starting...", "container", opts.ContainerName)
-			if err := c.containerManager.Start(ctx, opts.ContainerName); err != nil {
-				return nil, fmt.Errorf("failed to start container '%s': %w", opts.ContainerName, err)
-			}
-		} else {
-			return nil, fmt.Errorf("container '%s' is stopped, run 'otter start %s'", opts.ContainerName, opts.ContainerName)
+		ui.DefaultLogger.Info("starting...", "container", opts.ContainerName)
+		if err := c.containerManager.Start(ctx, opts.ContainerName); err != nil {
+			return nil, fmt.Errorf("failed to start container '%s': %w", opts.ContainerName, err)
 		}
 	}
 	if !c.containerManager.IsSetupDone(ctx, opts.ContainerName) {

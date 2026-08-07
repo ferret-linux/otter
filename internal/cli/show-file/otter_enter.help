@@ -19,7 +19,6 @@
 {2}│{R} {4}--empty-env{R}        {2}┆{R} {4}-E{R}   {5}Don't auto copy host environment variables{R}    {2}│{R}
 {2}│{R} {4}--clean-path{R}       {2}┆{R} {4}-c{R}   {5}Reset PATH inside container to FHS standard{R}   {2}│{R}
 {2}│{R} {4}--no-workdir{R}       {2}┆{R} {4}-nw{R}  {5}Always start from container's home directory{R}  {2}│{R}
-{2}│{R} {4}--auto-start{R}       {2}┆{R} {4}-S{R}   {5}Start container if stopped, then enter{R}        {2}│{R}
 {2}│{R} {4}--additional-flags{R} {2}┆{R} {4}-a{R}   {5}Additional flags to pass to container manager{R} {2}│{R}
 {2}├────────────────────┴────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                                                {2}│{R}
