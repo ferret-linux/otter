@@ -8,6 +8,8 @@ import (
 	"runtime"
 	"strings"
 
+	"charm.land/log/v2"
+	"github.com/charmbracelet/colorprofile"
 	"github.com/urfave/cli/v3"
 
 	"github.com/ferret-linux/otter/pkg/config"
@@ -58,6 +60,9 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 		},
 		Before: func(ctx context.Context, _ *cli.Command) (context.Context, error) {
 			ui.SetNoColor(ui.ShouldDisableColor(os.Stdout))
+			if ui.NoColor() {
+				ui.DefaultLogger.SetColorProfile(colorprofile.Ascii)
+			}
 			return ctx, nil
 		},
 		Commands: subcommands(cfg),
@@ -65,18 +70,18 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 			if err == nil {
 				return
 			}
-			ui.DefaultLogger.Error("%s", err)
+			ui.DefaultLogger.Error(err)
 		},
 	}
 }
 
-func printMissingContainerManager(l *ui.Logger) {
+func printMissingContainerManager(l *log.Logger) {
 	l.Error("Missing dependency: we need a container manager.")
 	l.Info("Please install one of podman, nerdctl, or docker.\nYou can follow the documentation on:\n\tman otter-compatibility\nor:\n\thttps://github.com/89luca89/distrobox/blob/main/docs/compatibility.md")
 }
 
-func printInvalidContainerManager(l *ui.Logger, containerManagerType string) {
-	l.Error("Invalid input %s.", containerManagerType)
+func printInvalidContainerManager(l *log.Logger, containerManagerType string) {
+	l.Error("Invalid input", "value", containerManagerType)
 	l.Warn("The available choices are: 'autodetect', 'podman', 'nerdctl', 'docker'")
 }
 
@@ -239,7 +244,7 @@ func splitNames(args []string) ([]string, error) {
 
 func withUsageErrorHandler(_ *config.Values, cmd *cli.Command) *cli.Command {
 	cmd.OnUsageError = func(_ context.Context, _ *cli.Command, err error, _ bool) error {
-		ui.DefaultLogger.Error("%s", err)
+		ui.DefaultLogger.Error(err)
 		os.Exit(1)
 		return nil
 	}
@@ -315,7 +320,7 @@ func buildContainerManager(
 	sudoCommand string,
 	root bool,
 ) (containermanager.ContainerManager, error) {
-	errLogger := ui.NewLogger(os.Stderr)
+	errLogger := log.New(os.Stderr)
 
 	if root && sudoCommand == "autodetect" {
 		resolved, err := rootcheck.Validate(ctx, sudoCommand)
