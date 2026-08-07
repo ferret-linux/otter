@@ -355,28 +355,6 @@
       "build_number": 32
     },
     {
-      "name": "rhel",
-      "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
-      "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-07T09:25:32Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1216152013,
-          "disk_size": 1216152013
-        },
-        "arm64": {
-          "compressed_size": 1095553828,
-          "disk_size": 1095553828
-        }
-      },
-      "build_number": 32
-    },
-    {
       "name": "chimera",
       "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
       "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest",
@@ -587,6 +565,28 @@
         "amd64": {
           "compressed_size": 1519041755,
           "disk_size": 1519041755
+        }
+      },
+      "build_number": 33
+    },
+    {
+      "name": "rhel",
+      "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
+      "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-07T14:21:35Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1216152014,
+          "disk_size": 1216152014
+        },
+        "arm64": {
+          "compressed_size": 1095553831,
+          "disk_size": 1095553831
         }
       },
       "build_number": 33
