@@ -320,8 +320,6 @@ func buildContainerManager(
 	sudoCommand string,
 	root bool,
 ) (containermanager.ContainerManager, error) {
-	errLogger := log.New(os.Stderr)
-
 	if root && sudoCommand == "autodetect" {
 		resolved, err := rootcheck.Validate(ctx, sudoCommand)
 		if err != nil {
@@ -341,14 +339,14 @@ func buildContainerManager(
 		cm, err := providers.NewAutoDetect(root, sudoCommand)
 		if err != nil {
 			if errors.Is(err, providers.ErrNoContainerManager) {
-				printMissingContainerManager(errLogger)
+				printMissingContainerManager(ui.DefaultLogger)
 				os.Exit(1)
 			}
 			return nil, fmt.Errorf("failed to auto-detect container manager: %w", err)
 		}
 		return cm, nil
 	default:
-		printInvalidContainerManager(errLogger, containerManagerType)
+		printInvalidContainerManager(ui.DefaultLogger, containerManagerType)
 		os.Exit(1)
 		return nil, fmt.Errorf("invalid input %s", containerManagerType)
 	}

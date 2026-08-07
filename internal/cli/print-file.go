@@ -69,7 +69,7 @@ func contentWidth(raw string) int {
 func printFile(name string) {
 	b, err := printFS.ReadFile("show-file/" + name + ".help")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "File not found: %s\n", name)
+		ui.DefaultLogger.Warn("file not found", "name", name)
 		return
 	}
 
