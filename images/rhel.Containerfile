@@ -110,6 +110,9 @@ RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
 COPY images/scripts/python-fix.sh /tmp/python-fix.sh
 RUN sh /tmp/python-fix.sh
 
+# Fix Zsh zlogout on Sh/Enter
+RUN rm -rf /etc/zlogout && touch /etc/zlogout
+
 # Dnf cleanup
 RUN dnf upgrade -y && \
     dnf autoremove -y && \
