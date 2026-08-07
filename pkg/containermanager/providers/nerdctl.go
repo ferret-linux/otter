@@ -864,11 +864,9 @@ func (n *Nerdctl) waitForSetup(
 
 		inspectResult, err := n.InspectContainer(ctx, containerName)
 		if err != nil {
-			ui.DefaultLogger.Error("Container Setup Failure!")
 			return fmt.Errorf("container stopped during setup: %w", err)
 		}
 		if inspectResult.ContainerStatus != containermanager.RunningStatus {
-			ui.DefaultLogger.Error("Container Setup Failure!")
 			return fmt.Errorf(
 				"container stopped during setup: status=%s",
 				inspectResult.ContainerStatus,
@@ -893,7 +891,6 @@ func (n *Nerdctl) waitForSetup(
 
 			case strings.HasPrefix(line, "Error:"):
 				progress.Fail()
-				ui.DefaultLogger.Error(line)
 				return fmt.Errorf("container setup error: %s", line)
 
 			case strings.HasPrefix(line, "Warning:"):

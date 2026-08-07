@@ -82,7 +82,6 @@ func summarizeBatch(outcome batchOutcome, cfg batchSummaryConfig) error {
 		case outcome.Skipped > 0:
 			failMsg = failMsg + skipNote
 		}
-		ui.DefaultLogger.Error(failMsg)
 		return errors.New(failMsg)
 	case succeeded == 0 && outcome.Skipped > 0:
 		msg := cfg.AllSkippedMessage
@@ -90,7 +89,6 @@ func summarizeBatch(outcome batchOutcome, cfg batchSummaryConfig) error {
 			msg = fmt.Sprintf("all %d containers already %s, nothing to do", total, cfg.PastVerb)
 		}
 		if cfg.AllSkippedIsError {
-			ui.DefaultLogger.Error(msg)
 			return errors.New(msg)
 		}
 		ui.DefaultLogger.Info(msg)

@@ -1126,11 +1126,9 @@ func (p *Podman) waitForSetup(
 		// Check container is still running
 		inspectResult, err := p.InspectContainer(ctx, containerName)
 		if err != nil {
-			ui.DefaultLogger.Error("Container Setup Failure!")
 			return fmt.Errorf("container stopped during setup: %w", err)
 		}
 		if inspectResult.ContainerStatus != containermanager.RunningStatus {
-			ui.DefaultLogger.Error("Container Setup Failure!")
 			return fmt.Errorf(
 				"container stopped during setup: status=%s",
 				inspectResult.ContainerStatus,
@@ -1157,7 +1155,6 @@ func (p *Podman) waitForSetup(
 
 			case strings.HasPrefix(line, "Error:"):
 				progress.Fail()
-				ui.DefaultLogger.Error(line)
 				return fmt.Errorf("container setup error: %s", line)
 
 			case strings.HasPrefix(line, "Warning:"):
