@@ -148,13 +148,13 @@ func (c *RegistryRemoveCommand) Execute(ctx context.Context, opts RegistryRemove
 	}
 	for _, ref := range targets {
 		if !c.containerManager.ImageExists(ctx, ref) {
-			ui.DefaultLogger.Warn("image '%s' not found locally, skipping", ref)
+			ui.DefaultLogger.Warn("image not found locally, skipping", "image", ref)
 			continue
 		}
 		if err := c.containerManager.RemoveImage(ctx, ref, opts.Force); err != nil {
 			return fmt.Errorf("failed to remove image '%s': %w", ref, err)
 		}
-		ui.DefaultLogger.Info("removed '%s'", ref)
+		ui.DefaultLogger.Info("removed", "image", ref)
 	}
 	return nil
 }
@@ -291,7 +291,7 @@ func resolvePullTargets(
 		if !force && cm.ImageExists(ctx, ref) {
 			st := registry.CheckStaleness(ctx, cm, props, ref)
 			if st.State != registry.StalenessBehind && st.State != registry.StalenessUnknown {
-				ui.DefaultLogger.Info("skipping '%s', already up to date", ref)
+				ui.DefaultLogger.Info("skipping, already up to date", "image", ref)
 				continue
 			}
 		}

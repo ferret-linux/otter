@@ -48,7 +48,7 @@ func (c *StartCommand) Execute(ctx context.Context, opts *StartOptions) error {
 
 	outcome := runBatch(ctx, containerNames, func(ctx context.Context, name string) (bool, error) {
 		if err := c.startOne(ctx, name); err != nil {
-			ui.DefaultLogger.Error("%s", err)
+			ui.DefaultLogger.Error(err)
 			return false, err
 		}
 		return false, nil

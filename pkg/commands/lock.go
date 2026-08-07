@@ -54,10 +54,10 @@ func (c *LockCommand) Execute(ctx context.Context, opts LockOptions) error {
 	outcome := runBatch(ctx, containerNames, func(ctx context.Context, name string) (bool, error) {
 		if err := c.lockOne(ctx, name); err != nil {
 			if errors.Is(err, ErrAlreadyLocked) {
-				ui.DefaultLogger.Warn("'%s' is already locked, skipping", name)
+				ui.DefaultLogger.Warn("already locked, skipping", "name", name)
 				return true, nil
 			}
-			ui.DefaultLogger.Error("failed to lock '%s': %s", name, err)
+			ui.DefaultLogger.Error("failed to lock", "name", name, "err", err)
 			return false, err
 		}
 		return false, nil
@@ -91,7 +91,7 @@ func (c *LockCommand) lockOne(ctx context.Context, name string) error {
 		return fmt.Errorf("failed to write lock file into '%s': %w", name, err)
 	}
 
-	ui.DefaultLogger.Ok("locked '%s'", name)
+	ui.DefaultLogger.Info("locked", "name", name)
 	return nil
 }
 

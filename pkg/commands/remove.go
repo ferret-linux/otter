@@ -69,15 +69,15 @@ func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, 
 	outcome := runBatch(ctx, containerNames, func(ctx context.Context, name string) (bool, error) {
 		container := containersByName[name]
 		if !options.BypassLock && isLocked(ctx, c.containerManager, name) {
-			ui.DefaultLogger.Warn("'%s' is locked, run 'otter unlock %s' first, skipping", name, name)
+			ui.DefaultLogger.Warn(fmt.Sprintf("locked, run 'otter unlock %s' first, skipping", name), "name", name)
 			return true, nil
 		}
 		if err := c.removeContainer(ctx, container, options.Force, options.RemoveHome, userHome, options.Root); err != nil {
-			ui.DefaultLogger.Error("failed to remove '%s': %s", name, err)
+			ui.DefaultLogger.Error("failed to remove", "name", name, "err", err)
 			return false, err
 		}
 		removedOtterContainers = append(removedOtterContainers, container)
-		ui.DefaultLogger.Ok("removed '%s'", name)
+		ui.DefaultLogger.Info("removed", "name", name)
 		return false, nil
 	})
 
@@ -89,7 +89,7 @@ func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, 
 		if !slices.ContainsFunc(otterContainersToRemove, func(c containermanager.Container) bool {
 			return c.Name == name
 		}) {
-			ui.DefaultLogger.Warn("container '%s' not found", name)
+			ui.DefaultLogger.Warn("container not found", "name", name)
 		}
 	}
 
@@ -135,7 +135,7 @@ func (c *RmCommand) removeContainer(
 		homeToRemove == userHome ||
 		slices.Contains(dangerousPaths, homeToRemove) {
 		if removeHome {
-			ui.DefaultLogger.Warn("refusing to remove home '%s': unsafe path", homeToRemove)
+			ui.DefaultLogger.Warn("refusing to remove home, unsafe path", "path", homeToRemove)
 		}
 		removeHome = false
 	}
@@ -164,7 +164,7 @@ func (c *RmCommand) cleanup(ctx context.Context, userHome, containerName string,
 
 	for _, path := range toDelete {
 		if err := os.Remove(path); err != nil {
-			ui.DefaultLogger.Warn("failed to remove file '%s': %s", path, err)
+			ui.DefaultLogger.Warn("failed to remove file", "path", path, "err", err)
 		}
 	}
 
@@ -177,7 +177,7 @@ func (c *RmCommand) cleanup(ctx context.Context, userHome, containerName string,
 		},
 	)
 	if err != nil {
-		ui.DefaultLogger.Warn("failed to remove desktop entry for '%s': %s", containerName, err)
+		ui.DefaultLogger.Warn("failed to remove desktop entry", "container", containerName, "err", err)
 	}
 }
 
@@ -253,7 +253,7 @@ func findExportedDesktopApps(userHome, containerName string, root bool) []string
 
 	matches, err := filepath.Glob(appsPattern)
 	if err != nil {
-		ui.DefaultLogger.Warn("failed to glob desktop apps: %s", err)
+		ui.DefaultLogger.Warn("failed to glob desktop apps", "err", err)
 		return []string{}
 	}
 
@@ -326,7 +326,7 @@ func findIconFiles(userHome, iconName string) []string {
 
 		return nil
 	}); err != nil && !os.IsNotExist(err) {
-		ui.DefaultLogger.Warn("failed to walk icons dir: %v", err)
+		ui.DefaultLogger.Warn("failed to walk icons dir", "err", err)
 	}
 
 	return files

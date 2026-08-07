@@ -205,7 +205,7 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item) e
 			Root:           *item.Settings.Rootful,
 			ContainerNames: []string{item.Name},
 		}); rmErr != nil {
-			ui.DefaultLogger.Warn("%s: %s", item.Name, rmErr)
+			ui.DefaultLogger.Warn("failed to remove item", "name", item.Name, "err", rmErr)
 		}
 	}()
 

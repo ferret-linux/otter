@@ -240,7 +240,7 @@ func printCreateCompleted(progress *ui.Progress, containerName string, rootful b
 	}
 
 	progress.Finalize("Otter '%s' successfully created.", containerName)
-	ui.DefaultLogger.Info("To enter, run: otter enter %s%s", rootFlag, containerName)
+	ui.DefaultLogger.Info(fmt.Sprintf("To enter, run: otter enter %s%s", rootFlag, containerName))
 }
 
 func printContainerAlreadyExists(progress *ui.Progress, containerName string, rootful bool) {
@@ -250,7 +250,7 @@ func printContainerAlreadyExists(progress *ui.Progress, containerName string, ro
 	}
 
 	progress.Finalize("Container named '%s' already exists.", containerName)
-	ui.DefaultLogger.Info("To enter, run: otter enter %s%s", rootFlag, containerName)
+	ui.DefaultLogger.Info(fmt.Sprintf("To enter, run: otter enter %s%s", rootFlag, containerName))
 }
 
 func validateShell(shell string) error {
@@ -387,10 +387,10 @@ func (c *CreateCommand) checkImageStaleness(
 				return fmt.Errorf("failed to pull image '%s': %w", containerImage, err)
 			}
 		case c.cfg.StalenessWarnThreshold > 0 && st.Diff >= c.cfg.StalenessWarnThreshold:
-			ui.DefaultLogger.Warn("image '%s' is behind upstream (local: %d, latest: %d)", ui.TrimImageRef(containerImage), st.LocalBuild, st.RemoteBuild)
+			ui.DefaultLogger.Warn("image is behind upstream", "image", ui.TrimImageRef(containerImage), "local", st.LocalBuild, "latest", st.RemoteBuild)
 		}
 	case registry.StalenessAhead:
-		ui.DefaultLogger.Warn("image '%s' is ahead of upstream (local: %d, latest: %d)", ui.TrimImageRef(containerImage), st.LocalBuild, st.RemoteBuild)
+		ui.DefaultLogger.Warn("image is ahead of upstream", "image", ui.TrimImageRef(containerImage), "local", st.LocalBuild, "latest", st.RemoteBuild)
 	case registry.StalenessUnknown:
 		// Local build label missing or unreadable — treat like a missing
 		// image and pull to heal, no special-casing for pre-feature images.

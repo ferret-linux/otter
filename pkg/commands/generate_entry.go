@@ -123,13 +123,13 @@ func (c *GenerateEntryCommand) Execute(
 		for _, containerName := range containerNames {
 			entryPath := c.getEntryFilePath(filepath.Join(desktopEntryBaseDir, "applications"), containerName, opts.Root)
 			if _, err := os.Stat(entryPath); os.IsNotExist(err) {
-				ui.DefaultLogger.Info("no desktop entry found for '%s'", containerName)
+				ui.DefaultLogger.Info("no desktop entry found", "container", containerName)
 				continue
 			}
 			if err := c.deleteEntry(containerName, desktopEntryBaseDir, opts.Root); err != nil {
 				return fmt.Errorf("failed to delete desktop entry for container %s: %w", containerName, err)
 			}
-			ui.DefaultLogger.Ok("desktop entry removed for '%s'", containerName)
+			ui.DefaultLogger.Info("desktop entry removed", "container", containerName)
 		}
 
 		return nil
@@ -150,7 +150,7 @@ func (c *GenerateEntryCommand) Execute(
 		if err := c.createEntry(ctx, containerName, icon, desktopEntryBaseDir, otterPath, opts.Root); err != nil {
 			return fmt.Errorf("failed to create desktop entry for container %s: %w", containerName, err)
 		}
-		ui.DefaultLogger.Ok("desktop entry created for '%s'", containerName)
+		ui.DefaultLogger.Info("desktop entry created", "container", containerName)
 	}
 
 	return nil
@@ -303,7 +303,7 @@ func (c *GenerateEntryCommand) getIconPath(ctx context.Context, containerName st
 	if _, err := os.Stat(destPath); os.IsNotExist(err) {
 		//nolint:gosec // 644 is standard for icon files
 		if err := os.WriteFile(destPath, iconData, 0644); err != nil {
-			ui.DefaultLogger.Warn("failed to write icon file: %v", err)
+			ui.DefaultLogger.Warn("failed to write icon file", "err", err)
 			return ""
 		}
 	}
@@ -338,7 +338,7 @@ func (c *GenerateEntryCommand) readDistroID(ctx context.Context, containerName s
 	}
 
 	if err := scanner.Err(); err != nil {
-		ui.DefaultLogger.Warn("failed to read os-release: %v", err)
+		ui.DefaultLogger.Warn("failed to read os-release", "err", err)
 	}
 
 	return ""

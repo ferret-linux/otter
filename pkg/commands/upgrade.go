@@ -76,11 +76,11 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 
 	outcome := runBatch(ctx, containerNames, func(ctx context.Context, name string) (bool, error) {
 		if isLocked(ctx, c.containerManager, name) {
-			ui.DefaultLogger.Warn("'%s' is locked, skipping", name)
+			ui.DefaultLogger.Warn("locked, skipping", "name", name)
 			return true, nil
 		}
 		if err := c.upgradeContainer(ctx, name); err != nil {
-			ui.DefaultLogger.Error("failed while upgrading '%s': %s", name, err)
+			ui.DefaultLogger.Error("failed while upgrading", "name", name, "err", err)
 			return false, err
 		}
 		return false, nil
@@ -96,7 +96,7 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 
 func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string) error {
 	if _, updated, err := insidecontainer.ProvisionScripts(c.cfg.ScriptsDir); err != nil {
-		ui.DefaultLogger.Warn("failed to provision scripts: %s", err)
+		ui.DefaultLogger.Warn("failed to provision scripts", "err", err)
 	} else if updated {
 		ui.DefaultLogger.Info("otter scripts updated")
 	} else {

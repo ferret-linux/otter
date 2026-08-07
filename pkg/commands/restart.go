@@ -50,14 +50,14 @@ func (c *RestartCommand) Execute(ctx context.Context, opts *RestartOptions) erro
 
 	outcome := runBatch(ctx, containerNames, func(ctx context.Context, name string) (bool, error) {
 		if err := c.containerManager.Stop(ctx, []string{name}, opts.Force); err != nil {
-			ui.DefaultLogger.Error("failed to restart '%s': %s", name, err)
+			ui.DefaultLogger.Error("failed to restart", "name", name, "err", err)
 			return false, err
 		}
 		if err := c.containerManager.Start(ctx, name); err != nil {
-			ui.DefaultLogger.Error("failed to restart '%s': %s", name, err)
+			ui.DefaultLogger.Error("failed to restart", "name", name, "err", err)
 			return false, err
 		}
-		ui.DefaultLogger.Ok("restarted '%s'", name)
+		ui.DefaultLogger.Info("restarted", "name", name)
 		return false, nil
 	})
 

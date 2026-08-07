@@ -36,14 +36,14 @@ func (p *Progress) Next(message string, a ...any) {
 	p.lastMessage = fmt.Sprintf(message, a...)
 
 	if p.writer != io.Discard {
-		DefaultLogger.Info("%s", p.lastMessage)
+		DefaultLogger.Info(p.lastMessage)
 	}
 }
 
 func (p *Progress) Finalize(message string, a ...any) {
 	p.Done()
 	if p.writer != io.Discard {
-		DefaultLogger.Ok("%s", fmt.Sprintf(message, a...))
+		DefaultLogger.Info(fmt.Sprintf(message, a...))
 	}
 }
 
@@ -57,7 +57,7 @@ func (p *Progress) Done() {
 		if ttyutil.IsTerminalWriter(p.writer) {
 			fmt.Fprintf(p.writer, "\033[1A\r\033[2K")
 		}
-		DefaultLogger.Ok("%s", p.lastMessage)
+		DefaultLogger.Info(p.lastMessage)
 	}
 }
 
@@ -68,6 +68,6 @@ func (p *Progress) Fail() {
 
 	p.pending = false
 	if p.writer != io.Discard {
-		DefaultLogger.Error("%s", p.lastMessage)
+		DefaultLogger.Error(p.lastMessage)
 	}
 }

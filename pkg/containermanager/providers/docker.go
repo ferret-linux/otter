@@ -960,7 +960,7 @@ func (d *Docker) generateEnterCommand(
 		} else if val, ok := os.LookupEnv(env); ok {
 			cmd = append(cmd, fmt.Sprintf("--env=%s=%s", env, val))
 		} else {
-			ui.DefaultLogger.Warn("env-var '%s' not found on host, skipping", env)
+			ui.DefaultLogger.Warn("env-var not found on host, skipping", "env", env)
 		}
 	}
 
@@ -997,7 +997,7 @@ func (d *Docker) Start(ctx context.Context, containerName string) error {
 		return fmt.Errorf("container '%s' not found", containerName)
 	}
 	if inspectResult.ContainerStatus == containermanager.RunningStatus {
-		ui.DefaultLogger.Info("container '%s' is already running", containerName)
+		ui.DefaultLogger.Info("container is already running", "container", containerName)
 		return nil
 	}
 	if inspectResult.ContainerStatus == containermanager.PausedStatus {
@@ -1088,11 +1088,11 @@ func (d *Docker) waitForSetup(
 
 			case strings.HasPrefix(line, "Error:"):
 				progress.Fail()
-				ui.DefaultLogger.Error("%s", line)
+				ui.DefaultLogger.Error(line)
 				return fmt.Errorf("container setup error: %s", line)
 
 			case strings.HasPrefix(line, "Warning:"):
-				ui.DefaultLogger.Warn("%s", line)
+				ui.DefaultLogger.Warn(line)
 
 			case strings.HasPrefix(line, "otter:"):
 				parts := strings.SplitN(line, " ", 2)

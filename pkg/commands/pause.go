@@ -53,14 +53,14 @@ func (c *PauseCommand) Execute(ctx context.Context, opts *PauseOptions) error {
 
 	outcome := runBatch(ctx, containerNames, func(ctx context.Context, name string) (bool, error) {
 		if skipNotRunning[name] {
-			ui.DefaultLogger.Warn("'%s' is not running, skipping", name)
+			ui.DefaultLogger.Warn("not running, skipping", "name", name)
 			return true, nil
 		}
 		if err := c.containerManager.Pause(ctx, name); err != nil {
-			ui.DefaultLogger.Error("failed to pause '%s': %s", name, err)
+			ui.DefaultLogger.Error("failed to pause", "name", name, "err", err)
 			return false, err
 		}
-		ui.DefaultLogger.Ok("paused '%s'", name)
+		ui.DefaultLogger.Info("paused", "name", name)
 		return false, nil
 	})
 

@@ -51,10 +51,10 @@ func (c *UnlockCommand) Execute(ctx context.Context, opts UnlockOptions) error {
 	outcome := runBatch(ctx, containerNames, func(ctx context.Context, name string) (bool, error) {
 		if err := c.unlockOne(ctx, name); err != nil {
 			if errors.Is(err, ErrNotLocked) {
-				ui.DefaultLogger.Warn("'%s' is already unlocked, skipping", name)
+				ui.DefaultLogger.Warn("already unlocked, skipping", "name", name)
 				return true, nil
 			}
-			ui.DefaultLogger.Error("failed to unlock '%s': %s", name, err)
+			ui.DefaultLogger.Error("failed to unlock", "name", name, "err", err)
 			return false, err
 		}
 		return false, nil
@@ -79,6 +79,6 @@ func (c *UnlockCommand) unlockOne(ctx context.Context, name string) error {
 		return fmt.Errorf("failed to remove lock file from '%s': %w", name, err)
 	}
 
-	ui.DefaultLogger.Ok("unlocked '%s'", name)
+	ui.DefaultLogger.Info("unlocked", "name", name)
 	return nil
 }

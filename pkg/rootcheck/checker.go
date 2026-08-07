@@ -54,7 +54,7 @@ func check(ctx context.Context, sudoCommand string) (string, error) {
 	case "doas":
 		return sudoCommand, checkDoas(ctx, sudoCommand)
 	default:
-		ui.DefaultLogger.Warn("unknown privilege escalator %q, skipping validation — ensure it works correctly", sudoCommand)
+		ui.DefaultLogger.Warn("unknown privilege escalator, skipping validation — ensure it works correctly", "escalator", sudoCommand)
 		return sudoCommand, nil
 	}
 }
