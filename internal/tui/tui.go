@@ -1,5 +1,6 @@
 // Package tui implements otter's interactive terminal UI, launched via
-// `otter tui`. See internal/cli/tui.go for the command wiring.
+// `otter interactive` (alias `tui`). See internal/cli/interactive.go for
+// the command wiring.
 package tui
 
 import (

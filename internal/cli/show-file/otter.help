@@ -17,6 +17,7 @@
 {2}│{R} {0}upgrade{R}        {2}┆{R} {0}syu{R}  {5}Update packages in containers{R}  {2}│{R}
 {2}│{R} {0}assemble{R}       {2}┆{R} {0}dmf{R}  {5}Manage containers from a spec{R}  {2}│{R}
 {2}│{R} {0}registry{R}       {2}┆{R} {0}reg{R}  {5}Browse and manage otter images{R} {2}│{R}
+{2}│{R} {0}interactive{R}    {2}┆{R} {0}tui{R}  {5}Launch the interactive TUI{R}     {2}│{R}
 {2}│{R} {0}generate-entry{R} {2}┆{R} {0}pin{R}  {5}Create clickable desktop entry{R} {2}│{R}
 {2}├────────────────┴─────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                             {2}│{R}

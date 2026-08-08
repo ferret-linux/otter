@@ -14,8 +14,9 @@ import (
 
 func newTUICommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
-		Name:   "tui",
-		Action: tuiAction,
+		Name:    "interactive",
+		Aliases: []string{"tui"},
+		Action:  tuiAction,
 	}
 }
 
