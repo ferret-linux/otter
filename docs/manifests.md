@@ -1,9 +1,10 @@
 # Manifests
 
-A manifest is a TOML file describing one or more containers declaratively,
-consumed by [otter assemble](commands/otter-assemble.md) to create or
-remove all of them in one batch. This is useful for reproducing a fixed set
-of dev environments, or sharing a team's standard setup.
+A manifest is a TOML file describing one or more containers
+declaratively, consumed by
+[otter assemble](commands/otter-assemble.md) to create or remove all
+of them in one batch. This is useful for reproducing a fixed set of
+dev environments, or sharing a team's standard setup.
 
 ## Basic structure
 
@@ -20,20 +21,20 @@ name  = "tumbleweed"
 image = "registry.opensuse.org/opensuse/tumbleweed"
 ```
 
-As with `otter.conf`, otter accepts equivalent dotted-key, inline-table,
-and table-header styles for the nested sections below — pick whichever
-reads best for your file.
+As with `otter.conf`, otter accepts equivalent dotted-key,
+inline-table, and table-header styles for the nested sections below —
+pick whichever reads best for your file.
 
 ## Top-level fields
 
-| Field | Type | Description |
-|---|---|---|
-| `name` | string | Container name. Required, and must be unique within the manifest. |
-| `image` | string | Image to use (short registry name or full reference). |
-| `clone` | string | Name of an existing otter container to clone instead of using `image`. |
-| `start-now` | bool | Start the container (and run its hooks) immediately after creation. Default `false`. |
-| `force-pull` | bool | Always pull the image, even if present locally. Default `false`. |
-| `include` | string | Name of another `[[container]]` entry in the same manifest to inherit settings from. See [Includes](#includes) below. |
+| Field        | Type   | Description                                                                                                           |
+| ------------ | ------ | --------------------------------------------------------------------------------------------------------------------- |
+| `name`       | string | Container name. Required, and must be unique within the manifest.                                                     |
+| `image`      | string | Image to use (short registry name or full reference).                                                                 |
+| `clone`      | string | Name of an existing otter container to clone instead of using `image`.                                                |
+| `start-now`  | bool   | Start the container (and run its hooks) immediately after creation. Default `false`.                                  |
+| `force-pull` | bool   | Always pull the image, even if present locally. Default `false`.                                                      |
+| `include`    | string | Name of another `[[container]]` entry in the same manifest to inherit settings from. See [Includes](#includes) below. |
 
 ## `additional`
 
@@ -58,23 +59,24 @@ exported.path = "~/.local/bin"
 ```
 
 - `apps` — application names to export as launchable entries.
-- `bins` — absolute in-container binary paths to export as host-callable
-  wrapper scripts.
-- `path` — host directory exported binaries are written to. Defaults to
-  `$HOME/.local/bin` if omitted.
-- If either `apps` or `bins` is non-empty, `assemble` starts the container
-  (even without `start-now`) long enough to run the exports, then stops it
-  again afterward — unless `start-now` is also set, in which case it's left
-  running.
-- App names must match `^[a-zA-Z0-9][a-zA-Z0-9._+\-]*$`, and the export
-  path plus every bin path must be an absolute path matching
-  `^/[a-zA-Z0-9._+\-/]+$` — otter validates this before running anything,
-  to prevent command injection through the manifest.
+- `bins` — absolute in-container binary paths to export as
+  host-callable wrapper scripts.
+- `path` — host directory exported binaries are written to. Defaults
+  to `$HOME/.local/bin` if omitted.
+- If either `apps` or `bins` is non-empty, `assemble` starts the
+  container (even without `start-now`) long enough to run the
+  exports, then stops it again afterward — unless `start-now` is also
+  set, in which case it's left running.
+- App names must match `^[a-zA-Z0-9][a-zA-Z0-9._+\-]*$`, and the
+  export path plus every bin path must be an absolute path matching
+  `^/[a-zA-Z0-9._+\-/]+$` — otter validates this before running
+  anything, to prevent command injection through the manifest.
 
 ## `hooks`
 
-Shell commands to run at the start and end of container initialization,
-same as `otter create`'s `--pre-init-hooks`/`--init-hooks`:
+Shell commands to run at the start and end of container
+initialization, same as `otter create`'s
+`--pre-init-hooks`/`--init-hooks`:
 
 ```toml
 hooks.pre-init  = ["touch /pre-init"]
@@ -84,9 +86,10 @@ hooks.post-init = [
 ]
 ```
 
-Multiple hook entries in the list are joined into a single shell command
-with `&&` between them (unless an entry already ends in `;` or `&&`, in
-which case it's left as-is and just space-joined with the next one).
+Multiple hook entries in the list are joined into a single shell
+command with `&&` between them (unless an entry already ends in `;`
+or `&&`, in which case it's left as-is and just space-joined with the
+next one).
 
 ## `settings`
 
@@ -99,14 +102,14 @@ settings.init-system = false
 settings.hostname    = "arch-linux"
 ```
 
-| Field | Description |
-|---|---|
-| `lock` | Lock the container (`otter lock`-equivalent) immediately after successful setup. |
-| `entry` | Generate a desktop entry for the container, same as `otter create` without `--no-entry`. |
-| `shell` | Shell inside the container. |
-| `rootful` | Create as a rootful container. |
-| `init-system` | Enable systemd/init inside the container. |
-| `hostname` | Hostname inside the container. |
+| Field         | Description                                                                              |
+| ------------- | ---------------------------------------------------------------------------------------- |
+| `lock`        | Lock the container (`otter lock`-equivalent) immediately after successful setup.         |
+| `entry`       | Generate a desktop entry for the container, same as `otter create` without `--no-entry`. |
+| `shell`       | Shell inside the container.                                                              |
+| `rootful`     | Create as a rootful container.                                                           |
+| `init-system` | Enable systemd/init inside the container.                                                |
+| `hostname`    | Hostname inside the container.                                                           |
 
 ## `hardware`
 
@@ -131,18 +134,19 @@ isolation.all            = false
 isolation.userns-nolimit = false
 ```
 
-Maps directly to `otter create`'s `--unshare-netns`, `--unshare-ipc`,
-`--unshare-process`, `--unshare-devsys`, `--unshare-groups`,
-`--unshare-all`, and `--no-userns-limit` respectively. `isolation.all` (or
-`init-system`, for groups/process) ORs into the individual flags the same
-way `--unshare-all`/`--init` do on the CLI.
+Maps directly to `otter create`'s `--unshare-netns`,
+`--unshare-ipc`, `--unshare-process`, `--unshare-devsys`,
+`--unshare-groups`, `--unshare-all`, and `--no-userns-limit`
+respectively. `isolation.all` (or `init-system`, for groups/process)
+ORs into the individual flags the same way
+`--unshare-all`/`--init` do on the CLI.
 
 ## Includes
 
-An entry can set `include = "<other-name>"` to inherit fields from another
-`[[container]]` entry defined earlier or later in the same file. The
-including entry's own explicitly-set fields always win over the included
-base; anything left unset is inherited.
+An entry can set `include = "<other-name>"` to inherit fields from
+another `[[container]]` entry defined earlier or later in the same
+file. The including entry's own explicitly-set fields always win over
+the included base; anything left unset is inherited.
 
 ```toml
 [[container]]
@@ -158,29 +162,30 @@ include = "arch"
 
 Merge rules:
 
-- **Scalar fields** (`image`, `clone`, `shell`, `hostname`, memory, etc.):
-  the including entry's value wins if set; otherwise the base's value is
-  used.
+- **Scalar fields** (`image`, `clone`, `shell`, `hostname`, memory,
+  etc.): the including entry's value wins if set; otherwise the
+  base's value is used.
 - **Boolean/flag fields** (`lock`, `entry`, `rootful`, `init-system`,
-  `nvidia`, all `isolation.*`, `start-now`, `force-pull`): the including
-  entry's value wins only if it was *explicitly set* in that entry's TOML
-  — an unset field falls through to the base, not to `false`.
+  `nvidia`, all `isolation.*`, `start-now`, `force-pull`): the
+  including entry's value wins only if it was *explicitly set* in
+  that entry's TOML — an unset field falls through to the base, not
+  to `false`.
 - **List fields** (`additional.packages`/`volumes`/`flags`,
-  `exported.apps`/`bins`, `hooks.pre-init`/`post-init`): the base's list
-  comes first, followed by the including entry's own list, with duplicate
-  entries already present in the base skipped.
+  `exported.apps`/`bins`, `hooks.pre-init`/`post-init`): the base's
+  list comes first, followed by the including entry's own list, with
+  duplicate entries already present in the base skipped.
 
-Circular includes (`a` includes `b` includes `a`) and includes pointing at
-a nonexistent name are both detected and rejected with an error before
-anything is created.
+Circular includes (`a` includes `b` includes `a`) and includes
+pointing at a nonexistent name are both detected and rejected with an
+error before anything is created.
 
 ## Remote manifests
 
-`--file` on `otter assemble` accepts either a local path or an HTTP(S) URL
-— a URL is fetched directly, so you can point `assemble` at a manifest
-hosted in a repo or gist without downloading it first:
+`--file` on `otter assemble` accepts either a local path or an
+HTTP(S) URL — a URL is fetched directly, so you can point `assemble`
+at a manifest hosted in a repo or gist without downloading it first:
 
-```
+```sh
 otter assemble create --file https://example.com/team-manifest.toml
 ```
 
@@ -191,5 +196,7 @@ runnable example covering every field in all supported TOML styles.
 
 ## See Also
 
-- [otter-assemble](commands/otter-assemble.md) — the command that consumes manifests.
-- [otter-create](commands/otter-create.md) — the per-container flags manifests map onto.
+- [otter-assemble](commands/otter-assemble.md) — the command that
+  consumes manifests.
+- [otter-create](commands/otter-create.md) — the per-container flags
+  manifests map onto.

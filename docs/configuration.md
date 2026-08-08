@@ -8,39 +8,44 @@ optional — anything left unset falls back to otter's built-in defaults.
 Otter checks the following locations, in order, and merges them —
 **later files override earlier ones**, key by key:
 
-1. `<executable-dir>/../share/otter/otter.conf` — relative to the otter
-   binary itself. This exists specifically so that on NixOS, a config file
-   shipped alongside the package derivation is found relative to the binary
-   rather than a fixed absolute path.
+1. `<executable-dir>/../share/otter/otter.conf` — relative to the
+   otter binary itself. This exists specifically so that on NixOS, a
+   config file shipped alongside the package derivation is found
+   relative to the binary rather than a fixed absolute path.
 2. `/usr/share/otter/otter.conf`
 3. `/etc/otter/otter.conf`
-4. `$XDG_CONFIG_HOME/otter/otter.conf` (or `~/.config/otter/otter.conf` if
-   `XDG_CONFIG_HOME` is unset)
+4. `$XDG_CONFIG_HOME/otter/otter.conf` (or
+   `~/.config/otter/otter.conf` if `XDG_CONFIG_HOME` is unset)
 
-In practice this means your personal config in `~/.config/otter/otter.conf`
-always has the final say over any system-wide default.
+In practice this means your personal config in
+`~/.config/otter/otter.conf` always has the final say over any
+system-wide default.
 
 A missing file at any of these paths is not an error — it's simply
 skipped.
 
 ## File format
 
-`otter.conf` is TOML, and otter accepts any of three equivalent styles —
-mix and match as you like, since they all produce the same parsed result:
+`otter.conf` is TOML, and otter accepts any of three equivalent
+styles — mix and match as you like, since they all produce the same
+parsed result:
 
 **Dotted keys** (most explicit):
+
 ```toml
 container.hostname = "my-dev-box"
 settings.shell      = "fish"
 ```
 
 **Inline tables** (compact):
+
 ```toml
 container = { hostname = "my-dev-box", name = "dev" }
 settings  = { shell = "fish", init-system = false }
 ```
 
 **Table headers** (most readable for larger configs):
+
 ```toml
 [container]
 hostname = "my-dev-box"
@@ -53,36 +58,36 @@ shell = "fish"
 
 ### `[container]`
 
-| Key | Type | Default | Description |
-|---|---|---|---|
-| `hostname` | string | *(host's hostname)* | Default hostname for newly created containers, if `--hostname` isn't passed. |
-| `name` | string | `"my-container"` | Default container name used when neither a name nor `--image` is given to `otter create`. |
+| Key        | Type   | Default             | Description                                                                               |
+| ---------- | ------ | ------------------- | ----------------------------------------------------------------------------------------- |
+| `hostname` | string | *(host's hostname)* | Default hostname for newly created containers, if `--hostname` isn't passed.              |
+| `name`     | string | `"my-container"`    | Default container name used when neither a name nor `--image` is given to `otter create`. |
 
 ### `[images]`
 
-| Key | Type | Default | Description |
-|---|---|---|---|
-| `default` | string | `"ghcr.io/ferret-linux/ubuntu-otr:lts"` | Image used by `otter create` when `--image` isn't passed. Accepts a short registry name (see `otter registry list`) or a full image reference. |
-| `staleness-warn-threshold` | int | `5` | Build-count difference behind upstream at which otter warns about a stale local image. `0` disables warning. |
-| `staleness-autopull-threshold` | int | `10` | Build-count difference behind upstream at which otter auto-pulls instead of just warning. `0` disables auto-pull. |
+| Key                            | Type   | Default                                 | Description                                                                                                                                    |
+| ------------------------------ | ------ | --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `default`                      | string | `"ghcr.io/ferret-linux/ubuntu-otr:lts"` | Image used by `otter create` when `--image` isn't passed. Accepts a short registry name (see `otter registry list`) or a full image reference. |
+| `staleness-warn-threshold`     | int    | `5`                                     | Build-count difference behind upstream at which otter warns about a stale local image. `0` disables warning.                                   |
+| `staleness-autopull-threshold` | int    | `10`                                    | Build-count difference behind upstream at which otter auto-pulls instead of just warning. `0` disables auto-pull.                              |
 
 ### `[settings]`
 
-| Key | Type | Default | Description |
-|---|---|---|---|
-| `shell` | string | *(host's `$SHELL`, or `bash`)* | Default shell inside new containers: `bash`, `zsh`, or `fish`. |
-| `init-system` | bool | `false` | Enable an init system (systemd) by default, as if `--init` were always passed. |
-| `rootful` | bool | `false` | Run containers as root by default, as if `--root` were always passed. |
-| `userns-nolimit` | bool | `false` | Disable the rootless uid/gid range limit for user namespaces by default. |
-| `scripts-dir` | string | `$HOME/.local/share/otter` | Host directory where otter's provisioned helper scripts (`otter-init`, `otter-export`, `otter-host-exec`) are stored. |
+| Key              | Type   | Default                        | Description                                                                                                           |
+| ---------------- | ------ | ------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| `shell`          | string | *(host's `$SHELL`, or `bash`)* | Default shell inside new containers: `bash`, `zsh`, or `fish`.                                                        |
+| `init-system`    | bool   | `false`                        | Enable an init system (systemd) by default, as if `--init` were always passed.                                        |
+| `rootful`        | bool   | `false`                        | Run containers as root by default, as if `--root` were always passed.                                                 |
+| `userns-nolimit` | bool   | `false`                        | Disable the rootless uid/gid range limit for user namespaces by default.                                              |
+| `scripts-dir`    | string | `$HOME/.local/share/otter`     | Host directory where otter's provisioned helper scripts (`otter-init`, `otter-export`, `otter-host-exec`) are stored. |
 
 ### `[preferences]`
 
-| Key | Type | Default | Description |
-|---|---|---|---|
-| `container-manager` | string | `"autodetect"` | Which container manager to use: `autodetect`, `podman`, `docker`, or `nerdctl`. |
-| `sudo-program` | string | `"autodetect"` | Privilege-escalation program used for `--root` operations. `autodetect` tries `sudo`, `sudo-rs`, `doas`, `run0`, then `pkexec`, in that order. Can also be set per-invocation via the `OTR_SUDO_PROGRAM` environment variable or a command's `--sudo-command`-derived behavior. |
-| `no-entry` | bool | `false` | Skip desktop entry generation by default, as if `--no-entry` were always passed to `otter create`. |
+| Key                 | Type   | Default        | Description                                                                                                                                                                                                                                                                     |
+| ------------------- | ------ | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `container-manager` | string | `"autodetect"` | Which container manager to use: `autodetect`, `podman`, `docker`, or `nerdctl`.                                                                                                                                                                                                 |
+| `sudo-program`      | string | `"autodetect"` | Privilege-escalation program used for `--root` operations. `autodetect` tries `sudo`, `sudo-rs`, `doas`, `run0`, then `pkexec`, in that order. Can also be set per-invocation via the `OTR_SUDO_PROGRAM` environment variable or a command's `--sudo-command`-derived behavior. |
+| `no-entry`          | bool   | `false`        | Skip desktop entry generation by default, as if `--no-entry` were always passed to `otter create`.                                                                                                                                                                              |
 
 ## Example
 
@@ -105,5 +110,7 @@ staleness-autopull-threshold = 3
 
 ## See Also
 
-- [manifests.md](manifests.md) — per-container declarative configuration, distinct from these global defaults.
-- [images.md](images.md) — the full list of valid short image names for `images.default`.
+- [manifests.md](manifests.md) — per-container declarative
+  configuration, distinct from these global defaults.
+- [images.md](images.md) — the full list of valid short image names
+  for `images.default`.

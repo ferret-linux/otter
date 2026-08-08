@@ -6,7 +6,7 @@
 
 ## Synopsis
 
-```
+```text
 otter syu     [options] [container...]
 otter upgrade [options] [container...]
 ```
@@ -17,63 +17,70 @@ otter upgrade [options] [container...]
 
 Runs each container's native package manager upgrade routine (via
 otter's own `otter-init --upgrade` entrypoint script) inside the named
-container(s), or every otter container with `--all`. `--running` narrows
-`--all` down to only the containers that are currently running.
+container(s), or every otter container with `--all`. `--running`
+narrows `--all` down to only the containers that are currently
+running.
 
 Before upgrading, otter re-provisions its own helper scripts
 (`otter-init`, `otter-export`, `otter-host-exec`) into the target
-directory on the host if they're out of date, logging whether an update
-occurred. Each target container is started if it isn't already running,
-then the upgrade script is executed inside it as root, using whichever
-privilege-escalation tool is available in the container — trying
-`su-exec`, then `doas`, then falling back to `sudo`.
+directory on the host if they're out of date, logging whether an
+update occurred. Each target container is started if it isn't already
+running, then the upgrade script is executed inside it as root, using
+whichever privilege-escalation tool is available in the container —
+trying `su-exec`, then `doas`, then falling back to `sudo`.
 
-Locked containers are always skipped with a warning; if every requested
-container turns out to be locked, `upgrade` exits with an error instead of
-silently doing nothing.
+Locked containers are always skipped with a warning; if every
+requested container turns out to be locked, `upgrade` exits with an
+error instead of silently doing nothing.
 
 ## Options
 
-| Flag | Alias | Description |
-|---|---|---|
-| `--all` | `-a` | Upgrade every otter container. |
-| `--root` | `-r` | Upgrade rootful containers. |
-| `--running` | `-R` | Restrict `--all` to only currently-running containers. |
+| Flag        | Alias | Description                                            |
+| ----------- | ----- | ------------------------------------------------------ |
+| `--all`     | `-a`  | Upgrade every otter container.                         |
+| `--root`    | `-r`  | Upgrade rootful containers.                            |
+| `--running` | `-R`  | Restrict `--all` to only currently-running containers. |
 
 ## Examples
 
-```
+```sh
 otter syu my-box
 ```
+
 Upgrades packages in `my-box`.
 
-```
+```sh
 otter syu --all --root
 ```
+
 Upgrades every rootful otter container.
 
-```
+```sh
 otter upgrade --all
 ```
-Upgrades every rootless otter container (starting any that are stopped).
 
-```
+Upgrades every rootless otter container (starting any that are
+stopped).
+
+```sh
 otter upgrade --running
 ```
+
 Upgrades only the otter containers that are currently running.
 
 ## Notes
 
-- `--root` is preferred over `sudo otter upgrade`. Set `OTR_SUDO_PROGRAM`
-  (or `preferences.sudo-program`) to use a different privilege-escalation
-  program.
-- Locked containers are always skipped, with a warning. If every requested
-  container is locked (nothing gets upgraded), the command errors. Use
-  `otter unlock` first.
-- Non-running target containers are started automatically as part of the
-  upgrade.
+- `--root` is preferred over `sudo otter upgrade`. Set
+  `OTR_SUDO_PROGRAM` (or `preferences.sudo-program`) to use a
+  different privilege-escalation program.
+- Locked containers are always skipped, with a warning. If every
+  requested container is locked (nothing gets upgraded), the command
+  errors. Use `otter unlock` first.
+- Non-running target containers are started automatically as part of
+  the upgrade.
 
 ## See Also
 
 - [otter-lock](otter-lock.md), [otter-unlock](otter-unlock.md)
-- [otter-registry](otter-registry.md) — for updating the base *image* itself, as distinct from packages inside an existing container.
+- [otter-registry](otter-registry.md) — for updating the base *image*
+  itself, as distinct from packages inside an existing container.

@@ -6,7 +6,7 @@
 
 ## Synopsis
 
-```
+```text
 otter mk     [container] [options] [--image image]
 otter create [container] [options] [--image image]
 ```
@@ -15,13 +15,13 @@ otter create [container] [options] [--image image]
 
 ## Description
 
-`create` builds a new host-integrated container: it pulls (or reuses) a base
-image, mounts in the pieces of the host that make the container feel
+`create` builds a new host-integrated container: it pulls (or reuses) a
+base image, mounts in the pieces of the host that make the container feel
 native (home directory, `/dev`, `/sys`, network namespace, journal, RHEL
 subscriptions where applicable, and so on), and provisions otter's own
-init/export/host-exec helper scripts inside it. Unless `--no-entry` is set,
-it also generates a clickable desktop entry for the new container once
-creation succeeds.
+init/export/host-exec helper scripts inside it. Unless `--no-entry` is
+set, it also generates a clickable desktop entry for the new container
+once creation succeeds.
 
 If the container name already exists, `create` does nothing further and
 prints how to enter it — it will not recreate or modify an existing
@@ -29,85 +29,91 @@ container.
 
 ## Options
 
-| Flag | Alias | Description |
-|---|---|---|
-| `--image` | `-i` | Image to use for the container. Accepts a short registry name (e.g. `fedora`, `alpine`) resolved via `otter registry list`, or a full image reference (anything containing `/` or `:`). |
-| `--hostname` | `-n` | Hostname to set inside the container. Defaults to the host's hostname (or `<container>.<host-hostname>` if `--unshare-netns` is used). Max 64 characters. |
-| `--shell` | `-s` | Shell to use inside the container: `bash`, `zsh`, or `fish`. Defaults to the host's `$SHELL` if it is one of those three, otherwise `bash`. |
-| `--always-pull` | `-p` | Pull the image even if it already exists locally, instead of relying on the automatic staleness check. |
-| `--clone` | `-C` | Name of an existing otter container to use as the base for the new one, instead of `--image`. The source container must not be running; it is committed to a dated image tag (`<name>:<YYYY-MM-DD>`) which becomes the new container's image. |
-| `--home` | `-H` | Custom host directory to use as this container's home, instead of your real host home. The directory is created if it doesn't exist. Inside the container, `$HOME` resolves to `/home/<user>`, which is bind-mounted to this custom path. |
-| `--volume` | `-v` | Additional host:container volume(s) to mount, in the same syntax as the underlying container manager (`--volume /host/path:/container/path:rw`). Repeatable. |
-| `--additional-flags` | `-a` | Extra flags passed straight through to the container manager's `create` command. Repeatable; each value is whitespace-split before being appended, so a single flag string like `"--label=a=1 --label=b=2"` is split into separate arguments. |
-| `--additional-packages` | `-ap` | Space-separated list of packages to install during container setup, using the image's native package manager. Repeatable. |
-| `--init-hooks` | `-ih` | Shell command(s) to run at the *end* of container initialization. |
-| `--pre-init-hooks` | `-ph` | Shell command(s) to run at the *start* of container initialization, before packages are installed. |
-| `--init` | `-I` | Use an init system (systemd) inside the container. Implies `--unshare-groups` and `--unshare-process`. May require the base image to include systemd/runit/openrc packages. |
-| `--memory` | `-m` | Memory limit, e.g. `512m` or `2g`. Validated against total host memory (`/proc/meminfo`) at creation time — otter refuses to create a container asking for more than the host has. |
-| `--cpu-threads` | `-t` | Number of CPU threads the container is allowed to use. Validated against the host's available CPU threads (`/sys/devices/system/cpu/present`). |
-| `--nvidia` | `-N` | Best-effort integration of the host's Nvidia drivers into the container. For a more robust setup, prefer Nvidia's own `nvidia-container-toolkit`. |
-| `--no-userns-limit` | `-ul` | Skip the size-capped rootless user-namespace range (Podman's `keep-id:size=65536`), falling back to a plain `keep-id` user namespace. |
-| `--platform` | `-P` | Target platform for the image, e.g. `linux/arm64`. |
-| `--unshare-devsys` | `-ud` | Do not bind-mount the host's `/dev` and `/sys` into the container. |
-| `--unshare-groups` | `-ug` | Do not forward the user's additional host groups into the container; entry uses `su` to trigger a proper login shell as the target user instead of running directly with the host's group set. |
-| `--unshare-ipc` | `-ui` | Do not share the host IPC namespace (`--ipc host` is omitted, and the container gets its own `/dev/shm`). |
-| `--unshare-netns` | `-un` | Do not share the host network namespace (`--network host` is omitted). Also switches the container's default hostname to `<container>.<host-hostname>`, and skips syncing `/etc/hosts`/`/etc/resolv.conf`/`/etc/hostname` from the host. |
-| `--unshare-process` | `-up` | Do not share the host PID namespace (`--pid host` is omitted). |
-| `--unshare-all` | `-ua` | Shorthand for enabling `--unshare-devsys`, `--unshare-groups`, `--unshare-ipc`, `--unshare-netns`, and `--unshare-process` together. |
-| `--no-entry` | `-E` | Do not generate a desktop entry for this container after creation. |
-| `--disable-root-password-i-fully-understand-the-risks-and-accept-the-responsibilities` | — | Disables setting a root password inside the container. Deliberately verbose name — read it before using it. |
-| `--root` | `-r` | Create a rootful container, using the configured privilege-escalation program. |
+| Flag                                                                                   | Alias | Description                                                                                                                                                                                                                                   |
+| -------------------------------------------------------------------------------------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  |
+| `--image`                                                                              | `-i`  | Image to use for the container. Accepts a short registry name (e.g. `fedora`, `alpine`) resolved via `otter registry list`, or a full image reference (anything containing `/` or `:`).                                                       |
+| `--hostname`                                                                           | `-n`  | Hostname to set inside the container. Defaults to the host's hostname (or `<container>.<host-hostname>` if `--unshare-netns` is used). Max 64 characters.                                                                                     |
+| `--shell`                                                                              | `-s`  | Shell to use inside the container: `bash`, `zsh`, or `fish`. Defaults to the host's `$SHELL` if it is one of those three, otherwise `bash`.                                                                                                   |
+| `--always-pull`                                                                        | `-p`  | Pull the image even if it already exists locally, instead of relying on the automatic staleness check.                                                                                                                                        |
+| `--clone`                                                                              | `-C`  | Name of an existing otter container to use as the base for the new one, instead of `--image`. The source container must not be running; it is committed to a dated image tag (`<name>:<YYYY-MM-DD>`) which becomes the new container's image. |
+| `--home`                                                                               | `-H`  | Custom host directory to use as this container's home, instead of your real host home. The directory is created if it doesn't exist. Inside the container, `$HOME` resolves to `/home/<user>`, which is bind-mounted to this custom path.     |
+| `--volume`                                                                             | `-v`  | Additional host:container volume(s) to mount, in the same syntax as the underlying container manager (`--volume /host/path:/container/path:rw`). Repeatable.                                                                                  |
+| `--additional-flags`                                                                   | `-a`  | Extra flags passed straight through to the container manager's `create` command. Repeatable; each value is whitespace-split before being appended, so a single flag string like `"--label=a=1 --label=b=2"` is split into separate arguments. |
+| `--additional-packages`                                                                | `-ap` | Space-separated list of packages to install during container setup, using the image's native package manager. Repeatable.                                                                                                                     |
+| `--init-hooks`                                                                         | `-ih` | Shell command(s) to run at the *end* of container initialization.                                                                                                                                                                             |
+| `--pre-init-hooks`                                                                     | `-ph` | Shell command(s) to run at the *start* of container initialization, before packages are installed.                                                                                                                                            |
+| `--init`                                                                               | `-I`  | Use an init system (systemd) inside the container. Implies `--unshare-groups` and `--unshare-process`. May require the base image to include systemd/runit/openrc packages.                                                                   |
+| `--memory`                                                                             | `-m`  | Memory limit, e.g. `512m` or `2g`. Validated against total host memory (`/proc/meminfo`) at creation time — otter refuses to create a container asking for more than the host has.                                                            |
+| `--cpu-threads`                                                                        | `-t`  | Number of CPU threads the container is allowed to use. Validated against the host's available CPU threads (`/sys/devices/system/cpu/present`).                                                                                                |
+| `--nvidia`                                                                             | `-N`  | Best-effort integration of the host's Nvidia drivers into the container. For a more robust setup, prefer Nvidia's own `nvidia-container-toolkit`.                                                                                             |
+| `--no-userns-limit`                                                                    | `-ul` | Skip the size-capped rootless user-namespace range (Podman's `keep-id:size=65536`), falling back to a plain `keep-id` user namespace.                                                                                                         |
+| `--platform`                                                                           | `-P`  | Target platform for the image, e.g. `linux/arm64`.                                                                                                                                                                                            |
+| `--unshare-devsys`                                                                     | `-ud` | Do not bind-mount the host's `/dev` and `/sys` into the container.                                                                                                                                                                            |
+| `--unshare-groups`                                                                     | `-ug` | Do not forward the user's additional host groups into the container; entry uses `su` to trigger a proper login shell as the target user instead of running directly with the host's group set.                                                |
+| `--unshare-ipc`                                                                        | `-ui` | Do not share the host IPC namespace (`--ipc host` is omitted, and the container gets its own `/dev/shm`).                                                                                                                                     |
+| `--unshare-netns`                                                                      | `-un` | Do not share the host network namespace (`--network host` is omitted). Also switches the container's default hostname to `<container>.<host-hostname>`, and skips syncing `/etc/hosts`/`/etc/resolv.conf`/`/etc/hostname` from the host.      |
+| `--unshare-process`                                                                    | `-up` | Do not share the host PID namespace (`--pid host` is omitted).                                                                                                                                                                                |
+| `--unshare-all`                                                                        | `-ua` | Shorthand for enabling `--unshare-devsys`, `--unshare-groups`, `--unshare-ipc`, `--unshare-netns`, and `--unshare-process` together.                                                                                                          |
+| `--no-entry`                                                                           | `-E`  | Do not generate a desktop entry for this container after creation.                                                                                                                                                                            |
+| `--disable-root-password-i-fully-understand-the-risks-and-accept-the-responsibilities` | —     | Disables setting a root password inside the container. Deliberately verbose name — read it before using it.                                                                                                                                   |
+| `--root`                                                                               | `-r`  | Create a rootful container, using the configured privilege-escalation program.                                                                                                                                                                |
 
 ## Examples
 
-```
+```sh
 otter mk --image alpine my-alpinebox
 ```
+
 Creates a container named `my-alpinebox` from the `alpine` registry image.
 
-```
+```sh
 otter mk --init --volume /opt/my-dir:/usr/local/my-dir:rw
 ```
-Creates a container with systemd enabled and an extra volume mounted, using
-the default image and an auto-derived name.
 
-```
+Creates a container with systemd enabled and an extra volume mounted,
+using the default image and an auto-derived name.
+
+```sh
 otter create --image alpine:latest --additional-packages "git tmux vim"
 ```
-Creates from a fully-qualified `alpine:latest` tag and installs three extra
-packages during setup.
 
-```
+Creates from a fully-qualified `alpine:latest` tag and installs three
+extra packages during setup.
+
+```sh
 otter create --image centos:stream10 --always-pull --home ~/otter/centos10
 ```
-Always re-pulls the image before creating, and uses a custom home directory.
+
+Always re-pulls the image before creating, and uses a custom home
+directory.
 
 ## Notes
 
 - **Root mode**: `--root` is preferred over `sudo otter create`. To use a
-  privilege-escalation program other than `sudo`, set `OTR_SUDO_PROGRAM` or
-  the `preferences.sudo-program` config value.
+  privilege-escalation program other than `sudo`, set `OTR_SUDO_PROGRAM`
+  or the `preferences.sudo-program` config value.
 - **`--init`**: makes host processes invisible from inside the container.
-  It implies `--unshare-process` and `--unshare-groups`, and may need extra
-  packages (systemd, runit, openrc) depending on the base image.
-- **`--clone`**: useful for renaming an existing container or branching off
-  multiple copies of the same environment. The container being cloned must
-  be stopped.
+  It implies `--unshare-process` and `--unshare-groups`, and may need
+  extra packages (systemd, runit, openrc) depending on the base image.
+- **`--clone`**: useful for renaming an existing container or branching
+  off multiple copies of the same environment. The container being
+  cloned must be stopped.
 - **`--nvidia`**: a best-effort attempt only; for serious GPU workloads,
   `nvidia-container-toolkit` is the officially supported path.
 - **Pulling behavior**: a missing image is always pulled automatically
   regardless of flags. An image that already exists locally is checked
-  against the registry's staleness thresholds (`images.staleness-warn-threshold`,
-  `images.staleness-autopull-threshold` in `otter.conf`) and either left
-  alone, warned about, or auto-pulled — unless `--always-pull` forces a pull
-  unconditionally. See [otter-registry](otter-registry.md) and
-  [images.md](../images.md).
-- **Naming**: if no name is given, otter derives one from the image — short
-  names like `alpine` become `my-alpine`; explicit registry paths/tags like
-  `ubuntu:20.04` become `ubuntu-20.04`.
+  against the registry's staleness thresholds
+  (`images.staleness-warn-threshold`, `images.staleness-autopull-threshold`
+  in `otter.conf`) and either left alone, warned about, or auto-pulled —
+  unless `--always-pull` forces a pull unconditionally. See
+  [otter-registry](otter-registry.md) and [images.md](../images.md).
+- **Naming**: if no name is given, otter derives one from the image —
+  short names like `alpine` become `my-alpine`; explicit registry
+  paths/tags like `ubuntu:20.04` become `ubuntu-20.04`.
 
 ## See Also
 
 - [otter-enter](otter-enter.md) — enter the container after creating it.
 - [otter-registry](otter-registry.md) — browse available images.
-- [configuration.md](../configuration.md) — defaults for shell, image, rootful mode, etc.
+- [configuration.md](../configuration.md) — defaults for shell, image,
+  rootful mode, etc.

@@ -6,7 +6,7 @@
 
 ## Synopsis
 
-```
+```text
 otter up    [options] [container...]
 otter start [options] [container...]
 ```
@@ -16,41 +16,45 @@ otter start [options] [container...]
 ## Description
 
 Starts the named container(s), or every otter-managed container with
-`--all`. Multiple names can be given as a single comma-separated argument
-(e.g. `otter start foo,bar`). Containers that are already running are
-skipped without being treated as a failure.
+`--all`. Multiple names can be given as a single comma-separated
+argument (e.g. `otter start foo,bar`). Containers that are already
+running are skipped without being treated as a failure.
 
-Every requested name is always attempted, even if starting an earlier one
-fails; a final summary line reports how many succeeded, failed, or were
-skipped.
+Every requested name is always attempted, even if starting an earlier
+one fails; a final summary line reports how many succeeded, failed, or
+were skipped.
 
 ## Options
 
-| Flag | Alias | Description |
-|---|---|---|
-| `--all` | `-a` | Start every otter container instead of specific names. |
-| `--root` | `-r` | Operate on rootful containers. |
+| Flag     | Alias | Description                                            |
+| -------- | ----- | ------------------------------------------------------ |
+| `--all`  | `-a`  | Start every otter container instead of specific names. |
+| `--root` | `-r`  | Operate on rootful containers.                         |
 
 ## Examples
 
-```
+```sh
 otter up --all
 ```
+
 Starts every rootless otter container.
 
-```
+```sh
 otter up my-box
 ```
+
 Starts `my-box`.
 
-```
+```sh
 otter start my-box
 ```
+
 Same as above, using the non-aliased command name.
 
-```
+```sh
 otter start --root my-box
 ```
+
 Starts the rootful container `my-box`.
 
 ## Notes
@@ -60,4 +64,5 @@ Starts the rootful container `my-box`.
 
 ## See Also
 
-- [otter-stop](otter-stop.md), [otter-restart](otter-restart.md), [otter-pause](otter-pause.md)
+- [otter-stop](otter-stop.md), [otter-restart](otter-restart.md),
+  [otter-pause](otter-pause.md)

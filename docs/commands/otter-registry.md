@@ -6,7 +6,7 @@
 
 ## Synopsis
 
-```
+```text
 otter reg      <list|pull|remove> [options]
 otter registry <list|pull|remove> [options]
 ```
@@ -16,8 +16,8 @@ otter registry <list|pull|remove> [options]
 
 ## Description
 
-Otter maintains a curated set of prebuilt, otter-optimized container images
-(see [images.md](../images.md) for the full list) described by a
+Otter maintains a curated set of prebuilt, otter-optimized container
+images (see [images.md](../images.md) for the full list) described by a
 JSON manifest fetched from the upstream repository at runtime. The
 `registry` command lets you browse that catalog, and pull or remove the
 corresponding local images independently of creating a container.
@@ -25,91 +25,101 @@ corresponding local images independently of creating a container.
 ### list
 
 Prints a table of the registry's image entries. By default, disabled
-entries are hidden and the table only shows `NAME`, `ARCH`, `LOCAL`, and
-`IMAGE`. With `--all`, disabled entries are included and `STATUS`/`BUILT`
-columns are added, showing whether each entry is enabled/disabled and
-roughly when it was last built. The `LOCAL` column shows whether the image
-is pulled at all and, if so, whether it's up to date, behind, or ahead of
-the latest known build.
+entries are hidden and the table only shows `NAME`, `ARCH`, `LOCAL`,
+and `IMAGE`. With `--all`, disabled entries are included and
+`STATUS`/`BUILT` columns are added, showing whether each entry is
+enabled/disabled and roughly when it was last built. The `LOCAL` column
+shows whether the image is pulled at all and, if so, whether it's up to
+date, behind, or ahead of the latest known build.
 
 ### pull
 
 Pulls image(s) by short name (or every enabled image with `--all`). An
-image already present locally and not stale is skipped unless `--force` is
-given.
+image already present locally and not stale is skipped unless
+`--force` is given.
 
 ### remove
 
 Removes locally-pulled image(s) by short name (or every locally-present
-otter image with `--all`). An image not present locally is skipped with a
-warning rather than treated as an error.
+otter image with `--all`). An image not present locally is skipped
+with a warning rather than treated as an error.
 
 ## Options
 
 ### list / ls
 
-| Flag | Alias | Description |
-|---|---|---|
-| `--all` | `-a` | Include disabled images in the table, and show the `STATUS`/`BUILT` columns. |
+| Flag    | Alias | Description                                                                  |
+| ------- | ----- | ---------------------------------------------------------------------------- |
+| `--all` | `-a`  | Include disabled images in the table, and show the `STATUS`/`BUILT` columns. |
 
 ### pull / pl
 
-| Flag | Alias | Description |
-|---|---|---|
-| `--all` | `-a` | Pull every enabled image not yet present locally (or stale, per the registry's build numbers). |
-| `--force` | `-f` | Pull even if the image is already present locally and current. |
+| Flag      | Alias | Description                                                                                    |
+| --------- | ----- | ---------------------------------------------------------------------------------------------- |
+| `--all`   | `-a`  | Pull every enabled image not yet present locally (or stale, per the registry's build numbers). |
+| `--force` | `-f`  | Pull even if the image is already present locally and current.                                 |
 
 ### remove / rm
 
-| Flag | Alias | Description |
-|---|---|---|
-| `--all` | `-a` | Remove every locally-present otter image. |
-| `--force` | `-f` | Remove an image even if it is currently in use by a container. |
+| Flag      | Alias | Description                                                    |
+| --------- | ----- | -------------------------------------------------------------- |
+| `--all`   | `-a`  | Remove every locally-present otter image.                      |
+| `--force` | `-f`  | Remove an image even if it is currently in use by a container. |
 
 ### Global
 
-| Flag | Alias | Description |
-|---|---|---|
-| `--root` | `-r` | Use rootful containers/images. |
+| Flag     | Alias | Description                    |
+| -------- | ----- | ------------------------------ |
+| `--root` | `-r`  | Use rootful containers/images. |
 
 ## Examples
 
-```
+```sh
 otter reg ls --all
 ```
-Lists every registry entry, including disabled ones, with status/build info.
 
-```
+Lists every registry entry, including disabled ones, with status/build
+info.
+
+```sh
 otter reg pull --all --force
 ```
-Force-pulls every enabled image, even ones already present and current.
 
-```
+Force-pulls every enabled image, even ones already present and
+current.
+
+```sh
 otter reg pull alpine,fedora
 ```
+
 Pulls the `alpine` and `fedora` images by short name.
 
-```
+```sh
 otter registry list
 ```
+
 Lists enabled registry entries.
 
-```
+```sh
 otter registry remove alpine,fedora
 ```
+
 Removes the locally-pulled `alpine` and `fedora` images.
 
 ## Notes
 
 - Disabled registry entries use a fallback vendor image (the plain
-  upstream distro image, rather than otter's optimized build) when pulled
-  by name.
-- Disabled images are hidden from `list`'s table unless `--all` is passed.
-- A short name (no `/` or `:`) is resolved against the registry catalog; a
-  full image reference is used as-is. `otter registry list` shows the valid
-  short names.
+  upstream distro image, rather than otter's optimized build) when
+  pulled by name.
+- Disabled images are hidden from `list`'s table unless `--all` is
+  passed.
+- A short name (no `/` or `:`) is resolved against the registry
+  catalog; a full image reference is used as-is. `otter registry list`
+  shows the valid short names.
 
 ## See Also
 
-- [images.md](../images.md) — the full catalog of built-in images and distros.
-- [otter-create](otter-create.md) — creating a container triggers the same staleness-aware pull logic.
+- [images.md](../images.md) — the full catalog of built-in images and
+  distros.
+- [otter-create](otter-create.md) — creating a container triggers the
+  same staleness-aware pull logic.

@@ -6,15 +6,15 @@ environment and with VS Code's Remote-Containers workflow.
 ## Desktop entries
 
 `otter create` generates a `.desktop` launcher for every new container
-automatically, unless `--no-entry` (or `preferences.no-entry = true` in
-`otter.conf`) is set. You can also manage entries manually with
+automatically, unless `--no-entry` (or `preferences.no-entry = true`
+in `otter.conf`) is set. You can also manage entries manually with
 [otter generate-entry](commands/otter-generate-entry.md) (alias
 `otter pin`):
 
-```
-otter pin my-box              # create/refresh an entry for my-box
-otter pin --all                # create entries for every container
-otter generate-entry my-box --delete   # remove the entry
+```sh
+otter pin my-box                     # create/refresh an entry for my-box
+otter pin --all                      # create entries for every container
+otter generate-entry my-box --delete # remove the entry
 ```
 
 Entries are written to `~/.local/share/applications/`, named
@@ -26,40 +26,42 @@ Each entry:
 
 - Runs `otter enter <container>` (with `--root` appended for rootful
   containers) in a terminal when launched.
-- Includes a **Remove** action (visible via right-click in most launchers)
-  that runs `otter rm <container>` instead.
+- Includes a **Remove** action (visible via right-click in most
+  launchers) that runs `otter rm <container>` instead.
 - Gets an icon matching the container's distro automatically, unless a
-  custom `--icon` path was given. Icon detection reads `/etc/os-release`
-  from inside the container and matches its `ID=` value against a built-in
-  set of distro icons (Arch, Alpine, Alma, Blackarch, CentOS, Chimera,
-  Debian, Devuan, Fedora, Gentoo, Kali, openSUSE Leap/Tumbleweed, Oracle
-  Linux, RHEL, Rocky, Ubuntu, Void), falling back to a generic otter
-  terminal icon otherwise. Detected/cached icons live under
+  custom `--icon` path was given. Icon detection reads
+  `/etc/os-release` from inside the container and matches its `ID=`
+  value against a built-in set of distro icons (Arch, Alpine, Alma,
+  Blackarch, CentOS, Chimera, Debian, Devuan, Fedora, Gentoo, Kali,
+  openSUSE Leap/Tumbleweed, Oracle Linux, RHEL, Rocky, Ubuntu, Void),
+  falling back to a generic otter terminal icon otherwise.
+  Detected/cached icons live under
   `~/.local/share/otter/icons/distros/`.
 
 `otter remove` deletes a container's desktop entry (and its exported
-binaries/apps — see below) automatically as part of removal, so manual
-`--delete` is only needed if you want to remove just the entry without
-removing the container.
+binaries/apps — see below) automatically as part of removal, so
+manual `--delete` is only needed if you want to remove just the entry
+without removing the container.
 
 ## Exported apps and binaries
 
-Independently of desktop entries for the container *shell* itself, otter
-can export individual applications or binaries from inside a container so
-they're runnable directly from the host, via the `otter-export` helper
-script that runs inside the container. This is most commonly driven
-through a [manifest's](manifests.md) `exported.apps`/`exported.bins`
-fields when using `otter assemble`, but the underlying mechanism also
-applies to anything exported manually.
+Independently of desktop entries for the container *shell* itself,
+otter can export individual applications or binaries from inside a
+container so they're runnable directly from the host, via the
+`otter-export` helper script that runs inside the container. This is
+most commonly driven through a [manifest's](manifests.md)
+`exported.apps`/`exported.bins` fields when using `otter assemble`,
+but the underlying mechanism also applies to anything exported
+manually.
 
 - Exported binaries are written as wrapper scripts under
-  `exported.path` (defaults to `$HOME/.local/bin`), tagged internally with
-  an `# otter_binary` / `# name: <container>` marker.
+  `exported.path` (defaults to `$HOME/.local/bin`), tagged internally
+  with an `# otter_binary` / `# name: <container>` marker.
 - Exported apps produce their own desktop entries alongside the
   container's own entry.
-- `otter remove` finds and cleans up everything exported for a container
-  by scanning for these markers — you don't need to remove exports
-  manually before removing the container.
+- `otter remove` finds and cleans up everything exported for a
+  container by scanning for these markers — you don't need to remove
+  exports manually before removing the container.
 
 ## VS Code Remote-Containers integration
 
@@ -77,30 +79,34 @@ otter-managed containers (detected via the `manager=otter` container
 label) and transparently redirect `.vscode-server` to a
 container-specific path under `/var/tmp` via a symlink, so each
 container gets its own isolated server install. They also forward a
-filtered set of the host's environment variables into the exec'd process,
-and normalize the exec user, so that a `code --remote` session behaves the
-same way `otter enter` would.
+filtered set of the host's environment variables into the exec'd
+process, and normalize the exec user, so that a `code --remote`
+session behaves the same way `otter enter` would.
 
-`vscode-otter` is the launcher counterpart: given a container name and a
-path, it opens VS Code with a `vscode-remote://attached-container+...`
-folder URI pointing at that path inside the container.
+`vscode-otter` is the launcher counterpart: given a container name and
+a path, it opens VS Code with a
+`vscode-remote://attached-container+...` folder URI pointing at that
+path inside the container.
 
 To use this integration:
 
 1. Copy or symlink the relevant host shim (`docker-host` or
    `podman-host`, matching your container manager) somewhere on your
-   `PATH`, and point VS Code's Dev Containers extension at it in place of
-   the raw `docker`/`podman` binary (see the extension's own
+   `PATH`, and point VS Code's Dev Containers extension at it in
+   place of the raw `docker`/`podman` binary (see the extension's own
    `dev.containers.dockerPath`/equivalent setting).
-2. Use `vscode-otter <container-name> <path>` to open a folder inside an
-   otter container in VS Code.
+2. Use `vscode-otter <container-name> <path>` to open a folder inside
+   an otter container in VS Code.
 
-Both shims also transparently fall back to Flatpak's `flatpak-spawn --host`
-when run from inside a Flatpak sandbox (e.g. a Flatpak build of VS Code),
-so the integration keeps working in that environment too.
+Both shims also transparently fall back to Flatpak's
+`flatpak-spawn --host` when run from inside a Flatpak sandbox (e.g. a
+Flatpak build of VS Code), so the integration keeps working in that
+environment too.
 
 ## See Also
 
 - [otter-generate-entry](commands/otter-generate-entry.md)
-- [otter-create](commands/otter-create.md), [otter-remove](commands/otter-remove.md)
-- [manifests.md](manifests.md) — declarative `exported.apps`/`exported.bins`.
+- [otter-create](commands/otter-create.md),
+  [otter-remove](commands/otter-remove.md)
+- [manifests.md](manifests.md) — declarative
+  `exported.apps`/`exported.bins`.

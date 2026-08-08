@@ -6,7 +6,7 @@
 
 ## Synopsis
 
-```
+```text
 otter info    [options] [container]
 otter inspect [options] [container]
 ```
@@ -18,38 +18,43 @@ otter inspect [options] [container]
 Displays a formatted table (or, with `--json`, structured JSON) of the
 container's configuration as it was defined at creation time: general
 info (name, ID, created timestamp, status, image, platform, hostname,
-shell, home directory, lock state, rootful/rootless, and which container
-manager is in use), resource limits (memory, CPU threads), enabled
-features (init system, Nvidia), and namespace isolation settings (IPC,
-network, process, devices, groups, and the rootless userns size limit).
+shell, home directory, lock state, rootful/rootless, and which
+container manager is in use), resource limits (memory, CPU threads),
+enabled features (init system, Nvidia), and namespace isolation
+settings (IPC, network, process, devices, groups, and the rootless
+userns size limit).
 
 ## Options
 
-| Flag | Alias | Description |
-|---|---|---|
-| `--root` | `-r` | Inspect a rootful container. |
-| `--json` | `-j` | Print the result as a JSON object instead of a formatted table. |
+| Flag     | Alias | Description                                                     |
+| -------- | ----- | --------------------------------------------------------------- |
+| `--root` | `-r`  | Inspect a rootful container.                                    |
+| `--json` | `-j`  | Print the result as a JSON object instead of a formatted table. |
 
 ## Examples
 
-```
+```sh
 otter info my-box
 ```
+
 Shows a formatted info table for `my-box`.
 
-```
+```sh
 otter info my-box --root
 ```
+
 Shows info for the rootful container `my-box`.
 
-```
+```sh
 otter inspect my-box
 ```
+
 Same as the first example, using the non-aliased command name.
 
-```
+```sh
 otter inspect my-box --root
 ```
+
 Same as the second example, using the non-aliased command name.
 
 ## Notes
@@ -65,5 +70,7 @@ Same as the second example, using the non-aliased command name.
 
 ## See Also
 
-- [otter-list](otter-list.md) — a lighter-weight summary across all containers.
-- [otter-journal](otter-journal.md) — log output, as distinct from static configuration.
+- [otter-list](otter-list.md) — a lighter-weight summary across all
+  containers.
+- [otter-journal](otter-journal.md) — log output, as distinct from
+  static configuration.

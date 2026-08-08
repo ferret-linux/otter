@@ -4,67 +4,68 @@
 
 Otter treats rootless and rootful containers as two separate sets — a
 rootless `otter list` will not show your rootful containers, and vice
-versa. Any command that operates on a specific container needs `--root` if
-that container was created with `--root`.
+versa. Any command that operates on a specific container needs
+`--root` if that container was created with `--root`.
 
 `--root` is otter's preferred way to run something with elevated
 privileges — it's equivalent to, but preferred over, running
 `sudo otter ...` directly, because it lets otter control exactly which
 privilege-escalation program is used and how.
 
-By default otter auto-detects a privilege-escalation program by trying, in
-order: `sudo`, `sudo-rs`, `doas`, `run0`, `pkexec`. You can pin a specific
-one via the `OTR_SUDO_PROGRAM` environment variable or
+By default otter auto-detects a privilege-escalation program by
+trying, in order: `sudo`, `sudo-rs`, `doas`, `run0`, `pkexec`. You can
+pin a specific one via the `OTR_SUDO_PROGRAM` environment variable or
 `preferences.sudo-program` in `otter.conf` (see
 [configuration.md](configuration.md)).
 
 **"cannot run in root mode" / privilege escalation errors**: otter
-validates the resolved escalation program before doing anything rootful.
-For `sudo`/`sudo-rs` it runs a `-v` credential check; for `doas`, `run0`,
-and `pkexec` — none of which offer a safe validate-only invocation — it
-only checks that the binary exists on `PATH`. If none of the five known
-programs are found, otter errors with a message telling you to install
-one.
+validates the resolved escalation program before doing anything
+rootful. For `sudo`/`sudo-rs` it runs a `-v` credential check; for
+`doas`, `run0`, and `pkexec` — none of which offer a safe
+validate-only invocation — it only checks that the binary exists on
+`PATH`. If none of the five known programs are found, otter errors
+with a message telling you to install one.
 
 ## "Missing dependency: we need a container manager"
 
-Otter needs one of Podman, Docker, or nerdctl installed and working. If
-none is detected during auto-detection, otter prints this and exits;
-install one of the three and try again, or set
+Otter needs one of Podman, Docker, or nerdctl installed and working.
+If none is detected during auto-detection, otter prints this and
+exits; install one of the three and try again, or set
 `preferences.container-manager` explicitly if one is installed but not
 being found automatically.
 
 ## "Invalid input" for `--container-manager`
 
-The value must be one of `autodetect`, `podman`, `docker`, or `nerdctl` —
-any other string is rejected outright.
+The value must be one of `autodetect`, `podman`, `docker`, or
+`nerdctl` — any other string is rejected outright.
 
 ## A container is "locked" and won't remove or upgrade
 
-Locking (`otter lock`) is otter's opt-in protection against accidentally
-removing or upgrading a container. A locked container is skipped by
-`otter remove` (unless you pass `--bypass-lock`) and by `otter upgrade`.
-Run `otter unlock <name>` first, or pass `--bypass-lock` to `remove` if you
-specifically want to override it. The container must be running for either
-`lock` or `unlock` to take effect, since the lock state is a file stored
-inside the container filesystem itself
-(`/usr/lib/otter/container.lock`).
+Locking (`otter lock`) is otter's opt-in protection against
+accidentally removing or upgrading a container. A locked container is
+skipped by `otter remove` (unless you pass `--bypass-lock`) and by
+`otter upgrade`. Run `otter unlock <name>` first, or pass
+`--bypass-lock` to `remove` if you specifically want to override it.
+The container must be running for either `lock` or `unlock` to take
+effect, since the lock state is a file stored inside the container
+filesystem itself (`/usr/lib/otter/container.lock`).
 
 ## "unknown image" when creating a container
 
-This means the short name you passed to `--image` doesn't match any entry
-in the registry catalog, and doesn't look like a full image reference
-either (i.e. it contains neither `/` nor `:`). The error message lists
-every currently valid short name. Run `otter registry list` to browse the
-catalog, or see [images.md](images.md) for the full built-in list.
+This means the short name you passed to `--image` doesn't match any
+entry in the registry catalog, and doesn't look like a full image
+reference either (i.e. it contains neither `/` nor `:`). The error
+message lists every currently valid short name. Run
+`otter registry list` to browse the catalog, or see
+[images.md](images.md) for the full built-in list.
 
 ## "not enough memory" / "not enough threads" when creating
 
 `--memory` and `--cpu-threads` are validated against the host's actual
 resources at creation time (`/proc/meminfo` and
-`/sys/devices/system/cpu/present`, respectively) — otter refuses to create
-a container requesting more than the host has available, rather than
-letting the container manager fail later.
+`/sys/devices/system/cpu/present`, respectively) — otter refuses to
+create a container requesting more than the host has available, rather
+than letting the container manager fail later.
 
 ## "invalid shell" errors
 
@@ -74,30 +75,32 @@ Only `bash`, `zsh`, and `fish` are supported values for `--shell` /
 
 ## My container's `PATH` looks different than I expect
 
-By default, `otter enter` merges your host `PATH` with a standard set of
-FHS directories, reordering things so `/usr/local/bin` always takes
-precedence over `/usr/bin` (so any otter-related wrapper scripts installed
-there win). Pass `--clean-path` to reset to only the standard FHS
-directories, ignoring your host `PATH` entirely. See
+By default, `otter enter` merges your host `PATH` with a standard set
+of FHS directories, reordering things so `/usr/local/bin` always takes
+precedence over `/usr/bin` (so any otter-related wrapper scripts
+installed there win). Pass `--clean-path` to reset to only the
+standard FHS directories, ignoring your host `PATH` entirely. See
 [otter-enter](commands/otter-enter.md).
 
 ## An environment variable I expect isn't inside the container
 
-A fixed set of names is always excluded from the automatic host-to-container
-environment copy (`CONTAINER_ID`, `FPATH`, anything starting with `HOST`,
-`HOME`, `PATH`, `PROFILEREAD`, `PWD`, `SHELL`, `XDG_SEAT`, `XDG_VTNR`, any
-`XDG_*_DIRS`, and anything starting with `_`), along with any value
-containing a quote, backtick, or `$`. Use `--add-env NAME` (or
-`--add-env NAME=value`) to explicitly copy one in regardless. See
-[otter-enter](commands/otter-enter.md).
+A fixed set of names is always excluded from the automatic
+host-to-container environment copy (`CONTAINER_ID`, `FPATH`, anything
+starting with `HOST`, `HOME`, `PATH`, `PROFILEREAD`, `PWD`, `SHELL`,
+`XDG_SEAT`, `XDG_VTNR`, any `XDG_*_DIRS`, and anything starting with
+`_`), along with any value containing a quote, backtick, or `$`. Use
+`--add-env NAME` (or `--add-env NAME=value`) to explicitly copy one in
+regardless. See [otter-enter](commands/otter-enter.md).
 
 ## Rootful containers aren't showing up in `otter list`
 
-This is expected — pass `--root` to see them; they're a separate namespace
-from rootless containers by design.
+This is expected — pass `--root` to see them; they're a separate
+namespace from rootless containers by design.
 
 ## See Also
 
 - [configuration.md](configuration.md)
-- [otter-lock](commands/otter-lock.md), [otter-unlock](commands/otter-unlock.md)
-- [otter-registry](commands/otter-registry.md), [images.md](images.md)
+- [otter-lock](commands/otter-lock.md),
+  [otter-unlock](commands/otter-unlock.md)
+- [otter-registry](commands/otter-registry.md),
+  [images.md](images.md)

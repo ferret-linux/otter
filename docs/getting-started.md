@@ -1,70 +1,71 @@
 # Getting Started
 
 This walks through creating, using, and cleaning up your first otter
-container. It assumes otter is already installed and a container manager
-(Podman, Docker, or nerdctl) is available — see
+container. It assumes otter is already installed and a container
+manager (Podman, Docker, or nerdctl) is available — see
 [installation.md](installation.md) if not.
 
 ## 1. See what images are available
 
-Otter ships with a curated registry of prebuilt, otter-optimized images
-covering most major distros. List them with:
+Otter ships with a curated registry of prebuilt, otter-optimized
+images covering most major distros. List them with:
 
-```
+```sh
 otter registry list
 ```
 
-Full details are in [images.md](images.md). You can also point `create`
-at any arbitrary registry image reference instead — see step 2.
+Full details are in [images.md](images.md). You can also point
+`create` at any arbitrary registry image reference instead — see
+step 2.
 
 ## 2. Create a container
 
-```
+```sh
 otter create --image fedora my-fedora-box
 ```
 
 This resolves `fedora` against the built-in registry, pulls it if not
 already present, and creates a container named `my-fedora-box` that's
-integrated with your host (home directory, devices, network namespace,
-and so on are shared by default).
+integrated with your host (home directory, devices, network
+namespace, and so on are shared by default).
 
 If you omit `--image`, otter uses the configured default image
 (`ghcr.io/ferret-linux/ubuntu-otr:lts` unless overridden — see
-[configuration.md](configuration.md)). If you omit a name, otter derives
-one from the image.
+[configuration.md](configuration.md)). If you omit a name, otter
+derives one from the image.
 
 You can also use a fully-qualified image reference instead of a short
 registry name:
 
-```
+```sh
 otter create --image docker.io/library/alpine:latest my-alpine
 ```
 
-See [otter-create](commands/otter-create.md) for the full set of creation
-options (custom home, memory/CPU limits, namespace isolation, init system,
-Nvidia integration, and more).
+See [otter-create](commands/otter-create.md) for the full set of
+creation options (custom home, memory/CPU limits, namespace isolation,
+init system, Nvidia integration, and more).
 
 ## 3. Enter the container
 
-```
+```sh
 otter enter my-fedora-box
 ```
 
-This starts the container if it isn't already running, waits for its setup
-to finish, and drops you into an interactive shell — using your own user,
-your own home directory contents, and most of your host environment
-variables. See [otter-enter](commands/otter-enter.md) for the full
-behavior.
+This starts the container if it isn't already running, waits for its
+setup to finish, and drops you into an interactive shell — using your
+own user, your own home directory contents, and most of your host
+environment variables. See [otter-enter](commands/otter-enter.md) for
+the full behavior.
 
 You can also run a one-off command instead of an interactive shell:
 
-```
+```sh
 otter enter my-fedora-box -- cat /etc/os-release
 ```
 
 ## 4. Manage the container's lifecycle
 
-```
+```sh
 otter list                  # see all your containers and their status
 otter stop my-fedora-box    # stop it
 otter start my-fedora-box   # start it again
@@ -72,37 +73,40 @@ otter restart my-fedora-box # stop + start in one step
 otter pause my-fedora-box   # freeze it in memory
 ```
 
-See [otter-list](commands/otter-list.md), [otter-start](commands/otter-start.md),
-[otter-stop](commands/otter-stop.md), [otter-restart](commands/otter-restart.md),
-and [otter-pause](commands/otter-pause.md).
+See [otter-list](commands/otter-list.md),
+[otter-start](commands/otter-start.md),
+[otter-stop](commands/otter-stop.md),
+[otter-restart](commands/otter-restart.md), and
+[otter-pause](commands/otter-pause.md).
 
 ## 5. Keep it up to date
 
-```
+```sh
 otter upgrade my-fedora-box
 ```
 
-Runs the container's native package manager upgrade. This is separate from
-updating the base *image* itself — see [otter-registry](commands/otter-registry.md)
-and [images.md](images.md) for how otter tracks image staleness.
+Runs the container's native package manager upgrade. This is separate
+from updating the base *image* itself — see
+[otter-registry](commands/otter-registry.md) and
+[images.md](images.md) for how otter tracks image staleness.
 
 ## 6. Remove it
 
-```
+```sh
 otter remove my-fedora-box
 ```
 
-Deletes the container and any host-side artifacts otter created for it
-(exported binaries, desktop entries, and so on). Add `--rm-home` if you
-also want its home directory removed. See
+Deletes the container and any host-side artifacts otter created for
+it (exported binaries, desktop entries, and so on). Add `--rm-home` if
+you also want its home directory removed. See
 [otter-remove](commands/otter-remove.md).
 
 ## Where to go next
 
-- [configuration.md](configuration.md) — set defaults so you don't have to
-  repeat flags every time.
-- [manifests.md](manifests.md) — declare multiple containers at once with
-  `otter assemble`.
-- [host-integration.md](host-integration.md) — desktop entries and VS Code
-  Remote integration.
+- [configuration.md](configuration.md) — set defaults so you don't
+  have to repeat flags every time.
+- [manifests.md](manifests.md) — declare multiple containers at once
+  with `otter assemble`.
+- [host-integration.md](host-integration.md) — desktop entries and VS
+  Code Remote integration.
 - [commands/](commands/) — full reference for every command.
