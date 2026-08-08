@@ -1,7 +1,5 @@
 # otter-journal
 
-## Name
-
 `otter journal` — show logs of an otter-managed container.
 
 ## Synopsis

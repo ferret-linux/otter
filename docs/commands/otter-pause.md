@@ -1,7 +1,5 @@
 # otter-pause
 
-## Name
-
 `otter pause` — pause a running otter-managed container.
 
 ## Synopsis

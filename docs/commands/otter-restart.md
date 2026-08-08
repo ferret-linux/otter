@@ -1,7 +1,5 @@
 # otter-restart
 
-## Name
-
 `otter restart` — restart an otter-managed container environment.
 
 ## Synopsis

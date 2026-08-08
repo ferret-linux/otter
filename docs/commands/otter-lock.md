@@ -1,7 +1,5 @@
 # otter-lock
 
-## Name
-
 `otter lock` — lock a container to prevent removal or upgrades.
 
 ## Synopsis

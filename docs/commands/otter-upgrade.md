@@ -1,7 +1,5 @@
 # otter-upgrade
 
-## Name
-
 `otter upgrade` — upgrade packages inside otter-managed containers.
 
 ## Synopsis

@@ -1,7 +1,5 @@
 # otter-inspect
 
-## Name
-
 `otter inspect` — show detailed info about an otter-managed container.
 
 ## Synopsis

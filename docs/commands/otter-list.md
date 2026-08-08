@@ -1,7 +1,5 @@
 # otter-list
 
-## Name
-
 `otter list` — list all otter-managed containers.
 
 ## Synopsis

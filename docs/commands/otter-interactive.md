@@ -1,7 +1,5 @@
 # otter-interactive
 
-## Name
-
 `otter interactive` — launch otter's interactive terminal UI.
 
 ## Synopsis

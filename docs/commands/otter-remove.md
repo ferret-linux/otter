@@ -1,7 +1,5 @@
 # otter-remove
 
-## Name
-
 `otter remove` — remove otter-managed container environments.
 
 ## Synopsis

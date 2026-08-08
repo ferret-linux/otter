@@ -1,7 +1,5 @@
 # otter-unlock
 
-## Name
-
 `otter unlock` — unlock a container to allow removal and upgrades.
 
 ## Synopsis

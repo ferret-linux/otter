@@ -1,7 +1,5 @@
 # otter-create
 
-## Name
-
 `otter create` — create a native-distro-like container environment.
 
 ## Synopsis

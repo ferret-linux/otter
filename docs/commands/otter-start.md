@@ -1,7 +1,5 @@
 # otter-start
 
-## Name
-
 `otter start` — start one or more otter-managed container environments.
 
 ## Synopsis
