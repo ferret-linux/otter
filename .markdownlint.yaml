@@ -1,13 +1,103 @@
 ---
+# Strict "modern & stylish" markdownlint config
+# Philosophy: the linter should make sloppy docs impossible to ship,
+# while still permitting badges/HTML/emoji/expressive formatting.
+
+# ── Line length: tight prose forces scannable, compact writing ──
 MD013:
-  line_length: 120
+  line_length: 90
   code_blocks: false
   tables: false
-  headings: false
-  headers: false
-MD025: false
-MD033: false
-MD041: false
-MD045: false
-MD059: false
-MD001: false
+  headings: true
+  heading_line_length: 70   # headings must stay punchy
+  strict: false
+  stern: true                # warn on unbreakable long lines too (URLs, etc.)
+
+# ── Structural freedom (kept off, this is what enables "modern" look) ──
+MD025: false   # multiple H1s allowed (banners, multi-part docs)
+MD033: false   # inline HTML allowed (badges, <details>, <kbd>, alignment)
+MD041: false   # don't require H1 as first line (badges/banners first)
+MD045: false   # relaxed alt-text edge cases
+MD059: false   # flexible table pipe style
+MD002: false   # first heading doesn't have to be H1
+
+# ── Heading discipline: clean hierarchy, no orphaned jumps ──
+MD001: true                       # increment by one level only
+MD003:
+  style: "atx"                    # # headings only, never setext
+MD024:
+  siblings_only: true             # no duplicate headings under same parent
+MD026:
+  punctuation: ".,;:!。，；：！"   # no trailing punctuation in headings
+MD036: true                       # don't fake headings with bold text
+MD043: false                      # no forced heading structure/template
+
+# ── List & emphasis consistency ──
+MD004:
+  style: "dash"
+MD005: true                       # consistent indentation across list items
+MD007:
+  indent: 2                       # tight, modern 2-space list nesting
+MD029:
+  style: "ordered"
+MD030:
+  ul_single: 1
+  ul_multi: 1
+  ol_single: 1
+  ol_multi: 1
+MD049:
+  style: "asterisk"
+MD050:
+  style: "asterisk"
+
+# ── Whitespace: compact, no visual clutter ──
+MD009: true                       # no trailing whitespace
+MD010: true                       # no hard tabs
+MD012:
+  maximum: 1                      # max 1 blank line — keeps docs tight
+MD022: true                       # blank line around headings
+MD023: true                       # headings start at line start
+MD031: true                       # blank line around fenced code
+MD032: true                       # blank line around lists
+MD027: true                       # no multiple spaces after blockquote marker
+MD028: true                       # no blank line inside blockquote
+
+# ── Code blocks: force real, highlighted, professional code ──
+MD040: true                       # language tag required — no bare ```
+MD046:
+  style: "fenced"                 # fenced only, never indented code blocks
+MD048:
+  style: "backtick"
+
+# ── Links & images: no bare URLs, no lazy referencing ──
+MD034: true                       # no bare URLs
+MD039: true                       # no space inside link text [ text ]
+MD042: true                       # no empty/placeholder links
+MD051: true                       # link fragments must resolve
+MD052: true                       # reference links/images must be defined
+MD053: true                       # no unused reference definitions (keeps file clean)
+MD054:
+  autolink: true
+  inline: true
+  full: false
+  collapsed: false
+  shortcut: false
+
+# ── Tables: force clean, aligned, professional tables ──
+MD055:
+  style: "leading_and_trailing"   # pipes on both ends — no ragged tables
+MD056: true                       # every row same column count
+
+# ── Misc polish ──
+MD018: true    # no missing space after # in headings
+MD019: true    # no multiple spaces after #
+MD020: true    # no missing space inside closed atx headings
+MD021: true    # no multiple spaces inside closed atx headings
+MD035:
+  style: "---"                     # consistent hr style
+MD037: true    # no space inside emphasis markers
+MD038: true    # no space inside code span backticks
+MD044:
+  names: []                        # (fill in project-specific proper nouns)
+  code_blocks: false
+MD047: true    # file must end with single newline
