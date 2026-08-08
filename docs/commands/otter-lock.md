@@ -9,7 +9,7 @@ otter lk   [options] [container...]
 otter lock [options] [container...]
 ```
 
-`lk` is a full alias of `lock`.
+`lk` is a full alias of `lock`; the two behave identically.
 
 ## Description
 

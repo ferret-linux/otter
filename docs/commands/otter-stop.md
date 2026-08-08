@@ -10,7 +10,7 @@ otter dn   [options] [container...]
 otter stop [options] [container...]
 ```
 
-`dn` is a full alias of `stop`.
+`dn` is a full alias of `stop`; the two behave identically.
 
 ## Description
 
@@ -50,9 +50,9 @@ Stops every rootful otter container.
 
 ## Notes
 
-- `--root` is preferred over `sudo otter stop`. Set
-  `OTR_SUDO_PROGRAM` (or the `preferences.sudo-program` config value)
-  to use a different privilege-escalation program.
+- `--root` is preferred over `sudo otter stop`. Set `preferences.sudo-program`
+  config value in `otter.conf` to use a different privilege-escalation program
+  other than `sudo`.
 - Rootful containers need `--root` for `stop` to find and act on them.
 
 ## See Also

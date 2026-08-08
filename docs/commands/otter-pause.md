@@ -9,7 +9,7 @@ otter zz    [options] [container...]
 otter pause [options] [container...]
 ```
 
-`zz` is a full alias of `pause`.
+`zz` is a full alias of `pause`; the two behave identically.
 
 ## Description
 

@@ -48,8 +48,7 @@ Lists rootful containers with colors disabled.
 - Rootful containers are hidden by default — pass `--root` to see them.
 - `--root` is preferred over running `sudo otter list`. If you need a
   privilege-escalation program other than `sudo`, set
-  `OTR_SUDO_PROGRAM` or the `preferences.sudo-program` value in
-  `otter.conf`.
+  the `preferences.sudo-program` value in `otter.conf`.
 - Setting the `NO_COLOR` environment variable to any non-empty value
   disables colored/styled output.
 

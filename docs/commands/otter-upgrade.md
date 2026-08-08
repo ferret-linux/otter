@@ -9,7 +9,7 @@ otter syu     [options] [container...]
 otter upgrade [options] [container...]
 ```
 
-`syu` is a full alias of `upgrade`.
+`syu` is a full alias of `upgrade`; the two behave identically.
 
 ## Description
 
@@ -69,8 +69,8 @@ Upgrades only the otter containers that are currently running.
 ## Notes
 
 - `--root` is preferred over `sudo otter upgrade`. Set
-  `OTR_SUDO_PROGRAM` (or `preferences.sudo-program`) to use a
-  different privilege-escalation program.
+  `preferences.sudo-program` to use a different
+  privilege-escalation program other then `sudo`.
 - Locked containers are always skipped, with a warning. If every
   requested container is locked (nothing gets upgraded), the command
   errors. Use `otter unlock` first.

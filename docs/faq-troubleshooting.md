@@ -14,9 +14,8 @@ privilege-escalation program is used and how.
 
 By default otter auto-detects a privilege-escalation program by
 trying, in order: `sudo`, `sudo-rs`, `doas`, `run0`, `pkexec`. You can
-pin a specific one via the `OTR_SUDO_PROGRAM` environment variable or
-`preferences.sudo-program` in `otter.conf` (see
-[configuration.md](configuration.md)).
+pin a specific one via the `preferences.sudo-program` in `otter.conf`
+(see [configuration.md](configuration.md)).
 
 **"cannot run in root mode" / privilege escalation errors**: otter
 validates the resolved escalation program before doing anything
@@ -36,6 +35,8 @@ being found automatically.
 
 ## "Invalid input" for `--container-manager`
 
+This is a hidden flag used to temporarily change the used
+container manager,  
 The value must be one of `autodetect`, `podman`, `docker`, or
 `nerdctl` — any other string is rejected outright.
 
@@ -72,6 +73,20 @@ than letting the container manager fail later.
 Only `bash`, `zsh`, and `fish` are supported values for `--shell` /
 `settings.shell`. If you leave it unset, otter picks up your host's
 `$SHELL` if it's one of those three, otherwise defaults to `bash`.
+
+`Nushell` & `Elvish` support is planned but not guaranteed at the moment.
+
+## Start failed on a custom image with '--shell'
+
+If you passed a valid input in shell on `create`, but start
+is failing with package install errors on a custom image
+(A image which is not part of otter's registry images)
+
+Then it means the repos of that image dont have the packages otter
+expects for the shells , For example otter on `--shell fish` needs
+as `fish` package to be in distro's repo , but void linux has it as
+`fish-shell` , this will cause faliure or a broken login-shell, Using
+the otter registy images fixes this as they alredy incude the fixes.
 
 ## My container's `PATH` looks different than I expect
 

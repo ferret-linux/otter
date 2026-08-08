@@ -22,7 +22,7 @@ Anywhere otter accepts an image (`otter create --image`, manifest
 
 ## Built-in images
 
-| Short name            | Upstream image                                     | Architectures |
+| Short name            | Upstream image thats used to make the otter image  | Architectures |
 | --------------------- | -------------------------------------------------- | ------------- |
 | `ubuntu`              | `docker.io/library/ubuntu:latest`                  | amd64, arm64  |
 | `ubuntu-lts`          | `docker.io/library/ubuntu:26.04`                   | amd64, arm64  |
@@ -96,8 +96,7 @@ Both thresholds default to values in `pkg/config/defaults.go`
 (`staleness-warn-threshold = 5`, `staleness-autopull-threshold = 10`)
 but can be tuned or disabled (`0`) in `otter.conf`. This check runs
 both when creating a container from an existing local image, and when
-running `otter registry list`/`otter registry pull` (see
-[otter-registry](commands/otter-registry.md)).
+running `otter registry list` (see [otter-registry](commands/otter-registry.md)).
 
 ## See Also
 

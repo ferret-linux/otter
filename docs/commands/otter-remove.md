@@ -9,7 +9,7 @@ otter rm     [options] [container...]
 otter remove [options] [container...]
 ```
 
-`rm` is a full alias of `remove`.
+`rm` is a full alias of `remove`; the two behave identically.
 
 ## Description
 
@@ -67,8 +67,8 @@ directories.
 ## Notes
 
 - `--root` is preferred over `sudo otter remove`. Set
-  `OTR_SUDO_PROGRAM` (or `preferences.sudo-program`) to use a
-  different privilege-escalation program.
+  `preferences.sudo-program` to use a different
+  privilege-escalation program from `sudo`.
 - **Home removal safety**: `--rm-home` is refused (with a warning, not
   a hard error) if the resolved home path is empty, equals your real
   host home directory, or is one of `/`, `/home`, `/root`, `/usr` —

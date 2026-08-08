@@ -9,7 +9,7 @@ otter sh    [options] [container] [-- command]
 otter enter [options] [container] [-- command]
 ```
 
-`sh` is a full alias of `enter`.
+`sh` is a full alias of `enter`; the two behave identically.
 
 ## Description
 
@@ -64,15 +64,20 @@ Enters the rootful container `my-box`.
 otter sh my-alpine -- sh -l
 ```
 
-Enters `my-alpine` and runs `sh -l` instead of the container's
-configured shell.
+Enters `my-alpine` and runs `sh -l` inside the container first
+and then lands the user in the interactive shell.
 
 ```sh
-otter enter fedora-44 -- bash -l
+otter enter fedora-44 --no-tty -- vivaldi
 ```
 
-Runs a login bash shell in `fedora-44` without stopping for interaction
-beyond that command.
+Runs the command `vivaldi` inside the container & detaches,It wont show
+the output of the command that happened inside the container as the TTY
+was never attached. Its useful to run oneshot commands and scripts inside
+the container while not freezing the host terminal to wait for the task to
+complete.
+In this case the `vivaldi` window will appear on your host's monitor as a
+program and will be running inside the container as a usual process.
 
 ```sh
 otter enter --additional-flags "--preserve-fds" test -- bash -l
@@ -84,8 +89,7 @@ invocation.
 ## Notes
 
 - **Root mode**: `--root` is preferred over `sudo otter enter`. Set
-  `OTR_SUDO_PROGRAM` or `preferences.sudo-program` to use something
-  other than `sudo`.
+  `preferences.sudo-program` to use something other than `sudo`.
 - **Auto-start**: if the target container is stopped, `enter` starts it
   automatically before attaching.
 - **Environment filtering**: automatically-copied host variables
@@ -97,7 +101,8 @@ invocation.
   flags.
 - **Only one container at a time**: `enter` does not accept a
   comma-separated list of names — unlike most other otter commands, it
-  only operates on a single container.
+  only operates on a single container. As its suppose to land you in a
+  interactive shell & I dont see how it will work with multiple containers.
 
 ## See Also
 

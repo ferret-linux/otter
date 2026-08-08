@@ -9,7 +9,7 @@ otter info    [options] [container]
 otter inspect [options] [container]
 ```
 
-`otter info` is a full alias of `otter inspect`.
+`info` is a full alias of `inspect`; the two behave identically.
 
 ## Description
 

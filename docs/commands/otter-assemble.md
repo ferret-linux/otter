@@ -10,7 +10,7 @@ otter assemble <create|remove> [options]
 ```
 
 `dmf` is a full alias of `assemble`. `create`'s alias is `mk`, `remove`'s
-alias is `rm`.
+alias is `rm`; They behave identically.
 
 ## Description
 
@@ -24,9 +24,9 @@ manifest schema.
 (equivalent to `otter create` with the manifest's fields mapped onto the
 same options), then — if the manifest requests it — starts the container
 and runs its init hooks, exports the requested apps/binaries via
-`otter-export`, and locks the container. If setup fails partway through,
-the just-created container is automatically rolled back (removed) rather
-than left in a half-configured state.
+`otter-export`, and locks the container if defined in the manifest file.
+If setup fails partway through,the just-created container is automatically
+rolled back (removed) rather than left in a half-configured state.
 
 `assemble remove` force-removes the named container (or every container
 in the manifest, if no name is given).

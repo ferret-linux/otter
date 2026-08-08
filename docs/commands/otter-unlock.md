@@ -9,7 +9,7 @@ otter ulk    [options] [container]
 otter unlock [options] [container]
 ```
 
-`ulk` is a full alias of `unlock`.
+`ulk` is a full alias of `unlock`; the two behave identically.
 
 ## Description
 

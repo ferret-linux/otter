@@ -53,6 +53,8 @@ most commonly driven through a [manifest's](manifests.md)
 `exported.apps`/`exported.bins` fields when using `otter assemble`,
 but the underlying mechanism also applies to anything exported
 manually.
+If you dont want to use manifest or assemble use the `otter export`
+command inside the container to export apps to your host.
 
 - Exported binaries are written as wrapper scripts under
   `exported.path` (defaults to `$HOME/.local/bin`), tagged internally

@@ -9,7 +9,7 @@ otter rbt     [options] [container...]
 otter restart [options] [container...]
 ```
 
-`rbt` is a full alias of `restart`.
+`rbt` is a full alias of `restart`; the two behave identically.
 
 ## Description
 

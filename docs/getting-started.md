@@ -32,7 +32,8 @@ namespace, and so on are shared by default).
 If you omit `--image`, otter uses the configured default image
 (`ghcr.io/ferret-linux/ubuntu-otr:lts` unless overridden — see
 [configuration.md](configuration.md)). If you omit a name, otter
-derives one from the image.
+derives one from the image if `--image` is passed otherwise it will
+use the default `my-container` name.
 
 You can also use a fully-qualified image reference instead of a short
 registry name:

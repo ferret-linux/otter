@@ -63,7 +63,6 @@ make uninstall
 
 | Target          | Purpose                                        |
 | --------------- | ---------------------------------------------- |
-| `make test`     | Runs `go vet` followed by the full test suite. |
 | `make vet`      | Runs `go vet` only.                            |
 | `make fmt`      | Runs `go fmt` across the module.               |
 | `make lint`     | Runs `golangci-lint`.                          |

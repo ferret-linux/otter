@@ -9,7 +9,7 @@ otter logs    [options] [container]
 otter journal [options] [container]
 ```
 
-`otter logs` is a full alias of `otter journal`.
+`logs` is a full alias of `journal`; the two behave identically.
 
 ## Description
 

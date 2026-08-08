@@ -10,7 +10,7 @@ otter registry <list|pull|remove> [options]
 ```
 
 `reg` is a full alias of `registry`. Subcommand aliases: `list`/`ls`,
-`pull`/`pl`, `remove`/`rm`.
+`pull`/`pl`, `remove`/`rm`; They behave identically.
 
 ## Description
 

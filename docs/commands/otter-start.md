@@ -9,7 +9,7 @@ otter up    [options] [container...]
 otter start [options] [container...]
 ```
 
-`up` is a full alias of `start`.
+`up` is a full alias of `start`; the two behave identically.
 
 ## Description
 

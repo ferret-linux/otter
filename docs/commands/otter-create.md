@@ -9,7 +9,7 @@ otter mk     [container] [options] [--image image]
 otter create [container] [options] [--image image]
 ```
 
-`mk` is a full alias of `create`.
+`mk` is a full alias of `create`; the two behave identically.
 
 ## Description
 
@@ -69,7 +69,7 @@ otter mk --init --volume /opt/my-dir:/usr/local/my-dir:rw
 ```
 
 Creates a container with systemd enabled and an extra volume mounted,
-using the default image and an auto-derived name.
+using the default image and name.
 
 ```sh
 otter create --image alpine:latest --additional-packages "git tmux vim"
@@ -78,8 +78,12 @@ otter create --image alpine:latest --additional-packages "git tmux vim"
 Creates from a fully-qualified `alpine:latest` tag and installs three
 extra packages during setup.
 
+This wont use the registry image, As user passed `alpine:latest` not
+`alpine`,On this case otter will pass `alpine:latest` directly without
+any extra handeling of the image or parsing.
+
 ```sh
-otter create --image centos:stream10 --always-pull --home ~/otter/centos10
+otter create --image centos --always-pull --home ~/otter/centos10
 ```
 
 Always re-pulls the image before creating, and uses a custom home
@@ -88,14 +92,17 @@ directory.
 ## Notes
 
 - **Root mode**: `--root` is preferred over `sudo otter create`. To use a
-  privilege-escalation program other than `sudo`, set `OTR_SUDO_PROGRAM`
-  or the `preferences.sudo-program` config value.
+  privilege-escalation program other than `sudo`, set the
+  `preferences.sudo-program` config value.
 - **`--init`**: makes host processes invisible from inside the container.
   It implies `--unshare-process` and `--unshare-groups`, and may need
   extra packages (systemd, runit, openrc) depending on the base image.
+  Official otter images that are part of otter's registry alredy include
+  initsystems as part of them & dont need any extra package handeling.
 - **`--clone`**: useful for renaming an existing container or branching
   off multiple copies of the same environment. The container being
-  cloned must be stopped.
+  cloned must be stopped. It works by using the container as base image
+  to make the new container, otter registry wont manage these images.
 - **`--nvidia`**: a best-effort attempt only; for serious GPU workloads,
   `nvidia-container-toolkit` is the officially supported path.
 - **Pulling behavior**: a missing image is always pulled automatically

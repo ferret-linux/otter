@@ -10,7 +10,7 @@ otter pin            [options] [name...]
 otter generate-entry [options] [name...]
 ```
 
-`otter pin` is a full alias of `otter generate-entry`.
+`pin` is a full alias of `generate-entry`; the two behave identically.
 
 ## Description
 

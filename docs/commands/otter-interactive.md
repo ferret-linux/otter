@@ -9,7 +9,7 @@ otter tui
 otter interactive
 ```
 
-`otter tui` is a full alias of `otter interactive`.
+`tui` is a full alias of `interactive`; the two behave identically.
 
 ## Description
 
