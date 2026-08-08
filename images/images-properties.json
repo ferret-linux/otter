@@ -194,23 +194,6 @@
       "build_number": 36
     },
     {
-      "name": "devuan-unstable",
-      "official_image": "ghcr.io/ferret-linux/devuan-otr:unstable",
-      "fallback_vendor_image": "docker.io/devuan/devuan:unstable",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-08T05:24:41Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1526490846,
-          "disk_size": 1526490846
-        }
-      },
-      "build_number": 35
-    },
-    {
       "name": "void-glibc",
       "official_image": "ghcr.io/ferret-linux/void-otr:glibc",
       "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest",
@@ -590,6 +573,23 @@
         }
       },
       "build_number": 37
+    },
+    {
+      "name": "devuan-unstable",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:unstable",
+      "fallback_vendor_image": "docker.io/devuan/devuan:unstable",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-08T09:33:20Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1526491357,
+          "disk_size": 1526491357
+        }
+      },
+      "build_number": 36
     }
   ]
 }
