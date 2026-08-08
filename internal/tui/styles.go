@@ -33,37 +33,17 @@ var (
 	actionActiveStyle = lipgloss.NewStyle().Foreground(colorTeal).Bold(true)
 )
 
-// tabBorderWithBottom returns a rounded border whose bottom edge uses the
-// given corner/fill runes. Used to make inactive tabs sit on a continuous
-// ridge while the active tab "opens" straight into the window below it —
-// the technique from charmbracelet/bubbletea's examples/tabs.
-func tabBorderWithBottom(left, middle, right string) lipgloss.Border {
-	b := lipgloss.RoundedBorder()
-	b.BottomLeft = left
-	b.Bottom = middle
-	b.BottomRight = right
-	return b
-}
-
 var (
-	inactiveTabBorder = tabBorderWithBottom("┴", "─", "┴")
-	activeTabBorder   = tabBorderWithBottom("┘", " ", "└")
+	// activeTabStyle and inactiveTabStyle render the section tab bar as
+	// plain colored text — no borders, no per-tab boxes, nothing that needs
+	// to visually line up with a neighboring tab or a frame below it.
+	activeTabStyle   = lipgloss.NewStyle().Bold(true).Foreground(colorTeal)
+	inactiveTabStyle = lipgloss.NewStyle().Foreground(colorDim)
 
-	tabStyle = lipgloss.NewStyle().
-			Border(inactiveTabBorder).
-			BorderForeground(colorCyan).
-			Padding(0, 2)
-	activeTabStyle = tabStyle.
-			Border(activeTabBorder).
-			Bold(true).
-			Foreground(colorTeal)
-
-	// windowStyle wraps the active section's content. Its top border is
-	// unset because the tab row's bottom border serves as the seam between
-	// the two — see App.renderTabs / App.View.
-	windowStyle = lipgloss.NewStyle().
-			Border(lipgloss.RoundedBorder()).
-			BorderForeground(colorCyan).
-			UnsetBorderTop().
-			Padding(1, 2)
+	// appStyle is the only spacing applied anywhere in the app: it wraps
+	// the entire rendered output (tabs + divider + section content + help)
+	// in one padded block. There is no border and no other style in this
+	// file adds width/height — see App.contentSize, which is the single
+	// place that has to agree with this.
+	appStyle = lipgloss.NewStyle().Padding(1, 2)
 )

@@ -2,6 +2,7 @@ package tui
 
 import (
 	"context"
+	"strings"
 
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
@@ -24,17 +25,16 @@ const (
 // section consts above.
 var sectionNames = []string{"Home", "Shell", "Registry", "Create", "Docs"}
 
-// These must stay in sync with windowStyle's Border/Padding (styles.go) and
-// tabStyle's Border/Padding, since they're used to compute how much space
-// is left over for a section's own content.
+// These must stay in sync with appStyle's Padding (styles.go) and with how
+// View assembles the tab/divider/body/help rows, since they're used to
+// compute how much space is left over for a section's own content.
 const (
-	windowBorderCols  = 2 // left + right border columns (top is unset)
-	windowPaddingCols = 4 // Padding(1, 2) → 2 left + 2 right
-	windowBorderRows  = 1 // bottom border row only; top is unset
-	windowPaddingRows = 2 // Padding(1, 2) → 1 top + 1 bottom
-	tabRowHeight      = 3 // tab box: top border + label line + bottom border
-	footerGapRows     = 1 // blank line between the frame and the help text
-	footerRows        = 1 // the help line itself
+	appPaddingCols = 4 // appStyle's Padding(1, 2) → 2 left + 2 right
+	appPaddingRows = 2 // appStyle's Padding(1, 2) → 1 top + 1 bottom
+	tabRowHeight   = 1 // plain text tab line, no border
+	dividerRows    = 1 // the "─" rule under the tabs
+	gapRows        = 2 // blank line after the divider + blank line before help
+	footerRows     = 1 // the help line itself
 )
 
 // App is otter tui's top-level model. It owns the section tab bar and
@@ -109,10 +109,11 @@ func (a App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 // contentSize returns the space available for a section's own content,
-// after accounting for the tab row, the window frame, and the footer.
+// after accounting for the tab row, the divider, the footer, and
+// appStyle's padding — the only things in this app that consume space.
 func (a App) contentSize() (width, height int) {
-	width = a.width - windowBorderCols - windowPaddingCols
-	height = a.height - tabRowHeight - windowBorderRows - windowPaddingRows - footerGapRows - footerRows
+	width = a.width - appPaddingCols
+	height = a.height - appPaddingRows - tabRowHeight - dividerRows - gapRows - footerRows
 	if width < 0 {
 		width = 0
 	}
@@ -123,57 +124,41 @@ func (a App) contentSize() (width, height int) {
 }
 
 func (a App) View() tea.View {
+	cw, ch := a.contentSize()
+
 	tabs := a.renderTabs()
+	divider := dimStyle.Render(strings.Repeat("─", cw))
 
 	var body string
 	if a.active == sectionHome {
 		body = a.home.View()
 	} else {
-		cw, ch := a.contentSize()
 		body = lipgloss.NewStyle().Width(cw).Height(ch).
 			Render(helpStyle.Render(sectionNames[a.active] + " — coming soon"))
 	}
 
-	frame := windowStyle.Render(body)
 	help := helpStyle.Render("←/→ switch section · ↑/↓ move · tab switch pane · ↵ select · q quit")
 
-	v := tea.NewView(tabs + "\n" + frame + "\n\n" + help)
+	screen := tabs + "\n" + divider + "\n\n" + body + "\n\n" + help
+
+	v := tea.NewView(appStyle.Render(screen))
 	v.AltScreen = true
 	return v
 }
 
-// renderTabs draws the section tab bar as connected pill tabs: the active
-// tab's bottom border opens straight into the window frame below it, while
-// inactive tabs sit on a closed ridge. See styles.go's tabBorderWithBottom.
+// renderTabs draws the section tab bar as plain, evenly-spaced text — no
+// borders, no boxes, nothing that needs to visually line up with a
+// neighboring tab.
 func (a App) renderTabs() string {
 	rendered := make([]string, len(sectionNames))
-	last := len(sectionNames) - 1
-
 	for i, name := range sectionNames {
-		isActive := section(i) == a.active
-
-		style := tabStyle
-		if isActive {
+		style := inactiveTabStyle
+		if section(i) == a.active {
 			style = activeTabStyle
 		}
-
-		border, _, _, _, _ := style.GetBorder()
-		switch {
-		case i == 0 && isActive:
-			border.BottomLeft = "│"
-		case i == 0 && !isActive:
-			border.BottomLeft = "├"
-		case i == last && isActive:
-			border.BottomRight = "│"
-		case i == last && !isActive:
-			border.BottomRight = "┤"
-		}
-		style = style.Border(border)
-
 		rendered[i] = style.Render(name)
 	}
-
-	return lipgloss.JoinHorizontal(lipgloss.Bottom, rendered...)
+	return strings.Join(rendered, "   ")
 }
 
 func nextSection(s section) section {
