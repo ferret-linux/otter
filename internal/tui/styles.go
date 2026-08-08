@@ -23,14 +23,47 @@ var (
 	pausedStyle  = lipgloss.NewStyle().Foreground(colorYellow)
 	exitedStyle  = lipgloss.NewStyle().Foreground(colorRed)
 
-	titleStyle = lipgloss.NewStyle().Bold(true).Foreground(colorCyan)
 	cursorMark = lipgloss.NewStyle().Foreground(colorCyan).Bold(true)
 	helpStyle  = lipgloss.NewStyle().Foreground(colorDim)
+	dimStyle   = lipgloss.NewStyle().Foreground(colorDim)
 
-	detailBorderStyle = lipgloss.NewStyle().
-				Border(lipgloss.NormalBorder()).
-				BorderForeground(colorDim).
-				Padding(0, 1)
-	detailKeyStyle   = lipgloss.NewStyle().Foreground(colorDim)
-	detailValueStyle = lipgloss.NewStyle().Foreground(colorTeal)
+	dividerStyle = lipgloss.NewStyle().Foreground(colorDim)
+
+	actionLabelStyle  = lipgloss.NewStyle().Foreground(colorDim)
+	actionActiveStyle = lipgloss.NewStyle().Foreground(colorTeal).Bold(true)
+)
+
+// tabBorderWithBottom returns a rounded border whose bottom edge uses the
+// given corner/fill runes. Used to make inactive tabs sit on a continuous
+// ridge while the active tab "opens" straight into the window below it —
+// the technique from charmbracelet/bubbletea's examples/tabs.
+func tabBorderWithBottom(left, middle, right string) lipgloss.Border {
+	b := lipgloss.RoundedBorder()
+	b.BottomLeft = left
+	b.Bottom = middle
+	b.BottomRight = right
+	return b
+}
+
+var (
+	inactiveTabBorder = tabBorderWithBottom("┴", "─", "┴")
+	activeTabBorder   = tabBorderWithBottom("┘", " ", "└")
+
+	tabStyle = lipgloss.NewStyle().
+			Border(inactiveTabBorder).
+			BorderForeground(colorCyan).
+			Padding(0, 2)
+	activeTabStyle = tabStyle.
+			Border(activeTabBorder).
+			Bold(true).
+			Foreground(colorTeal)
+
+	// windowStyle wraps the active section's content. Its top border is
+	// unset because the tab row's bottom border serves as the seam between
+	// the two — see App.renderTabs / App.View.
+	windowStyle = lipgloss.NewStyle().
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(colorCyan).
+			UnsetBorderTop().
+			Padding(1, 2)
 )

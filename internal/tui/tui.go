@@ -14,7 +14,7 @@ import (
 
 // Run starts the otter TUI program. It blocks until the user quits.
 func Run(ctx context.Context, cm containermanager.ContainerManager) error {
-	p := tea.NewProgram(NewModel(ctx, cm))
+	p := tea.NewProgram(NewApp(ctx, cm))
 	if _, err := p.Run(); err != nil {
 		return fmt.Errorf("tui program exited with error: %w", err)
 	}
