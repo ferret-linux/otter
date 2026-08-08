@@ -1,0 +1,99 @@
+# otter-enter
+
+## Name
+
+`otter enter` — enter an otter-managed container environment.
+
+## Synopsis
+
+```
+otter sh    [options] [container] [-- command]
+otter enter [options] [container] [-- command]
+```
+
+`sh` is a full alias of `enter`.
+
+## Description
+
+Enters a running (or currently stopped — otter starts it for you first)
+container, dropping you into an interactive login shell by default, or
+running a custom command if one is given after `--`.
+
+Before entering, otter waits for the container's own setup/init process to
+finish; if setup is still in progress it reports that and does not attempt
+to enter.
+
+The command builds the exec environment carefully so the container feels
+native:
+
+- **User**: normally the exec runs as your own user inside the container.
+  If the container was created with `--unshare-groups`, it instead execs as
+  `root` and uses `su` internally to trigger a real login as the target
+  user (this is how `--unshare-groups` avoids forwarding host group
+  membership).
+- **TTY**: a pseudo-TTY is attached automatically when stdin/stdout are a
+  real terminal, unless `--no-tty` is passed.
+- **Working directory**: by default otter tries to preserve your current
+  host working directory inside the container (mapped under your home, or
+  under `/run/host` if outside it). `--no-workdir` skips this and always
+  starts from the container's home directory instead.
+- **Environment**: most host environment variables are copied in
+  automatically (see Notes), `PATH` is rebuilt to include standard FHS
+  directories, and XDG base-directory variables are set appropriately.
+
+## Options
+
+| Flag | Alias | Description |
+|---|---|---|
+| `--` | — | Everything after `--` is treated as the command to execute inside the container, instead of starting an interactive shell. |
+| `--root` | `-r` | Enter a rootful container instead of a rootless one. |
+| `--no-tty` | `-T` | Do not allocate a pseudo-TTY; runs the exec detached instead of interactive. |
+| `--add-env` | `-e` | Comma-separated list of host environment variables to copy in explicitly. Each entry can be `NAME=value` (used literally) or just `NAME` (its current host value is looked up and copied; a missing variable is skipped with a warning). Applied after otter's own PATH/XDG values, so it can override them. Repeatable. |
+| `--empty-env` | `-E` | Skip the automatic copying of host environment variables entirely (PATH/XDG/PWD/etc. are still set by otter). |
+| `--clean-path` | `-c` | Reset `PATH` inside the container to the standard FHS locations (`/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin`) instead of inheriting and augmenting the host's `PATH`. |
+| `--no-workdir` | `-nw` | Always start the shell/command from the container's home directory, ignoring the host's current working directory. |
+| `--additional-flags` | `-a` | Extra flags to pass straight through to the container manager's `exec` command. |
+
+## Examples
+
+```
+otter sh my-box --root
+```
+Enters the rootful container `my-box`.
+
+```
+otter sh my-alpine -- sh -l
+```
+Enters `my-alpine` and runs `sh -l` instead of the container's configured shell.
+
+```
+otter enter fedora-44 -- bash -l
+```
+Runs a login bash shell in `fedora-44` without stopping for interaction beyond that command.
+
+```
+otter enter --additional-flags "--preserve-fds" test -- bash -l
+```
+Passes `--preserve-fds` straight through to the container manager's exec invocation.
+
+## Notes
+
+- **Root mode**: `--root` is preferred over `sudo otter enter`. Set
+  `OTR_SUDO_PROGRAM` or `preferences.sudo-program` to use something other
+  than `sudo`.
+- **Auto-start**: if the target container is stopped, `enter` starts it
+  automatically before attaching.
+- **Environment filtering**: automatically-copied host variables exclude a
+  fixed set of host-specific names (`CONTAINER_ID`, `FPATH`, `HOST*`,
+  `HOME`, `PATH`, `PROFILEREAD`, `PWD`, `SHELL`, `XDG_SEAT`, `XDG_VTNR`,
+  any `XDG_*_DIRS`, and anything starting with `_`), plus any value
+  containing quotes or backticks or `$`, since those otherwise copied
+  environment variables get re-injected via `--env` flags.
+- **Only one container at a time**: `enter` does not accept a
+  comma-separated list of names — unlike most other otter commands, it only
+  operates on a single container.
+
+## See Also
+
+- [otter-create](otter-create.md) — the `--unshare-*` flags set at creation time affect `enter`'s behavior (user selection, IPC/network namespace, etc.).
+- [otter-start](otter-start.md), [otter-stop](otter-stop.md) — manual start/stop, if you don't want `enter`'s auto-start behavior.

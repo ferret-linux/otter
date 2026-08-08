@@ -1,0 +1,84 @@
+# otter-remove
+
+## Name
+
+`otter remove` — remove otter-managed container environments.
+
+## Synopsis
+
+```
+otter rm     [options] [container...]
+otter remove [options] [container...]
+```
+
+`rm` is a full alias of `remove`.
+
+## Description
+
+Deletes the named container(s), or every otter container with `--all`.
+Alongside the container itself, `remove` cleans up anything otter created
+on the host on its behalf:
+
+- Any binaries previously exported to `~/.local/bin` via
+  `otter-export --bin` for this container (identified by an
+  `# otter_binary` / `# name: <container>` marker otter writes into the
+  exported script).
+- Any desktop application entries exported via `otter-export --app` for
+  this container, plus their associated icon files under
+  `~/.local/share/icons`.
+- The container's own generated desktop entry (as if
+  `otter generate-entry --delete` had been run for it).
+
+## Options
+
+| Flag | Alias | Description |
+|---|---|---|
+| `--all` | `-a` | Delete every otter container. |
+| `--root` | `-r` | Remove a rootful container. |
+| `--force` | `-f` | Force deletion of problematic containers. |
+| `--rm-home` | `-H` | Also remove the container's home directory on the host. |
+| `--bypass-lock` | `-B` | Remove the container even if it is locked. |
+
+## Examples
+
+```
+otter rm --force my-box
+```
+Force-removes `my-box`.
+
+```
+otter rm --all --force
+```
+Force-removes every rootless otter container.
+
+```
+otter remove my-box my-box2,my-box3
+```
+Removes `my-box`, `my-box2`, and `my-box3` (comma-separated names).
+
+```
+otter remove --all --root --force --rm-home
+```
+Force-removes every rootful container and deletes their home directories.
+
+## Notes
+
+- `--root` is preferred over `sudo otter remove`. Set `OTR_SUDO_PROGRAM` (or
+  `preferences.sudo-program`) to use a different privilege-escalation
+  program.
+- **Home removal safety**: `--rm-home` is refused (with a warning, not a
+  hard error) if the resolved home path is empty, equals your real host
+  home directory, or is one of `/`, `/home`, `/root`, `/usr` — otter will
+  never delete these regardless of the flag. For containers created with a
+  custom `--home`, the *custom* host directory is what gets removed, not
+  the canonical in-container path.
+- **Locking**: with `--all`, locked containers are silently skipped. When a
+  locked container is named explicitly, it logs an error instead of
+  removing it. Use `otter unlock` first, or pass `--bypass-lock`.
+- If every requested container turns out to be locked (and none removed),
+  the command exits with an error rather than a silent no-op.
+
+## See Also
+
+- [otter-lock](otter-lock.md), [otter-unlock](otter-unlock.md)
+- [otter-generate-entry](otter-generate-entry.md) — desktop-entry cleanup performed automatically by `remove`.

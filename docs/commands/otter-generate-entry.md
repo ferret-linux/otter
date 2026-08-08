@@ -1,0 +1,82 @@
+# otter-generate-entry
+
+## Name
+
+`otter generate-entry` — generate (or delete) a desktop entry for a container.
+
+## Synopsis
+
+```
+otter pin            [options] [name...]
+otter generate-entry [options] [name...]
+```
+
+`otter pin` is a full alias of `otter generate-entry`.
+
+## Description
+
+Creates a `.desktop` launcher file for the named container(s) — or every
+otter container with `--all` — so it can be opened directly from your
+desktop environment's application menu/launcher. The entry runs
+`otter enter <name>` (with `--root` appended if the container is rootful)
+in a terminal.
+
+Icons are resolved automatically unless `--icon` is given: otter reads
+`/etc/os-release` from inside the target container to detect its distro
+ID, matches that against a built-in set of distro icons (Arch, Alpine,
+Alma, Blackarch, CentOS, Chimera, Debian, Devuan, Fedora, Gentoo, Kali,
+openSUSE Leap/Tumbleweed, Oracle Linux, RHEL, Rocky, Ubuntu, Void), and
+falls back to a generic otter terminal icon if detection fails or the
+distro isn't in that set. This detection always runs when using `--all`,
+or when generating entries for more than one name at once — `--icon` is
+only honored for a single named container.
+
+Entries are written to `~/.local/share/applications/`, and detected icons
+are cached under `~/.local/share/otter/icons/distros/`.
+
+## Options
+
+| Flag | Alias | Description |
+|---|---|---|
+| `--all` | `-a` | Generate (or delete) entries for every otter container. |
+| `--root` | `-r` | Operate on rootful containers. |
+| `--icon` | `-i` | Custom icon path to use instead of auto-detection. Ignored when `--all` is used or when more than one name is given. |
+| `--delete` | `-d` | Delete the entry instead of creating it. |
+
+## Examples
+
+```
+otter pin --all
+```
+Generates desktop entries for every otter container.
+
+```
+otter pin my-box -i /path/to/icon
+```
+Generates an entry for `my-box` using a custom icon.
+
+```
+otter generate-entry debian --delete
+```
+Deletes the desktop entry for `debian`.
+
+```
+otter generate-entry --all --root
+```
+Generates desktop entries for every rootful otter container.
+
+## Notes
+
+- `--icon` is ignored when `--all` is used, or when generating entries for
+  multiple containers at once — icon auto-detection takes over in both
+  cases.
+- Entries are saved to `~/.local/share/applications/*`; rootful entries are
+  named with a `rootful-` prefix to distinguish them from rootless ones.
+- `otter remove` automatically deletes a container's desktop entry as part
+  of cleanup — you don't normally need to run `--delete` yourself unless
+  you're removing an entry without removing the container.
+
+## See Also
+
+- [otter-create](otter-create.md) — entries are generated automatically on creation unless `--no-entry` is passed.
+- [otter-remove](otter-remove.md) — entries are deleted automatically on removal.

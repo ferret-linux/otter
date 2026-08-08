@@ -1,0 +1,83 @@
+# Installation
+
+Otter is not yet published to any package repository — as of this writing
+the project's own README marks it as unreleased, targeting an initial
+release around October 2027. Until then, building from source is the only
+supported installation path.
+
+## Prerequisites
+
+- **Go** 1.26.5 or newer (the version pinned in `go.mod`).
+- **One of**: [Podman](https://podman.io/), [Docker](https://www.docker.com/),
+  or [nerdctl](https://github.com/containerd/nerdctl). Otter needs one of
+  these installed and working; it auto-detects whichever is available
+  unless told otherwise (see [configuration.md](configuration.md)).
+- A `make`-capable build environment (GNU Make).
+
+## Building from source
+
+Clone the repository and build the binary with `make`:
+
+```
+git clone https://github.com/ferret-linux/otter
+cd otter
+make build
+```
+
+This produces a binary at `./bin/otter`, built with `CGO_ENABLED=0` for the
+host's `GOOS`, and embeds the current git commit and build timestamp into
+the binary (visible via `otter --version`).
+
+### Installing system-wide
+
+```
+make install
+```
+
+By default this installs to `/usr/local/bin/otter` (via `PREFIX=/usr/local`,
+`BINDIR=$PREFIX/bin`). To install elsewhere:
+
+```
+make install PREFIX=/usr
+```
+
+`DESTDIR` is also honored for staged installs (e.g. packaging), following
+the usual GNU convention:
+
+```
+make install DESTDIR=/tmp/pkgroot PREFIX=/usr
+```
+
+To remove an installed binary:
+
+```
+make uninstall
+```
+
+(Respect the same `DESTDIR`/`PREFIX`/`BINDIR` you used for `install`.)
+
+## Other useful Makefile targets
+
+| Target | Purpose |
+|---|---|
+| `make test` | Runs `go vet` followed by the full test suite. |
+| `make vet` | Runs `go vet` only. |
+| `make fmt` | Runs `go fmt` across the module. |
+| `make lint` | Runs `golangci-lint`. |
+| `make lint-fix` | Runs `golangci-lint` with `--fix`. |
+| `make clean` | Removes the built `./bin/otter` binary. |
+
+## Verifying the install
+
+```
+otter --version
+otter --help
+```
+
+The first run also checks whether a supported container manager is
+available; if none is found, otter prints instructions to install one.
+
+## Next steps
+
+See [getting-started.md](getting-started.md) to create your first
+container.

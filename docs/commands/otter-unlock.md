@@ -1,0 +1,56 @@
+# otter-unlock
+
+## Name
+
+`otter unlock` — unlock a container to allow removal and upgrades.
+
+## Synopsis
+
+```
+otter ulk    [options] [container]
+otter unlock [options] [container]
+```
+
+`ulk` is a full alias of `unlock`.
+
+## Description
+
+Removes the lock file (`/usr/lib/otter/container.lock`) from the named
+container(s), or every otter container with `--all`, reversing
+`otter lock`. The container must be running for `unlock` to remove the
+file. Containers that aren't currently locked are skipped without being
+treated as a failure.
+
+## Options
+
+| Flag | Alias | Description |
+|---|---|---|
+| `--all` | `-a` | Unlock every otter container. |
+| `--root` | `-r` | Unlock a rootful container. |
+
+## Examples
+
+```
+otter ulk my-box
+```
+Unlocks `my-box`.
+
+```
+otter ulk my-box --root
+```
+Unlocks the rootful container `my-box`.
+
+```
+otter unlock my-box
+```
+Same as the first example, using the non-aliased command name.
+
+## Notes
+
+- The container must be running to unlock — use `otter start` first if
+  needed.
+- Already-unlocked containers are skipped, not treated as an error.
+
+## See Also
+
+- [otter-lock](otter-lock.md) — locks a container to protect it from removal/upgrade.
