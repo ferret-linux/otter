@@ -16,31 +16,47 @@ otter journal [options] [container]
 Shows the container manager's own log output for a single container
 (equivalent to `podman logs` / `docker logs` / `nerdctl logs` under the
 hood, with otter's flags mapped onto the manager's own log options).
+With no options, it prints the container's full available log history
+and exits; `--follow` keeps streaming new lines as they're written.
 
 ## Options
 
-| Flag           | Alias | Description                             |
-| -------------- | ----- | --------------------------------------- |
-| `--tail`       | `-n`  | Show only the last N lines.             |
-| `--since`      | `-s`  | Show logs generated since a given time. |
-| `--until`      | `-u`  | Show logs generated until a given time. |
-| `--follow`     | `-f`  | Stream logs live, like `tail -f`.       |
-| `--timestamps` | `-t`  | Prefix each line with its timestamp.    |
-| `--root`       | `-r`  | View a rootful container's logs.        |
+| Flag           | Alias |
+| -------------- | ----- |
+| `--tail`       | `-n`  |
+| `--since`      | `-s`  |
+| `--until`      | `-u`  |
+| `--follow`     | `-f`  |
+| `--timestamps` | `-t`  |
+| `--root`       | `-r`  |
+
+## Options Explained
+
+### `--tail`, `-n`
+
+Show only the last N lines.
+
+### `--since`, `-s`
+
+Show logs generated since a given time.
+
+### `--until`, `-u`
+
+Show logs generated until a given time.
+
+### `--follow`, `-f`
+
+Stream logs live, like `tail -f`.
+
+### `--timestamps`, `-t`
+
+Prefix each line with its timestamp.
+
+### `--root`, `-r`
+
+View a rootful container's logs.
 
 ## Examples
-
-```sh
-otter logs my-box --follow
-```
-
-Streams `my-box`'s logs live.
-
-```sh
-otter logs my-box --tail 50 --timestamps
-```
-
-Shows the last 50 log lines of `my-box`, with timestamps.
 
 ```sh
 otter journal my-box
@@ -49,10 +65,23 @@ otter journal my-box
 Shows all available logs for `my-box`.
 
 ```sh
+otter logs my-box --tail 50 --timestamps
+```
+
+Shows the last 50 log lines of `my-box`, with timestamps.
+
+```sh
 otter journal my-box --since 1h --timestamps
 ```
 
 Shows the last hour of logs for `my-box`, with timestamps.
+
+```sh
+otter logs my-box --root --follow --since 30m
+```
+
+Streams live logs for the rootful container `my-box`, starting from the
+last 30 minutes of history.
 
 ## Notes
 

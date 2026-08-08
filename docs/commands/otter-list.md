@@ -14,34 +14,55 @@ otter list [options]
 ## Description
 
 Lists every container that otter created and manages, along with its
-status and image. By default only rootless containers are shown.
+ID, status, and image, in a table sorted alphabetically by name. By
+default only rootless containers are shown; `--root` switches to
+rootful ones. It's the quickest way to check what containers exist and
+whether they're running, without inspecting each one individually.
 
 ## Options
 
-| Flag     | Alias | Description                                                  |
-| -------- | ----- | ------------------------------------------------------------ |
-| `--root` | `-r`  | List rootful containers instead of rootless ones.            |
-| `--json` | `-j`  | Print the list as a JSON array instead of a formatted table. |
+| Flag     | Alias |
+| -------- | ----- |
+| `--root` | `-r`  |
+| `--json` | `-j`  |
+
+## Options Explained
+
+### `--root`, `-r`
+
+List rootful containers instead of rootless ones.
+
+### `--json`, `-j`
+
+Print the list as a JSON array instead of a formatted table.
 
 ## Examples
+
+```sh
+otter ls
+```
+
+Lists rootless containers in a formatted table.
 
 ```sh
 otter ls --root
 ```
 
-Lists rootful containers.
-
-```sh
-NO_COLOR=1 otter ls
-```
-
-Lists rootless containers with ANSI colors disabled.
+Lists rootful containers instead.
 
 ```sh
 NO_COLOR=1 otter list --root
 ```
 
-Lists rootful containers with colors disabled.
+Lists rootful containers with ANSI colors disabled — useful when piping
+the output somewhere that doesn't render color codes.
+
+```sh
+otter list --json | jq '.[].name'
+```
+
+Lists rootless containers as JSON and pipes the output into `jq` to
+extract just the container names, for use in scripts.
 
 ## Notes
 

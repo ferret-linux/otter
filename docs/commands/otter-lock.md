@@ -22,10 +22,20 @@ containers are skipped without being treated as a failure.
 
 ## Options
 
-| Flag     | Alias | Description                 |
-| -------- | ----- | --------------------------- |
-| `--all`  | `-a`  | Lock every otter container. |
-| `--root` | `-r`  | Lock a rootful container.   |
+| Flag     | Alias |
+| -------- | ----- |
+| `--all`  | `-a`  |
+| `--root` | `-r`  |
+
+## Options Explained
+
+### `--all`, `-a`
+
+Lock every otter container.
+
+### `--root`, `-r`
+
+Lock a rootful container.
 
 ## Examples
 
@@ -36,16 +46,23 @@ otter lk my-box
 Locks `my-box`.
 
 ```sh
+otter lock my-box
+```
+
+Same as above, using the non-aliased command name.
+
+```sh
 otter lk my-box --root
 ```
 
 Locks the rootful container `my-box`.
 
 ```sh
-otter lock my-box
+otter lock ubuntu,fedora --all
 ```
 
-Same as the first example, using the non-aliased command name.
+Locks every otter container regardless of the positional names given —
+`--all` takes precedence over any explicit names.
 
 ## Notes
 

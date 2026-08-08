@@ -20,14 +20,25 @@ shell, home directory, lock state, rootful/rootless, and which
 container manager is in use), resource limits (memory, CPU threads),
 enabled features (init system, Nvidia), and namespace isolation
 settings (IPC, network, process, devices, groups, and the rootless
-userns size limit).
+userns size limit). It's the detailed counterpart to `otter list`,
+which only shows a one-line summary per container.
 
 ## Options
 
-| Flag     | Alias | Description                                                     |
-| -------- | ----- | --------------------------------------------------------------- |
-| `--root` | `-r`  | Inspect a rootful container.                                    |
-| `--json` | `-j`  | Print the result as a JSON object instead of a formatted table. |
+| Flag     | Alias |
+| -------- | ----- |
+| `--root` | `-r`  |
+| `--json` | `-j`  |
+
+## Options Explained
+
+### `--root`, `-r`
+
+Inspect a rootful container.
+
+### `--json`, `-j`
+
+Print the result as a JSON object instead of a formatted table.
 
 ## Examples
 
@@ -41,19 +52,20 @@ Shows a formatted info table for `my-box`.
 otter info my-box --root
 ```
 
-Shows info for the rootful container `my-box`.
+Shows info for the rootful container `my-box` instead of a rootless one.
 
 ```sh
-otter inspect my-box
+otter inspect my-box --json
 ```
 
-Same as the first example, using the non-aliased command name.
+Shows the same information as JSON instead of a table, useful for
+piping into `jq` or other tooling.
 
 ```sh
-otter inspect my-box --root
+otter inspect my-box --root --json
 ```
 
-Same as the second example, using the non-aliased command name.
+Combines both: rootful container, JSON output.
 
 ## Notes
 

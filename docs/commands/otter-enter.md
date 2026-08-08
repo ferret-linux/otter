@@ -41,16 +41,61 @@ native:
 
 ## Options
 
-| Flag                 | Alias | Description                                                                                                                                                                                                                                                                                                              |
-| -------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `--`                 | —     | Everything after `--` is treated as the command to execute inside the container, instead of starting an interactive shell.                                                                                                                                                                                               |
-| `--root`             | `-r`  | Enter a rootful container instead of a rootless one.                                                                                                                                                                                                                                                                     |
-| `--no-tty`           | `-T`  | Do not allocate a pseudo-TTY; runs the exec detached instead of interactive.                                                                                                                                                                                                                                             |
-| `--add-env`          | `-e`  | Comma-separated list of host environment variables to copy in explicitly. Each entry can be `NAME=value` (used literally) or just `NAME` (its current host value is looked up and copied; a missing variable is skipped with a warning). Applied after otter's own PATH/XDG values, so it can override them. Repeatable. |
-| `--empty-env`        | `-E`  | Skip the automatic copying of host environment variables entirely (PATH/XDG/PWD/etc. are still set by otter).                                                                                                                                                                                                            |
-| `--clean-path`       | `-c`  | Reset `PATH` inside the container to the standard FHS locations (`/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin`) instead of inheriting and augmenting the host's `PATH`.                                                                                                                                 |
-| `--no-workdir`       | `-nw` | Always start the shell/command from the container's home directory, ignoring the host's current working directory.                                                                                                                                                                                                       |
-| `--additional-flags` | `-a`  | Extra flags to pass straight through to the container manager's `exec` command.                                                                                                                                                                                                                                          |
+| Flag                 | Alias |
+| -------------------- | ----- |
+| `--`                 | —     |
+| `--root`             | `-r`  |
+| `--no-tty`           | `-T`  |
+| `--add-env`          | `-e`  |
+| `--empty-env`        | `-E`  |
+| `--clean-path`       | `-c`  |
+| `--no-workdir`       | `-nw` |
+| `--additional-flags` | `-a`  |
+
+## Options Explained
+
+### `--`
+
+Everything after `--` is treated as the command to execute inside the
+container, instead of starting an interactive shell.
+
+### `--root`, `-r`
+
+Enter a rootful container instead of a rootless one.
+
+### `--no-tty`, `-T`
+
+Do not allocate a pseudo-TTY; runs the exec detached instead of
+interactive.
+
+### `--add-env`, `-e`
+
+Comma-separated list of host environment variables to copy in
+explicitly. Each entry can be `NAME=value` (used literally) or just
+`NAME` (its current host value is looked up and copied; a missing
+variable is skipped with a warning). Applied after otter's own
+PATH/XDG values, so it can override them. Repeatable.
+
+### `--empty-env`, `-E`
+
+Skip the automatic copying of host environment variables entirely
+(PATH/XDG/PWD/etc. are still set by otter).
+
+### `--clean-path`, `-c`
+
+Reset `PATH` inside the container to the standard FHS locations
+(`/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin`)
+instead of inheriting and augmenting the host's `PATH`.
+
+### `--no-workdir`, `-nw`
+
+Always start the shell/command from the container's home directory,
+ignoring the host's current working directory.
+
+### `--additional-flags`, `-a`
+
+Extra flags to pass straight through to the container manager's
+`exec` command.
 
 ## Examples
 
@@ -64,27 +109,26 @@ Enters the rootful container `my-box`.
 otter sh my-alpine -- sh -l
 ```
 
-Enters `my-alpine` and runs `sh -l` inside the container first
-and then lands the user in the interactive shell.
+Enters `my-alpine` and runs `sh -l` inside the container instead of the
+default interactive shell.
 
 ```sh
 otter enter fedora-44 --no-tty -- vivaldi
 ```
 
-Runs the command `vivaldi` inside the container & detaches,It wont show
-the output of the command that happened inside the container as the TTY
-was never attached. Its useful to run oneshot commands and scripts inside
-the container while not freezing the host terminal to wait for the task to
-complete.
-In this case the `vivaldi` window will appear on your host's monitor as a
-program and will be running inside the container as a usual process.
+Runs `vivaldi` inside the container and detaches — no TTY is attached,
+so no output from the command is shown on the host terminal, and the
+host shell isn't blocked waiting for it to finish. This is useful for
+one-shot commands and scripts. GUI apps behave normally: `vivaldi`'s
+window appears on the host's display, even though the process itself
+runs inside the container.
 
 ```sh
 otter enter --additional-flags "--preserve-fds" test -- bash -l
 ```
 
 Passes `--preserve-fds` straight through to the container manager's exec
-invocation.
+invocation, then runs `bash -l` inside `test`.
 
 ## Notes
 
@@ -96,13 +140,13 @@ invocation.
   exclude a fixed set of host-specific names (`CONTAINER_ID`, `FPATH`,
   `HOST*`, `HOME`, `PATH`, `PROFILEREAD`, `PWD`, `SHELL`, `XDG_SEAT`,
   `XDG_VTNR`, any `XDG_*_DIRS`, and anything starting with `_`), plus
-  any value containing quotes or backticks or `$`, since those
-  otherwise copied environment variables get re-injected via `--env`
-  flags.
+  any value containing quotes, backticks, or `$`, since those otherwise
+  copied environment variables get re-injected via `--env` flags.
 - **Only one container at a time**: `enter` does not accept a
   comma-separated list of names — unlike most other otter commands, it
-  only operates on a single container. As its suppose to land you in a
-  interactive shell & I dont see how it will work with multiple containers.
+  only operates on a single container. This is by design: since `enter`
+  is meant to land you in one interactive shell, running it against
+  multiple containers at once wouldn't make sense.
 
 ## See Also
 

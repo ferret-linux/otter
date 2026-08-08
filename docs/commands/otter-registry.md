@@ -10,7 +10,7 @@ otter registry <list|pull|remove> [options]
 ```
 
 `reg` is a full alias of `registry`. Subcommand aliases: `list`/`ls`,
-`pull`/`pl`, `remove`/`rm`; They behave identically.
+`pull`/`pl`, `remove`/`rm`; they behave identically.
 
 ## Description
 
@@ -46,63 +46,94 @@ with a warning rather than treated as an error.
 
 ### list / ls
 
-| Flag    | Alias | Description                                                                  |
-| ------- | ----- | ---------------------------------------------------------------------------- |
-| `--all` | `-a`  | Include disabled images in the table, and show the `STATUS`/`BUILT` columns. |
+| Flag    | Alias |
+| ------- | ----- |
+| `--all` | `-a`  |
 
 ### pull / pl
 
-| Flag      | Alias | Description                                                                                    |
-| --------- | ----- | ---------------------------------------------------------------------------------------------- |
-| `--all`   | `-a`  | Pull every enabled image not yet present locally (or stale, per the registry's build numbers). |
-| `--force` | `-f`  | Pull even if the image is already present locally and current.                                 |
+| Flag      | Alias |
+| --------- | ----- |
+| `--all`   | `-a`  |
+| `--force` | `-f`  |
 
 ### remove / rm
 
-| Flag      | Alias | Description                                                    |
-| --------- | ----- | -------------------------------------------------------------- |
-| `--all`   | `-a`  | Remove every locally-present otter image.                      |
-| `--force` | `-f`  | Remove an image even if it is currently in use by a container. |
+| Flag      | Alias |
+| --------- | ----- |
+| `--all`   | `-a`  |
+| `--force` | `-f`  |
 
 ### Global
 
-| Flag     | Alias | Description                    |
-| -------- | ----- | ------------------------------ |
-| `--root` | `-r`  | Use rootful containers/images. |
+| Flag     | Alias |
+| -------- | ----- |
+| `--root` | `-r`  |
+
+## Options Explained
+
+### list / ls
+
+#### `--all`, `-a`
+
+Include disabled images in the table, and show the `STATUS`/`BUILT`
+columns.
+
+### pull / pl
+
+#### `--all`, `-a`
+
+Pull every enabled image not yet present locally (or stale, per the
+registry's build numbers).
+
+#### `--force`, `-f`
+
+Pull even if the image is already present locally and current.
+
+### remove / rm
+
+#### `--all`, `-a`
+
+Remove every locally-present otter image.
+
+#### `--force`, `-f`
+
+Remove an image even if it is currently in use by a container.
+
+### Global
+
+#### `--root`, `-r`
+
+Use rootful containers/images.
 
 ## Examples
-
-```sh
-otter reg ls --all
-```
-
-Lists every registry entry, including disabled ones, with status/build
-info.
-
-```sh
-otter reg pull --all --force
-```
-
-Force-pulls every enabled image, even ones already present and
-current.
-
-```sh
-otter reg pull alpine,fedora
-```
-
-Pulls the `alpine` and `fedora` images by short name.
 
 ```sh
 otter registry list
 ```
 
-Lists enabled registry entries.
+Lists enabled registry entries in a compact table.
 
 ```sh
-otter registry remove alpine,fedora
+otter reg ls --all
 ```
 
-Removes the locally-pulled `alpine` and `fedora` images.
+Lists every registry entry, including disabled ones, with extra
+`STATUS`/`BUILT` columns.
+
+```sh
+otter reg pull alpine,fedora
+```
+
+Pulls the `alpine` and `fedora` images by short name, skipping either
+one that's already present locally and current.
+
+```sh
+otter reg remove --all --force --root
+```
+
+Force-removes every locally-present rootful otter image, even ones
+currently in use by a container.
 
 ## Notes
 

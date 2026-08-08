@@ -24,56 +24,79 @@ Icons are resolved automatically unless `--icon` is given: otter reads
 `/etc/os-release` from inside the target container to detect its distro
 ID, matches that against a built-in set of distro icons (Arch, Alpine,
 Alma, Blackarch, CentOS, Chimera, Debian, Devuan, Fedora, Gentoo, Kali,
-openSUSE Leap/Tumbleweed, Oracle Linux, RHEL, Rocky, Ubuntu, Void), and
-falls back to a generic otter terminal icon if detection fails or the
-distro isn't in that set. This detection always runs when using `--all`,
-or when generating entries for more than one name at once — `--icon` is
-only honored for a single named container.
+openSUSE Leap/Tumbleweed, Oracle Linux, RHEL, Rocky, Ubuntu, Void,
+Wolfi), and falls back to a generic otter terminal icon if detection
+fails or the distro isn't in that set. This detection always runs when
+using `--all`, or when generating entries for more than one name at
+once — `--icon` is only honored for a single named container.
 
 Entries are written to `~/.local/share/applications/`, and detected
 icons are cached under `~/.local/share/otter/icons/distros/`.
 
 ## Options
 
-| Flag       | Alias | Description                                                                                                          |
-| ---------- | ----- | -------------------------------------------------------------------------------------------------------------------- |
-| `--all`    | `-a`  | Generate (or delete) entries for every otter container.                                                              |
-| `--root`   | `-r`  | Operate on rootful containers.                                                                                       |
-| `--icon`   | `-i`  | Custom icon path to use instead of auto-detection. Ignored when `--all` is used or when more than one name is given. |
-| `--delete` | `-d`  | Delete the entry instead of creating it.                                                                             |
+| Flag       | Alias |
+| ---------- | ----- |
+| `--all`    | `-a`  |
+| `--root`   | `-r`  |
+| `--icon`   | `-i`  |
+| `--delete` | `-d`  |
+
+## Options Explained
+
+### `--all`, `-a`
+
+Generate (or delete) entries for every otter container.
+
+### `--root`, `-r`
+
+Operate on rootful containers.
+
+### `--icon`, `-i`
+
+Custom icon path to use instead of auto-detection. Ignored when
+`--all` is used or when more than one name is given.
+
+### `--delete`, `-d`
+
+Delete the entry instead of creating it.
 
 ## Examples
 
 ```sh
-otter pin --all
+otter pin my-box
 ```
 
-Generates desktop entries for every otter container.
+Generates a desktop entry for `my-box`, with the icon auto-detected from
+the container's distro.
 
 ```sh
 otter pin my-box -i /path/to/icon
 ```
 
-Generates an entry for `my-box` using a custom icon.
+Generates an entry for `my-box` using a custom icon instead of
+auto-detection.
 
 ```sh
 otter generate-entry debian --delete
 ```
 
-Deletes the desktop entry for `debian`.
+Deletes the desktop entry for `debian` without touching the container
+itself.
 
 ```sh
 otter generate-entry --all --root
 ```
 
-Generates desktop entries for every rootful otter container.
+Generates desktop entries for every rootful otter container, with icons
+auto-detected for each one.
 
 ## Notes
 
 - `--icon` is ignored when `--all` is used, or when generating entries
   for multiple containers at once — icon auto-detection takes over in
   both cases.
-- Entries are saved to `~/.local/share/applications/*`; rootful entries
+- Entries are saved to `~/.local/share/applications/`; rootful entries
   are named with a `rootful-` prefix to distinguish them from rootless
   ones.
 - `otter remove` automatically deletes a container's desktop entry as

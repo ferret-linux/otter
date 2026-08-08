@@ -10,7 +10,7 @@ otter assemble <create|remove> [options]
 ```
 
 `dmf` is a full alias of `assemble`. `create`'s alias is `mk`, `remove`'s
-alias is `rm`; They behave identically.
+alias is `rm`; they behave identically.
 
 ## Description
 
@@ -25,8 +25,9 @@ manifest schema.
 same options), then — if the manifest requests it — starts the container
 and runs its init hooks, exports the requested apps/binaries via
 `otter-export`, and locks the container if defined in the manifest file.
-If setup fails partway through,the just-created container is automatically
-rolled back (removed) rather than left in a half-configured state.
+If setup fails partway through, the just-created container is
+automatically rolled back (removed) rather than left in a
+half-configured state.
 
 `assemble remove` force-removes the named container (or every container
 in the manifest, if no name is given).
@@ -38,43 +39,65 @@ name before recreating it from the manifest.
 
 ### create / mk
 
-| Flag        | Alias | Description                                                                        |
-| ----------- | ----- | ---------------------------------------------------------------------------------- |
-| `--file`    | `-f`  | Path or URL to the manifest file. **Required.**                                    |
-| `--replace` | `-R`  | Replace an existing container with a matching name instead of leaving it untouched.|
+| Flag        | Alias |
+| ----------- | ----- |
+| `--file`    | `-f`  |
+| `--replace` | `-R`  |
 
 ### remove / rm
 
-| Flag     | Alias | Description                                       |
-| -------- | ----- | --------------------------------------------------|
-| `--file` | `-f`  | Path or URL to the manifest file. **Required.**   |
+| Flag     | Alias |
+| -------- | ----- |
+| `--file` | `-f`  |
+
+## Options Explained
+
+### create / mk
+
+#### `--file`, `-f`
+
+Path or URL to the manifest file. **Required.**
+
+#### `--replace`, `-R`
+
+Replace an existing container with a matching name instead of leaving
+it untouched.
+
+### remove / rm
+
+#### `--file`, `-f`
+
+Path or URL to the manifest file. **Required.**
 
 ## Examples
 
 ```sh
-otter dmf rm my-box --file /path/to/file.ini
+otter dmf mk --file /path/to/file.toml
 ```
 
-Removes the `my-box` entry defined in the manifest.
+Creates every container defined in the manifest, leaving any existing
+container with a matching name untouched.
 
 ```sh
-otter dmf mk --replace --file /path/to/file.ini
+otter dmf mk --replace --file /path/to/file.toml
 ```
 
-Creates every container in the manifest, replacing any that already exist.
+Creates every container in the manifest, replacing any that already
+exist.
 
 ```sh
-otter assemble create -R --file /path/to/file.ini
+otter assemble create -R --file https://example.com/manifest.toml
 ```
 
-Same as above, using the non-aliased command and short flag.
+Same as above, using the non-aliased command name, the short `-R` flag,
+and a manifest fetched over HTTPS instead of a local path.
 
 ```sh
-otter assemble remove my-box --file /path/to/file.ini
+otter assemble remove my-box --file /path/to/file.toml
 ```
 
-Removes the `my-box` entry defined in the manifest, using the non-aliased
-command name.
+Removes only the `my-box` entry defined in the manifest, instead of
+every container the manifest declares.
 
 ## Notes
 
@@ -89,6 +112,9 @@ command name.
 - Manifest entries can `include` another entry in the same file to
   inherit its settings, with the including entry's own explicit values
   taking priority. See [manifests.md](../manifests.md).
+- Unlike most other otter commands, `assemble` does not have its own
+  `--root` flag — rootful behavior is controlled entirely per-entry via
+  the manifest's `settings.rootful` field.
 
 ## See Also
 

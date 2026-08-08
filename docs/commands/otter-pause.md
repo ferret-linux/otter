@@ -15,17 +15,29 @@ otter pause [options] [container...]
 
 Freezes the named container(s) in memory using the container manager's
 native pause/freeze support, or every currently-running otter container
-with `--all`. Containers that are not currently running are
+with `--all`. Pausing suspends all processes inside the container
+without stopping it — useful for temporarily reclaiming CPU without
+losing container state. Containers that are not currently running are
 automatically skipped rather than treated as an error — this includes
 the `--all` case, where only the subset of running containers is
 targeted.
 
 ## Options
 
-| Flag     | Alias | Description                                    |
-| -------- | ----- | ---------------------------------------------- |
-| `--all`  | `-a`  | Pause every currently-running otter container. |
-| `--root` | `-r`  | Pause rootful containers.                      |
+| Flag     | Alias |
+| -------- | ----- |
+| `--all`  | `-a`  |
+| `--root` | `-r`  |
+
+## Options Explained
+
+### `--all`, `-a`
+
+Pause every currently-running otter container.
+
+### `--root`, `-r`
+
+Pause rootful containers.
 
 ## Examples
 
