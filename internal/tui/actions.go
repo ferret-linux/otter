@@ -1,6 +1,10 @@
 package tui
 
-import "github.com/ferret-linux/otter/pkg/containermanager"
+import (
+	"charm.land/bubbles/v2/list"
+
+	"github.com/ferret-linux/otter/pkg/containermanager"
+)
 
 // focusPane identifies which pane of the Home section currently has input
 // focus.
@@ -16,18 +20,6 @@ func toggleFocus(f focusPane) focusPane {
 		return focusActions
 	}
 	return focusList
-}
-
-// actionsModel is the Home section's action menu: a small, static list of
-// operations for the currently selected container. It's hand-rolled rather
-// than a second bubbles/list.Model since it's a fixed set of rows with no
-// filtering/search needs.
-type actionsModel struct {
-	cursor int
-}
-
-func newActionsModel() actionsModel {
-	return actionsModel{}
 }
 
 // defaultActionLabels lists the actions offered for a container, in
@@ -53,16 +45,13 @@ func labelsFor(c *containermanager.Container) []string {
 	return labels
 }
 
-func (a actionsModel) moveUp() actionsModel {
-	if a.cursor > 0 {
-		a.cursor--
+// actionListItems converts action labels for the given container into
+// list.Item values for the actions pane's list.Model.
+func actionListItems(c *containermanager.Container) []list.Item {
+	labels := labelsFor(c)
+	items := make([]list.Item, len(labels))
+	for i, label := range labels {
+		items[i] = actionItem(label)
 	}
-	return a
-}
-
-func (a actionsModel) moveDown() actionsModel {
-	if a.cursor < len(defaultActionLabels())-1 {
-		a.cursor++
-	}
-	return a
+	return items
 }

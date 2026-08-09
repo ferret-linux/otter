@@ -1,14 +1,60 @@
 package tui
 
 import (
-	"context"
 	"strings"
 
+	"charm.land/bubbles/v2/key"
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
-
-	"github.com/ferret-linux/otter/pkg/containermanager"
 )
+
+// keyMap describes otter tui's top-level keybindings and satisfies
+// help.KeyMap, so the footer help line is generated from the same
+// bindings Update actually switches on rather than a hand-written string
+// that can drift out of sync.
+//
+//nolint:gochecknoglobals // see justification in styles.go
+var keys = keyMap{
+	switchSection: key.NewBinding(
+		key.WithKeys("left", "right", "h", "l"),
+		key.WithHelp("←/→", "switch section"),
+	),
+	move: key.NewBinding(
+		key.WithKeys("up", "down", "k", "j"),
+		key.WithHelp("↑/↓", "move"),
+	),
+	switchPane: key.NewBinding(
+		key.WithKeys("tab"),
+		key.WithHelp("tab", "switch pane"),
+	),
+	selectItem: key.NewBinding(
+		key.WithKeys("enter"),
+		key.WithHelp("↵", "select"),
+	),
+	quit: key.NewBinding(
+		key.WithKeys("q", "ctrl+c"),
+		key.WithHelp("q", "quit"),
+	),
+}
+
+type keyMap struct {
+	switchSection key.Binding
+	move          key.Binding
+	switchPane    key.Binding
+	selectItem    key.Binding
+	quit          key.Binding
+}
+
+// ShortHelp satisfies help.KeyMap.
+func (k keyMap) ShortHelp() []key.Binding {
+	return []key.Binding{k.switchSection, k.move, k.switchPane, k.selectItem, k.quit}
+}
+
+// FullHelp satisfies help.KeyMap. otter tui only ever renders the short
+// help line, but the interface requires this.
+func (k keyMap) FullHelp() [][]key.Binding {
+	return [][]key.Binding{k.ShortHelp()}
+}
 
 // section identifies one of otter tui's top-level screens.
 type section int
@@ -39,26 +85,50 @@ const (
 	footerRows     = 1 // the help line itself
 )
 
-// App is otter tui's top-level model. It owns the section tab bar and
-// delegates rendering/input to whichever section is active. Only Home is
-// implemented so far; the rest render as placeholders.
-type App struct {
-	ctx context.Context
-	cm  containermanager.ContainerManager
+func (a App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.KeyPressMsg:
+		switch {
+		case key.Matches(msg, keys.quit):
+			return a, tea.Quit
+		case msg.String() == "right" || msg.String() == "l":
+			a.active = nextSection(a.active)
+			return a, nil
+		case msg.String() == "left" || msg.String() == "h":
+			a.active = prevSection(a.active)
+			return a, nil
+		case msg.String() == "1":
+			a.active = sectionHome
+			return a, nil
+		case msg.String() == "2":
+			a.active = sectionShell
+			return a, nil
+		case msg.String() == "3":
+			a.active = sectionRegistry
+			return a, nil
+		case msg.String() == "4":
+			a.active = sectionCreate
+			return a, nil
+		case msg.String() == "5":
+			a.active = sectionDocs
+			return a, nil
+		}
 
-	active section
-	home   homeModel
-
-	width, height int
-}
-
-// NewApp builds the initial top-level app model.
-func NewApp(ctx context.Context, cm containermanager.ContainerManager) App {
-	return App{
-		ctx:  ctx,
-		cm:   cm,
-		home: newHomeModel(ctx, cm),
+	case tea.WindowSizeMsg:
+		a.width, a.height = msg.Width, msg.Height
+		cw, ch := a.contentSize()
+		a.home = a.home.SetSize(cw, ch)
+		a.help.SetWidth(cw)
+		return a, nil
 	}
+
+	if a.active == sectionHome {
+		var cmd tea.Cmd
+		a.home, cmd = a.home.Update(msg)
+		return a, cmd
+	}
+
+	return a, nil
 }
 
 func (a App) Init() tea.Cmd {
@@ -139,12 +209,13 @@ func (a App) View() tea.View {
 			Render(helpStyle.Render(sectionNames[a.active] + " — coming soon"))
 	}
 
-	help := helpStyle.Render("←/→ switch section · ↑/↓ move · tab switch pane · ↵ select · q quit")
+	footer := helpStyle.Render(a.help.View(keys))
 
-	screen := tabs + "\n" + divider + "\n\n" + body + "\n\n" + help
+	screen := tabs + "\n" + divider + "\n\n" + body + "\n\n" + footer
 
 	v := tea.NewView(appStyle.Render(screen))
 	v.AltScreen = true
+	v.MouseMode = tea.MouseModeCellMotion
 	return v
 }
 

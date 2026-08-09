@@ -34,7 +34,7 @@ type homeModel struct {
 	cm  containermanager.ContainerManager
 
 	list    list.Model
-	actions actionsModel
+	actions list.Model
 	focus   focusPane
 
 	loading bool
@@ -43,9 +43,13 @@ type homeModel struct {
 	width, height int
 }
 
-// newHomeModel builds the initial Home section model.
-func newHomeModel(ctx context.Context, cm containermanager.ContainerManager) homeModel {
-	l := list.New(nil, containerDelegate{}, 0, 0)
+// newList builds a bare bubbles/list.Model with all chrome (title, status
+// bar, help, pagination, filtering) suppressed — both the container list
+// and the actions pane are fixed-content sidebars with no need for any of
+// it, so every Show*/SetFilteringEnabled call below is required to avoid
+// unwanted UI appearing.
+func newList(delegate list.ItemDelegate) list.Model {
+	l := list.New(nil, delegate, 0, 0)
 	// Lip Gloss v2 dropped adaptive light/dark colors, so list styles must
 	// be chosen explicitly. We assume a dark terminal background, which is
 	// the common default; see bubbles' UPGRADE_GUIDE_V2.md.
@@ -53,12 +57,18 @@ func newHomeModel(ctx context.Context, cm containermanager.ContainerManager) hom
 	l.SetShowTitle(false)
 	l.SetShowStatusBar(false)
 	l.SetShowHelp(false)
+	l.SetShowPagination(false)
+	l.SetFilteringEnabled(false)
+	return l
+}
 
+// newHomeModel builds the initial Home section model.
+func newHomeModel(ctx context.Context, cm containermanager.ContainerManager) homeModel {
 	return homeModel{
 		ctx:     ctx,
 		cm:      cm,
-		list:    l,
-		actions: newActionsModel(),
+		list:    newList(containerDelegate{}),
+		actions: newList(actionDelegate{}),
 		loading: true,
 	}
 }
@@ -83,6 +93,11 @@ func fetchContainers(ctx context.Context, cm containermanager.ContainerManager) 
 func (h homeModel) SetSize(width, height int) homeModel {
 	h.width, h.height = width, height
 	h.list.SetSize(homeListWidth(width), height)
+	actionsHeight := height - actionsHeaderRows
+	if actionsHeight < 0 {
+		actionsHeight = 0
+	}
+	h.actions.SetSize(actionsPaneWidth, actionsHeight)
 	return h
 }
 
@@ -106,6 +121,7 @@ func (h homeModel) Update(msg tea.Msg) (homeModel, tea.Cmd) {
 			items = append(items, containerItem{container: c})
 		}
 		cmd := h.list.SetItems(items)
+		h.actions.SetItems(h.currentActionItems())
 		return h, cmd
 
 	case errMsg:
@@ -118,30 +134,42 @@ func (h homeModel) Update(msg tea.Msg) (homeModel, tea.Cmd) {
 		case "tab":
 			h.focus = toggleFocus(h.focus)
 			return h, nil
-		case "up", "k":
-			if h.focus == focusActions {
-				h.actions = h.actions.moveUp()
-				return h, nil
-			}
-		case "down", "j":
-			if h.focus == focusActions {
-				h.actions = h.actions.moveDown()
-				return h, nil
-			}
 		case "enter":
 			// Actions don't execute yet — navigation-only until the
 			// results/error feedback mechanism is designed.
 			return h, nil
 		}
+
+	case tea.MouseClickMsg:
+		return h.handleMouseClick(msg), nil
+
+	case tea.MouseWheelMsg:
+		return h.handleMouseWheel(msg), nil
 	}
 
 	if h.focus == focusList {
+		prevIndex := h.list.Index()
 		var cmd tea.Cmd
 		h.list, cmd = h.list.Update(msg)
+		if h.list.Index() != prevIndex {
+			h.actions.SetItems(h.currentActionItems())
+		}
 		return h, cmd
 	}
 
-	return h, nil
+	var cmd tea.Cmd
+	h.actions, cmd = h.actions.Update(msg)
+	return h, cmd
+}
+
+// currentActionItems returns the action list.Items for the currently
+// selected container, or nil if none is selected.
+func (h homeModel) currentActionItems() []list.Item {
+	selected, ok := h.list.SelectedItem().(containerItem)
+	if !ok {
+		return nil
+	}
+	return actionListItems(&selected.container)
 }
 
 func (h homeModel) View() string {
@@ -175,18 +203,81 @@ func (h homeModel) renderActions() string {
 	c := selected.container
 
 	header := nameStyle.Render(c.Name) + "\n" + imageStyle.Render(ui.TrimImageRef(c.Image))
+	body := header + "\n\n" + h.actions.View()
+	return lipgloss.NewStyle().Width(actionsPaneWidth).Render(body)
+}
 
-	var rows []string
-	for i, label := range labelsFor(&c) {
-		rowStyle := unselectedRowStyle
-		labelStyle := actionLabelStyle
-		if h.focus == focusActions && i == h.actions.cursor {
-			rowStyle = selectedRowStyle
-			labelStyle = actionActiveStyle
-		}
-		rows = append(rows, rowStyle.Render(labelStyle.Render(label)))
+// listPaneAt reports which pane (if any) contains column x, given the
+// container list's rendered width and the single-column divider between
+// the two panes. Matches the layout built by View/homeListWidth.
+func (h homeModel) listPaneAt(x int) (focusPane, bool) {
+	listWidth := homeListWidth(h.width)
+	switch {
+	case x < listWidth:
+		return focusList, true
+	case x < listWidth+1:
+		return 0, false // the divider itself
+	default:
+		return focusActions, true
+	}
+}
+
+// actionsHeaderRows is the number of lines renderActions draws above the
+// actions list itself (container name + image + one blank line), which a
+// click's row offset must account for.
+const actionsHeaderRows = 3
+
+func (h homeModel) handleMouseClick(msg tea.MouseClickMsg) homeModel {
+	mouse := msg.Mouse()
+	if mouse.Button != tea.MouseLeft {
+		return h
 	}
 
-	body := header + "\n\n" + strings.Join(rows, "\n")
-	return lipgloss.NewStyle().Width(actionsPaneWidth).Render(body)
+	pane, ok := h.listPaneAt(mouse.X)
+	if !ok {
+		return h
+	}
+	h.focus = pane
+
+	switch pane {
+	case focusList:
+		if mouse.Y >= 0 && mouse.Y < len(h.list.Items()) {
+			h.list.Select(mouse.Y)
+			h.actions.SetItems(h.currentActionItems())
+		}
+	case focusActions:
+		row := mouse.Y - actionsHeaderRows
+		if row >= 0 && row < len(h.actions.Items()) {
+			h.actions.Select(row)
+		}
+	}
+	return h
+}
+
+func (h homeModel) handleMouseWheel(msg tea.MouseWheelMsg) homeModel {
+	mouse := msg.Mouse()
+	pane, ok := h.listPaneAt(mouse.X)
+	if !ok {
+		return h
+	}
+
+	switch pane {
+	case focusList:
+		switch mouse.Button {
+		case tea.MouseWheelUp:
+			h.list.CursorUp()
+			h.actions.SetItems(h.currentActionItems())
+		case tea.MouseWheelDown:
+			h.list.CursorDown()
+			h.actions.SetItems(h.currentActionItems())
+		}
+	case focusActions:
+		switch mouse.Button {
+		case tea.MouseWheelUp:
+			h.actions.CursorUp()
+		case tea.MouseWheelDown:
+			h.actions.CursorDown()
+		}
+	}
+	return h
 }
