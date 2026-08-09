@@ -44,12 +44,14 @@ var (
 	colorBg     = lipgloss.Color("0")
 	colorYellow = lipgloss.Color("11")
 	colorWhite  = lipgloss.Color("15")
+	colorOrange = lipgloss.Color("208")
+	colorBlue   = lipgloss.Color("12")
 
 	// selectedTreeStyle highlights the focused row with a solid
 	// background fill (not a left-edge bar — see treeDelegate.Render for
 	// why the bar glyph specifically would clash here).
 	selectedTreeStyle   = lipgloss.NewStyle().Background(colorTeal).Foreground(colorBg)
-	unselectedTreeStyle = lipgloss.NewStyle().Foreground(colorDim)
+	unselectedTreeStyle = lipgloss.NewStyle().Foreground(colorOrange)
 
 	// treeConnectorStyle colors just the ├──/└──/│ connector glyphs
 	// drawn by docTreePrefix, kept separate from unselectedTreeStyle so
@@ -60,7 +62,7 @@ var (
 	// docTreeDelegate.Render, independently of nameStyle so the icon's
 	// color doesn't change with selection the way the name text does.
 	folderIconStyle = lipgloss.NewStyle().Foreground(colorYellow)
-	fileIconStyle   = lipgloss.NewStyle().Foreground(colorWhite)
+	fileIconStyle   = lipgloss.NewStyle().Foreground(colorBlue)
 
 	paneBorderStyle        = lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).BorderForeground(colorDim)
 	focusedPaneBorderStyle = lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).BorderForeground(colorTeal)
