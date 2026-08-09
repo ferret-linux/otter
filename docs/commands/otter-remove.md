@@ -29,40 +29,62 @@ created on the host on its behalf:
 
 ## Options
 
-| Flag            | Alias | Description                                             |
-| --------------- | ----- | ------------------------------------------------------- |
-| `--all`         | `-a`  | Delete every otter container.                           |
-| `--root`        | `-r`  | Remove a rootful container.                             |
-| `--force`       | `-f`  | Force deletion of problematic containers.               |
-| `--rm-home`     | `-H`  | Also remove the container's home directory on the host. |
-| `--bypass-lock` | `-B`  | Remove the container even if it is locked.              |
+| Flag            | Alias |
+| --------------- | ----- |
+| `--all`         | `-a`  |
+| `--root`        | `-r`  |
+| `--force`       | `-f`  |
+| `--rm-home`     | `-H`  |
+| `--bypass-lock` | `-B`  |
+
+## Options Explained
+
+### `--all`, `-a`
+
+Delete every otter container.
+
+### `--root`, `-r`
+
+Remove a rootful container.
+
+### `--force`, `-f`
+
+Force deletion of problematic containers.
+
+### `--rm-home`, `-H`
+
+Also remove the container's home directory on the host.
+
+### `--bypass-lock`, `-B`
+
+Remove the container even if it is locked.
 
 ## Examples
 
 ```sh
-otter rm --force my-box
+otter rm my-box
 ```
 
-Force-removes `my-box`.
+Removes `my-box`.
 
 ```sh
-otter rm --all --force
+otter rm --force my-box2,my-box3
+```
+
+Force-removes both `my-box2` and `my-box3` (comma-separated names).
+
+```sh
+otter remove --all --force
 ```
 
 Force-removes every rootless otter container.
-
-```sh
-otter remove my-box my-box2,my-box3
-```
-
-Removes `my-box`, `my-box2`, and `my-box3` (comma-separated names).
 
 ```sh
 otter remove --all --root --force --rm-home
 ```
 
 Force-removes every rootful container and deletes their home
-directories.
+directories on the host.
 
 ## Notes
 

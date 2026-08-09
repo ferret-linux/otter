@@ -22,11 +22,25 @@ the whole batch), then stopped.
 
 ## Options
 
-| Flag      | Alias | Description                                           |
-| --------- | ----- | ----------------------- ----------------------------- |
-| `--all`   | `-a`  | Stop every otter container instead of specific names. |
-| `--root`  | `-r`  | Stop rootful containers.                              |
-| `--force` | `-f`  | Force-stop containers instead of a graceful stop.     |
+| Flag      | Alias |
+| --------- | ----- |
+| `--all`   | `-a`  |
+| `--root`  | `-r`  |
+| `--force` | `-f`  |
+
+## Options Explained
+
+### `--all`, `-a`
+
+Stop every otter container instead of specific names.
+
+### `--root`, `-r`
+
+Stop rootful containers.
+
+### `--force`, `-f`
+
+Force-stop containers instead of a graceful stop.
 
 ## Examples
 
@@ -37,16 +51,23 @@ otter dn my-box
 Stops `my-box`.
 
 ```sh
+otter stop my-box
+```
+
+Same as above, using the non-aliased command name.
+
+```sh
 otter dn --all
 ```
 
 Stops every rootless otter container.
 
 ```sh
-otter stop --all --root
+otter stop --all --root --force
 ```
 
-Stops every rootful otter container.
+Force-stops every rootful otter container, skipping the graceful stop
+phase.
 
 ## Notes
 

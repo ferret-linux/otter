@@ -22,11 +22,25 @@ it.
 
 ## Options
 
-| Flag      | Alias | Description                                              |
-| --------- | ----- | -------------------------------------------------------- |
-| `--all`   | `-a`  | Restart every otter container instead of specific names. |
-| `--root`  | `-r`  | Restart rootful containers.                              |
-| `--force` | `-f`  | Force the stop phase instead of a graceful stop.         |
+| Flag      | Alias |
+| --------- | ----- |
+| `--all`   | `-a`  |
+| `--root`  | `-r`  |
+| `--force` | `-f`  |
+
+## Options Explained
+
+### `--all`, `-a`
+
+Restart every otter container instead of specific names.
+
+### `--root`, `-r`
+
+Restart rootful containers.
+
+### `--force`, `-f`
+
+Force the stop phase instead of a graceful stop.
 
 ## Examples
 
@@ -37,16 +51,23 @@ otter rbt my-box
 Restarts `my-box`.
 
 ```sh
+otter restart my-box
+```
+
+Same as above, using the non-aliased command name.
+
+```sh
 otter rbt --all
 ```
 
 Restarts every rootless otter container.
 
 ```sh
-otter restart --all --root
+otter restart --all --root --force
 ```
 
-Restarts every rootful otter container.
+Force-restarts every rootful otter container, skipping the graceful
+stop phase.
 
 ## Notes
 

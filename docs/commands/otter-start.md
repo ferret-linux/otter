@@ -24,18 +24,22 @@ were skipped.
 
 ## Options
 
-| Flag     | Alias | Description                                            |
-| -------- | ----- | ------------------------------------------------------ |
-| `--all`  | `-a`  | Start every otter container instead of specific names. |
-| `--root` | `-r`  | Operate on rootful containers.                         |
+| Flag     | Alias |
+| -------- | ----- |
+| `--all`  | `-a`  |
+| `--root` | `-r`  |
+
+## Options Explained
+
+### `--all`, `-a`
+
+Start every otter container instead of specific names.
+
+### `--root`, `-r`
+
+Operate on rootful containers.
 
 ## Examples
-
-```sh
-otter up --all
-```
-
-Starts every rootless otter container.
 
 ```sh
 otter up my-box
@@ -54,6 +58,12 @@ otter start --root my-box
 ```
 
 Starts the rootful container `my-box`.
+
+```sh
+otter up --all --root
+```
+
+Starts every rootful otter container, skipping any already running.
 
 ## Notes
 

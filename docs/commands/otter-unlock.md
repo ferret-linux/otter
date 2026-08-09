@@ -5,8 +5,8 @@
 ## Synopsis
 
 ```text
-otter ulk    [options] [container]
-otter unlock [options] [container]
+otter ulk    [options] [container...]
+otter unlock [options] [container...]
 ```
 
 `ulk` is a full alias of `unlock`; the two behave identically.
@@ -21,10 +21,20 @@ being treated as a failure.
 
 ## Options
 
-| Flag     | Alias | Description                   |
-| -------- | ----- | --------- ------------------- |
-| `--all`  | `-a`  | Unlock every otter container. |
-| `--root` | `-r`  | Unlock a rootful container.   |
+| Flag     | Alias |
+| -------- | ----- |
+| `--all`  | `-a`  |
+| `--root` | `-r`  |
+
+## Options Explained
+
+### `--all`, `-a`
+
+Unlock every otter container.
+
+### `--root`, `-r`
+
+Unlock a rootful container.
 
 ## Examples
 
@@ -35,16 +45,23 @@ otter ulk my-box
 Unlocks `my-box`.
 
 ```sh
+otter unlock my-box
+```
+
+Same as above, using the non-aliased command name.
+
+```sh
 otter ulk my-box --root
 ```
 
 Unlocks the rootful container `my-box`.
 
 ```sh
-otter unlock my-box
+otter unlock ubuntu,fedora --all
 ```
 
-Same as the first example, using the non-aliased command name.
+Unlocks every otter container regardless of the positional names given —
+`--all` takes precedence over any explicit names.
 
 ## Notes
 

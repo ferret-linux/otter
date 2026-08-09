@@ -33,11 +33,25 @@ error instead of silently doing nothing.
 
 ## Options
 
-| Flag        | Alias | Description                                            |
-| ----------- | ----- | ------------------------------------------------------ |
-| `--all`     | `-a`  | Upgrade every otter container.                         |
-| `--root`    | `-r`  | Upgrade rootful containers.                            |
-| `--running` | `-R`  | Restrict `--all` to only currently-running containers. |
+| Flag        | Alias |
+| ----------- | ----- |
+| `--all`     | `-a`  |
+| `--root`    | `-r`  |
+| `--running` | `-R`  |
+
+## Options Explained
+
+### `--all`, `-a`
+
+Upgrade every otter container.
+
+### `--root`, `-r`
+
+Upgrade rootful containers.
+
+### `--running`, `-R`
+
+Restrict `--all` to only currently-running containers.
 
 ## Examples
 
@@ -57,25 +71,27 @@ Upgrades every rootful otter container.
 otter upgrade --all
 ```
 
-Upgrades every rootless otter container (starting any that are
-stopped).
+Upgrades every rootless otter container, starting any that are
+stopped.
 
 ```sh
-otter upgrade --running
+otter upgrade --all --running
 ```
 
-Upgrades only the otter containers that are currently running.
+Upgrades only the otter containers that are currently running, without
+starting any stopped ones.
 
 ## Notes
 
 - `--root` is preferred over `sudo otter upgrade`. Set
   `preferences.sudo-program` to use a different
-  privilege-escalation program other then `sudo`.
+  privilege-escalation program other than `sudo`.
 - Locked containers are always skipped, with a warning. If every
   requested container is locked (nothing gets upgraded), the command
   errors. Use `otter unlock` first.
 - Non-running target containers are started automatically as part of
-  the upgrade.
+  the upgrade, unless `--running` restricts the batch to already-running
+  ones.
 
 ## See Also
 
