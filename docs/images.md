@@ -27,36 +27,36 @@ This is the image actually pulled when you use a given short name
 entry is enabled. See [Enabled vs. disabled entries](#enabled-vs-disabled-entries)
 below for what you get instead if it's disabled.
 
-| Short name            | Image pulled by short name                    | Architectures |
-| --------------------- | --------------------------------------------- | ------------- |
-| `ubuntu`              | `ghcr.io/ferret-linux/ubuntu-otr:stable`      | amd64, arm64  |
-| `ubuntu-lts`          | `ghcr.io/ferret-linux/ubuntu-otr:lts`         | amd64, arm64  |
-| `debian`              | `ghcr.io/ferret-linux/debian-otr:stable`      | amd64, arm64  |
-| `debian-testing`      | `ghcr.io/ferret-linux/debian-otr:testing`     | amd64, arm64  |
-| `debian-unstable`     | `ghcr.io/ferret-linux/debian-otr:unstable`    | amd64, arm64  |
-| `fedora`              | `ghcr.io/ferret-linux/fedora-otr:stable`      | amd64, arm64  |
-| `fedora-rawhide`      | `ghcr.io/ferret-linux/fedora-otr:rawhide`     | amd64, arm64  |
-| `arch`                | `ghcr.io/ferret-linux/arch-otr:latest`        | amd64         |
-| `blackarch`           | `ghcr.io/ferret-linux/blackarch-otr:latest`   | amd64         |
-| `gentoo`              | `ghcr.io/ferret-linux/gentoo-otr:stage3`      | amd64, arm64  |
-| `alma`                | `ghcr.io/ferret-linux/alma-otr:stable`        | amd64, arm64  |
-| `rocky`               | `ghcr.io/ferret-linux/rocky-otr:stable`       | amd64, arm64  |
-| `centos`              | `ghcr.io/ferret-linux/centos-otr:stable`      | amd64, arm64  |
-| `oracle`              | `ghcr.io/ferret-linux/oracle-otr:stable`      | amd64, arm64  |
-| `rhel`                | `ghcr.io/ferret-linux/rhel-otr:stable`        | amd64, arm64  |
-| `opensuse-leap`       | `ghcr.io/ferret-linux/opensuse-otr:leap`      | amd64, arm64  |
-| `opensuse-tumbleweed` | `ghcr.io/ferret-linux/opensuse-otr:tumbleweed`| amd64, arm64  |
-| `alpine`              | `ghcr.io/ferret-linux/alpine-otr:latest`      | amd64, arm64  |
-| `alpine-edge`         | `ghcr.io/ferret-linux/alpine-otr:edge`        | amd64, arm64  |
-| `kali`                | `ghcr.io/ferret-linux/kali-otr:rolling`       | amd64, arm64  |
-| `kali-edge`           | `ghcr.io/ferret-linux/kali-otr:edge`          | amd64, arm64  |
-| `void-glibc`          | `ghcr.io/ferret-linux/void-otr:glibc`         | amd64, arm64  |
-| `void-musl`           | `ghcr.io/ferret-linux/void-otr:musl`          | amd64, arm64  |
-| `chimera`             | `ghcr.io/ferret-linux/chimera-otr:latest`     | amd64, arm64  |
-| `devuan`              | `ghcr.io/ferret-linux/devuan-otr:stable`      | amd64         |
-| `devuan-testing`      | `ghcr.io/ferret-linux/devuan-otr:testing`     | amd64         |
-| `devuan-unstable`     | `ghcr.io/ferret-linux/devuan-otr:unstable`    | amd64         |
-| `wolfi`               | `ghcr.io/ferret-linux/wolfi-otr:latest`       | amd64, arm64  |
+| Short name            | Image pulled by short name                     | Architectures |
+| --------------------- | -----------------------------------------------| ------------- |
+| `ubuntu`              | `ghcr.io/ferret-linux/ubuntu-otr:stable`       | amd64, arm64  |
+| `ubuntu-lts`          | `ghcr.io/ferret-linux/ubuntu-otr:lts`          | amd64, arm64  |
+| `debian`              | `ghcr.io/ferret-linux/debian-otr:stable`       | amd64, arm64  |
+| `debian-testing`      | `ghcr.io/ferret-linux/debian-otr:testing`      | amd64, arm64  |
+| `debian-unstable`     | `ghcr.io/ferret-linux/debian-otr:unstable`     | amd64, arm64  |
+| `fedora`              | `ghcr.io/ferret-linux/fedora-otr:stable`       | amd64, arm64  |
+| `fedora-rawhide`      | `ghcr.io/ferret-linux/fedora-otr:rawhide`      | amd64, arm64  |
+| `arch`                | `ghcr.io/ferret-linux/arch-otr:latest`         | amd64         |
+| `blackarch`           | `ghcr.io/ferret-linux/blackarch-otr:latest`    | amd64         |
+| `gentoo`              | `ghcr.io/ferret-linux/gentoo-otr:stage3`       | amd64, arm64  |
+| `alma`                | `ghcr.io/ferret-linux/alma-otr:stable`         | amd64, arm64  |
+| `rocky`               | `ghcr.io/ferret-linux/rocky-otr:stable`        | amd64, arm64  |
+| `centos`              | `ghcr.io/ferret-linux/centos-otr:stable`       | amd64, arm64  |
+| `oracle`              | `ghcr.io/ferret-linux/oracle-otr:stable`       | amd64, arm64  |
+| `rhel`                | `ghcr.io/ferret-linux/rhel-otr:stable`         | amd64, arm64  |
+| `opensuse-leap`       | `ghcr.io/ferret-linux/opensuse-otr:leap`       | amd64, arm64  |
+| `opensuse-tumbleweed` | `ghcr.io/ferret-linux/opensuse-otr:tumbleweed` | amd64, arm64  |
+| `alpine`              | `ghcr.io/ferret-linux/alpine-otr:latest`       | amd64, arm64  |
+| `alpine-edge`         | `ghcr.io/ferret-linux/alpine-otr:edge`         | amd64, arm64  |
+| `kali`                | `ghcr.io/ferret-linux/kali-otr:rolling`        | amd64, arm64  |
+| `kali-edge`           | `ghcr.io/ferret-linux/kali-otr:edge`           | amd64, arm64  |
+| `void-glibc`          | `ghcr.io/ferret-linux/void-otr:glibc`          | amd64, arm64  |
+| `void-musl`           | `ghcr.io/ferret-linux/void-otr:musl`           | amd64, arm64  |
+| `chimera`             | `ghcr.io/ferret-linux/chimera-otr:latest`      | amd64, arm64  |
+| `devuan`              | `ghcr.io/ferret-linux/devuan-otr:stable`       | amd64         |
+| `devuan-testing`      | `ghcr.io/ferret-linux/devuan-otr:testing`      | amd64         |
+| `devuan-unstable`     | `ghcr.io/ferret-linux/devuan-otr:unstable`     | amd64         |
+| `wolfi`               | `ghcr.io/ferret-linux/wolfi-otr:latest`        | amd64, arm64  |
 
 ## Base images
 
@@ -104,6 +104,59 @@ upstream (see below).
 Run `otter registry list --all` for the live, up-to-date view of this
 catalog, including any images that have since been disabled and any
 that have been added upstream since these docs were written.
+
+## What makes an image "otter-optimized"
+
+Each `Containerfile` starts from the upstream base image listed above
+and layers a consistent set of changes on top of it at build time, so
+every otter image — regardless of distro — behaves predictably once a
+container is created from it. Concretely, this includes:
+
+- **A build-number label.** Every image gets an `otter.image_build` OCI
+  label baked in. This is what powers the staleness tracking described
+  below and in [otter-registry](commands/otter-registry.md) — otter
+  compares your local build number against the latest one recorded
+  upstream to decide whether an image is current, behind, or ahead.
+- **Otter's directory layout.** A shared setup step creates and
+  permission-fixes the directories otter relies on inside every
+  container — `/usr/lib/otter`, `/usr/lib/otter/scripts`,
+  `/usr/lib/otter/helpers`, `/etc/sudoers.d`, `/opt`,
+  `/usr/local/bin`, and so on — and drops an identifying marker file
+  (e.g. `/usr/lib/otter/container.fedora`) so otter can recognize an
+  otter-built image from the outside.
+- **A curated common package set.** Things like `bash`/`zsh`/`fish`,
+  `sudo`, locale and timezone data, and everyday CLI tools (`curl`,
+  `wget`, `rsync`, `unzip`, `tree`, `man-db`, `tcpdump`, and similar)
+  are installed on top of the base image, plus `systemd` where the
+  distro supports it (needed for `otter create --init`). Because
+  package names and availability differ across `dnf`/`apt`/`pacman`/
+  `apk`/`zypper`/`xbps`/`emerge`, this list is filtered per distro
+  through a small validator script so the build doesn't fail on a
+  package that happens not to exist in that distro's repos.
+- **Locale and timezone defaults.** `en_US.UTF-8` and `UTC` are set up
+  out of the box.
+- **Image specific fixes** some images ship configurations that may
+  work against otter or break it in some way,The registry build images
+  alredy fix the at build time so that user has a seamless experience.
+- **Small distro-specific fixups**, applied only where needed — for
+  example, Fedora's upstream image strips package documentation and
+  ships the OpenH264 codec repo disabled by default, both of which
+  otter's build reverses; distros that only ship a versioned `python3`
+  binary (no unversioned symlink) get one added so scripts that expect
+  `python3` on `PATH` keep working.
+- **Cleanup.** Package manager caches and logs are cleared at the end
+  of the build to keep image size down.
+
+**This is distinct from what happens at container-creation time.**
+Otter's own helper scripts (`otter-init`, `otter-export`,
+`otter-host-exec`) are not baked into the image at all — they ship
+embedded in the `otter` binary itself and are written into each
+container individually by `otter create`, along with the host
+integration (home directory, `/dev`/`/sys`, network namespace, and so
+on) described in [otter-create](commands/otter-create.md). In other
+words: the *image* build makes a distro's upstream image otter-ready
+in a generic, distro-agnostic way; `otter create` is what turns that
+image into a specific, host-integrated *container*.
 
 ## Enabled vs. disabled entries
 
