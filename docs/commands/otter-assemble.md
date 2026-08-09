@@ -16,9 +16,9 @@ alias is `rm`; they behave identically.
 
 Reads a TOML manifest describing one or more `[[container]]` entries and
 creates or removes the corresponding otter containers in one batch. This
-is the declarative counterpart to running individual `otter create`
-commands by hand — see [manifests.md](../manifests.md) for the full
-manifest schema.
+is the declarative counterpart to running individual `otter create` &
+`otter remove` commands by hand — see [manifests.md](../manifests.md) for
+the full manifest schema.
 
 `assemble create` provisions each container defined in the manifest
 (equivalent to `otter create` with the manifest's fields mapped onto the

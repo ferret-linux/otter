@@ -33,34 +33,36 @@ flags, which control how much of the host the container shares).
 
 ## Options
 
-| Flag                                                                                   | Alias |
-| -------------------------------------------------------------------------------------- | ----- |
-| `--image`                                                                              | `-i`  |
-| `--hostname`                                                                           | `-n`  |
-| `--shell`                                                                              | `-s`  |
-| `--always-pull`                                                                        | `-p`  |
-| `--clone`                                                                              | `-C`  |
-| `--home`                                                                               | `-H`  |
-| `--volume`                                                                             | `-v`  |
-| `--additional-flags`                                                                   | `-a`  |
-| `--additional-packages`                                                                | `-ap` |
-| `--init-hooks`                                                                         | `-ih` |
-| `--pre-init-hooks`                                                                     | `-ph` |
-| `--init`                                                                               | `-I`  |
-| `--memory`                                                                             | `-m`  |
-| `--cpu-threads`                                                                        | `-t`  |
-| `--nvidia`                                                                             | `-N`  |
-| `--no-userns-limit`                                                                    | `-ul` |
-| `--platform`                                                                           | `-P`  |
-| `--unshare-devsys`                                                                     | `-ud` |
-| `--unshare-groups`                                                                     | `-ug` |
-| `--unshare-ipc`                                                                        | `-ui` |
-| `--unshare-netns`                                                                      | `-un` |
-| `--unshare-process`                                                                    | `-up` |
-| `--unshare-all`                                                                        | `-ua` |
-| `--no-entry`                                                                           | `-E`  |
-| `--disable-root-password-i-fully-understand-the-risks-and-accept-the-responsibilities` | —     |
-| `--root`                                                                               | `-r`  |
+| Flag                    | Alias |
+| ----------------------- | ----- |
+| `--home`                | `-H`  |
+| `--init`                | `-I`  |
+| `--root`                | `-r`  |
+| `--image`               | `-i`  |
+| `--shell`               | `-s`  |
+| `--clone`               | `-C`  |
+| `--volume`              | `-v`  |
+| `--memory`              | `-m`  |
+| `--nvidia`              | `-N`  |
+| `--hostname`            | `-n`  |
+| `--platform`            | `-P`  |
+| `--no-entry`            | `-E`  |
+| `--init-hooks`          | `-ih` |
+| `--always-pull`         | `-p`  |
+| `--cpu-threads`         | `-t`  |
+| `--unshare-ipc`         | `-ui` |
+| `--unshare-all`         | `-ua` |
+| `--unshare-netns`       | `-un` |
+| `--pre-init-hooks`      | `-ph` |
+| `--unshare-devsys`      | `-ud` |
+| `--unshare-groups`      | `-ug` |
+| `--no-userns-limit`     | `-ul` |
+| `--unshare-process`     | `-up` |
+| `--additional-flags`    | `-a`  |
+| `--additional-packages` | `-ap` |
+
+⚠️ Use with extreme caution — this flag disables the root password:
+`--disable-root-password-i-fully-understand-the-risks-and-accept-the-responsibilities`
 
 ## Options Explained
 
