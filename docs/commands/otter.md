@@ -21,7 +21,6 @@ short alias alongside its full name; both behave identically.
 | [`enter`](otter-enter.md)                   | `sh`  | Enter a container environment.                        |
 | [`generate-entry`](otter-generate-entry.md) | `pin` | Generate (or delete) a desktop entry for a container. |
 | [`inspect`](otter-inspect.md)               | `info`| Show detailed info about a container.                 |
-| [`interactive`](otter-interactive.md)       | `tui` | Launch otter's interactive terminal UI.               |
 | [`journal`](otter-journal.md)               | `logs`| Show logs of a container.                             |
 | [`list`](otter-list.md)                     | `ls`  | List all otter-managed containers.                    |
 | [`lock`](otter-lock.md)                     | `lk`  | Lock a container to prevent removal or upgrades.      |

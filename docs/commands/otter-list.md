@@ -77,5 +77,3 @@ extract just the container names, for use in scripts.
 
 - [otter-inspect](otter-inspect.md) — detailed info for a single
   container.
-- [otter-interactive](otter-interactive.md) — a TUI alternative to
-  `list`.

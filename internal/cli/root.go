@@ -118,7 +118,6 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		{newRestartCommand, stdOpts},
 		{newStartCommand, stdOpts},
 		{newStopCommand, stdOpts},
-		{newTUICommand, stdOpts},
 		{newUnlockCommand, stdOpts},
 		{newUpgradeCommand, stdOpts},
 	}
