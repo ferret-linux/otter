@@ -39,24 +39,32 @@ const treePaneWidth = 28
 
 //nolint:gochecknoglobals // package-level styles are the idiomatic lipgloss pattern
 var (
-	colorTeal   = lipgloss.Color("14")
-	colorDim    = lipgloss.Color("7")
+	// Palette mirrors otter's existing house colors from pkg/ui/colors.go
+	// and internal/cli/print-file.go's help-screen colorSlots, so the
+	// docs viewer reads as the same app rather than a one-off theme.
+	colorTeal   = lipgloss.Color("14") // bright cyan — matches ui.Teal / print-file {1}
+	colorDim    = lipgloss.Color("7")  // matches ui.Dim / print-file {5}
 	colorBg     = lipgloss.Color("0")
-	colorYellow = lipgloss.Color("11")
-	colorWhite  = lipgloss.Color("15")
-	colorOrange = lipgloss.Color("208")
-	colorBlue   = lipgloss.Color("12")
+	colorGreen  = lipgloss.Color("2") // matches ui.Green / print-file {0} — command/dir names
+	colorCyan   = lipgloss.Color("6") // matches ui.Cyan / print-file {2} — box borders
+	colorYellow = lipgloss.Color("3") // matches ui.Yellow / print-file {3} — headers
+	colorBlue   = lipgloss.Color("4") // matches print-file {4} — flags/extras
 
 	// selectedTreeStyle highlights the focused row with a solid
 	// background fill (not a left-edge bar — see treeDelegate.Render for
 	// why the bar glyph specifically would clash here).
 	selectedTreeStyle   = lipgloss.NewStyle().Background(colorTeal).Foreground(colorBg)
-	unselectedTreeStyle = lipgloss.NewStyle().Foreground(colorOrange)
+	unselectedTreeStyle = lipgloss.NewStyle().Foreground(colorDim)
+
+	// dirNameStyle colors directory names/expand-indicators, kept apart
+	// from unselectedTreeStyle so folders read as more prominent than
+	// files, matching ordinary file-tree conventions.
+	dirNameStyle = lipgloss.NewStyle().Bold(true).Foreground(colorGreen)
 
 	// treeConnectorStyle colors just the ├──/└──/│ connector glyphs
 	// drawn by docTreePrefix, kept separate from unselectedTreeStyle so
 	// row labels/icons aren't affected.
-	treeConnectorStyle = lipgloss.NewStyle().Foreground(colorYellow)
+	treeConnectorStyle = lipgloss.NewStyle().Foreground(colorCyan)
 
 	// folderIconStyle/fileIconStyle color just the 🗀/🗟 glyphs in
 	// docTreeDelegate.Render, independently of nameStyle so the icon's
@@ -285,15 +293,20 @@ func (d docTreeDelegate) Render(w io.Writer, m list.Model, index int, it list.It
 	// selectable rows (enter toggles them collapsed/expanded instead of
 	// switching focus to the content pane).
 	nameStyle := unselectedTreeStyle
+	if e.isDir {
+		nameStyle = dirNameStyle
+	}
 	if index == m.Index() {
 		nameStyle = selectedTreeStyle
+		if e.isDir {
+			nameStyle = nameStyle.Bold(true)
+		}
 	}
 
 	indicator := ""
 	icon := "🗟"
 	iconStyle := fileIconStyle
 	if e.isDir {
-		nameStyle = nameStyle.Bold(true)
 		indicator = "▸ "
 		if !d.collapsed[e.embedPath] {
 			indicator = "▾ "
