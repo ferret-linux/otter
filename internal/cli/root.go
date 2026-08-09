@@ -86,142 +86,48 @@ func printInvalidContainerManager(l *log.Logger, containerManagerType string) {
 	l.Warn("The available choices are: 'autodetect', 'podman', 'nerdctl', 'docker'")
 }
 
-//nolint:funlen // function length is acceptable for CLI subcommand registration
 func subcommands(cfg *config.Values) []*cli.Command {
 	cc := &CommandComposer[config.Values]{cfg: cfg}
 
-	list := cc.apply(
-		newListCommand,
+	stdOpts := []func(*config.Values, *cli.Command) *cli.Command{
 		withUsageErrorHandler,
 		withRoot,
 		withContainerManager,
-	)
-
-	generateEntry := cc.apply(
-		newGenerateEntryCommand,
-		withUsageErrorHandler,
-		withRoot,
-		withContainerManager,
-	)
-
-	create := cc.apply(
-		newCreateCommand,
-		withUsageErrorHandler,
-		withRoot,
-		withContainerManager,
-	)
-
-	enter := cc.apply(
-		newEnterCommand,
-		withUsageErrorHandler,
-		withRoot,
-		withContainerManager,
-	)
-
-	assemble := cc.apply(
-		newAssembleCommand,
-		withUsageErrorHandler,
-		withContainerManager,
-	)
-
-	remove := cc.apply(
-		newRmCommand,
-		withUsageErrorHandler,
-		withRoot,
-		withContainerManager,
-	)
-
-	start := cc.apply(
-		newStartCommand,
-		withUsageErrorHandler,
-		withRoot,
-		withContainerManager,
-	)
-
-	restart := cc.apply(
-		newRestartCommand,
-		withUsageErrorHandler,
-		withRoot,
-		withContainerManager,
-	)
-
-	pause := cc.apply(
-		newPauseCommand,
-		withUsageErrorHandler,
-		withRoot,
-		withContainerManager,
-	)
-
-	stop := cc.apply(
-		newStopCommand,
-		withUsageErrorHandler,
-		withRoot,
-		withContainerManager,
-	)
-
-	tui := cc.apply(
-		newTUICommand,
-		withUsageErrorHandler,
-		withRoot,
-		withContainerManager,
-	)
-
-	upgrade := cc.apply(
-		newUpgradeCommand,
-		withUsageErrorHandler,
-		withRoot,
-		withContainerManager,
-	)
-
-	journal := cc.apply(
-		newJournalCommand,
-		withUsageErrorHandler,
-		withRoot,
-		withContainerManager,
-	)
-
-	inspect := cc.apply(
-		newInspectCommand,
-		withUsageErrorHandler,
-		withRoot,
-		withContainerManager,
-	)
-
-	lock := cc.apply(
-		newLockCommand,
-		withUsageErrorHandler,
-		withRoot,
-		withContainerManager,
-	)
-
-	unlock := cc.apply(
-		newUnlockCommand,
-		withUsageErrorHandler,
-		withRoot,
-		withContainerManager,
-	)
-
-	registry := newRegistryCommand(cfg)
-
-	return []*cli.Command{
-		assemble,
-		create,
-		enter,
-		generateEntry,
-		inspect,
-		journal,
-		list,
-		lock,
-		pause,
-		registry,
-		remove,
-		restart,
-		start,
-		stop,
-		tui,
-		unlock,
-		upgrade,
 	}
+	noRootOpts := []func(*config.Values, *cli.Command) *cli.Command{
+		withUsageErrorHandler,
+		withContainerManager,
+	}
+
+	// Order matches the alphabetical listing urfave/cli renders in --help.
+	specs := []struct {
+		factory func(*config.Values) *cli.Command
+		opts    []func(*config.Values, *cli.Command) *cli.Command
+	}{
+		{newAssembleCommand, noRootOpts},
+		{newCreateCommand, stdOpts},
+		{newEnterCommand, stdOpts},
+		{newGenerateEntryCommand, stdOpts},
+		{newInspectCommand, stdOpts},
+		{newJournalCommand, stdOpts},
+		{newListCommand, stdOpts},
+		{newLockCommand, stdOpts},
+		{newPauseCommand, stdOpts},
+		{newRegistryCommand, nil},
+		{newRmCommand, stdOpts},
+		{newRestartCommand, stdOpts},
+		{newStartCommand, stdOpts},
+		{newStopCommand, stdOpts},
+		{newTUICommand, stdOpts},
+		{newUnlockCommand, stdOpts},
+		{newUpgradeCommand, stdOpts},
+	}
+
+	commands := make([]*cli.Command, len(specs))
+	for i, spec := range specs {
+		commands[i] = cc.apply(spec.factory, spec.opts...)
+	}
+	return commands
 }
 
 // firstName returns the first positional argument, or empty string if none.

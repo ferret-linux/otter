@@ -123,27 +123,7 @@ func (d *Docker) Create(
 	userEnv.Shell = opts.ContainerShell
 
 	cmd := d.makeCreateCommand(
-		opts.ContainerName,
-		opts.ContainerImage,
-		opts.AdditionalFlags,
-		opts.ContainerHostname,
-		opts.ContainerHostnameExplicit,
-		opts.AdditionalPackages,
-		opts.AdditionalVolumes,
-		opts.ContainerUserCustomHome,
-		opts.ContainerPlatform,
-		opts.Nopasswd,
-		opts.Init,
-		opts.ContainerPreInitHook,
-		opts.ContainerInitHook,
-		opts.Nvidia,
-		opts.Memory,
-		opts.CPUThreads,
-		opts.UnshareDevsys,
-		opts.UnshareGroups,
-		opts.UnshareIPC,
-		opts.UnshareNetNS,
-		opts.UnshareProcess,
+		opts,
 		userEnv,
 		filepath.Join(scriptsDir, "otter-init"),
 		filepath.Join(scriptsDir, "otter-export"),
@@ -162,33 +142,35 @@ func (d *Docker) Create(
 //
 //nolint:gocognit,funlen,gocyclo,cyclop // ignore cognitive complexity here, the function is mostly imperative option appending
 func (d *Docker) makeCreateCommand(
-	containerName string,
-	containerImage string,
-	containerAdditionalFlags []string,
-	containerHostname string,
-	hostnameExplicit bool,
-	containerAdditionalPackages []string,
-	containerAdditionalVolumes []string,
-	customHome string,
-	containerPlatform string,
-	nopasswd bool,
-	init bool,
-	containerPreInitHook string,
-	containerInitHook string,
-	nvidia bool,
-	memory string,
-	cpuThreads int,
-	unshareDevsys bool,
-	unshareGroups bool,
-	unshareIPC bool,
-	unshareNetNS bool,
-	unshareProcess bool,
+	opts containermanager.CreateOptions,
 	userEnv *userenv.UserEnvironment,
 	otterInitPath string,
 	otterExportPath string,
 	otterHostexecPath string,
 	otterPath string,
 ) []string {
+	containerName := opts.ContainerName
+	containerImage := opts.ContainerImage
+	containerAdditionalFlags := opts.AdditionalFlags
+	containerHostname := opts.ContainerHostname
+	hostnameExplicit := opts.ContainerHostnameExplicit
+	containerAdditionalPackages := opts.AdditionalPackages
+	containerAdditionalVolumes := opts.AdditionalVolumes
+	customHome := opts.ContainerUserCustomHome
+	containerPlatform := opts.ContainerPlatform
+	nopasswd := opts.Nopasswd
+	init := opts.Init
+	containerPreInitHook := opts.ContainerPreInitHook
+	containerInitHook := opts.ContainerInitHook
+	nvidia := opts.Nvidia
+	memory := opts.Memory
+	cpuThreads := opts.CPUThreads
+	unshareDevsys := opts.UnshareDevsys
+	unshareGroups := opts.UnshareGroups
+	unshareIPC := opts.UnshareIPC
+	unshareNetNS := opts.UnshareNetNS
+	unshareProcess := opts.UnshareProcess
+
 	containerManager := d.Name()
 
 	containerUserName := userEnv.User
