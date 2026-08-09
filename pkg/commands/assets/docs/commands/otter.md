@@ -18,6 +18,7 @@ short alias alongside its full name; both behave identically.
 | ------------------------------------------- | ----- | ----------------------------------------------------- |
 | [`assemble`](otter-assemble.md)             | `dmf` | Manage containers declared in a manifest file.        |
 | [`create`](otter-create.md)                 | `mk`  | Create a native-distro-like container environment.    |
+| [`documentation`](otter-documentation.md)   | `docs`| Browse otter's documentation in a terminal viewer.    |
 | [`enter`](otter-enter.md)                   | `sh`  | Enter a container environment.                        |
 | [`generate-entry`](otter-generate-entry.md) | `pin` | Generate (or delete) a desktop entry for a container. |
 | [`inspect`](otter-inspect.md)               | `info`| Show detailed info about a container.                 |

@@ -1,0 +1,56 @@
+# otter-documentation
+
+`otter documentation` — browse otter's documentation in an interactive
+terminal viewer.
+
+## Synopsis
+
+```text
+otter docs          [options]
+otter documentation [options]
+```
+
+`docs` is a full alias of `documentation`; the two behave identically.
+
+## Description
+
+Opens a two-pane terminal UI: a tree of otter's documentation on the
+left (mirroring this `docs/` directory, including this `commands/`
+subdirectory) and the selected file's rendered markdown on the right.
+The documentation is embedded directly into the `otter` binary, so
+`otter documentation` works fully offline — there's no need for a
+network connection or a local copy of the repository.
+
+Use the arrow keys to move the selection in the tree pane, switch
+focus between the tree and content panes, and open a file to read it
+rendered in place. Press `q` to quit back to the shell.
+
+## Examples
+
+```sh
+otter docs
+```
+
+Opens the documentation viewer, starting on the first file in the
+tree.
+
+```sh
+otter documentation
+```
+
+Same as above, using the full command name instead of the alias.
+
+## Notes
+
+- The tree only lets the cursor rest on files, not directory headings
+  — directories are pure headings for grouping, not selectable
+  entries.
+- Because the docs are embedded at build time, the content shown
+  always matches the exact `otter` binary you're running, even if your
+  local clone of the repository is out of date.
+
+## See Also
+
+- [otter](otter.md) — the full command reference this viewer browses.
+- [getting-started.md](../getting-started.md) — the same introduction,
+  in plain markdown form.
