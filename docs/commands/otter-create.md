@@ -101,6 +101,9 @@ Custom host directory to use as this container's home, instead of your
 real host home. The directory is created if it doesn't exist. Inside
 the container, `$HOME` resolves to `/home/<user>`, which is
 bind-mounted to this custom path.
+This means `path/to/custom/home` on host is still shown as `/home/<user>`
+inside the container, This keeps the apps that hardcode `/home/<user>` from
+breaking and also keeps it more consistent with normal linux systems.
 
 ### `--volume`, `-v`
 
@@ -123,29 +126,54 @@ using the image's native package manager. Repeatable.
 ### `--init-hooks`, `-ih`
 
 Shell command(s) to run at the *end* of container initialization.
+`--init-hooks` has nothing to do with `--init` , `init` here stands
+for `initialization` i.e user defined the commands or steps to run
+inside the container after the initial setup is completed.
 
 ### `--pre-init-hooks`, `-ph`
 
 Shell command(s) to run at the *start* of container initialization,
 before packages are installed.
+`--pre-init-hooks` has nothing to do with `--init` , `init` here stands
+for `initialization` i.e user defined the commands or steps to run
+inside the container before the initial setup is started. Its useful
+when you want to enable repos inside the container to install packages
+that you listed in `--additional-packages` but may not be in default repos.
 
 ### `--init`, `-I`
 
 Use an init system (systemd) inside the container. Implies
 `--unshare-groups` and `--unshare-process`. May require the base image
 to include systemd/runit/openrc packages.
+`--init` has nothing to do with `--init-hooks` or `--pre-init-hooks`,
+`init` here stands for `initsystem`. Its useful when you want a independent
+initsystem inside the container
+Its mainly tested on `systemd` but can also work with `openrc`,`runit`....
 
 ### `--memory`, `-m`
 
 Memory limit, e.g. `512m` or `2g`. Validated against total host memory
 (`/proc/meminfo`) at creation time — otter refuses to create a
 container asking for more than the host has.
+⚠️ If you enter a value thats really close to your host's maximum/physical
+memory capacity i.e You pass `--memory 31g` on a system with `31±0.02g RAM`
+then you may get a error similar to this `memory validation failed: not enough memory`
+This is expected as the calculation done by `--memory` is not 100% precise,In cases like
+this just keep the `--memory` unused , this will automatically allow full memory inside
+the container.
+Also, `--memory` only accepts integral values i.e values like `31.5g` are invalid instead
+use use `31g` or `32256m` if you want `31.5g`.
 
 ### `--cpu-threads`, `-t`
 
 Number of CPU threads the container is allowed to use. Validated
 against the host's available CPU threads
 (`/sys/devices/system/cpu/present`).
+This option sets the limit on cpu `threads` not `cores` i.e HT or SMT
+is kept in considetation while using this flag.
+By default otter will allow the container to use all the `cores` or `threads`
+of you cpu (this dosent mean increased or decreased resource usage), Its to just
+set a limit on maximum resources that can be used by the container.
 
 ### `--nvidia`, `-N`
 
