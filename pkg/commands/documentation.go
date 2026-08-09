@@ -281,7 +281,9 @@ func (d docTreeDelegate) Render(w io.Writer, m list.Model, index int, it list.It
 		if !d.collapsed[e.embedPath] {
 			indicator = "▾ "
 		}
-		label = indicator + label
+		label = indicator + "🗀 " + label
+	} else {
+		label = "🗎 " + label
 	}
 
 	fmt.Fprint(w, unselectedTreeStyle.Render(docTreePrefix(e))+nameStyle.Render(label))
