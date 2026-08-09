@@ -10,6 +10,8 @@ import (
 	"sort"
 	"strings"
 
+	"charm.land/bubbles/v2/help"
+	"charm.land/bubbles/v2/key"
 	"charm.land/bubbles/v2/list"
 	"charm.land/bubbles/v2/viewport"
 	tea "charm.land/bubbletea/v2"
@@ -52,6 +54,36 @@ var (
 
 	helpStyle = lipgloss.NewStyle().Foreground(colorDim)
 )
+
+// docKeyMap defines the keybindings for the documentation viewer. Keeping
+// bindings here (rather than matching raw key strings in Update) means the
+// help line below is generated from the same source of truth that Update
+// actually checks against — the two can't drift apart.
+type docKeyMap struct {
+	Up         key.Binding // covers both up and down movement, labeled "↑/↓ move"
+	SwitchPane key.Binding
+	Open       key.Binding
+	Quit       key.Binding
+}
+
+// ShortHelp satisfies help.KeyMap.
+func (k docKeyMap) ShortHelp() []key.Binding {
+	return []key.Binding{k.Up, k.SwitchPane, k.Open, k.Quit}
+}
+
+// FullHelp satisfies help.KeyMap. The docs viewer has no expanded help
+// view distinct from the short one, so both return the same bindings.
+func (k docKeyMap) FullHelp() [][]key.Binding {
+	return [][]key.Binding{k.ShortHelp()}
+}
+
+//nolint:gochecknoglobals // keymap is the idiomatic bubbles/key pattern
+var docKeys = docKeyMap{
+	Up:         key.NewBinding(key.WithKeys("up", "down"), key.WithHelp("↑/↓", "move")),
+	SwitchPane: key.NewBinding(key.WithKeys("left", "right"), key.WithHelp("←/→", "switch pane")),
+	Open:       key.NewBinding(key.WithKeys("enter"), key.WithHelp("↵", "open/toggle")),
+	Quit:       key.NewBinding(key.WithKeys("q", "ctrl+c"), key.WithHelp("q", "quit")),
+}
 
 // docEntry is one row of the docs tree: either a directory (selectable —
 // pressing enter toggles it collapsed/expanded) or a markdown file
@@ -310,8 +342,7 @@ type DocumentationModel struct {
 	collapsed map[string]bool
 	renderer  *glamour.TermRenderer
 	focus     docFocusPane
-
-	err error
+	help      help.Model
 
 	width, height int
 }
@@ -344,6 +375,11 @@ func NewDocumentationModel() (DocumentationModel, error) {
 
 	vp := viewport.New()
 
+	h := help.New()
+	h.Styles.ShortKey = helpStyle
+	h.Styles.ShortDesc = helpStyle
+	h.Styles.ShortSeparator = helpStyle
+
 	m := DocumentationModel{
 		tree:      l,
 		content:   vp,
@@ -351,6 +387,7 @@ func NewDocumentationModel() (DocumentationModel, error) {
 		visible:   visible,
 		collapsed: collapsed,
 		renderer:  renderer,
+		help:      h,
 	}
 	return m.loadSelected(), nil
 }
@@ -360,13 +397,13 @@ func (m DocumentationModel) Init() tea.Cmd { return nil }
 func (m DocumentationModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyPressMsg:
-		switch msg.String() {
-		case "q", "ctrl+c":
+		switch {
+		case key.Matches(msg, docKeys.Quit):
 			return m, tea.Quit
-		case "left", "right":
+		case key.Matches(msg, docKeys.SwitchPane):
 			m.focus = toggleDocFocus(m.focus)
 			return m, nil
-		case "enter":
+		case key.Matches(msg, docKeys.Open):
 			if m.focus == docFocusTree {
 				if sel, ok := m.tree.SelectedItem().(docTreeItem); ok && sel.entry.isDir {
 					return m.toggleCollapsed(sel.entry), nil
@@ -512,11 +549,11 @@ func (m DocumentationModel) setSize(width, height int) DocumentationModel {
 		paneHeight = 0
 	}
 
-	m.tree.SetSize(treePaneWidth-docPaneFrameSize(), paneHeight-docPaneFrameSize())
-	m.content.SetWidth(contentWidth - docPaneFrameSize())
-	m.content.SetHeight(paneHeight - docPaneFrameSize())
+	m.tree.SetSize(treePaneWidth-docPaneFrameSize, paneHeight-docPaneFrameSize)
+	m.content.SetWidth(contentWidth - docPaneFrameSize)
+	m.content.SetHeight(paneHeight - docPaneFrameSize)
 
-	renderWidth := contentWidth - docPaneFrameSize() - glamourGutter
+	renderWidth := contentWidth - docPaneFrameSize - glamourGutter
 	if renderWidth < 0 {
 		renderWidth = 0
 	}
@@ -533,13 +570,9 @@ func (m DocumentationModel) setSize(width, height int) DocumentationModel {
 // docPaneFrameSize is the width/height a RoundedBorder adds on each pane —
 // both panes use the same border style, so this is one constant rather
 // than a per-pane lipgloss.Style.GetHorizontalFrameSize() call.
-func docPaneFrameSize() int { return 2 }
+const docPaneFrameSize = 2
 
 func (m DocumentationModel) View() tea.View {
-	if m.err != nil {
-		return tea.NewView(fmt.Sprintf("error: %s", m.err))
-	}
-
 	treeBorder := paneBorderStyle
 	contentBorder := paneBorderStyle
 	if m.focus == docFocusTree {
@@ -552,9 +585,9 @@ func (m DocumentationModel) View() tea.View {
 	contentPane := contentBorder.Render(m.content.View())
 
 	body := lipgloss.JoinHorizontal(lipgloss.Top, treePane, contentPane)
-	help := helpStyle.Render("↑/↓ move · ←/→ switch pane · ↵ open/toggle · q quit")
+	helpView := m.help.View(docKeys)
 
-	v := tea.NewView(body + "\n" + help)
+	v := tea.NewView(body + "\n" + helpView)
 	v.AltScreen = true
 	v.MouseMode = tea.MouseModeAllMotion
 	return v
