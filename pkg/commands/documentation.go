@@ -158,11 +158,22 @@ func walkDocs(dir string, depth int, parentIsLast []bool, children []fs.DirEntry
 
 // docTreePrefix returns the connector glyphs (ancestor continuation columns
 // plus this row's own ├──/└──) that should precede e.name when rendered,
-// matching the classic Unix `tree` layout.
+// matching the classic Unix `tree` layout — but only for entries below the
+// top level. Depth-0 entries (both the "commands" heading and the flat
+// top-level docs) render with no prefix at all, since there's no visible
+// root node above them to connect to.
 func docTreePrefix(e docEntry) string {
+	if e.depth == 0 {
+		return ""
+	}
+
 	var b strings.Builder
-	// One column per ancestor depth, then this entry's own connector.
-	for i := 0; i < e.depth; i++ {
+	b.WriteString(" ")
+	// One column per ancestor depth below the root, then this entry's own
+	// connector. Ancestor depth 0 is skipped since depth-0 entries render
+	// no visible connector for their own row (see above), so there's no
+	// vertical bar to continue down from them.
+	for i := 1; i < e.depth; i++ {
 		if e.isLastAtDepth[i] {
 			b.WriteString("    ")
 		} else {
@@ -202,17 +213,42 @@ func (d docTreeDelegate) Render(w io.Writer, m list.Model, index int, it list.It
 	}
 	e := ti.entry
 
-	line := docTreePrefix(e) + e.name
-
-	style := unselectedTreeStyle
-	if index == m.Index() {
-		style = selectedTreeStyle
+	// Highlighting only ever applies to the name itself, not the prefix —
+	// otherwise the selection background bleeds over the tree connector
+	// glyphs. Directory headings never highlight at all, since they're
+	// inert (see skipDirEntries): the cursor can't actually stop on one,
+	// so a highlighted dir row would be a visual lie.
+	nameStyle := unselectedTreeStyle
+	if index == m.Index() && !e.isDir {
+		nameStyle = selectedTreeStyle
 	}
 	if e.isDir {
-		style = style.Bold(true)
+		nameStyle = nameStyle.Bold(true)
 	}
 
-	fmt.Fprint(w, style.Render(line))
+	fmt.Fprint(w, unselectedTreeStyle.Render(docTreePrefix(e))+nameStyle.Render(e.name))
+}
+
+// skipDirEntries nudges l's cursor off any directory-heading row it may be
+// sitting on, moving further in the given direction until it lands on a
+// file row (or exhausts the list). Directory rows are pure headings — see
+// docTreePrefix and docTreeDelegate.Render — so the cursor should never
+// rest on one.
+func skipDirEntries(l list.Model, entries []docEntry, movingDown bool) list.Model {
+	for len(entries) > 0 && entries[l.Index()].isDir {
+		prev := l.Index()
+		if movingDown {
+			l.CursorDown()
+		} else {
+			l.CursorUp()
+		}
+		if l.Index() == prev {
+			// Hit the end of the list without finding a file row; stop
+			// rather than loop forever.
+			break
+		}
+	}
+	return l
 }
 
 // docFocusPane identifies which pane currently has input focus.
@@ -261,6 +297,10 @@ func NewDocumentationModel() (DocumentationModel, error) {
 	l.SetShowHelp(false)
 	l.SetShowPagination(false)
 	l.SetFilteringEnabled(false)
+	// The list defaults to selecting index 0, which may be a directory
+	// heading (e.g. "commands" sorts first) — nudge forward onto the
+	// first real file so the initial selection is never a dir row.
+	l = skipDirEntries(l, entries, true)
 
 	renderer, err := glamour.NewTermRenderer(glamour.WithStyles(styles.DarkStyleConfig))
 	if err != nil {
@@ -286,7 +326,7 @@ func (m DocumentationModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "q", "ctrl+c":
 			return m, tea.Quit
-		case "tab":
+		case "left", "right":
 			m.focus = toggleDocFocus(m.focus)
 			return m, nil
 		case "enter":
@@ -305,7 +345,8 @@ func (m DocumentationModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		prevIndex := m.tree.Index()
 		var cmd tea.Cmd
 		m.tree, cmd = m.tree.Update(msg)
-		if m.tree.Index() != prevIndex {
+		if newIndex := m.tree.Index(); newIndex != prevIndex {
+			m.tree = skipDirEntries(m.tree, m.entries, newIndex > prevIndex)
 			m = m.loadSelected()
 		}
 		return m, cmd
@@ -401,7 +442,7 @@ func (m DocumentationModel) View() tea.View {
 	contentPane := contentBorder.Render(m.content.View())
 
 	body := lipgloss.JoinHorizontal(lipgloss.Top, treePane, contentPane)
-	help := helpStyle.Render("↑/↓ move · tab switch pane · ↵ open · q quit")
+	help := helpStyle.Render("↑/↓ move · ←/→ switch pane · ↵ open · q quit")
 
 	v := tea.NewView(body + "\n" + help)
 	v.AltScreen = true
