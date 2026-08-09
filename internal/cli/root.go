@@ -78,7 +78,7 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 
 func printMissingContainerManager(l *log.Logger) {
 	l.Error("Missing dependency: we need a container manager.")
-	l.Info("Please install one of podman, nerdctl, or docker.\nYou can follow the documentation on:\n\tman otter-compatibility\nor:\n\thttps://github.com/89luca89/distrobox/blob/main/docs/compatibility.md")
+	l.Info("Please install one of podman, nerdctl, or docker.\nRun `otter documentation` for more details.")
 }
 
 func printInvalidContainerManager(l *log.Logger, containerManagerType string) {
