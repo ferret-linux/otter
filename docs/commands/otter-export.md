@@ -1,0 +1,180 @@
+# otter-export
+
+`otter export` — export an app or binary from a container to the host.
+
+## Where this runs
+
+Unlike the other commands in this reference, `export` is not run on
+your host — it's run **inside** an otter container, using a separate,
+container-side `otter` wrapper that otter provisions automatically.
+That in-container `otter` is a different program from the host CLI: it
+lives at `/usr/bin/otter` inside the container (read-only, provisioned
+by `otter create`), and only understands two subcommands, `export` and
+`host-exec`, which it dispatches to the real scripts otter mounts at
+`/usr/lib/otter/scripts/otter-export` and
+`/usr/lib/otter/scripts/otter-host-exec`. The naming is deliberate —
+`otter export ...`/`otter host-exec ...` inside a container mirrors the
+same `otter <verb>` convention you use on the host.
+
+In other words: `otter enter my-box`, then run `otter export ...` from
+the shell you land in.
+
+## Synopsis
+
+```text
+otter export <--app|--bin> [options]
+```
+
+## Description
+
+Makes something inside the container usable directly from the host,
+without needing to `otter enter` first:
+
+- **`--app`** exports a GUI application's `.desktop` launcher. otter
+  finds the app's desktop file inside the container, rewrites its
+  `Exec=` line to route through `otter enter ... --no-tty --`, copies
+  its icon, and writes the result to
+  `~/.local/share/applications` on the host — so it shows up in your
+  host's application launcher like any native app, but actually runs
+  inside the container.
+- **`--bin`** exports a single binary as a small wrapper script written
+  to the host (`~/.local/bin` by default), so typing its name on the
+  host runs it inside the container transparently.
+
+`otter remove` automatically cleans up anything exported this way when
+the container is removed — see [otter-remove](otter-remove.md).
+
+## Options
+
+| Flag               | Alias  |
+| ------------------ | ------ |
+| `--app`            | `-a`   |
+| `--bin`            | `-b`   |
+| `--sudo`           | `-S`   |
+| `--delete`         | `-del` |
+| `--list-apps`      | —      |
+| `--list-binaries`  | —      |
+| `--enter-flags`    | `-nf`  |
+| `--export-path`    | `-ep`  |
+| `--extra-flags`    | `-ef`  |
+| `--export-label`   | `-el`  |
+
+## Options Explained
+
+### `--app`, `-a`
+
+Name of the application to export — matched against the `Exec=`/`Name=`
+fields of `.desktop` files found inside the container. You can also
+give the path to a `.desktop` file directly, which is useful if
+name-matching fails to find it (desktop files inside a container are
+usually under `/usr/share/applications`).
+
+### `--bin`, `-b`
+
+Absolute path of the binary inside the container to export.
+
+### `--sudo`, `-S`
+
+Run the exported item with elevated privileges inside the container.
+Tries `sudo`, then falls back to `doas`, then `su-exec root`, depending
+on what's available in the container.
+
+### `--delete`, `-del`
+
+Delete a previously exported application or binary instead of creating
+one.
+
+### `--list-apps`
+
+List applications that have been exported from this specific
+container.
+
+### `--list-binaries`
+
+List binaries that have been exported from this specific container.
+
+### `--enter-flags`, `-nf`
+
+Extra flags to pass through to the underlying `otter enter` call that
+the exported item runs when invoked. `--root`/`-r` and `--name`/`-n`
+are set automatically and will trigger a warning if you also pass them
+here.
+
+### `--export-path`, `-ep`
+
+Host directory to export a binary into. Defaults to `~/.local/bin`.
+Only relevant to `--bin`; apps always export to
+`~/.local/share/applications`.
+
+### `--extra-flags`, `-ef`
+
+Extra flags to append to the exported command itself (not to `otter
+enter`) — inserted right before any arguments the app/binary is called
+with.
+
+### `--export-label`, `-el`
+
+Text appended to the exported app's display name, so you can tell it
+apart from a native install of the same app. Defaults to
+`(on <container>)` (or `(on <container>, rootful)` for a rootful
+container). Pass `none` to disable the suffix entirely.
+
+## Examples
+
+```sh
+otter export --app firefox
+```
+
+Exports Firefox from the current container as a desktop entry on the
+host.
+
+```sh
+otter export --bin /usr/bin/docker --sudo
+```
+
+Exports the container's `docker` binary to `~/.local/bin` on the host,
+running it with elevated privileges inside the container whenever it's
+invoked.
+
+```sh
+otter export --app firefox --delete
+```
+
+Removes the previously exported Firefox entry.
+
+```sh
+otter export --bin /usr/bin/zeditor --export-path ~/.local/bin --export-label none
+```
+
+Exports the `zeditor` binary to an explicit path, with the usual
+`(on <container>)` label suffix disabled.
+
+## Notes
+
+- Must be run inside a container — otter checks for `/run/.containerenv`,
+  `/.dockerenv`, or a `container` environment variable, and refuses to
+  run on the bare host.
+- Must **not** be run as root inside the container (it needs to resolve
+  your real user's home directory).
+- `--app` and `--bin` are mutually exclusive — pass exactly one.
+- Exported apps get an extra "Remove" action in their right-click
+  context menu on the host, so you can un-export without coming back
+  to the command line.
+- Exported binaries are written with an internal marker comment
+  (`# otter_binary`, `# name: <container>`) — this is how `otter
+  remove` and `--list-binaries` recognize what belongs to which
+  container.
+- `--export-path` defaults relative to your real host home
+  (`$OTTER_HOST_HOME` for containers created with a custom `--home`,
+  otherwise plain `$HOME`), not the container's home.
+
+## See Also
+
+- [otter-host-exec](otter-host-exec.md) — the other in-container
+  command, for running host commands from inside a container.
+- [otter-remove](otter-remove.md) — cleans up exported apps/binaries
+  automatically.
+- [manifests.md](../manifests.md) — declaring exports up front via
+  `exported.apps`/`exported.bins`.
+- [host-integration.md](../host-integration.md) — the broader picture
+  of how otter integrates a container with the host.

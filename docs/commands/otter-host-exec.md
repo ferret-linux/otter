@@ -1,0 +1,101 @@
+# otter-host-exec
+
+`otter host-exec` — run a command on the host from inside a container.
+
+## Where this runs
+
+Like [otter-export](otter-export.md), this is not a host command — it's
+run **inside** an otter container, via the same container-side `otter`
+wrapper (`/usr/bin/otter` inside the container) that dispatches to the
+real script at `/usr/lib/otter/scripts/otter-host-exec`.
+
+In other words: `otter enter my-box`, then run `otter host-exec ...`
+from the shell you land in.
+
+## Synopsis
+
+```text
+otter host-exec [options] <command> [args...]
+```
+
+## Description
+
+Runs a command on the real host, from inside the container, using the
+`host-spawn` helper. otter installs `host-spawn` into the container
+automatically the first time it's needed (with a confirmation prompt
+in an interactive shell, or automatically in a non-interactive one).
+
+This is the mechanism behind otter's automatic `xdg-open` and
+`flatpak` symlinks inside every container — both point at
+`otter-host-exec` under the hood, so opening a URL or file from inside
+the container transparently opens it on the host. You can use it
+directly for anything else you want to run on the host without leaving
+the container — for example, checking `podman ps` on the host, or
+opening a host GUI app.
+
+If invoked with no command, it defaults to your shell (`$SHELL`, or
+`/bin/sh` if unset).
+
+## Options
+
+| Flag     | Alias |
+| -------- | ----- |
+| `--yes`  | `-Y`  |
+
+## Options Explained
+
+### `--yes`, `-Y`
+
+Skip the interactive confirmation prompt when `host-spawn` needs to be
+installed. Installation is already auto-confirmed in non-interactive
+shells (e.g. when output isn't a terminal), so `--yes` mainly matters
+for scripting an interactive session.
+
+## Examples
+
+```sh
+otter host-exec ls
+```
+
+Lists the contents of the current directory on the host.
+
+```sh
+otter host-exec bash -l
+```
+
+Drops into a login shell on the host, from inside the container.
+
+```sh
+otter host-exec podman ps -a
+```
+
+Runs `podman ps -a` on the host — useful for checking the host's own
+containers without leaving the one you're in.
+
+```sh
+otter host-exec --yes flatpak remotes
+```
+
+Runs `flatpak remotes` on the host, auto-confirming a `host-spawn`
+install if it isn't already present, without prompting.
+
+## Notes
+
+- Must be run inside a container — otter checks for `/run/.containerenv`,
+  `/.dockerenv`, or a `container` environment variable, and refuses to
+  run on the bare host.
+- `host-spawn` is fetched from its GitHub releases if missing or
+  outdated; this requires network access from inside the container.
+- The host's `XDG_RUNTIME_DIR` and `DBUS_SESSION_BUS_ADDRESS` are
+  automatically remapped through `/run/host`, so GUI/D-Bus-dependent
+  host commands (like opening a file manager) work correctly.
+- No pseudo-TTY is allocated for commands known to be GUI launchers
+  (`xdg-open`, `gio`, `flatpak`) or when output isn't a terminal to
+  begin with — otherwise one is allocated automatically.
+
+## See Also
+
+- [otter-export](otter-export.md) — the other in-container command, for
+  exporting apps/binaries to the host.
+- [host-integration.md](../host-integration.md) — the broader picture
+  of how otter integrates a container with the host.
