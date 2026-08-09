@@ -1,11 +1,15 @@
 package tui
 
 import (
+	"context"
 	"strings"
 
+	"charm.land/bubbles/v2/help"
 	"charm.land/bubbles/v2/key"
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
+
+	"github.com/ferret-linux/otter/pkg/containermanager"
 )
 
 // keyMap describes otter tui's top-level keybindings and satisfies
@@ -85,6 +89,34 @@ const (
 	footerRows     = 1 // the help line itself
 )
 
+// App is otter tui's top-level model. It owns the section tab bar and
+// delegates rendering/input to whichever section is active. Only Home is
+// implemented so far; the rest render as placeholders.
+type App struct {
+	ctx context.Context
+	cm  containermanager.ContainerManager
+
+	active section
+	home   homeModel
+	help   help.Model
+
+	width, height int
+}
+
+// NewApp builds the initial top-level app model.
+func NewApp(ctx context.Context, cm containermanager.ContainerManager) App {
+	return App{
+		ctx:  ctx,
+		cm:   cm,
+		home: newHomeModel(ctx, cm),
+		help: help.New(),
+	}
+}
+
+func (a App) Init() tea.Cmd {
+	return a.home.Init()
+}
+
 func (a App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyPressMsg:
@@ -119,55 +151,6 @@ func (a App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		cw, ch := a.contentSize()
 		a.home = a.home.SetSize(cw, ch)
 		a.help.SetWidth(cw)
-		return a, nil
-	}
-
-	if a.active == sectionHome {
-		var cmd tea.Cmd
-		a.home, cmd = a.home.Update(msg)
-		return a, cmd
-	}
-
-	return a, nil
-}
-
-func (a App) Init() tea.Cmd {
-	return a.home.Init()
-}
-
-func (a App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	switch msg := msg.(type) {
-	case tea.KeyPressMsg:
-		switch msg.String() {
-		case "q", "ctrl+c":
-			return a, tea.Quit
-		case "right", "l":
-			a.active = nextSection(a.active)
-			return a, nil
-		case "left", "h":
-			a.active = prevSection(a.active)
-			return a, nil
-		case "1":
-			a.active = sectionHome
-			return a, nil
-		case "2":
-			a.active = sectionShell
-			return a, nil
-		case "3":
-			a.active = sectionRegistry
-			return a, nil
-		case "4":
-			a.active = sectionCreate
-			return a, nil
-		case "5":
-			a.active = sectionDocs
-			return a, nil
-		}
-
-	case tea.WindowSizeMsg:
-		a.width, a.height = msg.Width, msg.Height
-		cw, ch := a.contentSize()
-		a.home = a.home.SetSize(cw, ch)
 		return a, nil
 	}
 
