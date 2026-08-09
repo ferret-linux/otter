@@ -52,8 +52,9 @@ var (
 	helpStyle = lipgloss.NewStyle().Foreground(colorDim)
 )
 
-// docEntry is one row of the docs tree: either a directory heading (not
-// selectable) or a markdown file (selectable, previewable).
+// docEntry is one row of the docs tree: either a directory (selectable —
+// pressing enter toggles it collapsed/expanded) or a markdown file
+// (selectable, previewable).
 type docEntry struct {
 	// name is the display label — the file/dir name with any .md
 	// extension stripped, e.g. "getting-started" or "commands".
@@ -199,7 +200,12 @@ func (i docTreeItem) FilterValue() string { return i.entry.FilterValue() }
 // (├──/└──/│) and highlights the selected row with a solid background
 // fill rather than a left-edge bar, since the bar glyph (│) would be
 // visually ambiguous next to the tree's own continuation columns.
-type docTreeDelegate struct{}
+// collapsed is shared with DocumentationModel.collapsed (the same map,
+// not a copy), so a toggle there is immediately visible here without
+// having to reconstruct the delegate.
+type docTreeDelegate struct {
+	collapsed map[string]bool
+}
 
 func (d docTreeDelegate) Height() int  { return 1 }
 func (d docTreeDelegate) Spacing() int { return 0 }
@@ -215,40 +221,60 @@ func (d docTreeDelegate) Render(w io.Writer, m list.Model, index int, it list.It
 
 	// Highlighting only ever applies to the name itself, not the prefix —
 	// otherwise the selection background bleeds over the tree connector
-	// glyphs. Directory headings never highlight at all, since they're
-	// inert (see skipDirEntries): the cursor can't actually stop on one,
-	// so a highlighted dir row would be a visual lie.
+	// glyphs. Directories highlight just like files now that they're
+	// selectable rows (enter toggles them collapsed/expanded instead of
+	// switching focus to the content pane).
 	nameStyle := unselectedTreeStyle
-	if index == m.Index() && !e.isDir {
+	if index == m.Index() {
 		nameStyle = selectedTreeStyle
 	}
+
+	label := e.name
 	if e.isDir {
 		nameStyle = nameStyle.Bold(true)
+		indicator := "▸ "
+		if !d.collapsed[e.embedPath] {
+			indicator = "▾ "
+		}
+		label = indicator + label
 	}
 
-	fmt.Fprint(w, unselectedTreeStyle.Render(docTreePrefix(e))+nameStyle.Render(e.name))
+	fmt.Fprint(w, unselectedTreeStyle.Render(docTreePrefix(e))+nameStyle.Render(label))
 }
 
-// skipDirEntries nudges l's cursor off any directory-heading row it may be
-// sitting on, moving further in the given direction until it lands on a
-// file row (or exhausts the list). Directory rows are pure headings — see
-// docTreePrefix and docTreeDelegate.Render — so the cursor should never
-// rest on one.
-func skipDirEntries(l list.Model, entries []docEntry, movingDown bool) list.Model {
-	for len(entries) > 0 && entries[l.Index()].isDir {
-		prev := l.Index()
-		if movingDown {
-			l.CursorDown()
-		} else {
-			l.CursorUp()
+// visibleDocEntries returns the subset of entries that should currently be
+// rendered, given which directories are collapsed. Collapsing a directory
+// hides everything nested under it — every following entry whose depth is
+// greater than the directory's own depth — but never hides its siblings or
+// ancestors. Nested collapsed directories don't need special-casing: once
+// an ancestor's subtree is being skipped, entries inside a collapsed
+// descendant are already being skipped too.
+func visibleDocEntries(entries []docEntry, collapsed map[string]bool) []docEntry {
+	var out []docEntry
+	skipBelowDepth := -1
+	for _, e := range entries {
+		if skipBelowDepth != -1 {
+			if e.depth > skipBelowDepth {
+				continue
+			}
+			skipBelowDepth = -1
 		}
-		if l.Index() == prev {
-			// Hit the end of the list without finding a file row; stop
-			// rather than loop forever.
-			break
+		out = append(out, e)
+		if e.isDir && collapsed[e.embedPath] {
+			skipBelowDepth = e.depth
 		}
 	}
-	return l
+	return out
+}
+
+// docTreeItems adapts a slice of docEntry into the []list.Item shape the
+// list widget expects.
+func docTreeItems(entries []docEntry) []list.Item {
+	items := make([]list.Item, len(entries))
+	for i, e := range entries {
+		items[i] = docTreeItem{entry: e}
+	}
+	return items
 }
 
 // docFocusPane identifies which pane currently has input focus.
@@ -264,11 +290,13 @@ const (
 // assets/docs on the left and the selected file's rendered markdown on
 // the right.
 type DocumentationModel struct {
-	tree     list.Model
-	content  viewport.Model
-	entries  []docEntry
-	renderer *glamour.TermRenderer
-	focus    docFocusPane
+	tree      list.Model
+	content   viewport.Model
+	entries   []docEntry
+	visible   []docEntry
+	collapsed map[string]bool
+	renderer  *glamour.TermRenderer
+	focus     docFocusPane
 
 	err error
 
@@ -286,21 +314,15 @@ func NewDocumentationModel() (DocumentationModel, error) {
 		return DocumentationModel{}, fmt.Errorf("failed to read embedded docs: %w", err)
 	}
 
-	items := make([]list.Item, len(entries))
-	for i, e := range entries {
-		items[i] = docTreeItem{entry: e}
-	}
+	collapsed := map[string]bool{}
+	visible := visibleDocEntries(entries, collapsed)
 
-	l := list.New(items, docTreeDelegate{}, 0, 0)
+	l := list.New(docTreeItems(visible), docTreeDelegate{collapsed: collapsed}, 0, 0)
 	l.SetShowTitle(false)
 	l.SetShowStatusBar(false)
 	l.SetShowHelp(false)
 	l.SetShowPagination(false)
 	l.SetFilteringEnabled(false)
-	// The list defaults to selecting index 0, which may be a directory
-	// heading (e.g. "commands" sorts first) — nudge forward onto the
-	// first real file so the initial selection is never a dir row.
-	l = skipDirEntries(l, entries, true)
 
 	renderer, err := glamour.NewTermRenderer(glamour.WithStyles(styles.DarkStyleConfig))
 	if err != nil {
@@ -310,10 +332,12 @@ func NewDocumentationModel() (DocumentationModel, error) {
 	vp := viewport.New()
 
 	m := DocumentationModel{
-		tree:     l,
-		content:  vp,
-		entries:  entries,
-		renderer: renderer,
+		tree:      l,
+		content:   vp,
+		entries:   entries,
+		visible:   visible,
+		collapsed: collapsed,
+		renderer:  renderer,
 	}
 	return m.loadSelected(), nil
 }
@@ -331,6 +355,9 @@ func (m DocumentationModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		case "enter":
 			if m.focus == docFocusTree {
+				if sel, ok := m.tree.SelectedItem().(docTreeItem); ok && sel.entry.isDir {
+					return m.toggleCollapsed(sel.entry), nil
+				}
 				m.focus = docFocusContent
 			}
 			return m, nil
@@ -345,8 +372,7 @@ func (m DocumentationModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		prevIndex := m.tree.Index()
 		var cmd tea.Cmd
 		m.tree, cmd = m.tree.Update(msg)
-		if newIndex := m.tree.Index(); newIndex != prevIndex {
-			m.tree = skipDirEntries(m.tree, m.entries, newIndex > prevIndex)
+		if m.tree.Index() != prevIndex {
 			m = m.loadSelected()
 		}
 		return m, cmd
@@ -355,6 +381,26 @@ func (m DocumentationModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	m.content, cmd = m.content.Update(msg)
 	return m, cmd
+}
+
+// toggleCollapsed flips dir's collapsed state, rebuilds the tree's visible
+// entries and list items to match, and keeps the cursor resting on dir
+// itself — so a further enter immediately re-expands it, and the cursor
+// never ends up pointing at a row that just became hidden (e.g. a file
+// that was selected somewhere inside the subtree being collapsed).
+func (m DocumentationModel) toggleCollapsed(dir docEntry) DocumentationModel {
+	m.collapsed[dir.embedPath] = !m.collapsed[dir.embedPath]
+	m.visible = visibleDocEntries(m.entries, m.collapsed)
+	m.tree.SetItems(docTreeItems(m.visible))
+
+	for i, e := range m.visible {
+		if e.embedPath == dir.embedPath {
+			m.tree.Select(i)
+			break
+		}
+	}
+
+	return m.loadSelected()
 }
 
 // loadSelected renders the currently-selected tree entry's markdown into
@@ -370,7 +416,7 @@ func (m DocumentationModel) loadSelected() DocumentationModel {
 	e := item.entry
 
 	if e.isDir {
-		m.content.SetContent("(directory — select a file to view it)")
+		m.content.SetContent("(directory — press enter to expand or collapse)")
 		return m
 	}
 
@@ -442,7 +488,7 @@ func (m DocumentationModel) View() tea.View {
 	contentPane := contentBorder.Render(m.content.View())
 
 	body := lipgloss.JoinHorizontal(lipgloss.Top, treePane, contentPane)
-	help := helpStyle.Render("↑/↓ move · ←/→ switch pane · ↵ open · q quit")
+	help := helpStyle.Render("↑/↓ move · ←/→ switch pane · ↵ open/toggle · q quit")
 
 	v := tea.NewView(body + "\n" + help)
 	v.AltScreen = true
