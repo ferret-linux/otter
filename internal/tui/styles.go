@@ -15,6 +15,7 @@ var (
 	colorCyan   = lipgloss.Color("6")  // matches \033[36m
 	colorTeal   = lipgloss.Color("14") // matches \033[96m (bright cyan)
 	colorDim    = lipgloss.Color("7")  // matches \033[37m
+	colorBlack  = lipgloss.Color("0")  // used as foreground on activeTabStyle's fill
 )
 
 //nolint:gochecknoglobals // see justification above
@@ -25,9 +26,19 @@ var (
 	pausedStyle  = lipgloss.NewStyle().Foreground(colorYellow)
 	exitedStyle  = lipgloss.NewStyle().Foreground(colorRed)
 
-	cursorMark = lipgloss.NewStyle().Foreground(colorCyan).Bold(true)
-	helpStyle  = lipgloss.NewStyle().Foreground(colorDim)
-	dimStyle   = lipgloss.NewStyle().Foreground(colorDim)
+	// selectedRowStyle marks the focused row in the container list or
+	// actions pane with a colored left-edge bar instead of a prefix glyph
+	// (the Glow/lipgloss list convention). unselectedRowStyle pads
+	// unselected rows by the same width so text stays aligned when the
+	// cursor moves.
+	selectedRowStyle = lipgloss.NewStyle().
+				Border(lipgloss.NormalBorder(), false, false, false, true).
+				BorderForeground(colorCyan).
+				PaddingLeft(1)
+	unselectedRowStyle = lipgloss.NewStyle().PaddingLeft(2)
+
+	helpStyle = lipgloss.NewStyle().Foreground(colorDim)
+	dimStyle  = lipgloss.NewStyle().Foreground(colorDim)
 
 	dividerStyle = lipgloss.NewStyle().Foreground(colorDim)
 
@@ -37,11 +48,17 @@ var (
 
 //nolint:gochecknoglobals // see justification above
 var (
-	// activeTabStyle and inactiveTabStyle render the section tab bar as
-	// plain colored text — no borders, no per-tab boxes, nothing that needs
-	// to visually line up with a neighboring tab or a frame below it.
-	activeTabStyle   = lipgloss.NewStyle().Bold(true).Foreground(colorTeal)
-	inactiveTabStyle = lipgloss.NewStyle().Foreground(colorDim)
+	// activeTabStyle marks the active section with a solid background
+	// fill (the table/pokemon-example convention) rather than just bold
+	// text, so the current section reads as a distinct block in the tab
+	// row. inactiveTabStyle stays plain dim text — no border, no box,
+	// nothing that needs to visually line up with a neighboring tab.
+	activeTabStyle = lipgloss.NewStyle().
+			Bold(true).
+			Foreground(colorBlack).
+			Background(colorTeal).
+			Padding(0, 1)
+	inactiveTabStyle = lipgloss.NewStyle().Foreground(colorDim).Padding(0, 1)
 
 	// appStyle is the only spacing applied anywhere in the app: it wraps
 	// the entire rendered output (tabs + divider + section content + help)

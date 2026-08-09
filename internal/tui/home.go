@@ -178,13 +178,13 @@ func (h homeModel) renderActions() string {
 
 	var rows []string
 	for i, label := range labelsFor(&c) {
-		prefix := "  "
-		style := actionLabelStyle
+		rowStyle := unselectedRowStyle
+		labelStyle := actionLabelStyle
 		if h.focus == focusActions && i == h.actions.cursor {
-			prefix = cursorMark.Render("▶ ")
-			style = actionActiveStyle
+			rowStyle = selectedRowStyle
+			labelStyle = actionActiveStyle
 		}
-		rows = append(rows, prefix+style.Render(label))
+		rows = append(rows, rowStyle.Render(labelStyle.Render(label)))
 	}
 
 	body := header + "\n\n" + strings.Join(rows, "\n")

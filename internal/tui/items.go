@@ -39,12 +39,12 @@ func (d containerDelegate) Render(w io.Writer, m list.Model, index int, it list.
 
 	line := fmt.Sprintf("%s %s", statusDot(c), nameStyle.Render(c.Name))
 
-	prefix := "  "
+	style := unselectedRowStyle
 	if index == m.Index() {
-		prefix = cursorMark.Render("▶ ")
+		style = selectedRowStyle
 	}
 
-	fmt.Fprint(w, prefix+line)
+	fmt.Fprint(w, style.Render(line))
 }
 
 // statusDot returns the colored status dot for a container, mirroring the
