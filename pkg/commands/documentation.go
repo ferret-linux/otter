@@ -39,15 +39,21 @@ const treePaneWidth = 28
 
 //nolint:gochecknoglobals // package-level styles are the idiomatic lipgloss pattern
 var (
-	colorTeal = lipgloss.Color("14")
-	colorDim  = lipgloss.Color("7")
-	colorBg   = lipgloss.Color("0")
+	colorTeal   = lipgloss.Color("14")
+	colorDim    = lipgloss.Color("7")
+	colorBg     = lipgloss.Color("0")
+	colorYellow = lipgloss.Color("11")
 
 	// selectedTreeStyle highlights the focused row with a solid
 	// background fill (not a left-edge bar — see treeDelegate.Render for
 	// why the bar glyph specifically would clash here).
 	selectedTreeStyle   = lipgloss.NewStyle().Background(colorTeal).Foreground(colorBg)
 	unselectedTreeStyle = lipgloss.NewStyle().Foreground(colorDim)
+
+	// treeConnectorStyle colors just the ├──/└──/│ connector glyphs
+	// drawn by docTreePrefix, kept separate from unselectedTreeStyle so
+	// row labels/icons aren't affected.
+	treeConnectorStyle = lipgloss.NewStyle().Foreground(colorYellow)
 
 	paneBorderStyle        = lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).BorderForeground(colorDim)
 	focusedPaneBorderStyle = lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).BorderForeground(colorTeal)
@@ -286,7 +292,7 @@ func (d docTreeDelegate) Render(w io.Writer, m list.Model, index int, it list.It
 		label = "🗟 " + label
 	}
 
-	fmt.Fprint(w, unselectedTreeStyle.Render(docTreePrefix(e))+nameStyle.Render(label))
+	fmt.Fprint(w, treeConnectorStyle.Render(docTreePrefix(e))+nameStyle.Render(label))
 }
 
 // visibleDocEntries returns the subset of entries that should currently be
