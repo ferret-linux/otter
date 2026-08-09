@@ -283,7 +283,7 @@ func (d docTreeDelegate) Render(w io.Writer, m list.Model, index int, it list.It
 		}
 		label = indicator + "🗀 " + label
 	} else {
-		label = "🗎 " + label
+		label = "🗟 " + label
 	}
 
 	fmt.Fprint(w, unselectedTreeStyle.Render(docTreePrefix(e))+nameStyle.Render(label))
