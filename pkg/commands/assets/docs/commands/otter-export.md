@@ -1,5 +1,3 @@
-# otter-export
-
 `otter export` — export an app or binary from a container to the host.
 
 ## Where this runs

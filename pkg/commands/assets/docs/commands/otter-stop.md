@@ -1,5 +1,3 @@
-# otter-stop
-
 `otter stop` — stop one or more running otter-managed container
 environments.
 

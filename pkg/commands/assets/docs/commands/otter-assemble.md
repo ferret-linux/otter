@@ -1,5 +1,3 @@
-# otter-assemble
-
 `otter assemble` — manage otter containers declared in a manifest file.
 
 ## Synopsis

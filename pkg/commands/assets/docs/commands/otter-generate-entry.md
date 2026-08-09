@@ -1,5 +1,3 @@
-# otter-generate-entry
-
 `otter generate-entry` — generate (or delete) a desktop entry for a
 container.
 

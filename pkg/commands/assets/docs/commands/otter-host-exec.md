@@ -1,5 +1,3 @@
-# otter-host-exec
-
 `otter host-exec` — run a command on the host from inside a container.
 
 ## Where this runs

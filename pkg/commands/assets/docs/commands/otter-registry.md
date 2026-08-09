@@ -1,5 +1,3 @@
-# otter-registry
-
 `otter registry` — browse and manage otter's prebuilt image registry.
 
 ## Synopsis

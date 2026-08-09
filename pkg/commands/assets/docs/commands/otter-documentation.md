@@ -1,5 +1,3 @@
-# otter-documentation
-
 `otter documentation` — browse otter's documentation in an interactive
 terminal viewer.
 

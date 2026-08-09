@@ -1,5 +1,3 @@
-# otter-enter
-
 `otter enter` — enter an otter-managed container environment.
 
 ## Synopsis

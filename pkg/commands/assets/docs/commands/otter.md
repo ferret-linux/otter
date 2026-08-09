@@ -1,5 +1,3 @@
-# otter
-
 `otter` is the command-line tool for creating and managing
 host-integrated Linux containers — see [getting-started.md](../getting-started.md)
 for an introduction.
