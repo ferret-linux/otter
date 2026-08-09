@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🦦 otter
+## 🦦 otter
 
 spin up host-integrated container environments that come
 pre-configured, opinionated, and ready to go.
