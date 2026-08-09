@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/fs"
 	"path"
+	"regexp"
 	"sort"
 	"strings"
 
@@ -103,6 +104,18 @@ func buildDocsTree() ([]docEntry, error) {
 	return out, nil
 }
 
+// srNumberPattern matches the leading "SR number" prefix on doc file and
+// directory names (e.g. "01." in "01.otter.md", "08." in "08.commands")
+// that exists only to control sort/tree order — see docChildrenOf — and
+// is never meant to be shown to the user.
+var srNumberPattern = regexp.MustCompile(`^\d+\.`)
+
+// stripSRPrefix removes a leading SR number prefix from name, if present,
+// so the ordering-only prefix never leaks into the displayed label.
+func stripSRPrefix(name string) string {
+	return srNumberPattern.ReplaceAllString(name, "")
+}
+
 // docChildrenOf returns the sorted, immediate directory entries of dir
 // within documentationFS.
 func docChildrenOf(dir string) ([]fs.DirEntry, error) {
@@ -127,7 +140,7 @@ func walkDocs(dir string, depth int, parentIsLast []bool, children []fs.DirEntry
 
 		if c.IsDir() {
 			*out = append(*out, docEntry{
-				name:          c.Name(),
+				name:          stripSRPrefix(c.Name()),
 				embedPath:     path.Join(dir, c.Name()),
 				depth:         depth,
 				isDir:         true,
@@ -148,7 +161,7 @@ func walkDocs(dir string, depth int, parentIsLast []bool, children []fs.DirEntry
 			continue
 		}
 		*out = append(*out, docEntry{
-			name:          strings.TrimSuffix(c.Name(), ".md"),
+			name:          stripSRPrefix(strings.TrimSuffix(c.Name(), ".md")),
 			embedPath:     path.Join(dir, c.Name()),
 			depth:         depth,
 			isDir:         false,
