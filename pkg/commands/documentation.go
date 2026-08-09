@@ -384,17 +384,32 @@ func (m DocumentationModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.focus = docFocusContent
 		}
 
-		if click, ok := msg.(tea.MouseClickMsg); ok && click.Button == tea.MouseLeft && m.focus == docFocusTree {
-			prevIndex := m.tree.Index()
-			var cmd tea.Cmd
-			m.tree, cmd = m.tree.Update(msg)
-			if m.tree.Index() != prevIndex {
-				m = m.loadSelected()
+		if m.focus == docFocusTree {
+			switch e := msg.(type) {
+			case tea.MouseClickMsg:
+				if e.Button == tea.MouseLeft {
+					if row := m.treeRowAt(mouse.Y); row != -1 {
+						m.tree.Select(row)
+						m = m.loadSelected()
+						if sel, ok := m.tree.SelectedItem().(docTreeItem); ok && sel.entry.isDir {
+							return m.toggleCollapsed(sel.entry), nil
+						}
+					}
+					return m, nil
+				}
+			case tea.MouseWheelMsg:
+				switch e.Button {
+				case tea.MouseWheelUp:
+					if idx := m.tree.Index() - 1; idx >= 0 {
+						m.tree.Select(idx)
+					}
+				case tea.MouseWheelDown:
+					if idx := m.tree.Index() + 1; idx < len(m.visible) {
+						m.tree.Select(idx)
+					}
+				}
+				return m.loadSelected(), nil
 			}
-			if sel, ok := m.tree.SelectedItem().(docTreeItem); ok && sel.entry.isDir {
-				return m.toggleCollapsed(sel.entry), cmd
-			}
-			return m, cmd
 		}
 
 	case tea.WindowSizeMsg:
@@ -435,6 +450,21 @@ func (m DocumentationModel) toggleCollapsed(dir docEntry) DocumentationModel {
 	}
 
 	return m.loadSelected()
+}
+
+// treeRowAt maps a mouse Y coordinate (0 at the very top of the rendered
+// view) to an index into m.visible, or -1 if y falls outside the tree
+// pane's item rows (the border, the help line, or past the last item).
+// This assumes the tree's first visible entry is always index 0 — i.e.
+// the list isn't internally scrolled past its start — which holds as
+// long as every entry fits within the pane height.
+func (m DocumentationModel) treeRowAt(y int) int {
+	const treeContentTop = 1 // RoundedBorder's top edge occupies screen row 0
+	row := y - treeContentTop
+	if row < 0 || row >= len(m.visible) {
+		return -1
+	}
+	return row
 }
 
 // loadSelected renders the currently-selected tree entry's markdown into
