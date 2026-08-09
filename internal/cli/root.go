@@ -98,6 +98,9 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		withUsageErrorHandler,
 		withContainerManager,
 	}
+	docsOpts := []func(*config.Values, *cli.Command) *cli.Command{
+		withUsageErrorHandler,
+	}
 
 	// Order matches the alphabetical listing urfave/cli renders in --help.
 	specs := []struct {
@@ -106,6 +109,7 @@ func subcommands(cfg *config.Values) []*cli.Command {
 	}{
 		{newAssembleCommand, noRootOpts},
 		{newCreateCommand, stdOpts},
+		{newDocsCommand, docsOpts},
 		{newEnterCommand, stdOpts},
 		{newGenerateEntryCommand, stdOpts},
 		{newInspectCommand, stdOpts},
