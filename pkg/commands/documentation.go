@@ -491,17 +491,31 @@ func (m DocumentationModel) toggleCollapsed(dir docEntry) DocumentationModel {
 
 // treeRowAt maps a mouse Y coordinate (0 at the very top of the rendered
 // view) to an index into m.visible, or -1 if y falls outside the tree
-// pane's item rows (the border, the help line, or past the last item).
-// This assumes the tree's first visible entry is always index 0 — i.e.
-// the list isn't internally scrolled past its start — which holds as
-// long as every entry fits within the pane height.
+// pane's rendered item rows (the border, the help line, past the last
+// item on the current page, or a padding row on a partially-filled last
+// page). Accounts for the list's own scroll/pagination state — i.e. the
+// row rendered at the top of the pane is not always m.visible[0]; it's
+// whatever index list.Model's Paginator has scrolled to — by resolving
+// the page's starting index the same way list.Model itself does when
+// rendering (see bubbles/list.Model.populatedView, which computes
+// start, end via Paginator.GetSliceBounds and steps by one delegate row
+// per item).
 func (m DocumentationModel) treeRowAt(y int) int {
 	const treeContentTop = 1 // RoundedBorder's top edge occupies screen row 0
 	row := y - treeContentTop
-	if row < 0 || row >= len(m.visible) {
+	if row < 0 {
 		return -1
 	}
-	return row
+
+	rowHeight := docTreeDelegate{}.Height() + docTreeDelegate{}.Spacing()
+	offset := row / rowHeight
+
+	start, end := m.tree.Paginator.GetSliceBounds(len(m.visible))
+	idx := start + offset
+	if idx < start || idx >= end {
+		return -1
+	}
+	return idx
 }
 
 // loadSelected renders the currently-selected tree entry's markdown into
