@@ -98,7 +98,7 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		withUsageErrorHandler,
 		withContainerManager,
 	}
-	docsOpts := []func(*config.Values, *cli.Command) *cli.Command{
+	documentationOpts := []func(*config.Values, *cli.Command) *cli.Command{
 		withUsageErrorHandler,
 	}
 
@@ -109,7 +109,7 @@ func subcommands(cfg *config.Values) []*cli.Command {
 	}{
 		{newAssembleCommand, noRootOpts},
 		{newCreateCommand, stdOpts},
-		{newDocsCommand, docsOpts},
+		{newDocumentationCommand, documentationOpts},
 		{newEnterCommand, stdOpts},
 		{newGenerateEntryCommand, stdOpts},
 		{newInspectCommand, stdOpts},

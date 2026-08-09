@@ -7,20 +7,20 @@ import (
 	tea "charm.land/bubbletea/v2"
 	"github.com/urfave/cli/v3"
 
-	"github.com/ferret-linux/otter/internal/docsui"
+	"github.com/ferret-linux/otter/pkg/commands"
 	"github.com/ferret-linux/otter/pkg/config"
 )
 
-func newDocsCommand(_ *config.Values) *cli.Command {
+func newDocumentationCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
-		Name:    "docs",
-		Aliases: []string{"d"},
-		Action:  docsAction,
+		Name:    "documentation",
+		Aliases: []string{"docs"},
+		Action:  documentationAction,
 	}
 }
 
-func docsAction(_ context.Context, _ *cli.Command) error {
-	m, err := docsui.New()
+func documentationAction(_ context.Context, _ *cli.Command) error {
+	m, err := commands.NewDocumentationModel()
 	if err != nil {
 		return fmt.Errorf("failed to start docs viewer: %w", err)
 	}
