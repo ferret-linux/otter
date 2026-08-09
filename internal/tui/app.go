@@ -23,6 +23,8 @@ const (
 
 // sectionNames are the tab bar labels, in display order, matching the
 // section consts above.
+//
+//nolint:gochecknoglobals // see justification in styles.go
 var sectionNames = []string{"Home", "Shell", "Registry", "Create", "Docs"}
 
 // These must stay in sync with appStyle's Padding (styles.go) and with how
@@ -111,9 +113,9 @@ func (a App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 // contentSize returns the space available for a section's own content,
 // after accounting for the tab row, the divider, the footer, and
 // appStyle's padding — the only things in this app that consume space.
-func (a App) contentSize() (width, height int) {
-	width = a.width - appPaddingCols
-	height = a.height - appPaddingRows - tabRowHeight - dividerRows - gapRows - footerRows
+func (a App) contentSize() (int, int) {
+	width := a.width - appPaddingCols
+	height := a.height - appPaddingRows - tabRowHeight - dividerRows - gapRows - footerRows
 	if width < 0 {
 		width = 0
 	}

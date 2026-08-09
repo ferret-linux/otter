@@ -862,10 +862,13 @@ func (d *Docker) PullImage(ctx context.Context, imageName string, platform strin
 		args = append([]string{command}, args...)
 		command = d.sudoCommand
 	}
-	cmd := exec.CommandContext(ctx, command, args...) //nolint:gosec // command/args are resolved the same way run() resolves them above
+	cmd := exec.CommandContext(ctx, command, args...)
 	cmd.Stdout = out
 	cmd.Stderr = out
-	return cmd.Run()
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("failed to pull image: %w", err)
+	}
+	return nil
 }
 
 func (d *Docker) generateEnterCommand(

@@ -278,6 +278,25 @@ func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) err
 		}
 	}
 
+	if err := ac.exportApps(ctx, enterCmd, item); err != nil {
+		return err
+	}
+
+	if err := ac.exportBins(ctx, enterCmd, item); err != nil {
+		return err
+	}
+
+	if hasExports && !*item.StartNow {
+		if err := cm.Stop(ctx, []string{item.Name}, false); err != nil {
+			return fmt.Errorf("failed to stop container '%s' after exporting: %w", item.Name, err)
+		}
+	}
+
+	return nil
+}
+
+// exportApps validates and exports every app declared in item.Exported.Apps.
+func (ac *AssembleCommand) exportApps(ctx context.Context, enterCmd *EnterCommand, item manifest.Item) error {
 	// validate app name to prevent command injection, since it's used in a custom command
 	var validAppName = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9._+\-]*$`)
 	for _, app := range item.Exported.Apps {
@@ -295,7 +314,11 @@ func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) err
 			return fmt.Errorf("failed to export app '%s' for item '%s': %w", app, item.Name, err)
 		}
 	}
+	return nil
+}
 
+// exportBins validates and exports every bin declared in item.Exported.Bins.
+func (ac *AssembleCommand) exportBins(ctx context.Context, enterCmd *EnterCommand, item manifest.Item) error {
 	// validate bin path to prevent command injection, since it's used in a custom command
 	var validBinPath = regexp.MustCompile(`^/[a-zA-Z0-9._+\-/]+$`)
 	if len(item.Exported.Bins) > 0 && !validBinPath.MatchString(item.Exported.Path) {
@@ -316,12 +339,5 @@ func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) err
 			return fmt.Errorf("failed to export bin '%s' for item '%s': %w", bin, item.Name, err)
 		}
 	}
-
-	if hasExports && !*item.StartNow {
-		if err := cm.Stop(ctx, []string{item.Name}, false); err != nil {
-			return fmt.Errorf("failed to stop container '%s' after exporting: %w", item.Name, err)
-		}
-	}
-
 	return nil
 }

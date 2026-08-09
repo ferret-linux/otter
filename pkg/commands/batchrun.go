@@ -9,6 +9,38 @@ import (
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
+// resolveContainerNames implements the name-resolution shared by the batch
+// commands whose --all behavior is a plain "every container, no filtering":
+// either every existing container (all=true) or the explicit names given on
+// the command line, erroring if neither was supplied.
+//
+// pause.go and upgrade.go do not use this helper: pause needs to track
+// which listed containers are non-running without excluding them from the
+// batch, and upgrade's --running flag needs to exclude them outright. Both
+// are genuine behavioral differences, not incidental duplication, so they
+// keep their own resolution logic.
+func resolveContainerNames(ctx context.Context, listCmd *ListCommand, explicit []string, all bool) ([]string, error) {
+	switch {
+	case all:
+		listResult, err := listCmd.Execute(ctx, ListOptions{})
+		if err != nil {
+			return nil, fmt.Errorf("failed to list containers: %w", err)
+		}
+		if len(listResult.Containers) == 0 {
+			return nil, ErrNoContainersFound
+		}
+		names := make([]string, 0, len(listResult.Containers))
+		for _, container := range listResult.Containers {
+			names = append(names, container.Name)
+		}
+		return names, nil
+	case len(explicit) > 0:
+		return explicit, nil
+	default:
+		return nil, errors.New("please specify a container name or use --all")
+	}
+}
+
 // batchOutcome tracks the result of running an action across multiple
 // container names: which succeeded, which failed, and how many were
 // skipped. Skips are never counted as failures.
@@ -80,7 +112,7 @@ func summarizeBatch(outcome batchOutcome, cfg batchSummaryConfig) error {
 		case succeeded > 0:
 			failMsg = fmt.Sprintf("%d/%d containers %s, %s%s", succeeded, total, cfg.PastVerb, failMsg, skipNote)
 		case outcome.Skipped > 0:
-			failMsg = failMsg + skipNote
+			failMsg += skipNote
 		}
 		return errors.New(failMsg)
 	case succeeded == 0 && outcome.Skipped > 0:

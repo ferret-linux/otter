@@ -83,7 +83,7 @@ func (s *scrollWindow) Close() {
 
 	total := len(s.lines) + 2
 	fmt.Fprintf(s.w, "\033[%dA", total)
-	for i := 0; i < total; i++ {
+	for i := range total {
 		fmt.Fprint(s.w, "\033[2K")
 		if i < total-1 {
 			fmt.Fprint(s.w, "\n")

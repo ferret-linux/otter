@@ -160,7 +160,7 @@ func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error
 		key     string
 		value   string
 	}
-
+	//nolint:goconst // A new constant is useless here
 	rows := []inspectRow{
 		{"General", "Name", opts.ContainerName},
 		{"General", "ID", id},

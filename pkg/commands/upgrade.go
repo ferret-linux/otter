@@ -41,7 +41,6 @@ func NewUpgradeCommand(
 	}
 }
 
-//nolint:gocognit // ignore cognitive complexity here, the function orchestrates multi-step container upgrade
 func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) error {
 	var containerNames []string
 

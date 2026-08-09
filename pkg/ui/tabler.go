@@ -79,7 +79,7 @@ func (t *Table) Render() {
 	tbl := table.New().
 		Border(lipgloss.RoundedBorder()).
 		BorderStyle(tableBorderColorStyle()).
-		StyleFunc(func(row, col int) lipgloss.Style {
+		StyleFunc(func(_, col int) lipgloss.Style {
 			return lipgloss.NewStyle().Padding(0, 1)
 		})
 

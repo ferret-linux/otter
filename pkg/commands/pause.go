@@ -57,7 +57,8 @@ func (c *PauseCommand) Execute(ctx context.Context, opts *PauseOptions) error {
 			return true, nil
 		}
 		if err := c.containerManager.Pause(ctx, name); err != nil {
-			ui.DefaultLogger.Error("failed to pause", "name", name, "err", err)
+			err = fmt.Errorf("failed to pause '%s': %w", name, err)
+			ui.DefaultLogger.Error(err)
 			return false, err
 		}
 		ui.DefaultLogger.Info("paused", "name", name)

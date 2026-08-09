@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/ferret-linux/otter/pkg/containermanager"
@@ -28,33 +27,20 @@ func NewRestartCommand(cm containermanager.ContainerManager) *RestartCommand {
 }
 
 func (c *RestartCommand) Execute(ctx context.Context, opts *RestartOptions) error {
-	var containerNames []string
-
-	switch {
-	case opts.All:
-		containers, err := c.listCmd.Execute(ctx, ListOptions{})
-		if err != nil {
-			return fmt.Errorf("failed to list containers: %w", err)
-		}
-		if len(containers.Containers) == 0 {
-			return ErrNoContainersFound
-		}
-		for _, container := range containers.Containers {
-			containerNames = append(containerNames, container.Name)
-		}
-	case len(opts.ContainerNames) > 0:
-		containerNames = opts.ContainerNames
-	default:
-		return errors.New("please specify a container name or use --all")
+	containerNames, err := resolveContainerNames(ctx, c.listCmd, opts.ContainerNames, opts.All)
+	if err != nil {
+		return err
 	}
 
 	outcome := runBatch(ctx, containerNames, func(ctx context.Context, name string) (bool, error) {
 		if err := c.containerManager.Stop(ctx, []string{name}, opts.Force); err != nil {
-			ui.DefaultLogger.Error("failed to restart", "name", name, "err", err)
+			err = fmt.Errorf("failed to restart (stop) '%s': %w", name, err)
+			ui.DefaultLogger.Error(err)
 			return false, err
 		}
 		if err := c.containerManager.Start(ctx, name); err != nil {
-			ui.DefaultLogger.Error("failed to restart", "name", name, "err", err)
+			err = fmt.Errorf("failed to restart (start) '%s': %w", name, err)
+			ui.DefaultLogger.Error(err)
 			return false, err
 		}
 		ui.DefaultLogger.Info("restarted", "name", name)

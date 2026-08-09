@@ -664,10 +664,13 @@ func (p *Podman) PullImage(ctx context.Context, imageName string, platform strin
 		args = append([]string{command}, args...)
 		command = p.sudoCommand
 	}
-	cmd := exec.CommandContext(ctx, command, args...) //nolint:gosec // command/args are resolved the same way run() resolves them above
+	cmd := exec.CommandContext(ctx, command, args...)
 	cmd.Stdout = out
 	cmd.Stderr = out
-	return cmd.Run()
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("failed to pull image: %w", err)
+	}
+	return nil
 }
 
 func (p *Podman) RemoveImage(ctx context.Context, imageName string, force bool) error {

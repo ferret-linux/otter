@@ -450,10 +450,13 @@ func (n *Nerdctl) PullImage(ctx context.Context, imageName string, platform stri
 		args = append([]string{command}, args...)
 		command = n.sudoCommand
 	}
-	cmd := exec.CommandContext(ctx, command, args...) //nolint:gosec // command/args are resolved the same way run() resolves them above
+	cmd := exec.CommandContext(ctx, command, args...)
 	cmd.Stdout = out
 	cmd.Stderr = out
-	return cmd.Run()
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("failed to pull image: %w", err)
+	}
+	return nil
 }
 
 func (n *Nerdctl) RemoveImage(ctx context.Context, imageName string, force bool) error {

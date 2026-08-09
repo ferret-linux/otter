@@ -3,15 +3,12 @@ package cli
 
 import (
 	"context"
-	"errors"
-	"fmt"
 
 	"github.com/urfave/cli/v3"
 
 	"github.com/ferret-linux/otter/pkg/commands"
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
-	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 func newRestartCommand(_ *config.Values) *cli.Command {
@@ -33,28 +30,11 @@ func newRestartCommand(_ *config.Values) *cli.Command {
 }
 
 func restartAction(ctx context.Context, cmd *cli.Command) error {
-	containerManager, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
-	if !ok {
-		return errors.New("container manager not found in context")
-	}
-
-	names, err := splitNames(cmd.Args().Slice())
-	if err != nil {
-		return err
-	}
-	options := &commands.RestartOptions{
-		ContainerNames: names,
-		All:            cmd.Bool("all"),
-		Force:          cmd.Bool("force"),
-	}
-
-	err = commands.NewRestartCommand(containerManager).Execute(ctx, options)
-	if errors.Is(err, commands.ErrNoContainersFound) {
-		ui.DefaultLogger.Warn("no containers found")
-		return nil
-	}
-	if err != nil {
-		return fmt.Errorf("failed to restart containers: %w", err)
-	}
-	return nil
+	return runContainerCommand(ctx, cmd, "failed to restart containers", func(cm containermanager.ContainerManager, names []string) error {
+		return commands.NewRestartCommand(cm).Execute(ctx, &commands.RestartOptions{
+			ContainerNames: names,
+			All:            cmd.Bool("all"),
+			Force:          cmd.Bool("force"),
+		})
+	})
 }

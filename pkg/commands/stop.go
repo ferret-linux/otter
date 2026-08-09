@@ -30,24 +30,9 @@ func NewStopCommand(cm containermanager.ContainerManager) *StopCommand {
 }
 
 func (c *StopCommand) Execute(ctx context.Context, opts *StopOptions) error {
-	var containerNames []string
-	switch {
-	case opts.All:
-		containers, err := c.listCmd.Execute(ctx, ListOptions{})
-		if err != nil {
-			return fmt.Errorf("failed to list containers: %w", err)
-		}
-		if len(containers.Containers) == 0 {
-			return ErrNoContainersFound
-		}
-		containerNames = make([]string, 0, len(containers.Containers))
-		for _, container := range containers.Containers {
-			containerNames = append(containerNames, container.Name)
-		}
-	case len(opts.ContainerNames) > 0:
-		containerNames = opts.ContainerNames
-	default:
-		return errors.New("please specify a container name or use --all")
+	containerNames, err := resolveContainerNames(ctx, c.listCmd, opts.ContainerNames, opts.All)
+	if err != nil {
+		return err
 	}
 
 	outcome := runBatch(ctx, containerNames, func(ctx context.Context, name string) (bool, error) {

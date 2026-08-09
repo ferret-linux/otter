@@ -1,4 +1,3 @@
-// Package tui implements otter's interactive terminal UI.
 package tui
 
 import "charm.land/lipgloss/v2"
@@ -7,6 +6,8 @@ import "charm.land/lipgloss/v2"
 // teal/dim) so the TUI's visual language matches otter's existing CLI
 // output. They're ANSI 16/256-color indices rather than hex so they resolve
 // to the exact same terminal colors as the \033[31m-style codes in pkg/ui.
+//
+//nolint:gochecknoglobals // package-level styles/colors are the idiomatic lipgloss pattern; threading them through every model would be a needless architecture change for no behavioral gain
 var (
 	colorRed    = lipgloss.Color("1")  // matches \033[31m in pkg/ui/colors.go
 	colorGreen  = lipgloss.Color("2")  // matches \033[32m
@@ -16,6 +17,7 @@ var (
 	colorDim    = lipgloss.Color("7")  // matches \033[37m
 )
 
+//nolint:gochecknoglobals // see justification above
 var (
 	nameStyle    = lipgloss.NewStyle().Foreground(colorTeal)
 	imageStyle   = lipgloss.NewStyle().Foreground(colorDim)
@@ -33,6 +35,7 @@ var (
 	actionActiveStyle = lipgloss.NewStyle().Foreground(colorTeal).Bold(true)
 )
 
+//nolint:gochecknoglobals // see justification above
 var (
 	// activeTabStyle and inactiveTabStyle render the section tab bar as
 	// plain colored text — no borders, no per-tab boxes, nothing that needs

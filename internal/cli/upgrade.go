@@ -3,15 +3,12 @@ package cli
 
 import (
 	"context"
-	"errors"
-	"fmt"
 
 	"github.com/urfave/cli/v3"
 
 	"github.com/ferret-linux/otter/pkg/commands"
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
-	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 func newUpgradeCommand(cfg *config.Values) *cli.Command {
@@ -35,28 +32,11 @@ func newUpgradeCommand(cfg *config.Values) *cli.Command {
 }
 
 func upgradeAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) error {
-	containerManager, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
-	if !ok {
-		return errors.New("container manager not found in context")
-	}
-
-	names, err := splitNames(cmd.Args().Slice())
-	if err != nil {
-		return err
-	}
-	options := &commands.UpgradeOptions{
-		ContainerNames: names,
-		All:            cmd.Bool("all"),
-		Running:        cmd.Bool("running"),
-	}
-
-	err = commands.NewUpgradeCommand(cfg, containerManager).Execute(ctx, options)
-	if errors.Is(err, commands.ErrNoContainersFound) {
-		ui.DefaultLogger.Warn("no containers found")
-		return nil
-	}
-	if err != nil {
-		return fmt.Errorf("failed to upgrade containers: %w", err)
-	}
-	return nil
+	return runContainerCommand(ctx, cmd, "failed to upgrade containers", func(cm containermanager.ContainerManager, names []string) error {
+		return commands.NewUpgradeCommand(cfg, cm).Execute(ctx, &commands.UpgradeOptions{
+			ContainerNames: names,
+			All:            cmd.Bool("all"),
+			Running:        cmd.Bool("running"),
+		})
+	})
 }

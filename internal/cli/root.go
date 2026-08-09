@@ -12,6 +12,7 @@ import (
 	"github.com/charmbracelet/colorprofile"
 	"github.com/urfave/cli/v3"
 
+	"github.com/ferret-linux/otter/pkg/commands"
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/containermanager/providers"
@@ -248,6 +249,39 @@ func splitNames(args []string) ([]string, error) {
 		}
 	}
 	return names, nil
+}
+
+// runContainerCommand implements the wiring shared by every container batch
+// action: pulling the container manager out of ctx (guaranteed present by
+// withContainerManager, but checked defensively in case a command is ever
+// wired without it), parsing container names from the CLI args, running
+// execute, and translating commands.ErrNoContainersFound into a warning
+// rather than a hard error. failMsg prefixes any other error from execute.
+func runContainerCommand(
+	ctx context.Context,
+	cmd *cli.Command,
+	failMsg string,
+	execute func(cm containermanager.ContainerManager, names []string) error,
+) error {
+	containerManager, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
+	if !ok {
+		return errors.New("container manager not found in context")
+	}
+
+	names, err := splitNames(cmd.Args().Slice())
+	if err != nil {
+		return err
+	}
+
+	err = execute(containerManager, names)
+	if errors.Is(err, commands.ErrNoContainersFound) {
+		ui.DefaultLogger.Warn("no containers found")
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("%s: %w", failMsg, err)
+	}
+	return nil
 }
 
 func withUsageErrorHandler(_ *config.Values, cmd *cli.Command) *cli.Command {
