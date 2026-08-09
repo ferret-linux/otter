@@ -43,6 +43,7 @@ var (
 	colorDim    = lipgloss.Color("7")
 	colorBg     = lipgloss.Color("0")
 	colorYellow = lipgloss.Color("11")
+	colorWhite  = lipgloss.Color("15")
 
 	// selectedTreeStyle highlights the focused row with a solid
 	// background fill (not a left-edge bar — see treeDelegate.Render for
@@ -54,6 +55,12 @@ var (
 	// drawn by docTreePrefix, kept separate from unselectedTreeStyle so
 	// row labels/icons aren't affected.
 	treeConnectorStyle = lipgloss.NewStyle().Foreground(colorYellow)
+
+	// folderIconStyle/fileIconStyle color just the 🗀/🗟 glyphs in
+	// docTreeDelegate.Render, independently of nameStyle so the icon's
+	// color doesn't change with selection the way the name text does.
+	folderIconStyle = lipgloss.NewStyle().Foreground(colorYellow)
+	fileIconStyle   = lipgloss.NewStyle().Foreground(colorWhite)
 
 	paneBorderStyle        = lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).BorderForeground(colorDim)
 	focusedPaneBorderStyle = lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).BorderForeground(colorTeal)
@@ -280,19 +287,31 @@ func (d docTreeDelegate) Render(w io.Writer, m list.Model, index int, it list.It
 		nameStyle = selectedTreeStyle
 	}
 
-	label := e.name
+	indicator := ""
+	icon := "🗟"
+	iconStyle := fileIconStyle
 	if e.isDir {
 		nameStyle = nameStyle.Bold(true)
-		indicator := "▸ "
+		indicator = "▸ "
 		if !d.collapsed[e.embedPath] {
 			indicator = "▾ "
 		}
-		label = indicator + "🗀 " + label
-	} else {
-		label = "🗟 " + label
+		icon = "🗀"
+		iconStyle = folderIconStyle
+	}
+	// On a selected row, match the icon's background to the highlight
+	// bar so the icon doesn't leave a gap in the solid fill — its
+	// foreground color still stays distinct from the rest of the row.
+	if index == m.Index() {
+		iconStyle = iconStyle.Background(colorTeal)
 	}
 
-	fmt.Fprint(w, treeConnectorStyle.Render(docTreePrefix(e))+nameStyle.Render(label))
+	fmt.Fprint(w,
+		treeConnectorStyle.Render(docTreePrefix(e))+
+			nameStyle.Render(indicator)+
+			iconStyle.Render(icon)+
+			nameStyle.Render(" "+e.name),
+	)
 }
 
 // visibleDocEntries returns the subset of entries that should currently be
