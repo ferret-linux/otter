@@ -28,7 +28,6 @@ func NewUnlockCommand(cm containermanager.ContainerManager) *UnlockCommand {
 	}
 }
 
-//nolint:dupl // structurally mirrors LockCommand.Execute; the lock/unlock semantics genuinely differ
 func (c *UnlockCommand) Execute(ctx context.Context, opts UnlockOptions) error {
 	containerNames, err := resolveContainerNames(ctx, c.listCmd, opts.ContainerNames, opts.All)
 	if err != nil {
