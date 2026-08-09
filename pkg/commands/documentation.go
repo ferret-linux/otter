@@ -376,6 +376,27 @@ func (m DocumentationModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 
+	case tea.MouseMsg:
+		mouse := msg.Mouse()
+		if mouse.X < treePaneWidth {
+			m.focus = docFocusTree
+		} else {
+			m.focus = docFocusContent
+		}
+
+		if click, ok := msg.(tea.MouseClickMsg); ok && click.Button == tea.MouseLeft && m.focus == docFocusTree {
+			prevIndex := m.tree.Index()
+			var cmd tea.Cmd
+			m.tree, cmd = m.tree.Update(msg)
+			if m.tree.Index() != prevIndex {
+				m = m.loadSelected()
+			}
+			if sel, ok := m.tree.SelectedItem().(docTreeItem); ok && sel.entry.isDir {
+				return m.toggleCollapsed(sel.entry), cmd
+			}
+			return m, cmd
+		}
+
 	case tea.WindowSizeMsg:
 		m.width, m.height = msg.Width, msg.Height
 		return m.setSize(msg.Width, msg.Height), nil
@@ -505,6 +526,7 @@ func (m DocumentationModel) View() tea.View {
 
 	v := tea.NewView(body + "\n" + help)
 	v.AltScreen = true
+	v.MouseMode = tea.MouseModeAllMotion
 	return v
 }
 
