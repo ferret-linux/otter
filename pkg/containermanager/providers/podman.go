@@ -1185,6 +1185,11 @@ func (p *Podman) IsSetupDone(ctx context.Context, containerName string) bool {
 	return err == nil
 }
 
+func (p *Podman) IsUpgrading(ctx context.Context, containerName string) bool {
+	_, err := p.run(ctx, []string{"exec", containerName, "test", "-f", "/usr/lib/otter/container.upgrading"}, runOptions{})
+	return err == nil
+}
+
 func (p *Podman) Journal(ctx context.Context, containerName string, opts containermanager.JournalOptions) error {
 	args := []string{"logs"}
 	if opts.Follow {

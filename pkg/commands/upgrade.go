@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 
 	"github.com/ferret-linux/otter/internal/insidecontainer"
 	"github.com/ferret-linux/otter/pkg/config"
@@ -20,6 +21,11 @@ type UpgradeOptions struct {
 	ContainerNames []string
 	All            bool
 	Running        bool
+	// Stdout and Stderr, if set, receive the upgrade script's output
+	// instead of the process's own stdout/stderr. Non-CLI callers (e.g.
+	// the webui) set these, the CLI leaves them at zero value.
+	Stdout io.Writer
+	Stderr io.Writer
 }
 
 type UpgradeCommand struct {
@@ -78,7 +84,7 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 			ui.DefaultLogger.Warn("locked, skipping", "name", name)
 			return true, nil
 		}
-		if err := c.upgradeContainer(ctx, name); err != nil {
+		if err := c.upgradeContainer(ctx, name, opts.Stdout, opts.Stderr); err != nil {
 			ui.DefaultLogger.Error("failed while upgrading", "name", name, "err", err)
 			return false, err
 		}
@@ -93,7 +99,7 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 	})
 }
 
-func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string) error {
+func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string, stdout, stderr io.Writer) error {
 	if _, updated, err := insidecontainer.ProvisionScripts(c.cfg.ScriptsDir); err != nil {
 		ui.DefaultLogger.Warn("failed to provision scripts", "err", err)
 	} else if updated {
@@ -109,6 +115,8 @@ func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string) erro
 	enterOpts := EnterOptions{
 		ContainerName: name,
 		CustomCommand: []string{"sh", "-c", upgradeScript},
+		Stdout:        stdout,
+		Stderr:        stderr,
 	}
 
 	if _, err := c.enterCmd.Execute(ctx, enterOpts); err != nil {

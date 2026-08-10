@@ -1128,6 +1128,11 @@ func (d *Docker) IsSetupDone(ctx context.Context, containerName string) bool {
 	return err == nil
 }
 
+func (d *Docker) IsUpgrading(ctx context.Context, containerName string) bool {
+	_, err := d.run(ctx, []string{"exec", containerName, "test", "-f", "/usr/lib/otter/container.upgrading"}, runOptions{})
+	return err == nil
+}
+
 func (d *Docker) Journal(ctx context.Context, containerName string, opts containermanager.JournalOptions) error {
 	args := []string{"logs"}
 	if opts.Follow {

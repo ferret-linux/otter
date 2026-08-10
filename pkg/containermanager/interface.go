@@ -50,6 +50,11 @@ type ContainerManager interface {
 	DeleteFromContainer(ctx context.Context, containerName string, filePath string) error
 	// IsSetupDone returns true if the container has completed its initial setup.
 	IsSetupDone(ctx context.Context, containerName string) bool
+	// IsUpgrading returns true if the container is currently running an
+	// 'otter upgrade' (otter-init --upgrade), based on the presence of the
+	// container.upgrading marker file otter-init maintains for the
+	// duration of that run.
+	IsUpgrading(ctx context.Context, containerName string) bool
 	// Journal streams the logs of a container to stdout.
 	Journal(ctx context.Context, containerName string, opts JournalOptions) error
 	// Pause freezes a running container without stopping it.
