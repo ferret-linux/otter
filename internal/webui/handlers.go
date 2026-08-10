@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/coder/websocket"
 
@@ -13,24 +14,31 @@ import (
 	"github.com/ferret-linux/otter/pkg/containermanager"
 )
 
-// rowData is the webui's per-row view model: a Container plus its lock
-// state. ListCommand doesn't include lock state (see commands.IsLocked's
-// doc comment on why it's a separate, per-container check rather than
-// something ListCommand computes for every container up front).
+// rowData is the webui's per-row view model: a Container plus its lock and
+// upgrade state. ListCommand doesn't include lock state (see
+// commands.IsLocked's doc comment on why it's a separate, per-container
+// check rather than something ListCommand computes for every container up
+// front); upgrade state is the same shape of check, via
+// containermanager.ContainerManager.IsUpgrading.
 type rowData struct {
 	containermanager.Container
-	Locked bool
+	Locked    bool
+	Upgrading bool
 }
 
-// buildRows attaches lock state to each container for template rendering.
-// This calls commands.IsLocked once per container, which is a real
-// container-filesystem check (see IsLocked's doc comment) — cheap for the
-// small number of containers typical of a single otter host, but something
-// to be aware of if that assumption stops holding.
+// buildRows attaches lock and upgrade state to each container for template
+// rendering. This calls commands.IsLocked and s.cm.IsUpgrading once per
+// container, each a real container-filesystem check — cheap for the small
+// number of containers typical of a single otter host, but something to be
+// aware of if that assumption stops holding.
 func (s *server) buildRows(ctx context.Context, containers []containermanager.Container) []rowData {
 	rows := make([]rowData, len(containers))
 	for i, c := range containers {
-		rows[i] = rowData{Container: c, Locked: commands.IsLocked(ctx, s.cm, c.Name)}
+		rows[i] = rowData{
+			Container: c,
+			Locked:    commands.IsLocked(ctx, s.cm, c.Name),
+			Upgrading: s.cm.IsUpgrading(ctx, c.Name),
+		}
 	}
 	return rows
 }
@@ -94,7 +102,11 @@ func (s *server) action(w http.ResponseWriter, r *http.Request) {
 	}
 	for _, c := range result.Containers {
 		if c.Name == name {
-			row := rowData{Container: c, Locked: commands.IsLocked(ctx, s.cm, c.Name)}
+			row := rowData{
+				Container: c,
+				Locked:    commands.IsLocked(ctx, s.cm, c.Name),
+				Upgrading: s.cm.IsUpgrading(ctx, c.Name),
+			}
 			if err := s.templates.ExecuteTemplate(w, "row", row); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
@@ -156,10 +168,20 @@ func (s *server) logsSSE(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// inspectData is the webui's inspect-page view model: an InspectResult plus
+// upgrade state. InspectResult doesn't carry this itself since it's shared
+// with the CLI's `otter inspect` (table and --json output), which has no
+// notion of live upgrade status.
+type inspectData struct {
+	*commands.InspectResult
+	Upgrading bool
+}
+
 func (s *server) inspectPage(w http.ResponseWriter, r *http.Request) {
 	name := r.PathValue("name")
+	ctx := r.Context()
 
-	result, err := commands.NewInspectCommand(s.cm).Execute(r.Context(), commands.InspectOptions{
+	result, err := commands.NewInspectCommand(s.cm).Execute(ctx, commands.InspectOptions{
 		ContainerName: name,
 		Manager:       s.cm.Name(),
 	})
@@ -168,8 +190,152 @@ func (s *server) inspectPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := s.templates.ExecuteTemplate(w, "inspect", result); err != nil {
+	data := inspectData{InspectResult: result, Upgrading: s.cm.IsUpgrading(ctx, name)}
+	if err := s.templates.ExecuteTemplate(w, "inspect", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+// upgradeAction handles POST /containers/{name}/upgrade. It starts
+// commands.NewUpgradeCommand in a background goroutine detached from this
+// request's context, so the upgrade is not interrupted by the triggering
+// request finishing, the browser tab closing, or a live-view SSE connection
+// dropping — matching how the underlying otter-init --upgrade run is not
+// tied to any particular otter-side process either. Actual upgrade-in-
+// progress status is read back from s.cm.IsUpgrading (the
+// container.upgrading marker file), not tracked separately here, so it
+// stays correct even if the webui process restarts mid-upgrade.
+//
+// If an upgrade is already in progress for this container, this is a
+// no-op: it does not start a second concurrent run.
+func (s *server) upgradeAction(w http.ResponseWriter, r *http.Request) {
+	name := r.PathValue("name")
+	ctx := r.Context()
+
+	if !s.cm.IsUpgrading(ctx, name) {
+		stream := newUpgradeStream()
+		s.upgradeStreamsMu.Lock()
+		s.upgradeStreams[name] = stream
+		s.upgradeStreamsMu.Unlock()
+
+		go func() {
+			defer func() {
+				stream.close()
+				s.upgradeStreamsMu.Lock()
+				delete(s.upgradeStreams, name)
+				s.upgradeStreamsMu.Unlock()
+			}()
+
+			sw := &upgradeStreamWriter{stream: stream}
+			if err := commands.NewUpgradeCommand(s.cfg, s.cm).Execute(context.Background(), &commands.UpgradeOptions{
+				ContainerNames: []string{name},
+				Stdout:         sw,
+				Stderr:         sw,
+			}); err != nil {
+				stream.write(fmt.Sprintf("error: %s", err.Error()))
+			}
+		}()
+	}
+
+	// The inspect page triggers this via a plain HTML form (it's a
+	// full-page navigation context, not a row in the index table), so send
+	// it on to the upgrade status page. htmx-issued requests (the index
+	// page's row actions) set the HX-Request header on every request; those
+	// get the re-rendered row fragment instead, matching every other action
+	// in this handler group.
+	if r.Header.Get("HX-Request") == "" {
+		http.Redirect(w, r, "/containers/"+name+"/upgrade", http.StatusSeeOther)
+		return
+	}
+
+	result, err := commands.NewListCommand(s.cm).Execute(ctx, commands.ListOptions{})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	for _, c := range result.Containers {
+		if c.Name == name {
+			row := rowData{
+				Container: c,
+				Locked:    commands.IsLocked(ctx, s.cm, c.Name),
+				Upgrading: s.cm.IsUpgrading(ctx, c.Name),
+			}
+			if err := s.templates.ExecuteTemplate(w, "row", row); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			return
+		}
+	}
+	w.WriteHeader(http.StatusOK)
+}
+
+// upgradePage renders the upgrade status/live-view page for a container.
+func (s *server) upgradePage(w http.ResponseWriter, r *http.Request) {
+	name := r.PathValue("name")
+	if err := s.templates.ExecuteTemplate(w, "upgrade", name); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+// upgradeSSE streams a running upgrade's output to the browser as
+// Server-Sent Events, if one is currently in progress for this container.
+// Unlike logsSSE, the upgrade itself is not tied to this connection (see
+// upgradeAction) — this handler only attaches to and detaches from it;
+// closing the SSE connection stops the browser from watching, not the
+// upgrade itself. If no upgrade is in progress, it sends a single message
+// saying so and closes.
+func (s *server) upgradeSSE(w http.ResponseWriter, r *http.Request) {
+	name := r.PathValue("name")
+
+	flusher, ok := w.(http.Flusher)
+	if !ok {
+		http.Error(w, "streaming unsupported", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/event-stream")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Connection", "keep-alive")
+	w.WriteHeader(http.StatusOK)
+	flusher.Flush()
+
+	s.upgradeStreamsMu.Lock()
+	stream, ok := s.upgradeStreams[name]
+	s.upgradeStreamsMu.Unlock()
+	if !ok {
+		fmt.Fprintf(w, "event: done\ndata: no upgrade currently in progress\n\n")
+		flusher.Flush()
+		return
+	}
+
+	buf, ch := stream.subscribe()
+	defer stream.unsubscribe(ch)
+
+	for _, line := range buf {
+		fmt.Fprintf(w, "data: %s\n\n", line)
+	}
+	flusher.Flush()
+
+	ctx := r.Context()
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case line, open := <-ch:
+			if !open {
+				fmt.Fprintf(w, "event: done\ndata: upgrade finished\n\n")
+				flusher.Flush()
+				return
+			}
+			fmt.Fprintf(w, "data: %s\n\n", line)
+			flusher.Flush()
+		case <-time.After(30 * time.Second):
+			// Keepalive comment so intermediary proxies/browsers don't
+			// time out an idle connection while the upgrade is still
+			// running but quiet.
+			fmt.Fprint(w, ": keepalive\n\n")
+			flusher.Flush()
+		}
 	}
 }
 

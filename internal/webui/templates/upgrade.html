@@ -1,0 +1,36 @@
+{{define "upgrade"}}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>otter — {{.}} — upgrade</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="terminal-body">
+  <header class="topbar">
+    <h1>🦦 {{.}} — upgrade</h1>
+    <a class="btn" href="/">&larr; back</a>
+  </header>
+  <pre id="upgrade-log" class="logs-view"></pre>
+  <script>
+    (function () {
+      const logEl = document.getElementById('upgrade-log');
+      const source = new EventSource('/sse/containers/{{.}}/upgrade');
+
+      source.onmessage = function (event) {
+        logEl.textContent += event.data + '\n';
+        logEl.scrollTop = logEl.scrollHeight;
+      };
+      source.addEventListener('done', function (event) {
+        logEl.textContent += '\n[' + event.data + ']\n';
+        source.close();
+      });
+      source.addEventListener('error', function () {
+        logEl.textContent += '\n[connection error]\n';
+      });
+    })();
+  </script>
+</body>
+</html>
+{{end}}

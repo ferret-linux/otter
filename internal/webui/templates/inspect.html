@@ -10,7 +10,16 @@
 <body>
   <header class="topbar">
     <h1>🦦 {{.Name}}</h1>
-    <a class="btn" href="/">&larr; back</a>
+    <div>
+      {{if .Upgrading}}
+        <a class="btn" href="/containers/{{.Name}}/upgrade">⟳ upgrading — view</a>
+      {{else}}
+        <form method="post" action="/containers/{{.Name}}/upgrade" style="display: inline">
+          <button class="btn" type="submit">Upgrade</button>
+        </form>
+      {{end}}
+      <a class="btn" href="/">&larr; back</a>
+    </div>
   </header>
   <main>
     <table class="containers">

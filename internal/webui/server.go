@@ -14,6 +14,7 @@ import (
 	"io/fs"
 	"net/http"
 	"net/url"
+	"sync"
 	"time"
 
 	"github.com/ferret-linux/otter/pkg/config"
@@ -35,6 +36,17 @@ type server struct {
 	rootful   bool
 	templates *template.Template
 	token     string
+
+	// upgradeStreamsMu guards upgradeStreams, the set of container names
+	// currently running an upgrade started from this webui process. Actual
+	// upgrade-in-progress status for row/inspect rendering comes from
+	// s.cm.IsUpgrading (the container.upgrading marker file, see
+	// containermanager.ContainerManager), which is authoritative and
+	// survives webui restarts; this map only exists to let a live viewer
+	// attach to a specific run's output, and is best-effort — it holds
+	// nothing that outlives the webui process.
+	upgradeStreamsMu sync.Mutex
+	upgradeStreams   map[string]*upgradeStream
 }
 
 // webUISessionCookie is the name of the cookie set once a request presents
@@ -58,7 +70,7 @@ func Serve(ctx context.Context, cm containermanager.ContainerManager, cfg *confi
 		return fmt.Errorf("failed to prepare webui static assets: %w", err)
 	}
 
-	s := &server{cm: cm, cfg: cfg, rootful: rootful, templates: tmpl, token: token}
+	s := &server{cm: cm, cfg: cfg, rootful: rootful, templates: tmpl, token: token, upgradeStreams: make(map[string]*upgradeStream)}
 
 	mux := http.NewServeMux()
 	mux.Handle("GET /static/", http.StripPrefix("/static/", http.FileServerFS(staticSub)))
@@ -71,6 +83,9 @@ func Serve(ctx context.Context, cm containermanager.ContainerManager, cfg *confi
 	mux.HandleFunc("GET /ws/containers/{name}/terminal", s.terminalWS)
 	mux.HandleFunc("GET /containers/{name}/logs", s.logsPage)
 	mux.HandleFunc("GET /sse/containers/{name}/logs", s.logsSSE)
+	mux.HandleFunc("POST /containers/{name}/upgrade", s.upgradeAction)
+	mux.HandleFunc("GET /containers/{name}/upgrade", s.upgradePage)
+	mux.HandleFunc("GET /sse/containers/{name}/upgrade", s.upgradeSSE)
 
 	httpServer := &http.Server{
 		Addr:              addr,
