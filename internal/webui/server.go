@@ -84,6 +84,7 @@ func Serve(ctx context.Context, cm containermanager.ContainerManager, cfg *confi
 	mux := http.NewServeMux()
 	mux.Handle("GET /static/", http.StripPrefix("/static/", http.FileServerFS(staticSub)))
 	mux.HandleFunc("GET /{$}", s.index)
+	mux.HandleFunc("GET /containers", s.containerList)
 	mux.HandleFunc("GET /containers/new", s.newContainerPage)
 	mux.HandleFunc("POST /containers", s.createContainer)
 	mux.HandleFunc("POST /containers/{name}/{action}", s.action)

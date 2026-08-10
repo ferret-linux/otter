@@ -3,6 +3,11 @@
   <a class="btn" href="/registry">Registry</a>
   <a class="btn btn-primary" href="/containers/new">+ New container</a>
 </div>
+{{template "container_list" .}}
+{{end}}
+
+{{define "container_list"}}
+<div id="container-list" hx-get="/containers" hx-trigger="every 3s" hx-target="this" hx-swap="outerHTML">
 {{if not .}}
   <p class="empty">No containers found. Use <code>otter create</code> to make one.</p>
 {{else}}
@@ -20,4 +25,5 @@
     </tbody>
   </table>
 {{end}}
+</div>
 {{end}}

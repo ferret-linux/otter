@@ -45,15 +45,42 @@ func (s *server) buildRows(ctx context.Context, containers []containermanager.Co
 	return rows
 }
 
+// listRows fetches the current container list and attaches lock/upgrade
+// state to each row (see buildRows), shared by index and containerList so
+// the initial page load and the polled fragment stay in sync.
+func (s *server) listRows(ctx context.Context) ([]rowData, error) {
+	result, err := commands.NewListCommand(s.cm).Execute(ctx, commands.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
+	return s.buildRows(ctx, result.Containers), nil
+}
+
 func (s *server) index(w http.ResponseWriter, r *http.Request) {
-	result, err := commands.NewListCommand(s.cm).Execute(r.Context(), commands.ListOptions{})
+	rows, err := s.listRows(r.Context())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	rows := s.buildRows(r.Context(), result.Containers)
 	if err := s.templates.ExecuteTemplate(w, "layout", rows); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+// containerList handles GET /containers: the same data as index, rendered
+// as just the container_list fragment (no layout/toolbar). It's polled by
+// the dashboard (see templates/index.html's "container_list" block) so the
+// table stays current if a container's state changes elsewhere — the CLI,
+// another browser tab, or a crash — without the user reloading.
+func (s *server) containerList(w http.ResponseWriter, r *http.Request) {
+	rows, err := s.listRows(r.Context())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := s.templates.ExecuteTemplate(w, "container_list", rows); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
