@@ -67,28 +67,6 @@
       "build_number": 22
     },
     {
-      "name": "debian-unstable",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:unstable",
-      "fallback_vendor_image": "docker.io/library/debian:unstable",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-10T12:10:04Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1593979258,
-          "disk_size": 1593979258
-        },
-        "arm64": {
-          "compressed_size": 1563654047,
-          "disk_size": 1563654047
-        }
-      },
-      "build_number": 48
-    },
-    {
       "name": "kali",
       "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
       "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest",
@@ -590,6 +568,28 @@
         }
       },
       "build_number": 50
+    },
+    {
+      "name": "debian-unstable",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:unstable",
+      "fallback_vendor_image": "docker.io/library/debian:unstable",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-10T20:49:48Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1613796220,
+          "disk_size": 1613796220
+        },
+        "arm64": {
+          "compressed_size": 1592017822,
+          "disk_size": 1592017822
+        }
+      },
+      "build_number": 49
     }
   ]
 }
