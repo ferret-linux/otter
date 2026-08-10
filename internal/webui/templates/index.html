@@ -1,0 +1,19 @@
+{{define "content"}}
+{{if not .}}
+  <p class="empty">No containers found. Use <code>otter create</code> to make one.</p>
+{{else}}
+  <table class="containers">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Status</th>
+        <th>Image</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="container-rows">
+      {{range .}}{{template "row" .}}{{end}}
+    </tbody>
+  </table>
+{{end}}
+{{end}}

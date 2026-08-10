@@ -611,6 +611,7 @@ func (n *Nerdctl) Enter(
 		options.CleanPath,
 		options.EmptyEnv,
 		options.AddEnv,
+		options.ForceTTY,
 	)
 	if err != nil {
 		return err
@@ -623,7 +624,7 @@ func (n *Nerdctl) Enter(
 		return fmt.Errorf("container '%s' is not running, use 'otter start' first", options.ContainerName)
 	}
 
-	runOpt := runOptions{Interactive: true}
+	runOpt := runOptions{Interactive: true, Stdin: options.Stdin, Stdout: options.Stdout, Stderr: options.Stderr}
 	if options.NoTTY {
 		runOpt = runOptions{}
 	}
@@ -647,6 +648,15 @@ func (n *Nerdctl) run(ctx context.Context, args []string, opts runOptions) (stri
 		cmd.Stdout = os.Stdout
 		cmd.Stdin = os.Stdin
 		cmd.Stderr = os.Stderr
+		if opts.Stdin != nil {
+			cmd.Stdin = opts.Stdin
+		}
+		if opts.Stdout != nil {
+			cmd.Stdout = opts.Stdout
+		}
+		if opts.Stderr != nil {
+			cmd.Stderr = opts.Stderr
+		}
 
 		err := cmd.Run()
 		if err != nil {
@@ -679,6 +689,7 @@ func (n *Nerdctl) generateEnterCommand(
 	cleanPath bool,
 	emptyEnv bool,
 	addEnv []string,
+	forceTTY bool,
 ) ([]string, *containermanager.InspectResult, error) {
 	cmd := []string{}
 
@@ -703,7 +714,10 @@ func (n *Nerdctl) generateEnterCommand(
 		cmd = append(cmd, fmt.Sprintf("--user=%s", userEnv.User))
 	}
 
-	if !noTTY && ttyutil.IsTTY() {
+	// forceTTY bypasses local-terminal auto-detection for callers (e.g. the
+	// webui) where otter's own terminal status is irrelevant and a
+	// container-side TTY is always wanted.
+	if !noTTY && (forceTTY || ttyutil.IsTTY()) {
 		cmd = append(cmd, "--tty")
 	}
 

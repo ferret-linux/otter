@@ -1,0 +1,53 @@
+{{define "terminal"}}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>otter — {{.}} — terminal</title>
+  <link rel="stylesheet" href="/static/xterm.css">
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/xterm.js"></script>
+  <script src="/static/xterm-addon-fit.js"></script>
+</head>
+<body class="terminal-body">
+  <header class="topbar">
+    <h1>🦦 {{.}}</h1>
+    <a class="btn" href="/">&larr; back</a>
+  </header>
+  <div id="terminal"></div>
+  <script>
+    (function () {
+      const term = new Terminal({ cursorBlink: true, convertEol: true });
+      const fitAddon = new FitAddon.FitAddon();
+      term.loadAddon(fitAddon);
+      term.open(document.getElementById('terminal'));
+      fitAddon.fit();
+
+      const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const socket = new WebSocket(proto + '//' + location.host + '/ws/containers/{{.}}/terminal');
+      socket.binaryType = 'arraybuffer';
+
+      socket.addEventListener('open', function () { term.focus(); });
+      socket.addEventListener('message', function (event) {
+        term.write(new Uint8Array(event.data));
+      });
+      socket.addEventListener('close', function () {
+        term.write('\r\n[session ended]\r\n');
+      });
+      socket.addEventListener('error', function () {
+        term.write('\r\n[connection error]\r\n');
+      });
+
+      term.onData(function (data) {
+        if (socket.readyState === WebSocket.OPEN) {
+          socket.send(new TextEncoder().encode(data));
+        }
+      });
+
+      window.addEventListener('resize', function () { fitAddon.fit(); });
+    })();
+  </script>
+</body>
+</html>
+{{end}}

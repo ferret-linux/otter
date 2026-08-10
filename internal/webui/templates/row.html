@@ -1,0 +1,29 @@
+{{define "row"}}
+<tr id="row-{{.Name}}">
+  <td>{{.Name}}</td>
+  <td>
+    {{if .IsRunning}}
+      <span class="status status-running">● running</span>
+    {{else}}
+      <span class="status status-stopped">○ {{.Status}}</span>
+    {{end}}
+  </td>
+  <td>{{.Image}}</td>
+  <td class="actions">
+    {{if .IsRunning}}
+      <button class="btn" hx-post="/containers/{{.Name}}/stop" hx-target="#row-{{.Name}}" hx-swap="outerHTML">Stop</button>
+      <button class="btn" hx-post="/containers/{{.Name}}/pause" hx-target="#row-{{.Name}}" hx-swap="outerHTML">Pause</button>
+      <a class="btn" href="/containers/{{.Name}}/terminal">Terminal</a>
+    {{else}}
+      <button class="btn" hx-post="/containers/{{.Name}}/start" hx-target="#row-{{.Name}}" hx-swap="outerHTML">Start</button>
+    {{end}}
+    <button
+      class="btn btn-danger"
+      hx-post="/containers/{{.Name}}/remove"
+      hx-target="#row-{{.Name}}"
+      hx-swap="outerHTML"
+      hx-confirm="Remove container '{{.Name}}'? This cannot be undone."
+    >Remove</button>
+  </td>
+</tr>
+{{end}}

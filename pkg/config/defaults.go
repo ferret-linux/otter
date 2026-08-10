@@ -19,6 +19,10 @@ func defaults() fileConfig {
 			ContainerManager: "autodetect",
 			SudoProgram:      "autodetect",
 		},
+		WebUI: webUIConfig{
+			Bind: "127.0.0.1",
+			Port: 8080,
+		},
 	}
 }
 
@@ -41,6 +45,8 @@ func toValues(cfg fileConfig) *Values {
 		ScriptsDir:                 resolveScriptsDir(cfg.Settings.ScriptsDir),
 		StalenessWarnThreshold:     cfg.Images.StalenessWarnThreshold,
 		StalenessAutopullThreshold: cfg.Images.StalenessAutopullThreshold,
+		DefaultWebUIBind:           cfg.WebUI.Bind,
+		DefaultWebUIPort:           cfg.WebUI.Port,
 	}
 }
 

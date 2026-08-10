@@ -124,6 +124,7 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		{newStopCommand, stdOpts},
 		{newUnlockCommand, stdOpts},
 		{newUpgradeCommand, stdOpts},
+		{newWebUICommand, stdOpts},
 	}
 
 	commands := make([]*cli.Command, len(specs))

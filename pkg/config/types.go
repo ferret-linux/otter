@@ -25,11 +25,17 @@ type preferencesConfig struct {
 	NoEntry          bool   `toml:"no-entry"`
 }
 
+type webUIConfig struct {
+	Bind string `toml:"bind"`
+	Port int    `toml:"port"`
+}
+
 type fileConfig struct {
 	Container   containerConfig   `toml:"container"`
 	Images      imagesConfig      `toml:"images"`
 	Settings    settingsConfig    `toml:"settings"`
 	Preferences preferencesConfig `toml:"preferences"`
+	WebUI       webUIConfig       `toml:"webui"`
 }
 
 type Values struct {
@@ -46,4 +52,6 @@ type Values struct {
 	ScriptsDir                 string
 	StalenessWarnThreshold     int
 	StalenessAutopullThreshold int
+	DefaultWebUIBind           string
+	DefaultWebUIPort           int
 }
