@@ -116,6 +116,12 @@ type JournalOptions struct {
 	Until      string
 	Timestamps bool
 	Tail       int
+	// Stdout and Stderr, when non-nil, are used instead of the process's
+	// own os.Stdout/os.Stderr for the log output. Nil (the CLI default)
+	// preserves existing behavior exactly. See EnterOptions.Stdout/Stderr
+	// for the same pattern.
+	Stdout io.Writer
+	Stderr io.Writer
 }
 
 type RmOptions struct {

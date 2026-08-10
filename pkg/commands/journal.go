@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/ferret-linux/otter/pkg/containermanager"
@@ -16,6 +17,11 @@ type JournalOptions struct {
 	Until         string
 	Timestamps    bool
 	Tail          int
+	// Stdout and Stderr are passed straight through to
+	// containermanager.JournalOptions; see the doc comment there. Non-CLI
+	// callers (e.g. the webui) set these, the CLI leaves them at zero value.
+	Stdout io.Writer
+	Stderr io.Writer
 }
 
 type JournalCommand struct {
@@ -47,6 +53,8 @@ func (c *JournalCommand) Execute(ctx context.Context, opts JournalOptions) error
 		Until:      opts.Until,
 		Timestamps: opts.Timestamps,
 		Tail:       opts.Tail,
+		Stdout:     opts.Stdout,
+		Stderr:     opts.Stderr,
 	}); err != nil {
 		return fmt.Errorf("failed to get container journal: %w", err)
 	}

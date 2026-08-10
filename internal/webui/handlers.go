@@ -1,6 +1,7 @@
 package webui
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -76,6 +77,51 @@ func (s *server) terminalPage(w http.ResponseWriter, r *http.Request) {
 	name := r.PathValue("name")
 	if err := s.templates.ExecuteTemplate(w, "terminal", name); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func (s *server) logsPage(w http.ResponseWriter, r *http.Request) {
+	name := r.PathValue("name")
+	if err := s.templates.ExecuteTemplate(w, "logs", name); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+// logsSSE streams a container's log output to the browser as
+// Server-Sent Events, via the same commands.NewJournalCommand() the CLI's
+// `otter journal` uses — just with Stdout/Stderr redirected to the SSE
+// response instead of the otter process's own stdout/stderr. It always
+// follows, capped at sseLogTailLines of initial history, so opening the
+// page doesn't replay a container's entire log history. The connection
+// ends when the client disconnects (r.Context() is canceled, which
+// propagates down to the exec.CommandContext driving `docker/podman/nerdctl
+// logs -f`) or when Journal returns.
+func (s *server) logsSSE(w http.ResponseWriter, r *http.Request) {
+	name := r.PathValue("name")
+
+	flusher, ok := w.(http.Flusher)
+	if !ok {
+		http.Error(w, "streaming unsupported", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/event-stream")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Connection", "keep-alive")
+	w.WriteHeader(http.StatusOK)
+	flusher.Flush()
+
+	sw := &sseLogWriter{w: w, flusher: flusher}
+
+	if err := commands.NewJournalCommand(s.cm).Execute(r.Context(), commands.JournalOptions{
+		ContainerName: name,
+		Follow:        true,
+		Tail:          sseLogTailLines,
+		Stdout:        sw,
+		Stderr:        sw,
+	}); err != nil {
+		fmt.Fprintf(w, "event: error\ndata: %s\n\n", err.Error())
+		flusher.Flush()
 	}
 }
 

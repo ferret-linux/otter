@@ -941,6 +941,6 @@ func (n *Nerdctl) Journal(ctx context.Context, containerName string, opts contai
 		args = append(args, "--tail", strconv.Itoa(opts.Tail))
 	}
 	args = append(args, containerName)
-	_, err := n.run(ctx, args, runOptions{Interactive: true})
+	_, err := n.run(ctx, args, runOptions{Interactive: true, Stdout: opts.Stdout, Stderr: opts.Stderr})
 	return err
 }

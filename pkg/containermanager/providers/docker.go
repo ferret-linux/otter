@@ -1146,6 +1146,6 @@ func (d *Docker) Journal(ctx context.Context, containerName string, opts contain
 		args = append(args, "--tail", strconv.Itoa(opts.Tail))
 	}
 	args = append(args, containerName)
-	_, err := d.run(ctx, args, runOptions{Interactive: true})
+	_, err := d.run(ctx, args, runOptions{Interactive: true, Stdout: opts.Stdout, Stderr: opts.Stderr})
 	return err
 }

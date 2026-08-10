@@ -69,6 +69,8 @@ func Serve(ctx context.Context, cm containermanager.ContainerManager, cfg *confi
 	mux.HandleFunc("GET /containers/{name}/inspect", s.inspectPage)
 	mux.HandleFunc("GET /containers/{name}/terminal", s.terminalPage)
 	mux.HandleFunc("GET /ws/containers/{name}/terminal", s.terminalWS)
+	mux.HandleFunc("GET /containers/{name}/logs", s.logsPage)
+	mux.HandleFunc("GET /sse/containers/{name}/logs", s.logsSSE)
 
 	httpServer := &http.Server{
 		Addr:              addr,
