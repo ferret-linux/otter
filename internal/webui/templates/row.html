@@ -13,6 +13,7 @@
     {{if .IsRunning}}
       <button class="btn" hx-post="/containers/{{.Name}}/stop" hx-target="#row-{{.Name}}" hx-swap="outerHTML">Stop</button>
       <button class="btn" hx-post="/containers/{{.Name}}/pause" hx-target="#row-{{.Name}}" hx-swap="outerHTML">Pause</button>
+      <button class="btn" hx-post="/containers/{{.Name}}/restart" hx-target="#row-{{.Name}}" hx-swap="outerHTML">Restart</button>
       <a class="btn" href="/containers/{{.Name}}/terminal">Terminal</a>
     {{else}}
       <button class="btn" hx-post="/containers/{{.Name}}/start" hx-target="#row-{{.Name}}" hx-swap="outerHTML">Start</button>

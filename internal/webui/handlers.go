@@ -40,6 +40,8 @@ func (s *server) action(w http.ResponseWriter, r *http.Request) {
 		err = commands.NewStopCommand(s.cm).Execute(ctx, &commands.StopOptions{ContainerNames: []string{name}})
 	case "pause":
 		err = commands.NewPauseCommand(s.cm).Execute(ctx, &commands.PauseOptions{ContainerNames: []string{name}})
+	case "restart":
+		err = commands.NewRestartCommand(s.cm).Execute(ctx, &commands.RestartOptions{ContainerNames: []string{name}})
 	case "remove":
 		_, err = commands.NewRmCommand(s.cm).Execute(ctx, commands.RmOptions{ContainerNames: []string{name}})
 	default:
