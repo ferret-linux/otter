@@ -16,6 +16,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
@@ -30,6 +31,8 @@ const shutdownTimeout = 5 * time.Second
 
 type server struct {
 	cm        containermanager.ContainerManager
+	cfg       *config.Values
+	rootful   bool
 	templates *template.Template
 	token     string
 }
@@ -44,7 +47,7 @@ const webUISessionCookie = "otter_webui_session"
 // Serve starts the otter webui HTTP server on addr and blocks until ctx is
 // canceled or the server fails. On cancellation it shuts the server down
 // gracefully.
-func Serve(ctx context.Context, cm containermanager.ContainerManager, addr string, token string) error {
+func Serve(ctx context.Context, cm containermanager.ContainerManager, cfg *config.Values, rootful bool, addr string, token string) error {
 	tmpl, err := template.ParseFS(templateFS, "templates/*.html")
 	if err != nil {
 		return fmt.Errorf("failed to parse webui templates: %w", err)
@@ -55,11 +58,13 @@ func Serve(ctx context.Context, cm containermanager.ContainerManager, addr strin
 		return fmt.Errorf("failed to prepare webui static assets: %w", err)
 	}
 
-	s := &server{cm: cm, templates: tmpl, token: token}
+	s := &server{cm: cm, cfg: cfg, rootful: rootful, templates: tmpl, token: token}
 
 	mux := http.NewServeMux()
 	mux.Handle("GET /static/", http.StripPrefix("/static/", http.FileServerFS(staticSub)))
 	mux.HandleFunc("GET /{$}", s.index)
+	mux.HandleFunc("GET /containers/new", s.newContainerPage)
+	mux.HandleFunc("POST /containers", s.createContainer)
 	mux.HandleFunc("POST /containers/{name}/{action}", s.action)
 	mux.HandleFunc("GET /containers/{name}/terminal", s.terminalPage)
 	mux.HandleFunc("GET /ws/containers/{name}/terminal", s.terminalWS)

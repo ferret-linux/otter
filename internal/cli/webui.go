@@ -63,7 +63,7 @@ func webuiAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) erro
 	}
 
 	addr := fmt.Sprintf("%s:%d", bind, cmd.Int("port"))
-	if err := webui.Serve(ctx, containerManager, addr, token); err != nil {
+	if err := webui.Serve(ctx, containerManager, cfg, cmd.Bool("root"), addr, token); err != nil {
 		return fmt.Errorf("failed to run webui: %w", err)
 	}
 	return nil

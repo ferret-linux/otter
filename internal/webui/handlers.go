@@ -2,6 +2,8 @@ package webui
 
 import (
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/coder/websocket"
 
@@ -75,6 +77,163 @@ func (s *server) terminalPage(w http.ResponseWriter, r *http.Request) {
 	if err := s.templates.ExecuteTemplate(w, "terminal", name); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+// createFormData holds the create form's field values, both for the
+// initial empty form and for re-rendering it with the submitted values and
+// an inline error if creation fails, so nothing typed is lost.
+type createFormData struct {
+	Name               string
+	Image              string
+	Hostname           string
+	Shell              string
+	Clone              string
+	Home               string
+	Volumes            string
+	AdditionalFlags    string
+	AdditionalPackages string
+	InitHooks          string
+	PreInitHooks       string
+	Memory             string
+	CPUThreads         string
+	Platform           string
+	AlwaysPull         bool
+	Init               bool
+	Nvidia             bool
+	NoUsernsLimit      bool
+	UnshareDevsys      bool
+	UnshareGroups      bool
+	UnshareIPC         bool
+	UnshareNetNS       bool
+	UnshareProcess     bool
+	GenerateEntry      bool
+	Nopasswd           bool
+	DefaultImage       string
+	Error              string
+}
+
+func (s *server) newContainerPage(w http.ResponseWriter, r *http.Request) {
+	data := createFormData{
+		GenerateEntry: true,
+		DefaultImage:  s.cfg.DefaultContainerImage,
+	}
+	if err := s.templates.ExecuteTemplate(w, "create", data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+// createContainer handles POST /containers via commands.NewCreateCommand —
+// the same command the CLI's `otter create` uses. It always creates in
+// whatever mode this webui process itself is running in (s.rootful), since
+// container privilege comes from which containermanager built it, not a
+// per-request choice; there's no root toggle in the form. On success it
+// redirects to /; on failure it re-renders the form with the submitted
+// values and an inline error.
+func (s *server) createContainer(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	data := createFormData{
+		Name:               r.FormValue("name"),
+		Image:              r.FormValue("image"),
+		Hostname:           r.FormValue("hostname"),
+		Shell:              r.FormValue("shell"),
+		Clone:              r.FormValue("clone"),
+		Home:               r.FormValue("home"),
+		Volumes:            r.FormValue("volumes"),
+		AdditionalFlags:    r.FormValue("additional-flags"),
+		AdditionalPackages: r.FormValue("additional-packages"),
+		InitHooks:          r.FormValue("init-hooks"),
+		PreInitHooks:       r.FormValue("pre-init-hooks"),
+		Memory:             r.FormValue("memory"),
+		CPUThreads:         r.FormValue("cpu-threads"),
+		Platform:           r.FormValue("platform"),
+		AlwaysPull:         r.FormValue("always-pull") != "",
+		Init:               r.FormValue("init") != "",
+		Nvidia:             r.FormValue("nvidia") != "",
+		NoUsernsLimit:      r.FormValue("no-userns-limit") != "",
+		UnshareDevsys:      r.FormValue("unshare-devsys") != "",
+		UnshareGroups:      r.FormValue("unshare-groups") != "",
+		UnshareIPC:         r.FormValue("unshare-ipc") != "",
+		UnshareNetNS:       r.FormValue("unshare-netns") != "",
+		UnshareProcess:     r.FormValue("unshare-process") != "",
+		GenerateEntry:      r.FormValue("generate-entry") != "",
+		Nopasswd:           r.FormValue("nopasswd") != "",
+		DefaultImage:       s.cfg.DefaultContainerImage,
+	}
+
+	cpuThreads := 0
+	if data.CPUThreads != "" {
+		var err error
+		cpuThreads, err = strconv.Atoi(data.CPUThreads)
+		if err != nil {
+			data.Error = "cpu threads must be a whole number"
+			s.renderCreateForm(w, data)
+			return
+		}
+	}
+
+	opts := commands.CreateOptions{
+		ContainerImage:          data.Image,
+		ContainerName:           data.Name,
+		ContainerHostname:       data.Hostname,
+		ContainerClone:          data.Clone,
+		ContainerShell:          data.Shell,
+		ContainerUserCustomHome: data.Home,
+		ContainerPlatform:       data.Platform,
+		Nopasswd:                data.Nopasswd,
+		UnshareDevsys:           data.UnshareDevsys,
+		// Init implies unsharing process and group namespaces, matching
+		// the CLI's own --init handling (internal/cli/create.go).
+		UnshareGroups:        data.UnshareGroups || data.Init,
+		UnshareIpc:           data.UnshareIPC,
+		UnshareNetNs:         data.UnshareNetNS,
+		UnshareProcess:       data.UnshareProcess || data.Init,
+		AdditionalFlags:      splitLines(data.AdditionalFlags),
+		AdditionalVolumes:    splitLines(data.Volumes),
+		AdditionalPackages:   splitLines(data.AdditionalPackages),
+		ContainerPreInitHook: data.PreInitHooks,
+		ContainerInitHook:    data.InitHooks,
+		Init:                 data.Init,
+		Nvidia:               data.Nvidia,
+		NoUsernsLimit:        data.NoUsernsLimit,
+		Memory:               data.Memory,
+		CPUThreads:           cpuThreads,
+		GenerateEntry:        data.GenerateEntry,
+		Rootful:              s.rootful,
+		ContainerAlwaysPull:  data.AlwaysPull,
+	}
+
+	if _, err := commands.NewCreateCommand(s.cfg, s.cm, nil).Execute(r.Context(), opts); err != nil {
+		data.Error = err.Error()
+		s.renderCreateForm(w, data)
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func (s *server) renderCreateForm(w http.ResponseWriter, data createFormData) {
+	w.WriteHeader(http.StatusUnprocessableEntity)
+	if err := s.templates.ExecuteTemplate(w, "create", data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+// splitLines splits newline-separated textarea input into a trimmed,
+// non-empty slice, matching the CLI's repeatable-flag semantics for the
+// same fields (--volume, --additional-flags, --additional-packages).
+func splitLines(in string) []string {
+	var out []string
+	for _, line := range strings.Split(in, "\n") {
+		line = strings.TrimSpace(line)
+		if line != "" {
+			out = append(out, line)
+		}
+	}
+	return out
 }
 
 // terminalWS bridges a browser websocket to an interactive shell inside the
