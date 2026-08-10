@@ -1,6 +1,7 @@
 package webui
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -12,6 +13,28 @@ import (
 	"github.com/ferret-linux/otter/pkg/containermanager"
 )
 
+// rowData is the webui's per-row view model: a Container plus its lock
+// state. ListCommand doesn't include lock state (see commands.IsLocked's
+// doc comment on why it's a separate, per-container check rather than
+// something ListCommand computes for every container up front).
+type rowData struct {
+	containermanager.Container
+	Locked bool
+}
+
+// buildRows attaches lock state to each container for template rendering.
+// This calls commands.IsLocked once per container, which is a real
+// container-filesystem check (see IsLocked's doc comment) — cheap for the
+// small number of containers typical of a single otter host, but something
+// to be aware of if that assumption stops holding.
+func (s *server) buildRows(ctx context.Context, containers []containermanager.Container) []rowData {
+	rows := make([]rowData, len(containers))
+	for i, c := range containers {
+		rows[i] = rowData{Container: c, Locked: commands.IsLocked(ctx, s.cm, c.Name)}
+	}
+	return rows
+}
+
 func (s *server) index(w http.ResponseWriter, r *http.Request) {
 	result, err := commands.NewListCommand(s.cm).Execute(r.Context(), commands.ListOptions{})
 	if err != nil {
@@ -19,7 +42,8 @@ func (s *server) index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := s.templates.ExecuteTemplate(w, "layout", result.Containers); err != nil {
+	rows := s.buildRows(r.Context(), result.Containers)
+	if err := s.templates.ExecuteTemplate(w, "layout", rows); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -42,6 +66,10 @@ func (s *server) action(w http.ResponseWriter, r *http.Request) {
 		err = commands.NewPauseCommand(s.cm).Execute(ctx, &commands.PauseOptions{ContainerNames: []string{name}})
 	case "restart":
 		err = commands.NewRestartCommand(s.cm).Execute(ctx, &commands.RestartOptions{ContainerNames: []string{name}})
+	case "lock":
+		err = commands.NewLockCommand(s.cm).Execute(ctx, commands.LockOptions{ContainerNames: []string{name}})
+	case "unlock":
+		err = commands.NewUnlockCommand(s.cm).Execute(ctx, commands.UnlockOptions{ContainerNames: []string{name}})
 	case "remove":
 		_, err = commands.NewRmCommand(s.cm).Execute(ctx, commands.RmOptions{ContainerNames: []string{name}})
 	default:
@@ -66,7 +94,8 @@ func (s *server) action(w http.ResponseWriter, r *http.Request) {
 	}
 	for _, c := range result.Containers {
 		if c.Name == name {
-			if err := s.templates.ExecuteTemplate(w, "row", c); err != nil {
+			row := rowData{Container: c, Locked: commands.IsLocked(ctx, s.cm, c.Name)}
+			if err := s.templates.ExecuteTemplate(w, "row", row); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
 			return

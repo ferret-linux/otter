@@ -1,6 +1,6 @@
 {{define "row"}}
 <tr id="row-{{.Name}}">
-  <td>{{.Name}}</td>
+  <td>{{.Name}}{{if .Locked}} <span title="locked">🔒</span>{{end}}</td>
   <td>
     {{if .IsRunning}}
       <span class="status status-running">● running</span>
@@ -20,6 +20,11 @@
     {{end}}
     <a class="btn" href="/containers/{{.Name}}/logs">Logs</a>
     <a class="btn" href="/containers/{{.Name}}/inspect">Inspect</a>
+    {{if .Locked}}
+      <button class="btn" hx-post="/containers/{{.Name}}/unlock" hx-target="#row-{{.Name}}" hx-swap="outerHTML">Unlock</button>
+    {{else}}
+      <button class="btn" hx-post="/containers/{{.Name}}/lock" hx-target="#row-{{.Name}}" hx-swap="outerHTML">Lock</button>
+    {{end}}
     <button
       class="btn btn-danger"
       hx-post="/containers/{{.Name}}/remove"
