@@ -519,6 +519,13 @@ func (p *Podman) run(ctx context.Context, args []string, opts runOptions) (strin
 	cmd := exec.CommandContext(ctx, command, args...)
 
 	if opts.Interactive {
+		if opts.Resize != nil {
+			if err := runInteractivePTY(ctx, cmd, opts); err != nil {
+				return "", fmt.Errorf("error running the interactive command :%w", err)
+			}
+			return "", nil
+		}
+
 		cmd.Stdout = os.Stdout
 		cmd.Stdin = os.Stdin
 		cmd.Stderr = os.Stderr
@@ -583,7 +590,7 @@ func (p *Podman) Enter(
 		return fmt.Errorf("container '%s' is not running, use 'otter start' first", options.ContainerName)
 	}
 
-	runOpt := runOptions{Interactive: true, Stdin: options.Stdin, Stdout: options.Stdout, Stderr: options.Stderr}
+	runOpt := runOptions{Interactive: true, Stdin: options.Stdin, Stdout: options.Stdout, Stderr: options.Stderr, Resize: options.Resize}
 	if options.NoTTY {
 		runOpt = runOptions{}
 	}

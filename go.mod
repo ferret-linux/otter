@@ -11,6 +11,7 @@ require (
 	github.com/BurntSushi/toml v1.6.0
 	github.com/charmbracelet/colorprofile v0.4.3
 	github.com/coder/websocket v1.8.15
+	github.com/creack/pty v1.1.24
 	github.com/urfave/cli/v3 v3.10.1
 	golang.org/x/term v0.45.0
 )

@@ -6,6 +6,7 @@ import (
 	"github.com/coder/websocket"
 
 	"github.com/ferret-linux/otter/pkg/commands"
+	"github.com/ferret-linux/otter/pkg/containermanager"
 )
 
 func (s *server) index(w http.ResponseWriter, r *http.Request) {
@@ -81,6 +82,10 @@ func (s *server) terminalPage(w http.ResponseWriter, r *http.Request) {
 // uses — just with Stdin/Stdout/Stderr redirected to the websocket instead
 // of the otter process's own terminal. See containermanager.EnterOptions and
 // pkg/commands.EnterOptions for the redirection fields.
+//
+// Terminal input and resize control messages share this one connection:
+// binary messages are input bytes, text messages are JSON resize events —
+// see wsTerminalReader. Output only ever flows as binary.
 func (s *server) terminalWS(w http.ResponseWriter, r *http.Request) {
 	name := r.PathValue("name")
 
@@ -91,15 +96,18 @@ func (s *server) terminalWS(w http.ResponseWriter, r *http.Request) {
 	defer conn.CloseNow()
 
 	ctx := r.Context()
-	stream := websocket.NetConn(ctx, conn, websocket.MessageBinary)
-	defer stream.Close()
+	resizeCh := make(chan containermanager.WinSize, 1)
+	reader := newWSTerminalReader(ctx, conn, resizeCh)
+	writer := websocket.NetConn(ctx, conn, websocket.MessageBinary)
+	defer writer.Close()
 
 	_, err = commands.NewEnterCommand(s.cm).Execute(ctx, commands.EnterOptions{
 		ContainerName: name,
 		ForceTTY:      true,
-		Stdin:         stream,
-		Stdout:        stream,
-		Stderr:        stream,
+		Stdin:         reader,
+		Stdout:        writer,
+		Stderr:        writer,
+		Resize:        resizeCh,
 	})
 
 	reason := "session ended"
