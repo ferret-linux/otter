@@ -47,6 +47,8 @@ func toValues(cfg fileConfig) *Values {
 		StalenessAutopullThreshold: cfg.Images.StalenessAutopullThreshold,
 		DefaultWebUIBind:           cfg.WebUI.Bind,
 		DefaultWebUIPort:           cfg.WebUI.Port,
+		DefaultWebUIAllowRemote:    cfg.WebUI.AllowRemote,
+		DefaultWebUIToken:          cfg.WebUI.Token,
 	}
 }
 
