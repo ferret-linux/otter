@@ -53,31 +53,55 @@ func inspectHomeValue(result *containermanager.InspectResult) string {
 	return result.ContainerHome
 }
 
-func printInspectJSON(result *containermanager.InspectResult, locked bool, opts InspectOptions) error {
-	out := struct {
-		ID             string `json:"id"`
-		Name           string `json:"name"`
-		Created        string `json:"created"`
-		Status         string `json:"status"`
-		Image          string `json:"image"`
-		Platform       string `json:"platform"`
-		Hostname       string `json:"hostname"`
-		Shell          string `json:"shell"`
-		Home           string `json:"home"`
-		Locked         bool   `json:"locked"`
-		Rootful        bool   `json:"rootful"`
-		Manager        string `json:"manager"`
-		Memory         string `json:"memory"`
-		CPUThreads     int    `json:"cpu_threads"`
-		Init           bool   `json:"init"`
-		Nvidia         bool   `json:"nvidia"`
-		UnshareIPC     bool   `json:"unshare_ipc"`
-		UnshareNetNS   bool   `json:"unshare_netns"`
-		UnshareProcess bool   `json:"unshare_process"`
-		UnshareDevsys  bool   `json:"unshare_devsys"`
-		UnshareGroups  bool   `json:"unshare_groups"`
-		UsernsNoLimit  bool   `json:"userns_nolimit"`
-	}{
+// InspectResult is the data `otter inspect` surfaces for a single
+// container, returned by Execute so both the CLI and the webui can render
+// it without Execute writing to stdout itself.
+type InspectResult struct {
+	ID             string
+	Name           string
+	Created        string
+	Status         string
+	Image          string
+	Platform       string
+	Hostname       string
+	Shell          string
+	Home           string
+	Locked         bool
+	Rootful        bool
+	Manager        string
+	Memory         string
+	CPUThreads     int
+	Init           bool
+	Nvidia         bool
+	UnshareIPC     bool
+	UnshareNetNS   bool
+	UnshareProcess bool
+	UnshareDevsys  bool
+	UnshareGroups  bool
+	UsernsNoLimit  bool
+}
+
+func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) (*InspectResult, error) {
+	if opts.ContainerName == "" {
+		return nil, errors.New("please specify a container name")
+	}
+
+	if strings.Contains(opts.ContainerName, ",") {
+		return nil, errors.New("inspect only accepts a single container name")
+	}
+
+	if !c.containerManager.Exists(ctx, opts.ContainerName) {
+		return nil, fmt.Errorf("container '%s' not found", opts.ContainerName)
+	}
+
+	result, err := c.containerManager.InspectContainer(ctx, opts.ContainerName)
+	if err != nil {
+		return nil, fmt.Errorf("failed to inspect container: %w", err)
+	}
+
+	locked := isLocked(ctx, c.containerManager, opts.ContainerName)
+
+	return &InspectResult{
 		ID:             result.ContainerID,
 		Name:           opts.ContainerName,
 		Created:        result.ContainerCreated,
@@ -100,42 +124,18 @@ func printInspectJSON(result *containermanager.InspectResult, locked bool, opts 
 		UnshareDevsys:  result.UnshareDevsys,
 		UnshareGroups:  result.UnshareGroups,
 		UsernsNoLimit:  result.UsernsNoLimit,
-	}
-
-	enc := json.NewEncoder(os.Stdout)
-	enc.SetIndent("", "  ")
-	if err := enc.Encode(out); err != nil {
-		return fmt.Errorf("failed to encode inspect output as JSON: %w", err)
-	}
-	return nil
+	}, nil
 }
 
-func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error {
-	if opts.ContainerName == "" {
-		return errors.New("please specify a container name")
-	}
-
-	if strings.Contains(opts.ContainerName, ",") {
-		return errors.New("inspect only accepts a single container name")
-	}
-
-	if !c.containerManager.Exists(ctx, opts.ContainerName) {
-		return fmt.Errorf("container '%s' not found", opts.ContainerName)
-	}
-
-	result, err := c.containerManager.InspectContainer(ctx, opts.ContainerName)
-	if err != nil {
-		return fmt.Errorf("failed to inspect container: %w", err)
-	}
-
-	locked := isLocked(ctx, c.containerManager, opts.ContainerName)
-
-	if opts.JSON {
-		return printInspectJSON(result, locked, opts)
+// PrintInspect renders an InspectResult to stdout, either as JSON or as the
+// CLI's sectioned table, matching `otter inspect` / `otter inspect --json`.
+func PrintInspect(result *InspectResult, jsonMode bool) error {
+	if jsonMode {
+		return printInspectJSON(result)
 	}
 
 	// Trim Created timestamp to readable format
-	created := result.ContainerCreated
+	created := result.Created
 	if len(created) > 19 {
 		created = created[:10] + " " + created[11:19]
 	}
@@ -150,7 +150,7 @@ func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error
 		cpuThreads = fmt.Sprintf("%d threads", result.CPUThreads)
 	}
 
-	id := result.ContainerID
+	id := result.ID
 	if len(id) > containerIDDisplayLength {
 		id = id[:containerIDDisplayLength]
 	}
@@ -162,18 +162,18 @@ func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error
 	}
 	//nolint:goconst // A new constant is useless here
 	rows := []inspectRow{
-		{"General", "Name", opts.ContainerName},
+		{"General", "Name", result.Name},
 		{"General", "ID", id},
 		{"General", "Created", created},
-		{"General", "Status", result.ContainerStatus},
-		{"General", "Image", ui.TrimImageRef(result.ContainerImage)},
-		{"General", "Platform", result.ContainerPlatform},
-		{"General", "Hostname", result.ContainerHostname},
-		{"General", "Shell", result.ContainerShell},
-		{"General", "Home", inspectHomeValue(result)},
-		{"General", "Locked", strconv.FormatBool(locked)},
+		{"General", "Status", result.Status},
+		{"General", "Image", ui.TrimImageRef(result.Image)},
+		{"General", "Platform", result.Platform},
+		{"General", "Hostname", result.Hostname},
+		{"General", "Shell", result.Shell},
+		{"General", "Home", result.Home},
+		{"General", "Locked", strconv.FormatBool(result.Locked)},
 		{"General", "Rootful", strconv.FormatBool(result.Rootful)},
-		{"General", "Manager", opts.Manager},
+		{"General", "Manager", result.Manager},
 		{"Resources", "Memory", memory},
 		{"Resources", "CPU", cpuThreads},
 		{"Features", "Init", boolToEnabledStr(result.Init)},
@@ -205,5 +205,62 @@ func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error
 	}
 	t.Render()
 
+	return nil
+}
+
+func printInspectJSON(result *InspectResult) error {
+	out := struct {
+		ID             string `json:"id"`
+		Name           string `json:"name"`
+		Created        string `json:"created"`
+		Status         string `json:"status"`
+		Image          string `json:"image"`
+		Platform       string `json:"platform"`
+		Hostname       string `json:"hostname"`
+		Shell          string `json:"shell"`
+		Home           string `json:"home"`
+		Locked         bool   `json:"locked"`
+		Rootful        bool   `json:"rootful"`
+		Manager        string `json:"manager"`
+		Memory         string `json:"memory"`
+		CPUThreads     int    `json:"cpu_threads"`
+		Init           bool   `json:"init"`
+		Nvidia         bool   `json:"nvidia"`
+		UnshareIPC     bool   `json:"unshare_ipc"`
+		UnshareNetNS   bool   `json:"unshare_netns"`
+		UnshareProcess bool   `json:"unshare_process"`
+		UnshareDevsys  bool   `json:"unshare_devsys"`
+		UnshareGroups  bool   `json:"unshare_groups"`
+		UsernsNoLimit  bool   `json:"userns_nolimit"`
+	}{
+		ID:             result.ID,
+		Name:           result.Name,
+		Created:        result.Created,
+		Status:         result.Status,
+		Image:          result.Image,
+		Platform:       result.Platform,
+		Hostname:       result.Hostname,
+		Shell:          result.Shell,
+		Home:           result.Home,
+		Locked:         result.Locked,
+		Rootful:        result.Rootful,
+		Manager:        result.Manager,
+		Memory:         result.Memory,
+		CPUThreads:     result.CPUThreads,
+		Init:           result.Init,
+		Nvidia:         result.Nvidia,
+		UnshareIPC:     result.UnshareIPC,
+		UnshareNetNS:   result.UnshareNetNS,
+		UnshareProcess: result.UnshareProcess,
+		UnshareDevsys:  result.UnshareDevsys,
+		UnshareGroups:  result.UnshareGroups,
+		UsernsNoLimit:  result.UsernsNoLimit,
+	}
+
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	if err := enc.Encode(out); err != nil {
+		return fmt.Errorf("failed to encode inspect output as JSON: %w", err)
+	}
 	return nil
 }

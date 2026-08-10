@@ -79,6 +79,23 @@ func (s *server) terminalPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (s *server) inspectPage(w http.ResponseWriter, r *http.Request) {
+	name := r.PathValue("name")
+
+	result, err := commands.NewInspectCommand(s.cm).Execute(r.Context(), commands.InspectOptions{
+		ContainerName: name,
+		Manager:       s.cm.Name(),
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := s.templates.ExecuteTemplate(w, "inspect", result); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
 // createFormData holds the create form's field values, both for the
 // initial empty form and for re-rendering it with the submitted values and
 // an inline error if creation fails, so nothing typed is lost.

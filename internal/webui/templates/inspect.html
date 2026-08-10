@@ -1,0 +1,51 @@
+{{define "inspect"}}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>otter — {{.Name}} — inspect</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>🦦 {{.Name}}</h1>
+    <a class="btn" href="/">&larr; back</a>
+  </header>
+  <main>
+    <table class="containers">
+      <tbody>
+        <tr><td colspan="2"><strong>General</strong></td></tr>
+        <tr><td>ID</td><td>{{.ID}}</td></tr>
+        <tr><td>Created</td><td>{{.Created}}</td></tr>
+        <tr><td>Status</td><td>{{.Status}}</td></tr>
+        <tr><td>Image</td><td>{{.Image}}</td></tr>
+        <tr><td>Platform</td><td>{{.Platform}}</td></tr>
+        <tr><td>Hostname</td><td>{{.Hostname}}</td></tr>
+        <tr><td>Shell</td><td>{{.Shell}}</td></tr>
+        <tr><td>Home</td><td>{{.Home}}</td></tr>
+        <tr><td>Locked</td><td>{{.Locked}}</td></tr>
+        <tr><td>Rootful</td><td>{{.Rootful}}</td></tr>
+        <tr><td>Manager</td><td>{{.Manager}}</td></tr>
+
+        <tr><td colspan="2"><strong>Resources</strong></td></tr>
+        <tr><td>Memory</td><td>{{if .Memory}}{{.Memory}}{{else}}unlimited{{end}}</td></tr>
+        <tr><td>CPU</td><td>{{if .CPUThreads}}{{.CPUThreads}} threads{{else}}unlimited{{end}}</td></tr>
+
+        <tr><td colspan="2"><strong>Features</strong></td></tr>
+        <tr><td>Init</td><td>{{if .Init}}enabled{{else}}disabled{{end}}</td></tr>
+        <tr><td>Nvidia</td><td>{{if .Nvidia}}enabled{{else}}disabled{{end}}</td></tr>
+
+        <tr><td colspan="2"><strong>Isolation</strong></td></tr>
+        <tr><td>IPC</td><td>{{if .UnshareIPC}}unshared{{else}}shared{{end}}</td></tr>
+        <tr><td>Network</td><td>{{if .UnshareNetNS}}unshared{{else}}shared{{end}}</td></tr>
+        <tr><td>Process</td><td>{{if .UnshareProcess}}unshared{{else}}shared{{end}}</td></tr>
+        <tr><td>Devices</td><td>{{if .UnshareDevsys}}unshared{{else}}shared{{end}}</td></tr>
+        <tr><td>Groups</td><td>{{if .UnshareGroups}}unshared{{else}}shared{{end}}</td></tr>
+        <tr><td>Userns No Limit</td><td>{{if .UsernsNoLimit}}enabled{{else}}disabled{{end}}</td></tr>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>
+{{end}}

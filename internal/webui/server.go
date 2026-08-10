@@ -66,6 +66,7 @@ func Serve(ctx context.Context, cm containermanager.ContainerManager, cfg *confi
 	mux.HandleFunc("GET /containers/new", s.newContainerPage)
 	mux.HandleFunc("POST /containers", s.createContainer)
 	mux.HandleFunc("POST /containers/{name}/{action}", s.action)
+	mux.HandleFunc("GET /containers/{name}/inspect", s.inspectPage)
 	mux.HandleFunc("GET /containers/{name}/terminal", s.terminalPage)
 	mux.HandleFunc("GET /ws/containers/{name}/terminal", s.terminalWS)
 

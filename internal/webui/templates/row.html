@@ -17,6 +17,7 @@
     {{else}}
       <button class="btn" hx-post="/containers/{{.Name}}/start" hx-target="#row-{{.Name}}" hx-swap="outerHTML">Start</button>
     {{end}}
+    <a class="btn" href="/containers/{{.Name}}/inspect">Inspect</a>
     <button
       class="btn btn-danger"
       hx-post="/containers/{{.Name}}/remove"

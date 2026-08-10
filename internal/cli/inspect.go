@@ -33,11 +33,15 @@ func inspectAction(ctx context.Context, cmd *cli.Command) error {
 	}
 
 	inspectCmd := commands.NewInspectCommand(cm)
-	if err := inspectCmd.Execute(ctx, commands.InspectOptions{
+	result, err := inspectCmd.Execute(ctx, commands.InspectOptions{
 		ContainerName: firstName(cmd.Args().Slice()),
 		Manager:       cm.Name(),
 		JSON:          cmd.Bool("json"),
-	}); err != nil {
+	})
+	if err != nil {
+		return fmt.Errorf("failed to inspect container: %w", err)
+	}
+	if err := commands.PrintInspect(result, cmd.Bool("json")); err != nil {
 		return fmt.Errorf("failed to inspect container: %w", err)
 	}
 	return nil
