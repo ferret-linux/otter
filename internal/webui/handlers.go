@@ -12,6 +12,8 @@ import (
 
 	"github.com/ferret-linux/otter/pkg/commands"
 	"github.com/ferret-linux/otter/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/registry"
+	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 // rowData is the webui's per-row view model: a Container plus its lock and
@@ -339,6 +341,146 @@ func (s *server) upgradeSSE(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// registryRowData is the webui's per-row view model for the registry
+// panel: a commands.RegistryRow plus its rendered local-status text/class
+// and whether a pull is currently running for it (see server.pulling).
+type registryRowData struct {
+	commands.RegistryRow
+	Pulling      bool
+	LocalDisplay string
+	LocalClass   string
+}
+
+// registryRows fetches the current registry catalog and returns it as
+// per-row view models, attaching each row's in-memory pull state.
+func (s *server) registryRows(ctx context.Context, all bool) ([]registryRowData, error) {
+	props, err := registry.Fetch(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch registry: %w", err)
+	}
+	rows := commands.BuildRegistryRows(ctx, s.cm, props, all)
+
+	s.pullingMu.Lock()
+	defer s.pullingMu.Unlock()
+
+	out := make([]registryRowData, len(rows))
+	for i, row := range rows {
+		out[i] = registryRowData{
+			RegistryRow:  row,
+			Pulling:      s.pulling[row.Name],
+			LocalDisplay: commands.RegistryLocalDisplay(row.Local, row.LocalDiff),
+			LocalClass:   registryLocalClass(row.Local),
+		}
+	}
+	return out, nil
+}
+
+// registryLocalClass maps a commands.RegistryLocalState to one of the
+// existing container-status CSS classes (status-running/status-upgrading),
+// reusing the same green/amber color scheme already defined for container
+// state instead of introducing new styling for image state.
+func registryLocalClass(state commands.RegistryLocalState) string {
+	switch state {
+	case commands.RegistryLocalCurrent:
+		return "status-running"
+	case commands.RegistryLocalBehind, commands.RegistryLocalAhead:
+		return "status-upgrading"
+	default:
+		return "status-stopped"
+	}
+}
+
+// registryPage renders the registry panel: every enabled registry entry
+// with its local pull state, matching `otter registry list`'s default
+// (no --all) view.
+func (s *server) registryPage(w http.ResponseWriter, r *http.Request) {
+	rows, err := s.registryRows(r.Context(), false)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if err := s.templates.ExecuteTemplate(w, "registry", rows); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+// registryPullAction handles POST /registry/{name}/pull. It starts
+// commands.NewRegistryPullCommand in a background goroutine detached from
+// this request's context, for the same reason upgradeAction does: a pull
+// can take minutes, far longer than it's reasonable to hold this request
+// open for. Unlike container upgrades, there's no on-disk marker for an
+// in-progress image pull, so s.pulling is the only record of pull-in-
+// progress state and does not survive a webui restart — the pull itself,
+// driven by the container engine, is unaffected either way.
+//
+// If a pull is already in progress for this name, this is a no-op: it does
+// not start a second concurrent pull. The row is re-rendered immediately
+// showing the "pulling" state; picking up completion requires reloading
+// the registry page, since nothing pushes an update once the pull finishes.
+func (s *server) registryPullAction(w http.ResponseWriter, r *http.Request) {
+	name := r.PathValue("name")
+
+	s.pullingMu.Lock()
+	alreadyPulling := s.pulling[name]
+	if !alreadyPulling {
+		s.pulling[name] = true
+	}
+	s.pullingMu.Unlock()
+
+	if !alreadyPulling {
+		go func() {
+			defer func() {
+				s.pullingMu.Lock()
+				delete(s.pulling, name)
+				s.pullingMu.Unlock()
+			}()
+			if err := commands.NewRegistryPullCommand(s.cm).Execute(context.Background(), commands.RegistryPullOptions{
+				Names: []string{name},
+			}); err != nil {
+				ui.DefaultLogger.Error(err)
+			}
+		}()
+	}
+
+	s.renderRegistryRow(w, r.Context(), name)
+}
+
+// registryRemoveAction handles POST /registry/{name}/remove. Removal is
+// fast, so unlike pull it runs synchronously within the request.
+func (s *server) registryRemoveAction(w http.ResponseWriter, r *http.Request) {
+	name := r.PathValue("name")
+	ctx := r.Context()
+
+	if err := commands.NewRegistryRemoveCommand(s.cm).Execute(ctx, commands.RegistryRemoveOptions{
+		Names: []string{name},
+	}); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	s.renderRegistryRow(w, ctx, name)
+}
+
+// renderRegistryRow re-fetches the registry and re-renders a single row for
+// htmx to swap in, matching the row-refresh pattern action and
+// upgradeAction use for the container table.
+func (s *server) renderRegistryRow(w http.ResponseWriter, ctx context.Context, name string) {
+	rows, err := s.registryRows(ctx, false)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	for _, row := range rows {
+		if row.Name == name {
+			if err := s.templates.ExecuteTemplate(w, "registry_row", row); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			return
+		}
+	}
+	w.WriteHeader(http.StatusOK)
+}
+
 // createFormData holds the create form's field values, both for the
 // initial empty form and for re-rendering it with the submitted values and
 // an inline error if creation fails, so nothing typed is lost.
@@ -376,6 +518,7 @@ func (s *server) newContainerPage(w http.ResponseWriter, r *http.Request) {
 	data := createFormData{
 		GenerateEntry: true,
 		DefaultImage:  s.cfg.DefaultContainerImage,
+		Image:         r.URL.Query().Get("image"),
 	}
 	if err := s.templates.ExecuteTemplate(w, "create", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

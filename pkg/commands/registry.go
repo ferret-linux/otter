@@ -159,6 +159,128 @@ func (c *RegistryRemoveCommand) Execute(ctx context.Context, opts RegistryRemove
 	return nil
 }
 
+// RegistryLocalState describes an enabled registry entry's local pull state
+// relative to the latest known remote build, independent of how it's
+// displayed. RegistryLocalNone applies to disabled entries, which have no
+// local pull state to report.
+type RegistryLocalState int
+
+const (
+	RegistryLocalNone RegistryLocalState = iota
+	RegistryLocalNotPulled
+	RegistryLocalCurrent
+	RegistryLocalBehind
+	RegistryLocalAhead
+	RegistryLocalUnknown
+)
+
+// RegistryRow is a single registry entry combined with its local pull
+// state. It's the shared shape behind both `otter registry list`'s table
+// rendering and the webui's registry panel, so the staleness logic behind
+// it lives in one place.
+type RegistryRow struct {
+	Name            string
+	ImageRef        string
+	Architecture    []string
+	Enabled         bool
+	BuiltAtRelative string
+	Local           RegistryLocalState
+	LocalDiff       int
+}
+
+// BuildRegistryRows computes a RegistryRow for every entry in props. If all
+// is false, disabled entries are omitted, matching registryList's default
+// (no --all) behavior.
+func BuildRegistryRows(ctx context.Context, cm containermanager.ContainerManager, props *registry.ImagesProperties, all bool) []RegistryRow {
+	var rows []RegistryRow
+	for _, entry := range props.Images {
+		if !all && !entry.Enabled {
+			continue
+		}
+
+		imageRef := entry.OfficialImage
+		if !entry.Enabled {
+			imageRef = entry.FallbackVendorImage
+		}
+
+		row := RegistryRow{
+			Name:            entry.Name,
+			ImageRef:        ui.TrimImageRef(imageRef),
+			Architecture:    entry.Architecture,
+			Enabled:         entry.Enabled,
+			BuiltAtRelative: relativeTime(entry.BuiltAt),
+			Local:           RegistryLocalNone,
+		}
+
+		if entry.Enabled {
+			row.Local, row.LocalDiff = localState(ctx, cm, props, imageRef)
+		}
+
+		rows = append(rows, row)
+	}
+	return rows
+}
+
+// localState returns the RegistryLocalState (and, for RegistryLocalBehind,
+// how many builds behind) for an enabled registry entry's official image
+// ref.
+func localState(
+	ctx context.Context,
+	cm containermanager.ContainerManager,
+	props *registry.ImagesProperties,
+	imageRef string,
+) (RegistryLocalState, int) {
+	if !cm.ImageExists(ctx, imageRef) {
+		return RegistryLocalNotPulled, 0
+	}
+
+	st := registry.CheckStaleness(ctx, cm, props, imageRef)
+	switch st.State {
+	case registry.StalenessCurrent:
+		return RegistryLocalCurrent, 0
+	case registry.StalenessBehind:
+		return RegistryLocalBehind, st.Diff
+	case registry.StalenessAhead:
+		return RegistryLocalAhead, 0
+	case registry.StalenessUnknown, registry.StalenessNotOtterImage:
+		return RegistryLocalUnknown, 0
+	default:
+		return RegistryLocalUnknown, 0
+	}
+}
+
+// RegistryLocalDisplay returns a human-readable LOCAL column value for the
+// given state, shared by the CLI's table rendering and the webui's registry
+// panel so the wording stays in one place.
+func RegistryLocalDisplay(state RegistryLocalState, diff int) string {
+	switch state {
+	case RegistryLocalNotPulled:
+		return "not pulled"
+	case RegistryLocalCurrent:
+		return "up to date"
+	case RegistryLocalBehind:
+		return fmt.Sprintf("%d behind", diff)
+	case RegistryLocalAhead:
+		return "ahead"
+	case RegistryLocalUnknown:
+		return "unknown"
+	default:
+		return ""
+	}
+}
+
+// registryLocalColor returns the CLI table color for a RegistryLocalState.
+func registryLocalColor(state RegistryLocalState) func(string) string {
+	switch state {
+	case RegistryLocalCurrent:
+		return ui.Green
+	case RegistryLocalBehind, RegistryLocalAhead:
+		return ui.Yellow
+	default:
+		return ui.Dim
+	}
+}
+
 // registryList renders a table of available images from props.
 // If all is false, disabled images are omitted and STATUS/BUILT columns are hidden.
 // A LOCAL column is shown for enabled entries, reflecting whether the image
@@ -171,69 +293,31 @@ func registryList(ctx context.Context, cm containermanager.ContainerManager, pro
 		t = ui.NewTable(os.Stdout, "NAME", "ARCH", "LOCAL", "IMAGE")
 	}
 
-	for _, entry := range props.Images {
-		if !all && !entry.Enabled {
-			continue
-		}
-
+	for _, row := range BuildRegistryRows(ctx, cm, props, all) {
 		status := "enabled"
 		statusColor := ui.Green
-		imageRef := entry.OfficialImage
-
-		if !entry.Enabled {
+		if !row.Enabled {
 			status = "disabled"
 			statusColor = ui.Yellow
-			imageRef = entry.FallbackVendorImage
 		}
 
-		local, localColor := "", ui.Dim
-		if entry.Enabled {
-			local, localColor = localStatus(ctx, cm, props, imageRef)
-		}
-
-		arch := strings.Join(entry.Architecture, ", ")
-		imageRef = ui.TrimImageRef(imageRef)
+		local := RegistryLocalDisplay(row.Local, row.LocalDiff)
+		localColor := registryLocalColor(row.Local)
+		arch := strings.Join(row.Architecture, ", ")
 
 		if all {
 			t.AddRow(
-				[]string{entry.Name, arch, status, relativeTime(entry.BuiltAt), local, imageRef},
+				[]string{row.Name, arch, status, row.BuiltAtRelative, local, row.ImageRef},
 				[]func(string) string{ui.Teal, ui.Dim, statusColor, ui.Dim, localColor, ui.Dim},
 			)
 		} else {
 			t.AddRow(
-				[]string{entry.Name, arch, local, imageRef},
+				[]string{row.Name, arch, local, row.ImageRef},
 				[]func(string) string{ui.Teal, ui.Dim, localColor, ui.Dim},
 			)
 		}
 	}
 	t.Render()
-}
-
-// localStatus returns a human-readable LOCAL column value and its color for
-// an enabled registry entry's official image ref.
-func localStatus(
-	ctx context.Context,
-	cm containermanager.ContainerManager,
-	props *registry.ImagesProperties,
-	imageRef string,
-) (string, func(string) string) {
-	if !cm.ImageExists(ctx, imageRef) {
-		return "not pulled", ui.Dim
-	}
-
-	st := registry.CheckStaleness(ctx, cm, props, imageRef)
-	switch st.State {
-	case registry.StalenessCurrent:
-		return "up to date", ui.Green
-	case registry.StalenessBehind:
-		return fmt.Sprintf("%d behind", st.Diff), ui.Yellow
-	case registry.StalenessAhead:
-		return "ahead", ui.Yellow
-	case registry.StalenessUnknown, registry.StalenessNotOtterImage:
-		return "unknown", ui.Dim
-	default:
-		return "unknown", ui.Dim
-	}
 }
 
 // resolvePullCandidates returns the set of image refs eligible for pulling,

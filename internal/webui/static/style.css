@@ -95,6 +95,7 @@ table.containers td {
 .toolbar {
   display: flex;
   justify-content: flex-end;
+  gap: 0.5rem;
   margin-bottom: 1rem;
 }
 

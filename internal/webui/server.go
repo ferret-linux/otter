@@ -47,6 +47,15 @@ type server struct {
 	// nothing that outlives the webui process.
 	upgradeStreamsMu sync.Mutex
 	upgradeStreams   map[string]*upgradeStream
+
+	// pullingMu guards pulling, the set of image names currently being
+	// pulled from the registry panel via a webui-initiated
+	// commands.RegistryPullCommand. Unlike upgrades, there's no on-disk
+	// marker for an in-progress image pull, so — unlike upgradeStreams's
+	// relationship to s.cm.IsUpgrading — this map is the only record of
+	// pull-in-progress state and does not survive a webui restart.
+	pullingMu sync.Mutex
+	pulling   map[string]bool
 }
 
 // webUISessionCookie is the name of the cookie set once a request presents
@@ -70,7 +79,7 @@ func Serve(ctx context.Context, cm containermanager.ContainerManager, cfg *confi
 		return fmt.Errorf("failed to prepare webui static assets: %w", err)
 	}
 
-	s := &server{cm: cm, cfg: cfg, rootful: rootful, templates: tmpl, token: token, upgradeStreams: make(map[string]*upgradeStream)}
+	s := &server{cm: cm, cfg: cfg, rootful: rootful, templates: tmpl, token: token, upgradeStreams: make(map[string]*upgradeStream), pulling: make(map[string]bool)}
 
 	mux := http.NewServeMux()
 	mux.Handle("GET /static/", http.StripPrefix("/static/", http.FileServerFS(staticSub)))
@@ -86,6 +95,9 @@ func Serve(ctx context.Context, cm containermanager.ContainerManager, cfg *confi
 	mux.HandleFunc("POST /containers/{name}/upgrade", s.upgradeAction)
 	mux.HandleFunc("GET /containers/{name}/upgrade", s.upgradePage)
 	mux.HandleFunc("GET /sse/containers/{name}/upgrade", s.upgradeSSE)
+	mux.HandleFunc("GET /registry", s.registryPage)
+	mux.HandleFunc("POST /registry/{name}/pull", s.registryPullAction)
+	mux.HandleFunc("POST /registry/{name}/remove", s.registryRemoveAction)
 
 	httpServer := &http.Server{
 		Addr:              addr,

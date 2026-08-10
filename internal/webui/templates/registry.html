@@ -1,0 +1,38 @@
+{{define "registry"}}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>otter — registry</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/htmx.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <h1>🦦 otter — registry</h1>
+    <a class="btn" href="/">&larr; back</a>
+  </header>
+  <main>
+    {{if not .}}
+      <p class="empty">No registry entries found.</p>
+    {{else}}
+      <table class="containers">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Arch</th>
+            <th>Built</th>
+            <th>Local</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .}}{{template "registry_row" .}}{{end}}
+        </tbody>
+      </table>
+    {{end}}
+  </main>
+</body>
+</html>
+{{end}}
