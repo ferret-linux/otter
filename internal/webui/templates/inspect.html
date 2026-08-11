@@ -1,60 +1,64 @@
-{{define "inspect"}}
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>otter — {{.Name}} — inspect</title>
-  <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
-  <header class="topbar">
-    <h1>🦦 {{.Name}}</h1>
-    <div>
-      {{if .Upgrading}}
-        <a class="btn" href="/containers/{{.Name}}/upgrade">⟳ upgrading — view</a>
-      {{else}}
-        <form method="post" action="/containers/{{.Name}}/upgrade" style="display: inline">
-          <button class="btn" type="submit">Upgrade</button>
-        </form>
-      {{end}}
-      <a class="btn" href="/">&larr; back</a>
-    </div>
-  </header>
-  <main>
-    <table class="containers">
-      <tbody>
-        <tr><td colspan="2"><strong>General</strong></td></tr>
-        <tr><td>ID</td><td>{{.ID}}</td></tr>
-        <tr><td>Created</td><td>{{.Created}}</td></tr>
-        <tr><td>Status</td><td>{{.Status}}</td></tr>
-        <tr><td>Image</td><td>{{.Image}}</td></tr>
-        <tr><td>Platform</td><td>{{.Platform}}</td></tr>
-        <tr><td>Hostname</td><td>{{.Hostname}}</td></tr>
-        <tr><td>Shell</td><td>{{.Shell}}</td></tr>
-        <tr><td>Home</td><td>{{.Home}}</td></tr>
-        <tr><td>Locked</td><td>{{.Locked}}</td></tr>
-        <tr><td>Rootful</td><td>{{.Rootful}}</td></tr>
-        <tr><td>Manager</td><td>{{.Manager}}</td></tr>
+{{define "container_panel"}}
+<div class="detail-panel-header">
+  <h2>{{.Name}}</h2>
+  <button class="detail-panel-close" onclick="document.getElementById('detail-panel').innerHTML = '<div class=&quot;detail-panel-empty&quot;>Select an instance to view details</div>'; document.querySelectorAll('#container-rows tr').forEach(function(r){r.classList.remove('row-selected')}); var l = document.getElementById('container-list'); if (l) { l.dataset.selected = ''; }" aria-label="Close">&times;</button>
+</div>
+<div class="detail-panel-actions">
+  {{if .Upgrading}}
+    <span class="status status-upgrading">⟳ upgrading</span>
+    <a class="btn" href="/console/{{.Name}}/watch">Watch</a>
+  {{else}}
+    <form action="/containers/{{.Name}}/upgrade" hx-post="/containers/{{.Name}}/upgrade" hx-target="#detail-panel" hx-swap="innerHTML" style="display: inline">
+      <button class="btn" type="submit">Upgrade</button>
+    </form>
+  {{end}}
+  <button class="btn" hx-post="/containers/{{.Name}}/stop" hx-target="#detail-panel" hx-swap="innerHTML">Stop</button>
+  <button class="btn" hx-post="/containers/{{.Name}}/start" hx-target="#detail-panel" hx-swap="innerHTML">Start</button>
+  <button class="btn" hx-post="/containers/{{.Name}}/pause" hx-target="#detail-panel" hx-swap="innerHTML">Pause</button>
+  <button class="btn" hx-post="/containers/{{.Name}}/restart" hx-target="#detail-panel" hx-swap="innerHTML">Restart</button>
+  {{if .Locked}}
+    <button class="btn" hx-post="/containers/{{.Name}}/unlock" hx-target="#detail-panel" hx-swap="innerHTML">Unlock</button>
+  {{else}}
+    <button class="btn" hx-post="/containers/{{.Name}}/lock" hx-target="#detail-panel" hx-swap="innerHTML">Lock</button>
+  {{end}}
+  <button
+    class="btn btn-danger"
+    hx-post="/containers/{{.Name}}/remove"
+    hx-target="#detail-panel"
+    hx-swap="innerHTML"
+    hx-confirm="Remove container '{{.Name}}'? This cannot be undone."
+  >Remove</button>
+</div>
+<table class="detail-table">
+  <tbody>
+    <tr class="section"><td colspan="2">General</td></tr>
+    <tr><td>ID</td><td>{{.ID}}</td></tr>
+    <tr><td>Created</td><td>{{.Created}}</td></tr>
+    <tr><td>Status</td><td>{{.Status}}</td></tr>
+    <tr><td>Image</td><td>{{.Image}}</td></tr>
+    <tr><td>Platform</td><td>{{.Platform}}</td></tr>
+    <tr><td>Hostname</td><td>{{.Hostname}}</td></tr>
+    <tr><td>Shell</td><td>{{.Shell}}</td></tr>
+    <tr><td>Home</td><td>{{.Home}}</td></tr>
+    <tr><td>Locked</td><td>{{.Locked}}</td></tr>
+    <tr><td>Rootful</td><td>{{.Rootful}}</td></tr>
+    <tr><td>Manager</td><td>{{.Manager}}</td></tr>
 
-        <tr><td colspan="2"><strong>Resources</strong></td></tr>
-        <tr><td>Memory</td><td>{{if .Memory}}{{.Memory}}{{else}}unlimited{{end}}</td></tr>
-        <tr><td>CPU</td><td>{{if .CPUThreads}}{{.CPUThreads}} threads{{else}}unlimited{{end}}</td></tr>
+    <tr class="section"><td colspan="2">Resources</td></tr>
+    <tr><td>Memory</td><td>{{if .Memory}}{{.Memory}}{{else}}unlimited{{end}}</td></tr>
+    <tr><td>CPU</td><td>{{if .CPUThreads}}{{.CPUThreads}} threads{{else}}unlimited{{end}}</td></tr>
 
-        <tr><td colspan="2"><strong>Features</strong></td></tr>
-        <tr><td>Init</td><td>{{if .Init}}enabled{{else}}disabled{{end}}</td></tr>
-        <tr><td>Nvidia</td><td>{{if .Nvidia}}enabled{{else}}disabled{{end}}</td></tr>
+    <tr class="section"><td colspan="2">Features</td></tr>
+    <tr><td>Init</td><td>{{if .Init}}enabled{{else}}disabled{{end}}</td></tr>
+    <tr><td>Nvidia</td><td>{{if .Nvidia}}enabled{{else}}disabled{{end}}</td></tr>
 
-        <tr><td colspan="2"><strong>Isolation</strong></td></tr>
-        <tr><td>IPC</td><td>{{if .UnshareIPC}}unshared{{else}}shared{{end}}</td></tr>
-        <tr><td>Network</td><td>{{if .UnshareNetNS}}unshared{{else}}shared{{end}}</td></tr>
-        <tr><td>Process</td><td>{{if .UnshareProcess}}unshared{{else}}shared{{end}}</td></tr>
-        <tr><td>Devices</td><td>{{if .UnshareDevsys}}unshared{{else}}shared{{end}}</td></tr>
-        <tr><td>Groups</td><td>{{if .UnshareGroups}}unshared{{else}}shared{{end}}</td></tr>
-        <tr><td>Userns No Limit</td><td>{{if .UsernsNoLimit}}enabled{{else}}disabled{{end}}</td></tr>
-      </tbody>
-    </table>
-  </main>
-</body>
-</html>
+    <tr class="section"><td colspan="2">Isolation</td></tr>
+    <tr><td>IPC</td><td>{{if .UnshareIPC}}unshared{{else}}shared{{end}}</td></tr>
+    <tr><td>Network</td><td>{{if .UnshareNetNS}}unshared{{else}}shared{{end}}</td></tr>
+    <tr><td>Process</td><td>{{if .UnshareProcess}}unshared{{else}}shared{{end}}</td></tr>
+    <tr><td>Devices</td><td>{{if .UnshareDevsys}}unshared{{else}}shared{{end}}</td></tr>
+    <tr><td>Groups</td><td>{{if .UnshareGroups}}unshared{{else}}shared{{end}}</td></tr>
+    <tr><td>Userns No Limit</td><td>{{if .UsernsNoLimit}}enabled{{else}}disabled{{end}}</td></tr>
+  </tbody>
+</table>
 {{end}}
