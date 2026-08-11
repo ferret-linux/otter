@@ -1,149 +1,137 @@
-{{define "create"}}
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>otter — new container</title>
-  <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
-  <header class="topbar">
-    <h1>🦦 new container</h1>
-    <a class="btn" href="/">&larr; back</a>
-  </header>
-  <main>
-    {{if .Error}}<p class="error-banner">{{.Error}}</p>{{end}}
-    <form method="post" action="/containers" class="create-form">
-      <fieldset>
-        <legend>Basics</legend>
-        <div class="field">
-          <label for="name">Name</label>
-          <input type="text" id="name" name="name" value="{{.Name}}" placeholder="auto-generated if left blank">
-        </div>
-        <div class="field">
-          <label for="image">Image</label>
-          <input type="text" id="image" name="image" value="{{.Image}}" placeholder="{{.DefaultImage}}">
-          <a class="btn" href="/registry">Browse registry</a>
-        </div>
-        <div class="field">
-          <label for="hostname">Hostname</label>
-          <input type="text" id="hostname" name="hostname" value="{{.Hostname}}" placeholder="host's hostname">
-        </div>
-        <div class="field">
-          <label for="shell">Shell</label>
-          <select id="shell" name="shell">
-            <option value="" {{if eq .Shell ""}}selected{{end}}>default</option>
-            <option value="bash" {{if eq .Shell "bash"}}selected{{end}}>bash</option>
-            <option value="zsh" {{if eq .Shell "zsh"}}selected{{end}}>zsh</option>
-            <option value="fish" {{if eq .Shell "fish"}}selected{{end}}>fish</option>
-          </select>
-        </div>
-        <div class="field checkbox">
-          <label><input type="checkbox" name="always-pull" {{if .AlwaysPull}}checked{{end}}> Always pull image before creating</label>
-        </div>
-      </fieldset>
-
-      <fieldset>
-        <legend>Source</legend>
-        <div class="field">
-          <label for="clone">Clone from container</label>
-          <input type="text" id="clone" name="clone" value="{{.Clone}}" placeholder="existing container name">
-        </div>
-        <div class="field">
-          <label for="platform">Platform</label>
-          <input type="text" id="platform" name="platform" value="{{.Platform}}" placeholder="e.g. linux/amd64">
-        </div>
-      </fieldset>
-
-      <fieldset>
-        <legend>Filesystem</legend>
-        <div class="field">
-          <label for="home">Custom home directory</label>
-          <input type="text" id="home" name="home" value="{{.Home}}" placeholder="host path">
-        </div>
-        <div class="field">
-          <label for="volumes">Additional volumes</label>
-          <textarea id="volumes" name="volumes" rows="3" placeholder="one per line, e.g. /host/path:/container/path">{{.Volumes}}</textarea>
-        </div>
-      </fieldset>
-
-      <fieldset>
-        <legend>Resources</legend>
-        <div class="field">
-          <label for="memory">Memory limit</label>
-          <input type="text" id="memory" name="memory" value="{{.Memory}}" placeholder="e.g. 512m, 2g">
-        </div>
-        <div class="field">
-          <label for="cpu-threads">CPU threads</label>
-          <input type="number" id="cpu-threads" name="cpu-threads" value="{{.CPUThreads}}" min="0">
-        </div>
-        <div class="field checkbox">
-          <label><input type="checkbox" name="nvidia" {{if .Nvidia}}checked{{end}}> Enable Nvidia GPU passthrough</label>
-        </div>
-      </fieldset>
-
-      <fieldset>
-        <legend>Namespaces</legend>
-        <div class="field checkbox">
-          <label><input type="checkbox" name="init" {{if .Init}}checked{{end}}> Enable init system (systemd) — also unshares process and group namespaces</label>
-        </div>
-        <div class="field checkbox">
-          <label><input type="checkbox" name="unshare-devsys" {{if .UnshareDevsys}}checked{{end}}> Unshare devices/sysfs</label>
-        </div>
-        <div class="field checkbox">
-          <label><input type="checkbox" name="unshare-groups" {{if .UnshareGroups}}checked{{end}}> Unshare additional groups</label>
-        </div>
-        <div class="field checkbox">
-          <label><input type="checkbox" name="unshare-ipc" {{if .UnshareIPC}}checked{{end}}> Unshare IPC namespace</label>
-        </div>
-        <div class="field checkbox">
-          <label><input type="checkbox" name="unshare-netns" {{if .UnshareNetNS}}checked{{end}}> Unshare network namespace</label>
-        </div>
-        <div class="field checkbox">
-          <label><input type="checkbox" name="unshare-process" {{if .UnshareProcess}}checked{{end}}> Unshare process namespace</label>
-        </div>
-        <div class="field checkbox">
-          <label><input type="checkbox" name="no-userns-limit" {{if .NoUsernsLimit}}checked{{end}}> Disable rootless uid/gid range limit</label>
-        </div>
-      </fieldset>
-
-      <fieldset>
-        <legend>Provisioning</legend>
-        <div class="field">
-          <label for="additional-flags">Additional container-manager flags</label>
-          <textarea id="additional-flags" name="additional-flags" rows="3" placeholder="one per line, e.g. --cap-add=SYS_PTRACE">{{.AdditionalFlags}}</textarea>
-        </div>
-        <div class="field">
-          <label for="additional-packages">Additional packages</label>
-          <textarea id="additional-packages" name="additional-packages" rows="3" placeholder="one per line">{{.AdditionalPackages}}</textarea>
-        </div>
-        <div class="field">
-          <label for="pre-init-hooks">Pre-init hook script</label>
-          <input type="text" id="pre-init-hooks" name="pre-init-hooks" value="{{.PreInitHooks}}" placeholder="path to script">
-        </div>
-        <div class="field">
-          <label for="init-hooks">Init hook script</label>
-          <input type="text" id="init-hooks" name="init-hooks" value="{{.InitHooks}}" placeholder="path to script">
-        </div>
-      </fieldset>
-
-      <fieldset>
-        <legend>Extras</legend>
-        <div class="field checkbox">
-          <label><input type="checkbox" name="generate-entry" {{if .GenerateEntry}}checked{{end}}> Generate desktop entry</label>
-        </div>
-        <div class="field checkbox warning">
-          <label><input type="checkbox" name="nopasswd" {{if .Nopasswd}}checked{{end}}> Disable root password inside the container</label>
-          <p class="warning-text">&#9888; the container's root user will have no password set. Only disable this if you understand the risk.</p>
-        </div>
-      </fieldset>
-
-      <div class="form-actions">
-        <button type="submit" class="btn btn-primary">Create container</button>
+{{define "create_content"}}
+<header class="topbar">
+  <h1>Create new</h1>
+</header>
+<main>
+  {{if .Error}}<p class="error-banner">{{.Error}}</p>{{end}}
+  <form method="post" action="/containers" class="create-form">
+    <fieldset>
+      <legend>Basics</legend>
+      <div class="field">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" value="{{.Name}}" placeholder="auto-generated if left blank">
       </div>
-    </form>
-  </main>
-</body>
-</html>
+      <div class="field">
+        <label for="image">Image</label>
+        <input type="text" id="image" name="image" value="{{.Image}}" placeholder="{{.DefaultImage}}">
+        <a class="btn" href="/registry">Browse registry</a>
+      </div>
+      <div class="field">
+        <label for="hostname">Hostname</label>
+        <input type="text" id="hostname" name="hostname" value="{{.Hostname}}" placeholder="host's hostname">
+      </div>
+      <div class="field">
+        <label for="shell">Shell</label>
+        <select id="shell" name="shell">
+          <option value="" {{if eq .Shell ""}}selected{{end}}>default</option>
+          <option value="bash" {{if eq .Shell "bash"}}selected{{end}}>bash</option>
+          <option value="zsh" {{if eq .Shell "zsh"}}selected{{end}}>zsh</option>
+          <option value="fish" {{if eq .Shell "fish"}}selected{{end}}>fish</option>
+        </select>
+      </div>
+      <div class="field checkbox">
+        <label><input type="checkbox" name="always-pull" {{if .AlwaysPull}}checked{{end}}> Always pull image before creating</label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Source</legend>
+      <div class="field">
+        <label for="clone">Clone from container</label>
+        <input type="text" id="clone" name="clone" value="{{.Clone}}" placeholder="existing container name">
+      </div>
+      <div class="field">
+        <label for="platform">Platform</label>
+        <input type="text" id="platform" name="platform" value="{{.Platform}}" placeholder="e.g. linux/amd64">
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Filesystem</legend>
+      <div class="field">
+        <label for="home">Custom home directory</label>
+        <input type="text" id="home" name="home" value="{{.Home}}" placeholder="host path">
+      </div>
+      <div class="field">
+        <label for="volumes">Additional volumes</label>
+        <textarea id="volumes" name="volumes" rows="3" placeholder="one per line, e.g. /host/path:/container/path">{{.Volumes}}</textarea>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Resources</legend>
+      <div class="field">
+        <label for="memory">Memory limit</label>
+        <input type="text" id="memory" name="memory" value="{{.Memory}}" placeholder="e.g. 512m, 2g">
+      </div>
+      <div class="field">
+        <label for="cpu-threads">CPU threads</label>
+        <input type="number" id="cpu-threads" name="cpu-threads" value="{{.CPUThreads}}" min="0">
+      </div>
+      <div class="field checkbox">
+        <label><input type="checkbox" name="nvidia" {{if .Nvidia}}checked{{end}}> Enable Nvidia GPU passthrough</label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Namespaces</legend>
+      <div class="field checkbox">
+        <label><input type="checkbox" name="init" {{if .Init}}checked{{end}}> Enable init system (systemd) — also unshares process and group namespaces</label>
+      </div>
+      <div class="field checkbox">
+        <label><input type="checkbox" name="unshare-devsys" {{if .UnshareDevsys}}checked{{end}}> Unshare devices/sysfs</label>
+      </div>
+      <div class="field checkbox">
+        <label><input type="checkbox" name="unshare-groups" {{if .UnshareGroups}}checked{{end}}> Unshare additional groups</label>
+      </div>
+      <div class="field checkbox">
+        <label><input type="checkbox" name="unshare-ipc" {{if .UnshareIPC}}checked{{end}}> Unshare IPC namespace</label>
+      </div>
+      <div class="field checkbox">
+        <label><input type="checkbox" name="unshare-netns" {{if .UnshareNetNS}}checked{{end}}> Unshare network namespace</label>
+      </div>
+      <div class="field checkbox">
+        <label><input type="checkbox" name="unshare-process" {{if .UnshareProcess}}checked{{end}}> Unshare process namespace</label>
+      </div>
+      <div class="field checkbox">
+        <label><input type="checkbox" name="no-userns-limit" {{if .NoUsernsLimit}}checked{{end}}> Disable rootless uid/gid range limit</label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Provisioning</legend>
+      <div class="field">
+        <label for="additional-flags">Additional container-manager flags</label>
+        <textarea id="additional-flags" name="additional-flags" rows="3" placeholder="one per line, e.g. --cap-add=SYS_PTRACE">{{.AdditionalFlags}}</textarea>
+      </div>
+      <div class="field">
+        <label for="additional-packages">Additional packages</label>
+        <textarea id="additional-packages" name="additional-packages" rows="3" placeholder="one per line">{{.AdditionalPackages}}</textarea>
+      </div>
+      <div class="field">
+        <label for="pre-init-hooks">Pre-init hook script</label>
+        <input type="text" id="pre-init-hooks" name="pre-init-hooks" value="{{.PreInitHooks}}" placeholder="path to script">
+      </div>
+      <div class="field">
+        <label for="init-hooks">Init hook script</label>
+        <input type="text" id="init-hooks" name="init-hooks" value="{{.InitHooks}}" placeholder="path to script">
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Extras</legend>
+      <div class="field checkbox">
+        <label><input type="checkbox" name="generate-entry" {{if .GenerateEntry}}checked{{end}}> Generate desktop entry</label>
+      </div>
+      <div class="field checkbox warning">
+        <label><input type="checkbox" name="nopasswd" {{if .Nopasswd}}checked{{end}}> Disable root password inside the container</label>
+        <p class="warning-text">&#9888; the container's root user will have no password set. Only disable this if you understand the risk.</p>
+      </div>
+    </fieldset>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Create container</button>
+    </div>
+  </form>
+</main>
 {{end}}

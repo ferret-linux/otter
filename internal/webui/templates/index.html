@@ -1,4 +1,4 @@
-{{define "content"}}
+{{define "home_content"}}
 <header class="topbar">
   <h1>Instances</h1>
   <input class="search-box" type="search" id="container-search" placeholder="Search" onkeyup="otterFilterRows()">
@@ -19,12 +19,6 @@
     });
   }
   function otterSelectRow(name) {
-    // Tracks the open selection in a data attribute on #container-list
-    // itself (not just a CSS class on the row), so the value survives the
-    // htmx poll's outerHTML swap — see container_list's hx-vals below,
-    // which reads this attribute to tell the server which row to
-    // re-highlight on every 3s refresh instead of the highlight being lost
-    // when the polled markup replaces every <tr>.
     const list = document.getElementById('container-list');
     if (list) {
       list.dataset.selected = name;

@@ -1,5 +1,5 @@
 {{define "registry_row"}}
-<tr id="registry-row-{{.Name}}">
+<tr id="registry-row-{{.Name}}" data-name="{{.Name}}">
   <td>{{.Name}}</td>
   <td>{{range $i, $a := .Architecture}}{{if $i}}, {{end}}{{$a}}{{end}}</td>
   <td>{{.BuiltAtRelative}}</td>
@@ -21,7 +21,7 @@
         hx-confirm="Remove local image for '{{.Name}}'? This cannot be undone."
       >Remove</button>
     {{end}}
-    <a class="btn" href="/containers/new?image={{.ImageRef}}">Use this image</a>
+    <a class="btn" href="/create?image={{.ImageRef}}">Use this image</a>
   </td>
 </tr>
 {{end}}

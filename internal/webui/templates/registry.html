@@ -1,38 +1,34 @@
-{{define "registry"}}
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>otter — registry</title>
-  <link rel="stylesheet" href="/static/style.css">
-  <script src="/static/htmx.min.js"></script>
-</head>
-<body>
-  <header class="topbar">
-    <h1>🦦 otter — registry</h1>
-    <a class="btn" href="/">&larr; back</a>
-  </header>
-  <main>
-    {{if not .}}
-      <p class="empty">No registry entries found.</p>
-    {{else}}
-      <table class="containers">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Arch</th>
-            <th>Built</th>
-            <th>Local</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {{range .}}{{template "registry_row" .}}{{end}}
-        </tbody>
-      </table>
-    {{end}}
-  </main>
-</body>
-</html>
+{{define "registry_content"}}
+<header class="topbar">
+  <h1>Registry</h1>
+  <input class="search-box" type="search" id="registry-search" placeholder="Search" onkeyup="otterFilterRegistryRows()">
+</header>
+<main>
+  {{if not .Rows}}
+    <p class="empty">No registry entries found.</p>
+  {{else}}
+    <table class="containers">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Arch</th>
+          <th>Built</th>
+          <th>Local</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="registry-rows">
+        {{range .Rows}}{{template "registry_row" .}}{{end}}
+      </tbody>
+    </table>
+  {{end}}
+</main>
+<script>
+  function otterFilterRegistryRows() {
+    const q = document.getElementById('registry-search').value.toLowerCase();
+    document.querySelectorAll('#registry-rows tr').forEach(function (row) {
+      row.style.display = row.dataset.name.toLowerCase().includes(q) ? '' : 'none';
+    });
+  }
+</script>
 {{end}}

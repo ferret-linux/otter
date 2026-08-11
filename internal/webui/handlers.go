@@ -160,9 +160,23 @@ func (s *server) containerPanel(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// action handles POST /containers/{name}/{action} for action in
-// start, stop, pause, remove. It re-renders the container's row on success
-// (htmx swaps it in), or an empty body for a successful remove.
+// action handles POST /containers/{name}/{action} for action in start,
+// stop, pause, restart, lock, unlock, remove.
+//
+// Two callers use this route with different expectations of what comes
+// back: Home's row is no longer interactive (see templates/row.html — rows
+// only carry the panel-opening hx-get now), so in practice every caller is
+// the detail panel's action buttons (see templates/inspect.html's
+// "container_panel" block), which target #detail-panel and expect a
+// re-rendered panel back. The optional ?view=row query parameter exists
+// for any future caller that instead wants the old row-fragment response,
+// so this handler isn't hard-wired to only ever serve the panel.
+//
+// On a successful remove, the container no longer exists to inspect, so
+// this responds with an out-of-band swap that both clears the row (if
+// still present, e.g. a stale row from a caller that isn't the panel) and
+// resets #detail-panel to its empty state, rather than trying to re-render
+// inspect data for a container that's gone.
 func (s *server) action(w http.ResponseWriter, r *http.Request) {
 	name := r.PathValue("name")
 	action := r.PathValue("action")
@@ -194,30 +208,54 @@ func (s *server) action(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if action == "remove" {
-		// Row removed: respond with nothing so htmx's outerHTML swap clears it.
+		// hx-swap-oob targets #row-{name} directly (deleting it if present)
+		// and #detail-panel back to its empty state, so both the list and
+		// the panel reflect the removal in one response regardless of
+		// which element htmx's own hx-target on the triggering button
+		// pointed at.
+		fmt.Fprintf(w,
+			`<div id="row-%s" hx-swap-oob="delete"></div>`+
+				`<div id="detail-panel" class="detail-panel" hx-swap-oob="true"><div class="detail-panel-empty">Select an instance to view details</div></div>`,
+			name,
+		)
+		return
+	}
+
+	if r.URL.Query().Get("view") == "row" {
+		result, err := commands.NewListCommand(s.cm).Execute(ctx, commands.ListOptions{})
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		for _, c := range result.Containers {
+			if c.Name == name {
+				row := rowData{
+					Container: c,
+					Locked:    commands.IsLocked(ctx, s.cm, c.Name),
+					Upgrading: s.cm.IsUpgrading(ctx, c.Name),
+				}
+				if err := s.templates.ExecuteTemplate(w, "row", row); err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+				}
+				return
+			}
+		}
 		w.WriteHeader(http.StatusOK)
 		return
 	}
 
-	result, err := commands.NewListCommand(s.cm).Execute(ctx, commands.ListOptions{})
+	panelResult, err := commands.NewInspectCommand(s.cm).Execute(ctx, commands.InspectOptions{
+		ContainerName: name,
+		Manager:       s.cm.Name(),
+	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	for _, c := range result.Containers {
-		if c.Name == name {
-			row := rowData{
-				Container: c,
-				Locked:    commands.IsLocked(ctx, s.cm, c.Name),
-				Upgrading: s.cm.IsUpgrading(ctx, c.Name),
-			}
-			if err := s.templates.ExecuteTemplate(w, "row", row); err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-			}
-			return
-		}
+	panelData := inspectData{InspectResult: panelResult, Upgrading: s.cm.IsUpgrading(ctx, name)}
+	if err := s.templates.ExecuteTemplate(w, "container_panel", panelData); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	w.WriteHeader(http.StatusOK)
 }
 
 // consolePageData is the Console page's view model: every currently
