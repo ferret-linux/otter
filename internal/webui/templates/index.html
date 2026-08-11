@@ -1,15 +1,35 @@
 {{define "content"}}
-<div class="toolbar">
-  <a class="btn" href="/registry">Registry</a>
-  <a class="btn btn-primary" href="/containers/new">+ New container</a>
+<header class="topbar">
+  <h1>Instances</h1>
+  <input class="search-box" type="search" id="container-search" placeholder="Search" onkeyup="otterFilterRows()">
+</header>
+<div class="page-body">
+  <main>
+    {{template "container_list" .Rows}}
+  </main>
+  <div id="detail-panel" class="detail-panel">
+    <div class="detail-panel-empty">Select an instance to view details</div>
+  </div>
 </div>
-{{template "container_list" .}}
+<script>
+  function otterFilterRows() {
+    const q = document.getElementById('container-search').value.toLowerCase();
+    document.querySelectorAll('#container-rows tr').forEach(function (row) {
+      row.style.display = row.dataset.name.toLowerCase().includes(q) ? '' : 'none';
+    });
+  }
+  function otterSelectRow(name) {
+    document.querySelectorAll('#container-rows tr').forEach(function (row) {
+      row.classList.toggle('row-selected', row.dataset.name === name);
+    });
+  }
+</script>
 {{end}}
 
 {{define "container_list"}}
 <div id="container-list" hx-get="/containers" hx-trigger="every 3s" hx-target="this" hx-swap="outerHTML">
 {{if not .}}
-  <p class="empty">No containers found. Use <code>otter create</code> to make one.</p>
+  <p class="empty">No containers found. Use <a href="/create">+ Create new</a> to make one.</p>
 {{else}}
   <table class="containers">
     <thead>
@@ -17,7 +37,6 @@
         <th>Name</th>
         <th>Status</th>
         <th>Image</th>
-        <th>Actions</th>
       </tr>
     </thead>
     <tbody id="container-rows">

@@ -4,17 +4,36 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>otter</title>
+  <title>otter{{if .PageTitle}} — {{.PageTitle}}{{end}}</title>
+  <link rel="stylesheet" href="/static/xterm.css">
   <link rel="stylesheet" href="/static/style.css">
   <script src="/static/htmx.min.js"></script>
+  <script src="/static/xterm.js"></script>
+  <script src="/static/xterm-addon-fit.js"></script>
 </head>
 <body>
-  <header class="topbar">
-    <h1>🦦 otter</h1>
-  </header>
-  <main>
-    {{template "content" .}}
-  </main>
+  <div class="app">
+    {{template "sidebar" .}}
+    <div class="app-body">
+      {{template "content" .}}
+    </div>
+  </div>
 </body>
 </html>
+{{end}}
+
+{{define "sidebar"}}
+<nav class="sidebar">
+  <div class="sidebar-brand">🦦 otter</div>
+  <div class="sidebar-nav">
+    <a class="sidebar-link{{if eq .Nav "home"}} active{{end}}" href="/">Home</a>
+    <a class="sidebar-link{{if eq .Nav "console"}} active{{end}}" href="/console">Console</a>
+    <a class="sidebar-link{{if eq .Nav "registry"}} active{{end}}" href="/registry">Registry</a>
+    <a class="sidebar-link{{if eq .Nav "logs"}} active{{end}}" href="/logs">Logs</a>
+  </div>
+  <div class="sidebar-spacer"></div>
+  <div class="sidebar-create">
+    <a class="btn btn-primary" style="display: block; text-align: center;" href="/create">+ Create new</a>
+  </div>
+</nav>
 {{end}}

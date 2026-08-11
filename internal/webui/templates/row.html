@@ -1,42 +1,15 @@
 {{define "row"}}
-<tr id="row-{{.Name}}">
+<tr id="row-{{.Name}}" class="row-selectable" data-name="{{.Name}}" hx-get="/containers/{{.Name}}/panel" hx-target="#detail-panel" hx-swap="innerHTML" onclick="otterSelectRow('{{.Name}}')">
   <td>{{.Name}}{{if .Locked}} <span title="locked">🔒</span>{{end}}</td>
   <td>
-    {{if .IsRunning}}
+    {{if .Upgrading}}
+      <span class="status status-upgrading">⟳ upgrading</span>
+    {{else if .IsRunning}}
       <span class="status status-running">● running</span>
     {{else}}
       <span class="status status-stopped">○ {{.Status}}</span>
     {{end}}
   </td>
   <td>{{.Image}}</td>
-  <td class="actions">
-    {{if .Upgrading}}
-      <span class="status status-upgrading">⟳ upgrading</span>
-      <a class="btn" href="/containers/{{.Name}}/upgrade">View</a>
-    {{else}}
-      {{if .IsRunning}}
-        <button class="btn" hx-post="/containers/{{.Name}}/stop" hx-target="#row-{{.Name}}" hx-swap="outerHTML">Stop</button>
-        <button class="btn" hx-post="/containers/{{.Name}}/pause" hx-target="#row-{{.Name}}" hx-swap="outerHTML">Pause</button>
-        <button class="btn" hx-post="/containers/{{.Name}}/restart" hx-target="#row-{{.Name}}" hx-swap="outerHTML">Restart</button>
-        <a class="btn" href="/containers/{{.Name}}/terminal">Terminal</a>
-      {{else}}
-        <button class="btn" hx-post="/containers/{{.Name}}/start" hx-target="#row-{{.Name}}" hx-swap="outerHTML">Start</button>
-      {{end}}
-      <a class="btn" href="/containers/{{.Name}}/logs">Logs</a>
-      <a class="btn" href="/containers/{{.Name}}/inspect">Inspect</a>
-      {{if .Locked}}
-        <button class="btn" hx-post="/containers/{{.Name}}/unlock" hx-target="#row-{{.Name}}" hx-swap="outerHTML">Unlock</button>
-      {{else}}
-        <button class="btn" hx-post="/containers/{{.Name}}/lock" hx-target="#row-{{.Name}}" hx-swap="outerHTML">Lock</button>
-      {{end}}
-      <button
-        class="btn btn-danger"
-        hx-post="/containers/{{.Name}}/remove"
-        hx-target="#row-{{.Name}}"
-        hx-swap="outerHTML"
-        hx-confirm="Remove container '{{.Name}}'? This cannot be undone."
-      >Remove</button>
-    {{end}}
-  </td>
 </tr>
 {{end}}
