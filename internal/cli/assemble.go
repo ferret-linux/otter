@@ -53,10 +53,15 @@ func assembleAction(ctx context.Context, cmd *cli.Command, cfg *config.Values, d
 		return errors.New("container manager not found in context")
 	}
 
+	names, err := splitNames(cmd.Args().Slice())
+	if err != nil {
+		return err
+	}
+
 	opts := commands.AssembleOptions{
 		ManifestPath: cmd.String("file"),
 		SudoCommand:  cmd.String("sudo-command"),
-		Boxname:      firstName(cmd.Args().Slice()),
+		BoxNames:     names,
 	}
 	if deleteFlag {
 		opts.Delete = true
@@ -66,7 +71,7 @@ func assembleAction(ctx context.Context, cmd *cli.Command, cfg *config.Values, d
 
 	assembleCmd := commands.NewAssembleCommand(cfg, containerManager)
 
-	err := assembleCmd.Execute(ctx, opts)
+	err = assembleCmd.Execute(ctx, opts)
 	if err != nil {
 		return fmt.Errorf("failed to execute assemble command: %w", err)
 	}

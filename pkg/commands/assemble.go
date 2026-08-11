@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"slices"
 	"strings"
 	"time"
 
@@ -24,10 +23,10 @@ type AssembleOptions struct {
 	ManifestPath string
 	// SudoCommand is the sudo program to use for root validation.
 	SudoCommand string
-	// Boxname is the name of the box to assemble.
-	// If specified, the Assemble command will only assemble the given box.
+	// BoxNames are the names of the boxes to assemble.
+	// If specified, the Assemble command will only assemble the given boxes.
 	// If empty, the command will assemble all boxes defined in the manifest.
-	Boxname string
+	BoxNames []string
 	// Delete indicates whether to delete the existing box before assembling.
 	// true=delete, false=create or update.
 	Delete  bool
@@ -88,35 +87,55 @@ func (ac *AssembleCommand) Execute(ctx context.Context, opts AssembleOptions) er
 		}
 	}
 
-	filteredItems := items
-	if opts.Boxname != "" {
-		idx := slices.IndexFunc(items, func(i manifest.Item) bool {
-			return i.Name == opts.Boxname
-		})
-		if idx == -1 {
-			return fmt.Errorf("box '%s' not found in manifest", opts.Boxname)
-		}
-		filteredItems = []manifest.Item{items[idx]}
+	itemsByName := make(map[string]manifest.Item, len(items))
+	for _, item := range items {
+		itemsByName[item.Name] = item
 	}
 
-	for _, item := range filteredItems {
+	boxNames := opts.BoxNames
+	if len(boxNames) == 0 {
+		boxNames = make([]string, len(items))
+		for i, item := range items {
+			boxNames[i] = item.Name
+		}
+	} else {
+		for _, name := range boxNames {
+			if _, ok := itemsByName[name]; !ok {
+				return fmt.Errorf("box '%s' not found in manifest", name)
+			}
+		}
+	}
+
+	pastVerb, baseVerb := "created", "create"
+	switch {
+	case opts.Delete:
+		pastVerb, baseVerb = "removed", "remove"
+	case opts.Replace:
+		pastVerb, baseVerb = "replaced", "replace"
+	}
+
+	outcome := runBatch(ctx, boxNames, func(ctx context.Context, name string) (bool, error) {
+		item := itemsByName[name]
+		var err error
 		switch {
 		case opts.Delete:
-			if err := ac.deleteItem(ctx, item); err != nil {
-				return fmt.Errorf("failed to delete item '%s': %w", item.Name, err)
-			}
+			err = ac.deleteItem(ctx, item)
 		case opts.Replace:
-			if err := ac.replaceItem(ctx, item); err != nil {
-				return fmt.Errorf("failed to replace item '%s': %w", item.Name, err)
-			}
+			err = ac.replaceItem(ctx, item)
 		default:
-			if err := ac.createItem(ctx, item); err != nil {
-				return fmt.Errorf("failed to create item '%s': %w", item.Name, err)
-			}
+			err = ac.createItem(ctx, item)
 		}
-	}
+		if err != nil {
+			ui.DefaultLogger.Error(fmt.Sprintf("failed to %s item", baseVerb), "name", name, "err", err)
+			return false, err
+		}
+		return false, nil
+	})
 
-	return nil
+	return summarizeBatch(outcome, batchSummaryConfig{
+		PastVerb: pastVerb,
+		BaseVerb: baseVerb,
+	})
 }
 
 func (ac *AssembleCommand) deleteItem(ctx context.Context, item manifest.Item) error {
