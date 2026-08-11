@@ -56,6 +56,29 @@ func (s *server) listRows(ctx context.Context) ([]rowData, error) {
 	return s.buildRows(ctx, result.Containers), nil
 }
 
+// pageData is the common view model every full page (layout.html's
+// "content" block) renders with: which sidebar link is active (Nav) and a
+// human title for <title> (PageTitle). Page-specific data is attached via
+// embedding a concrete *Data struct below, matching the pattern
+// inspectData already used for InspectResult+Upgrading before this change.
+type pageData struct {
+	Nav       string
+	PageTitle string
+}
+
+// indexData is the Home page's view model: the container rows plus which
+// container name (if any) should be pre-selected in the detail panel and
+// have its row highlighted. Selection only happens via the row's onclick
+// JS today (see templates/row.html), so Selected is always empty on a full
+// page load; it exists so containerList (the polled fragment) can accept
+// and preserve a selection across polls instead of the highlight being
+// wiped every 3s when the row set is replaced.
+type indexData struct {
+	pageData
+	Rows     []rowData
+	Selected string
+}
+
 func (s *server) index(w http.ResponseWriter, r *http.Request) {
 	rows, err := s.listRows(r.Context())
 	if err != nil {
@@ -63,16 +86,27 @@ func (s *server) index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := s.templates.ExecuteTemplate(w, "layout", rows); err != nil {
+	data := indexData{
+		pageData: pageData{Nav: "home", PageTitle: "instances"},
+		Rows:     rows,
+	}
+	if err := s.templates.ExecuteTemplate(w, "layout", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
-// containerList handles GET /containers: the same data as index, rendered
-// as just the container_list fragment (no layout/toolbar). It's polled by
-// the dashboard (see templates/index.html's "container_list" block) so the
-// table stays current if a container's state changes elsewhere — the CLI,
-// another browser tab, or a crash — without the user reloading.
+// containerList handles GET /containers: the same row data as index,
+// rendered as just the container_list fragment (no layout/sidebar). It's
+// polled by the dashboard (see templates/index.html's "container_list"
+// block) so the table stays current if a container's state changes
+// elsewhere — the CLI, another browser tab, or a crash — without the user
+// reloading.
+//
+// The optional ?selected=name query parameter (sent by the poll via
+// hx-vals, see templates/index.html) is echoed back into container_list so
+// the currently-open detail panel's row keeps its row-selected highlight
+// across polls, instead of the highlight being lost every time htmx
+// replaces #container-list's rows wholesale.
 func (s *server) containerList(w http.ResponseWriter, r *http.Request) {
 	rows, err := s.listRows(r.Context())
 	if err != nil {
@@ -80,7 +114,37 @@ func (s *server) containerList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := s.templates.ExecuteTemplate(w, "container_list", rows); err != nil {
+	data := struct {
+		Rows     []rowData
+		Selected string
+	}{Rows: rows, Selected: r.URL.Query().Get("selected")}
+
+	if err := s.templates.ExecuteTemplate(w, "container_list", data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+// containerPanel handles GET /containers/{name}/panel: the Home page's
+// right-hand detail panel fragment for a single container, replacing the
+// old standalone /containers/{name}/inspect page. htmx swaps this into
+// #detail-panel (see templates/row.html's hx-get) without a full page
+// navigation, matching how selecting an instance behaves in Incus's web UI
+// (see the reference screenshots this design followed).
+func (s *server) containerPanel(w http.ResponseWriter, r *http.Request) {
+	name := r.PathValue("name")
+	ctx := r.Context()
+
+	result, err := commands.NewInspectCommand(s.cm).Execute(ctx, commands.InspectOptions{
+		ContainerName: name,
+		Manager:       s.cm.Name(),
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := inspectData{InspectResult: result, Upgrading: s.cm.IsUpgrading(ctx, name)}
+	if err := s.templates.ExecuteTemplate(w, "container_panel", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -145,16 +209,95 @@ func (s *server) action(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (s *server) terminalPage(w http.ResponseWriter, r *http.Request) {
-	name := r.PathValue("name")
-	if err := s.templates.ExecuteTemplate(w, "terminal", name); err != nil {
+// consolePageData is the Console page's view model: every currently
+// running container (attachable as a shell) and every currently upgrading
+// container (attachable as a live upgrade-output view), matching the
+// "Running containers" / "Upgrading containers" picker lists design — see
+// templates/console.html.
+type consolePageData struct {
+	pageData
+	Running   []rowData
+	Upgrading []rowData
+}
+
+// consolePage handles GET /console: the Console picker page, listing
+// running and upgrading containers to attach a shell or watch an upgrade,
+// replacing the old per-row "Terminal" link and standalone
+// /containers/{name}/terminal and /containers/{name}/upgrade pages.
+func (s *server) consolePage(w http.ResponseWriter, r *http.Request) {
+	rows, err := s.listRows(r.Context())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := consolePageData{pageData: pageData{Nav: "console", PageTitle: "console"}}
+	for _, row := range rows {
+		if row.Upgrading {
+			data.Upgrading = append(data.Upgrading, row)
+			continue
+		}
+		if row.IsRunning() {
+			data.Running = append(data.Running, row)
+		}
+	}
+
+	if err := s.templates.ExecuteTemplate(w, "layout", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
-func (s *server) logsPage(w http.ResponseWriter, r *http.Request) {
+// consoleShellFragment handles GET /console/{name}/shell: the terminal
+// detail-pane fragment for a running container, htmx-swapped into
+// #picker-detail when its list item is clicked (see templates/console.html).
+// It renders the same xterm/websocket bootstrap terminal.html used to, just
+// as a fragment instead of a full page.
+func (s *server) consoleShellFragment(w http.ResponseWriter, r *http.Request) {
 	name := r.PathValue("name")
-	if err := s.templates.ExecuteTemplate(w, "logs", name); err != nil {
+	if err := s.templates.ExecuteTemplate(w, "console_shell", name); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+// consoleWatchFragment handles GET /console/{name}/watch: the live
+// upgrade-output detail-pane fragment for an upgrading container,
+// htmx-swapped into #picker-detail the same way consoleShellFragment is.
+// It renders the same SSE bootstrap upgrade.html used to, just as a
+// fragment instead of a full page.
+func (s *server) consoleWatchFragment(w http.ResponseWriter, r *http.Request) {
+	name := r.PathValue("name")
+	if err := s.templates.ExecuteTemplate(w, "console_watch", name); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+// logsListPage handles GET /logs: the Logs picker page, listing every
+// container to view its runtime log tail, replacing the old per-row "Logs"
+// link and standalone /containers/{name}/logs page.
+func (s *server) logsListPage(w http.ResponseWriter, r *http.Request) {
+	rows, err := s.listRows(r.Context())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := struct {
+		pageData
+		Rows []rowData
+	}{pageData: pageData{Nav: "logs", PageTitle: "logs"}, Rows: rows}
+
+	if err := s.templates.ExecuteTemplate(w, "layout", data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+// logsViewFragment handles GET /logs/{name}/view: the log-tail detail-pane
+// fragment for a container, htmx-swapped into #picker-detail when its list
+// item is clicked (see templates/logs.html). It renders the same SSE
+// bootstrap logs.html used to, just as a fragment instead of a full page.
+func (s *server) logsViewFragment(w http.ResponseWriter, r *http.Request) {
+	name := r.PathValue("name")
+	if err := s.templates.ExecuteTemplate(w, "logs_view", name); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
