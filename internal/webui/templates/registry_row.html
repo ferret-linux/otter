@@ -12,16 +12,46 @@
   </td>
   <td class="actions">
     {{if not .Pulling}}
-      <button class="btn" hx-post="/registry/{{.Name}}/pull" hx-target="#registry-row-{{.Name}}" hx-swap="outerHTML">Pull</button>
-      <button
-        class="btn btn-danger"
-        hx-post="/registry/{{.Name}}/remove"
-        hx-target="#registry-row-{{.Name}}"
-        hx-swap="outerHTML"
-        hx-confirm="Remove local image for '{{.Name}}'? This cannot be undone."
-      >Remove</button>
+      <div class="actions-stack">
+        {{if eq .Local 1}}
+          <button class="btn" hx-post="/registry/{{.Name}}/pull" hx-target="#registry-row-{{.Name}}" hx-swap="outerHTML">Pull</button>
+        {{else if eq .Local 2}}
+          <button
+            class="btn btn-danger"
+            hx-post="/registry/{{.Name}}/remove"
+            hx-target="#registry-row-{{.Name}}"
+            hx-swap="outerHTML"
+            hx-confirm="Remove local image for '{{.Name}}'? This cannot be undone."
+          >Remove</button>
+        {{else if eq .Local 3}}
+          <button
+            class="btn btn-danger"
+            hx-post="/registry/{{.Name}}/remove"
+            hx-target="#registry-row-{{.Name}}"
+            hx-swap="outerHTML"
+            hx-confirm="Remove local image for '{{.Name}}'? This cannot be undone."
+          >Remove</button>
+          <button class="btn" hx-post="/registry/{{.Name}}/pull" hx-target="#registry-row-{{.Name}}" hx-swap="outerHTML">Refresh</button>
+        {{else if eq .Local 4}}
+          <button
+            class="btn btn-danger"
+            hx-post="/registry/{{.Name}}/remove"
+            hx-target="#registry-row-{{.Name}}"
+            hx-swap="outerHTML"
+            hx-confirm="Remove local image for '{{.Name}}'? This cannot be undone."
+          >Remove</button>
+        {{else if eq .Local 5}}
+          <button
+            class="btn btn-danger"
+            hx-post="/registry/{{.Name}}/remove"
+            hx-target="#registry-row-{{.Name}}"
+            hx-swap="outerHTML"
+            hx-confirm="Remove local image for '{{.Name}}'? This cannot be undone."
+          >Remove</button>
+          <button class="btn" hx-post="/registry/{{.Name}}/pull" hx-target="#registry-row-{{.Name}}" hx-swap="outerHTML">Refresh</button>
+        {{end}}
+      </div>
     {{end}}
-    <a class="btn" href="/create?image={{.ImageRef}}">Use this image</a>
   </td>
 </tr>
 {{end}}

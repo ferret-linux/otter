@@ -418,6 +418,17 @@ table.containers td {
   flex-wrap: wrap;
 }
 
+.actions-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.actions-stack .btn {
+  width: 5.5rem;
+  text-align: center;
+}
+
 .btn {
   display: inline-block;
   padding: 0.3rem 0.7rem;
