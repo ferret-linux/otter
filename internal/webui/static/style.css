@@ -141,6 +141,7 @@ main {
   border-left: 1px solid var(--border);
   background: var(--panel-bg);
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 1.25rem;
 }
 
@@ -186,6 +187,7 @@ main {
 .detail-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .detail-table td {
@@ -193,6 +195,8 @@ main {
   border-bottom: 1px solid var(--border);
   font-size: 0.85rem;
   vertical-align: top;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .detail-table td:first-child {
