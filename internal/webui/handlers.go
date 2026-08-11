@@ -340,32 +340,13 @@ func (s *server) logsSSE(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// inspectData is the webui's inspect-page view model: an InspectResult plus
-// upgrade state. InspectResult doesn't carry this itself since it's shared
-// with the CLI's `otter inspect` (table and --json output), which has no
-// notion of live upgrade status.
+// inspectData is the webui's inspect-panel view model: an InspectResult
+// plus upgrade state. InspectResult doesn't carry this itself since it's
+// shared with the CLI's `otter inspect` (table and --json output), which
+// has no notion of live upgrade status. Used by containerPanel.
 type inspectData struct {
 	*commands.InspectResult
 	Upgrading bool
-}
-
-func (s *server) inspectPage(w http.ResponseWriter, r *http.Request) {
-	name := r.PathValue("name")
-	ctx := r.Context()
-
-	result, err := commands.NewInspectCommand(s.cm).Execute(ctx, commands.InspectOptions{
-		ContainerName: name,
-		Manager:       s.cm.Name(),
-	})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	data := inspectData{InspectResult: result, Upgrading: s.cm.IsUpgrading(ctx, name)}
-	if err := s.templates.ExecuteTemplate(w, "inspect", data); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
 }
 
 // upgradeAction handles POST /containers/{name}/upgrade. It starts
@@ -409,42 +390,30 @@ func (s *server) upgradeAction(w http.ResponseWriter, r *http.Request) {
 		}()
 	}
 
-	// The inspect page triggers this via a plain HTML form (it's a
-	// full-page navigation context, not a row in the index table), so send
-	// it on to the upgrade status page. htmx-issued requests (the index
-	// page's row actions) set the HX-Request header on every request; those
-	// get the re-rendered row fragment instead, matching every other action
-	// in this handler group.
+	// Upgrade is now only ever triggered from the Home detail panel, which
+	// is itself an htmx fragment (see templates/container_panel.html), so
+	// every caller sets HX-Request. Non-htmx callers (e.g. curl) get sent
+	// to Console's watch view for this container instead of a 404, since
+	// the old standalone /containers/{name}/upgrade status page no longer
+	// exists — live output now only lives at /console/{name}/watch.
 	if r.Header.Get("HX-Request") == "" {
-		http.Redirect(w, r, "/containers/"+name+"/upgrade", http.StatusSeeOther)
+		http.Redirect(w, r, "/console/"+name+"/watch", http.StatusSeeOther)
 		return
 	}
 
-	result, err := commands.NewListCommand(s.cm).Execute(ctx, commands.ListOptions{})
+	// Re-render the detail panel (not the row — the panel is what shows
+	// the Upgrade button and now-upgrading state) so htmx can swap
+	// #detail-panel in place, matching containerPanel's own rendering.
+	panelResult, err := commands.NewInspectCommand(s.cm).Execute(ctx, commands.InspectOptions{
+		ContainerName: name,
+		Manager:       s.cm.Name(),
+	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	for _, c := range result.Containers {
-		if c.Name == name {
-			row := rowData{
-				Container: c,
-				Locked:    commands.IsLocked(ctx, s.cm, c.Name),
-				Upgrading: s.cm.IsUpgrading(ctx, c.Name),
-			}
-			if err := s.templates.ExecuteTemplate(w, "row", row); err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-			}
-			return
-		}
-	}
-	w.WriteHeader(http.StatusOK)
-}
-
-// upgradePage renders the upgrade status/live-view page for a container.
-func (s *server) upgradePage(w http.ResponseWriter, r *http.Request) {
-	name := r.PathValue("name")
-	if err := s.templates.ExecuteTemplate(w, "upgrade", name); err != nil {
+	panelData := inspectData{InspectResult: panelResult, Upgrading: s.cm.IsUpgrading(ctx, name)}
+	if err := s.templates.ExecuteTemplate(w, "container_panel", panelData); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -562,14 +531,21 @@ func registryLocalClass(state commands.RegistryLocalState) string {
 
 // registryPage renders the registry panel: every enabled registry entry
 // with its local pull state, matching `otter registry list`'s default
-// (no --all) view.
+// (no --all) view. Wrapped in the shared sidebar layout like every other
+// top-level nav destination.
 func (s *server) registryPage(w http.ResponseWriter, r *http.Request) {
 	rows, err := s.registryRows(r.Context(), false)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if err := s.templates.ExecuteTemplate(w, "registry", rows); err != nil {
+
+	data := struct {
+		pageData
+		Rows []registryRowData
+	}{pageData: pageData{Nav: "registry", PageTitle: "registry"}, Rows: rows}
+
+	if err := s.templates.ExecuteTemplate(w, "layout", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -684,13 +660,23 @@ type createFormData struct {
 	Error              string
 }
 
-func (s *server) newContainerPage(w http.ResponseWriter, r *http.Request) {
-	data := createFormData{
-		GenerateEntry: true,
-		DefaultImage:  s.cfg.DefaultContainerImage,
-		Image:         r.URL.Query().Get("image"),
+// createPage handles GET /create: the "+ Create new" sidebar destination,
+// wrapped in the shared sidebar layout like every other top-level nav
+// destination (unlike its predecessor, /containers/new, which was a
+// standalone page).
+func (s *server) createPage(w http.ResponseWriter, r *http.Request) {
+	data := struct {
+		pageData
+		createFormData
+	}{
+		pageData: pageData{Nav: "create", PageTitle: "create new"},
+		createFormData: createFormData{
+			GenerateEntry: true,
+			DefaultImage:  s.cfg.DefaultContainerImage,
+			Image:         r.URL.Query().Get("image"),
+		},
 	}
-	if err := s.templates.ExecuteTemplate(w, "create", data); err != nil {
+	if err := s.templates.ExecuteTemplate(w, "layout", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
