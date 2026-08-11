@@ -1,5 +1,5 @@
 {{define "row"}}
-<tr id="row-{{.Name}}" class="row-selectable" data-name="{{.Name}}" hx-get="/containers/{{.Name}}/panel" hx-target="#detail-panel" hx-swap="innerHTML" onclick="otterSelectRow('{{.Name}}')">
+<tr id="row-{{.Name}}" class="row-selectable{{if .Selected}} row-selected{{end}}" data-name="{{.Name}}" hx-get="/containers/{{.Name}}/panel" hx-target="#detail-panel" hx-swap="innerHTML" onclick="otterSelectRow('{{.Name}}')">
   <td>{{.Name}}{{if .Locked}} <span title="locked">🔒</span>{{end}}</td>
   <td>
     {{if .Upgrading}}

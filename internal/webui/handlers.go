@@ -21,11 +21,17 @@ import (
 // commands.IsLocked's doc comment on why it's a separate, per-container
 // check rather than something ListCommand computes for every container up
 // front); upgrade state is the same shape of check, via
-// containermanager.ContainerManager.IsUpgrading.
+// containermanager.ContainerManager.IsUpgrading. Selected reflects whether
+// this row is the currently-open detail-panel selection for this specific
+// request — computed server-side per request (see containerList) so the
+// row-selected highlight survives the dashboard's 3s poll, instead of
+// depending only on client-side JS state that's wiped when htmx replaces
+// the polled markup.
 type rowData struct {
 	containermanager.Container
 	Locked    bool
 	Upgrading bool
+	Selected  bool
 }
 
 // buildRows attaches lock and upgrade state to each container for template
@@ -114,10 +120,15 @@ func (s *server) containerList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	selected := r.URL.Query().Get("selected")
+	for i := range rows {
+		rows[i].Selected = selected != "" && rows[i].Name == selected
+	}
+
 	data := struct {
 		Rows     []rowData
 		Selected string
-	}{Rows: rows, Selected: r.URL.Query().Get("selected")}
+	}{Rows: rows, Selected: selected}
 
 	if err := s.templates.ExecuteTemplate(w, "container_list", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -776,7 +787,14 @@ func (s *server) createContainer(w http.ResponseWriter, r *http.Request) {
 
 func (s *server) renderCreateForm(w http.ResponseWriter, data createFormData) {
 	w.WriteHeader(http.StatusUnprocessableEntity)
-	if err := s.templates.ExecuteTemplate(w, "create", data); err != nil {
+	full := struct {
+		pageData
+		createFormData
+	}{
+		pageData:       pageData{Nav: "create", PageTitle: "create new"},
+		createFormData: data,
+	}
+	if err := s.templates.ExecuteTemplate(w, "layout", full); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
