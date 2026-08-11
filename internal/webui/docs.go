@@ -2,8 +2,10 @@ package webui
 
 import (
 	"bytes"
+	"fmt"
 	"html/template"
 	"net/http"
+	"strings"
 
 	"github.com/alecthomas/chroma/v2"
 	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
@@ -51,6 +53,23 @@ type docsCodeRenderer struct{}
 func (docsCodeRenderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
 	reg.Register(ast.KindFencedCodeBlock, renderFencedCodeBlock)
 	reg.Register(ast.KindCodeBlock, renderCodeBlock)
+	reg.Register(ast.KindHeading, renderHeading)
+}
+
+// renderHeading overrides goldmark's default heading rendering to prepend
+// the literal "#"-prefix (e.g. "## ") before the heading text, matching
+// how `otter documentation`'s glamour renderer displays headings in the
+// terminal instead of relying on size/weight alone.
+func renderHeading(w util.BufWriter, source []byte, n ast.Node, entering bool) (ast.WalkStatus, error) {
+	node := n.(*ast.Heading)
+	if entering {
+		fmt.Fprintf(w, "<h%d>", node.Level)
+		w.WriteString(strings.Repeat("#", node.Level))
+		w.WriteString(" ")
+	} else {
+		fmt.Fprintf(w, "</h%d>\n", node.Level)
+	}
+	return ast.WalkContinue, nil
 }
 
 func renderFencedCodeBlock(w util.BufWriter, source []byte, n ast.Node, entering bool) (ast.WalkStatus, error) {
