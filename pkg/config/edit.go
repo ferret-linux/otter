@@ -161,7 +161,7 @@ func setKeyInSection(content, section, key, value string) string {
 // uses to read values, so SaveUserValue's caller (the webui Settings
 // handler) doesn't need its own copy of which fields are bool/int/string.
 func FormatTOMLValue(path FieldPath, raw string) (string, error) {
-	switch fieldKind(path) {
+	switch kindOfField(path) {
 	case fieldKindBool:
 		switch raw {
 		case "true", "on", "1":
@@ -190,10 +190,10 @@ const (
 	fieldKindInt
 )
 
-// fieldKind reports how a field's value should be formatted in TOML,
+// kindOfField reports how a field's value should be formatted in TOML,
 // mirroring the Go types declared in types.go (fileConfig's nested
 // structs) for exactly the fields listed in Fields.
-func fieldKind(path FieldPath) fieldKind {
+func kindOfField(path FieldPath) fieldKind {
 	switch path {
 	case FieldPath{"settings", "init-system"},
 		FieldPath{"settings", "rootful"},
