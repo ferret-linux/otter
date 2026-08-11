@@ -64,6 +64,21 @@ type server struct {
 	// pull-in-progress state and does not survive a webui restart.
 	pullingMu sync.Mutex
 	pulling   map[string]bool
+
+	// manifestSessionsMu guards manifestSessions, the set of in-progress
+	// Manifests-page sessions (see internal/webui/manifests.go): one per
+	// parsed manifest, kept alive between its preview and apply requests.
+	// Best-effort, in-memory only — a webui restart mid-session just means
+	// the person has to re-upload or re-enter the manifest URL.
+	manifestSessionsMu sync.Mutex
+	manifestSessions   map[string]*manifestSession
+
+	// manifestApplyingMu guards manifestApplying, the set of session IDs
+	// currently running a detached commands.AssembleCommand.Execute from
+	// the Manifests page's Apply action (see manifestsApply), mirroring
+	// how s.pulling tracks in-progress registry pulls above.
+	manifestApplyingMu sync.Mutex
+	manifestApplying   map[string]bool
 }
 
 // webUISessionCookie is the name of the cookie set once a request presents
@@ -87,7 +102,13 @@ func Serve(ctx context.Context, cm containermanager.ContainerManager, cfg *confi
 		return fmt.Errorf("failed to prepare webui static assets: %w", err)
 	}
 
-	s := &server{cm: cm, rootful: rootful, templates: tmpl, token: token, upgradeStreams: make(map[string]*upgradeStream), pulling: make(map[string]bool)}
+	s := &server{
+		cm: cm, rootful: rootful, templates: tmpl, token: token,
+		upgradeStreams:   make(map[string]*upgradeStream),
+		pulling:          make(map[string]bool),
+		manifestSessions: make(map[string]*manifestSession),
+		manifestApplying: make(map[string]bool),
+	}
 	s.setConfig(cfg)
 
 	mux := http.NewServeMux()
@@ -105,6 +126,9 @@ func Serve(ctx context.Context, cm containermanager.ContainerManager, cfg *confi
 	mux.HandleFunc("GET /registry", s.registryPage)
 	mux.HandleFunc("POST /registry/{name}/pull", s.registryPullAction)
 	mux.HandleFunc("POST /registry/{name}/remove", s.registryRemoveAction)
+	mux.HandleFunc("GET /manifests", s.manifestsPage)
+	mux.HandleFunc("POST /manifests/parse", s.manifestsParse)
+	mux.HandleFunc("POST /manifests/{sessionID}/apply", s.manifestsApply)
 	mux.HandleFunc("GET /console", s.consolePage)
 	mux.HandleFunc("GET /console/{name}/shell", s.consoleShellFragment)
 	mux.HandleFunc("GET /console/{name}/watch", s.consoleWatchFragment)

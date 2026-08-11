@@ -1,0 +1,106 @@
+{{define "manifests_content"}}
+<header class="topbar">
+  <h1>Manifests</h1>
+</header>
+<main>
+  <form
+    class="create-form"
+    hx-post="/manifests/parse"
+    hx-target="#manifests-result"
+    hx-swap="innerHTML"
+    hx-encoding="multipart/form-data"
+  >
+    <fieldset>
+      <legend>Manifest source</legend>
+      <div class="field">
+        <label for="manifest-url">Manifest URL</label>
+        <input type="text" id="manifest-url" name="url" placeholder="https://example.com/manifest.toml">
+      </div>
+      <div class="field">
+        <label for="manifest-file">...or upload a file</label>
+        <input type="file" id="manifest-file" name="file" accept=".toml">
+      </div>
+    </fieldset>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Preview</button>
+    </div>
+  </form>
+
+  <div id="manifests-result">{{template "manifests_result" .}}</div>
+</main>
+{{end}}
+
+{{define "manifests_result"}}
+{{if .Error}}
+  <p class="error-banner">{{.Error}}</p>
+{{else if .Boxes}}
+  <form id="manifest-apply-form">
+    <table class="containers">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Name</th>
+          <th>State</th>
+          <th>Image</th>
+          <th>Rootful</th>
+          <th>Init</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .Boxes}}
+        <tr>
+          <td><input type="checkbox" name="boxes" value="{{.Name}}" form="manifest-apply-form"></td>
+          <td>{{.Name}}</td>
+          <td>
+            {{if .Exists}}
+              <span class="status status-running">Existing</span>
+            {{else}}
+              <span class="status status-stopped">New</span>
+            {{end}}
+          </td>
+          <td>{{.Image}}</td>
+          <td>{{if .Rootful}}yes{{else}}no{{end}}</td>
+          <td>{{if .Init}}yes{{else}}no{{end}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </form>
+
+  <div class="form-actions">
+    <button
+      type="button"
+      class="btn btn-primary"
+      hx-post="/manifests/{{.SessionID}}/apply"
+      hx-target="#manifests-result"
+      hx-swap="innerHTML"
+      hx-include="#manifest-apply-form"
+      hx-vals='{"verb":"create"}'
+    >Create selected</button>
+    <button
+      type="button"
+      class="btn"
+      hx-post="/manifests/{{.SessionID}}/apply"
+      hx-target="#manifests-result"
+      hx-swap="innerHTML"
+      hx-include="#manifest-apply-form"
+      hx-vals='{"verb":"replace"}'
+      hx-confirm="Replace the selected boxes? Each will be removed and recreated."
+    >Replace selected</button>
+    <button
+      type="button"
+      class="btn btn-danger"
+      hx-post="/manifests/{{.SessionID}}/apply"
+      hx-target="#manifests-result"
+      hx-swap="innerHTML"
+      hx-include="#manifest-apply-form"
+      hx-vals='{"verb":"remove"}'
+      hx-confirm="Remove the selected boxes? This cannot be undone."
+    >Remove selected</button>
+  </div>
+{{end}}
+{{end}}
+
+{{define "manifests_applying"}}
+<p class="empty">Applying the selected boxes&hellip; this can take a while for several boxes. Reload this page and re-submit the manifest to check on progress or try again.</p>
+{{end}}

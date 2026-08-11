@@ -22,6 +22,7 @@
       {{else if eq .Nav "docs"}}{{template "docs_content" .}}
       {{else if eq .Nav "settings"}}{{template "settings_content" .}}
       {{else if eq .Nav "create"}}{{template "create_content" .}}
+      {{else if eq .Nav "manifests"}}{{template "manifests_content" .}}
       {{end}}
     </div>
   </div>
@@ -36,6 +37,7 @@
     <a class="sidebar-link{{if eq .Nav "home"}} active{{end}}" href="/">Home</a>
     <a class="sidebar-link{{if eq .Nav "console"}} active{{end}}" href="/console">Console</a>
     <a class="sidebar-link{{if eq .Nav "registry"}} active{{end}}" href="/registry">Registry</a>
+    <a class="sidebar-link{{if eq .Nav "manifests"}} active{{end}}" href="/manifests">Manifests</a>
     <a class="sidebar-link{{if eq .Nav "logs"}} active{{end}}" href="/logs">Logs</a>
     <a class="sidebar-link{{if eq .Nav "docs"}} active{{end}}" href="/docs">Documentation</a>
     <a class="sidebar-link{{if eq .Nav "settings"}} active{{end}}" href="/settings">Settings</a>
