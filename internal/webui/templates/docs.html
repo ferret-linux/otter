@@ -1,0 +1,31 @@
+{{define "docs_content"}}
+<header class="topbar">
+  <h1>Documentation</h1>
+</header>
+<div class="docs-page">
+  <div id="docs-body" class="docs-body">
+    <div class="docs-body-empty">Select a doc to view it</div>
+  </div>
+  <div class="docs-tree">
+    {{range .Entries}}
+      {{if .IsDir}}
+        <h3>{{.Name}}</h3>
+      {{else}}
+        <div class="docs-tree-item{{if gt .Depth 0}} docs-tree-item-nested{{end}}" hx-get="/docs/content?path={{.Path | urlquery}}" hx-target="#docs-body" hx-swap="innerHTML" onclick="otterSelectDocItem(this)">{{.Name}}</div>
+      {{end}}
+    {{end}}
+  </div>
+</div>
+<script>
+  function otterSelectDocItem(el) {
+    el.parentElement.querySelectorAll('.docs-tree-item').forEach(function (item) {
+      item.classList.remove('active');
+    });
+    el.classList.add('active');
+  }
+</script>
+{{end}}
+
+{{define "docs_body"}}
+<div class="markdown-body">{{.}}</div>
+{{end}}

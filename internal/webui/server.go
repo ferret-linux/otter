@@ -110,6 +110,8 @@ func Serve(ctx context.Context, cm containermanager.ContainerManager, cfg *confi
 	mux.HandleFunc("GET /console/{name}/watch", s.consoleWatchFragment)
 	mux.HandleFunc("GET /logs", s.logsListPage)
 	mux.HandleFunc("GET /logs/{name}/view", s.logsViewFragment)
+	mux.HandleFunc("GET /docs", s.docsPage)
+	mux.HandleFunc("GET /docs/content", s.docsContentFragment)
 	mux.HandleFunc("GET /settings", s.settingsPage)
 	mux.HandleFunc("POST /settings/save", s.settingsSave)
 

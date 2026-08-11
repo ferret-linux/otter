@@ -19,6 +19,7 @@
       {{else if eq .Nav "console"}}{{template "console_content" .}}
       {{else if eq .Nav "registry"}}{{template "registry_content" .}}
       {{else if eq .Nav "logs"}}{{template "logs_content" .}}
+      {{else if eq .Nav "docs"}}{{template "docs_content" .}}
       {{else if eq .Nav "settings"}}{{template "settings_content" .}}
       {{else if eq .Nav "create"}}{{template "create_content" .}}
       {{end}}
@@ -36,6 +37,7 @@
     <a class="sidebar-link{{if eq .Nav "console"}} active{{end}}" href="/console">Console</a>
     <a class="sidebar-link{{if eq .Nav "registry"}} active{{end}}" href="/registry">Registry</a>
     <a class="sidebar-link{{if eq .Nav "logs"}} active{{end}}" href="/logs">Logs</a>
+    <a class="sidebar-link{{if eq .Nav "docs"}} active{{end}}" href="/docs">Documentation</a>
     <a class="sidebar-link{{if eq .Nav "settings"}} active{{end}}" href="/settings">Settings</a>
   </div>
   <div class="sidebar-spacer"></div>
