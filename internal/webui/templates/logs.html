@@ -1,32 +1,66 @@
-{{define "logs"}}
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>otter — {{.}} — logs</title>
-  <link rel="stylesheet" href="/static/style.css">
-</head>
-<body class="terminal-body">
-  <header class="topbar">
-    <h1>🦦 {{.}} — logs</h1>
-    <a class="btn" href="/">&larr; back</a>
-  </header>
-  <pre id="logs" class="logs-view"></pre>
-  <script>
-    (function () {
-      const logsEl = document.getElementById('logs');
-      const source = new EventSource('/sse/containers/{{.}}/logs');
+{{define "logs_content"}}
+<header class="topbar">
+  <h1>Logs</h1>
+</header>
+<div class="picker-page">
+  <div class="picker-list">
+    <h3>Containers</h3>
+    {{if not .Rows}}
+      <p class="picker-empty">No containers found.</p>
+    {{else}}
+      {{range .Rows}}
+        <div class="picker-item" hx-get="/logs/{{.Name}}/view" hx-target="#picker-detail" hx-swap="innerHTML" onclick="otterSelectPickerItem(this)">
+          <span>{{.Name}}</span>
+          {{if .Upgrading}}<span class="picker-badge">upgrading</span>{{end}}
+        </div>
+      {{end}}
+    {{end}}
+  </div>
+  <div id="picker-detail" class="picker-detail">
+    <div class="picker-detail-empty">Select a container to view its logs</div>
+  </div>
+</div>
+<script>
+  function otterSelectPickerItem(el) {
+    el.parentElement.querySelectorAll('.picker-item').forEach(function (item) {
+      item.classList.remove('active');
+    });
+    el.classList.add('active');
+  }
+</script>
+{{end}}
 
-      source.onmessage = function (event) {
-        logsEl.textContent += event.data + '\n';
-        logsEl.scrollTop = logsEl.scrollHeight;
-      };
-      source.addEventListener('error', function () {
-        logsEl.textContent += '\n[connection error]\n';
-      });
-    })();
-  </script>
-</body>
-</html>
+{{define "logs_view"}}
+<div class="picker-detail-header">
+  <h2>{{.}} — logs</h2>
+</div>
+<div class="picker-detail-body">
+  <pre id="logs" class="logs-view"></pre>
+</div>
+<script>
+  (function () {
+    const logsEl = document.getElementById('logs');
+    const source = new EventSource('/sse/containers/{{.}}/logs');
+
+    source.onmessage = function (event) {
+      logsEl.textContent += event.data + '\n';
+      logsEl.scrollTop = logsEl.scrollHeight;
+    };
+    source.addEventListener('error', function () {
+      logsEl.textContent += '\n[connection error]\n';
+    });
+
+    // Same reasoning as console.html's fragments: this can be replaced by
+    // htmx without a page navigation, so the open EventSource must be
+    // closed when the user picks a different container, or it keeps
+    // streaming into a detached DOM node indefinitely.
+    const detailEl = document.getElementById('picker-detail');
+    if (detailEl) {
+      detailEl.addEventListener('htmx:beforeSwap', function cleanup() {
+        source.close();
+        detailEl.removeEventListener('htmx:beforeSwap', cleanup);
+      }, { once: true });
+    }
+  })();
+</script>
 {{end}}
