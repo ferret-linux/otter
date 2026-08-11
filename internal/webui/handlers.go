@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -11,6 +12,7 @@ import (
 	"github.com/coder/websocket"
 
 	"github.com/ferret-linux/otter/pkg/commands"
+	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/registry"
 	"github.com/ferret-linux/otter/pkg/ui"
@@ -429,7 +431,7 @@ func (s *server) upgradeAction(w http.ResponseWriter, r *http.Request) {
 			}()
 
 			sw := &upgradeStreamWriter{stream: stream}
-			if err := commands.NewUpgradeCommand(s.cfg, s.cm).Execute(context.Background(), &commands.UpgradeOptions{
+			if err := commands.NewUpgradeCommand(s.config(), s.cm).Execute(context.Background(), &commands.UpgradeOptions{
 				ContainerNames: []string{name},
 				Stdout:         sw,
 				Stderr:         sw,
@@ -721,7 +723,7 @@ func (s *server) createPage(w http.ResponseWriter, r *http.Request) {
 		pageData: pageData{Nav: "create", PageTitle: "create new"},
 		createFormData: createFormData{
 			GenerateEntry: true,
-			DefaultImage:  s.cfg.DefaultContainerImage,
+			DefaultImage:  s.config().DefaultContainerImage,
 			Image:         r.URL.Query().Get("image"),
 		},
 	}
@@ -769,7 +771,7 @@ func (s *server) createContainer(w http.ResponseWriter, r *http.Request) {
 		UnshareProcess:     r.FormValue("unshare-process") != "",
 		GenerateEntry:      r.FormValue("generate-entry") != "",
 		Nopasswd:           r.FormValue("nopasswd") != "",
-		DefaultImage:       s.cfg.DefaultContainerImage,
+		DefaultImage:       s.config().DefaultContainerImage,
 	}
 
 	cpuThreads := 0
@@ -814,7 +816,7 @@ func (s *server) createContainer(w http.ResponseWriter, r *http.Request) {
 		ContainerAlwaysPull:  data.AlwaysPull,
 	}
 
-	if _, err := commands.NewCreateCommand(s.cfg, s.cm, nil).Execute(r.Context(), opts); err != nil {
+	if _, err := commands.NewCreateCommand(s.config(), s.cm, nil).Execute(r.Context(), opts); err != nil {
 		data.Error = err.Error()
 		s.renderCreateForm(w, data)
 		return
@@ -835,6 +837,122 @@ func (s *server) renderCreateForm(w http.ResponseWriter, data createFormData) {
 	if err := s.templates.ExecuteTemplate(w, "layout", full); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+// settingsFieldView is one config field as rendered on the Settings page:
+// config.FieldState plus the human label from config.Fields and a
+// lowercase CSS-safe badge name derived from its Source, so the template
+// doesn't need Go-side Source constants to pick a badge class.
+type settingsFieldView struct {
+	config.FieldState
+	Label      string
+	SourceName string // "default", "system", "user", or "override"
+}
+
+// sourceName maps a config.Source to the lowercase name settingsFieldView
+// and the settings template use for CSS classes and display text.
+func sourceName(src config.Source) string {
+	switch src {
+	case config.SourceSystem:
+		return "system"
+	case config.SourceUser:
+		return "user"
+	case config.SourceOverride:
+		return "override"
+	default:
+		return "default"
+	}
+}
+
+// settingsFieldViews zips config.LoadProvenance's per-field states with
+// their labels from config.Fields, relying on LoadProvenance iterating
+// Fields in the same order it's declared (see provenance.go) to zip by
+// index rather than needing a lookup by FieldPath.
+func settingsFieldViews() ([]settingsFieldView, error) {
+	states, err := config.LoadProvenance()
+	if err != nil {
+		return nil, err
+	}
+	views := make([]settingsFieldView, len(states))
+	for i, st := range states {
+		label := ""
+		if i < len(config.Fields) {
+			label = config.Fields[i].Label
+		}
+		views[i] = settingsFieldView{FieldState: st, Label: label, SourceName: sourceName(st.Source)}
+	}
+	return views, nil
+}
+
+// settingsPage handles GET /settings: shows every config field's current
+// effective value and where it comes from (system config, user config, an
+// override of a system default, or otter's built-in default — see
+// config.LoadProvenance), each individually editable and saved via
+// settingsSave.
+func (s *server) settingsPage(w http.ResponseWriter, r *http.Request) {
+	views, err := settingsFieldViews()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := struct {
+		pageData
+		Fields []settingsFieldView
+	}{pageData: pageData{Nav: "settings", PageTitle: "settings"}, Fields: views}
+
+	if err := s.templates.ExecuteTemplate(w, "layout", data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+// settingsSave handles POST /settings/save: writes one field's new value
+// into the user's own otter.conf (see config.SaveUserValue — system config
+// files are never written to), reloads s.cfg from disk so the change is
+// visible elsewhere in this running webui process without a restart (see
+// server.setConfig), and redirects back to the Settings page.
+//
+// Saving webui.token is a special case: since s.token gates every request
+// via withAuth, and the browser's session cookie is only valid for the
+// token that was active when it was set, changing the token immediately
+// invalidates the current session. To avoid the user locking themselves
+// out, the redirect after a token save carries the new value as
+// ?token=..., which withAuth's existing query-param flow (see server.go)
+// picks up and turns into a fresh valid session cookie in the same
+// response round-trip.
+func (s *server) settingsSave(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	path := config.FieldPath{Section: r.FormValue("section"), Key: r.FormValue("key")}
+	raw := r.FormValue("value")
+
+	formatted, err := config.FormatTOMLValue(path, raw)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := config.SaveUserValue(path, formatted); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	newCfg, err := config.LoadValues()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	s.setConfig(newCfg)
+
+	if path.Section == "webui" && path.Key == "token" {
+		http.Redirect(w, r, "/settings?token="+url.QueryEscape(raw), http.StatusSeeOther)
+		return
+	}
+
+	http.Redirect(w, r, "/settings", http.StatusSeeOther)
 }
 
 // splitLines splits newline-separated textarea input into a trimmed,

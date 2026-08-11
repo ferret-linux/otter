@@ -1,0 +1,56 @@
+{{define "settings_content"}}
+<header class="topbar">
+  <h1>Settings</h1>
+</header>
+<main>
+  <p class="settings-intro">
+    Editing writes to your own config file only; system-wide config is shown for reference and is never modified here.
+  </p>
+  <table class="detail-table settings-table">
+    <tbody>
+      {{range .Fields}}
+      <tr>
+        <td>
+          {{.Label}}
+          <span class="badge badge-{{.SourceName}}">{{.SourceName}}</span>
+          {{if eq .SourceName "override"}}
+            <div class="settings-system-value">system: {{.SystemValue}}</div>
+          {{end}}
+        </td>
+        <td>
+          <form class="settings-field-form" method="post" action="/settings/save">
+            <input type="hidden" name="section" value="{{.Path.Section}}">
+            <input type="hidden" name="key" value="{{.Path.Key}}">
+            {{if and (eq .Path.Section "webui") (eq .Path.Key "token")}}
+              <input type="text" name="value" value="{{.Value}}" class="settings-value-input" data-confirm-token="true">
+            {{else}}
+              <input type="text" name="value" value="{{.Value}}" class="settings-value-input">
+            {{end}}
+            <button type="submit" class="btn">Save</button>
+          </form>
+        </td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+</main>
+<script>
+  (function () {
+    document.querySelectorAll('.settings-field-form').forEach(function (form) {
+      const input = form.querySelector('[data-confirm-token="true"]');
+      if (!input) return;
+      form.addEventListener('submit', function (e) {
+        const newToken = input.value;
+        const confirmation = prompt(
+          'Changing the webui token will end your current session. ' +
+          'Type the new token to confirm:'
+        );
+        if (confirmation !== newToken) {
+          e.preventDefault();
+          alert('Token change cancelled: confirmation did not match.');
+        }
+      });
+    });
+  })();
+</script>
+{{end}}

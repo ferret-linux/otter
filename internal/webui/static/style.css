@@ -347,6 +347,67 @@ table.containers td {
   color: var(--upgrading);
 }
 
+.badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.badge-default {
+  background: var(--border);
+  color: var(--fg-muted);
+}
+
+.badge-system {
+  background: var(--border);
+  color: var(--fg);
+}
+
+.badge-user {
+  background: var(--accent);
+  color: #fff;
+}
+
+.badge-override {
+  background: var(--upgrading);
+  color: #1c1d1f;
+}
+
+.settings-intro {
+  color: var(--fg-muted);
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.settings-table td {
+  vertical-align: middle;
+}
+
+.settings-system-value {
+  color: var(--fg-muted);
+  font-size: 0.75rem;
+  margin-top: 0.2rem;
+}
+
+.settings-field-form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.settings-value-input {
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-alt);
+  color: var(--fg);
+  font: inherit;
+  min-width: 220px;
+}
+
 .actions {
   display: flex;
   gap: 0.4rem;

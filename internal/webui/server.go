@@ -31,9 +31,17 @@ var staticFS embed.FS
 const shutdownTimeout = 5 * time.Second
 
 type server struct {
-	cm        containermanager.ContainerManager
-	cfg       *config.Values
-	rootful   bool
+	cm      containermanager.ContainerManager
+	rootful bool
+
+	// cfgMu guards cfg. Config is loaded once at startup but can change
+	// after a webui Settings save (see settingsSave), so every read goes
+	// through s.config() and every write through s.setConfig() rather
+	// than accessing cfg directly, to avoid a data race between a save on
+	// one request and a read on another concurrent request.
+	cfgMu sync.RWMutex
+	cfg   *config.Values
+
 	templates *template.Template
 	token     string
 
@@ -79,7 +87,8 @@ func Serve(ctx context.Context, cm containermanager.ContainerManager, cfg *confi
 		return fmt.Errorf("failed to prepare webui static assets: %w", err)
 	}
 
-	s := &server{cm: cm, cfg: cfg, rootful: rootful, templates: tmpl, token: token, upgradeStreams: make(map[string]*upgradeStream), pulling: make(map[string]bool)}
+	s := &server{cm: cm, rootful: rootful, templates: tmpl, token: token, upgradeStreams: make(map[string]*upgradeStream), pulling: make(map[string]bool)}
+	s.setConfig(cfg)
 
 	mux := http.NewServeMux()
 	mux.Handle("GET /static/", http.StripPrefix("/static/", http.FileServerFS(staticSub)))
@@ -101,6 +110,8 @@ func Serve(ctx context.Context, cm containermanager.ContainerManager, cfg *confi
 	mux.HandleFunc("GET /console/{name}/watch", s.consoleWatchFragment)
 	mux.HandleFunc("GET /logs", s.logsListPage)
 	mux.HandleFunc("GET /logs/{name}/view", s.logsViewFragment)
+	mux.HandleFunc("GET /settings", s.settingsPage)
+	mux.HandleFunc("POST /settings/save", s.settingsSave)
 
 	httpServer := &http.Server{
 		Addr:              addr,
@@ -164,4 +175,22 @@ func (s *server) withAuth(next http.Handler) http.Handler {
 
 		http.Error(w, "unauthorized: open the URL printed at webui startup (it includes ?token=...) to establish a session", http.StatusUnauthorized)
 	})
+}
+
+// config returns the current in-memory config, safe for concurrent use
+// alongside setConfig.
+func (s *server) config() *config.Values {
+	s.cfgMu.RLock()
+	defer s.cfgMu.RUnlock()
+	return s.cfg
+}
+
+// setConfig replaces the in-memory config, safe for concurrent use
+// alongside config. Called once at startup and again after every
+// successful Settings save (see settingsSave) so already-running handlers
+// see a saved change without a webui restart.
+func (s *server) setConfig(cfg *config.Values) {
+	s.cfgMu.Lock()
+	defer s.cfgMu.Unlock()
+	s.cfg = cfg
 }
