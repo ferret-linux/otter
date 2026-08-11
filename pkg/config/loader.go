@@ -9,7 +9,7 @@ import (
 )
 
 func LoadValues() (*Values, error) {
-	files, err := getConfigFilePaths()
+	files, err := GetConfigFilePaths()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get config file paths: %w", err)
 	}
@@ -25,7 +25,12 @@ func LoadValues() (*Values, error) {
 	return toValues(cfg), nil
 }
 
-func getConfigFilePaths() ([]string, error) {
+// GetConfigFilePaths returns the config file paths in increasing priority
+// order (see the comment below). Exported so other packages — currently
+// just the webui's Settings page (see internal/webui) — can identify which
+// of these is "the user file" without duplicating this path-resolution
+// logic.
+func GetConfigFilePaths() ([]string, error) {
 	execPath, err := os.Executable()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get executable path: %w", err)
