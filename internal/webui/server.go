@@ -45,10 +45,13 @@ type server struct {
 	templates *template.Template
 	token     string
 
-	// sessionsMu guards sessions, the set of container names currently
-	// attached to a live interactive session started from this webui
-	// process — either a shell (see terminalWS) or an upgrade (see
-	// upgradeAction). Actual upgrade-in-progress status for row/inspect
+	// sessionsMu guards sessions, the set of live interactive sessions
+	// started from this webui process — either a shell (see terminalWS)
+	// or an upgrade (see upgradeAction). Keys are "shell:"+name or
+	// "upgrade:"+name, never the bare container name, so a shell and an
+	// upgrade running for the same container get separate entries
+	// instead of one clobbering the other — a container can be attached
+	// to both at once. Actual upgrade-in-progress status for row/inspect
 	// rendering still comes from s.cm.IsUpgrading (the
 	// container.upgrading marker file, see containermanager.
 	// ContainerManager), which is authoritative and survives webui

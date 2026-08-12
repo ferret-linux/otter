@@ -49,9 +49,11 @@
   // when another viewer requests control — kept in one place rather than
   // duplicated in console_shell and console_watch.
   //
-  // handlers.onOutput(line) is called for every output line, handlers.
-  // onClosed() when the session ends, handlers.onError() on a connection
-  // error. The returned object exposes sendInput(bytes), sendControl(obj)
+  // handlers.onOutput(data) is called for every chunk of output — a
+  // Uint8Array of raw bytes for a binary (shell/PTY) session, or a string
+  // line for a text (upgrade log) session — handlers.onClosed() when the
+  // session ends, handlers.onError() on a connection error. The returned
+  // object exposes sendInput(bytes), sendControl(obj)
   // (for non-input control messages like resize), requestControl(), and
   // close(); assign a function to the returned object's onControlState
   // property to be notified (isController: bool) whenever control changes
@@ -81,7 +83,7 @@
 
     socket.addEventListener('message', function (event) {
       if (typeof event.data !== 'string') {
-        handlers.onOutput && handlers.onOutput(new TextDecoder().decode(event.data));
+        handlers.onOutput && handlers.onOutput(new Uint8Array(event.data));
         return;
       }
 
@@ -167,7 +169,7 @@
     fitAddon.fit();
 
     const session = otterAttachSession('/ws/containers/{{.}}/terminal', {
-      onOutput: function (line) { term.write(line + '\r\n'); },
+      onOutput: function (data) { term.write(data); },
       onClosed: function () { term.write('\r\n[session ended]\r\n'); },
       onError: function () { term.write('\r\n[connection error]\r\n'); },
     });

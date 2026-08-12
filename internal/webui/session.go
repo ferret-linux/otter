@@ -27,8 +27,22 @@ type sessionConn struct {
 	conn *websocket.Conn
 	// send serializes writes to conn; websocket.Conn is not safe for
 	// concurrent writes, and both the session's fan-out and this
-	// connection's own control-state messages write to it.
-	send chan []byte
+	// connection's own control-state messages write to it. Each queued
+	// wsFrame carries its own websocket message type, since a session
+	// mixes binary output (raw shell/PTY bytes, for sessions with
+	// resizeCh set) with text output (JSON wireMessage envelopes, for
+	// everything else — line-buffered upgrade output and all control
+	// messages) on the same connection.
+	send chan wsFrame
+}
+
+// wsFrame is one message queued on a sessionConn's send channel, paired
+// with the websocket message type it must be written as — binary for raw
+// shell output, text for JSON wireMessage envelopes (line-buffered
+// upgrade output, control_state, control_requested, closed).
+type wsFrame struct {
+	msgType websocket.MessageType
+	data    []byte
 }
 
 // session is a single running interactive process (a shell entered via
@@ -46,9 +60,11 @@ type sessionConn struct {
 type session struct {
 	mu sync.Mutex
 
-	// buf holds every line written so far, for connections that attach
-	// after output has already started.
-	buf []string
+	// buf holds every output message broadcast so far — one entry per
+	// upgrade log line for line-buffered sessions, one entry per raw
+	// write for shell sessions (see broadcastRaw) — for connections that
+	// attach after output has already started.
+	buf []bufEntry
 	// conns is every currently attached connection, controller included.
 	conns map[uint64]*sessionConn
 	// controllerID is the id of the connection currently in control, or 0
@@ -77,6 +93,15 @@ type session struct {
 	pendingTimer       *time.Timer
 
 	done bool
+}
+
+// bufEntry is one buffered, already-wire-ready broadcast: msgType is the
+// websocket message type it must be replayed as, and data is the exact
+// payload (raw shell bytes for a binary entry, a marshaled wireMessage for
+// a text entry).
+type bufEntry struct {
+	msgType websocket.MessageType
+	data    []byte
 }
 
 // sessionIO is what a session hands back for wiring into the underlying
@@ -110,11 +135,24 @@ func newSession(withResize bool) (*session, sessionIO) {
 }
 
 // Write implements io.Writer so *session can be passed directly as a
-// process's Stdout/Stderr. It buffers the line(s) and fans them out to
-// every attached connection, splitting on newlines the same way the old
-// upgradeStreamWriter did, since output arrives in arbitrarily-chunked
-// multi-line writes.
+// process's Stdout/Stderr.
+//
+// Sessions with resizeCh set are backed by a real PTY (see terminalWS) —
+// their output is an arbitrary byte stream (cursor movement, in-place
+// prompt redraws, per-keystroke echo with no trailing newline) that a
+// terminal emulator must receive byte-for-byte to render correctly, so it
+// is broadcast as-is via broadcastRaw with no reinterpretation.
+//
+// Every other session (upgrade) is line-buffered the same way the old
+// upgradeStreamWriter was, since its output is genuinely line-oriented log
+// text and arrives in arbitrarily-chunked multi-line writes.
 func (s *session) Write(p []byte) (int, error) {
+	if s.resizeCh != nil {
+		data := append([]byte(nil), p...) // p may be reused by the caller after Write returns
+		s.broadcastRaw(data)
+		return len(p), nil
+	}
+
 	trimmed := strings.TrimRight(string(p), "\n")
 	if trimmed == "" {
 		return len(p), nil
@@ -125,14 +163,26 @@ func (s *session) Write(p []byte) (int, error) {
 	return len(p), nil
 }
 
+// broadcastRaw fans out a raw chunk of shell/PTY output to every attached
+// connection as a binary websocket frame, unmodified.
+func (s *session) broadcastRaw(data []byte) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	s.buf = append(s.buf, bufEntry{msgType: websocket.MessageBinary, data: data})
+	for _, c := range s.conns {
+		s.sendLocked(c, websocket.MessageBinary, data)
+	}
+}
+
 func (s *session) broadcastOutput(line string) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	s.buf = append(s.buf, line)
 	msg, _ := json.Marshal(wireMessage{Type: "output", Data: line})
+	s.buf = append(s.buf, bufEntry{msgType: websocket.MessageText, data: msg})
 	for _, c := range s.conns {
-		s.sendLocked(c, msg)
+		s.sendLocked(c, websocket.MessageText, msg)
 	}
 }
 
@@ -140,9 +190,9 @@ func (s *session) broadcastOutput(line string) {
 // keeping up, the message is dropped for that connection rather than
 // stalling every other connection's output, matching upgradeStream.write's
 // original non-blocking fan-out tradeoff.
-func (s *session) sendLocked(c *sessionConn, msg []byte) {
+func (s *session) sendLocked(c *sessionConn, msgType websocket.MessageType, msg []byte) {
 	select {
-	case c.send <- msg:
+	case c.send <- wsFrame{msgType: msgType, data: msg}:
 	default:
 	}
 }
@@ -162,7 +212,7 @@ func (s *session) close() {
 	}
 	msg, _ := json.Marshal(wireMessage{Type: "closed"})
 	for _, c := range s.conns {
-		s.sendLocked(c, msg)
+		s.sendLocked(c, websocket.MessageText, msg)
 		close(c.send)
 	}
 	s.conns = nil
@@ -186,20 +236,19 @@ func (s *session) attach(conn *websocket.Conn) (*sessionConn, bool) {
 
 	s.nextConnID++
 	// +2: the control-state message plus headroom, on top of one slot per
-	// buffered line, so the initial replay below never blocks or drops.
-	c := &sessionConn{id: s.nextConnID, conn: conn, send: make(chan []byte, len(s.buf)+2)}
+	// buffered entry, so the initial replay below never blocks or drops.
+	c := &sessionConn{id: s.nextConnID, conn: conn, send: make(chan wsFrame, len(s.buf)+2)}
 	s.conns[c.id] = c
 
 	if s.controllerID == 0 {
 		s.controllerID = c.id
 	}
 
-	for _, line := range s.buf {
-		msg, _ := json.Marshal(wireMessage{Type: "output", Data: line})
-		c.send <- msg
+	for _, entry := range s.buf {
+		c.send <- wsFrame{msgType: entry.msgType, data: entry.data}
 	}
 	stateMsg, _ := json.Marshal(wireMessage{Type: "control_state", Controller: s.controllerID == c.id})
-	c.send <- stateMsg
+	c.send <- wsFrame{msgType: websocket.MessageText, data: stateMsg}
 
 	return c, true
 }
@@ -279,7 +328,7 @@ func (s *session) requestControl(c *sessionConn) {
 
 	s.pendingRequesterID = c.id
 	msg, _ := json.Marshal(wireMessage{Type: "control_requested"})
-	s.sendLocked(current, msg)
+	s.sendLocked(current, websocket.MessageText, msg)
 
 	s.pendingTimer = time.AfterFunc(controlRequestTimeout, func() {
 		s.mu.Lock()
@@ -333,7 +382,7 @@ func (s *session) grantControlLocked(newControllerID uint64) {
 func (s *session) broadcastControlStateLocked() {
 	for id, c := range s.conns {
 		msg, _ := json.Marshal(wireMessage{Type: "control_state", Controller: id == s.controllerID})
-		s.sendLocked(c, msg)
+		s.sendLocked(c, websocket.MessageText, msg)
 	}
 }
 

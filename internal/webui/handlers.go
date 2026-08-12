@@ -444,9 +444,10 @@ func (s *server) upgradeAction(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	if !s.cm.IsUpgrading(ctx, name) {
+		sessionKey := "upgrade:" + name
 		sess, sessIO := newSession(false)
 		s.sessionsMu.Lock()
-		s.sessions[name] = sess
+		s.sessions[sessionKey] = sess
 		s.sessionsMu.Unlock()
 
 		s.notify("info", fmt.Sprintf("upgrade started: %s", name))
@@ -455,7 +456,7 @@ func (s *server) upgradeAction(w http.ResponseWriter, r *http.Request) {
 			defer func() {
 				sess.close()
 				s.sessionsMu.Lock()
-				delete(s.sessions, name)
+				delete(s.sessions, sessionKey)
 				s.sessionsMu.Unlock()
 			}()
 
@@ -516,7 +517,7 @@ func (s *server) upgradeWS(w http.ResponseWriter, r *http.Request) {
 	name := r.PathValue("name")
 
 	s.sessionsMu.Lock()
-	sess, ok := s.sessions[name]
+	sess, ok := s.sessions["upgrade:"+name]
 	s.sessionsMu.Unlock()
 
 	conn, err := websocket.Accept(w, r, &websocket.AcceptOptions{})
@@ -1020,12 +1021,13 @@ func (s *server) terminalWS(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
+	sessionKey := "shell:" + name
 	s.sessionsMu.Lock()
-	sess, existed := s.sessions[name]
+	sess, existed := s.sessions[sessionKey]
 	var sessIO sessionIO
 	if !existed {
 		sess, sessIO = newSession(true)
-		s.sessions[name] = sess
+		s.sessions[sessionKey] = sess
 	}
 	s.sessionsMu.Unlock()
 
@@ -1034,7 +1036,7 @@ func (s *server) terminalWS(w http.ResponseWriter, r *http.Request) {
 			defer func() {
 				sess.close()
 				s.sessionsMu.Lock()
-				delete(s.sessions, name)
+				delete(s.sessions, sessionKey)
 				s.sessionsMu.Unlock()
 			}()
 

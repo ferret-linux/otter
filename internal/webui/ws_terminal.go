@@ -66,14 +66,15 @@ func runSessionReadLoop(ctx context.Context, conn *websocket.Conn, sess *session
 	}
 }
 
-// runSessionWriteLoop writes every message queued on c.send to conn until
-// the channel is closed (by session.detach or session.close) or a write
-// fails. It owns all writes to conn so runSessionReadLoop's goroutine and
-// the session's fan-out never write to the same *websocket.Conn
-// concurrently.
+// runSessionWriteLoop writes every frame queued on c.send to conn — each
+// as the websocket message type it was queued with (binary for raw shell
+// output, text for JSON control/upgrade messages) — until the channel is
+// closed (by session.detach or session.close) or a write fails. It owns
+// all writes to conn so runSessionReadLoop's goroutine and the session's
+// fan-out never write to the same *websocket.Conn concurrently.
 func runSessionWriteLoop(ctx context.Context, conn *websocket.Conn, c *sessionConn) {
-	for msg := range c.send {
-		if conn.Write(ctx, websocket.MessageText, msg) != nil {
+	for frame := range c.send {
+		if conn.Write(ctx, frame.msgType, frame.data) != nil {
 			return
 		}
 	}
