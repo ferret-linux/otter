@@ -34,7 +34,10 @@
   <div id="notif-panel" class="notif-panel">
     <div class="notif-panel-header">
       <span>Notifications</span>
-      <button class="notif-panel-close" onclick="otterToggleNotifPanel()" aria-label="Close">✕</button>
+      <div class="notif-panel-header-actions">
+        <button class="notif-panel-clear-all" onclick="otterClearAllNotifs()">Clear all</button>
+        <button class="notif-panel-close" onclick="otterToggleNotifPanel()" aria-label="Close">✕</button>
+      </div>
     </div>
     <div id="notif-list" class="notif-list">
       <div class="notif-empty">No notifications yet this session.</div>
@@ -63,7 +66,10 @@
         }
         list.innerHTML = items.map(function (n) {
           return '<div class="notif-item notif-item-' + n.level + '">' +
+            '<div class="notif-item-top">' +
             '<div class="notif-item-message"></div>' +
+            '<button class="notif-item-dismiss" onclick="otterDismissNotif(' + n.id + ')" aria-label="Dismiss">✕</button>' +
+            '</div>' +
             '<div class="notif-item-time">' + timeLabel(n.time) + '</div>' +
             '</div>';
         }).join('');
@@ -85,21 +91,36 @@
       window.otterToggleNotifPanel = function () {
         panelOpen = !panelOpen;
         document.getElementById('notif-panel').classList.toggle('open', panelOpen);
+        document.getElementById('notif-bell').classList.toggle('hidden', panelOpen);
         if (panelOpen) {
           unread = 0;
           updateBadge();
         }
       };
 
+      window.otterDismissNotif = function (id) {
+        fetch('/notifications/' + id, { method: 'DELETE' });
+      };
+
+      window.otterClearAllNotifs = function () {
+        fetch('/notifications', { method: 'DELETE' });
+      };
+
       function connect() {
         const es = new EventSource('/sse/notifications');
         es.onmessage = function (ev) {
           if (!ev.data) return;
-          let n;
-          try { n = JSON.parse(ev.data); } catch (e) { return; }
-          items.unshift(n);
-          if (items.length > MAX_ITEMS) items.length = MAX_ITEMS;
-          if (!panelOpen) unread++;
+          let msg;
+          try { msg = JSON.parse(ev.data); } catch (e) { return; }
+          if (msg.type === 'delete') {
+            items = items.filter(function (n) { return n.id !== msg.id; });
+          } else if (msg.type === 'clear') {
+            items = [];
+          } else {
+            items.unshift(msg.notification);
+            if (items.length > MAX_ITEMS) items.length = MAX_ITEMS;
+            if (!panelOpen) unread++;
+          }
           render();
           updateBadge();
         };

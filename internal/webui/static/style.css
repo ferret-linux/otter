@@ -724,6 +724,10 @@ table.containers td {
   justify-content: center;
 }
 
+.notif-bell.hidden {
+  display: none;
+}
+
 .notif-badge {
   position: absolute;
   top: -0.25rem;
@@ -769,6 +773,22 @@ table.containers td {
   font-weight: 600;
 }
 
+.notif-panel-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.notif-panel-clear-all {
+  border: none;
+  background: none;
+  color: var(--fg-muted);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-decoration: underline;
+}
+
 .notif-panel-close {
   border: none;
   background: none;
@@ -796,6 +816,24 @@ table.containers td {
   padding: 0.5rem 0.65rem;
   margin-bottom: 0.5rem;
   font-size: 0.85rem;
+}
+
+.notif-item-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.notif-item-dismiss {
+  flex-shrink: 0;
+  border: none;
+  background: none;
+  color: var(--fg-muted);
+  cursor: pointer;
+  font-size: 0.75rem;
+  line-height: 1;
+  padding: 0.1rem;
 }
 
 .notif-item-message {

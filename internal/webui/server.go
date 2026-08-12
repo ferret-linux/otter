@@ -146,6 +146,8 @@ func Serve(ctx context.Context, cm containermanager.ContainerManager, cfg *confi
 	mux.HandleFunc("GET /settings", s.settingsPage)
 	mux.HandleFunc("POST /settings/save", s.settingsSave)
 	mux.HandleFunc("GET /sse/notifications", s.notificationsSSE)
+	mux.HandleFunc("DELETE /notifications/{id}", s.notificationDeleteAction)
+	mux.HandleFunc("DELETE /notifications", s.notificationClearAction)
 
 	httpServer := &http.Server{
 		Addr:              addr,
