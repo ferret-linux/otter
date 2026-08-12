@@ -557,7 +557,7 @@ func (s *server) upgradeAction(w http.ResponseWriter, r *http.Request) {
 				Stdout:         sess,
 				Stderr:         sess,
 			}); err != nil {
-				_, _ = sess.Write([]byte(fmt.Sprintf("error: %s", err.Error())))
+				_, _ = sess.Write(fmt.Appendf(nil, "error: %s", err.Error()))
 				s.notify("error", fmt.Sprintf("upgrade failed: %s: %s", name, err))
 				return
 			}
