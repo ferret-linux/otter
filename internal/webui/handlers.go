@@ -186,7 +186,7 @@ func (s *server) containerPanel(w http.ResponseWriter, r *http.Request) {
 	data := inspectData{
 		InspectResult: result,
 		Upgrading:     upgrading,
-		Starting:      s.isStarting(ctx, containermanager.Container{Status: result.Status}, upgrading),
+		Starting:      s.isStarting(ctx, containermanager.Container{Name: name, Status: result.Status}, upgrading),
 	}
 	if err := s.templates.ExecuteTemplate(w, "container_panel", data); err != nil {
 		s.notify("error", err.Error())
@@ -298,7 +298,7 @@ func (s *server) action(w http.ResponseWriter, r *http.Request) {
 	panelData := inspectData{
 		InspectResult: panelResult,
 		Upgrading:     upgrading,
-		Starting:      s.isStarting(ctx, containermanager.Container{Status: panelResult.Status}, upgrading),
+		Starting:      s.isStarting(ctx, containermanager.Container{Name: name, Status: panelResult.Status}, upgrading),
 	}
 	if err := s.templates.ExecuteTemplate(w, "container_panel", panelData); err != nil {
 		s.notify("error", err.Error())
@@ -592,7 +592,7 @@ func (s *server) upgradeAction(w http.ResponseWriter, r *http.Request) {
 	panelData := inspectData{
 		InspectResult: panelResult,
 		Upgrading:     upgrading,
-		Starting:      s.isStarting(ctx, containermanager.Container{Status: panelResult.Status}, upgrading),
+		Starting:      s.isStarting(ctx, containermanager.Container{Name: name, Status: panelResult.Status}, upgrading),
 	}
 	if err := s.templates.ExecuteTemplate(w, "container_panel", panelData); err != nil {
 		s.notify("error", err.Error())
