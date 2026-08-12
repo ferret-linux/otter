@@ -348,28 +348,6 @@
       "build_number": 57
     },
     {
-      "name": "void-musl",
-      "official_image": "ghcr.io/ferret-linux/void-otr:musl",
-      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-12T13:06:44Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1188603099,
-          "disk_size": 1188603099
-        },
-        "arm64": {
-          "compressed_size": 1159224996,
-          "disk_size": 1159224996
-        }
-      },
-      "build_number": 58
-    },
-    {
       "name": "rocky",
       "official_image": "ghcr.io/ferret-linux/rocky-otr:stable",
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init",
@@ -587,6 +565,28 @@
         "arm64": {
           "compressed_size": 1076719908,
           "disk_size": 1076719908
+        }
+      },
+      "build_number": 59
+    },
+    {
+      "name": "void-musl",
+      "official_image": "ghcr.io/ferret-linux/void-otr:musl",
+      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-12T17:38:16Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1188603098,
+          "disk_size": 1188603098
+        },
+        "arm64": {
+          "compressed_size": 1161277102,
+          "disk_size": 1161277102
         }
       },
       "build_number": 59
