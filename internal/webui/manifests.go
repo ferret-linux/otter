@@ -73,6 +73,7 @@ func newManifestSessionID() (string, error) {
 func (s *server) manifestsPage(w http.ResponseWriter, r *http.Request) {
 	data := manifestsPageData{pageData: pageData{Nav: "manifests", PageTitle: "manifests"}}
 	if err := s.templates.ExecuteTemplate(w, "layout", data); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -160,12 +161,14 @@ func (s *server) buildManifestBoxViews(ctx context.Context, items []manifest.Ite
 // renderManifestsError re-renders the Manifests page's result fragment
 // with an error message, for htmx to swap into #manifests-result.
 func (s *server) renderManifestsError(w http.ResponseWriter, msg string) {
+	s.notify("error", msg)
 	w.WriteHeader(http.StatusUnprocessableEntity)
 	data := manifestsPageData{
 		pageData: pageData{Nav: "manifests", PageTitle: "manifests"},
 		Error:    msg,
 	}
 	if err := s.templates.ExecuteTemplate(w, "manifests_result", data); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -220,12 +223,15 @@ func (s *server) manifestsParse(w http.ResponseWriter, r *http.Request) {
 	s.manifestSessions[sessionID] = &manifestSession{Source: source, TempFile: tempFile}
 	s.manifestSessionsMu.Unlock()
 
+	s.notify("info", fmt.Sprintf("manifest parsed: %d box(es) found", len(boxes)))
+
 	data := manifestsPageData{
 		pageData:  pageData{Nav: "manifests", PageTitle: "manifests"},
 		SessionID: sessionID,
 		Boxes:     boxes,
 	}
 	if err := s.templates.ExecuteTemplate(w, "manifests_result", data); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -250,16 +256,19 @@ func (s *server) manifestsApply(w http.ResponseWriter, r *http.Request) {
 	sess, ok := s.manifestSessions[sessionID]
 	s.manifestSessionsMu.Unlock()
 	if !ok {
+		s.notify("error", "manifest session expired or not found; re-submit the manifest")
 		http.Error(w, "manifest session expired or not found; re-submit the manifest", http.StatusNotFound)
 		return
 	}
 
 	if err := r.ParseForm(); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	boxNames := r.Form["boxes"]
 	if len(boxNames) == 0 {
+		s.notify("error", "select at least one box")
 		http.Error(w, "select at least one box", http.StatusBadRequest)
 		return
 	}
@@ -277,6 +286,7 @@ func (s *server) manifestsApply(w http.ResponseWriter, r *http.Request) {
 	case "create":
 		// zero value: create-or-update, matching AssembleCommand's default.
 	default:
+		s.notify("error", "unknown verb")
 		http.Error(w, "unknown verb", http.StatusBadRequest)
 		return
 	}
@@ -289,6 +299,7 @@ func (s *server) manifestsApply(w http.ResponseWriter, r *http.Request) {
 	s.manifestApplyingMu.Unlock()
 
 	if !alreadyApplying {
+		s.notify("info", fmt.Sprintf("applying manifest (%d box(es))", len(boxNames)))
 		go func() {
 			defer func() {
 				s.manifestApplyingMu.Lock()
@@ -305,12 +316,16 @@ func (s *server) manifestsApply(w http.ResponseWriter, r *http.Request) {
 			}()
 			if err := commands.NewAssembleCommand(s.config(), s.cm).Execute(context.Background(), opts); err != nil {
 				ui.DefaultLogger.Error("failed to apply manifest selection", "session", sessionID, "err", err)
+				s.notify("error", fmt.Sprintf("manifest apply failed: %s", err))
+				return
 			}
+			s.notify("success", fmt.Sprintf("manifest applied (%d box(es))", len(boxNames)))
 		}()
 	}
 
 	data := manifestsPageData{pageData: pageData{Nav: "manifests", PageTitle: "manifests"}}
 	if err := s.templates.ExecuteTemplate(w, "manifests_applying", data); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

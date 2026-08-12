@@ -166,12 +166,14 @@ type docsPageData struct {
 func (s *server) docsPage(w http.ResponseWriter, r *http.Request) {
 	entries, err := commands.DocsTree()
 	if err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	data := docsPageData{pageData: pageData{Nav: "docs", PageTitle: "documentation"}, Entries: entries}
 	if err := s.templates.ExecuteTemplate(w, "layout", data); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -187,6 +189,7 @@ func (s *server) docsContentFragment(w http.ResponseWriter, r *http.Request) {
 
 	entries, err := commands.DocsTree()
 	if err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -204,11 +207,13 @@ func (s *server) docsContentFragment(w http.ResponseWriter, r *http.Request) {
 
 	content, err := renderDoc(path)
 	if err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if err := s.templates.ExecuteTemplate(w, "docs_body", content); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

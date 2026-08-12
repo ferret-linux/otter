@@ -79,6 +79,12 @@ type server struct {
 	// how s.pulling tracks in-progress registry pulls above.
 	manifestApplyingMu sync.Mutex
 	manifestApplying   map[string]bool
+
+	// notifications buffers and fans out user-facing notifications (action
+	// failures and successes) to every connected /sse/notifications
+	// viewer — see notifications.go. Like the maps above, it's in-memory
+	// only and does not survive a webui restart.
+	notifications *notificationHub
 }
 
 // webUISessionCookie is the name of the cookie set once a request presents
@@ -108,6 +114,7 @@ func Serve(ctx context.Context, cm containermanager.ContainerManager, cfg *confi
 		pulling:          make(map[string]bool),
 		manifestSessions: make(map[string]*manifestSession),
 		manifestApplying: make(map[string]bool),
+		notifications:    newNotificationHub(),
 	}
 	s.setConfig(cfg)
 
@@ -138,6 +145,7 @@ func Serve(ctx context.Context, cm containermanager.ContainerManager, cfg *confi
 	mux.HandleFunc("GET /docs/content", s.docsContentFragment)
 	mux.HandleFunc("GET /settings", s.settingsPage)
 	mux.HandleFunc("POST /settings/save", s.settingsSave)
+	mux.HandleFunc("GET /sse/notifications", s.notificationsSSE)
 
 	httpServer := &http.Server{
 		Addr:              addr,

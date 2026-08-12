@@ -90,6 +90,7 @@ type indexData struct {
 func (s *server) index(w http.ResponseWriter, r *http.Request) {
 	rows, err := s.listRows(r.Context())
 	if err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -99,6 +100,7 @@ func (s *server) index(w http.ResponseWriter, r *http.Request) {
 		Rows:     rows,
 	}
 	if err := s.templates.ExecuteTemplate(w, "layout", data); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -118,6 +120,7 @@ func (s *server) index(w http.ResponseWriter, r *http.Request) {
 func (s *server) containerList(w http.ResponseWriter, r *http.Request) {
 	rows, err := s.listRows(r.Context())
 	if err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -133,6 +136,7 @@ func (s *server) containerList(w http.ResponseWriter, r *http.Request) {
 	}{Rows: rows, Selected: selected}
 
 	if err := s.templates.ExecuteTemplate(w, "container_list", data); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -152,12 +156,14 @@ func (s *server) containerPanel(w http.ResponseWriter, r *http.Request) {
 		Manager:       s.cm.Name(),
 	})
 	if err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	data := inspectData{InspectResult: result, Upgrading: s.cm.IsUpgrading(ctx, name)}
 	if err := s.templates.ExecuteTemplate(w, "container_panel", data); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -201,13 +207,16 @@ func (s *server) action(w http.ResponseWriter, r *http.Request) {
 	case "remove":
 		_, err = commands.NewRmCommand(s.cm).Execute(ctx, commands.RmOptions{ContainerNames: []string{name}})
 	default:
+		s.notify("error", "unknown action: "+action)
 		http.Error(w, "unknown action: "+action, http.StatusBadRequest)
 		return
 	}
 	if err != nil {
+		s.notify("error", fmt.Sprintf("%s %s failed: %s", action, name, err))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	s.notify("success", fmt.Sprintf("%s: %s succeeded", name, action))
 
 	if action == "remove" {
 		// hx-swap-oob targets #row-{name} directly (deleting it if present)
@@ -226,6 +235,7 @@ func (s *server) action(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Query().Get("view") == "row" {
 		result, err := commands.NewListCommand(s.cm).Execute(ctx, commands.ListOptions{})
 		if err != nil {
+			s.notify("error", err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -237,6 +247,7 @@ func (s *server) action(w http.ResponseWriter, r *http.Request) {
 					Upgrading: s.cm.IsUpgrading(ctx, c.Name),
 				}
 				if err := s.templates.ExecuteTemplate(w, "row", row); err != nil {
+					s.notify("error", err.Error())
 					http.Error(w, err.Error(), http.StatusInternalServerError)
 				}
 				return
@@ -251,11 +262,13 @@ func (s *server) action(w http.ResponseWriter, r *http.Request) {
 		Manager:       s.cm.Name(),
 	})
 	if err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	panelData := inspectData{InspectResult: panelResult, Upgrading: s.cm.IsUpgrading(ctx, name)}
 	if err := s.templates.ExecuteTemplate(w, "container_panel", panelData); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -278,6 +291,7 @@ type consolePageData struct {
 func (s *server) consolePage(w http.ResponseWriter, r *http.Request) {
 	rows, err := s.listRows(r.Context())
 	if err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -294,6 +308,7 @@ func (s *server) consolePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := s.templates.ExecuteTemplate(w, "layout", data); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -306,6 +321,7 @@ func (s *server) consolePage(w http.ResponseWriter, r *http.Request) {
 func (s *server) consoleShellFragment(w http.ResponseWriter, r *http.Request) {
 	name := r.PathValue("name")
 	if err := s.templates.ExecuteTemplate(w, "console_shell", name); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -318,6 +334,7 @@ func (s *server) consoleShellFragment(w http.ResponseWriter, r *http.Request) {
 func (s *server) consoleWatchFragment(w http.ResponseWriter, r *http.Request) {
 	name := r.PathValue("name")
 	if err := s.templates.ExecuteTemplate(w, "console_watch", name); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -328,6 +345,7 @@ func (s *server) consoleWatchFragment(w http.ResponseWriter, r *http.Request) {
 func (s *server) logsListPage(w http.ResponseWriter, r *http.Request) {
 	rows, err := s.listRows(r.Context())
 	if err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -338,6 +356,7 @@ func (s *server) logsListPage(w http.ResponseWriter, r *http.Request) {
 	}{pageData: pageData{Nav: "logs", PageTitle: "logs"}, Rows: rows}
 
 	if err := s.templates.ExecuteTemplate(w, "layout", data); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -349,6 +368,7 @@ func (s *server) logsListPage(w http.ResponseWriter, r *http.Request) {
 func (s *server) logsViewFragment(w http.ResponseWriter, r *http.Request) {
 	name := r.PathValue("name")
 	if err := s.templates.ExecuteTemplate(w, "logs_view", name); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -367,6 +387,7 @@ func (s *server) logsSSE(w http.ResponseWriter, r *http.Request) {
 
 	flusher, ok := w.(http.Flusher)
 	if !ok {
+		s.notify("error", "streaming unsupported")
 		http.Error(w, "streaming unsupported", http.StatusInternalServerError)
 		return
 	}
@@ -386,6 +407,7 @@ func (s *server) logsSSE(w http.ResponseWriter, r *http.Request) {
 		Stdout:        sw,
 		Stderr:        sw,
 	}); err != nil {
+		s.notify("error", fmt.Sprintf("logs %s: %s", name, err))
 		fmt.Fprintf(w, "event: error\ndata: %s\n\n", err.Error())
 		flusher.Flush()
 	}
@@ -422,6 +444,8 @@ func (s *server) upgradeAction(w http.ResponseWriter, r *http.Request) {
 		s.upgradeStreams[name] = stream
 		s.upgradeStreamsMu.Unlock()
 
+		s.notify("info", fmt.Sprintf("upgrade started: %s", name))
+
 		go func() {
 			defer func() {
 				stream.close()
@@ -437,7 +461,10 @@ func (s *server) upgradeAction(w http.ResponseWriter, r *http.Request) {
 				Stderr:         sw,
 			}); err != nil {
 				stream.write(fmt.Sprintf("error: %s", err.Error()))
+				s.notify("error", fmt.Sprintf("upgrade failed: %s: %s", name, err))
+				return
 			}
+			s.notify("success", fmt.Sprintf("upgrade finished: %s", name))
 		}()
 	}
 
@@ -460,11 +487,13 @@ func (s *server) upgradeAction(w http.ResponseWriter, r *http.Request) {
 		Manager:       s.cm.Name(),
 	})
 	if err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	panelData := inspectData{InspectResult: panelResult, Upgrading: s.cm.IsUpgrading(ctx, name)}
 	if err := s.templates.ExecuteTemplate(w, "container_panel", panelData); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -481,6 +510,7 @@ func (s *server) upgradeSSE(w http.ResponseWriter, r *http.Request) {
 
 	flusher, ok := w.(http.Flusher)
 	if !ok {
+		s.notify("error", "streaming unsupported")
 		http.Error(w, "streaming unsupported", http.StatusInternalServerError)
 		return
 	}
@@ -587,6 +617,7 @@ func registryLocalClass(state commands.RegistryLocalState) string {
 func (s *server) registryPage(w http.ResponseWriter, r *http.Request) {
 	rows, err := s.registryRows(r.Context(), false)
 	if err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -597,6 +628,7 @@ func (s *server) registryPage(w http.ResponseWriter, r *http.Request) {
 	}{pageData: pageData{Nav: "registry", PageTitle: "registry"}, Rows: rows}
 
 	if err := s.templates.ExecuteTemplate(w, "layout", data); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -625,6 +657,7 @@ func (s *server) registryPullAction(w http.ResponseWriter, r *http.Request) {
 	s.pullingMu.Unlock()
 
 	if !alreadyPulling {
+		s.notify("info", fmt.Sprintf("pulling %s", name))
 		go func() {
 			defer func() {
 				s.pullingMu.Lock()
@@ -635,7 +668,10 @@ func (s *server) registryPullAction(w http.ResponseWriter, r *http.Request) {
 				Names: []string{name},
 			}); err != nil {
 				ui.DefaultLogger.Error(err)
+				s.notify("error", fmt.Sprintf("failed to pull %s: %s", name, err))
+				return
 			}
+			s.notify("success", fmt.Sprintf("pulled %s", name))
 		}()
 	}
 
@@ -651,9 +687,11 @@ func (s *server) registryRemoveAction(w http.ResponseWriter, r *http.Request) {
 	if err := commands.NewRegistryRemoveCommand(s.cm).Execute(ctx, commands.RegistryRemoveOptions{
 		Names: []string{name},
 	}); err != nil {
+		s.notify("error", fmt.Sprintf("failed to remove %s: %s", name, err))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	s.notify("success", fmt.Sprintf("removed %s", name))
 
 	s.renderRegistryRow(w, ctx, name)
 }
@@ -664,12 +702,14 @@ func (s *server) registryRemoveAction(w http.ResponseWriter, r *http.Request) {
 func (s *server) renderRegistryRow(w http.ResponseWriter, ctx context.Context, name string) {
 	rows, err := s.registryRows(ctx, false)
 	if err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	for _, row := range rows {
 		if row.Name == name {
 			if err := s.templates.ExecuteTemplate(w, "registry_row", row); err != nil {
+				s.notify("error", err.Error())
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
 			return
@@ -728,6 +768,7 @@ func (s *server) createPage(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 	if err := s.templates.ExecuteTemplate(w, "layout", data); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -741,6 +782,7 @@ func (s *server) createPage(w http.ResponseWriter, r *http.Request) {
 // values and an inline error.
 func (s *server) createContainer(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -822,10 +864,14 @@ func (s *server) createContainer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	s.notify("success", fmt.Sprintf("created %s", data.Name))
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func (s *server) renderCreateForm(w http.ResponseWriter, data createFormData) {
+	if data.Error != "" {
+		s.notify("error", data.Error)
+	}
 	w.WriteHeader(http.StatusUnprocessableEntity)
 	full := struct {
 		pageData
@@ -835,6 +881,7 @@ func (s *server) renderCreateForm(w http.ResponseWriter, data createFormData) {
 		createFormData: data,
 	}
 	if err := s.templates.ExecuteTemplate(w, "layout", full); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -892,6 +939,7 @@ func settingsFieldViews() ([]settingsFieldView, error) {
 func (s *server) settingsPage(w http.ResponseWriter, r *http.Request) {
 	views, err := settingsFieldViews()
 	if err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -902,6 +950,7 @@ func (s *server) settingsPage(w http.ResponseWriter, r *http.Request) {
 	}{pageData: pageData{Nav: "settings", PageTitle: "settings"}, Fields: views}
 
 	if err := s.templates.ExecuteTemplate(w, "layout", data); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -922,6 +971,7 @@ func (s *server) settingsPage(w http.ResponseWriter, r *http.Request) {
 // response round-trip.
 func (s *server) settingsSave(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -931,21 +981,25 @@ func (s *server) settingsSave(w http.ResponseWriter, r *http.Request) {
 
 	formatted, err := config.FormatTOMLValue(path, raw)
 	if err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	if err := config.SaveUserValue(path, formatted); err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	newCfg, err := config.LoadValues()
 	if err != nil {
+		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	s.setConfig(newCfg)
+	s.notify("success", fmt.Sprintf("saved %s.%s", path.Section, path.Key))
 
 	if path.Section == "webui" && path.Key == "token" {
 		http.Redirect(w, r, "/settings?token="+url.QueryEscape(raw), http.StatusSeeOther)
