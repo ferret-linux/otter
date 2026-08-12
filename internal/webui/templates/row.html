@@ -4,6 +4,8 @@
   <td>
     {{if .Upgrading}}
       <span class="status status-upgrading">⟳ upgrading</span>
+    {{else if .Starting}}
+      <span class="status status-starting">◐ starting</span>
     {{else if .IsRunning}}
       <span class="status status-running">● running</span>
     {{else}}

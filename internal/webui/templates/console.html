@@ -26,6 +26,18 @@
         </div>
       {{end}}
     {{end}}
+
+    <h3>Starting containers</h3>
+    {{if not .Starting}}
+      <p class="picker-empty">No containers starting.</p>
+    {{else}}
+      {{range .Starting}}
+        <div class="picker-item" hx-get="/console/{{.Name}}/starting" hx-target="#picker-detail" hx-swap="innerHTML" onclick="otterSelectPickerItem(this)">
+          <span>{{.Name}}</span>
+          <span class="picker-badge picker-badge-starting">starting</span>
+        </div>
+      {{end}}
+    {{end}}
   </div>
   <div id="picker-detail" class="picker-detail">
     <div class="picker-detail-empty">Select a container to attach</div>
@@ -209,35 +221,36 @@
 </script>
 {{end}}
 
-{{define "console_watch"}}
+{{define "console_session"}}
 <div class="picker-detail-header">
   <div style="display:flex; align-items:center; gap:0.5rem;">
-    <h2>{{.}} — upgrade output</h2>
-    <span id="control-badge" class="picker-badge">connecting…</span>
+    <h2>{{.Name}} — {{.Heading}}</h2>
+    {{if .Interactive}}<span id="control-badge" class="picker-badge">connecting…</span>{{end}}
   </div>
-  <button id="control-request-btn" class="btn" style="display:none;" onclick="window.otterCurrentSession && window.otterCurrentSession.requestControl()">Request control</button>
+  {{if .Interactive}}<button id="control-request-btn" class="btn" style="display:none;" onclick="window.otterCurrentSession && window.otterCurrentSession.requestControl()">Request control</button>{{end}}
 </div>
 <div class="picker-detail-body">
-  <pre id="upgrade-log" class="logs-view"></pre>
+  <pre id="session-log" class="logs-view"></pre>
 </div>
 <script>
   (function () {
-    const logEl = document.getElementById('upgrade-log');
+    const logEl = document.getElementById('session-log');
 
-    const session = otterAttachSession('/ws/containers/{{.}}/upgrade', {
+    const session = otterAttachSession('{{.WSPath}}', {
       onOutput: function (line) {
         logEl.textContent += line + '\n';
         logEl.scrollTop = logEl.scrollHeight;
       },
       onClosed: function () {
-        logEl.textContent += '\n[upgrade finished]\n';
+        logEl.textContent += '\n[{{.ClosedMessage}}]\n';
       },
       onError: function () {
         logEl.textContent += '\n[connection error]\n';
       },
     });
 
-    // Upgrade output is a plain scrollback, not a terminal — a viewer that
+    {{if .Interactive}}
+    // Output here is a plain scrollback, not a terminal — a viewer that
     // requests and receives control types into this box and submits with
     // Enter, rather than every keystroke going straight to the process the
     // way console_shell's xterm does. This matches otter-init --upgrade's
@@ -258,6 +271,7 @@
     session.onControlState = function (isController) {
       inputEl.style.display = isController ? '' : 'none';
     };
+    {{end}}
 
     // Same reasoning as console_shell's cleanup: this fragment can be
     // swapped out by htmx without a page navigation, so the open

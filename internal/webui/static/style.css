@@ -11,6 +11,7 @@
   --danger: #d64545;
   --running: #2fa84f;
   --upgrading: #d6a12d;
+  --starting: #2ea8a0;
   --sidebar-width: 220px;
   --panel-width: 380px;
 }
@@ -285,6 +286,10 @@ main {
   flex-shrink: 0;
 }
 
+.picker-badge-starting {
+  background: var(--starting);
+}
+
 .picker-empty {
   color: var(--fg-muted);
   font-size: 0.85rem;
@@ -349,6 +354,10 @@ table.containers td {
 
 .status-upgrading {
   color: var(--upgrading);
+}
+
+.status-starting {
+  color: var(--starting);
 }
 
 .badge {

@@ -12,6 +12,7 @@
         <div class="picker-item" hx-get="/logs/{{.Name}}/view" hx-target="#picker-detail" hx-swap="innerHTML" onclick="otterSelectPickerItem(this)">
           <span>{{.Name}}</span>
           {{if .Upgrading}}<span class="picker-badge">upgrading</span>{{end}}
+          {{if .Starting}}<span class="picker-badge picker-badge-starting">starting</span>{{end}}
         </div>
       {{end}}
     {{end}}

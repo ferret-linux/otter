@@ -7,6 +7,9 @@
   {{if .Upgrading}}
     <span class="status status-upgrading">⟳ upgrading</span>
     <a class="btn" href="/console/{{.Name}}/watch">Watch</a>
+  {{else if .Starting}}
+    <span class="status status-starting">◐ starting</span>
+    <a class="btn" href="/console/{{.Name}}/starting">Watch</a>
   {{else}}
     <form action="/containers/{{.Name}}/upgrade" hx-post="/containers/{{.Name}}/upgrade" hx-target="#detail-panel" hx-swap="innerHTML" style="display: inline">
       <button class="btn" type="submit">Upgrade</button>

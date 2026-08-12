@@ -144,6 +144,8 @@ func Serve(ctx context.Context, cm containermanager.ContainerManager, cfg *confi
 	mux.HandleFunc("GET /console", s.consolePage)
 	mux.HandleFunc("GET /console/{name}/shell", s.consoleShellFragment)
 	mux.HandleFunc("GET /console/{name}/watch", s.consoleWatchFragment)
+	mux.HandleFunc("GET /console/{name}/starting", s.consoleStartingFragment)
+	mux.HandleFunc("GET /ws/containers/{name}/starting", s.startingWS)
 	mux.HandleFunc("GET /logs", s.logsListPage)
 	mux.HandleFunc("GET /logs/{name}/view", s.logsViewFragment)
 	mux.HandleFunc("GET /docs", s.docsPage)

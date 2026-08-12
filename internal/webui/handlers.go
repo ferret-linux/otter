@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/coder/websocket"
 
@@ -17,22 +18,41 @@ import (
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
-// rowData is the webui's per-row view model: a Container plus its lock and
-// upgrade state. ListCommand doesn't include lock state (see
+// rowData is the webui's per-row view model: a Container plus its lock,
+// upgrade, and starting state. ListCommand doesn't include lock state (see
 // commands.IsLocked's doc comment on why it's a separate, per-container
 // check rather than something ListCommand computes for every container up
-// front); upgrade state is the same shape of check, via
-// containermanager.ContainerManager.IsUpgrading. Selected reflects whether
-// this row is the currently-open detail-panel selection for this specific
-// request — computed server-side per request (see containerList) so the
-// row-selected highlight survives the dashboard's 3s poll, instead of
-// depending only on client-side JS state that's wiped when htmx replaces
-// the polled markup.
+// front); upgrade and starting state are the same shape of check, via
+// containermanager.ContainerManager.IsUpgrading and isStarting. Selected
+// reflects whether this row is the currently-open detail-panel selection
+// for this specific request — computed server-side per request (see
+// containerList) so the row-selected highlight survives the dashboard's 3s
+// poll, instead of depending only on client-side JS state that's wiped
+// when htmx replaces the polled markup.
 type rowData struct {
 	containermanager.Container
 	Locked    bool
 	Upgrading bool
+	Starting  bool
 	Selected  bool
+}
+
+// isStarting reports whether c is running but has not yet finished otter's
+// container initialization — i.e. otter-init, running as the container's
+// own PID 1, has not yet written the /usr/lib/otter/container.ready marker
+// checked by IsSetupDone. upgrading is passed in rather than recomputed
+// here since every caller already has it at hand; the check short-circuits
+// on it (and on c.IsRunning()) so the real container-filesystem check
+// behind IsSetupDone is skipped entirely for stopped or already-upgrading
+// containers.
+//
+// The !upgrading condition is defensive: an upgrading container has, by
+// definition, already finished initial setup, so the two states shouldn't
+// overlap in practice, but if they ever did, Upgrading takes precedence,
+// matching the if/else-if ordering used in consolePage and templates/
+// row.html and templates/inspect.html.
+func (s *server) isStarting(ctx context.Context, c containermanager.Container, upgrading bool) bool {
+	return c.IsRunning() && !upgrading && !s.cm.IsSetupDone(ctx, c.Name)
 }
 
 // buildRows attaches lock and upgrade state to each container for template
@@ -43,10 +63,12 @@ type rowData struct {
 func (s *server) buildRows(ctx context.Context, containers []containermanager.Container) []rowData {
 	rows := make([]rowData, len(containers))
 	for i, c := range containers {
+		upgrading := s.cm.IsUpgrading(ctx, c.Name)
 		rows[i] = rowData{
 			Container: c,
 			Locked:    commands.IsLocked(ctx, s.cm, c.Name),
-			Upgrading: s.cm.IsUpgrading(ctx, c.Name),
+			Upgrading: upgrading,
+			Starting:  s.isStarting(ctx, c, upgrading),
 		}
 	}
 	return rows
@@ -160,7 +182,12 @@ func (s *server) containerPanel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := inspectData{InspectResult: result, Upgrading: s.cm.IsUpgrading(ctx, name)}
+	upgrading := s.cm.IsUpgrading(ctx, name)
+	data := inspectData{
+		InspectResult: result,
+		Upgrading:     upgrading,
+		Starting:      s.isStarting(ctx, containermanager.Container{Status: result.Status}, upgrading),
+	}
 	if err := s.templates.ExecuteTemplate(w, "container_panel", data); err != nil {
 		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -240,10 +267,12 @@ func (s *server) action(w http.ResponseWriter, r *http.Request) {
 		}
 		for _, c := range result.Containers {
 			if c.Name == name {
+				upgrading := s.cm.IsUpgrading(ctx, c.Name)
 				row := rowData{
 					Container: c,
 					Locked:    commands.IsLocked(ctx, s.cm, c.Name),
-					Upgrading: s.cm.IsUpgrading(ctx, c.Name),
+					Upgrading: upgrading,
+					Starting:  s.isStarting(ctx, c, upgrading),
 				}
 				if err := s.templates.ExecuteTemplate(w, "row", row); err != nil {
 					s.notify("error", err.Error())
@@ -265,7 +294,12 @@ func (s *server) action(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	panelData := inspectData{InspectResult: panelResult, Upgrading: s.cm.IsUpgrading(ctx, name)}
+	upgrading := s.cm.IsUpgrading(ctx, name)
+	panelData := inspectData{
+		InspectResult: panelResult,
+		Upgrading:     upgrading,
+		Starting:      s.isStarting(ctx, containermanager.Container{Status: panelResult.Status}, upgrading),
+	}
 	if err := s.templates.ExecuteTemplate(w, "container_panel", panelData); err != nil {
 		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -273,13 +307,15 @@ func (s *server) action(w http.ResponseWriter, r *http.Request) {
 }
 
 // consolePageData is the Console page's view model: every currently
-// running container (attachable as a shell) and every currently upgrading
-// container (attachable as a live upgrade-output view), matching the
-// "Running containers" / "Upgrading containers" picker lists design — see
-// templates/console.html.
+// running container (attachable as a shell), every currently starting
+// container (attachable as a live setup-output view), and every currently
+// upgrading container (attachable as a live upgrade-output view), matching
+// the "Running containers" / "Starting containers" / "Upgrading
+// containers" picker lists design — see templates/console.html.
 type consolePageData struct {
 	pageData
 	Running   []rowData
+	Starting  []rowData
 	Upgrading []rowData
 }
 
@@ -299,6 +335,10 @@ func (s *server) consolePage(w http.ResponseWriter, r *http.Request) {
 	for _, row := range rows {
 		if row.Upgrading {
 			data.Upgrading = append(data.Upgrading, row)
+			continue
+		}
+		if row.Starting {
+			data.Starting = append(data.Starting, row)
 			continue
 		}
 		if row.IsRunning() {
@@ -325,14 +365,63 @@ func (s *server) consoleShellFragment(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// consoleSessionData is the shared template view model for consoleWatchFragment
+// and consoleStartingFragment (see templates/console.html's "console_session"
+// block): both attach the browser to a *session (see session.go) that
+// streams line-buffered output, differing only in which websocket path they
+// connect to, the heading shown, whether the session takes input, and what
+// its closed-message says.
+//
+// Interactive is false for a starting session: unlike an upgrade, which can
+// prompt for input (e.g. a package-manager "Continue? [Y/n]"), a starting
+// container's setup output is followed via cm.Journal with no process stdin
+// behind it at all (see runStartingSession) — so the fragment must not
+// render the reply box upgrade's does, since typing into it would write to
+// a pipe nothing ever reads.
+type consoleSessionData struct {
+	Name          string
+	WSPath        string
+	Heading       string
+	Interactive   bool
+	ClosedMessage string
+}
+
 // consoleWatchFragment handles GET /console/{name}/watch: the live
 // upgrade-output detail-pane fragment for an upgrading container,
 // htmx-swapped into #picker-detail the same way consoleShellFragment is.
-// It renders the same SSE bootstrap upgrade.html used to, just as a
-// fragment instead of a full page.
+// It renders the console_session fragment shared with consoleStartingFragment.
 func (s *server) consoleWatchFragment(w http.ResponseWriter, r *http.Request) {
 	name := r.PathValue("name")
-	if err := s.templates.ExecuteTemplate(w, "console_watch", name); err != nil {
+	data := consoleSessionData{
+		Name:          name,
+		WSPath:        "/ws/containers/" + name + "/upgrade",
+		Heading:       "upgrade output",
+		Interactive:   true,
+		ClosedMessage: "upgrade finished",
+	}
+	if err := s.templates.ExecuteTemplate(w, "console_session", data); err != nil {
+		s.notify("error", err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+// consoleStartingFragment handles GET /console/{name}/starting: the live
+// setup-output detail-pane fragment for a container that is running but has
+// not yet finished initial setup (see rowData.Starting/isStarting),
+// htmx-swapped into #picker-detail the same way consoleWatchFragment is. It
+// renders the console_session fragment shared with consoleWatchFragment,
+// parameterized for the /ws/containers/{name}/starting websocket handled by
+// startingWS.
+func (s *server) consoleStartingFragment(w http.ResponseWriter, r *http.Request) {
+	name := r.PathValue("name")
+	data := consoleSessionData{
+		Name:          name,
+		WSPath:        "/ws/containers/" + name + "/starting",
+		Heading:       "starting",
+		Interactive:   false,
+		ClosedMessage: "setup finished",
+	}
+	if err := s.templates.ExecuteTemplate(w, "console_session", data); err != nil {
 		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -413,12 +502,14 @@ func (s *server) logsSSE(w http.ResponseWriter, r *http.Request) {
 }
 
 // inspectData is the webui's inspect-panel view model: an InspectResult
-// plus upgrade state. InspectResult doesn't carry this itself since it's
-// shared with the CLI's `otter inspect` (table and --json output), which
-// has no notion of live upgrade status. Used by containerPanel.
+// plus upgrade and starting state. InspectResult doesn't carry this itself
+// since it's shared with the CLI's `otter inspect` (table and --json
+// output), which has no notion of live upgrade/starting status. Used by
+// containerPanel.
 type inspectData struct {
 	*commands.InspectResult
 	Upgrading bool
+	Starting  bool
 }
 
 // upgradeAction handles POST /containers/{name}/upgrade. It starts
@@ -497,7 +588,12 @@ func (s *server) upgradeAction(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	panelData := inspectData{InspectResult: panelResult, Upgrading: s.cm.IsUpgrading(ctx, name)}
+	upgrading := s.cm.IsUpgrading(ctx, name)
+	panelData := inspectData{
+		InspectResult: panelResult,
+		Upgrading:     upgrading,
+		Starting:      s.isStarting(ctx, containermanager.Container{Status: panelResult.Status}, upgrading),
+	}
 	if err := s.templates.ExecuteTemplate(w, "container_panel", panelData); err != nil {
 		s.notify("error", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -532,6 +628,143 @@ func (s *server) upgradeWS(w http.ResponseWriter, r *http.Request) {
 	}
 
 	s.runAttachedSession(r.Context(), conn, sess)
+}
+
+// startingPollInterval is how often runStartingSession checks IsSetupDone
+// (and whether the container is still running) while a "starting:"+name
+// session is live. IsSetupDone/IsUpgrading are otherwise only ever checked
+// synchronously, once per request, elsewhere in the webui; this is the one
+// place they're polled in a loop.
+const startingPollInterval = time.Second
+
+// startingWS bridges a browser websocket to a container's setup output. On
+// the first browser attach for a given container name, this lazily creates
+// a "starting:"+name session — mirroring terminalWS's lazy shell-session
+// creation — and starts runStartingSession in a goroutine; later
+// connections for the same name attach to that already-running session as
+// viewers, the same way terminalWS's second tab does. If no session exists
+// for name and none is created here (can't currently happen, since this
+// handler always creates one on first attach), the connection would be
+// closed immediately by runAttachedSession's sess.attach failing — matching
+// upgradeWS's behavior for a container with no upgrade in progress.
+func (s *server) startingWS(w http.ResponseWriter, r *http.Request) {
+	name := r.PathValue("name")
+
+	conn, err := websocket.Accept(w, r, &websocket.AcceptOptions{})
+	if err != nil {
+		return
+	}
+	defer conn.CloseNow()
+
+	ctx := r.Context()
+
+	sessionKey := "starting:" + name
+	s.sessionsMu.Lock()
+	sess, existed := s.sessions[sessionKey]
+	if !existed {
+		sess, _ = newSession(false)
+		s.sessions[sessionKey] = sess
+	}
+	s.sessionsMu.Unlock()
+
+	if !existed {
+		go s.runStartingSession(name, sessionKey, sess)
+	}
+
+	s.runAttachedSession(ctx, conn, sess)
+}
+
+// runStartingSession follows a container's log output into sess (via
+// cm.Journal, the same docker/podman/nerdctl `logs -f` mechanism logsSSE
+// already uses for the Logs page) and, alongside it, polls IsSetupDone
+// roughly once a second until setup finishes or the container stops being
+// running. It then cancels the Journal follow, writes a final status line,
+// and closes sess — mirroring upgradeAction's completion/cleanup pattern.
+//
+// Unlike an upgrade (see upgradeAction), there is no blocking call here
+// that returns when setup finishes — otter-init runs as the container's own
+// PID 1, started by the container runtime, not by the webui — so this poll
+// is the only way to detect completion. Tail: -1 asks Journal for the
+// container's full log history (not just new lines from the moment of
+// attach), matching every provider's Journal implementation, where a
+// negative Tail omits the --tail flag entirely rather than requesting zero
+// lines of history, so a browser attaching after setup has already been
+// running for a while still sees everything emitted so far, not just what
+// comes after it connects.
+//
+// sess is created with withResize=false (see startingWS), which means it
+// has no PTY resize target and, importantly, no real stdin consumer behind
+// it — its Stdin pipe reader is never read here. This is safe only because
+// the fragment that attaches to this session (see consoleStartingFragment)
+// sets Interactive: false and so never renders the reply box that would
+// let a browser tab send input; if a connection ever wrote to sess.input
+// despite that, it would block on the unread pipe. This mirrors the plan's
+// framing that a starting session needs "no PTY, no resize, no real stdin
+// use" — the existing session type already supports that shape unchanged.
+//
+// journalDone additionally lets this return promptly if Journal itself
+// returns first (e.g. the container is removed out from under the log
+// stream) rather than only ever being interrupted by cancelJournal.
+func (s *server) runStartingSession(name, sessionKey string, sess *session) {
+	defer func() {
+		sess.close()
+		s.sessionsMu.Lock()
+		delete(s.sessions, sessionKey)
+		s.sessionsMu.Unlock()
+	}()
+
+	journalCtx, cancelJournal := context.WithCancel(context.Background())
+	defer cancelJournal()
+
+	journalDone := make(chan struct{})
+	go func() {
+		defer close(journalDone)
+		_ = commands.NewJournalCommand(s.cm).Execute(journalCtx, commands.JournalOptions{
+			ContainerName: name,
+			Follow:        true,
+			Tail:          -1,
+			Stdout:        sess,
+			Stderr:        sess,
+		})
+	}()
+
+	ticker := time.NewTicker(startingPollInterval)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-journalDone:
+			// Journal returned on its own (e.g. the container was removed)
+			// before setup was ever observed done.
+			return
+		case <-ticker.C:
+			pollCtx := context.Background()
+			if s.cm.IsSetupDone(pollCtx, name) {
+				_, _ = sess.Write([]byte("setup finished"))
+				cancelJournal()
+				<-journalDone
+				return
+			}
+
+			result, err := commands.NewListCommand(s.cm).Execute(pollCtx, commands.ListOptions{})
+			if err != nil {
+				continue // transient listing error; try again next tick
+			}
+			stillRunning := false
+			for _, c := range result.Containers {
+				if c.Name == name {
+					stillRunning = c.IsRunning()
+					break
+				}
+			}
+			if !stillRunning {
+				_, _ = sess.Write([]byte("container is no longer running"))
+				cancelJournal()
+				<-journalDone
+				return
+			}
+		}
+	}
 }
 
 // registryRowData is the webui's per-row view model for the registry
