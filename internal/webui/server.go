@@ -45,21 +45,23 @@ type server struct {
 	templates *template.Template
 	token     string
 
-	// upgradeStreamsMu guards upgradeStreams, the set of container names
-	// currently running an upgrade started from this webui process. Actual
-	// upgrade-in-progress status for row/inspect rendering comes from
-	// s.cm.IsUpgrading (the container.upgrading marker file, see
-	// containermanager.ContainerManager), which is authoritative and
-	// survives webui restarts; this map only exists to let a live viewer
-	// attach to a specific run's output, and is best-effort — it holds
-	// nothing that outlives the webui process.
-	upgradeStreamsMu sync.Mutex
-	upgradeStreams   map[string]*upgradeStream
+	// sessionsMu guards sessions, the set of container names currently
+	// attached to a live interactive session started from this webui
+	// process — either a shell (see terminalWS) or an upgrade (see
+	// upgradeAction). Actual upgrade-in-progress status for row/inspect
+	// rendering still comes from s.cm.IsUpgrading (the
+	// container.upgrading marker file, see containermanager.
+	// ContainerManager), which is authoritative and survives webui
+	// restarts; this map only exists to let additional viewers attach to
+	// an already-running session's output/control, and is best-effort —
+	// it holds nothing that outlives the webui process.
+	sessionsMu sync.Mutex
+	sessions   map[string]*session
 
 	// pullingMu guards pulling, the set of image names currently being
 	// pulled from the registry panel via a webui-initiated
 	// commands.RegistryPullCommand. Unlike upgrades, there's no on-disk
-	// marker for an in-progress image pull, so — unlike upgradeStreams's
+	// marker for an in-progress image pull, so — unlike sessions's
 	// relationship to s.cm.IsUpgrading — this map is the only record of
 	// pull-in-progress state and does not survive a webui restart.
 	pullingMu sync.Mutex
@@ -110,7 +112,7 @@ func Serve(ctx context.Context, cm containermanager.ContainerManager, cfg *confi
 
 	s := &server{
 		cm: cm, rootful: rootful, templates: tmpl, token: token,
-		upgradeStreams:   make(map[string]*upgradeStream),
+		sessions:         make(map[string]*session),
 		pulling:          make(map[string]bool),
 		manifestSessions: make(map[string]*manifestSession),
 		manifestApplying: make(map[string]bool),
@@ -128,7 +130,7 @@ func Serve(ctx context.Context, cm containermanager.ContainerManager, cfg *confi
 	mux.HandleFunc("GET /ws/containers/{name}/terminal", s.terminalWS)
 	mux.HandleFunc("GET /sse/containers/{name}/logs", s.logsSSE)
 	mux.HandleFunc("POST /containers/{name}/upgrade", s.upgradeAction)
-	mux.HandleFunc("GET /sse/containers/{name}/upgrade", s.upgradeSSE)
+	mux.HandleFunc("GET /ws/containers/{name}/upgrade", s.upgradeWS)
 	mux.HandleFunc("GET /create", s.createPage)
 	mux.HandleFunc("GET /registry", s.registryPage)
 	mux.HandleFunc("POST /registry/{name}/pull", s.registryPullAction)

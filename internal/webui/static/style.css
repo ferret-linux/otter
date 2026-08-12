@@ -700,6 +700,44 @@ table.containers td {
   font-size: 0.85rem;
 }
 
+/* Line-based reply box shown under console_watch's upgrade output once
+   the viewer has control, since otter-init --upgrade's own prompts are
+   line-based (e.g. "Continue? [Y/n]") rather than raw-keystroke, unlike
+   console_shell's xterm. */
+.upgrade-input {
+  flex-shrink: 0;
+  margin: 0 1rem 0.75rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--fg);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+}
+
+/* Accept/deny prompt shown to the current controller of a console_shell
+   or console_watch session when another viewer requests control (see
+   otterShowControlRequestPopup). Fixed/floating for the same reason as
+   the notification bell panel below: it needs to appear above whichever
+   page fragment is currently swapped into #picker-detail. */
+.control-request-popup {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-alt);
+  color: var(--fg);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  font-size: 0.85rem;
+  z-index: 50;
+}
+
 /* Notification bell + panel (layout.html). Fixed/floating rather than
    docked into a shared topbar, since each page currently declares its own
    separate <header class="topbar"> (see templates/*.html) rather than

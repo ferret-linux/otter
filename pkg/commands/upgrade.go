@@ -26,6 +26,12 @@ type UpgradeOptions struct {
 	// the webui) set these, the CLI leaves them at zero value.
 	Stdout io.Writer
 	Stderr io.Writer
+	// Stdin, if set, is used instead of the process's own stdin, so a
+	// non-CLI caller (e.g. the webui) can answer a prompt the upgrade
+	// script or an underlying package manager blocks on. The CLI leaves
+	// this at zero value, matching EnterOptions.Stdin's nil-preserves-
+	// existing-behavior convention.
+	Stdin io.Reader
 }
 
 type UpgradeCommand struct {
@@ -84,7 +90,7 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 			ui.DefaultLogger.Warn("locked, skipping", "name", name)
 			return true, nil
 		}
-		if err := c.upgradeContainer(ctx, name, opts.Stdout, opts.Stderr); err != nil {
+		if err := c.upgradeContainer(ctx, name, opts.Stdin, opts.Stdout, opts.Stderr); err != nil {
 			ui.DefaultLogger.Error("failed while upgrading", "name", name, "err", err)
 			return false, err
 		}
@@ -99,7 +105,7 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 	})
 }
 
-func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string, stdout, stderr io.Writer) error {
+func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string, stdin io.Reader, stdout, stderr io.Writer) error {
 	if _, updated, err := insidecontainer.ProvisionScripts(c.cfg.ScriptsDir); err != nil {
 		ui.DefaultLogger.Warn("failed to provision scripts", "err", err)
 	} else if updated {
@@ -115,8 +121,14 @@ func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string, stdo
 	enterOpts := EnterOptions{
 		ContainerName: name,
 		CustomCommand: []string{"sh", "-c", upgradeScript},
+		Stdin:         stdin,
 		Stdout:        stdout,
 		Stderr:        stderr,
+		// ForceTTY so a package manager step that isn't covered by the
+		// -y/--noconfirm flags in otter-init (e.g. needrestart, a
+		// maintainer script debconf fallback) gets a real terminal to
+		// prompt on instead of hanging on a pipe with no TTY.
+		ForceTTY: stdin != nil,
 	}
 
 	if _, err := c.enterCmd.Execute(ctx, enterOpts); err != nil {

@@ -37,18 +37,18 @@ type notificationEvent struct {
 // notificationMaxBuffered caps how many past notifications are kept
 // in-memory and replayed to a newly-connected /sse/notifications viewer.
 // Matches the rest of webui's ephemeral, in-memory-only session state
-// (see server.pulling, server.upgradeStreams) — nothing here survives a
+// (see server.pulling, server.sessions) — nothing here survives a
 // webui restart.
 const notificationMaxBuffered = 100
 
 // notificationHub buffers notifications and fans them out to every
-// connected /sse/notifications viewer, mirroring upgradeStream's
-// buffer-plus-subscriber-channels pattern (see upgrade_stream.go). Unlike
-// an upgradeStream, a notificationHub never closes: it lives for the
-// whole webui process, not one upgrade run. buf holds the current, live
-// set of notifications — delete/clear remove entries from it directly
-// rather than just appending — so it doubles as the persisted state a
-// fresh subscriber replays.
+// connected /sse/notifications viewer, mirroring session's
+// buffer-plus-subscriber-channels pattern (see session.go). Unlike a
+// session, a notificationHub never closes: it lives for the whole webui
+// process, not one shell or upgrade run. buf holds the current, live set
+// of notifications — delete/clear remove entries from it directly rather
+// than just appending — so it doubles as the persisted state a fresh
+// subscriber replays.
 type notificationHub struct {
 	mu     sync.Mutex
 	nextID int
@@ -65,7 +65,7 @@ func newNotificationHub() *notificationHub {
 // notify appends a new notification and fans it out to every current
 // subscriber. Subscribers that are not keeping up are skipped for this
 // notification rather than blocking the caller — same tradeoff
-// upgradeStream.write makes for upgrade output.
+// session.sendLocked makes for session output.
 func (h *notificationHub) notify(level, message string) {
 	h.mu.Lock()
 	defer h.mu.Unlock()

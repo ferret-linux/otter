@@ -7,7 +7,6 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/coder/websocket"
 
@@ -425,12 +424,18 @@ type inspectData struct {
 // upgradeAction handles POST /containers/{name}/upgrade. It starts
 // commands.NewUpgradeCommand in a background goroutine detached from this
 // request's context, so the upgrade is not interrupted by the triggering
-// request finishing, the browser tab closing, or a live-view SSE connection
-// dropping — matching how the underlying otter-init --upgrade run is not
-// tied to any particular otter-side process either. Actual upgrade-in-
-// progress status is read back from s.cm.IsUpgrading (the
+// request finishing, the browser tab closing, or a live-view websocket
+// connection dropping — matching how the underlying otter-init --upgrade
+// run is not tied to any particular otter-side process either. Actual
+// upgrade-in-progress status is read back from s.cm.IsUpgrading (the
 // container.upgrading marker file), not tracked separately here, so it
 // stays correct even if the webui process restarts mid-upgrade.
+//
+// The upgrade's stdin is backed by a *session (see session.go) from the
+// moment it starts, before any browser has attached — so a package-manager
+// prompt that shows up before anyone opens the watch view simply waits on
+// session's stdin pipe, exactly as it would wait on a real terminal, until
+// a viewer attaches, is granted control, and answers it.
 //
 // If an upgrade is already in progress for this container, this is a
 // no-op: it does not start a second concurrent run.
@@ -439,28 +444,28 @@ func (s *server) upgradeAction(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	if !s.cm.IsUpgrading(ctx, name) {
-		stream := newUpgradeStream()
-		s.upgradeStreamsMu.Lock()
-		s.upgradeStreams[name] = stream
-		s.upgradeStreamsMu.Unlock()
+		sess, sessIO := newSession(false)
+		s.sessionsMu.Lock()
+		s.sessions[name] = sess
+		s.sessionsMu.Unlock()
 
 		s.notify("info", fmt.Sprintf("upgrade started: %s", name))
 
 		go func() {
 			defer func() {
-				stream.close()
-				s.upgradeStreamsMu.Lock()
-				delete(s.upgradeStreams, name)
-				s.upgradeStreamsMu.Unlock()
+				sess.close()
+				s.sessionsMu.Lock()
+				delete(s.sessions, name)
+				s.sessionsMu.Unlock()
 			}()
 
-			sw := &upgradeStreamWriter{stream: stream}
 			if err := commands.NewUpgradeCommand(s.config(), s.cm).Execute(context.Background(), &commands.UpgradeOptions{
 				ContainerNames: []string{name},
-				Stdout:         sw,
-				Stderr:         sw,
+				Stdin:          sessIO.Stdin,
+				Stdout:         sess,
+				Stderr:         sess,
 			}); err != nil {
-				stream.write(fmt.Sprintf("error: %s", err.Error()))
+				_, _ = sess.Write([]byte(fmt.Sprintf("error: %s", err.Error())))
 				s.notify("error", fmt.Sprintf("upgrade failed: %s: %s", name, err))
 				return
 			}
@@ -498,67 +503,34 @@ func (s *server) upgradeAction(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// upgradeSSE streams a running upgrade's output to the browser as
-// Server-Sent Events, if one is currently in progress for this container.
-// Unlike logsSSE, the upgrade itself is not tied to this connection (see
-// upgradeAction) — this handler only attaches to and detaches from it;
-// closing the SSE connection stops the browser from watching, not the
-// upgrade itself. If no upgrade is in progress, it sends a single message
-// saying so and closes.
-func (s *server) upgradeSSE(w http.ResponseWriter, r *http.Request) {
+// upgradeWS bridges a browser websocket to a running upgrade's session, if
+// one is currently in progress for this container: output flows to the
+// browser for every attached connection, and input flows to the upgrade's
+// stdin only from whichever connection currently holds control (see
+// session.go). Unlike terminalWS, the upgrade itself is not tied to this
+// connection (see upgradeAction) — this handler only attaches to and
+// detaches from an already-running session; closing this connection stops
+// the browser from watching/controlling, not the upgrade itself. If no
+// upgrade is in progress, the connection is closed immediately.
+func (s *server) upgradeWS(w http.ResponseWriter, r *http.Request) {
 	name := r.PathValue("name")
 
-	flusher, ok := w.(http.Flusher)
+	s.sessionsMu.Lock()
+	sess, ok := s.sessions[name]
+	s.sessionsMu.Unlock()
+
+	conn, err := websocket.Accept(w, r, &websocket.AcceptOptions{})
+	if err != nil {
+		return
+	}
+	defer conn.CloseNow()
+
 	if !ok {
-		s.notify("error", "streaming unsupported")
-		http.Error(w, "streaming unsupported", http.StatusInternalServerError)
+		conn.Close(websocket.StatusNormalClosure, "no upgrade currently in progress")
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/event-stream")
-	w.Header().Set("Cache-Control", "no-cache")
-	w.Header().Set("Connection", "keep-alive")
-	w.WriteHeader(http.StatusOK)
-	flusher.Flush()
-
-	s.upgradeStreamsMu.Lock()
-	stream, ok := s.upgradeStreams[name]
-	s.upgradeStreamsMu.Unlock()
-	if !ok {
-		fmt.Fprintf(w, "event: done\ndata: no upgrade currently in progress\n\n")
-		flusher.Flush()
-		return
-	}
-
-	buf, ch := stream.subscribe()
-	defer stream.unsubscribe(ch)
-
-	for _, line := range buf {
-		fmt.Fprintf(w, "data: %s\n\n", line)
-	}
-	flusher.Flush()
-
-	ctx := r.Context()
-	for {
-		select {
-		case <-ctx.Done():
-			return
-		case line, open := <-ch:
-			if !open {
-				fmt.Fprintf(w, "event: done\ndata: upgrade finished\n\n")
-				flusher.Flush()
-				return
-			}
-			fmt.Fprintf(w, "data: %s\n\n", line)
-			flusher.Flush()
-		case <-time.After(30 * time.Second):
-			// Keepalive comment so intermediary proxies/browsers don't
-			// time out an idle connection while the upgrade is still
-			// running but quiet.
-			fmt.Fprint(w, ": keepalive\n\n")
-			flusher.Flush()
-		}
-	}
+	s.runAttachedSession(r.Context(), conn, sess)
 }
 
 // registryRowData is the webui's per-row view model for the registry
@@ -1025,13 +997,18 @@ func splitLines(in string) []string {
 
 // terminalWS bridges a browser websocket to an interactive shell inside the
 // container, via the same containermanager.Enter() the CLI's `otter enter`
-// uses — just with Stdin/Stdout/Stderr redirected to the websocket instead
-// of the otter process's own terminal. See containermanager.EnterOptions and
-// pkg/commands.EnterOptions for the redirection fields.
+// uses — just with Stdin/Stdout/Stderr redirected through a *session (see
+// session.go) instead of the otter process's own terminal. The first
+// connection to arrive for a given container name creates the session and
+// starts Enter(); later connections for the same container name (e.g. a
+// second browser tab) attach to that already-running session as viewers
+// instead of starting a second, independent shell — matching how
+// upgradeWS's session is shared across every attached viewer.
 //
-// Terminal input and resize control messages share this one connection:
-// binary messages are input bytes, text messages are JSON resize events —
-// see wsTerminalReader. Output only ever flows as binary.
+// Terminal input and control messages (resize, control requests) share
+// each connection with its output — binary messages are input bytes, text
+// messages are JSON control messages — see clientMessage and
+// runSessionReadLoop.
 func (s *server) terminalWS(w http.ResponseWriter, r *http.Request) {
 	name := r.PathValue("name")
 
@@ -1042,23 +1019,62 @@ func (s *server) terminalWS(w http.ResponseWriter, r *http.Request) {
 	defer conn.CloseNow()
 
 	ctx := r.Context()
-	resizeCh := make(chan containermanager.WinSize, 1)
-	reader := newWSTerminalReader(ctx, conn, resizeCh)
-	writer := websocket.NetConn(ctx, conn, websocket.MessageBinary)
-	defer writer.Close()
 
-	_, err = commands.NewEnterCommand(s.cm).Execute(ctx, commands.EnterOptions{
-		ContainerName: name,
-		ForceTTY:      true,
-		Stdin:         reader,
-		Stdout:        writer,
-		Stderr:        writer,
-		Resize:        resizeCh,
-	})
+	s.sessionsMu.Lock()
+	sess, existed := s.sessions[name]
+	var sessIO sessionIO
+	if !existed {
+		sess, sessIO = newSession(true)
+		s.sessions[name] = sess
+	}
+	s.sessionsMu.Unlock()
+
+	if !existed {
+		go func() {
+			defer func() {
+				sess.close()
+				s.sessionsMu.Lock()
+				delete(s.sessions, name)
+				s.sessionsMu.Unlock()
+			}()
+
+			_, _ = commands.NewEnterCommand(s.cm).Execute(context.Background(), commands.EnterOptions{
+				ContainerName: name,
+				ForceTTY:      true,
+				Stdin:         sessIO.Stdin,
+				Stdout:        sess,
+				Stderr:        sess,
+				Resize:        sess.resizeCh,
+			})
+		}()
+	}
+
+	s.runAttachedSession(ctx, conn, sess)
+}
+
+// runAttachedSession attaches conn to sess as a new connection (controller
+// if none is attached yet, viewer otherwise), replays buffered output,
+// then runs the read and write loops until the connection or session ends.
+// Shared by terminalWS and upgradeWS since both are session-backed the
+// same way.
+func (s *server) runAttachedSession(ctx context.Context, conn *websocket.Conn, sess *session) {
+	c, ok := sess.attach(conn)
+	if !ok {
+		conn.Close(websocket.StatusNormalClosure, "session ended")
+		return
+	}
+	defer sess.detach(c)
+
+	go runSessionWriteLoop(ctx, conn, c)
+
+	resizeCh := sess.resizeCh
+	if resizeCh == nil {
+		resizeCh = make(chan containermanager.WinSize, 1) // upgrade sessions have no PTY resize target
+	}
 
 	reason := "session ended"
-	if err != nil {
-		reason = "session error"
+	if err := runSessionReadLoop(ctx, conn, sess, c, resizeCh); err != nil {
+		reason = "connection closed"
 	}
 	conn.Close(websocket.StatusNormalClosure, reason)
 }

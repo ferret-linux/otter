@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"github.com/coder/websocket"
+
+	"github.com/ferret-linux/otter/pkg/containermanager"
 )
 
 // controlRequestTimeout is how long a session waits for the current
@@ -62,6 +64,13 @@ type session struct {
 	// never needs to know control changed hands.
 	stdinW io.Writer
 
+	// resizeCh is the PTY resize channel for sessions backed by a shell
+	// (see terminalWS), so every attached connection's resize messages —
+	// not just the one that started the session — reach the real PTY.
+	// Left nil for upgrade sessions, which have no PTY to resize since
+	// EnterOptions.Resize is never set for them (see upgradeContainer).
+	resizeCh chan containermanager.WinSize
+
 	// pendingRequesterID is set while a control request is awaiting the
 	// current controller's response; 0 when no request is pending.
 	pendingRequesterID uint64
@@ -82,11 +91,20 @@ type sessionIO struct {
 // should be handed to the underlying process (Enter's opts.Stdin). The
 // reader blocks for input until a controller is attached and writes to it,
 // exactly like a real terminal blocks until someone types.
-func newSession() (*session, sessionIO) {
+//
+// withResize is true for sessions backed by a shell (see terminalWS),
+// which sets session.resizeCh once here at construction — never mutated
+// afterward — so every later attach/read-loop can read it without
+// synchronization. It's left nil (false) for upgrade sessions, which have
+// no PTY to resize.
+func newSession(withResize bool) (*session, sessionIO) {
 	r, w := io.Pipe()
 	s := &session{
 		conns:  make(map[uint64]*sessionConn),
 		stdinW: w,
+	}
+	if withResize {
+		s.resizeCh = make(chan containermanager.WinSize, 1)
 	}
 	return s, sessionIO{Stdin: r}
 }
@@ -152,35 +170,55 @@ func (s *session) close() {
 
 // attach registers a new connection with the session. The first connection
 // to attach becomes controller automatically; later connections attach as
-// viewers. Returns the connection handle and the buffered output so far,
-// so the caller can replay it to the new connection before live output
-// resumes.
-func (s *session) attach(conn *websocket.Conn) (*sessionConn, []string, bool) {
+// viewers. The new connection's send channel is sized to fit the entire
+// backlog buffered so far plus its initial control-state message, so
+// replaying that backlog (done by the caller, via the returned channel)
+// can never silently drop early output the way a fixed-size channel with a
+// non-blocking send could for a long-running upgrade with substantial
+// output already produced before this connection attached.
+func (s *session) attach(conn *websocket.Conn) (*sessionConn, bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	if s.done {
-		return nil, nil, false
+		return nil, false
 	}
 
 	s.nextConnID++
-	c := &sessionConn{id: s.nextConnID, conn: conn, send: make(chan []byte, 32)}
+	// +2: the control-state message plus headroom, on top of one slot per
+	// buffered line, so the initial replay below never blocks or drops.
+	c := &sessionConn{id: s.nextConnID, conn: conn, send: make(chan []byte, len(s.buf)+2)}
 	s.conns[c.id] = c
 
 	if s.controllerID == 0 {
 		s.controllerID = c.id
 	}
 
-	buf := append([]string(nil), s.buf...)
-	return c, buf, true
+	for _, line := range s.buf {
+		msg, _ := json.Marshal(wireMessage{Type: "output", Data: line})
+		c.send <- msg
+	}
+	stateMsg, _ := json.Marshal(wireMessage{Type: "control_state", Controller: s.controllerID == c.id})
+	c.send <- stateMsg
+
+	return c, true
 }
 
 // detach removes a connection from the session. If it was the controller,
 // control passes to an arbitrary remaining connection, if any; the process
 // itself is left running either way (see session doc comment).
+//
+// If the session already finished and called close() — which closes every
+// still-attached connection's send channel itself — this is a no-op: c is
+// no longer in s.conns (close() clears it), so detach must not close
+// c.send a second time.
 func (s *session) detach(c *sessionConn) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+
+	if _, ok := s.conns[c.id]; !ok {
+		return
+	}
 
 	delete(s.conns, c.id)
 	close(c.send)
@@ -198,13 +236,6 @@ func (s *session) detach(c *sessionConn) {
 		break
 	}
 	s.broadcastControlStateLocked()
-}
-
-// isController reports whether c currently holds control.
-func (s *session) isController(c *sessionConn) bool {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	return s.controllerID == c.id
 }
 
 // input is called with a chunk of terminal input from c. It is only
@@ -307,10 +338,11 @@ func (s *session) broadcastControlStateLocked() {
 }
 
 // wireMessage is the JSON envelope for every message a session sends down
-// a websocket. Terminal input from the browser is sent as raw binary
-// messages (see wsSessionReader), separately from this JSON control
-// channel, the same way resizeMessage and binary input already coexist on
-// one connection in ws_terminal.go.
+// a websocket. Terminal input from the browser goes the other direction,
+// as raw binary messages handled by runSessionReadLoop (see
+// ws_terminal.go), separately from this JSON channel — the same
+// binary-vs-text split clientMessage uses for messages going the other
+// way.
 type wireMessage struct {
 	Type string `json:"type"`
 	// Data carries a line of process output for Type == "output".

@@ -38,12 +38,122 @@
     });
     el.classList.add('active');
   }
+
+  // otterAttachSession opens a websocket to path and speaks the shared
+  // session protocol used by both the shell console (console_shell) and
+  // the upgrade console (console_watch): binary messages are input/output
+  // bytes, text messages are JSON control messages (see wireMessage and
+  // clientMessage in internal/webui). It also drives the shared
+  // #control-badge / #control-request-btn elements every session fragment
+  // includes, and the accept/deny popup shown to the current controller
+  // when another viewer requests control — kept in one place rather than
+  // duplicated in console_shell and console_watch.
+  //
+  // handlers.onOutput(line) is called for every output line, handlers.
+  // onClosed() when the session ends, handlers.onError() on a connection
+  // error. The returned object exposes sendInput(bytes), sendControl(obj)
+  // (for non-input control messages like resize), requestControl(), and
+  // close(); assign a function to the returned object's onControlState
+  // property to be notified (isController: bool) whenever control changes
+  // hands, in addition to the shared badge/button already being updated
+  // automatically.
+  function otterAttachSession(path, handlers) {
+    const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const socket = new WebSocket(proto + '//' + location.host + path);
+    socket.binaryType = 'arraybuffer';
+
+    const badgeEl = document.getElementById('control-badge');
+    const requestBtnEl = document.getElementById('control-request-btn');
+
+    const result = { socket: socket, onControlState: null };
+    result.sendInput = function (bytes) {
+      if (socket.readyState === WebSocket.OPEN) socket.send(bytes);
+    };
+    result.sendControl = function (obj) {
+      if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify(obj));
+    };
+    result.requestControl = function () {
+      result.sendControl({ type: 'request_control' });
+    };
+    result.close = function () { socket.close(); };
+
+    window.otterCurrentSession = result;
+
+    socket.addEventListener('message', function (event) {
+      if (typeof event.data !== 'string') {
+        handlers.onOutput && handlers.onOutput(new TextDecoder().decode(event.data));
+        return;
+      }
+
+      let msg;
+      try {
+        msg = JSON.parse(event.data);
+      } catch (e) {
+        return;
+      }
+
+      switch (msg.type) {
+        case 'output':
+          handlers.onOutput && handlers.onOutput(msg.data);
+          break;
+        case 'closed':
+          handlers.onClosed && handlers.onClosed();
+          break;
+        case 'control_state':
+          if (badgeEl) badgeEl.textContent = msg.controller ? 'interactive' : 'view only';
+          if (requestBtnEl) requestBtnEl.style.display = msg.controller ? 'none' : '';
+          result.onControlState && result.onControlState(msg.controller);
+          break;
+        case 'control_requested':
+          otterShowControlRequestPopup(result);
+          break;
+      }
+    });
+
+    socket.addEventListener('error', function () {
+      handlers.onError && handlers.onError();
+    });
+
+    return result;
+  }
+
+  // otterShowControlRequestPopup shows the current controller a 5-second
+  // accept/deny prompt when another viewer requests control, matching the
+  // server-side controlRequestTimeout in internal/webui/session.go — if
+  // neither button is pressed in time, the server grants control to the
+  // requester on its own and this popup is simply dismissed.
+  function otterShowControlRequestPopup(session) {
+    const existing = document.getElementById('control-request-popup');
+    if (existing) existing.remove();
+
+    const popup = document.createElement('div');
+    popup.id = 'control-request-popup';
+    popup.className = 'control-request-popup';
+    popup.innerHTML =
+      '<span>Another viewer wants control</span>' +
+      '<button type="button" class="btn btn-primary" data-accept="true">Hand off</button>' +
+      '<button type="button" class="btn" data-accept="false">Keep control</button>';
+    document.body.appendChild(popup);
+
+    const timeoutId = setTimeout(function () { popup.remove(); }, 5000);
+    popup.querySelectorAll('button').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        clearTimeout(timeoutId);
+        session.sendControl({ type: 'resolve_request', accept: btn.dataset.accept === 'true' });
+        popup.remove();
+      });
+    });
+  }
 </script>
 {{end}}
 
 {{define "console_shell"}}
 <div class="picker-detail-header">
-  <h2>{{.}} — shell</h2>
+  <div style="display:flex; align-items:center; gap:0.5rem;">
+    <h2>{{.}} — shell</h2>
+    <span id="control-badge" class="picker-badge">connecting…</span>
+  </div>
+  <button id="control-request-btn" class="btn" style="display:none;" onclick="window.otterCurrentSession && window.otterCurrentSession.requestControl()">Request control</button>
 </div>
 <div class="picker-detail-body">
   <div id="terminal" style="flex: 1; padding: 0.5rem;"></div>
@@ -56,37 +166,24 @@
     term.open(document.getElementById('terminal'));
     fitAddon.fit();
 
-    const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const socket = new WebSocket(proto + '//' + location.host + '/ws/containers/{{.}}/terminal');
-    socket.binaryType = 'arraybuffer';
+    const session = otterAttachSession('/ws/containers/{{.}}/terminal', {
+      onOutput: function (line) { term.write(line + '\r\n'); },
+      onClosed: function () { term.write('\r\n[session ended]\r\n'); },
+      onError: function () { term.write('\r\n[connection error]\r\n'); },
+    });
 
     function sendResize() {
-      if (socket.readyState === WebSocket.OPEN) {
-        socket.send(JSON.stringify({ type: 'resize', cols: term.cols, rows: term.rows }));
-      }
+      session.sendControl({ type: 'resize', cols: term.cols, rows: term.rows });
     }
-
-    socket.addEventListener('open', function () {
+    session.socket.addEventListener('open', function () {
       term.focus();
       sendResize();
     });
-    socket.addEventListener('message', function (event) {
-      term.write(new Uint8Array(event.data));
-    });
-    socket.addEventListener('close', function () {
-      term.write('\r\n[session ended]\r\n');
-    });
-    socket.addEventListener('error', function () {
-      term.write('\r\n[connection error]\r\n');
-    });
+    term.onResize(sendResize);
 
     term.onData(function (data) {
-      if (socket.readyState === WebSocket.OPEN) {
-        socket.send(new TextEncoder().encode(data));
-      }
+      session.sendInput(new TextEncoder().encode(data));
     });
-
-    term.onResize(sendResize);
 
     // Unlike the old standalone terminal.html, this fragment can be
     // replaced by htmx (picking a different container) without a page
@@ -102,7 +199,7 @@
     if (detailEl) {
       detailEl.addEventListener('htmx:beforeSwap', function cleanup() {
         window.removeEventListener('resize', onWindowResize);
-        socket.close();
+        session.close();
         detailEl.removeEventListener('htmx:beforeSwap', cleanup);
       }, { once: true });
     }
@@ -112,7 +209,11 @@
 
 {{define "console_watch"}}
 <div class="picker-detail-header">
-  <h2>{{.}} — upgrade output</h2>
+  <div style="display:flex; align-items:center; gap:0.5rem;">
+    <h2>{{.}} — upgrade output</h2>
+    <span id="control-badge" class="picker-badge">connecting…</span>
+  </div>
+  <button id="control-request-btn" class="btn" style="display:none;" onclick="window.otterCurrentSession && window.otterCurrentSession.requestControl()">Request control</button>
 </div>
 <div class="picker-detail-body">
   <pre id="upgrade-log" class="logs-view"></pre>
@@ -120,28 +221,50 @@
 <script>
   (function () {
     const logEl = document.getElementById('upgrade-log');
-    const source = new EventSource('/sse/containers/{{.}}/upgrade');
 
-    source.onmessage = function (event) {
-      logEl.textContent += event.data + '\n';
-      logEl.scrollTop = logEl.scrollHeight;
+    const session = otterAttachSession('/ws/containers/{{.}}/upgrade', {
+      onOutput: function (line) {
+        logEl.textContent += line + '\n';
+        logEl.scrollTop = logEl.scrollHeight;
+      },
+      onClosed: function () {
+        logEl.textContent += '\n[upgrade finished]\n';
+      },
+      onError: function () {
+        logEl.textContent += '\n[connection error]\n';
+      },
+    });
+
+    // Upgrade output is a plain scrollback, not a terminal — a viewer that
+    // requests and receives control types into this box and submits with
+    // Enter, rather than every keystroke going straight to the process the
+    // way console_shell's xterm does. This matches otter-init --upgrade's
+    // prompts, which are line-based (e.g. "Continue? [Y/n]"), not raw TTY
+    // input.
+    const inputEl = document.createElement('input');
+    inputEl.type = 'text';
+    inputEl.placeholder = 'Reply to a prompt and press Enter…';
+    inputEl.className = 'upgrade-input';
+    inputEl.style.display = 'none';
+    inputEl.addEventListener('keydown', function (event) {
+      if (event.key !== 'Enter') return;
+      session.sendInput(new TextEncoder().encode(inputEl.value + '\n'));
+      inputEl.value = '';
+    });
+    logEl.insertAdjacentElement('afterend', inputEl);
+
+    session.onControlState = function (isController) {
+      inputEl.style.display = isController ? '' : 'none';
     };
-    source.addEventListener('done', function (event) {
-      logEl.textContent += '\n[' + event.data + ']\n';
-      source.close();
-    });
-    source.addEventListener('error', function () {
-      logEl.textContent += '\n[connection error]\n';
-    });
 
     // Same reasoning as console_shell's cleanup: this fragment can be
     // swapped out by htmx without a page navigation, so the open
-    // EventSource must be closed when that happens or it keeps streaming
+    // websocket must be closed when that happens or it keeps streaming
     // into a detached DOM node indefinitely.
     const detailEl = document.getElementById('picker-detail');
     if (detailEl) {
       detailEl.addEventListener('htmx:beforeSwap', function cleanup() {
-        source.close();
+        session.close();
         detailEl.removeEventListener('htmx:beforeSwap', cleanup);
       }, { once: true });
     }
