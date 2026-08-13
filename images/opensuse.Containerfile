@@ -117,10 +117,15 @@ COPY images/scripts/python-fix.sh /tmp/python-fix.sh
 RUN sh /tmp/python-fix.sh
 
 # Zypper cleanup
-RUN zypper refresh && \
-    zypper update -y && \
-    zypper rm $(zypper packages --orphaned -i | awk -F'|' '/^i/{print $3}') && \
-    zypper clean
+RUN zypper --non-interactive refresh && \
+    zypper --non-interactive --auto-agree-with-licenses update -y && \
+    orphans="$(zypper --non-interactive packages --orphaned -i | awk -F'|' '/^i/{print $3}')" && \
+    if [ -n "$orphans" ]; then \
+        zypper --non-interactive --auto-agree-with-licenses rm -y $orphans; \
+    else \
+        echo "No orphaned packages to remove."; \
+    fi && \
+    zypper --non-interactive clean
 
 # Cleanup
 RUN zypper clean --all \
