@@ -120,7 +120,8 @@ RUN nix store gc && \
     nix-store --optimise && \
     nix-collect-garbage -d && \
     nix profile wipe-history && \
-    nix-env --delete-generations old
+    nix-env --delete-generations old && \
+    nh clean all --non-interactive --keep 1 --keep-since 0s
 
 # Cleanup
 RUN rm -rf \
