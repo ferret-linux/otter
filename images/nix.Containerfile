@@ -112,8 +112,15 @@ RUN ln -sf /root/.nix-profile/share/zoneinfo/UTC /etc/localtime \
 # Nix store cleanup: drop build-time garbage not reachable from the
 # current profile generation, then hardlink duplicate store paths
 # to shrink the image.
-RUN nix-collect-garbage -d \
-    && nix store optimise
+RUN nix store gc && \
+    nix-store --gc &&\ 
+    nix store verify && \ 
+    nix-store --verify && \
+    nix store optimise && \
+    nix-store --optimise && \
+    nix-collect-garbage -d && \
+    nix profile wipe-history && \
+    nix-env --delete-generations old
 
 # Cleanup
 RUN rm -rf \
