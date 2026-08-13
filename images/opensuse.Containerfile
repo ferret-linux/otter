@@ -118,10 +118,10 @@ RUN sh /tmp/python-fix.sh
 
 # Zypper cleanup
 RUN zypper --non-interactive refresh && \
-    zypper --non-interactive --auto-agree-with-licenses update -y && \
+    zypper --non-interactive update -y --auto-agree-with-licenses && \
     orphans="$(zypper --non-interactive packages --orphaned -i | awk -F'|' '/^i/{print $3}')" && \
     if [ -n "$orphans" ]; then \
-        zypper --non-interactive --auto-agree-with-licenses rm -y $orphans; \
+        zypper --non-interactive rm -y $orphans; \
     else \
         echo "No orphaned packages to remove."; \
     fi && \
