@@ -17,88 +17,96 @@ RUN sh /tmp/setup-common.sh
 # Add otter image identifiers
 RUN touch /usr/lib/otter/container.chimera
 
-# Upgrade all packages
-RUN apk update && apk upgrade
-# Enable Chimera's user repo for additional packages
-RUN apk add chimera-repo-user && apk update
-# Add bootstrap packages
-RUN apk add base-bootstrap && apk upgrade -Ua
-# Upgrade all packages
-RUN apk update && apk upgrade
-
-# Run package install script
+# Upgrade all packages, enable Chimera's user repository, install
+# bootstrap packages, install the complete package set, and perform
+# Apk/filesystem cleanup before this layer is committed.
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
-RUN apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
-    bc \
-    xz \
-    zsh \
-    gpg \
-    vte \
-    zip \
-    bash \
-    fish \
-    curl \
-    gtar \
-    less \
-    lsof \
-    pigz \
-    sudo \
-    tree \
-    wget \
-    which \
-    bc-gh \
-    bzip2 \
-    gnupg \
-    mount \
-    rsync \
-    dinit \
-    unzip \
-    wget2 \
-    xauth \
-    ffmpeg \
-    libcap \
-    shadow \
-    tzdata \
-    umount \
-    findmnt \
-    iputils \
-    ncurses \
-    openssh \
-    python3 \
-    tcpdump \
-    pipewire \
-    iproute2 \
-    keyutils \
-    mesa-dri \
-    opendoas \
-    pinentry \
-    coreutils \
-    xdg-utils \
-    diffutils \
-    findutils \
-    net-tools \
-    vpl-gpu-rt \
-    util-linux \
-    libcap-progs \
-    ncurses-term \
-    base-full-man \
-    xdg-user-dirs \
-    pipewire-jack \
-    dinit-chimera \
-    vulkan-loader \
-    pipewire-pulse \
-    base-bootstrap \
-    bash-completion \
-    gst-plugins-bad \
-    util-linux-misc \
-    gst-plugins-base \
-    gst-plugins-ugly \
-    gst-plugins-good \
-    libarchive-progs \
-    ncurses-terminfo \
-    util-linux-login \
-    util-linux-mount \
-    xdg-desktop-portal)
+RUN apk update && \
+    apk upgrade && \
+    apk add chimera-repo-user && \
+    apk update && \
+    apk add base-bootstrap && \
+    apk upgrade -Ua && \
+    apk update && \
+    apk upgrade && \
+    apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
+        bc \
+        xz \
+        zsh \
+        gpg \
+        vte \
+        zip \
+        bash \
+        fish \
+        curl \
+        gtar \
+        less \
+        lsof \
+        pigz \
+        sudo \
+        tree \
+        wget \
+        which \
+        bc-gh \
+        bzip2 \
+        gnupg \
+        mount \
+        rsync \
+        dinit \
+        unzip \
+        wget2 \
+        xauth \
+        ffmpeg \
+        libcap \
+        shadow \
+        tzdata \
+        umount \
+        findmnt \
+        iputils \
+        ncurses \
+        openssh \
+        python3 \
+        tcpdump \
+        pipewire \
+        iproute2 \
+        keyutils \
+        mesa-dri \
+        opendoas \
+        pinentry \
+        coreutils \
+        xdg-utils \
+        diffutils \
+        findutils \
+        net-tools \
+        vpl-gpu-rt \
+        util-linux \
+        libcap-progs \
+        ncurses-term \
+        base-full-man \
+        xdg-user-dirs \
+        pipewire-jack \
+        dinit-chimera \
+        vulkan-loader \
+        pipewire-pulse \
+        base-bootstrap \
+        bash-completion \
+        gst-plugins-bad \
+        util-linux-misc \
+        gst-plugins-base \
+        gst-plugins-ugly \
+        gst-plugins-good \
+        libarchive-progs \
+        ncurses-terminfo \
+        util-linux-login \
+        util-linux-mount \
+        xdg-desktop-portal) && \
+    apk update && \
+    apk upgrade && \
+    apk cache clean && \
+    rm -rf \
+        /var/cache/apk/* \
+        /var/log/* \
+        /var/tmp/*
 
 # Timezone default
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
@@ -108,14 +116,3 @@ RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
 # python3.X only, no unversioned symlink)
 COPY images/scripts/python-fix.sh /tmp/python-fix.sh
 RUN sh /tmp/python-fix.sh
-
-# Apk cleanup
-RUN apk update && \
-    apk upgrade && \
-    apk cache clean
-
-# Cleanup
-RUN rm -rf \
-    /var/cache/apk/* \
-    /var/log/* \
-    /var/tmp/*
