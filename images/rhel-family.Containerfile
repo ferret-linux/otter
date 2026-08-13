@@ -21,82 +21,88 @@ RUN touch /usr/lib/otter/container.rhel-family
 RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf 2>/dev/null || \
     sed -i '/tsflags=nodocs/d' /etc/yum.conf 2>/dev/null || true
 
-
-# Install epel repos
-RUN dnf install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm"
-# Upgrade all packages
-RUN dnf upgrade -y
-
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
-RUN dnf install -y --skip-broken $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
-    bc \
-    xz \
-    zsh \
-    mtr \
-    pam \
-    zip \
-    fish \
-    bash \
-    curl \
-    less \
-    lsof \
-    pigz \
-    sudo \
-    time \
-    tree \
-    wget \
-    x264 \
-    x265 \
-    lame \
-    opus \
-    bzip2 \
-    rsync \
-    unzip \
-    which \
-    whois \
-    words \
-    gnupg2 \
-    man-db \
-    passwd \
-    tzdata \
-    vulkan \
-    libvpx \
-    iproute \
-    iputils \
-    ncurses \
-    python3 \
-    tcpdump \
-    systemd \
-    hostname \
-    keyutils \
-    nss-mdns \
-    pinentry \
-    pipewire \
-    diffutils \
-    findutils \
-    krb5-libs \
-    man-pages \
-    procps-ng \
-    traceroute \
-    util-linux \
-    gstreamer1 \
-    vte-profile \
-    wireplumber \
-    glibc-common \
-    gnupg2-smime \
-    shadow-utils \
-    cracklib-dicts \
-    xorg-x11-xauth \
-    bash-completion \
-    openssh-clients \
-    dnf-plugins-core \
-    mesa-dri-drivers \
-    util-linux-script \
-    glibc-all-langpacks \
-    glibc-locale-source \
-    mesa-vulkan-drivers \
-    pipewire-pulseaudio)
+
+# Install EPEL, upgrade the system, install the requested packages,
+# and clean DNF metadata/cache in the same layer.
+RUN dnf install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm" && \
+    dnf upgrade -y && \
+    dnf install -y --skip-broken $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
+        bc \
+        xz \
+        zsh \
+        mtr \
+        pam \
+        zip \
+        fish \
+        bash \
+        curl \
+        less \
+        lsof \
+        pigz \
+        sudo \
+        time \
+        tree \
+        wget \
+        x264 \
+        x265 \
+        lame \
+        opus \
+        bzip2 \
+        rsync \
+        unzip \
+        which \
+        whois \
+        words \
+        gnupg2 \
+        man-db \
+        passwd \
+        tzdata \
+        vulkan \
+        libvpx \
+        iproute \
+        iputils \
+        ncurses \
+        python3 \
+        tcpdump \
+        systemd \
+        hostname \
+        keyutils \
+        nss-mdns \
+        pinentry \
+        pipewire \
+        diffutils \
+        findutils \
+        krb5-libs \
+        man-pages \
+        procps-ng \
+        traceroute \
+        util-linux \
+        gstreamer1 \
+        vte-profile \
+        wireplumber \
+        glibc-common \
+        gnupg2-smime \
+        shadow-utils \
+        cracklib-dicts \
+        xorg-x11-xauth \
+        bash-completion \
+        openssh-clients \
+        dnf-plugins-core \
+        mesa-dri-drivers \
+        util-linux-script \
+        glibc-all-langpacks \
+        glibc-locale-source \
+        mesa-vulkan-drivers \
+        pipewire-pulseaudio) && \
+    dnf upgrade -y && \
+    dnf autoremove -y && \
+    dnf clean all && \
+    rm -rf \
+    /var/cache/dnf/* \
+    /var/log/* \
+    /var/tmp/*
 
 # Locale setup
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8
@@ -112,15 +118,3 @@ RUN sh /tmp/python-fix.sh
 
 # Fix Zsh zlogout on Sh/Enter
 RUN rm -rf /etc/zlogout && touch /etc/zlogout
-
-# Dnf cleanup
-RUN dnf upgrade -y && \
-    dnf autoremove -y && \
-    dnf clean all
-
-# Cleanup
-RUN dnf clean all \
-    && rm -rf \
-    /var/cache/dnf/* \
-    /var/log/* \
-    /var/tmp/*
