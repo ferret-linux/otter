@@ -9,6 +9,15 @@
     "enabled": true
   },
   {
+    "image": "ghcr.io/nixos/nix:latest",
+    "containerfile": "nix.Containerfile",
+    "name": "nixos-otr",
+    "tag": "unstable",
+    "display_name": "nixos-unstable",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  },
+  {
     "image": "docker.io/library/ubuntu:26.04",
     "containerfile": "ubuntu.Containerfile",
     "name": "ubuntu-otr",
