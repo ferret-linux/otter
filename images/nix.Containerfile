@@ -14,7 +14,7 @@ LABEL otter.image_build=${OTTER_BUILD_NUMBER}
 # `cat /etc/os-release` -> "No such file or directory"). Write our
 # own so get_distro_id() resolves to a known value instead of
 # otter-init hard-exiting with 127.
-RUN printf 'ID=nix\nNAME="Nix"\nPRETTY_NAME="Nix"\n' > /etc/os-release
+RUN printf 'ID=nix\nNAME="NixOS"\nPRETTY_NAME="NixOS OCI"\n' > /etc/os-release
 
 # Flakes / the `nix` CLI are not enabled by default here (confirmed:
 # /etc/nix/nix.conf ships with no experimental-features line).
