@@ -20,74 +20,85 @@ RUN touch /usr/lib/otter/container.ubuntu
 # Re-enable locale and docs
 RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
 
-# Upgrade all packages
-RUN apt-get update && apt-get upgrade -y
-
 # Accept microsoft fonts eula
 RUN echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections
 
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
-RUN apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr apt -- \
-    bc \
-    zsh \
-    mtr \
-    zip \
-    curl \
-    fish \
-    bash \
-    less \
-    lsof \
-    pigz \
-    sudo \
-    time \
-    tree \
-    wget \
-    bzip2 \
-    gnupg \
-    gpgsm \
-    rsync \
-    unzip \
-    xauth \
-    dialog \
-    gnupg2 \
-    libgl1 \
-    man-db \
-    passwd \
-    procps \
-    tzdata \
-    systemd \
-    libegl1 \
-    locales \
-    python3 \
-    tcpdump \
-    hostname \
-    iproute2 \
-    keyutils \
-    manpages \
-    xz-utils \
-    apt-utils \
-    diffutils \
-    findutils \
-    libkrb5-3 \
-    libvulkan1 \
-    traceroute \
-    util-linux \
-    libcap2-bin \
-    libnss-mdns \
-    iputils-ping \
-    libegl-mesa0 \
-    libglx-mesa0 \
-    ncurses-base \
-    openssh-client \
-    bash-completion \
-    libgl1-mesa-glx \
-    pinentry-curses \
-    language-pack-en \
-    libnss-myhostname \
-    mesa-vulkan-drivers \
-    ubuntu-restricted-extras \
-    ubuntu-restricted-addons)
+
+# Upgrade the system, install the requested packages, and clean
+# APT metadata/cache in the same layer.
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr apt -- \
+        bc \
+        zsh \
+        mtr \
+        zip \
+        curl \
+        fish \
+        bash \
+        less \
+        lsof \
+        pigz \
+        sudo \
+        time \
+        tree \
+        wget \
+        bzip2 \
+        gnupg \
+        gpgsm \
+        rsync \
+        unzip \
+        xauth \
+        dialog \
+        gnupg2 \
+        libgl1 \
+        man-db \
+        passwd \
+        procps \
+        tzdata \
+        systemd \
+        libegl1 \
+        locales \
+        python3 \
+        tcpdump \
+        hostname \
+        iproute2 \
+        keyutils \
+        manpages \
+        xz-utils \
+        apt-utils \
+        diffutils \
+        findutils \
+        libkrb5-3 \
+        libvulkan1 \
+        traceroute \
+        util-linux \
+        libcap2-bin \
+        libnss-mdns \
+        iputils-ping \
+        libegl-mesa0 \
+        libglx-mesa0 \
+        ncurses-base \
+        openssh-client \
+        bash-completion \
+        libgl1-mesa-glx \
+        pinentry-curses \
+        language-pack-en \
+        libnss-myhostname \
+        mesa-vulkan-drivers \
+        ubuntu-restricted-extras \
+        ubuntu-restricted-addons) && \
+    apt-get update && \
+    apt-get upgrade -y && \
+    apt-get autoremove -y && \
+    apt-get autoclean && \
+    apt-get clean && \
+    rm -rf \
+    /var/lib/apt/lists/* \
+    /var/log/* \
+    /var/tmp/*
 
 # Locale setup
 RUN sed -i "s|# en_US.UTF-8|en_US.UTF-8|g" /etc/locale.gen \
@@ -102,17 +113,3 @@ RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
 # python3.X only, no unversioned symlink)
 COPY images/scripts/python-fix.sh /tmp/python-fix.sh
 RUN sh /tmp/python-fix.sh
-
-# Apt cleanup
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get autoremove -y && \
-    apt-get autoclean && \
-    apt-get clean
-
-# Cleanup
-RUN apt-get clean \
-    && rm -rf \
-    /var/lib/apt/lists/* \
-    /var/log/* \
-    /var/tmp/*
