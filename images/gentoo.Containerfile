@@ -94,7 +94,7 @@ RUN sh /tmp/python-fix.sh
 
 # Portage cleanup
 RUN emerge --sync && \
-    emerge -uDN @world && \
+    emerge --with-bdeps=y -uDN @world && \
     emerge --depclean && \
     eclean distfiles && \
     eclean packages
