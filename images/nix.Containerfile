@@ -36,85 +36,104 @@ RUN touch /usr/lib/otter/container.nix
 # whatever the global flake registry's default happens to be.
 RUN nix registry pin nixpkgs github:NixOS/nixpkgs/nixpkgs-unstable
 
-# Install the package set into the default profile.
-# Not run through pkg-validator.sh (agreed) -- Nix resolves/builds
-# each attribute at install time, so a bad name fails the build
-# directly instead of needing pre-validation.
-RUN nix profile install \
-    nixpkgs#bc \
-    nixpkgs#xz \
-    nixpkgs#gnutar \
-    nixpkgs#zsh \
-    nixpkgs#gnupg \
-    nixpkgs#zip \
-    nixpkgs#bashInteractive \
-    nixpkgs#fish \
-    nixpkgs#curl \
-    nixpkgs#less \
-    nixpkgs#lsof \
-    nixpkgs#pigz \
-    nixpkgs#sudo \
-    nixpkgs#tree \
-    nixpkgs#vte \
-    nixpkgs#wget \
-    nixpkgs#which \
-    nixpkgs#bzip2 \
-    nixpkgs#rsync \
-    nixpkgs#unzip \
-    nixpkgs#xorg.xauth \
-    nixpkgs#ffmpeg \
-    nixpkgs#libcap \
-    nixpkgs#shadow \
-    nixpkgs#mandoc \
-    nixpkgs#tzdata \
-    nixpkgs#iputils \
-    nixpkgs#ncurses \
-    nixpkgs#python3 \
-    nixpkgs#tcpdump \
-    nixpkgs#pipewire \
-    nixpkgs#iproute2 \
-    nixpkgs#keyutils \
-    nixpkgs#pinentry \
-    nixpkgs#man-pages \
-    nixpkgs#coreutils \
-    nixpkgs#xdg-utils \
-    nixpkgs#diffutils \
-    nixpkgs#findutils \
-    nixpkgs#nettools \
-    nixpkgs#vpl-gpu-rt \
-    nixpkgs#util-linux \
-    nixpkgs#xdg-user-dirs \
-    nixpkgs#pipewire.jack \
-    nixpkgs#vulkan-loader \
-    nixpkgs#bash-completion \
-    nixpkgs#gst_all_1.gstreamer \
-    nixpkgs#gst_all_1.gst-plugins-bad \
-    nixpkgs#gst_all_1.gst-plugins-base \
-    nixpkgs#gst_all_1.gst-plugins-ugly \
-    nixpkgs#gst_all_1.gst-plugins-good \
-    nixpkgs#xdg-desktop-portal \
-    nixpkgs#openssh
+# Declarative package set.
+#
+# This file is intentionally kept in the final image at
+# /etc/otter/packages.nix so users can inspect/configure the package
+# set after the image is built.
+RUN mkdir -p /etc/otter && \
+    cat > /etc/otter/packages.nix <<'EOF'
+let
+  pkgs = builtins.getFlake "nixpkgs";
+in
+with pkgs;
 
-# Install nh, comma, and nix-index, then build the nix-index
-# database at image-build time (agreed: baked in, not built lazily
-# on first run).
-RUN nix profile install nixpkgs#nh nixpkgs#comma nixpkgs#nix-index \
+[
+  bc
+  xz
+  gnutar
+  zsh
+  gnupg
+  zip
+  bashInteractive
+  fish
+  curl
+  less
+  lsof
+  pigz
+  sudo
+  tree
+  vte
+  wget
+  which
+  bzip2
+  rsync
+  unzip
+  xorg.xauth
+  ffmpeg
+  libcap
+  shadow
+  mandoc
+  tzdata
+  iputils
+  ncurses
+  python3
+  tcpdump
+  pipewire
+  iproute2
+  keyutils
+  pinentry
+  man-pages
+  coreutils
+  xdg-utils
+  diffutils
+  findutils
+  nettools
+  vpl-gpu-rt
+  util-linux
+  xdg-user-dirs
+  pipewire.jack
+  vulkan-loader
+  bash-completion
+  gst_all_1.gstreamer
+  gst_all_1.gst-plugins-bad
+  gst_all_1.gst-plugins-base
+  gst_all_1.gst-plugins-ugly
+  gst_all_1.gst-plugins-good
+  xdg-desktop-portal
+  openssh
+]
+EOF
+
+# Install the package set from the declarative file into the
+# system/default Nix profile.
+RUN nix profile install \
+    --profile /nix/var/nix/profiles/default \
+    --file /etc/otter/packages.nix
+
+# Install nh, comma, and nix-index into the same system/default
+# profile, then build the nix-index database at image-build time
+# (agreed: baked in, not built lazily on first run).
+RUN nix profile install \
+    --profile /nix/var/nix/profiles/default \
+    nixpkgs#nh \
+    nixpkgs#comma \
+    nixpkgs#nix-index \
     && nix-index
 
 # Timezone default
 # NOTE: no /usr/share/zoneinfo here -- nothing lands at FHS paths in
 # this image. tzdata's zoneinfo is symlinked into the Nix profile
-# tree instead, at /root/.nix-profile/share/zoneinfo (confirmed via
-# the earlier PATH/profile inspection).
-RUN ln -sf /root/.nix-profile/share/zoneinfo/UTC /etc/localtime \
+# tree instead, at /nix/var/nix/profiles/default/share/zoneinfo.
+RUN ln -sf /nix/var/nix/profiles/default/share/zoneinfo/UTC /etc/localtime \
     && echo "UTC" > /etc/timezone
 
 # Nix store cleanup: drop build-time garbage not reachable from the
 # current profile generation, then hardlink duplicate store paths
 # to shrink the image.
 RUN nix store gc && \
-    nix-store --gc &&\ 
-    nix store verify && \ 
+    nix-store --gc && \
+    nix store verify && \
     nix-store --verify && \
     nix store optimise && \
     nix-store --optimise && \
@@ -122,6 +141,7 @@ RUN nix store gc && \
     nix profile wipe-history && \
     nix-env --delete-generations old && \
     nh clean all --keep 1 --keep-since 0s --optimise
+
 # Cleanup
 RUN rm -rf \
     /var/log/* \
