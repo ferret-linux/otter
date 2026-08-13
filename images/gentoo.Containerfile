@@ -33,7 +33,7 @@ RUN emerge --ask=n --quiet-build --getbinpkg -uDN sys-apps/portage
 # Upgrade all packages
 RUN emerge --ask=n --autounmask-continue --quiet-build --getbinpkg -uDN @world
 
-# Run package install script (fish already installed above, removed from this list)
+# Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN emerge --ask=n --autounmask-continue --noreplace --quiet-build --getbinpkg --keep-going $(sh /tmp/pkg-validator.sh --pkgmgr emerge -- \
     sys-devel/bc \
