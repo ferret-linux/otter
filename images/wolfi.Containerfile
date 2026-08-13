@@ -34,6 +34,9 @@ RUN touch /usr/lib/otter/container.wolfi
 # Install dinit, built in the dinit-builder stage above (not packaged by Wolfi)
 COPY --from=dinit-builder /dinit-out/usr/ /usr/
 
+# Make dinit available as the system init
+RUN ln -sf /usr/bin/dinit /sbin/init
+
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN apk update && \
