@@ -8,24 +8,25 @@
 # Usage: ./setup-common.sh
 # it's used to setup common settings/defaults that are generic across distros
 
-# Remove broken dir-files from images
-rm -rf /opt /root
-
 # Make common otter specific dir's
-mkdir -p \
+# (only remove+recreate a path if it's not already a directory,
+# e.g. some images ship broken dir-files instead of real dirs)
+for d in \
     /opt \
     /run \
     /tmp \
     /var \
     /root \
     /home \
-    /usr/libexec/ \
+    /usr/libexec \
     /etc/profile.d \
     /etc/sudoers.d \
     /usr/lib/otter \
     /usr/local/bin \
     /usr/lib/otter/scripts \
-    /usr/lib/otter/helpers 
+    /usr/lib/otter/helpers; do
+    [ -d "${d}" ] || { rm -rf "${d}"; mkdir -p "${d}"; }
+done
 
 # Fix Permissions for dirs
 chmod 700 /root
