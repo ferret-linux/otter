@@ -121,8 +121,7 @@ RUN nix store gc && \
     nix-collect-garbage -d && \
     nix profile wipe-history && \
     nix-env --delete-generations old && \
-    nh clean all --non-interactive --keep 1 --keep-since 0s
-
+    nh clean all --keep 1 --keep-since 0s --optimise
 # Cleanup
 RUN rm -rf \
     /var/log/* \
