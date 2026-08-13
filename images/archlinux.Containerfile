@@ -23,76 +23,83 @@ RUN sed -i "s|NoExtract.*||g" /etc/pacman.conf \
     && sed -i '/^\s*#\?\s*ILoveCandy/d; /^\s*#\?\s*Color/d' /etc/pacman.conf \
     && sed -i '0,/^\[options\]/s/^\[options\]/\[options\]\nColor\nILoveCandy/' /etc/pacman.conf
 
-# Upgrade all packages
-RUN pacman -Sy --noconfirm --needed archlinux-keyring
-RUN pacman -Syyu --noconfirm --needed
-
-# Run package install script
+# Upgrade all packages, install the complete package set, perform
+# pacman cleanup, and remove filesystem caches before this layer
+# is committed.
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
-RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman -- \
-    bc \
-    zsh \
-    git \
-    tar \
-    mtr \
-    zip \
-    fish \
-    bash \
-    curl \
-    less \
-    lsof \
-    mesa \
-    pigz \
-    sudo \
-    time \
-    tree \
-    wget \
-    base \
-    glibc \
-    gnupg \
-    rsync \
-    unzip \
-    words \
-    ffmpeg \
-    man-db \
-    python \
-    shadow \
-    tzdata \
-    systemd \
-    iputils \
-    mlocate \
-    ncurses \
-    openssh \
-    tcpdump \
-    pipewire \
-    fakeroot \
-    keyutils \
-    nss-mdns \
-    pinentry \
-    xdg-utils \
-    diffutils \
-    findutils \
-    inetutils \
-    man-pages \
-    procps-ng \
-    vpl-gpu-rt \
-    base-devel \
-    traceroute \
-    util-linux \
-    vte-common \
-    xorg-xauth \
-    vulkan-intel \
-    pipewire-jack \
-    xdg-user-dirs \
-    vulkan-radeon \
-    pipewire-pulse \
-    bash-completion \
-    gst-plugins-bad \
-    util-linux-libs \
-    gst-plugins-base \
-    gst-plugins-good \
-    gst-plugins-ugly \
-    xdg-desktop-portal)
+RUN pacman -Sy --noconfirm --needed archlinux-keyring && \
+    pacman -Syyu --noconfirm --needed && \
+    pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman -- \
+        bc \
+        zsh \
+        git \
+        tar \
+        mtr \
+        zip \
+        fish \
+        bash \
+        curl \
+        less \
+        lsof \
+        mesa \
+        pigz \
+        sudo \
+        time \
+        tree \
+        wget \
+        base \
+        glibc \
+        gnupg \
+        rsync \
+        unzip \
+        words \
+        ffmpeg \
+        man-db \
+        python \
+        shadow \
+        tzdata \
+        systemd \
+        iputils \
+        mlocate \
+        ncurses \
+        openssh \
+        tcpdump \
+        pipewire \
+        fakeroot \
+        keyutils \
+        nss-mdns \
+        pinentry \
+        xdg-utils \
+        diffutils \
+        findutils \
+        inetutils \
+        man-pages \
+        procps-ng \
+        vpl-gpu-rt \
+        base-devel \
+        traceroute \
+        util-linux \
+        vte-common \
+        xorg-xauth \
+        vulkan-intel \
+        pipewire-jack \
+        xdg-user-dirs \
+        vulkan-radeon \
+        pipewire-pulse \
+        bash-completion \
+        gst-plugins-bad \
+        util-linux-libs \
+        gst-plugins-base \
+        gst-plugins-good \
+        gst-plugins-ugly \
+        xdg-desktop-portal) && \
+    pacman -Syy && \
+    pacman -Syu && \
+    pacman -Scc && \
+    rm -rf \
+        /var/cache/pacman/pkg/* \
+        /var/log/* \
+        /var/tmp/*
 
 # Timezone default
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
@@ -102,14 +109,3 @@ RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
 # python3.X only, no unversioned symlink)
 COPY images/scripts/python-fix.sh /tmp/python-fix.sh
 RUN sh /tmp/python-fix.sh
-
-# Pacman cleanup
-RUN pacman -Syy && \
-    pacman -Syu && \
-    pacman -Scc
-
-# Cleanup
-RUN rm -rf \
-    /var/cache/pacman/pkg/* \
-    /var/log/* \
-    /var/tmp/*
