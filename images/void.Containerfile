@@ -25,80 +25,86 @@ RUN mkdir -p /etc/xbps.d \
     && echo -e "noextract=/etc/passwd\nnoextract=/etc/hosts\nnoextract=/etc/host.conf\nnoextract=/etc/hostname\nnoextract=/etc/localtime\nnoextract=/etc/machine-id\nnoextract=/etc/resolv.conf" \
     > /etc/xbps.d/otter-ignore.conf
 
-# Update xbps itself first
-RUN xbps-install -Syu xbps
-
-# Enable non-free repos
-RUN xbps-install -Sy void-repo-nonfree \
-    && xbps-install -Sy
-
-# Upgrade all packages
-RUN xbps-install -Syu
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
-RUN xbps-install -Sy $(sh /tmp/pkg-validator.sh --pkgmgr xbps -- \
-    bc \
-    xz \
-    zsh \
-    mtr \
-    nss \
-    zip \
-    bash \
-    curl \
-    less \
-    lsof \
-    pigz \
-    sudo \
-    time \
-    tree \
-    vte3 \
-    wget \
-    x265 \
-    opus \
-    lame \
-    bzip2 \
-    rsync \
-    runit \
-    unzip \
-    which \
-    xauth \
-    gnupg2 \
-    man-db \
-    shadow \
-    tzdata \
-    ffmpeg \
-    libvpx \
-    ncurses \
-    openssh \
-    python3 \
-    libx264 \
-    libflac \
-    iproute2 \
-    mesa-dri \
-    mit-krb5 \
-    pinentry \
-    pipewire \
-    diffutils \
-    findutils \
-    inetutils \
-    procps-ng \
-    gstreamer \
-    fish-shell \
-    traceroute \
-    util-linux \
-    wireplumber \
-    pinentry-tty \
-    mit-krb5-libs \
-    vulkan-loader \
-    pipewire-pulse \
-    bash-completion \
-    mit-krb5-client \
-    gst-plugins-bad \
-    gst-plugins-base \
-    gst-plugins-good \
-    gst-plugins-ugly \
-    mesa-vulkan-intel \
-    mesa-vulkan-radeon)
+
+# Update xbps, enable non-free repositories, upgrade the system,
+# install the requested packages, and clean XBPS metadata/cache
+# in the same layer.
+RUN xbps-install -Syu xbps && \
+    xbps-install -Sy void-repo-nonfree && \
+    xbps-install -Sy && \
+    xbps-install -Syu && \
+    xbps-install -Sy $(sh /tmp/pkg-validator.sh --pkgmgr xbps -- \
+        bc \
+        xz \
+        zsh \
+        mtr \
+        nss \
+        zip \
+        bash \
+        curl \
+        less \
+        lsof \
+        pigz \
+        sudo \
+        time \
+        tree \
+        vte3 \
+        wget \
+        x265 \
+        opus \
+        lame \
+        bzip2 \
+        rsync \
+        runit \
+        unzip \
+        which \
+        xauth \
+        gnupg2 \
+        man-db \
+        shadow \
+        tzdata \
+        ffmpeg \
+        libvpx \
+        ncurses \
+        openssh \
+        python3 \
+        libx264 \
+        libflac \
+        iproute2 \
+        mesa-dri \
+        mit-krb5 \
+        pinentry \
+        pipewire \
+        diffutils \
+        findutils \
+        inetutils \
+        procps-ng \
+        gstreamer \
+        fish-shell \
+        traceroute \
+        util-linux \
+        wireplumber \
+        pinentry-tty \
+        mit-krb5-libs \
+        vulkan-loader \
+        pipewire-pulse \
+        bash-completion \
+        mit-krb5-client \
+        gst-plugins-bad \
+        gst-plugins-base \
+        gst-plugins-good \
+        gst-plugins-ugly \
+        mesa-vulkan-intel \
+        mesa-vulkan-radeon) && \
+    xbps-install -Su && \
+    xbps-remove -O && \
+    xbps-remove -o && \
+    rm -rf \
+    /var/cache/xbps/* \
+    /var/log/* \
+    /var/tmp/*
 
 # Locale setup (glibc only, musl does not use libc-locales)
 RUN if [ -f /etc/default/libc-locales ]; then \
@@ -114,14 +120,3 @@ RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
 # python3.X only, no unversioned symlink)
 COPY images/scripts/python-fix.sh /tmp/python-fix.sh
 RUN sh /tmp/python-fix.sh
-
-# Xbps cleanup
-RUN xbps-install -Su && \
-    xbps-remove -O && \
-    xbps-remove -o
-
-# Cleanup
-RUN rm -rf \
-    /var/cache/xbps/* \
-    /var/log/* \
-    /var/tmp/*
