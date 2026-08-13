@@ -39,8 +39,8 @@ RUN nix registry pin nixpkgs github:NixOS/nixpkgs/nixpkgs-unstable
 # Declarative package set.
 #
 # This file is intentionally kept in the final image at
-# /etc/otter/packages.nix so users can inspect/configure the package
-# set after the image is built.
+# /etc/otter/packages.nix so users can inspect and configure the
+# package set after the image is built.
 RUN mkdir -p /etc/otter && \
     cat > /etc/otter/packages.nix <<'EOF'
 let
@@ -102,24 +102,21 @@ with pkgs;
   gst_all_1.gst-plugins-good
   xdg-desktop-portal
   openssh
+  nh
+  comma
+  nix-index
 ]
 EOF
 
-# Install the package set from the declarative file into the
-# system/default Nix profile.
+# Install the complete package set from the declarative file into
+# the system/default Nix profile.
 RUN nix profile install \
     --profile /nix/var/nix/profiles/default \
     --file /etc/otter/packages.nix
 
-# Install nh, comma, and nix-index into the same system/default
-# profile, then build the nix-index database at image-build time
+# Build the nix-index database at image-build time
 # (agreed: baked in, not built lazily on first run).
-RUN nix profile install \
-    --profile /nix/var/nix/profiles/default \
-    nixpkgs#nh \
-    nixpkgs#comma \
-    nixpkgs#nix-index \
-    && nix-index
+RUN nix-index
 
 # Timezone default
 # NOTE: no /usr/share/zoneinfo here -- nothing lands at FHS paths in
