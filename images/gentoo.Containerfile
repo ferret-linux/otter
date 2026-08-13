@@ -27,13 +27,19 @@ RUN emerge-webrsync && getuto
 # Upgrade Python first in its own layer
 RUN emerge --ask=n --quiet-build --getbinpkg -uDN dev-lang/python dev-lang/rust-bin
 
+# fish needs a working cargo/rustc toolchain at build time (cargo.eclass).
+# Install it immediately after rust-bin, before @world or anything else
+# gets a chance to disturb that toolchain state -- fish's own compiled
+# output has no runtime dependency on rust, so once merged here it's safe.
+RUN emerge --ask=n --quiet-build --getbinpkg -uDN app-shells/fish
+
 # Upgrade portage in a separate layer so it starts with the new Python already in place
 RUN emerge --ask=n --quiet-build --getbinpkg -uDN sys-apps/portage
 
 # Upgrade all packages
 RUN emerge --ask=n --autounmask-continue --quiet-build --getbinpkg -uDN @world
 
-# Run package install script
+# Run package install script (fish already installed above, removed from this list)
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN emerge --ask=n --autounmask-continue --noreplace --quiet-build --getbinpkg --keep-going $(sh /tmp/pkg-validator.sh --pkgmgr emerge -- \
     sys-devel/bc \
@@ -54,7 +60,6 @@ RUN emerge --ask=n --autounmask-continue --noreplace --quiet-build --getbinpkg -
     media-libs/flac \
     media-libs/mesa \
     app-shells/bash \
-    app-shells/fish \
     sys-apps/shadow \
     sys-apps/openrc \
     media-sound/lame \
