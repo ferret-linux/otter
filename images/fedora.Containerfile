@@ -26,6 +26,22 @@ RUN dnf install dnf5-plugins -y --refresh
 # Enable Openh264 repos
 RUN dnf config-manager setopt fedora-cisco-openh264.enabled=1
 
+# Ensure the current, complete GPG keyring is in place before upgrading.
+# Rawhide periodically re-branches to a new Fedora version, and the base
+# image's fedora-gpg-keys package can lag behind what the repo is
+# currently serving (e.g. packages tagged fc45 with no matching fc45 key
+# present), causing signature verification failures on otherwise-valid
+# packages.
+RUN set -eux; \
+    dnf clean expire-cache; \
+    dnf makecache --refresh; \
+    if rpm -q fedora-gpg-keys >/dev/null 2>&1; then \
+        dnf upgrade -y --refresh fedora-gpg-keys; \
+    else \
+        dnf install -y --refresh fedora-gpg-keys; \
+    fi; \
+    dnf upgrade -y --refresh distribution-gpg-keys 2>/dev/null || true
+
 # Upgrade all packages
 RUN dnf upgrade -y --refresh
 
