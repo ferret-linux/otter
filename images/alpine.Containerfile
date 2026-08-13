@@ -17,79 +17,87 @@ RUN sh /tmp/setup-common.sh
 # Add otter image identifiers
 RUN touch /usr/lib/otter/container.alpine
 
-# Upgrade all packages
-RUN apk update && apk upgrade
-RUN apk add alpine-base
-RUN apk update && apk upgrade -Ua
-
-# Run package install script
+# Upgrade all packages, install alpine-base, install the complete
+# package set, and perform Apk cleanup in the same layer.
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
-RUN apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
-    bc \
-    xz \
-    tar \
-    zsh \
-    gpg \
-    zip \
-    bash \
-    fish \
-    curl \
-    docs \
-    less \
-    lsof \
-    pigz \
-    sudo \
-    tree \
-    vte3 \
-    wget \
-    which \
-    bzip2 \
-    gnupg \
-    mount \
-    rsync \
-    unzip \
-    xauth \
-    ffmpeg \
-    libcap \
-    shadow \
-    mandoc \
-    tzdata \
-    umount \
-    openrc \
-    gcompat \
-    findmnt \
-    iputils \
-    ncurses \
-    python3 \
-    tcpdump \
-    pipewire \
-    iproute2 \
-    keyutils \
-    pinentry \
-    man-pages \
-    coreutils \
-    xdg-utils \
-    diffutils \
-    findutils \
-    net-tools \
-    vpl-gpu-rt \
-    util-linux \
-    musl-utils \
-    alpine-base \
-    xdg-user-dirs \
-    pipewire-jack \
-    vulkan-loader \
-    pipewire-pulse \
-    bash-completion \
-    gst-plugins-bad \
-    util-linux-misc \
-    gst-plugins-base \
-    gst-plugins-ugly \
-    gst-plugins-good \
-    ncurses-terminfo \
-    util-linux-login \
-    xdg-desktop-portal \
-    openssh-client-default)
+RUN apk update && \
+    apk upgrade && \
+    apk add alpine-base && \
+    apk update && \
+    apk upgrade -Ua && \
+    apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
+        bc \
+        xz \
+        tar \
+        zsh \
+        gpg \
+        zip \
+        bash \
+        fish \
+        curl \
+        docs \
+        less \
+        lsof \
+        pigz \
+        sudo \
+        tree \
+        vte3 \
+        wget \
+        which \
+        bzip2 \
+        gnupg \
+        mount \
+        rsync \
+        unzip \
+        xauth \
+        ffmpeg \
+        libcap \
+        shadow \
+        mandoc \
+        tzdata \
+        umount \
+        openrc \
+        gcompat \
+        findmnt \
+        iputils \
+        ncurses \
+        python3 \
+        tcpdump \
+        pipewire \
+        iproute2 \
+        keyutils \
+        pinentry \
+        man-pages \
+        coreutils \
+        xdg-utils \
+        diffutils \
+        findutils \
+        net-tools \
+        vpl-gpu-rt \
+        util-linux \
+        musl-utils \
+        alpine-base \
+        xdg-user-dirs \
+        pipewire-jack \
+        vulkan-loader \
+        pipewire-pulse \
+        bash-completion \
+        gst-plugins-bad \
+        util-linux-misc \
+        gst-plugins-base \
+        gst-plugins-ugly \
+        gst-plugins-good \
+        ncurses-terminfo \
+        util-linux-login \
+        xdg-desktop-portal \
+        openssh-client-default) && \
+    apk update && \
+    apk upgrade && \
+    apk cache clean && \
+    rm -rf \
+        /var/cache/apk/* \
+        /var/log/* \
+        /var/tmp/*
 
 # Timezone default
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
@@ -99,14 +107,3 @@ RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
 # python3.X only, no unversioned symlink)
 COPY images/scripts/python-fix.sh /tmp/python-fix.sh
 RUN sh /tmp/python-fix.sh
-
-# Apk cleanup
-RUN apk update && \
-    apk upgrade && \
-    apk cache clean
-
-# Cleanup
-RUN rm -rf \
-    /var/cache/apk/* \
-    /var/log/* \
-    /var/tmp/*
