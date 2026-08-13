@@ -31,80 +31,87 @@ RUN sh /tmp/setup-common.sh
 # Add otter image identifiers
 RUN touch /usr/lib/otter/container.wolfi
 
-# Upgrade all packages
-RUN apk update && apk upgrade
-RUN apk add wolfi-base
-RUN apk update && apk upgrade -Ua
-
 # Install dinit, built in the dinit-builder stage above (not packaged by Wolfi)
 COPY --from=dinit-builder /dinit-out/usr/ /usr/
 
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
-RUN apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
-    bc \
-    xz \
-    zsh \
-    gpg \
-    zip \
-    bash \
-    fish \
-    curl \
-    less \
-    mesa \
-    pigz \
-    sudo \
-    tree \
-    wget \
-    which \
-    bzip2 \
-    gnupg \
-    mount \
-    rsync \
-    unzip \
-    xauth \
-    ffmpeg \
-    gnutar \
-    libcap \
-    man-db \
-    procps \
-    script \
-    shadow \
-    tzdata \
-    umount \
-    busybox \
-    findmnt \
-    iputils \
-    ncurses \
-    python3 \
-    tcpdump \
-    iproute2 \
-    keyutils \
-    pinentry \
-    pipewire \
-    coreutils \
-    diffutils \
-    findutils \
-    net-tools \
-    xdg-utils \
-    wolfi-base \
-    util-linux \
-    vpl-gpu-rt \
-    pipewire-jack \
-    vulkan-loader \
-    xdg-user-dirs \
-    openssh-client \
-    pipewire-pulse \
-    bash-completion \
-    gst-plugins-bad \
-    util-linux-misc \
-    gst-plugins-base \
-    gst-plugins-ugly \
-    gst-plugins-good \
-    ncurses-terminfo \
-    posix-libc-utils \
-    util-linux-login \
-    xdg-desktop-portal)
+RUN apk update && \
+    apk upgrade && \
+    apk add wolfi-base && \
+    apk update && \
+    apk upgrade -Ua && \
+    apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
+        bc \
+        xz \
+        zsh \
+        gpg \
+        zip \
+        bash \
+        fish \
+        curl \
+        less \
+        mesa \
+        pigz \
+        sudo \
+        tree \
+        wget \
+        which \
+        bzip2 \
+        gnupg \
+        mount \
+        rsync \
+        unzip \
+        xauth \
+        ffmpeg \
+        gnutar \
+        libcap \
+        man-db \
+        procps \
+        script \
+        shadow \
+        tzdata \
+        umount \
+        busybox \
+        findmnt \
+        iputils \
+        ncurses \
+        python3 \
+        tcpdump \
+        iproute2 \
+        keyutils \
+        pinentry \
+        pipewire \
+        coreutils \
+        diffutils \
+        findutils \
+        net-tools \
+        xdg-utils \
+        wolfi-base \
+        util-linux \
+        vpl-gpu-rt \
+        pipewire-jack \
+        vulkan-loader \
+        xdg-user-dirs \
+        openssh-client \
+        pipewire-pulse \
+        bash-completion \
+        gst-plugins-bad \
+        util-linux-misc \
+        gst-plugins-base \
+        gst-plugins-ugly \
+        gst-plugins-good \
+        ncurses-terminfo \
+        posix-libc-utils \
+        util-linux-login \
+        xdg-desktop-portal) && \
+    apk update && \
+    apk upgrade && \
+    apk cache clean && \
+    rm -rf \
+        /var/cache/apk/* \
+        /var/log/* \
+        /var/tmp/*
 
 # Timezone default
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
@@ -114,14 +121,3 @@ RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
 # python3.X only, no unversioned symlink)
 COPY images/scripts/python-fix.sh /tmp/python-fix.sh
 RUN sh /tmp/python-fix.sh
-
-# Apk cleanup
-RUN apk update && \
-    apk upgrade && \
-    apk cache clean
-
-# Cleanup
-RUN rm -rf \
-    /var/cache/apk/* \
-    /var/log/* \
-    /var/tmp/*
