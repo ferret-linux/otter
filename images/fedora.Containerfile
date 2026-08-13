@@ -20,19 +20,15 @@ RUN touch /usr/lib/otter/container.fedora
 # Re-enable docs
 RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf 2>/dev/null || true
 
-# Install DNF plugins
-RUN dnf install dnf5-plugins -y --refresh
+# Run package install script
+COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 
-# Enable Openh264 repos
-RUN dnf config-manager setopt fedora-cisco-openh264.enabled=1
-
-# Ensure the current, complete GPG keyring is in place before upgrading.
-# Rawhide periodically re-branches to a new Fedora version, and the base
-# image's fedora-gpg-keys package can lag behind what the repo is
-# currently serving (e.g. packages tagged fc45 with no matching fc45 key
-# present), causing signature verification failures on otherwise-valid
-# packages.
-RUN set -eux; \
+# Configure DNF, enable OpenH264, refresh the GPG keyring,
+# upgrade the system, install the requested packages, and clean
+# DNF metadata/cache in the same layer.
+RUN dnf install dnf5-plugins -y --refresh && \
+    dnf config-manager setopt fedora-cisco-openh264.enabled=1 && \
+    set -eux; \
     dnf clean expire-cache; \
     dnf makecache --refresh; \
     if rpm -q fedora-gpg-keys >/dev/null 2>&1; then \
@@ -40,73 +36,75 @@ RUN set -eux; \
     else \
         dnf install -y --refresh fedora-gpg-keys; \
     fi; \
-    dnf upgrade -y --refresh distribution-gpg-keys 2>/dev/null || true
-
-# Upgrade all packages
-RUN dnf upgrade -y --refresh
-
-# Run package install script
-COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
-RUN dnf install -y $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
-    bc \
-    xz \
-    zsh \
-    mtr \
-    pam \
-    zip \
-    fish \
-    bash \
-    curl \
-    less \
-    lsof \
-    pigz \
-    sudo \
-    time \
-    tree \
-    wget \
-    bzip2 \
-    rsync \
-    unzip \
-    which \
-    whois \
-    words \
-    gnupg2 \
-    man-db \
-    passwd \
-    tzdata \
-    vulkan \
-    iproute \
-    iputils \
-    ncurses \
-    python3 \
-    tcpdump \
-    systemd \
-    hostname \
-    keyutils \
-    nss-mdns \
-    pinentry \
-    diffutils \
-    findutils \
-    krb5-libs \
-    man-pages \
-    procps-ng \
-    traceroute \
-    util-linux \
-    wget2-wget \
-    vte-profile \
-    glibc-common \
-    gnupg2-smime \
-    shadow-utils \
-    cracklib-dicts \
-    xorg-x11-xauth \
-    bash-completion \
-    openssh-clients \
-    dnf-plugins-core \
-    mesa-dri-drivers \
-    util-linux-script \
-    glibc-all-langpacks \
-    glibc-locale-source \
-    mesa-vulkan-drivers)
+    dnf upgrade -y --refresh distribution-gpg-keys 2>/dev/null || true; \
+    dnf upgrade -y --refresh; \
+    dnf install -y $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
+        bc \
+        xz \
+        zsh \
+        mtr \
+        pam \
+        zip \
+        fish \
+        bash \
+        curl \
+        less \
+        lsof \
+        pigz \
+        sudo \
+        time \
+        tree \
+        wget \
+        bzip2 \
+        rsync \
+        unzip \
+        which \
+        whois \
+        words \
+        gnupg2 \
+        man-db \
+        passwd \
+        tzdata \
+        vulkan \
+        iproute \
+        iputils \
+        ncurses \
+        python3 \
+        tcpdump \
+        systemd \
+        hostname \
+        keyutils \
+        nss-mdns \
+        pinentry \
+        diffutils \
+        findutils \
+        krb5-libs \
+        man-pages \
+        procps-ng \
+        traceroute \
+        util-linux \
+        wget2-wget \
+        vte-profile \
+        glibc-common \
+        gnupg2-smime \
+        shadow-utils \
+        cracklib-dicts \
+        xorg-x11-xauth \
+        bash-completion \
+        openssh-clients \
+        dnf-plugins-core \
+        mesa-dri-drivers \
+        util-linux-script \
+        glibc-all-langpacks \
+        glibc-locale-source \
+        mesa-vulkan-drivers); \
+    dnf upgrade -y; \
+    dnf autoremove -y; \
+    dnf clean all \
+    && rm -rf \
+    /var/cache/dnf/* \
+    /var/log/* \
+    /var/tmp/*
 
 # Locale setup
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8
@@ -119,15 +117,3 @@ RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
 # python3.X only, no unversioned symlink)
 COPY images/scripts/python-fix.sh /tmp/python-fix.sh
 RUN sh /tmp/python-fix.sh
-
-# Dnf cleanup
-RUN dnf upgrade -y && \
-    dnf autoremove -y && \
-    dnf clean all
-
-# Cleanup
-RUN dnf clean all \
-    && rm -rf \
-    /var/cache/dnf/* \
-    /var/log/* \
-    /var/tmp/*
