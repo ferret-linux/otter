@@ -109,26 +109,13 @@ with pkgs;
 EOF
 
 # Install the complete package set from the declarative file into
-# the system/default Nix profile.
+# the system/default profile, build the nix-index database, and
+# clean the Nix store before this layer is committed.
 RUN nix profile install \
     --profile /nix/var/nix/profiles/default \
-    --file /etc/otter/packages.nix
-
-# Build the nix-index database at image-build time
-# (agreed: baked in, not built lazily on first run).
-RUN nix-index
-
-# Timezone default
-# NOTE: no /usr/share/zoneinfo here -- nothing lands at FHS paths in
-# this image. tzdata's zoneinfo is symlinked into the Nix profile
-# tree instead, at /nix/var/nix/profiles/default/share/zoneinfo.
-RUN ln -sf /nix/var/nix/profiles/default/share/zoneinfo/UTC /etc/localtime \
-    && echo "UTC" > /etc/timezone
-
-# Nix store cleanup: drop build-time garbage not reachable from the
-# current profile generation, then hardlink duplicate store paths
-# to shrink the image.
-RUN nix store gc && \
+    --file /etc/otter/packages.nix && \
+    nix-index && \
+    nix store gc && \
     nix-store --gc && \
     nix store verify && \
     nix-store --verify && \
@@ -137,9 +124,12 @@ RUN nix store gc && \
     nix-collect-garbage -d && \
     nix profile wipe-history && \
     nix-env --delete-generations old && \
-    nh clean all --keep 1 --keep-since 0s --optimise
+    nh clean all --keep 1 --keep-since 0s --optimise && \
+    rm -rf /var/log/* /var/tmp/*
 
-# Cleanup
-RUN rm -rf \
-    /var/log/* \
-    /var/tmp/*
+# Timezone default
+# NOTE: no /usr/share/zoneinfo here -- nothing lands at FHS paths in
+# this image. tzdata's zoneinfo is symlinked into the Nix profile
+# tree instead, at /nix/var/nix/profiles/default/share/zoneinfo.
+RUN ln -sf /nix/var/nix/profiles/default/share/zoneinfo/UTC /etc/localtime \
+    && echo "UTC" > /etc/timezone
