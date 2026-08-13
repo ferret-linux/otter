@@ -27,6 +27,9 @@ RUN zypper al parallel-printer-support
 
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
+
+# Install the requested packages, update the system, remove orphaned
+# packages, and clean Zypper metadata in the same layer.
 RUN zypper -n install --auto-agree-with-licenses -y \
     $(sh /tmp/pkg-validator.sh --pkgmgr zypper -- \
     bc \
@@ -101,7 +104,21 @@ RUN zypper -n install --auto-agree-with-licenses -y \
     gstreamer-plugins-base \
     gstreamer-plugins-good \
     gstreamer-plugins-ugly \
-    gstreamer-plugins-libav) || { rc=${?}; [ "${rc}" -ge 100 ] && [ "${rc}" -lt 200 ] && [ "${rc}" -ne 105 ]; }
+    gstreamer-plugins-libav) || { rc=${?}; [ "${rc}" -ge 100 ] && [ "${rc}" -lt 200 ] && [ "${rc}" -ne 105 ]; } && \
+    zypper --non-interactive refresh && \
+    zypper --non-interactive update -y --auto-agree-with-licenses && \
+    orphans="$(zypper --non-interactive packages --orphaned -i | awk -F'|' '/^i/{print $3}')" && \
+    if [ -n "$orphans" ]; then \
+        zypper --non-interactive rm -y $orphans; \
+    else \
+        echo "No orphaned packages to remove."; \
+    fi && \
+    zypper --non-interactive clean && \
+    zypper clean --all \
+    && rm -rf \
+    /var/cache/zypp/* \
+    /var/log/* \
+    /var/tmp/*
 
 # Locale setup — glibc-locale (installed via pkg script) pre-builds locales on Leap;
 # localedef requires glibc-i18ndata charmap files which are not available on Leap 15.x
@@ -115,21 +132,3 @@ RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
 # python3.X only, no unversioned symlink)
 COPY images/scripts/python-fix.sh /tmp/python-fix.sh
 RUN sh /tmp/python-fix.sh
-
-# Zypper cleanup
-RUN zypper --non-interactive refresh && \
-    zypper --non-interactive update -y --auto-agree-with-licenses && \
-    orphans="$(zypper --non-interactive packages --orphaned -i | awk -F'|' '/^i/{print $3}')" && \
-    if [ -n "$orphans" ]; then \
-        zypper --non-interactive rm -y $orphans; \
-    else \
-        echo "No orphaned packages to remove."; \
-    fi && \
-    zypper --non-interactive clean
-
-# Cleanup
-RUN zypper clean --all \
-    && rm -rf \
-    /var/cache/zypp/* \
-    /var/log/* \
-    /var/tmp/*
