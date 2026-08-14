@@ -113,6 +113,7 @@ EOF
 # clean the Nix store before this layer is committed.
 RUN nix profile add \
     --profile /nix/var/nix/profiles/default \
+    --priority 0 \
     --file /etc/otter/packages.nix && \
     nix-index && \
     nix store gc && \
