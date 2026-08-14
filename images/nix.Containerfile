@@ -111,7 +111,7 @@ EOF
 # Install the complete package set from the declarative file into
 # the system/default profile, build the nix-index database, and
 # clean the Nix store before this layer is committed.
-RUN nix profile install \
+RUN nix profile add \
     --profile /nix/var/nix/profiles/default \
     --file /etc/otter/packages.nix && \
     nix-index && \
