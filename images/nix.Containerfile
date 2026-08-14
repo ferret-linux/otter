@@ -45,24 +45,26 @@ RUN nix registry pin nixpkgs github:NixOS/nixpkgs/nixpkgs-unstable
 #   - util-linux vs coreutils: both ship bin/kill
 #   - util-linux vs shadow: both ship bin/chfn (and chsh, login)
 #   - shadow vs man-pages: both ship share/man/man3/getspnam.3.gz
+#   - tzdata vs man-pages: both ship share/man/man5/tzfile.5.gz
 #   - nettools vs iproute2: both ship legacy net command names
 #     (route, ifconfig, netstat, etc)
-# These four packages (util-linux, coreutils, shadow, iproute2) are
-# therefore kept in three SEPARATE tiers/priorities, never combined
-# in one batch with each other.
+# These packages (util-linux, coreutils, shadow, tzdata, iproute2)
+# are therefore kept apart from man-pages/coreutils in separate
+# tiers/priorities, never combined in one batch with each other.
 #
 # core: fundamental system tools, installed at the highest
 # precedence (lowest priority number) so they win any binary
 # collision against the other two tiers.
 #
-# essentials: single-owner packages kept apart from core because
-# they collide with something in it (shadow vs util-linux's chfn) --
-# installed second, so core still wins on shared binaries, but
-# essentials still wins against supplementary.
+# essentials: single-owner packages kept apart from core (shadow vs
+# util-linux's chfn) and apart from supplementary (shadow and
+# tzdata both collide with man-pages's doc files) -- installed
+# second, so core still wins on shared binaries, and essentials
+# still wins against supplementary.
 #
 # supplementary: the bulk of the package set (git, gnupg, man-db,
-# man-pages, coreutils, nettools, gstreamer, etc) -- installed last,
-# at the lowest precedence, so it's always the side that gets
+# man-pages, coreutils-full, nettools, gstreamer, etc) -- installed
+# last, at the lowest precedence, so it's always the side that gets
 # silently shadowed on any binary it happens to share with core or
 # essentials.
 #
@@ -95,6 +97,7 @@ with pkgs;
 
 [
   shadow
+  tzdata
 ]
 EOF
 
@@ -130,7 +133,6 @@ with pkgs;
   ffmpeg
   libcap
   man-db
-  tzdata
   iputils
   ncurses
   python3
