@@ -44,7 +44,7 @@ RUN nix registry pin nixpkgs github:NixOS/nixpkgs/nixpkgs-unstable
 RUN mkdir -p /etc/otter && \
     cat > /etc/otter/packages.nix <<'EOF'
 let
-  pkgs = builtins.getFlake "nixpkgs";
+  pkgs = (builtins.getFlake "nixpkgs").legacyPackages.${builtins.currentSystem};
 in
 with pkgs;
 
