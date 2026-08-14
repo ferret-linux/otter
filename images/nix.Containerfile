@@ -36,13 +36,36 @@ RUN touch /usr/lib/otter/container.nix
 # whatever the global flake registry's default happens to be.
 RUN nix registry pin nixpkgs github:NixOS/nixpkgs/nixpkgs-unstable
 
-# Declarative package set.
+# Declarative package set, split into two tiers to avoid same-batch
+# filename collisions. util-linux and coreutils both ship bin/kill;
+# nettools and iproute2 both ship legacy net command names (route,
+# ifconfig, netstat, etc). Installing them in the same
+# `nix profile add --file` batch makes nix error out rather than
+# pick a winner, since priority only arbitrates between separate
+# profile elements, not members of one batch.
 #
-# This file is intentionally kept in the final image at
-# /etc/otter/packages.nix so users can inspect and configure the
-# package set after the image is built.
+# util-linux and iproute2 go in first at the higher-precedence
+# priority (lower number) so they win those filename collisions;
+# everything else -- including coreutils and nettools -- follows at
+# a lower-precedence priority and is silently shadowed on any
+# overlapping binary instead of erroring.
+#
+# Both files are kept in the final image under /etc/otter so users
+# can inspect and adjust the package set after the image is built.
 RUN mkdir -p /etc/otter && \
-    cat > /etc/otter/packages.nix <<'EOF'
+    cat > /etc/otter/packages-core.nix <<'EOF'
+let
+  pkgs = (builtins.getFlake "nixpkgs").legacyPackages.${builtins.currentSystem};
+in
+with pkgs;
+
+[
+  util-linux
+  iproute2
+]
+EOF
+
+RUN cat > /etc/otter/packages.nix <<'EOF'
 let
   pkgs = (builtins.getFlake "nixpkgs").legacyPackages.${builtins.currentSystem};
 in
@@ -81,7 +104,6 @@ with pkgs;
   python3
   tcpdump
   pipewire
-  iproute2
   keyutils
   man-pages
   coreutils
@@ -90,7 +112,6 @@ with pkgs;
   findutils
   nettools
   vpl-gpu-rt
-  util-linux
   xdg-user-dirs
   pipewire.jack
   vulkan-loader
@@ -109,12 +130,16 @@ with pkgs;
 ]
 EOF
 
-# Install the complete package set from the declarative file into
-# the system/default profile, build the nix-index database, and
+# Install the core tier first at the higher-precedence priority,
+# then everything else, then build the nix-index database and
 # clean the Nix store before this layer is committed.
 RUN nix profile add \
     --profile /nix/var/nix/profiles/default \
     --priority 0 \
+    --file /etc/otter/packages-core.nix && \
+    nix profile add \
+    --profile /nix/var/nix/profiles/default \
+    --priority 5 \
     --file /etc/otter/packages.nix && \
     nix-index && \
     nix store gc && \
