@@ -36,21 +36,44 @@ RUN touch /usr/lib/otter/container.nix
 # whatever the global flake registry's default happens to be.
 RUN nix registry pin nixpkgs github:NixOS/nixpkgs/nixpkgs-unstable
 
-# Declarative package set, split into two tiers to avoid same-batch
-# filename collisions. util-linux and coreutils both ship bin/kill;
-# nettools and iproute2 both ship legacy net command names (route,
-# ifconfig, netstat, etc). Installing them in the same
-# `nix profile add --file` batch makes nix error out rather than
-# pick a winner, since priority only arbitrates between separate
-# profile elements, not members of one batch.
+# Declarative package set, split into three tiers to avoid same-batch
+# filename collisions. Packages that ship overlapping binaries can't
+# be installed in the same `nix profile add --file` batch -- nix
+# errors out rather than pick a winner, since priority only
+# arbitrates between separate profile elements, not members of one
+# batch. Known collisions driving this split:
+#   - util-linux vs coreutils: both ship bin/kill
+#   - util-linux vs shadow: both ship bin/chfn (and chsh, login)
+#   - shadow vs man-pages: both ship share/man/man3/getspnam.3.gz
+#   - nettools vs iproute2: both ship legacy net command names
+#     (route, ifconfig, netstat, etc)
+# These four packages (util-linux, coreutils, shadow, iproute2) are
+# therefore kept in three SEPARATE tiers/priorities, never combined
+# in one batch with each other.
+#
+# core: fundamental system tools, installed at the highest
+# precedence (lowest priority number) so they win any binary
+# collision against the other two tiers.
+#
+# essentials: single-owner packages kept apart from core because
+# they collide with something in it (shadow vs util-linux's chfn) --
+# installed second, so core still wins on shared binaries, but
+# essentials still wins against supplementary.
+#
+# supplementary: the bulk of the package set (git, gnupg, man-db,
+# man-pages, coreutils, nettools, gstreamer, etc) -- installed last,
+# at the lowest precedence, so it's always the side that gets
+# silently shadowed on any binary it happens to share with core or
+# essentials.
 #
 # NOTE: this step must run and be written to disk *before* the
 # base-image profile packages (coreutils-full, findutils, etc.) are
 # removed below -- those provide mkdir/cat/basic shell utilities
 # that this RUN step itself depends on.
 #
-# Both files are kept in the final image under /etc/otter so users
-# can inspect and adjust the package set after the image is built.
+# All three files are kept in the final image under /etc/otter so
+# users can inspect and adjust the package set after the image is
+# built.
 RUN mkdir -p /etc/otter && \
     cat > /etc/otter/packages-core.nix <<'EOF'
 let
@@ -64,7 +87,18 @@ with pkgs;
 ]
 EOF
 
-RUN cat > /etc/otter/packages.nix <<'EOF'
+RUN cat > /etc/otter/packages-essentials.nix <<'EOF'
+let
+  pkgs = (builtins.getFlake "nixpkgs").legacyPackages.${builtins.currentSystem};
+in
+with pkgs;
+
+[
+  shadow
+]
+EOF
+
+RUN cat > /etc/otter/packages-supplementary.nix <<'EOF'
 let
   pkgs = (builtins.getFlake "nixpkgs").legacyPackages.${builtins.currentSystem};
 in
@@ -95,7 +129,6 @@ with pkgs;
   xauth
   ffmpeg
   libcap
-  shadow
   man-db
   tzdata
   iputils
@@ -105,7 +138,7 @@ with pkgs;
   pipewire
   keyutils
   man-pages
-  coreutils
+  coreutils-full
   xdg-utils
   diffutils
   findutils
@@ -132,16 +165,11 @@ EOF
 # Remove the base image's pre-existing profile elements that overlap
 # with the declarative set above (same package/version fighting over
 # the same profile priority -- e.g. two builds of gnutar's bin/tar),
-# then install the declarative set in the same RUN so there's no
-# window where coreutils/findutils are missing but a later step still
-# needs them. Deliberately NOT removed: nix, nss-cacert, iana-etc,
-# gnugrep, gzip -- not redeclared below, and nix/nss-cacert are
-# load-bearing for the nix CLI itself.
-#
-# util-linux and iproute2 install first at the higher-precedence
-# priority (lower number) so they win filename collisions (kill,
-# mount, route, etc.) against the rest of the set, which installs
-# second at a lower-precedence priority.
+# then install the three-tier declarative set in the same RUN so
+# there's no window where coreutils/findutils are missing but a
+# later step still needs them. Deliberately NOT removed: nix,
+# nss-cacert, iana-etc, gnugrep, gzip -- not redeclared below, and
+# nix/nss-cacert are load-bearing for the nix CLI itself.
 RUN nix profile remove \
     --profile /nix/var/nix/profiles/default \
     bash-interactive coreutils-full curl findutils gnutar \
@@ -152,8 +180,12 @@ RUN nix profile remove \
     --file /etc/otter/packages-core.nix && \
     nix profile add \
     --profile /nix/var/nix/profiles/default \
+    --priority 3 \
+    --file /etc/otter/packages-essentials.nix && \
+    nix profile add \
+    --profile /nix/var/nix/profiles/default \
     --priority 5 \
-    --file /etc/otter/packages.nix && \
+    --file /etc/otter/packages-supplementary.nix && \
     nix-index && \
     nix store gc && \
     nix-store --gc && \
