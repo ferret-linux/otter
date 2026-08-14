@@ -73,7 +73,7 @@ with pkgs;
   ffmpeg
   libcap
   shadow
-  mandoc
+  man-db
   tzdata
   iputils
   ncurses
