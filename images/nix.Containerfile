@@ -7,6 +7,8 @@
 ARG IMAGE
 FROM ${IMAGE}
 
+ARG TAG
+
 ARG OTTER_BUILD_NUMBER
 LABEL otter.image_build=${OTTER_BUILD_NUMBER}
 
@@ -30,11 +32,29 @@ RUN sh /tmp/setup-common.sh
 # Add otter image identifiers
 RUN touch /usr/lib/otter/container.nix
 
-# Pin the "nixpkgs" flake registry entry explicitly to the unstable
-# channel branch, so every `nixpkgs#pkg` reference below (and
-# anything a user runs later) resolves deterministically instead of
-# whatever the global flake registry's default happens to be.
-RUN nix registry pin nixpkgs github:NixOS/nixpkgs/nixpkgs-unstable
+# Pin the "nixpkgs" flake registry entry explicitly to a fixed
+# channel, so every `nixpkgs#pkg` reference below (and anything a
+# user runs later) resolves deterministically instead of whatever
+# the global flake registry's default happens to be.
+#
+# TAG selects which channel: "unstable" pins the rolling
+# nixpkgs-unstable branch. "stable" resolves the current stable
+# NixOS release cycle at build time (e.g. "26.05") via the
+# endoflife.date API, so this stays correct across future NixOS
+# releases without needing a manual bump here. curl is already
+# present in the base image's default profile at this point (it's
+# only removed further down), so no extra install is needed. If the
+# lookup fails for any reason, fall back to a hardcoded last-known
+# stable version rather than failing the build.
+RUN if [ "$TAG" = "stable" ]; then \
+        STABLE_CYCLE="$(curl -fsSL https://endoflife.date/api/nixos.json | grep -o '"cycle": *"[^"]*"' | head -1 | cut -d'"' -f4)"; \
+        if [ -z "${STABLE_CYCLE}" ]; then STABLE_CYCLE="26.05"; fi; \
+        echo "Pinning nixpkgs to stable channel nixpkgs-${STABLE_CYCLE}"; \
+        nix registry pin nixpkgs github:NixOS/nixpkgs/nixpkgs-${STABLE_CYCLE}; \
+    else \
+        echo "Pinning nixpkgs to nixpkgs-unstable"; \
+        nix registry pin nixpkgs github:NixOS/nixpkgs/nixpkgs-unstable; \
+    fi
 
 # Declarative package set, split into three tiers to avoid same-batch
 # filename collisions. Packages that ship overlapping binaries can't
