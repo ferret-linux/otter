@@ -12,6 +12,15 @@
     "image": "ghcr.io/nixos/nix:latest",
     "containerfile": "nix.Containerfile",
     "name": "nixos-otr",
+    "tag": "stable",
+    "display_name": "nixos",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  },
+  {
+    "image": "ghcr.io/nixos/nix:latest",
+    "containerfile": "nix.Containerfile",
+    "name": "nixos-otr",
     "tag": "unstable",
     "display_name": "nixos-unstable",
     "arches": ["amd64", "arm64"],
