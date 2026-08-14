@@ -53,6 +53,7 @@ with pkgs;
   xz
   gnutar
   zsh
+  git
   gnupg
   zip
   bashInteractive
