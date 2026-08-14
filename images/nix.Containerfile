@@ -44,11 +44,10 @@ RUN nix registry pin nixpkgs github:NixOS/nixpkgs/nixpkgs-unstable
 # pick a winner, since priority only arbitrates between separate
 # profile elements, not members of one batch.
 #
-# util-linux and iproute2 go in first at the higher-precedence
-# priority (lower number) so they win those filename collisions;
-# everything else -- including coreutils and nettools -- follows at
-# a lower-precedence priority and is silently shadowed on any
-# overlapping binary instead of erroring.
+# NOTE: this step must run and be written to disk *before* the
+# base-image profile packages (coreutils-full, findutils, etc.) are
+# removed below -- those provide mkdir/cat/basic shell utilities
+# that this RUN step itself depends on.
 #
 # Both files are kept in the final image under /etc/otter so users
 # can inspect and adjust the package set after the image is built.
@@ -130,10 +129,24 @@ with pkgs;
 ]
 EOF
 
-# Install the core tier first at the higher-precedence priority,
-# then everything else, then build the nix-index database and
-# clean the Nix store before this layer is committed.
-RUN nix profile add \
+# Remove the base image's pre-existing profile elements that overlap
+# with the declarative set above (same package/version fighting over
+# the same profile priority -- e.g. two builds of gnutar's bin/tar),
+# then install the declarative set in the same RUN so there's no
+# window where coreutils/findutils are missing but a later step still
+# needs them. Deliberately NOT removed: nix, nss-cacert, iana-etc,
+# gnugrep, gzip -- not redeclared below, and nix/nss-cacert are
+# load-bearing for the nix CLI itself.
+#
+# util-linux and iproute2 install first at the higher-precedence
+# priority (lower number) so they win filename collisions (kill,
+# mount, route, etc.) against the rest of the set, which installs
+# second at a lower-precedence priority.
+RUN nix profile remove \
+    --profile /nix/var/nix/profiles/default \
+    bash-interactive coreutils-full curl findutils gnutar \
+    less man-db openssh wget which git-minimal && \
+    nix profile add \
     --profile /nix/var/nix/profiles/default \
     --priority 0 \
     --file /etc/otter/packages-core.nix && \
