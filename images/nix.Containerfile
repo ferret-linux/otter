@@ -69,7 +69,7 @@ with pkgs;
   bzip2
   rsync
   unzip
-  xorg.xauth
+  xauth
   ffmpeg
   libcap
   shadow
@@ -82,7 +82,6 @@ with pkgs;
   pipewire
   iproute2
   keyutils
-  pinentry
   man-pages
   coreutils
   xdg-utils
@@ -95,6 +94,7 @@ with pkgs;
   pipewire.jack
   vulkan-loader
   bash-completion
+  pinentry-curses
   gst_all_1.gstreamer
   gst_all_1.gst-plugins-bad
   gst_all_1.gst-plugins-base
