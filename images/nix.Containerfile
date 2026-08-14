@@ -198,7 +198,6 @@ RUN nix profile remove \
     nix-collect-garbage -d && \
     nix profile wipe-history && \
     nix-env --delete-generations old && \
-    nh clean all --keep 1 --keep-since 0s --optimise && \
     rm -rf /var/log/* /var/tmp/*
 
 # Timezone default
