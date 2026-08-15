@@ -180,6 +180,8 @@ with pkgs;
   xdg-user-dirs
   pipewire.jack
   vulkan-loader
+  mesa
+  libglvnd
   bash-completion
   pinentry-curses
   gst_all_1.gstreamer
@@ -193,6 +195,10 @@ with pkgs;
   comma
   nix-index
   systemd
+  procps
+  traceroute
+  krb5
+  glibcLocales
 ]
 EOF
 
@@ -242,6 +248,22 @@ RUN nix profile remove \
 # individually.
 RUN mkdir -p /usr/lib && \
     ln -sf /nix/var/nix/profiles/default/lib/systemd /usr/lib/systemd
+
+# glibc on non-NixOS systems can't assume an FHS locale-archive path,
+# so nixpkgs' glibc is patched to read from $LOCALE_ARCHIVE instead
+# (documented nixpkgs behavior, not a workaround specific to this
+# image). Without this, locale-dependent tools emit "cannot change
+# locale" warnings or misbehave.
+ENV LANG=en_US.UTF-8
+ENV LOCALE_ARCHIVE=/nix/var/nix/profiles/default/lib/locale/locale-archive
+
+# Best-effort GL driver dispatch: /run/opengl-driver is the path
+# libglvnd/Mesa expect, normally set up by NixOS's module system.
+# This is a known-incomplete area for non-NixOS Nix (see
+# https://github.com/NixOS/nixpkgs/issues/62169, still open) -- this
+# symlink alone may not be sufficient for hardware-accelerated GL to
+# actually work; flagging as unverified rather than solved.
+RUN ln -sf /nix/var/nix/profiles/default /run/opengl-driver
 
 # Timezone default
 # NOTE: no /usr/share/zoneinfo here -- nothing lands at FHS paths in
