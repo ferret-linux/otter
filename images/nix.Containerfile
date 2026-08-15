@@ -120,7 +120,6 @@ with pkgs;
   sudo
   tree
   libcap
-  procps
   ncurses
   systemd
   iproute2
@@ -215,6 +214,7 @@ with pkgs;
   xauth
   ffmpeg
   gnutar
+  procps
   man-pages
   xdg-utils
   glibcLocales
