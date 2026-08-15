@@ -192,6 +192,7 @@ with pkgs;
   nh
   comma
   nix-index
+  systemd
 ]
 EOF
 
@@ -230,6 +231,17 @@ RUN nix profile remove \
     nix profile wipe-history && \
     nix-env --delete-generations old && \
     rm -rf /var/log/* /var/tmp/*
+
+# otter-init looks for the systemd binary and unit files at the FHS
+# paths /usr/lib/systemd/systemd and /usr/lib/systemd/system/*, and
+# expects `systemctl` on $PATH (already satisfied -- the profile's
+# bin dir is on $PATH via this base image's own ONBUILD ENV). Nix
+# profile-installs systemd's own output tree under
+# <profile>/lib/systemd instead of at those FHS paths, so symlink
+# the whole directory across in one shot rather than each file
+# individually.
+RUN mkdir -p /usr/lib && \
+    ln -sf /nix/var/nix/profiles/default/lib/systemd /usr/lib/systemd
 
 # Timezone default
 # NOTE: no /usr/share/zoneinfo here -- nothing lands at FHS paths in
