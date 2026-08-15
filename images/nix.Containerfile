@@ -183,6 +183,7 @@ common.onlySupported [
   sudo
   tree
   libcap
+  python3
   ncurses
   systemd
   iproute2

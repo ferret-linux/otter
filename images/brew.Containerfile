@@ -18,14 +18,22 @@ FROM ${IMAGE}
 ARG OTTER_BUILD_NUMBER
 LABEL otter.image_build=${OTTER_BUILD_NUMBER}
 
+# Re-enable locale and docs
+RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
+
+# Enable non-free and contrib repos
+RUN sed -i 's/Components: main/Components: main contrib non-free non-free-firmware/' /etc/apt/sources.list.d/debian.sources
+
 # Homebrew's install script hard-requires these and none of them are
 # present on debian:stable-slim by default. build-essential is
 # needed because several common formulae/bottled fallbacks still
 # compile from source on Linux when a bottle isn't available for the
 # host's glibc version. procps is required by the installer itself
 # (it shells out to `ps`).
+COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN apt-get update && \
-    apt-get install -y --no-install-suggests \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr apt -- \
         ca-certificates \
         curl \
         gcc \
@@ -33,11 +41,12 @@ RUN apt-get update && \
         systemd \
         tar \
         wget \
+        python3 \
         git \
         build-essential \
         procps \
         file \
-        sudo \
+        sudo) \
     && rm -rf /var/lib/apt/lists/*
 
 # This image ships no /etc/os-release surprises the way the Nix

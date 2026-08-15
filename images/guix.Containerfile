@@ -13,6 +13,12 @@ FROM ${IMAGE}
 ARG OTTER_BUILD_NUMBER
 LABEL otter.image_build=${OTTER_BUILD_NUMBER}
 
+# Re-enable locale and docs
+RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
+
+# Enable non-free and contrib repos
+RUN sed -i 's/Components: main/Components: main contrib non-free non-free-firmware/' /etc/apt/sources.list.d/debian.sources
+
 # Guix's install script needs gpg to verify the release signature,
 # and wget/tar/xz to fetch and unpack the substitute binary tarball
 # it installs itself from. sudo is needed because the installer sets
@@ -20,6 +26,7 @@ LABEL otter.image_build=${OTTER_BUILD_NUMBER}
 # itself is invoked as a normal user afterward.
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN apt-get update && \
+    apt-get upgrade -y && \
     apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr apt -- \
         ca-certificates \
         gnupg \
@@ -31,6 +38,7 @@ RUN apt-get update && \
         gcc \
         curl \
         systemd \
+        python3 \
         xz-utils \
         procps \
         sudo) \
