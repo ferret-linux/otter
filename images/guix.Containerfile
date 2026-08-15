@@ -18,8 +18,9 @@ LABEL otter.image_build=${OTTER_BUILD_NUMBER}
 # it installs itself from. sudo is needed because the installer sets
 # up /gnu/store and the build-users-group as root, even though guix
 # itself is invoked as a normal user afterward.
+COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN apt-get update && \
-    apt-get install -y --no-install-suggests \
+    apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr apt -- \
         ca-certificates \
         gnupg \
         wget \
@@ -32,7 +33,7 @@ RUN apt-get update && \
         systemd \
         xz-utils \
         procps \
-        sudo \
+        sudo) \
     && rm -rf /var/lib/apt/lists/*
 
 RUN rm -rf /usr/lib/os-release /etc/os-release && \
@@ -80,9 +81,8 @@ ENV PATH="/root/.config/guix/current/bin:/root/.guix-profile/bin:/root/.guix-pro
 # pull falls back to building from source, which is prohibitively
 # slow for a base image. This mirrors trusting cache.nixos.org's
 # public key in the Nix image's nix.conf.
-RUN guix archive --authorize < /root/.config/guix/current/share/guix/ci.guix.gnu.org.pub 2>/dev/null || \
-    guix archive --authorize < /var/guix/profiles/per-user/root/current-guix/share/guix/ci.guix.gnu.org.pub 2>/dev/null || \
-    true
+RUN guix archive --authorize < /root/.config/guix/current/share/guix/ci.guix.gnu.org.pub || \
+    guix archive --authorize < /var/guix/profiles/per-user/root/current-guix/share/guix/ci.guix.gnu.org.pub
 
 # Housekeeping: same GC posture as the Nix image -- collect garbage
 # from the install process itself so the image doesn't ship build
