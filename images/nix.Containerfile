@@ -58,6 +58,18 @@ RUN echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
 # users doing local `nix build`/`nix develop` work later expect GC
 # to leave their in-progress build's dependencies alone rather than
 # sweeping them up the moment a derivation is realized.
+#
+# filter-syscalls installs a seccomp-BPF filter before builds run,
+# independent of `sandbox` above -- it blocks setuid/setgid and
+# capability/ACL manipulation in build outputs as a hardening
+# measure. That BPF program cannot be loaded under qemu-user
+# emulation (cross-arch builds, e.g. building arm64 on an amd64
+# host or vice versa, which otter explicitly supports) -- Nix fails
+# with "unable to load seccomp BPF program: Invalid argument"
+# regardless of hardware. Disabled here because otter needs
+# emulated cross-arch builds to work at all; this is not
+# recoverable by upgrading Nix/qemu/kernel, only by building
+# natively per-arch instead, which isn't otter's model.
 RUN printf '%s\n' \
     'sandbox = false' \
     'keep-outputs = true' \
