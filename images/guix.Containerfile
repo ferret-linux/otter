@@ -13,19 +13,23 @@ FROM ${IMAGE}
 ARG OTTER_BUILD_NUMBER
 LABEL otter.image_build=${OTTER_BUILD_NUMBER}
 
-ENV DEBIAN_FRONTEND=noninteractive
-
 # Guix's install script needs gpg to verify the release signature,
 # and wget/tar/xz to fetch and unpack the substitute binary tarball
 # it installs itself from. sudo is needed because the installer sets
 # up /gnu/store and the build-users-group as root, even though guix
 # itself is invoked as a normal user afterward.
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+    apt-get install -y --no-install-suggests \
         ca-certificates \
         gnupg \
         wget \
+        tar \
+        git \
+        make \
+        zstd \
+        gcc \
         curl \
+        systemd \
         xz-utils \
         procps \
         sudo \
