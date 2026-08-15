@@ -52,6 +52,18 @@ RUN printf 'ID=nix\nNAME="NixOS"\nPRETTY_NAME="NixOS OCI"\n' > /etc/os-release
 # in the image.
 RUN echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
 
+# Container builds can't rely on Nix's default build sandbox --
+# user namespaces / bubblewrap are frequently unavailable when Nix
+# is already running inside another container -- and interactive
+# users doing local `nix build`/`nix develop` work later expect GC
+# to leave their in-progress build's dependencies alone rather than
+# sweeping them up the moment a derivation is realized.
+RUN printf '%s\n' \
+    'sandbox = false' \
+    'keep-outputs = true' \
+    'keep-derivations = true' \
+    >> /etc/nix/nix.conf
+
 # Pre-create otter dirs
 COPY images/scripts/setup-common.sh /tmp/setup-common.sh
 RUN sh /tmp/setup-common.sh
@@ -108,18 +120,37 @@ RUN nix registry pin nixpkgs github:NixOS/nixpkgs/$(cat /tmp/channel-ref) && \
 # users can inspect and adjust the package set after the image is
 # built.
 #
+# nix-settings.nix holds the nixpkgs `config` attrset (currently
+# just allowUnfree) applied when packages-lib.nix instantiates pkgs.
+# Kept as its own file, alongside the package tiers, so it's
+# editable in the same place users already go to adjust packages.
+#
 # packages-lib.nix is a shared helper imported by all five tiers
-# below: it centralizes the `pkgs` binding and an `onlySupported`
-# filter (built on nixpkgs' own lib.meta.availableOn) that drops any
+# below: it centralizes the `pkgs` binding (now instantiated via
+# `import` with nix-settings.nix's config, rather than reaching
+# through the flake's pre-instantiated `legacyPackages`, since
+# `legacyPackages` has a fixed config baked in and can't have
+# allowUnfree applied after the fact) and an `onlySupported` filter
+# (built on nixpkgs' own lib.meta.availableOn) that drops any
 # package not available on the current build arch before it's
 # handed to `nix profile add` -- e.g. vpl-gpu-rt, which nixpkgs
 # marks x86_64-linux-only, would otherwise abort evaluation on
 # aarch64-linux builds with "Refusing to evaluate package ... not
 # available on the requested hostPlatform".
 RUN mkdir -p /etc/otter && \
-    cat > /etc/otter/packages-lib.nix <<'EOF'
+    cat > /etc/otter/nix-settings.nix <<'EOF'
+{
+  allowUnfree = true;
+}
+EOF
+
+RUN cat > /etc/otter/packages-lib.nix <<'EOF'
 let
-  pkgs = (builtins.getFlake "nixpkgs").legacyPackages.${builtins.currentSystem};
+  settings = import /etc/otter/nix-settings.nix;
+  pkgs = import (builtins.getFlake "nixpkgs") {
+    system = builtins.currentSystem;
+    config = settings;
+  };
   onlySupported = builtins.filter (pkgs.lib.meta.availableOn pkgs.stdenv.hostPlatform);
 in
 {
@@ -303,6 +334,14 @@ RUN mkdir -p /usr/lib && \
 # locale" warnings or misbehave.
 ENV LANG=en_US.UTF-8
 ENV LOCALE_ARCHIVE=/nix/var/nix/profiles/default/lib/locale/locale-archive
+
+# Lets classic-style commands (nix-env, nix-build, nix-shell) install
+# unfree packages without extra flags. Does NOT cover flake-style
+# commands (nix profile/build/shell/develop) -- those run in pure
+# evaluation mode, which blocks reading env vars regardless of this
+# setting, so `--impure` is still required alongside this for e.g.
+# `nix profile add --impure nixpkgs#vscode`.
+ENV NIXPKGS_ALLOW_UNFREE=1
 
 # Best-effort GL driver dispatch: /run/opengl-driver is the path
 # libglvnd/Mesa expect, normally set up by NixOS's module system.
