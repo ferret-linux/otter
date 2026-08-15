@@ -132,4 +132,8 @@ WORKDIR /home/linuxbrew
 # Housekeeping: Homebrew's own installer leaves a git checkout and
 # cache behind under HOMEBREW_REPOSITORY; brew cleanup trims
 # formula caches/old versions without removing the install itself.
-RUN brew cleanup -s 2>/dev/null || true
+RUN brew doctor && \
+    brew missing && \
+    brew autoremove && \
+    brew services cleanup && \
+    brew cleanup --prune=all -s
