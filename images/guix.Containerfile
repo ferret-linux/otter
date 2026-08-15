@@ -35,7 +35,8 @@ RUN apt-get update && \
         sudo \
     && rm -rf /var/lib/apt/lists/*
 
-RUN printf 'ID=debian\nNAME="Debian GNU/Linux"\nPRETTY_NAME="Debian GNU/Linux (otter)"\n' > /etc/os-release
+RUN rm -rf /usr/lib/os-release /etc/os-release && \
+    printf 'ID=guix\nID_LIKE=debian\nNAME="GUIX (debian)"\nPRETTY_NAME="GNU/GUIX (debian)"\n' > /etc/os-release
 
 # Pre-create otter dirs
 COPY images/scripts/setup-common.sh /tmp/setup-common.sh
