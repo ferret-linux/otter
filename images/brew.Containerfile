@@ -64,13 +64,18 @@ RUN sh /tmp/setup-common.sh
 # Add otter image identifiers
 RUN touch /usr/lib/otter/container.nix.brew 2>/dev/null || mkdir -p /usr/lib/otter && touch /usr/lib/otter/container.brew
 
-# Run the official installer as the linuxbrew user.
-# NONINTERACTIVE=1 skips the confirmation prompt (otherwise the
-# install hangs forever in a non-tty build). CI=1 additionally
-# suppresses some interactive `Press RETURN` steps in the shellenv
-# setup that NONINTERACTIVE alone doesn't cover.
+# Run the official installer as the linuxbrew user. NONINTERACTIVE=1
+# skips the confirmation prompt (otherwise the install hangs forever
+# in a non-tty build) and makes have_sudo_access() call `sudo -n`
+# (fail instead of prompt), which only succeeds because linuxbrew
+# already has passwordless sudo configured above. CI is intentionally
+# not set: in the real installer, CI only matters as an alternate way
+# to derive NONINTERACTIVE=1 when it isn't already set directly --
+# with NONINTERACTIVE=1 already present, CI is never read for
+# anything else in the script, so setting it here would be dead
+# weight left over from an earlier, inaccurate assumption.
 RUN su - linuxbrew -c ' \
-    NONINTERACTIVE=1 CI=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" \
+    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" \
     '
 
 # Homebrew installs to /home/linuxbrew/.linuxbrew on Linux (not
