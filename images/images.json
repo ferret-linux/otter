@@ -19,19 +19,19 @@
   },
   {
     "image": "docker.io/library/debian:stable",
-    "containerfile": "nix.Containerfile",
-    "name": "nixos-otr",
-    "tag": "unstable",
-    "display_name": "nixos-unstable",
+    "containerfile": "brew.Containerfile",
+    "name": "brew-otr",
+    "tag": "latest",
+    "display_name": "homebrew",
     "arches": ["amd64", "arm64"],
     "enabled": true
   },
   {
     "image": "docker.io/library/debian:stable",
-    "containerfile": "nix.Containerfile",
-    "name": "nixos-otr",
-    "tag": "unstable",
-    "display_name": "nixos-unstable",
+    "containerfile": "guix.Containerfile",
+    "name": "guix-otr",
+    "tag": "latest",
+    "display_name": "guix",
     "arches": ["amd64", "arm64"],
     "enabled": true
   },
