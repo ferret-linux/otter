@@ -27,8 +27,8 @@ ARG TAG
 RUN if [ "$TAG" = "stable" ]; then \
         STABLE_CYCLE="$(curl -fsSL https://endoflife.date/api/nixos.json | grep -o '"cycle": *"[^"]*"' | head -1 | cut -d'"' -f4)"; \
         if [ -z "${STABLE_CYCLE}" ]; then STABLE_CYCLE="26.05"; fi; \
-        echo "Resolved stable channel: nixpkgs-${STABLE_CYCLE}"; \
-        echo "nixpkgs-${STABLE_CYCLE}" > /channel-ref; \
+        echo "Resolved stable channel: ${STABLE_CYCLE}"; \
+        echo "${STABLE_CYCLE}" > /channel-ref; \
     else \
         echo "Resolved unstable channel: nixpkgs-unstable"; \
         echo "nixpkgs-unstable" > /channel-ref; \
