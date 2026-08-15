@@ -107,14 +107,33 @@ RUN nix registry pin nixpkgs github:NixOS/nixpkgs/$(cat /tmp/channel-ref) && \
 # All five files are kept in the final image under /etc/otter so
 # users can inspect and adjust the package set after the image is
 # built.
+#
+# packages-lib.nix is a shared helper imported by all five tiers
+# below: it centralizes the `pkgs` binding and an `onlySupported`
+# filter (built on nixpkgs' own lib.meta.availableOn) that drops any
+# package not available on the current build arch before it's
+# handed to `nix profile add` -- e.g. vpl-gpu-rt, which nixpkgs
+# marks x86_64-linux-only, would otherwise abort evaluation on
+# aarch64-linux builds with "Refusing to evaluate package ... not
+# available on the requested hostPlatform".
 RUN mkdir -p /etc/otter && \
-    cat > /etc/otter/packages-core.nix <<'EOF'
+    cat > /etc/otter/packages-lib.nix <<'EOF'
 let
   pkgs = (builtins.getFlake "nixpkgs").legacyPackages.${builtins.currentSystem};
+  onlySupported = builtins.filter (pkgs.lib.meta.availableOn pkgs.stdenv.hostPlatform);
 in
-with pkgs;
+{
+  inherit pkgs onlySupported;
+}
+EOF
 
-[
+RUN cat > /etc/otter/packages-core.nix <<'EOF'
+let
+  common = import /etc/otter/packages-lib.nix;
+in
+with common.pkgs;
+
+common.onlySupported [
   bc
   lsof
   sudo
@@ -132,11 +151,11 @@ EOF
 
 RUN cat > /etc/otter/packages-shell.nix <<'EOF'
 let
-  pkgs = (builtins.getFlake "nixpkgs").legacyPackages.${builtins.currentSystem};
+  common = import /etc/otter/packages-lib.nix;
 in
-with pkgs;
+with common.pkgs;
 
-[
+common.onlySupported [
   nh
   git
   zsh
@@ -154,11 +173,11 @@ EOF
 
 RUN cat > /etc/otter/packages-multimedia.nix <<'EOF'
 let
-  pkgs = (builtins.getFlake "nixpkgs").legacyPackages.${builtins.currentSystem};
+  common = import /etc/otter/packages-lib.nix;
 in
-with pkgs;
+with common.pkgs;
 
-[
+common.onlySupported [
   mesa
   tzdata
   libglvnd
@@ -177,11 +196,11 @@ EOF
 
 RUN cat > /etc/otter/packages-network.nix <<'EOF'
 let
-  pkgs = (builtins.getFlake "nixpkgs").legacyPackages.${builtins.currentSystem};
+  common = import /etc/otter/packages-lib.nix;
 in
-with pkgs;
+with common.pkgs;
 
-[
+common.onlySupported [
   xz
   curl
   krb5
@@ -200,11 +219,11 @@ EOF
 
 RUN cat > /etc/otter/packages-utilities.nix <<'EOF'
 let
-  pkgs = (builtins.getFlake "nixpkgs").legacyPackages.${builtins.currentSystem};
+  common = import /etc/otter/packages-lib.nix;
 in
-with pkgs;
+with common.pkgs;
 
-[
+common.onlySupported [
   vte
   zip
   less
