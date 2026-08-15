@@ -18,8 +18,6 @@ FROM ${IMAGE}
 ARG OTTER_BUILD_NUMBER
 LABEL otter.image_build=${OTTER_BUILD_NUMBER}
 
-ENV DEBIAN_FRONTEND=noninteractive
-
 # Homebrew's install script hard-requires these and none of them are
 # present on debian:stable-slim by default. build-essential is
 # needed because several common formulae/bottled fallbacks still
@@ -27,9 +25,14 @@ ENV DEBIAN_FRONTEND=noninteractive
 # host's glibc version. procps is required by the installer itself
 # (it shells out to `ps`).
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+    apt-get install -y --no-install-suggests \
         ca-certificates \
         curl \
+        gcc \
+        zstd \
+        systemd \
+        tar \
+        wget \
         git \
         build-essential \
         procps \
