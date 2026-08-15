@@ -56,20 +56,56 @@ RUN cd /tmp && \
     GUIX_ALLOW_OVERWRITE=yes sh -c 'yes "" | ./guix-install.sh' && \
     rm -f guix-install.sh
 
-# No init runs during build, so guix-install.sh's own init detection
-# resolved to NA and skipped enabling guix-daemon (its systemd branch
-# is the only place that happens). Real systemd only starts later, at
-# container runtime via otter-init's exec of /usr/lib/systemd/systemd
-# as PID 1 -- by then guix-install.sh has already finished. Replicate
-# its unit-enable step by hand instead, reading each unit's own
-# WantedBy=/RequiredBy= line rather than hardcoding a target, so
-# otter-init's generic systemd exec picks guix-daemon up on its own.
-# configure_substitute_discovery (upstream's own function, prompts
-# "enable local-network substitute discovery?") is skipped here on
-# purpose: it only fires inside a live interactive prompt, and since
+# install_unprivileged_daemon() (called from sys_create_build_user)
+# checks `[ "$INIT_SYS" = systemd ]` to decide whether guix-daemon
+# should run as the unprivileged "guix-daemon" user. With NA at build
+# time it took the else branch instead: guixbuilder01-10 build users
+# were created and /gnu, /var/guix were left root:root from the raw
+# tar extract. But the real guix-daemon.service (verified:
+# `User=guix-daemon`, `AmbientCapabilities=CAP_CHOWN`) expects the
+# unprivileged setup regardless of which branch ran at build time --
+# without this, the daemon has no user to run as and no ownership of
+# the store it needs at container runtime. Replicated by hand below,
+# matching install_unprivileged_daemon()'s branch and create_account().
+RUN if getent group kvm > /dev/null; then kvmgroup=",kvm"; else kvmgroup=""; fi && \
+    groupadd --system guix-daemon && \
+    useradd --system -g guix-daemon -G "guix-daemon${kvmgroup}" \
+        -d /var/empty -s "$(command -v nologin)" \
+        -c "Unprivileged Guix Daemon User" guix-daemon && \
+    if getent group kvm > /dev/null; then \
+        kvmgid="$(getent group kvm | cut -f3 -d:)" && \
+        echo "guix-daemon:${kvmgid}:1" >> /etc/subgid; \
+    fi && \
+    chown -R guix-daemon:guix-daemon /gnu /var/guix && \
+    chown -R root:root /var/guix/profiles/per-user/root && \
+    mkdir -p /var/log/guix && \
+    chown guix-daemon:guix-daemon /var/log/guix && \
+    chmod 755 /var/log/guix
+
+# guixbuilder01-10 and guixbuild above are the privileged-daemon build
+# users guix-install.sh creates on the NA/non-systemd path -- mutually
+# exclusive with the unprivileged setup just applied (upstream's own
+# install_unprivileged_daemon() if/else never creates both). Removed
+# so the image doesn't ship unused accounts alongside guix-daemon.
+RUN for i in $(seq -w 1 10); do userdel -f "guixbuilder${i}" 2>/dev/null || true; done && \
+    groupdel guixbuild 2>/dev/null || true
+
+# guix-install.sh's own init detection also resolved to NA, so
+# sys_enable_guix_daemon() never installed/enabled the systemd units
+# either (its systemd branch is the only place that happens). Real
+# systemd only starts later, at container runtime via otter-init's
+# exec of /usr/lib/systemd/systemd as PID 1 -- by then guix-install.sh
+# has already finished. Replicated by hand: copy the units guix
+# already shipped, reading each unit's own WantedBy=/RequiredBy= line
+# rather than hardcoding a target, so otter-init's generic systemd
+# exec picks guix-daemon up on its own once systemd is actually
+# running. configure_substitute_discovery (upstream's own function,
+# prompts "enable local-network substitute discovery?") is skipped on
+# purpose -- it only fires inside a live interactive prompt, and since
 # this whole install runs non-interactively there's no answer to
-# replicate -- omitting it matches its own "no" branch, i.e. the
-# --discover=no guix ships by default is left untouched.
+# replicate; omitting it leaves the --discover=no guix ships by
+# default untouched, which is also the safer default for a container
+# whose network namespace isn't a trusted LAN.
 RUN unit_src=/root/.config/guix/current/lib/systemd/system && \
     for unit in guix-daemon.service gnu-store.mount; do \
         cp "${unit_src}/${unit}" "/etc/systemd/system/${unit}" && \
