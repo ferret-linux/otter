@@ -39,6 +39,7 @@ RUN apt-get update && \
         curl \
         systemd \
         python3 \
+        locales \
         xz-utils \
         procps \
         sudo) && \

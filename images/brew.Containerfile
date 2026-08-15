@@ -41,6 +41,7 @@ RUN apt-get update && \
         systemd \
         tar \
         wget \
+        locales \
         python3 \
         git \
         build-essential \
