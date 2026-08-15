@@ -318,7 +318,6 @@ RUN nix profile remove \
     --profile /nix/var/nix/profiles/default \
     --priority 4 \
     --file /etc/otter/packages-utilities.nix && \
-    nix-index && \
     nix store gc && \
     nix-store --gc && \
     nix-store --verify && \
