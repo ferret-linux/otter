@@ -53,7 +53,7 @@ RUN mkdir -p /usr/lib/otter && touch /usr/lib/otter/container.guix
 RUN cd /tmp && \
     wget -q https://guix.gnu.org/install.sh -O guix-install.sh && \
     chmod +x guix-install.sh && \
-    GUIX_ALLOW_OVERWRITE=yes ./guix-install.sh --batch && \
+    GUIX_ALLOW_OVERWRITE=yes sh -c 'yes "" | ./guix-install.sh' && \
     rm -f guix-install.sh
 
 # Container builds can't rely on systemd to supervise guix-daemon the
@@ -75,14 +75,6 @@ ENV PATH="/root/.config/guix/current/bin:/root/.guix-profile/bin:/root/.guix-pro
 # is; users who want a newer Guix can `guix pull` themselves at
 # runtime once guix-daemon is up, same spirit as the Nix image
 # leaving `nix flake update` to the user rather than baking it in.
-
-# Guix's substitutes (pre-built binaries from ci.guix.gnu.org) are
-# not authorized by default -- without this, every single package
-# pull falls back to building from source, which is prohibitively
-# slow for a base image. This mirrors trusting cache.nixos.org's
-# public key in the Nix image's nix.conf.
-RUN guix archive --authorize < /root/.config/guix/current/share/guix/ci.guix.gnu.org.pub || \
-    guix archive --authorize < /var/guix/profiles/per-user/root/current-guix/share/guix/ci.guix.gnu.org.pub
 
 # Housekeeping: same GC posture as the Nix image -- collect garbage
 # from the install process itself so the image doesn't ship build
