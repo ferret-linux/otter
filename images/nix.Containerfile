@@ -61,6 +61,7 @@ RUN echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
 RUN printf '%s\n' \
     'sandbox = false' \
     'keep-outputs = true' \
+    'filter-syscalls = false' \
     'keep-derivations = true' \
     >> /etc/nix/nix.conf
 
