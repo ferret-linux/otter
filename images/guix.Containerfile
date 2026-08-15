@@ -64,9 +64,16 @@ RUN cd /tmp && \
 # its unit-enable step by hand instead, reading each unit's own
 # WantedBy=/RequiredBy= line rather than hardcoding a target, so
 # otter-init's generic systemd exec picks guix-daemon up on its own.
+# configure_substitute_discovery (upstream's own function, prompts
+# "enable local-network substitute discovery?") is skipped here on
+# purpose: it only fires inside a live interactive prompt, and since
+# this whole install runs non-interactively there's no answer to
+# replicate -- omitting it matches its own "no" branch, i.e. the
+# --discover=no guix ships by default is left untouched.
 RUN unit_src=/root/.config/guix/current/lib/systemd/system && \
     for unit in guix-daemon.service gnu-store.mount; do \
         cp "${unit_src}/${unit}" "/etc/systemd/system/${unit}" && \
+        chmod 664 "/etc/systemd/system/${unit}" && \
         for target in $(sed -n 's/^WantedBy=//p' "${unit_src}/${unit}"); do \
             mkdir -p "/etc/systemd/system/${target}.wants" && \
             ln -sf "../${unit}" "/etc/systemd/system/${target}.wants/${unit}"; \
