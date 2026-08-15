@@ -128,28 +128,6 @@
       "build_number": 73
     },
     {
-      "name": "wolfi",
-      "official_image": "ghcr.io/ferret-linux/wolfi-otr:latest",
-      "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-14T23:03:37Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 809197549,
-          "disk_size": 809197549
-        },
-        "arm64": {
-          "compressed_size": 831219810,
-          "disk_size": 831219810
-        }
-      },
-      "build_number": 73
-    },
-    {
       "name": "kali-edge",
       "official_image": "ghcr.io/ferret-linux/kali-otr:edge",
       "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest",
@@ -587,6 +565,28 @@
         "arm64": {
           "compressed_size": 1268526474,
           "disk_size": 1268526474
+        }
+      },
+      "build_number": 74
+    },
+    {
+      "name": "wolfi",
+      "official_image": "ghcr.io/ferret-linux/wolfi-otr:latest",
+      "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-15T04:54:22Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 809197548,
+          "disk_size": 809197548
+        },
+        "arm64": {
+          "compressed_size": 831219810,
+          "disk_size": 831219810
         }
       },
       "build_number": 74
