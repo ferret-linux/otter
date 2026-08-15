@@ -67,44 +67,44 @@ COPY --from=channel-resolver /channel-ref /tmp/channel-ref
 RUN nix registry pin nixpkgs github:NixOS/nixpkgs/$(cat /tmp/channel-ref) && \
     rm /tmp/channel-ref
 
-# Declarative package set, split into three tiers to avoid same-batch
-# filename collisions. Packages that ship overlapping binaries can't
-# be installed in the same `nix profile add --file` batch -- nix
-# errors out rather than pick a winner, since priority only
-# arbitrates between separate profile elements, not members of one
-# batch. Known collisions driving this split:
+# Declarative package set, split into five theme-focused tiers
+# (roughly evenly sized) to avoid same-batch filename collisions.
+# Packages that ship overlapping binaries can't be installed in the
+# same `nix profile add --file` batch -- nix errors out rather than
+# pick a winner, since priority only arbitrates between separate
+# profile elements, not members of one batch. Known collisions
+# driving the split, each pair kept in different files below:
 #   - util-linux vs coreutils: both ship bin/kill
 #   - util-linux vs shadow: both ship bin/chfn (and chsh, login)
 #   - shadow vs man-pages: both ship share/man/man3/getspnam.3.gz
 #   - tzdata vs man-pages: both ship share/man/man5/tzfile.5.gz
 #   - nettools vs iproute2: both ship legacy net command names
 #     (route, ifconfig, netstat, etc)
-# These packages (util-linux, coreutils, shadow, tzdata, iproute2)
-# are therefore kept apart from man-pages/coreutils in separate
-# tiers/priorities, never combined in one batch with each other.
+# Satisfying all five pairs across five theme-based files forces two
+# packages out of their natural theme: coreutils-full lives in
+# "network" (not "core") since core already holds util-linux, and
+# tzdata lives in "multimedia" (not "utilities") since "utilities"
+# already holds man-pages. Every other file's contents are chosen by
+# theme.
 #
-# core: fundamental system tools, installed at the highest
-# precedence (lowest priority number) so they win any binary
-# collision against the other two tiers.
+# core: system/process management, installed at the highest
+# precedence (lowest priority number) so it wins any binary
+# collision against the other four tiers.
 #
-# essentials: single-owner packages kept apart from core (shadow vs
-# util-linux's chfn) and apart from supplementary (shadow and
-# tzdata both collide with man-pages's doc files) -- installed
-# second, so core still wins on shared binaries, and essentials
-# still wins against supplementary.
+# shell: shells and developer tooling, installed second.
 #
-# supplementary: the bulk of the package set (git, gnupg, man-db,
-# man-pages, coreutils-full, nettools, gstreamer, etc) -- installed
-# last, at the lowest precedence, so it's always the side that gets
-# silently shadowed on any binary it happens to share with core or
-# essentials.
+# multimedia: graphics/audio/desktop-integration packages, installed
+# third.
 #
-# NOTE: this step must run and be written to disk *before* the
-# base-image profile packages (coreutils-full, findutils, etc.) are
-# removed below -- those provide mkdir/cat/basic shell utilities
-# that this RUN step itself depends on.
+# network: networking tools plus core CLI utilities (coreutils-full
+# lives here, see above), installed fourth.
 #
-# All three files are kept in the final image under /etc/otter so
+# utilities: archive tools, docs, locale data, and misc (man-pages
+# lives here, see above), installed last at the lowest precedence,
+# so it's always the side that gets silently shadowed on any binary
+# it happens to share with an earlier tier.
+#
+# All five files are kept in the final image under /etc/otter so
 # users can inspect and adjust the package set after the image is
 # built.
 RUN mkdir -p /etc/otter && \
@@ -115,97 +115,117 @@ in
 with pkgs;
 
 [
-  util-linux
-  iproute2
-]
-EOF
-
-RUN cat > /etc/otter/packages-essentials.nix <<'EOF'
-let
-  pkgs = (builtins.getFlake "nixpkgs").legacyPackages.${builtins.currentSystem};
-in
-with pkgs;
-
-[
-  shadow
-  tzdata
-]
-EOF
-
-RUN cat > /etc/otter/packages-supplementary.nix <<'EOF'
-let
-  pkgs = (builtins.getFlake "nixpkgs").legacyPackages.${builtins.currentSystem};
-in
-with pkgs;
-
-[
   bc
-  xz
-  gnutar
-  zsh
-  git
-  gnupg
-  zip
-  bashInteractive
-  fish
-  curl
-  less
   lsof
-  pigz
   sudo
   tree
-  vte
-  wget
-  which
-  bzip2
-  rsync
-  unzip
-  xauth
-  ffmpeg
   libcap
-  man-db
-  iputils
+  procps
   ncurses
-  python3
-  tcpdump
-  pipewire
+  systemd
+  iproute2
   keyutils
-  man-pages
-  coreutils-full
-  xdg-utils
-  diffutils
   findutils
-  nettools
+  util-linux
+  bash-completion
+]
+EOF
+
+RUN cat > /etc/otter/packages-shell.nix <<'EOF'
+let
+  pkgs = (builtins.getFlake "nixpkgs").legacyPackages.${builtins.currentSystem};
+in
+with pkgs;
+
+[
+  nh
+  git
+  zsh
+  fish
+  comma
+  gnupg
+  man-db
+  shadow
+  python3
+  nix-index
+  bashInteractive
+  pinentry-curses
+]
+EOF
+
+RUN cat > /etc/otter/packages-multimedia.nix <<'EOF'
+let
+  pkgs = (builtins.getFlake "nixpkgs").legacyPackages.${builtins.currentSystem};
+in
+with pkgs;
+
+[
+  mesa
+  tzdata
+  libglvnd
+  pipewire
   vpl-gpu-rt
-  xdg-user-dirs
   pipewire.jack
   vulkan-loader
-  mesa
-  libglvnd
-  bash-completion
-  pinentry-curses
+  xdg-desktop-portal
   gst_all_1.gstreamer
   gst_all_1.gst-plugins-bad
   gst_all_1.gst-plugins-base
-  gst_all_1.gst-plugins-ugly
   gst_all_1.gst-plugins-good
-  xdg-desktop-portal
-  openssh
-  nh
-  comma
-  nix-index
-  systemd
-  procps
-  traceroute
+  gst_all_1.gst-plugins-ugly
+]
+EOF
+
+RUN cat > /etc/otter/packages-network.nix <<'EOF'
+let
+  pkgs = (builtins.getFlake "nixpkgs").legacyPackages.${builtins.currentSystem};
+in
+with pkgs;
+
+[
+  xz
+  curl
   krb5
+  wget
+  bzip2
+  rsync
+  iputils
+  openssh
+  tcpdump
+  nettools
+  diffutils
+  traceroute
+  coreutils-full
+]
+EOF
+
+RUN cat > /etc/otter/packages-utilities.nix <<'EOF'
+let
+  pkgs = (builtins.getFlake "nixpkgs").legacyPackages.${builtins.currentSystem};
+in
+with pkgs;
+
+[
+  vte
+  zip
+  less
+  pigz
+  unzip
+  which
+  xauth
+  ffmpeg
+  gnutar
+  man-pages
+  xdg-utils
   glibcLocales
+  xdg-user-dirs
 ]
 EOF
 
 # Remove the base image's pre-existing profile elements that overlap
 # with the declarative set above (same package/version fighting over
 # the same profile priority -- e.g. two builds of gnutar's bin/tar),
-# then install the three-tier declarative set in the same RUN so
+# then install the five-tier declarative set in the same RUN so
 # there's no window where coreutils/findutils are missing but a
 # later step still needs them. Deliberately NOT removed: nix,
 # nss-cacert, iana-etc, gnugrep, gzip -- not redeclared below, and
@@ -220,12 +240,20 @@ RUN nix profile remove \
     --file /etc/otter/packages-core.nix && \
     nix profile add \
     --profile /nix/var/nix/profiles/default \
-    --priority 3 \
-    --file /etc/otter/packages-essentials.nix && \
+    --priority 1 \
+    --file /etc/otter/packages-shell.nix && \
     nix profile add \
     --profile /nix/var/nix/profiles/default \
-    --priority 5 \
-    --file /etc/otter/packages-supplementary.nix && \
+    --priority 2 \
+    --file /etc/otter/packages-multimedia.nix && \
+    nix profile add \
+    --profile /nix/var/nix/profiles/default \
+    --priority 3 \
+    --file /etc/otter/packages-network.nix && \
+    nix profile add \
+    --profile /nix/var/nix/profiles/default \
+    --priority 4 \
+    --file /etc/otter/packages-utilities.nix && \
     nix-index && \
     nix store gc && \
     nix-store --gc && \
