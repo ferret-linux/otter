@@ -46,15 +46,33 @@ RUN apt-get update && \
         build-essential \
         procps \
         file \
-        sudo) \
-    && rm -rf /var/lib/apt/lists/*
+        sudo) && \
+    apt-get update && \
+    apt-get upgrade -y && \
+    apt-get autoremove -y && \
+    apt-get autoclean && \
+    apt-get clean && \
+    rm -rf \
+        /var/lib/apt/lists/* \
+        /var/log/* \
+        /var/tmp/*
 
-# This image ships no /etc/os-release surprises the way the Nix
-# image's base did, but write one anyway for consistency across the
-# otter image family and so get_distro_id() has a stable value to
-# key off regardless of what Debian release "stable" currently
-# points at.
-RUN printf 'ID=debian\nNAME="Debian GNU/Linux"\nPRETTY_NAME="Debian GNU/Linux (otter)"\n' > /etc/os-release
+# Locale setup
+RUN sed -i "s|# en_US.UTF-8|en_US.UTF-8|g" /etc/locale.gen \
+    && locale-gen \
+    && update-locale LANG=en_US.UTF-8
+
+RUN rm -rf /usr/lib/os-release /etc/os-release && \
+    printf 'ID=brew\nID_LIKE=debian\nNAME="Homebrew (debian)"\nPRETTY_NAME="Homebrew Linux (debian)"\n' > /etc/os-release
+
+# Timezone default
+RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
+    && echo "UTC" > /etc/timezone
+
+# Ensure a python3 binary is resolvable (Wolfi ships versioned
+# python3.X only, no unversioned symlink)
+COPY images/scripts/python-fix.sh /tmp/python-fix.sh
+RUN sh /tmp/python-fix.sh
 
 # Homebrew refuses to run as root and expects a normal user account
 # with passwordless sudo (the installer itself needs sudo once, to

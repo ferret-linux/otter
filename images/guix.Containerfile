@@ -41,8 +41,21 @@ RUN apt-get update && \
         python3 \
         xz-utils \
         procps \
-        sudo) \
-    && rm -rf /var/lib/apt/lists/*
+        sudo) && \
+    apt-get update && \
+    apt-get upgrade -y && \
+    apt-get autoremove -y && \
+    apt-get autoclean && \
+    apt-get clean && \
+    rm -rf \
+        /var/lib/apt/lists/* \
+        /var/log/* \
+        /var/tmp/*
+
+# Locale setup
+RUN sed -i "s|# en_US.UTF-8|en_US.UTF-8|g" /etc/locale.gen \
+    && locale-gen \
+    && update-locale LANG=en_US.UTF-8
 
 RUN rm -rf /usr/lib/os-release /etc/os-release && \
     printf 'ID=guix\nID_LIKE=debian\nNAME="GUIX (debian)"\nPRETTY_NAME="GNU/GUIX (debian)"\n' > /etc/os-release
@@ -51,6 +64,15 @@ RUN rm -rf /usr/lib/os-release /etc/os-release && \
 COPY images/scripts/setup-common.sh /tmp/setup-common.sh
 RUN sh /tmp/setup-common.sh
 RUN mkdir -p /usr/lib/otter && touch /usr/lib/otter/container.guix
+
+# Timezone default
+RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
+    && echo "UTC" > /etc/timezone
+
+# Ensure a python3 binary is resolvable (Wolfi ships versioned
+# python3.X only, no unversioned symlink)
+COPY images/scripts/python-fix.sh /tmp/python-fix.sh
+RUN sh /tmp/python-fix.sh
 
 # guix-install.sh handles all of this itself when run non-
 # interactively (build-users-group creation, /gnu/store ownership,
