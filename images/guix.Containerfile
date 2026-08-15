@@ -56,15 +56,27 @@ RUN cd /tmp && \
     GUIX_ALLOW_OVERWRITE=yes sh -c 'yes "" | ./guix-install.sh' && \
     rm -f guix-install.sh
 
-# Container builds can't rely on systemd to supervise guix-daemon the
-# way a real Guix System install would (unit files are dropped by
-# the installer above but nothing here starts them -- this image has
-# no init running at build time). guix commands that build/substitute
-# packages need guix-daemon reachable; flagging this as the same
-# category of unverified/best-effort area as the Nix image's GL
-# driver dispatch note: otter-init is expected to actually start
-# guix-daemon at container runtime (e.g. as a supervised service)
-# rather than it being handled here at build time.
+# No init runs during build, so guix-install.sh's own init detection
+# resolved to NA and skipped enabling guix-daemon (its systemd branch
+# is the only place that happens). Real systemd only starts later, at
+# container runtime via otter-init's exec of /usr/lib/systemd/systemd
+# as PID 1 -- by then guix-install.sh has already finished. Replicate
+# its unit-enable step by hand instead, reading each unit's own
+# WantedBy=/RequiredBy= line rather than hardcoding a target, so
+# otter-init's generic systemd exec picks guix-daemon up on its own.
+RUN unit_src=/root/.config/guix/current/lib/systemd/system && \
+    for unit in guix-daemon.service gnu-store.mount; do \
+        cp "${unit_src}/${unit}" "/etc/systemd/system/${unit}" && \
+        for target in $(sed -n 's/^WantedBy=//p' "${unit_src}/${unit}"); do \
+            mkdir -p "/etc/systemd/system/${target}.wants" && \
+            ln -sf "../${unit}" "/etc/systemd/system/${target}.wants/${unit}"; \
+        done; \
+        for target in $(sed -n 's/^RequiredBy=//p' "${unit_src}/${unit}"); do \
+            mkdir -p "/etc/systemd/system/${target}.requires" && \
+            ln -sf "../${unit}" "/etc/systemd/system/${target}.requires/${unit}"; \
+        done; \
+    done
+
 ENV GUIX_LOCPATH=/root/.guix-profile/lib/locale
 ENV PATH="/root/.config/guix/current/bin:/root/.guix-profile/bin:/root/.guix-profile/sbin:${PATH}"
 
