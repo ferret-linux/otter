@@ -51,7 +51,7 @@ RUN mkdir -p /usr/lib/otter && touch /usr/lib/otter/container.guix
 # hand, so otter tracks whatever the installer's own logic does
 # release to release instead of drifting from it.
 RUN cd /tmp && \
-    wget -q https://git.savannah.gnu.org/cgit/guix.git/plain/etc/guix-install.sh -O guix-install.sh && \
+    wget -q https://guix.gnu.org/install.sh -O guix-install.sh && \
     chmod +x guix-install.sh && \
     GUIX_ALLOW_OVERWRITE=yes ./guix-install.sh --batch && \
     rm -f guix-install.sh
