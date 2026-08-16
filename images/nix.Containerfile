@@ -47,11 +47,11 @@ RUN printf 'ID=nix\nNAME="NixOS"\nPRETTY_NAME="NixOS OCI"\n' > /etc/os-release
 
 # Flakes / the `nix` CLI are not enabled by default here (confirmed:
 # /etc/nix/nix.conf ships with no experimental-features line).
-# Append rather than overwrite, to preserve the existing
-# build-users-group / sandbox / trusted-public-keys lines already
-# in the image.
-RUN echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
-
+# Rebuilt from scratch rather than appended, pulling forward only
+# trusted-public-keys from the base image's original nix.conf (that
+# key is base-image/build-specific and shouldn't be hardcoded here);
+# build-users-group and sandbox are set explicitly below instead of
+# inherited, since this file already needs to declare them anyway.
 # Container builds can't rely on Nix's default build sandbox --
 # user namespaces / bubblewrap are frequently unavailable when Nix
 # is already running inside another container -- and interactive
@@ -78,13 +78,28 @@ RUN echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
 # GitHub-hosted runners' overlayfs (see containers/podman#23808,
 # containers/podman#5816) -- incremental per-path hardlinking avoids
 # that burst pattern while still getting the same disk savings.
-RUN printf '%s\n' \
+#
+# Both settings blocks below are written in one RUN via a
+# read-modify-write against a fresh /tmp file rather than appending
+# directly to /etc/nix/nix.conf: on this base image, that path is a
+# symlink into the Nix store, and shell `>>` redirection follows
+# symlinks, so an in-place append would silently write into an
+# immutable store path (root bypasses the store's read-only file
+# perms) and corrupt it -- `rm -f` on a symlink only removes the
+# symlink itself, never the store target, which is what makes this
+# safe.
+RUN grep '^trusted-public-keys' /etc/nix/nix.conf > /tmp/nix.conf.new && \
+    printf '%s\n' \
     'sandbox = false' \
     'keep-outputs = true' \
     'filter-syscalls = false' \
     'keep-derivations = true' \
     'auto-optimise-store = true' \
-    >> /etc/nix/nix.conf
+    'build-users-group = nixbld' \
+    'experimental-features = nix-command flakes' \
+    >> /tmp/nix.conf.new && \
+    rm -f /etc/nix/nix.conf && \
+    mv /tmp/nix.conf.new /etc/nix/nix.conf
 
 # Pre-create otter dirs
 COPY images/scripts/setup-common.sh /tmp/setup-common.sh
