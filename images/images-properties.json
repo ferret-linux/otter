@@ -548,28 +548,6 @@
       "build_number": 82
     },
     {
-      "name": "rhel",
-      "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
-      "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-16T03:19:01Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1118667300,
-          "disk_size": 1118667300
-        },
-        "arm64": {
-          "compressed_size": 998441160,
-          "disk_size": 998441160
-        }
-      },
-      "build_number": 83
-    },
-    {
       "name": "centos",
       "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
       "fallback_vendor_image": "quay.io/centos/centos:stream10",
@@ -634,6 +612,28 @@
         }
       },
       "build_number": 82
+    },
+    {
+      "name": "rhel",
+      "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
+      "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-16T03:38:06Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1118667300,
+          "disk_size": 1118667300
+        },
+        "arm64": {
+          "compressed_size": 998441160,
+          "disk_size": 998441160
+        }
+      },
+      "build_number": 84
     }
   ]
 }
