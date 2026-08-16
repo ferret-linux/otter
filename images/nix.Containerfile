@@ -108,6 +108,18 @@ RUN sh /tmp/setup-common.sh
 # Add otter image identifiers
 RUN touch /usr/lib/otter/container.nix
 
+# Pre-setup cleanup
+RUN nix store gc && \
+    nix-store --gc && \
+    nix-store --verify && \
+    nix store optimise && \
+    nix-store --optimise && \
+    nix store verify --all && \
+    nix-collect-garbage -d && \
+    nix profile wipe-history && \
+    nix-env --delete-generations old && \
+    rm -rf /var/log/* /var/tmp/*
+
 # Pin the "nixpkgs" flake registry entry explicitly to the channel
 # resolved above, so every `nixpkgs#pkg` reference below (and
 # anything a user runs later) resolves deterministically instead of
@@ -345,6 +357,8 @@ RUN nix profile remove \
     nix store gc && \
     nix-store --gc && \
     nix-store --verify && \
+    nix store optimise && \
+    nix-store --optimise && \
     nix store verify --all && \
     nix-collect-garbage -d && \
     nix profile wipe-history && \
