@@ -133,10 +133,8 @@ RUN nix key generate-secret --key-name otter-local-1 > /tmp/otter-local-signing-
     nix store sign --key-file /tmp/otter-local-signing-key --all && \
     rm -f /tmp/otter-local-signing-key
 
-# Verify & optimise store paths/packages
+# Verify store paths/packages
 RUN nix-store --verify && \
-    nix store optimise && \
-    nix-store --optimise && \
     nix store verify --all && \
     rm -rf /var/log/* /var/tmp/*
 
