@@ -47,6 +47,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
 
+      # Must run before any podman command touches storage (login,
+      # manifest inspect, pull, etc.) -- Podman records storage
+      # driver/mount settings into its own state DB on first use, and
+      # a storage.conf edit written after that point can be silently
+      # ignored (containers/podman#13458). GitHub-hosted runners'
+      # kernels are new enough for rootless native overlay (5.13+,
+      # see Podman's own "Podman is gaining rootless overlay support"
+      # post), so this pins that explicitly rather than leaving it to
+      # auto-detection, which is what was actually still in effect
+      # despite an earlier attempt here to force fuse-overlayfs --
+      # forcing the FUSE path made things worse, not better, since
+      # it's described by Podman's own maintainers as needing roughly
+      # twice the work of native overlay per operation. Scoped to
+      # nix.Containerfile only -- every other image builds fine as-is.
+      - name: Configure storage for nix image
+        if: inputs.containerfile == 'nix.Containerfile'
+        run: |
+          sudo mkdir -p /etc/containers
+          sudo tee /etc/containers/storage.conf > /dev/null <<'EOF'
+          [storage]
+          driver = "overlay"
+          EOF
+
       - name: Login to GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
 
@@ -65,28 +88,6 @@ jobs:
             sleep 15
           done
           [ "$success" -eq 1 ] || exit 1
-
-      # The nix image's own build step (nix store optimise / nix-store
-      # --optimise) does heavy hardlink/rename churn across the store,
-      # which triggers "Stale file handle" errors on GitHub-hosted
-      # runners' overlayfs backend (see containers/podman#23808,
-      # containers/podman#5816 -- runner filesystem doesn't fully
-      # support the file-handle mechanism overlay's xino tracking
-      # relies on under that kind of churn). Forcing fuse-overlayfs
-      # with xino=off avoids it. Scoped to nix.Containerfile only --
-      # every other image builds fine as-is and doesn't need this.
-      - name: Configure storage for nix image (overlay xino workaround)
-        if: inputs.containerfile == 'nix.Containerfile'
-        run: |
-          sudo mkdir -p /etc/containers
-          sudo tee /etc/containers/storage.conf > /dev/null <<'EOF'
-          [storage]
-          driver = "overlay"
-
-          [storage.options.overlay]
-          mount_program = "/usr/bin/fuse-overlayfs"
-          mountopt = "nodev,xino=off"
-          EOF
 
       - name: Build
         run: |

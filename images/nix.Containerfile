@@ -70,11 +70,20 @@ RUN echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
 # emulated cross-arch builds to work at all; this is not
 # recoverable by upgrading Nix/qemu/kernel, only by building
 # natively per-arch instead, which isn't otter's model.
+# auto-optimise-store hardlinks each new store path against the
+# existing store incrementally, at add time, instead of leaving it
+# for a single retroactive `nix store optimise` pass over the whole
+# store later. The retroactive pass does thousands of renames in one
+# burst and is what was triggering "Stale file handle" errors against
+# GitHub-hosted runners' overlayfs (see containers/podman#23808,
+# containers/podman#5816) -- incremental per-path hardlinking avoids
+# that burst pattern while still getting the same disk savings.
 RUN printf '%s\n' \
     'sandbox = false' \
     'keep-outputs = true' \
     'filter-syscalls = false' \
     'keep-derivations = true' \
+    'auto-optimise-store = true' \
     >> /etc/nix/nix.conf
 
 # Pre-create otter dirs
