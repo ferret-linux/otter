@@ -86,6 +86,9 @@ RUN printf '%s\n' \
     'auto-optimise-store = true' \
     >> /etc/nix/nix.conf
 
+RUN nix store optimise && \
+    nix-store --optimise
+
 # Pre-create otter dirs
 COPY images/scripts/setup-common.sh /tmp/setup-common.sh
 RUN sh /tmp/setup-common.sh
