@@ -135,8 +135,7 @@ RUN nix key generate-secret --key-name otter-local-1 > /tmp/otter-local-signing-
 
 # Verify store paths/packages
 RUN nix-store --verify && \
-    nix store verify --all && \
-    rm -rf /var/log/* /var/tmp/*
+    nix store verify --all
 
 # Pre-create otter dirs
 COPY images/scripts/setup-common.sh /tmp/setup-common.sh
