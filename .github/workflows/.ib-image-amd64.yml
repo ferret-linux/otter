@@ -47,29 +47,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
 
-      # Must run before any podman command touches storage (login,
-      # manifest inspect, pull, etc.) -- Podman records storage
-      # driver/mount settings into its own state DB on first use, and
-      # a storage.conf edit written after that point can be silently
-      # ignored (containers/podman#13458). GitHub-hosted runners'
-      # kernels are new enough for rootless native overlay (5.13+,
-      # see Podman's own "Podman is gaining rootless overlay support"
-      # post), so this pins that explicitly rather than leaving it to
-      # auto-detection, which is what was actually still in effect
-      # despite an earlier attempt here to force fuse-overlayfs --
-      # forcing the FUSE path made things worse, not better, since
-      # it's described by Podman's own maintainers as needing roughly
-      # twice the work of native overlay per operation. Scoped to
-      # nix.Containerfile only -- every other image builds fine as-is.
-      - name: Configure storage for nix image
-        if: inputs.containerfile == 'nix.Containerfile'
-        run: |
-          sudo mkdir -p /etc/containers
-          sudo tee /etc/containers/storage.conf > /dev/null <<'EOF'
-          [storage]
-          driver = "overlay"
-          EOF
-
       - name: Login to GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
 
@@ -89,19 +66,40 @@ jobs:
           done
           [ "$success" -eq 1 ] || exit 1
 
+      # nix.Containerfile builds with Docker instead of Podman here --
+      # Nix's auto-optimise-store does heavy incremental hardlinking
+      # against the container's overlay mount, which triggers
+      # "Stale file handle" errors under Podman's rootless-overlay
+      # driver on GitHub runners' kernel (containers/podman#23808,
+      # containers/podman#5816). Docker's own overlay2 driver avoids
+      # that failure mode. The built image is then pulled into
+      # Podman's local store via the docker-daemon: transport so the
+      # existing podman push/sign steps below need no changes.
       - name: Build
         run: |
           success=0
           for i in 1 2 3; do
-            podman build \
-              --build-arg IMAGE=${{ inputs.image }} \
-              --build-arg OTTER_BUILD_NUMBER=${{ inputs.build_number }} \
-              --build-arg TAG=${{ inputs.tag }} \
-              --file images/${{ inputs.containerfile }} \
-              --tag ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64 \
-              . && success=1 && break
-            echo "Attempt $i/3 failed, pruning and retrying in 30s..."
-            podman system prune -af
+            if [ "${{ inputs.containerfile }}" = "nix.Containerfile" ]; then
+              docker build \
+                --build-arg IMAGE=${{ inputs.image }} \
+                --build-arg OTTER_BUILD_NUMBER=${{ inputs.build_number }} \
+                --build-arg TAG=${{ inputs.tag }} \
+                --file images/${{ inputs.containerfile }} \
+                --tag ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64 \
+                . && podman pull docker-daemon:ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64 && success=1 && break
+              echo "Attempt $i/3 failed, pruning and retrying in 30s..."
+              docker system prune -af
+            else
+              podman build \
+                --build-arg IMAGE=${{ inputs.image }} \
+                --build-arg OTTER_BUILD_NUMBER=${{ inputs.build_number }} \
+                --build-arg TAG=${{ inputs.tag }} \
+                --file images/${{ inputs.containerfile }} \
+                --tag ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64 \
+                . && success=1 && break
+              echo "Attempt $i/3 failed, pruning and retrying in 30s..."
+              podman system prune -af
+            fi
             sleep 30
           done
           [ "$success" -eq 1 ] || exit 1
