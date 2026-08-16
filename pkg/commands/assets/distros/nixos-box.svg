@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg height="128px" viewBox="0 0 128 128" width="128px" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="a" gradientUnits="userSpaceOnUse" x1="11.999989" x2="115.999989" y1="64" y2="64">
+            <stop offset="0" stop-color="#0a1a2e"/>
+            <stop offset="0.05" stop-color="#1a4170"/>
+            <stop offset="0.1" stop-color="#143257"/>
+            <stop offset="0.899999" stop-color="#112b4b"/>
+            <stop offset="0.95" stop-color="#1a4170"/>
+            <stop offset="1" stop-color="#0a1a2e"/>
+        </linearGradient>
+        <linearGradient id="b" gradientUnits="userSpaceOnUse" x1="12" x2="112.041023" y1="60" y2="80.988281">
+            <stop offset="0" stop-color="#1a4170"/>
+            <stop offset="0.384443" stop-color="#559ef7"/>
+            <stop offset="0.720567" stop-color="#1a4170"/>
+            <stop offset="1" stop-color="#0a1a2e"/>
+        </linearGradient>
+        <linearGradient id="nixosgrad" gradientUnits="userSpaceOnUse" x1="76" y1="74" x2="124" y2="122">
+            <stop offset="0" stop-color="#57a2ff"/>
+            <stop offset="0.5" stop-color="#2d609f"/>
+            <stop offset="1" stop-color="#0a1a2e"/>
+        </linearGradient>
+        <linearGradient id="shadowgrad" gradientUnits="userSpaceOnUse" x1="76" y1="102" x2="124" y2="102">
+            <stop offset="0" stop-color="#14355c"/>
+            <stop offset="0.15" stop-color="#1a4170"/>
+            <stop offset="0.5" stop-color="#3871b7"/>
+            <stop offset="0.85" stop-color="#1a4170"/>
+            <stop offset="1" stop-color="#14355c"/>
+        </linearGradient>
+    </defs>
+
+    <!-- Box layers -->
+    <path d="m 20 22 h 88 c 4.417969 0 8 3.582031 8 8 v 78 c 0 4.417969 -3.582031 8 -8 8 h -88 c -4.417969 0 -8 -3.582031 -8 -8 v -78 c 0 -4.417969 3.582031 -8 8 -8 z m 0 0" fill="url(#a)"/>
+    <path d="m 20 12 h 88 c 4.417969 0 8 3.582031 8 8 v 80 c 0 4.417969 -3.582031 8 -8 8 h -88 c -4.417969 0 -8 -3.582031 -8 -8 v -80 c 0 -4.417969 3.582031 -8 8 -8 z m 0 0" fill="url(#b)"/>
+    <path d="m 20 14 h 88 c 3.3125 0 6 2.6875 6 6 v 80 c 0 3.3125 -2.6875 6 -6 6 h -88 c -3.3125 0 -6 -2.6875 -6 -6 v -80 c 0 -3.3125 2.6875 -6 6 -6 z m 0 0" fill="#081c35"/>
+
+    <!-- Top-left accent marks -->
+    <path d="m 46.011719 40.886719 l -14.011719 -7.613281 v 4.726562 l 9.710938 4.628906 v 0.144532 l -9.710938 5.226562 v 4.726562 l 14.011719 -8.210937 z m 0 0" fill="#3e7ecc"/>
+    <path d="m 50 56 v 4 h 16 v -4 z m 0 0" fill="#3e7ecc"/>
+
+    <!-- Circle badge shadow -->
+    <circle cx="100" cy="102" r="24" fill="url(#shadowgrad)"/>
+    <!-- Circle badge face -->
+    <circle cx="100" cy="98" r="24" fill="url(#nixosgrad)"/>
+
+    <!-- NixOS snowflake mark: two-tone original, scaled/centered from source 512x475.4 viewBox.
+         Dark navy stroke added on both paths (matching brew-box.svg's contrast technique) since
+         the mark's own blues sit too close in hue/lightness to nixosgrad to read clearly on their own. -->
+    <g transform="translate(81,79) scale(0.07421875)" stroke="#d9eaff" stroke-width="11" stroke-linejoin="round">
+        <path d="M201.1 166.7 76.5 397.9l-29.1-52.8 33.6-62-66.8-.2L0 256.5l14.6-27 95.1.3 34.2-63zm9.7 184.8h249.4L432 404.9l-66.9-.2 33.2 62-14.2 26.5H355L307.7 405l-68.1-.1zM356 250.2 231.3 19l57.3-.6 33.3 62.1 33.5-61.8h28.5l14.5 27-47.8 87.9 33.9 63.2z" fill="#7ebae4" fill-rule="evenodd"/>
+        <path d="m156.2 261.9 124.7 231.2-57.3.6-33.3-62.2-33.5 61.8h-28.5l-14.6-27 47.8-87.8-33.9-63.2zM301.1 160H51.6l28.2-53.4 66.9.2-33.2-62 14.2-26.5h29.1l47.3 88.2 68.1.1zm9.8 185.4 124.7-231.2 29.1 52.8-33.7 61.9 66.8.2 14.2 26.5-14.6 27-95.1-.3-34.2 63z" fill="#5277c3" fill-rule="evenodd"/>
+    </g>
+</svg>
