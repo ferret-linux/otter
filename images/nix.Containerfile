@@ -330,8 +330,6 @@ RUN nix profile remove \
     nix store gc && \
     nix-store --gc && \
     nix-store --verify && \
-    nix store optimise && \
-    nix-store --optimise && \
     nix store verify --all && \
     nix-collect-garbage -d && \
     nix profile wipe-history && \
