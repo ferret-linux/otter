@@ -29,6 +29,9 @@ var distroIconsFS embed.FS
 //nolint:gochecknoglobals // package-level distro icon lookup table is effectively a constant
 var distroIconMap = map[string]string{
 	"ol":                  "oracle-box.svg",
+	"nix":                 "nixos-box.svg",
+	"brew":                "brew-box.svg",
+	"guix":                "guix-box.svg",
 	"arch":                "arch-box.svg",
 	"kali":                "kali-box.svg",
 	"alma":                "alma-box.svg",
