@@ -66,6 +66,28 @@ jobs:
           done
           [ "$success" -eq 1 ] || exit 1
 
+      # The nix image's own build step (nix store optimise / nix-store
+      # --optimise) does heavy hardlink/rename churn across the store,
+      # which triggers "Stale file handle" errors on GitHub-hosted
+      # runners' overlayfs backend (see containers/podman#23808,
+      # containers/podman#5816 -- runner filesystem doesn't fully
+      # support the file-handle mechanism overlay's xino tracking
+      # relies on under that kind of churn). Forcing fuse-overlayfs
+      # with xino=off avoids it. Scoped to nix.Containerfile only --
+      # every other image builds fine as-is and doesn't need this.
+      - name: Configure storage for nix image (overlay xino workaround)
+        if: inputs.containerfile == 'nix.Containerfile'
+        run: |
+          sudo mkdir -p /etc/containers
+          sudo tee /etc/containers/storage.conf > /dev/null <<'EOF'
+          [storage]
+          driver = "overlay"
+
+          [storage.options.overlay]
+          mount_program = "/usr/bin/fuse-overlayfs"
+          mountopt = "nodev,xino=off"
+          EOF
+
       - name: Build
         run: |
           success=0
