@@ -48,3 +48,5 @@ code*.md
 /issues*.md
 /prompt*.md
 /PROMPT*.md
+/audit*.md
+/AUDIT*.md
