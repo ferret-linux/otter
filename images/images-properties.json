@@ -1,28 +1,6 @@
 {
   "images": [
     {
-      "name": "homebrew",
-      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
-      "fallback_vendor_image": "docker.io/library/debian:stable",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-16T14:49:25Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 963599691,
-          "disk_size": 963599691
-        },
-        "arm64": {
-          "compressed_size": 983181077,
-          "disk_size": 983181077
-        }
-      },
-      "build_number": 10
-    },
-    {
       "name": "opensuse-tumbleweed",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
@@ -678,6 +656,28 @@
         }
       },
       "build_number": 90
+    },
+    {
+      "name": "homebrew",
+      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
+      "fallback_vendor_image": "docker.io/library/debian:stable",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-16T19:56:07Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 962961227,
+          "disk_size": 962961227
+        },
+        "arm64": {
+          "compressed_size": 982971157,
+          "disk_size": 982971157
+        }
+      },
+      "build_number": 11
     }
   ]
 }
