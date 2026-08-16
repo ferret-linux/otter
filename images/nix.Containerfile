@@ -101,6 +101,21 @@ RUN grep '^trusted-public-keys' /etc/nix/nix.conf > /tmp/nix.conf.new && \
     rm -f /etc/nix/nix.conf && \
     mv /tmp/nix.conf.new /etc/nix/nix.conf
 
+# The base image's closure (glibc, bash-interactive, coreutils, nix
+# itself, systemd-minimal-libs, etc.) is registered directly into
+# /nix/var/nix/db by buildLayeredImage at base-image build time,
+# without ever going through the substituter/binary-cache protocol
+# -- so no narinfo signature is attached locally, and `nix-store
+# --verify` / `nix store verify --all` report every one of those
+# paths as "untrusted" even though the content itself is fine.
+# `nix copy` alone does not fix this: it skips transferring
+# signatures for paths that already exist in the destination store
+# (see NixOS/nix#4221). `nix store copy-sigs` is the command built
+# for exactly this case -- it fetches and attaches signatures for
+# paths already present locally, without re-copying their content.
+# Must run before the first `nix store verify --all` call.
+RUN nix store copy-sigs --substituter https://cache.nixos.org --recursive $(nix-store -qR /nix/var/nix/profiles/default)
+
 # Pre-create otter dirs
 COPY images/scripts/setup-common.sh /tmp/setup-common.sh
 RUN sh /tmp/setup-common.sh
