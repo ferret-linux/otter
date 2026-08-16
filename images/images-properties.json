@@ -1,28 +1,6 @@
 {
   "images": [
     {
-      "name": "homebrew",
-      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
-      "fallback_vendor_image": "docker.io/library/debian:stable",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-16T05:16:46Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 963142460,
-          "disk_size": 963142460
-        },
-        "arm64": {
-          "compressed_size": 983163656,
-          "disk_size": 983163656
-        }
-      },
-      "build_number": 6
-    },
-    {
       "name": "blackarch",
       "official_image": "ghcr.io/ferret-linux/blackarch-otr:latest",
       "fallback_vendor_image": "docker.io/blackarchlinux/blackarch:latest",
@@ -634,6 +612,28 @@
         }
       },
       "build_number": 85
+    },
+    {
+      "name": "homebrew",
+      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
+      "fallback_vendor_image": "docker.io/library/debian:stable",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-16T10:15:04Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 963159353,
+          "disk_size": 963159353
+        },
+        "arm64": {
+          "compressed_size": 983179018,
+          "disk_size": 983179018
+        }
+      },
+      "build_number": 7
     }
   ]
 }
