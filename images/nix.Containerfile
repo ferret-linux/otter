@@ -116,6 +116,30 @@ RUN grep '^trusted-public-keys' /etc/nix/nix.conf > /tmp/nix.conf.new && \
 # Must run before the first `nix store verify --all` call.
 RUN nix store copy-sigs --substituter https://cache.nixos.org --recursive $(nix-store -qR /nix/var/nix/profiles/default)
 
+# A handful of paths in the base image's closure (e.g. base-system,
+# channel-nixos, the nixpkgs source checkout, libbsd, libmd, shadow,
+# tcb, glibc's -bin output) were composed locally by the base
+# image's own build tooling rather than fetched from cache.nixos.org,
+# so copy-sigs above has no upstream signature to fetch for them --
+# they remain "untrusted" to `nix store verify --all` even though
+# their contents are intact. Sign them with a throwaway local key
+# instead: the key is generated fresh on every build (no need to
+# persist it across rebuilds), its public half is appended to
+# trusted-public-keys so verify accepts its signatures, the closure
+# is signed, and the secret key is deleted immediately after so it
+# never ends up in the final image.
+RUN nix key generate-secret --key-name otter-local-1 > /tmp/otter-local-signing-key && \
+    printf 'extra-trusted-public-keys = %s\n' "$(nix key convert-secret-to-public < /tmp/otter-local-signing-key)" >> /etc/nix/nix.conf && \
+    nix store sign --key-file /tmp/otter-local-signing-key --all && \
+    rm -f /tmp/otter-local-signing-key
+
+# Verify & optimise store paths/packages
+RUN nix-store --verify && \
+    nix store optimise && \
+    nix-store --optimise && \
+    nix store verify --all && \
+    rm -rf /var/log/* /var/tmp/*
+
 # Pre-create otter dirs
 COPY images/scripts/setup-common.sh /tmp/setup-common.sh
 RUN sh /tmp/setup-common.sh
@@ -324,18 +348,6 @@ common.onlySupported [
   xdg-user-dirs
 ]
 EOF
-
-# Pre-setup cleanup
-RUN nix store gc && \
-    nix-store --gc && \
-    nix-store --verify && \
-    nix store optimise && \
-    nix-store --optimise && \
-    nix store verify --all && \
-    nix-collect-garbage -d && \
-    nix profile wipe-history && \
-    nix-env --delete-generations old && \
-    rm -rf /var/log/* /var/tmp/*
 
 # Remove the base image's pre-existing profile elements that overlap
 # with the declarative set above (same package/version fighting over
