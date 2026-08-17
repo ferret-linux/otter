@@ -101,6 +101,20 @@ RUN printf 'yes\n' | DIALOG=off slackpkg update gpg && \
         DIALOG=off slackpkg -batch=on -default_answer=y -orig_backups=off install "${pkg}"; \
     done
 
+# Fish is not in official slackware repos at the moment
+RUN if [ ! -x /usr/bin/fish ]; then \
+      set -eux; \
+      tmp="$(mktemp -d)"; \
+      curl -fsSL https://api.github.com/repos/fish-shell/fish-shell/releases/latest \
+        | grep -o '"browser_download_url": "[^"]*linux-x86_64\.tar\.xz"' \
+        | head -1 \
+        | cut -d'"' -f4 \
+        | xargs -r curl -fL -o "$tmp/fish.tar.xz"; \
+      tar -xJf "$tmp/fish.tar.xz" -C "$tmp"; \
+      install -m 0755 "$tmp/fish" /usr/bin/fish; \
+      rm -rf "$tmp"; \
+    fi
+
 # Timezone default
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
     && echo "UTC" > /etc/timezone
