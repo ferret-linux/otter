@@ -5,7 +5,7 @@
             <stop offset="0" stop-color="#1a2a3a"/>
             <stop offset="0.05" stop-color="#3a5a7a"/>
             <stop offset="0.1" stop-color="#2a4a6a"/>
-            <stop offset="0.899999" stop-color="#243f5c"/>
+            <stop offset="0.899999" stop-color="#2a4a6a"/>
             <stop offset="0.95" stop-color="#3a5a7a"/>
             <stop offset="1" stop-color="#1a2a3a"/>
         </linearGradient>
@@ -13,7 +13,7 @@
             <stop offset="0" stop-color="#3a5a7a"/>
             <stop offset="0.384443" stop-color="#8cc8e8"/>
             <stop offset="0.720567" stop-color="#3a5a7a"/>
-            <stop offset="1" stop-color="#2e4f6e"/>
+            <stop offset="1" stop-color="#3a5a7a"/>
         </linearGradient>
         <linearGradient id="otterbadgegrad" gradientUnits="userSpaceOnUse" x1="76" y1="74" x2="124" y2="122">
             <stop offset="0" stop-color="#5998c4"/>

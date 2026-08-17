@@ -5,7 +5,7 @@
             <stop offset="0" stop-color="#0a2e2b"/>
             <stop offset="0.05" stop-color="#1a6e66"/>
             <stop offset="0.1" stop-color="#155c55"/>
-            <stop offset="0.899999" stop-color="#124e47"/>
+            <stop offset="0.899999" stop-color="#155c55"/>
             <stop offset="0.95" stop-color="#1a6e66"/>
             <stop offset="1" stop-color="#0a2e2b"/>
         </linearGradient>
@@ -13,7 +13,7 @@
             <stop offset="0" stop-color="#1a6e66"/>
             <stop offset="0.384443" stop-color="#5de8d8"/>
             <stop offset="0.720567" stop-color="#1a6e66"/>
-            <stop offset="1" stop-color="#0d4540"/>
+            <stop offset="1" stop-color="#1a6e66"/>
         </linearGradient>
         <linearGradient id="twgrad" gradientUnits="userSpaceOnUse" x1="76" y1="74" x2="124" y2="122">
             <stop offset="0" stop-color="#4dd4c5"/>

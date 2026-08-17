@@ -5,7 +5,7 @@
             <stop offset="0" stop-color="#042b1a"/>
             <stop offset="0.05" stop-color="#0a6b40"/>
             <stop offset="0.1" stop-color="#085535"/>
-            <stop offset="0.899999" stop-color="#064528"/>
+            <stop offset="0.899999" stop-color="#085535"/>
             <stop offset="0.95" stop-color="#0a6b40"/>
             <stop offset="1" stop-color="#042b1a"/>
         </linearGradient>
@@ -13,7 +13,7 @@
             <stop offset="0" stop-color="#0a6b40"/>
             <stop offset="0.384443" stop-color="#34d399"/>
             <stop offset="0.720567" stop-color="#0a6b40"/>
-            <stop offset="1" stop-color="#042b1a"/>
+            <stop offset="1" stop-color="#0a6b40"/>
         </linearGradient>
         <linearGradient id="rockygrad" gradientUnits="userSpaceOnUse" x1="76" y1="74" x2="124" y2="122">
             <stop offset="0" stop-color="#34d399"/>

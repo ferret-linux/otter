@@ -5,7 +5,7 @@
             <stop offset="0" stop-color="#2a1000"/>
             <stop offset="0.05" stop-color="#7a2e00"/>
             <stop offset="0.1" stop-color="#622600"/>
-            <stop offset="0.899999" stop-color="#561e00"/>
+            <stop offset="0.899999" stop-color="#622600"/>
             <stop offset="0.95" stop-color="#7a2e00"/>
             <stop offset="1" stop-color="#2a1000"/>
         </linearGradient>
@@ -13,7 +13,7 @@
             <stop offset="0" stop-color="#7a2e00"/>
             <stop offset="0.384443" stop-color="#f47421"/>
             <stop offset="0.720567" stop-color="#7a2e00"/>
-            <stop offset="1" stop-color="#481800"/>
+            <stop offset="1" stop-color="#7a2e00"/>
         </linearGradient>
         <linearGradient id="ubuntugrad" gradientUnits="userSpaceOnUse" x1="76" y1="74" x2="124" y2="122">
             <stop offset="0" stop-color="#f89050"/>
