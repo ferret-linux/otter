@@ -67,28 +67,6 @@
       "build_number": 44
     },
     {
-      "name": "nixos",
-      "official_image": "ghcr.io/ferret-linux/nixos-otr:stable",
-      "fallback_vendor_image": "ghcr.io/nixos/nix:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-17T15:51:09Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 4287607174,
-          "disk_size": 4287607174
-        },
-        "arm64": {
-          "compressed_size": 4407951134,
-          "disk_size": 4407951134
-        }
-      },
-      "build_number": 8
-    },
-    {
       "name": "nixos-unstable",
       "official_image": "ghcr.io/ferret-linux/nixos-otr:unstable",
       "fallback_vendor_image": "ghcr.io/nixos/nix:latest",
@@ -717,6 +695,28 @@
         }
       },
       "build_number": 93
+    },
+    {
+      "name": "nixos",
+      "official_image": "ghcr.io/ferret-linux/nixos-otr:stable",
+      "fallback_vendor_image": "ghcr.io/nixos/nix:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-17T19:43:52Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 4287601031,
+          "disk_size": 4287601031
+        },
+        "arm64": {
+          "compressed_size": 4408120093,
+          "disk_size": 4408120093
+        }
+      },
+      "build_number": 9
     }
   ]
 }
