@@ -32,7 +32,7 @@ COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 # Slackpkg does not resolve dependencies, so include curl's runtime
 # dependencies explicitly. git/wget are also bootstrapped here because
 # they are needed by the image's subsequent package/tooling setup.
-RUN DIALOG=off slackpkg update gpg && \
+RUN printf 'yes\n' | DIALOG=off slackpkg update gpg && \
     DIALOG=off slackpkg update && \
     for pkg in $(sh /tmp/pkg-validator.sh --pkgmgr slackpkg -- \
         curl \
