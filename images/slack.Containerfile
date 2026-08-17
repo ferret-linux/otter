@@ -43,7 +43,12 @@ RUN printf 'yes\n' | DIALOG=off slackpkg update gpg && \
         libpsl \
         libssh2 \
         libidn2 \
-        nghttp2); do \
+        nghttp2 \
+        nghttp3 \
+        ngtcp2 \
+        brotli \
+        cyrus-sasl \
+        c-ares); do \
         DIALOG=off slackpkg -batch=on -default_answer=y -orig_backups=off install "${pkg}"; \
     done
 
