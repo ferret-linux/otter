@@ -38,7 +38,7 @@ RUN printf 'yes\n' | DIALOG=off slackpkg update gpg && \
     for pkg in $(sh /tmp/pkg-validator.sh --pkgmgr slackpkg -- \
         curl \
         git \
-        wget \
+        wget2 \
         zstd \
         libpsl \
         libssh2 \
@@ -46,11 +46,19 @@ RUN printf 'yes\n' | DIALOG=off slackpkg update gpg && \
         nghttp2 \
         nghttp3 \
         ngtcp2 \
+        ca-certificates \
         brotli \
         cyrus-sasl \
         c-ares); do \
         DIALOG=off slackpkg -batch=on -default_answer=y -orig_backups=off install "${pkg}"; \
     done
+
+# Refresh the system CA trust store and verify HTTPS certificate validation.
+RUN set -eux; \
+    /usr/sbin/update-ca-certificates; \
+    test -s /etc/ssl/certs/ca-certificates.crt; \
+    curl -fsSL https://api.github.com/ >/dev/null; \
+    echo "CA certificates refreshed and HTTPS verification passed"
 
 # Install the latest Slackpkg+ release from alienbob.
 # GitHub releases contain a pre-built Slackware .txz package.
