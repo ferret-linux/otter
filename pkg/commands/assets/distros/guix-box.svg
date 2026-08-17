@@ -16,16 +16,16 @@
             <stop offset="1" stop-color="#6e4200"/>
         </linearGradient>
         <linearGradient id="guixgrad" gradientUnits="userSpaceOnUse" x1="76" y1="74" x2="124" y2="122">
-            <stop offset="0" stop-color="#4a2c00"/>
-            <stop offset="0.4" stop-color="#2e1a00"/>
-            <stop offset="1" stop-color="#150c00"/>
+            <stop offset="0" stop-color="#ffd07e"/>
+            <stop offset="0.4" stop-color="#d68c1a"/>
+            <stop offset="1" stop-color="#2e1a00"/>
         </linearGradient>
         <linearGradient id="shadowgrad" gradientUnits="userSpaceOnUse" x1="76" y1="102" x2="124" y2="102">
-            <stop offset="0" stop-color="#140b00"/>
-            <stop offset="0.15" stop-color="#140b00"/>
-            <stop offset="0.5" stop-color="#2e1a00"/>
-            <stop offset="0.85" stop-color="#140b00"/>
-            <stop offset="1" stop-color="#140b00"/>
+            <stop offset="0" stop-color="#5c3600"/>
+            <stop offset="0.15" stop-color="#6e4200"/>
+            <stop offset="0.5" stop-color="#c98a1a"/>
+            <stop offset="0.85" stop-color="#6e4200"/>
+            <stop offset="1" stop-color="#5c3600"/>
         </linearGradient>
         <clipPath id="guixclip">
             <circle cx="100" cy="98" r="24"/>
@@ -83,13 +83,17 @@
     <!-- Circle badge face (mostly covered by the clipped logo above it) -->
     <circle cx="100" cy="98" r="24" fill="url(#guixgrad)"/>
 
-    <!-- Guix logo: every path below is verbatim from the original
-         source file (Guix.svg, viewBox 0 0 75.081802 47.692211),
+    <!-- Guix logo: original multicolor version, paths verbatim from the
+         original source file (Guix.svg, viewBox 0 0 75.081802 47.692211),
          including its own gradient defs above, with only the
-         outer translate/scale changed to fit the circle badge. -->
+         outer translate/scale changed to fit the circle badge.
+         A light warm-cream stroke is added on the group (matching
+         nixos-box.svg's contrast technique) since the mark's gold
+         tones sit close in hue/lightness to guixgrad's highlight,
+         and this keeps the horns and body edges readable against it. -->
     <g clip-path="url(#guixclip)">
         <g transform="translate(79.5,89) scale(0.55)">
-            <g transform="translate(-28.982771,-103.82055)">
+            <g transform="translate(-28.982771,-103.82055)" stroke="#ffe9b3" stroke-width="2" stroke-linejoin="round">
                 <path
                    d="m 98.825871,106.82088 c -0.7098,1.29716 -1.4303,2.35321 -2.1645,3.18531 -0.7098,0.80766 -1.4925,1.4537 -2.349,1.94316 -0.8322,0.46502 -1.7763,0.8004 -2.8287,0.99617 -1.0279,0.17132 -2.2082,0.25831 -3.5543,0.25826 -0.9929,0 -1.8853,-0.0508 -2.6687,-0.14756 0,0 -0.01,0 -0.012,0 -0.099,-0.007 -0.3044,-0.0406 -0.5165,-0.0738 -0.2234,-0.035 -0.4517,-0.0687 -0.8117,-0.13528 -6.5992,-1.22102 -8.7879,3.36029 -9.2607,4.62424 -0.074,0.19782 -0.1107,0.31974 -0.1107,0.31974 l -8.0186,22.35863 -4.9194,8.36301 h 9.8265 c 4.0358,-8.98594 7.9158,-27.74832 12.0648,-29.40567 0.8992,0.12577 2.0139,0.18445 3.3574,0.18445 1.7622,0 3.3399,-0.21126 4.735,-0.6518 1.395,-0.44054 2.6498,-1.12384 3.7756,-2.05387 1.1258,-0.95447 2.1445,-2.17188 3.05,-3.64035 0.93,-1.46843 1.812099,-3.2325 2.644199,-5.28834 l -2.238299,-0.8363 z"
                    fill="#ffcc00"/>
