@@ -286,5 +286,41 @@
     "display_name": "wolfi",
     "arches": ["amd64", "arm64"],
     "enabled": true
+  },
+  {
+    "image": "docker.io/library/amazonlinux:latest",
+    "containerfile": "amazon.Containerfile",
+    "name": "amazon-otr",
+    "tag": "latest",
+    "display_name": "amazonlinux",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  },
+  {
+    "image": "docker.io/artixlinux/artixlinux:base-openrc",
+    "containerfile": "artix.Containerfile",
+    "name": "artix-otr",
+    "tag": "openrc",
+    "display_name": "artix",
+    "arches": ["amd64", "arm64"],
+    "enabled": true
+  },
+  {
+    "image": "docker.io/aclemons/slackware:current",
+    "containerfile": "slack.Containerfile",
+    "name": "slackware-otr",
+    "tag": "current",
+    "display_name": "slackware-current",
+    "arches": ["amd64"],
+    "enabled": true
+  },
+  {
+    "image": "docker.io/aclemons/slackware:latest",
+    "containerfile": "slack.Containerfile",
+    "name": "slackware-otr",
+    "tag": "stable",
+    "display_name": "slackware",
+    "arches": ["amd64"],
+    "enabled": true
   }
 ]

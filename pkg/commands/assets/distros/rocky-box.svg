@@ -15,7 +15,7 @@
             <stop offset="0.720567" stop-color="#0a6b40"/>
             <stop offset="1" stop-color="#042b1a"/>
         </linearGradient>
-        <linearGradient id="cgrad" gradientUnits="userSpaceOnUse" x1="76" y1="74" x2="124" y2="122">
+        <linearGradient id="rockygrad" gradientUnits="userSpaceOnUse" x1="76" y1="74" x2="124" y2="122">
             <stop offset="0" stop-color="#34d399"/>
             <stop offset="0.5" stop-color="#10b981"/>
             <stop offset="1" stop-color="#042b1a"/>
@@ -38,7 +38,7 @@
 
     <!-- Circle badge -->
     <circle cx="100" cy="102" r="24" fill="url(#shadowgrad)"/>
-    <circle cx="100" cy="98" r="24" fill="url(#cgrad)"/>
+    <circle cx="100" cy="98" r="24" fill="url(#rockygrad)"/>
 
     <!-- Rocky Linux logo scaled into badge -->
     <g transform="translate(79,77) scale(0.21875)">

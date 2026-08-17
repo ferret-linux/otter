@@ -118,6 +118,17 @@ case "${pkgmgr}" in
             fi
         done
         ;;
+    slackpkg)
+        # NOTE: exact `slackpkg search` non-interactive output format is
+        # unverified against a live mirror - test this before relying on it.
+        for pkg in ${packages}; do
+            if DIALOG=off slackpkg search "${pkg}" 2>/dev/null | grep -qE "^${pkg}-[^ ]+\.txz"; then
+                valid="${valid} ${pkg}"
+            else
+                printf "${YELLOW}WARN: ${RED}%s${YELLOW} not found in repos${RESET}\n" "${pkg}" >&2
+            fi
+        done
+        ;;
     *)
         echo "ERROR: unknown package manager: ${pkgmgr}" >&2
         exit 1

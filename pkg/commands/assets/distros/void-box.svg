@@ -44,7 +44,7 @@
     <circle cx="100" cy="98" r="24" fill="url(#voidgrad)"/>
 
     <!-- Void logo inside circle, exact paths from source scaled to fit -->
-    <g transform="translate(68,66) scale(1.000)">
+    <g transform="translate(68,66)">
         <g transform="translate(2 2)scale(0.9375)">
             <path fill="#91cd91" d="M32 10a22 22 0 0 0-12.92 4.219l4.941 4.941a15.1 15.1 0 0 1 7.98-2.285A15.125 15.125 0 0 1 47.124 32a15.1 15.1 0 0 1-2.293 7.97l4.944 4.945A22 22 0 0 0 54 32a22 22 0 0 0-22-22"/>
             <path fill="#91cd91" d="M14.224 19.085A22 22 0 0 0 10 32a22 22 0 0 0 22 22 22 22 0 0 0 12.92-4.219l-4.942-4.941A15.1 15.1 0 0 1 32 47.125 15.125 15.125 0 0 1 16.874 32a15.1 15.1 0 0 1 2.294-7.97z"/>

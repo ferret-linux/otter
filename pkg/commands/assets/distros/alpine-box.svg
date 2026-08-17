@@ -15,7 +15,7 @@
             <stop offset="0.720567" stop-color="#0d597f"/>
             <stop offset="1" stop-color="#041820"/>
         </linearGradient>
-        <linearGradient id="cgrad" gradientUnits="userSpaceOnUse" x1="76" y1="74" x2="124" y2="122">
+        <linearGradient id="alpinegrad" gradientUnits="userSpaceOnUse" x1="76" y1="74" x2="124" y2="122">
             <stop offset="0" stop-color="#2ab0e8"/>
             <stop offset="0.5" stop-color="#0d597f"/>
             <stop offset="1" stop-color="#041820"/>
@@ -38,7 +38,7 @@
 
     <!-- Circle badge -->
     <circle cx="100" cy="102" r="24" fill="url(#shadowgrad)"/>
-    <circle cx="100" cy="98" r="24" fill="url(#cgrad)"/>
+    <circle cx="100" cy="98" r="24" fill="url(#alpinegrad)"/>
 
     <!-- Alpine Linux logo scaled into badge -->
     <g transform="translate(81,81) scale(0.6000) translate(0,-4.28)">

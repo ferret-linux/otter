@@ -27,9 +27,6 @@
             <stop offset="0.85" stop-color="#4b1313"/>
             <stop offset="1" stop-color="#4b1313"/>
         </linearGradient>
-        <clipPath id="circleclip">
-            <circle cx="100" cy="98" r="24"/>
-        </clipPath>
     </defs>
 
     <!-- Box layers -->
