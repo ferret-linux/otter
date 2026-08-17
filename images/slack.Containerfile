@@ -28,6 +28,23 @@ RUN touch /usr/lib/otter/container.slackware
 
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 
+# Install the latest Slackpkg+ release from alienbob.
+# GitHub releases contain a pre-built Slackware .txz package.
+# installpkg is the upstream-recommended installation method.
+RUN set -eux; \
+    tmp="$(mktemp -d)"; \
+    pkg_url="$(curl -fsSL \
+      https://api.github.com/repos/alienbob/slackpkgplus/releases/latest \
+      | grep -o '"browser_download_url": "[^"]*\.txz"' \
+      | head -1 \
+      | cut -d'"' -f4)"; \
+    [ -n "$pkg_url" ]; \
+    pkg="${pkg_url##*/}"; \
+    echo "Installing Slackpkg+: ${pkg}"; \
+    curl -fL -o "$tmp/$pkg" "$pkg_url"; \
+    installpkg "$tmp/$pkg"; \
+    rm -rf "$tmp"
+
 # NOTE: slackpkg does not perform automatic dependency resolution -
 # unlike apt/dnf/pacman, packages not explicitly listed here will
 # not be pulled in as transitive dependencies. This list may need
