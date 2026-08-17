@@ -28,6 +28,24 @@ RUN touch /usr/lib/otter/container.slackware
 
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 
+# Bootstrap the network/package tools required before installing Slackpkg+.
+# Slackpkg does not resolve dependencies, so include curl's runtime
+# dependencies explicitly. git/wget are also bootstrapped here because
+# they are needed by the image's subsequent package/tooling setup.
+RUN DIALOG=off slackpkg update gpg && \
+    DIALOG=off slackpkg update && \
+    for pkg in $(sh /tmp/pkg-validator.sh --pkgmgr slackpkg -- \
+        curl \
+        git \
+        wget \
+        zstd \
+        libpsl \
+        libssh2 \
+        libidn2 \
+        nghttp2); do \
+        DIALOG=off slackpkg -batch=on -default_answer=y -orig_backups=off install "${pkg}"; \
+    done
+
 # Install the latest Slackpkg+ release from alienbob.
 # GitHub releases contain a pre-built Slackware .txz package.
 # installpkg is the upstream-recommended installation method.
@@ -55,13 +73,6 @@ RUN set -eux; \
 # nothing installed or changed here. systemd is intentionally not
 # in this list (not part of Slackware)
 #
-# NOTE: nghttp2 / libssh2 / libidn2 / libpsl / zstd added below -
-# these are curl's (and git's) documented runtime link deps on
-# Slackware and are NOT pulled in automatically by slackpkg when
-# installing "curl" or "git" alone. This was the confirmed root
-# cause of the original "libnghttp2.so.14: cannot open shared
-# object file" build failure.
-#
 # NOTE: this list is NOT guaranteed exhaustive for the multimedia/
 # graphics/portal stack (ffmpeg, gstreamer plugins, mesa, pipewire,
 # wireplumber, xdg-desktop-portal, xwayland). Those packages' exact
@@ -75,12 +86,10 @@ RUN printf 'yes\n' | DIALOG=off slackpkg update gpg && \
     for pkg in $(sh /tmp/pkg-validator.sh --pkgmgr slackpkg -- \
         bc \
         xz \
-        git \
         mtr \
         tar \
         zsh \
         bash \
-        curl \
         fish \
         gzip \
         lame \
@@ -90,14 +99,8 @@ RUN printf 'yes\n' | DIALOG=off slackpkg update gpg && \
         sudo \
         time \
         tree \
-        wget \
-        zstd \
         bzip2 \
         gnupg \
-        libpsl \
-        libssh2 \
-        libidn2 \
-        nghttp2 \
         rsync \
         unzip \
         which \
