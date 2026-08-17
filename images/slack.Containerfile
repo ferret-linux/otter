@@ -42,32 +42,62 @@ RUN DIALOG=off slackpkg update gpg && \
     for pkg in $(sh /tmp/pkg-validator.sh --pkgmgr slackpkg -- \
         bc \
         xz \
+        git \
+        mtr \
+        tar \
         zsh \
-        gzip \
-        fish \
         bash \
         curl \
+        fish \
+        gzip \
+        lame \
         less \
         lsof \
+        mesa \
         sudo \
+        time \
         tree \
         wget \
         bzip2 \
+        gnupg \
         rsync \
         unzip \
         which \
-        gnupg \
+        dialog \
+        ffmpeg \
+        libdrm \
+        libvpx \
         man-db \
+        shadow \
         tzdata \
+        infozip \
         ncurses \
+        openssh \
         python3 \
         tcpdump \
-        findutils \
+        wayland \
+        hostname \
+        iproute2 \
+        keyutils \
+        libglvnd \
+        libinput \
+        nss-mdns \
+        pinentry \
+        pipewire \
         diffutils \
+        findutils \
+        gstreamer \
+        procps-ng \
         util-linux \
-        shadow \
-        openssh \
-        bash-completion); do \
+        wireplumber \
+        bash-completion \
+        gst-plugins-base \
+        gst-plugins-good \
+        gst-plugins-libav \
+        wayland-protocols \
+        xdg-desktop-portal \
+        gst-plugins-bad-free \
+        xorg-server-xwayland); do \
         DIALOG=off slackpkg -batch=on -default_answer=y -orig_backups=off install "${pkg}"; \
     done
 
