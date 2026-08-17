@@ -162,6 +162,63 @@ RUN printf 'yes\n' | DIALOG=off slackpkg update gpg && \
         shadow \
         tzdata \
         infozip \
+        libaio \
+        libcap \
+        libffi \
+        libgcc \
+        libgcrypt \
+        libgpg-error \
+        libjpeg-turbo \
+        libogg \
+        libsndfile \
+        atk \
+        at-spi2-atk \
+        at-spi2-core \
+        cairo \
+        cups \
+        dbus-glib \
+        fontconfig \
+        freetype \
+        fribidi \
+        gdk-pixbuf \
+        harfbuzz \
+        hicolor-icon-theme \
+        json-glib \
+        libepoxy \
+        libexif \
+        libgudev \
+        libnotify \
+        librsvg \
+        libsecret \
+        libunwind \
+        libxkbcommon \
+        libxkbcommon-x11 \
+        pango \
+        shared-mime-info \
+        wayland-utils \
+        xcb-util-cursor \
+        xcb-util-errors \
+        xcb-util-xrm \
+        libtiff \
+        libunistring \
+        libvorbis \
+        libxml2 \
+        opus \
+        pcre2 \
+        sqlite \
+        speex \
+        taglib \
+        flac \
+        mpg123 \
+        orc \
+        sdl2 \
+        xcb-util \
+        xcb-util-image \
+        xcb-util-keysyms \
+        xcb-util-renderutil \
+        xcb-util-wm \
+        xkeyboard-config \
+        xorgproto \
         ncurses \
         openssh \
         python3 \
