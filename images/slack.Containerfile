@@ -102,7 +102,10 @@ RUN printf 'yes\n' | DIALOG=off slackpkg update gpg && \
     done
 
 # Fish is not in official slackware repos at the moment
-RUN if [ ! -x /usr/bin/fish ]; then \
+RUN if [ -x /usr/bin/fish ]; then \
+      echo "fish: already installed ($(/usr/bin/fish --version))"; \
+    else \
+      echo "fish: not installed, fetching latest AMD64 release"; \
       set -eux; \
       tmp="$(mktemp -d)"; \
       curl -fsSL https://api.github.com/repos/fish-shell/fish-shell/releases/latest \
@@ -112,6 +115,7 @@ RUN if [ ! -x /usr/bin/fish ]; then \
         | xargs -r curl -fL -o "$tmp/fish.tar.xz"; \
       tar -xJf "$tmp/fish.tar.xz" -C "$tmp"; \
       install -m 0755 "$tmp/fish" /usr/bin/fish; \
+      echo "fish: installed $(/usr/bin/fish --version)"; \
       rm -rf "$tmp"; \
     fi
 
