@@ -37,7 +37,7 @@ COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 # already present as part of Slackware's mandatory base "A" series -
 # nothing installed or changed here. systemd is intentionally not
 # in this list (not part of Slackware)
-RUN DIALOG=off slackpkg update gpg && \
+RUN printf 'yes\n' | DIALOG=off slackpkg update gpg && \
     DIALOG=off slackpkg update && \
     for pkg in $(sh /tmp/pkg-validator.sh --pkgmgr slackpkg -- \
         bc \
