@@ -700,6 +700,23 @@
         }
       },
       "build_number": 93
+    },
+    {
+      "name": "artix",
+      "official_image": "ghcr.io/ferret-linux/artix-otr:openrc",
+      "fallback_vendor_image": "docker.io/artixlinux/artixlinux:base-openrc",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-17T19:40:23Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 2194872882,
+          "disk_size": 2194872882
+        }
+      },
+      "build_number": 1
     }
   ]
 }
