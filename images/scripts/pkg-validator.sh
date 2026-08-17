@@ -119,14 +119,22 @@ case "${pkgmgr}" in
         done
         ;;
     slackpkg)
-        # NOTE: exact `slackpkg search` non-interactive output format is
-        # unverified against a live mirror - test this before relying on it.
+        # NOTE: `slackpkg search` output format below is based on
+        # documented behaviour, not verified against a live mirror
         for pkg in ${packages}; do
-            if DIALOG=off slackpkg search "${pkg}" 2>/dev/null | grep -qE "^${pkg}-[^ ]+\.txz"; then
-                valid="${valid} ${pkg}"
-            else
-                printf "${YELLOW}WARN: ${RED}%s${YELLOW} not found in repos${RESET}\n" "${pkg}" >&2
-            fi
+            # slackpkg search does substring matching on the name, so
+            # extract the exact package name from each result line
+            # (strip "[status] - " prefix and trailing
+            # "-version-arch-build") before comparing to ${pkg}.
+            found="$(DIALOG=off slackpkg search "${pkg}" 2>/dev/null | \
+                grep -E '^\[.*\] - ' | \
+                sed 's/^\[.*\] - //' | \
+                sed 's/-[^-]*-[^-]*-[^-]*$//' | \
+                tr '\n' ' ')"
+            case " ${found} " in
+                *" ${pkg} "*) valid="${valid} ${pkg}" ;;
+                *) printf "${YELLOW}WARN: ${RED}%s${YELLOW} not found in repos${RESET}\n" "${pkg}" >&2 ;;
+            esac
         done
         ;;
     *)
