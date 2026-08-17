@@ -4,6 +4,7 @@
 #    https://github.com/ferret-linux/otter
 # Copyright (C) 2026 otter contributors
 
+ARG TAG
 ARG IMAGE
 FROM ${IMAGE}
 
