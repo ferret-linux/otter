@@ -37,6 +37,22 @@ COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 # already present as part of Slackware's mandatory base "A" series -
 # nothing installed or changed here. systemd is intentionally not
 # in this list (not part of Slackware)
+#
+# NOTE: nghttp2 / libssh2 / libidn2 / libpsl / zstd added below -
+# these are curl's (and git's) documented runtime link deps on
+# Slackware and are NOT pulled in automatically by slackpkg when
+# installing "curl" or "git" alone. This was the confirmed root
+# cause of the original "libnghttp2.so.14: cannot open shared
+# object file" build failure.
+#
+# NOTE: this list is NOT guaranteed exhaustive for the multimedia/
+# graphics/portal stack (ffmpeg, gstreamer plugins, mesa, pipewire,
+# wireplumber, xdg-desktop-portal, xwayland). Those packages' exact
+# runtime deps vary by how each was actually built (enabled codecs,
+# GPU backends, etc.) and can't be reliably guessed from docs alone.
+# The ldd verification step below is the source of truth for those -
+# run the build, and if it fails, feed the reported missing .so
+# names back in here as newly-identified packages.
 RUN printf 'yes\n' | DIALOG=off slackpkg update gpg && \
     DIALOG=off slackpkg update && \
     for pkg in $(sh /tmp/pkg-validator.sh --pkgmgr slackpkg -- \
@@ -58,8 +74,13 @@ RUN printf 'yes\n' | DIALOG=off slackpkg update gpg && \
         time \
         tree \
         wget \
+        zstd \
         bzip2 \
         gnupg \
+        libpsl \
+        libssh2 \
+        libidn2 \
+        nghttp2 \
         rsync \
         unzip \
         which \
@@ -104,6 +125,11 @@ RUN printf 'yes\n' | DIALOG=off slackpkg update gpg && \
 # Verify every installed ELF binary/library actually resolves its
 # shared-library deps - catches slackpkg's lack of dep resolution
 # instead of discovering it one broken binary at a time in CI.
+#
+# This is the authoritative check for anything not covered above
+# (ffmpeg codecs, gstreamer plugins, mesa/GL, pipewire, etc.) - if
+# it fails, the missing .so names it prints map 1:1 to the package
+# that needs to be added to the list above.
 RUN missing=0; \
     for f in $(find /usr/bin /usr/sbin /usr/lib* -xtype f 2>/dev/null); do \
       if file "$f" 2>/dev/null | grep -q ELF; then \
@@ -124,11 +150,12 @@ RUN if [ -x /usr/bin/fish ]; then \
       echo "fish: not installed, fetching latest AMD64 release"; \
       set -eux; \
       tmp="$(mktemp -d)"; \
-      curl -fsSL https://api.github.com/repos/fish-shell/fish-shell/releases/latest \
+      url="$(curl -fsSL https://api.github.com/repos/fish-shell/fish-shell/releases/latest \
         | grep -o '"browser_download_url": "[^"]*linux-x86_64\.tar\.xz"' \
         | head -1 \
-        | cut -d'"' -f4 \
-        | xargs -r curl -fL -o "$tmp/fish.tar.xz"; \
+        | cut -d'"' -f4)"; \
+      [ -n "$url" ]; \
+      curl -fL -o "$tmp/fish.tar.xz" "$url"; \
       tar -xJf "$tmp/fish.tar.xz" -C "$tmp"; \
       install -m 0755 "$tmp/fish" /usr/bin/fish; \
       echo "fish: installed $(/usr/bin/fish --version)"; \
