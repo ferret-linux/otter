@@ -64,6 +64,50 @@ RUN set -eux; \
     installpkg "$tmp/$pkg"; \
     rm -rf "$tmp"
 
+# Configure AlienBOB repositories according to TAG.
+# TAG=current:
+#   use AlienBOB's rolling Slackware-current repositories.
+#
+# TAG=stable:
+#   dynamically resolve the current stable Slackware release and use
+#   the matching AlienBOB repositories. This avoids hardcoding a
+#   release number here so the image automatically follows future
+#   stable Slackware releases.
+#
+# Enabled repositories:
+#   alienbob   - AlienBOB's main third-party binary packages.
+#   restricted - AlienBOB's restricted/multimedia packages.
+#
+# PKGS_PRIORITY makes restricted and alienbob take precedence over
+# the official Slackware repositories when the same package exists
+# in multiple repositories.
+RUN set -eux; \
+    case "$TAG" in \
+      current) \
+        echo "AlienBOB: detected current branch"; \
+        slackware_release="current"; \
+        ;; \
+      stable) \
+        echo "AlienBOB: detected stable branch"; \
+        slackware_release="$(curl -fsSL \
+          https://endoflife.date/api/slackware.json \
+          | grep -o '"cycle":"[^"]*"' \
+          | head -1 \
+          | cut -d'"' -f4)"; \
+        [ -n "$slackware_release" ]; \
+        echo "AlienBOB: using stable Slackware ${slackware_release}"; \
+        ;; \
+    esac; \
+    cat >> /etc/slackpkg/slackpkgplus.conf <<EOF
+REPOPLUS+=( alienbob )
+REPOPLUS+=( restricted )
+
+MIRRORPLUS['alienbob']=https://slackware.nl/people/alien/sbrepos/${slackware_release}/x86_64/
+MIRRORPLUS['restricted']=https://slackware.nl/people/alien/restricted_sbrepos/${slackware_release}/x86_64/
+
+PKGS_PRIORITY=( restricted alienbob )
+EOF
+
 # NOTE: slackpkg does not perform automatic dependency resolution -
 # unlike apt/dnf/pacman, packages not explicitly listed here will
 # not be pulled in as transitive dependencies. This list may need
