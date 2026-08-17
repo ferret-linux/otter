@@ -101,6 +101,22 @@ RUN printf 'yes\n' | DIALOG=off slackpkg update gpg && \
         DIALOG=off slackpkg -batch=on -default_answer=y -orig_backups=off install "${pkg}"; \
     done
 
+# Verify every installed ELF binary/library actually resolves its
+# shared-library deps - catches slackpkg's lack of dep resolution
+# instead of discovering it one broken binary at a time in CI.
+RUN missing=0; \
+    for f in $(find /usr/bin /usr/sbin /usr/lib* -xtype f 2>/dev/null); do \
+      if file "$f" 2>/dev/null | grep -q ELF; then \
+        out="$(ldd "$f" 2>&1)"; \
+        if echo "$out" | grep -q "not found"; then \
+          echo "=== $f ==="; \
+          echo "$out" | grep "not found"; \
+          missing=1; \
+        fi; \
+      fi; \
+    done; \
+    [ "$missing" -eq 0 ] || (echo "ERROR: missing shared library dependencies detected above" && exit 1)
+
 # Fish is not in official slackware repos at the moment
 RUN if [ -x /usr/bin/fish ]; then \
       echo "fish: already installed ($(/usr/bin/fish --version))"; \
