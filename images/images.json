@@ -302,7 +302,7 @@
     "name": "artix-otr",
     "tag": "openrc",
     "display_name": "artix",
-    "arches": ["amd64", "arm64"],
+    "arches": ["amd64"],
     "enabled": true
   },
   {
