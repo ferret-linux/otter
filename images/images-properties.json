@@ -1,28 +1,6 @@
 {
   "images": [
     {
-      "name": "fedora-rawhide",
-      "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide",
-      "fallback_vendor_image": "quay.io/fedora/fedora:rawhide",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-18T02:38:40Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1368460287,
-          "disk_size": 1368460287
-        },
-        "arm64": {
-          "compressed_size": 1302159146,
-          "disk_size": 1302159146
-        }
-      },
-      "build_number": 90
-    },
-    {
       "name": "alpine",
       "official_image": "ghcr.io/ferret-linux/alpine-otr:latest",
       "fallback_vendor_image": "docker.io/library/alpine:latest",
@@ -717,6 +695,28 @@
         }
       },
       "build_number": 96
+    },
+    {
+      "name": "fedora-rawhide",
+      "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide",
+      "fallback_vendor_image": "quay.io/fedora/fedora:rawhide",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-18T04:05:02Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1368460288,
+          "disk_size": 1368460288
+        },
+        "arm64": {
+          "compressed_size": 1302159144,
+          "disk_size": 1302159144
+        }
+      },
+      "build_number": 91
     }
   ]
 }
