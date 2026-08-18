@@ -32,9 +32,23 @@ COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 # Slackpkg does not resolve dependencies, so include curl's runtime
 # dependencies explicitly. git/wget are also bootstrapped here because
 # they are needed by the image's subsequent package/tooling setup.
-RUN printf 'yes\n' | DIALOG=off slackpkg update gpg && \
-    DIALOG=off slackpkg update && \
-    for pkg in $(sh /tmp/pkg-validator.sh --pkgmgr slackpkg -- \
+#
+# Each slackpkg command below runs in its own RUN step so a failure
+# is attributable to a specific command. Each is preceded by a clear
+# of any stale /var/lock/slackpkg.* file: slackpkg's own lock cleanup
+# only runs on certain exit paths, so a lock can be left behind even
+# after a command that otherwise completed fine, which then makes
+# every later slackpkg invocation refuse to run. The clear only ever
+# runs before a command starts - it never wraps or suppresses that
+# command's own exit status, so a genuine failure still fails the RUN.
+RUN rm -f /var/lock/slackpkg.*; \
+    printf 'yes\n' | DIALOG=off slackpkg update gpg
+
+RUN rm -f /var/lock/slackpkg.*; \
+    DIALOG=off slackpkg update
+
+RUN rm -f /var/lock/slackpkg.*; \
+    DIALOG=off slackpkg -batch=on -default_answer=y -orig_backups=off install $(sh /tmp/pkg-validator.sh --pkgmgr slackpkg -- \
         curl \
         git \
         wget2 \
@@ -50,9 +64,7 @@ RUN printf 'yes\n' | DIALOG=off slackpkg update gpg && \
         brotli \
         dcron \
         cyrus-sasl \
-        c-ares); do \
-        DIALOG=off slackpkg -batch=on -default_answer=y -orig_backups=off install "${pkg}"; \
-    done
+        c-ares)
 
 # Slackware's package tooling does not guarantee the CA trust store is
 # refreshed after installing/upgrading ca-certificates. Rebuild the
@@ -145,9 +157,14 @@ EOF
 # The ldd verification step below is the source of truth for those -
 # run the build, and if it fails, feed the reported missing .so
 # names back in here as newly-identified packages.
-RUN printf 'yes\n' | DIALOG=off slackpkg update gpg && \
-    DIALOG=off slackpkg update && \
-    for pkg in $(sh /tmp/pkg-validator.sh --pkgmgr slackpkg -- \
+RUN rm -f /var/lock/slackpkg.*; \
+    printf 'yes\n' | DIALOG=off slackpkg update gpg
+
+RUN rm -f /var/lock/slackpkg.*; \
+    DIALOG=off slackpkg update
+
+RUN rm -f /var/lock/slackpkg.*; \
+    DIALOG=off slackpkg -batch=on -default_answer=y -orig_backups=off install $(sh /tmp/pkg-validator.sh --pkgmgr slackpkg -- \
         bc \
         xz \
         mtr \
@@ -271,9 +288,7 @@ RUN printf 'yes\n' | DIALOG=off slackpkg update gpg && \
         gst-plugins-bad-free \
         gst-plugins-ugly \
         gst-plugins-bad \
-        xorg-server-xwayland); do \
-        DIALOG=off slackpkg -batch=on -default_answer=y -orig_backups=off install "${pkg}"; \
-    done
+        xorg-server-xwayland)
 
 # Verify every installed ELF binary/library actually resolves its
 # shared-library deps - catches slackpkg's lack of dep resolution
