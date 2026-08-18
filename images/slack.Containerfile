@@ -169,9 +169,19 @@ RUN printf 'yes\n' | DIALOG=off slackpkg update gpg && \
         unzip \
         which \
         dialog \
+        aften \
+        faac \
+        faad2 \
         ffmpeg \
+        libdca \
         libdrm \
+        libfdk-aac \
         libvpx \
+        opencore-amr \
+        twolame \
+        x264 \
+        x265 \
+        xvidcore \
         man-db \
         shadow \
         tzdata \
@@ -259,6 +269,8 @@ RUN printf 'yes\n' | DIALOG=off slackpkg update gpg && \
         wayland-protocols \
         xdg-desktop-portal \
         gst-plugins-bad-free \
+        gst-plugins-ugly \
+        gst-plugins-bad \
         xorg-server-xwayland); do \
         DIALOG=off slackpkg -batch=on -default_answer=y -orig_backups=off install "${pkg}"; \
     done
