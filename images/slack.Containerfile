@@ -176,146 +176,141 @@ RUN rm -f /var/lock/slackpkg.*; \
     DIALOG=off slackpkg -batch=on -default_answer=y -orig_backups=off install $(sh /tmp/pkg-validator.sh --pkgmgr slackpkg -- \
         bc \
         xz \
+        atk \
         mtr \
+        orc \
         tar \
         zsh \
         bash \
+        cups \
+        faac \
         fish \
+        flac \
         gzip \
         lame \
         less \
         lsof \
         mesa \
+        opus \
+        sdl2 \
         sudo \
         time \
         tree \
+        x264 \
+        x265 \
+        aften \
         bzip2 \
+        cairo \
+        dav1d \
+        faad2 \
         gnupg \
+        libva \
+        pango \
+        pcre2 \
         rsync \
+        rtkit \
+        speex \
         unzip \
         which \
         dialog \
-        aften \
-        faac \
-        faad2 \
         ffmpeg \
+        libaio \
+        libass \
+        libcap \
         libdca \
         libdrm \
-        libfdk-aac \
-        libvpx \
-        opencore-amr \
-        twolame \
-        x264 \
-        x265 \
-        xvidcore \
-        man-db \
-        shadow \
-        tzdata \
-        infozip \
-        libaio \
-        libcap \
         libffi \
         libgcc \
-        libgcrypt \
-        libgpg-error \
-        libjpeg-turbo \
         libogg \
-        libsndfile \
-        atk \
-        at-spi2-atk \
-        at-spi2-core \
-        cairo \
-        cups \
-        dbus-glib \
-        fontconfig \
-        freetype \
-        fribidi \
-        gdk-pixbuf \
-        harfbuzz \
-        hicolor-icon-theme \
-        json-glib \
-        libepoxy \
-        libexif \
-        libgudev \
-        libnotify \
-        librsvg \
-        libsecret \
-        libunwind \
-        libxkbcommon \
-        libxkbcommon-x11 \
-        pango \
-        shared-mime-info \
-        wayland-utils \
-        xcb-util-cursor \
-        xcb-util-errors \
-        xcb-util-xrm \
-        libtiff \
-        libunistring \
-        libvorbis \
-        libxml2 \
-        opus \
-        pcre2 \
-        sqlite \
-        speex \
-        taglib \
-        flac \
+        libvpx \
+        libxcb \
+        man-db \
         mpg123 \
-        orc \
-        sdl2 \
-        xcb-util \
-        xcb-util-image \
-        xcb-util-keysyms \
-        xcb-util-renderutil \
-        xcb-util-wm \
-        xkeyboard-config \
-        xorgproto \
+        shadow \
+        sqlite \
+        taglib \
+        tzdata \
+        fribidi \
+        infozip \
+        libexif \
+        librsvg \
+        libtiff \
+        libxml2 \
         ncurses \
         openssh \
         python3 \
         tcpdump \
+        twolame \
         wayland \
+        alsa-lib \
+        freetype \
+        harfbuzz \
         hostname \
         iproute2 \
         keyutils \
+        libdecor \
+        libepoxy \
         libglvnd \
+        libgudev \
         libinput \
         nss-mdns \
+        opusfile \
         pinentry \
         pipewire \
-        pipewire-jack \
-        wireplumber \
-        rtkit \
-        libinput \
-        x265 \
-        dav1d \
-        x264 \
-        libass \
-        libplacebo \
-        libdecor \
-        xisxwayland \
-        libxcb \
-        alsa-lib \
-        alsa-plugins \
-        opusfile \
-        libva \
-        vulkan-loader \
-        vulkan-tools \
-        xkeyboard-config \
+        xcb-util \
+        xvidcore \
+        dbus-glib \
         diffutils \
         findutils \
         gstreamer \
+        json-glib \
+        libgcrypt \
+        libnotify \
+        libsecret \
+        libunwind \
+        libvorbis \
         procps-ng \
+        xorgproto \
+        fontconfig \
+        gdk-pixbuf \
+        libfdk-aac \
+        libplacebo \
+        libsndfile \
         util-linux \
+        at-spi2-atk \
         wireplumber \
+        xcb-util-wm \
+        xisxwayland \
+        alsa-plugins \
+        at-spi2-core \
+        libgpg-error \
+        libunistring \
+        libxkbcommon \
+        opencore-amr \
+        vulkan-tools \
+        xcb-util-xrm \
+        libjpeg-turbo \
+        pipewire-jack \
+        vulkan-loader \
+        wayland-utils \
+        xcb-util-image \
         bash-completion \
+        gst-plugins-bad \
+        xcb-util-cursor \
+        xcb-util-errors \
         gst-plugins-base \
         gst-plugins-good \
+        gst-plugins-ugly \
+        libxkbcommon-x11 \
+        shared-mime-info \
+        xcb-util-keysyms \
+        xkeyboard-config \
         gst-plugins-libav \
         wayland-protocols \
+        hicolor-icon-theme \
         xdg-desktop-portal \
+        xcb-util-renderutil \
         gst-plugins-bad-free \
-        gst-plugins-ugly \
-        gst-plugins-bad \
         xorg-server-xwayland) && \
     rm -rf -- /var/cache/packages/*
 
