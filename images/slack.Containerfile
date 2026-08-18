@@ -4,7 +4,6 @@
 #    https://github.com/ferret-linux/otter
 # Copyright (C) 2026 otter contributors
 
-ARG TAG
 ARG IMAGE
 FROM ${IMAGE}
 
@@ -17,7 +16,7 @@ RUN sh /tmp/setup-common.sh
 
 # Add otter image identifiers
 RUN touch /usr/lib/otter/container.slackware
-
+ARG TAG
 # NOTE: no mirror-selection step needed here - aclemons/slackware
 # ships with slackpkg already pointed at the correct mirror for
 # whichever release this tag actually is ("slackpkg needs to work
