@@ -275,6 +275,25 @@ RUN rm -f /var/lock/slackpkg.*; \
         nss-mdns \
         pinentry \
         pipewire \
+        pipewire-jack \
+        wireplumber \
+        rtkit \
+        libinput \
+        x265 \
+        dav1d \
+        x264 \
+        libass \
+        libplacebo \
+        libdecor \
+        xisxwayland \
+        libxcb \
+        alsa-lib \
+        alsa-plugins \
+        opusfile \
+        libva \
+        vulkan-loader \
+        vulkan-tools \
+        xkeyboard-config \
         diffutils \
         findutils \
         gstreamer \
