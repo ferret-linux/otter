@@ -49,22 +49,22 @@ RUN rm -f /var/lock/slackpkg.*; \
 
 RUN rm -f /var/lock/slackpkg.*; \
     DIALOG=off slackpkg -batch=on -default_answer=y -orig_backups=off install $(sh /tmp/pkg-validator.sh --pkgmgr slackpkg -- \
-        curl \
         git \
-        wget2 \
+        curl \
+        perl \
         zstd \
+        dcron \
+        wget2 \
+        brotli \
+        c-ares \
         libpsl \
-        libssh2 \
+        ngtcp2 \
         libidn2 \
+        libssh2 \
         nghttp2 \
         nghttp3 \
-        perl \
-        ngtcp2 \
-        ca-certificates \
-        brotli \
-        dcron \
         cyrus-sasl \
-        c-ares) && \
+        ca-certificates) && \
     rm -rf -- /var/cache/packages/*
 
 # Slackware's package tooling does not guarantee the CA trust store is
