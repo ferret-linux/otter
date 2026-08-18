@@ -48,6 +48,7 @@ RUN printf 'yes\n' | DIALOG=off slackpkg update gpg && \
         ngtcp2 \
         ca-certificates \
         brotli \
+        dcron \
         cyrus-sasl \
         c-ares); do \
         DIALOG=off slackpkg -batch=on -default_answer=y -orig_backups=off install "${pkg}"; \
