@@ -42,10 +42,10 @@ COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 # runs before a command starts - it never wraps or suppresses that
 # command's own exit status, so a genuine failure still fails the RUN.
 RUN rm -f /var/lock/slackpkg.*; \
-    printf 'yes\n' | DIALOG=off slackpkg update gpg
+    printf 'yes\n' | DIALOG=off slackpkg update gpg && rm -rf -- /var/cache/packages/*
 
 RUN rm -f /var/lock/slackpkg.*; \
-    DIALOG=off slackpkg update
+    DIALOG=off slackpkg update && rm -rf -- /var/cache/packages/*
 
 RUN rm -f /var/lock/slackpkg.*; \
     DIALOG=off slackpkg -batch=on -default_answer=y -orig_backups=off install $(sh /tmp/pkg-validator.sh --pkgmgr slackpkg -- \
@@ -64,7 +64,8 @@ RUN rm -f /var/lock/slackpkg.*; \
         brotli \
         dcron \
         cyrus-sasl \
-        c-ares)
+        c-ares) && \
+    rm -rf -- /var/cache/packages/*
 
 # Slackware's package tooling does not guarantee the CA trust store is
 # refreshed after installing/upgrading ca-certificates. Rebuild the
@@ -158,10 +159,11 @@ EOF
 # run the build, and if it fails, feed the reported missing .so
 # names back in here as newly-identified packages.
 RUN rm -f /var/lock/slackpkg.*; \
-    printf 'yes\n' | DIALOG=off slackpkg update gpg
+    printf 'yes\n' | DIALOG=off slackpkg update gpg && rm -rf -- /var/cache/packages/*
 
 RUN rm -f /var/lock/slackpkg.*; \
-    DIALOG=off slackpkg update
+    DIALOG=off slackpkg update && \
+    rm -rf -- /var/cache/packages/*
 
 RUN rm -f /var/lock/slackpkg.*; \
     DIALOG=off slackpkg -batch=on -default_answer=y -orig_backups=off install $(sh /tmp/pkg-validator.sh --pkgmgr slackpkg -- \
@@ -288,7 +290,8 @@ RUN rm -f /var/lock/slackpkg.*; \
         gst-plugins-bad-free \
         gst-plugins-ugly \
         gst-plugins-bad \
-        xorg-server-xwayland)
+        xorg-server-xwayland) && \
+    rm -rf -- /var/cache/packages/*
 
 # Verify every installed ELF binary/library actually resolves its
 # shared-library deps - catches slackpkg's lack of dep resolution
