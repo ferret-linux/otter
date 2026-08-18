@@ -96,48 +96,55 @@ RUN set -eux; \
     installpkg "$tmp/$pkg"; \
     rm -rf "$tmp"
 
-# Configure AlienBOB repositories according to TAG.
+# Configure third-party repositories according to TAG.
+# Repository priority:
+#
+#   Ponce > AlienBOB Restricted > AlienBOB > Official Slackware
+#
 # TAG=current:
-#   use AlienBOB's rolling Slackware-current repositories.
+#   use the rolling Slackware-current repositories.
 #
 # TAG=stable:
 #   dynamically resolve the current stable Slackware release and use
-#   the matching AlienBOB repositories. This avoids hardcoding a
-#   release number here so the image automatically follows future
-#   stable Slackware releases.
+#   the matching repositories.
 #
-# Enabled repositories:
-#   alienbob   - AlienBOB's main third-party binary packages.
-#   restricted - AlienBOB's restricted/multimedia packages.
+# Ponce provides x86_64 repositories for both Slackware 15.0 and
+# Slackware-current. :contentReference[oaicite:1]{index=1}
 #
-# PKGS_PRIORITY makes restricted and alienbob take precedence over
-# the official Slackware repositories when the same package exists
-# in multiple repositories.
+# PKGS_PRIORITY controls which third-party repository wins when the
+# same package is available from multiple repositories. The official
+# Slackware repository remains the fallback.
 RUN set -eux; \
     case "$TAG" in \
       current) \
-        echo "AlienBOB: detected current branch"; \
+        echo "Slackware: detected current branch"; \
         slackware_release="current"; \
         ;; \
       stable) \
-        echo "AlienBOB: detected stable branch"; \
+        echo "Slackware: detected stable branch"; \
         slackware_release="$(curl -fsSL \
           https://endoflife.date/api/slackware.json \
           | grep -o '"cycle":"[^"]*"' \
           | head -1 \
           | cut -d'"' -f4)"; \
         [ -n "$slackware_release" ]; \
-        echo "AlienBOB: using stable Slackware ${slackware_release}"; \
+        echo "Slackware: using stable Slackware ${slackware_release}"; \
+        ;; \
+      *) \
+        echo "ERROR: unsupported TAG: ${TAG}" >&2; \
+        exit 1; \
         ;; \
     esac; \
     cat >> /etc/slackpkg/slackpkgplus.conf <<EOF
 REPOPLUS+=( alienbob )
 REPOPLUS+=( restricted )
+REPOPLUS+=( ponce )
 
 MIRRORPLUS['alienbob']=https://slackware.nl/people/alien/sbrepos/${slackware_release}/x86_64/
 MIRRORPLUS['restricted']=https://slackware.nl/people/alien/restricted_sbrepos/${slackware_release}/x86_64/
+MIRRORPLUS['ponce']=https://ponce.cc/slackware/slackware64-${slackware_release}/packages/
 
-PKGS_PRIORITY=( restricted alienbob )
+PKGS_PRIORITY=( ponce restricted alienbob )
 EOF
 
 # NOTE: slackpkg does not perform automatic dependency resolution -
