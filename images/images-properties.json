@@ -67,23 +67,6 @@
       "build_number": 92
     },
     {
-      "name": "artix",
-      "official_image": "ghcr.io/ferret-linux/artix-otr:openrc",
-      "fallback_vendor_image": "docker.io/artixlinux/artixlinux:base-openrc",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-17T20:17:10Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 2203122739,
-          "disk_size": 2203122739
-        }
-      },
-      "build_number": 2
-    },
-    {
       "name": "devuan",
       "official_image": "ghcr.io/ferret-linux/devuan-otr:stable",
       "fallback_vendor_image": "docker.io/devuan/devuan:stable",
@@ -717,6 +700,23 @@
         }
       },
       "build_number": 96
+    },
+    {
+      "name": "artix",
+      "official_image": "ghcr.io/ferret-linux/artix-otr:openrc",
+      "fallback_vendor_image": "docker.io/artixlinux/artixlinux:base-openrc",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-18T03:06:59Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 2203117614,
+          "disk_size": 2203117614
+        }
+      },
+      "build_number": 3
     }
   ]
 }
