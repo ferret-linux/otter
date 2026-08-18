@@ -45,6 +45,7 @@ RUN printf 'yes\n' | DIALOG=off slackpkg update gpg && \
         libidn2 \
         nghttp2 \
         nghttp3 \
+        perl \
         ngtcp2 \
         ca-certificates \
         brotli \
@@ -54,12 +55,17 @@ RUN printf 'yes\n' | DIALOG=off slackpkg update gpg && \
         DIALOG=off slackpkg -batch=on -default_answer=y -orig_backups=off install "${pkg}"; \
     done
 
-# Refresh the system CA trust store and verify HTTPS certificate validation.
+# Slackware's package tooling does not guarantee the CA trust store is
+# refreshed after installing/upgrading ca-certificates. Rebuild the
+# system CA bundle and OpenSSL hash links, then verify the resulting
+# trust store with a real HTTPS request. This prevents TLS failures when
+# subsequent build steps fetch packages or releases from HTTPS sources.
 RUN set -eux; \
     /usr/sbin/update-ca-certificates; \
+    /usr/sbin/update-ca-certificates -f; \
+    openssl rehash /etc/ssl/certs; \
     test -s /etc/ssl/certs/ca-certificates.crt; \
-    curl -fsSL https://api.github.com/ >/dev/null; \
-    echo "CA certificates refreshed and HTTPS verification passed"
+    curl -fsSL https://api.github.com/ >/dev/null
 
 # Install the latest Slackpkg+ release from alienbob.
 # GitHub releases contain a pre-built Slackware .txz package.
