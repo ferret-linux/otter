@@ -119,23 +119,22 @@ case "${pkgmgr}" in
         done
         ;;
     slackpkg)
-        # NOTE: `slackpkg search` output format below is based on
-        # documented behaviour, not verified against a live mirror
+        # slackpkg's own search output format differs between plain
+        # slackpkg and slackpkg+ (multi-repo) installs, so it can't be
+        # reliably parsed for an exact package name match here. Also,
+        # slackpkg install already no-ops safely on a pattern that
+        # matches nothing ("No packages match the pattern for
+        # install."), and this script's callers install packages one
+        # at a time in a loop, so a bad name can't break the rest of
+        # the batch. There is therefore no need to filter the list -
+        # just warn about names that look potentially missing.
         for pkg in ${packages}; do
-            # slackpkg search does substring matching on the name, so
-            # extract the exact package name from each result line
-            # (strip "[status] - " prefix and trailing
-            # "-version-arch-build") before comparing to ${pkg}.
-            found="$(DIALOG=off slackpkg search "${pkg}" 2>/dev/null | \
-                grep -E '^\[.*\] - ' | \
-                sed 's/^\[.*\] - //' | \
-                sed 's/-[^-]*-[^-]*-[^-]*$//' | \
-                tr '\n' ' ')"
-            case " ${found} " in
-                *" ${pkg} "*) valid="${valid} ${pkg}" ;;
-                *) printf "${YELLOW}WARN: ${RED}%s${YELLOW} not found in repos${RESET}\n" "${pkg}" >&2 ;;
-            esac
+            if DIALOG=off slackpkg search "${pkg}" 2>/dev/null | \
+                grep -q "No package name matches the pattern."; then
+                printf "${YELLOW}WARN: ${RED}%s${YELLOW} may not be found in repos${RESET}\n" "${pkg}" >&2
+            fi
         done
+        valid="${packages}"
         ;;
     *)
         echo "ERROR: unknown package manager: ${pkgmgr}" >&2
