@@ -52,6 +52,7 @@ RUN apk update && \
         xauth \
         ffmpeg \
         libcap \
+        procps \
         shadow \
         mandoc \
         tzdata \
@@ -73,6 +74,7 @@ RUN apk update && \
         diffutils \
         findutils \
         net-tools \
+        libc-utils \
         vpl-gpu-rt \
         util-linux \
         musl-utils \
@@ -91,6 +93,21 @@ RUN apk update && \
         util-linux-login \
         xdg-desktop-portal \
         openssh-client-default) && \
+    apk update && \
+    apk upgrade && \
+    apk cache clean && \
+    rm -rf \
+        /var/cache/apk/* \
+        /var/log/* \
+        /var/tmp/*
+
+# Install GPU driver packages for Alpine. Alpine splits mesa-dri and
+# mesa-vulkan into multiple arch/vendor-specific sub-packages, so we
+# resolve them by prefix search here, the same way otter-init does
+# via `apk search -q mesa-dri` / `apk search -q mesa-vulkan` at
+# container-create time.
+RUN apk update && \
+    apk add --force-overwrite $(apk search -q mesa-dri) $(apk search -q mesa-vulkan) && \
     apk update && \
     apk upgrade && \
     apk cache clean && \
