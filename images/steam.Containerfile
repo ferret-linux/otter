@@ -185,7 +185,6 @@ RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman --
         lib32-p11-kit \
         lib32-systemd \
         lib32-wayland \
-        lib32-libcups \
         lib32-libssh2 \
         lib32-alsa-lib \
         lib32-gcc-libs \
