@@ -130,6 +130,8 @@ RUN pacman -Sy --noconfirm --needed archlinux-keyring && \
 # Install common 32-bit gaming dependencies from multilib for Steam, Wine, Proton, and games.
 RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman -- \
         lib32-xz \
+        lib32-acl \
+        lib32-gmp \
         lib32-icu \
         lib32-lz4 \
         lib32-nss \
@@ -137,49 +139,90 @@ RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman --
         lib32-curl \
         lib32-dbus \
         lib32-flac \
+        lib32-krb5 \
         lib32-mesa \
         lib32-nspr \
         lib32-opus \
         lib32-sdl2 \
         lib32-sdl3 \
         lib32-zlib \
+        lib32-zstd \
         lib32-bzip2 \
         lib32-expat \
         lib32-glibc \
+        lib32-libnm \
+        lib32-libva \
         lib32-libxi \
+        lib32-pcre2 \
+        lib32-vkd3d \
+        lib32-brotli \
         lib32-giflib \
         lib32-gnutls \
+        lib32-libcap \
         lib32-libdrm \
+        lib32-libelf \
+        lib32-libffi \
+        lib32-libndp \
         lib32-libogg \
         lib32-libpng \
+        lib32-libpsl \
         lib32-libx11 \
+        lib32-libxau \
+        lib32-libxcb \
+        lib32-libxss \
+        lib32-nettle \
         lib32-openal \
+        lib32-libidn2 \
+        lib32-libpcap \
+        lib32-libthai \
         lib32-libwebp \
         lib32-libxext \
         lib32-libxml2 \
+        lib32-libxtst \
+        lib32-ncurses \
+        lib32-openssl \
+        lib32-p11-kit \
         lib32-systemd \
         lib32-wayland \
         lib32-alsa-lib \
         lib32-gcc-libs \
         lib32-libdecor \
         lib32-libglvnd \
+        lib32-libinput \
+        lib32-libproxy \
         lib32-libpulse \
+        lib32-libtasn1 \
         lib32-pipewire \
         lib32-freetype2 \
+        lib32-libgcrypt \
         lib32-libtheora \
+        lib32-libunwind \
         lib32-libvorbis \
+        lib32-libxcrypt \
         lib32-libxfixes \
+        lib32-libxrandr \
+        lib32-llvm-libs \
         lib32-fontconfig \
         lib32-jpeg-turbo \
         lib32-libasyncns \
         lib32-libxcursor \
+        lib32-libxdamage \
         lib32-libxrender \
+        lib32-lm_sensors \
         lib32-libxinerama \
+        lib32-spirv-tools \
         lib32-alsa-plugins \
+        lib32-libgpg-error \
         lib32-libpciaccess \
+        lib32-libxshmfence \
         lib32-vulkan-intel \
+        lib32-libxcomposite \
         lib32-vulkan-radeon \
-        lib32-vulkan-icd-loader) && \
+        lib32-libxcrypt-compat \
+        lib32-xcb-util-keysyms \
+        lib32-vulkan-icd-loader \
+        lib32-libsysprof-capture \
+        lib32-vulkan-mesa-implicit-layers) && \
     pacman -Syy && \
     pacman -Syu && \
     pacman -Scc && \
