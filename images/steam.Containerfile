@@ -105,8 +105,8 @@ RUN pacman -Syyu --noconfirm --needed && \
         gst-plugins-ugly \
         xdg-desktop-portal) && \
     pacman -Syy && \
-    pacman -Syu && \
-    pacman -Scc && \
+    pacman -Syu --noconfirm && \
+    pacman -Scc --noconfirm && \
     rm -rf \
         /var/cache/pacman/pkg/* \
         /var/log/* \
@@ -219,8 +219,8 @@ RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman --
         lib32-libsysprof-capture \
         lib32-vulkan-mesa-implicit-layers) && \
     pacman -Syy && \
-    pacman -Syu && \
-    pacman -Scc && \
+    pacman -Syu --noconfirm && \
+    pacman -Scc --noconfirm && \
     rm -rf \
         /var/cache/pacman/pkg/* \
         /var/log/* \
@@ -286,8 +286,8 @@ RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman --
         power-profiles-daemon \
         xdg-desktop-portal-gtk) && \
     pacman -Syy && \
-    pacman -Syu && \
-    pacman -Scc && \
+    pacman -Syu --noconfirm && \
+    pacman -Scc --noconfirm && \
     rm -rf \
         /var/cache/pacman/pkg/* \
         /var/log/* \
@@ -302,8 +302,8 @@ RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman --
         wine-gecko \
         wine-cachyos-opt) && \
     pacman -Syy && \
-    pacman -Syu && \
-    pacman -Scc && \
+    pacman -Syu --noconfirm && \
+    pacman -Scc --noconfirm && \
     rm -rf \
         /var/cache/pacman/pkg/* \
         /var/log/* \
@@ -319,8 +319,8 @@ RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman --
         umu-launcher \
         proton-cachyos-slr) && \
     pacman -Syy && \
-    pacman -Syu && \
-    pacman -Scc && \
+    pacman -Syu --noconfirm && \
+    pacman -Scc --noconfirm && \
     rm -rf \
         /var/cache/pacman/pkg/* \
         /var/log/* \
@@ -335,8 +335,8 @@ RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman --
         steam-devices \
         heroic-games-launcher) && \
     pacman -Syy && \
-    pacman -Syu && \
-    pacman -Scc && \
+    pacman -Syu --noconfirm && \
+    pacman -Scc --noconfirm && \
     rm -rf \
         /var/cache/pacman/pkg/* \
         /var/log/* \
