@@ -94,8 +94,8 @@ RUN pacman -Sy --noconfirm --needed archlinux-keyring && \
         gst-plugins-ugly \
         xdg-desktop-portal) && \
     pacman -Syy && \
-    pacman -Syu && \
-    pacman -Scc && \
+    pacman -Syu --noconfirm && \
+    pacman -Scc --noconfirm && \
     rm -rf \
         /var/cache/pacman/pkg/* \
         /var/log/* \
