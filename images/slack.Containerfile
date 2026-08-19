@@ -224,6 +224,43 @@ RUN rm -f /var/lock/slackpkg.*; \
         libxcb \
         man-db \
         mpg123 \
+        Imath \
+        a52dec \
+        bluez \
+        chromaprint \
+        dbus \
+        fftw \
+        fluidsynth \
+        gnutls \
+        graphene \
+        graphite2 \
+        icu4c \
+        lcms2 \
+        libcdio \
+        libcdio-paranoia \
+        libdisplay-info \
+        liblrdf \
+        libmodplug \
+        libnice \
+        libpciaccess \
+        libsamplerate \
+        libunibreak \
+        libvisual \
+        lilv \
+        llvm \
+        nettle \
+        openexr \
+        pixman \
+        qrencode \
+        sbc \
+        serd \
+        sord \
+        soundtouch \
+        sratom \
+        srt \
+        suil \
+        zix \
+        zxing-cpp \
         shadow \
         sqlite \
         taglib \
