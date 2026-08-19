@@ -24,7 +24,9 @@ RUN sed -i "s|NoExtract.*||g" /etc/pacman.conf \
     && sed -i '0,/^\[options\]/s/^\[options\]/\[options\]\nColor\nILoveCandy/' /etc/pacman.conf
 
 RUN rm -f /etc/os-release /usr/lib/os-release \
-    && cat > /etc/os-release <<'EOF'
+    && touch /usr/lib/os-release \
+    && ln -s /usr/lib/os-release /etc/os-release \
+    && cat > /usr/lib/os-release <<'EOF'
 NAME="SteamOS"
 PRETTY_NAME="SteamOS OCI (otter)"
 ID=steamos
