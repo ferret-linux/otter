@@ -58,6 +58,7 @@ RUN dnf clean expire-cache && \
         man-db \
         passwd \
         tzdata \
+        vulkan \
         iproute \
         iputils \
         ncurses \
@@ -67,6 +68,7 @@ RUN dnf clean expire-cache && \
         hostname \
         keyutils \
         pinentry \
+        nss-mdns \
         diffutils \
         findutils \
         krb5-libs \
@@ -74,16 +76,21 @@ RUN dnf clean expire-cache && \
         procps-ng \
         traceroute \
         util-linux \
+        wget2-wget \
+        vte-profile \
         glibc-common \
         gnupg2-smime \
         shadow-utils \
         cracklib-dicts \
+        xorg-x11-xauth \
         bash-completion \
         openssh-clients \
         dnf-plugins-core \
+        mesa-dri-drivers \
         util-linux-script \
         glibc-all-langpacks \
-        glibc-locale-source) && \
+        glibc-locale-source \
+        mesa-vulkan-drivers) && \
     dnf upgrade -y && \
     dnf autoremove -y && \
     dnf clean all && \
