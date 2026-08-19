@@ -119,21 +119,25 @@ case "${pkgmgr}" in
         done
         ;;
     slackpkg)
-        # slackpkg's own search output format differs between plain
-        # slackpkg and slackpkg+ (multi-repo) installs, so it can't be
-        # reliably parsed for an exact package name match here. Also,
-        # slackpkg install already no-ops safely on a pattern that
-        # matches nothing ("No packages match the pattern for
-        # install."), and this script's callers install packages one
-        # at a time in a loop, so a bad name can't break the rest of
-        # the batch. There is therefore no need to filter the list -
-        # just warn about names that look potentially missing.
-        for pkg in ${packages}; do
-            if DIALOG=off slackpkg search "${pkg}" 2>/dev/null | \
-                grep -q "No package name matches the pattern."; then
-                printf "${YELLOW}WARN: ${RED}%s${YELLOW} may not be found in repos${RESET}\n" "${pkg}" >&2
-            fi
-        done
+        # No pre-install search/validation here by design:
+        #  1. slackpkg search calls done here would run inside the
+        #     same command substitution as the real install, ahead of
+        #     any lock clearing done by the caller - a search that
+        #     exits abnormally (e.g. SIGPIPE'd by a `grep -q` match)
+        #     can leave slackpkg's own lock file behind and block the
+        #     install that immediately follows.
+        #  2. slackpkg's search output format is not reliable to
+        #     parse: it differs between plain slackpkg and slackpkg+
+        #     (multi-repo) installs.
+        #  3. That unreliability is worse once third-party repos are
+        #     layered in via slackpkg+ - official and third-party
+        #     listings don't share one consistent format to match
+        #     against.
+        #  4. slackpkg install already no-ops safely on a pattern
+        #     that matches nothing ("No packages match the pattern
+        #     for install."), so this step was never required for
+        #     safety in the first place.
+        # The package list is passed straight through unchanged.
         valid="${packages}"
         ;;
     *)
