@@ -179,39 +179,55 @@ RUN rm -f /var/lock/slackpkg.*; \
         atk \
         mtr \
         orc \
+        sbc \
+        srt \
         tar \
+        zix \
         zsh \
         bash \
         cups \
+        dbus \
         faac \
+        fftw \
         fish \
         flac \
         gzip \
         lame \
         less \
+        lilv \
+        llvm \
         lsof \
         mesa \
         opus \
         sdl2 \
+        serd \
+        sord \
         sudo \
+        suil \
         time \
         tree \
         x264 \
         x265 \
         aften \
+        bluez \
         bzip2 \
         cairo \
         dav1d \
         faad2 \
         gnupg \
+        icu4c \
+        Imath \
+        lcms2 \
         libva \
         pango \
         pcre2 \
         rsync \
         speex \
         which \
+        a52dec \
         dialog \
         ffmpeg \
+        gnutls \
         libaio \
         libass \
         libcap \
@@ -224,53 +240,23 @@ RUN rm -f /var/lock/slackpkg.*; \
         libxcb \
         man-db \
         mpg123 \
-        Imath \
-        a52dec \
-        bluez \
-        chromaprint \
-        dbus \
-        fftw \
-        fluidsynth \
-        gnutls \
-        graphene \
-        graphite2 \
-        icu4c \
-        lcms2 \
-        libcdio \
-        libcdio-paranoia \
-        libdisplay-info \
-        liblrdf \
-        libmodplug \
-        libnice \
-        libpciaccess \
-        libsamplerate \
-        libunibreak \
-        libvisual \
-        lilv \
-        llvm \
         nettle \
-        openexr \
         pixman \
-        qrencode \
-        sbc \
-        serd \
-        sord \
-        soundtouch \
-        sratom \
-        srt \
-        suil \
-        zix \
-        zxing-cpp \
         shadow \
         sqlite \
+        sratom \
         taglib \
         fribidi \
         infozip \
+        libcdio \
         libexif \
+        liblrdf \
+        libnice \
         librsvg \
         libtiff \
         libxml2 \
         ncurses \
+        openexr \
         openssh \
         python3 \
         tcpdump \
@@ -278,6 +264,7 @@ RUN rm -f /var/lock/slackpkg.*; \
         wayland \
         alsa-lib \
         freetype \
+        graphene \
         harfbuzz \
         hostname \
         iproute2 \
@@ -291,49 +278,62 @@ RUN rm -f /var/lock/slackpkg.*; \
         opusfile \
         pinentry \
         pipewire \
+        qrencode \
         xcb-util \
         xvidcore \
         dbus-glib \
         diffutils \
         findutils \
+        graphite2 \
         gstreamer \
         json-glib \
         libgcrypt \
         libnotify \
         libsecret \
         libunwind \
+        libvisual \
         libvorbis \
         procps-ng \
         xorgproto \
+        zxing-cpp \
+        fluidsynth \
         fontconfig \
         gdk-pixbuf \
         libfdk-aac \
+        libmodplug \
         libplacebo \
         libsndfile \
+        soundtouch \
         util-linux \
         vulkan-sdk \
+        chromaprint \
+        libunibreak \
         wireplumber \
         xcb-util-wm \
         xisxwayland \
         alsa-plugins \
         at-spi2-core \
         libgpg-error \
+        libpciaccess \
         libunistring \
         libxkbcommon \
         opencore-amr \
         xcb-util-xrm \
         libjpeg-turbo \
+        libsamplerate \
         pipewire-jack \
         wayland-utils \
         glibc-zoneinfo \
         xcb-util-image \
         bash-completion \
         gst-plugins-bad \
+        libdisplay-info \
         xcb-util-cursor \
         xcb-util-errors \
         gst-plugins-base \
         gst-plugins-good \
         gst-plugins-ugly \
+        libcdio-paranoia \
         shared-mime-info \
         xcb-util-keysyms \
         xkeyboard-config \
