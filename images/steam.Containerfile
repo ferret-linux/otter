@@ -30,6 +30,10 @@ RUN sed -i \
         -e 's/^PRETTY_NAME=.*/PRETTY_NAME="SteamOS OCI (cachyOSv3)"/' \
         /usr/lib/os-release
 
+# Disable pacman's download sandbox for Podman container-build compatibility.
+RUN sed -i '/^[[:space:]]*DisableSandbox[[:space:]]*$/d' /etc/pacman.conf \
+    && sed -i '0,/^\[options\]/s/^\[options\]/[options]\nDisableSandbox/' /etc/pacman.conf
+
 # CachyOS provides its own optimized repositories alongside the standard Arch
 # repositories, including multilib. The gaming stack used by this image is
 # sourced from these repositories, so Chaotic-AUR is intentionally not enabled
