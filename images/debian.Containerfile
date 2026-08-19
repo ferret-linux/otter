@@ -91,6 +91,7 @@ RUN apt-get update && \
         libegl-mesa0 \
         libglx-mesa0 \
         ncurses-base \
+        libvte-common \
         pipewire-pulse \
         openssh-client \
         bash-completion \
