@@ -101,6 +101,46 @@ RUN pacman -Sy --noconfirm --needed archlinux-keyring && \
         /var/log/* \
         /var/tmp/*
 
+# Install a curated set of commonly expected BlackArch tools,
+# balanced across recon, web, cracking, wireless, sniffing/MITM,
+# and reversing/binary/forensics categories.
+RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman -- \
+        ffuf \
+        john \
+        nmap \
+        bully \
+        hydra \
+        nikto \
+        crunch \
+        dsniff \
+        medusa \
+        reaver \
+        sqlmap \
+        tshark \
+        wifite \
+        wpscan \
+        binwalk \
+        dnsenum \
+        hashcat \
+        masscan \
+        radare2 \
+        whatweb \
+        checksec \
+        ettercap \
+        exiftool \
+        foremost \
+        gobuster \
+        hcxtools \
+        bettercap \
+        mitmproxy \
+        aircrack-ng \
+        theharvester) && \
+    pacman -Scc --noconfirm && \
+    rm -rf \
+        /var/cache/pacman/pkg/* \
+        /var/log/* \
+        /var/tmp/*
+
 # Timezone default
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
     && echo "UTC" > /etc/timezone
