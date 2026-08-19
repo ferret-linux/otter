@@ -23,6 +23,7 @@ RUN sed -i "s|NoExtract.*||g" /etc/pacman.conf \
     && sed -i '/^\s*#\?\s*ILoveCandy/d; /^\s*#\?\s*Color/d' /etc/pacman.conf \
     && sed -i '0,/^\[options\]/s/^\[options\]/\[options\]\nColor\nILoveCandy/' /etc/pacman.conf
 
+# Set the container OS identity to SteamOS while retaining Arch compatibility.
 RUN rm -f /etc/os-release /usr/lib/os-release \
     && touch /usr/lib/os-release \
     && ln -s /usr/lib/os-release /etc/os-release \
@@ -32,6 +33,13 @@ PRETTY_NAME="SteamOS OCI (otter)"
 ID=steamos
 ID_LIKE=arch
 EOF
+
+# Enable the multilib repository for Steam, gaming libraries, and 32-bit dependencies.
+RUN if grep -q '^\s*\[multilib\]' /etc/pacman.conf; then \
+        sed -i '/^\s*\[multilib\]/,/^\s*\[/ s/^\s*#\s*//' /etc/pacman.conf; \
+    else \
+        printf '\n[multilib]\nInclude = /etc/pacman.d/mirrorlist\n' >> /etc/pacman.conf; \
+    fi
 
 # Upgrade all packages, install the complete package set, perform
 # pacman cleanup, and remove filesystem caches before this layer
