@@ -15,7 +15,7 @@ COPY images/scripts/setup-common.sh /tmp/setup-common.sh
 RUN sh /tmp/setup-common.sh
 
 # Add otter image identifiers
-RUN touch /usr/lib/otter/container.archlinux
+RUN touch /usr/lib/otter/container.steam
 
 # Configure pacman
 RUN sed -i "s|NoExtract.*||g" /etc/pacman.conf \
