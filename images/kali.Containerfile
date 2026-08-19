@@ -116,6 +116,23 @@ RUN apt-get update && \
     /var/log/* \
     /var/tmp/*
 
+# Install Kali's own curated tool tiers: core system essentials,
+# the top-10 most commonly expected pentesting tools, and the
+# headless (GUI-free) default toolset.
+RUN apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr apt -- \
+        kali-linux-core \
+        kali-tools-top10 \
+        kali-linux-headless) && \
+    apt-get update && \
+    apt-get upgrade -y && \
+    apt-get autoremove -y && \
+    apt-get autoclean && \
+    apt-get clean && \
+    rm -rf \
+        /var/lib/apt/lists/* \
+        /var/log/* \
+        /var/tmp/*
+
 # Locale setup
 RUN sed -i "s|# en_US.UTF-8|en_US.UTF-8|g" /etc/locale.gen \
     && locale-gen \
