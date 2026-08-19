@@ -23,6 +23,14 @@ RUN sed -i "s|NoExtract.*||g" /etc/pacman.conf \
     && sed -i '/^\s*#\?\s*ILoveCandy/d; /^\s*#\?\s*Color/d' /etc/pacman.conf \
     && sed -i '0,/^\[options\]/s/^\[options\]/\[options\]\nColor\nILoveCandy/' /etc/pacman.conf
 
+RUN rm -f /etc/os-release /usr/lib/os-release \
+    && cat > /etc/os-release <<'EOF'
+NAME="SteamOS"
+PRETTY_NAME="SteamOS OCI (otter)"
+ID=steamos
+ID_LIKE=arch
+EOF
+
 # Upgrade all packages, install the complete package set, perform
 # pacman cleanup, and remove filesystem caches before this layer
 # is committed.
