@@ -325,6 +325,23 @@ RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman --
         /var/log/* \
         /var/tmp/*
 
+# Install Proton compatibility tools and Proton utilities.
+# Core Wine, Vulkan, DXVK, VKD3D, audio, fonts, and 32-bit dependencies
+# are already installed above.
+RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman -- \
+        proton \
+        protonplus \
+        protontricks \
+        umu-launcher \
+        proton-cachyos-slr) && \
+    pacman -Syy && \
+    pacman -Syu && \
+    pacman -Scc && \
+    rm -rf \
+        /var/cache/pacman/pkg/* \
+        /var/log/* \
+        /var/tmp/*
+
 # Timezone default
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
     && echo "UTC" > /etc/timezone
