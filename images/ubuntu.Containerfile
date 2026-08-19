@@ -79,8 +79,10 @@ RUN apt-get update && \
         libnss-mdns \
         iputils-ping \
         libegl-mesa0 \
+        libegl1-mesa \
         libglx-mesa0 \
         ncurses-base \
+        libvte-common \
         openssh-client \
         bash-completion \
         libgl1-mesa-glx \
