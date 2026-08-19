@@ -108,6 +108,15 @@
     "enabled": true
   },
   {
+    "image": "docker.io/library/archlinux:latest",
+    "containerfile": "steam.Containerfile",
+    "name": "steamos-otr",
+    "tag": "latest",
+    "display_name": "steamos",
+    "arches": ["amd64"],
+    "enabled": true
+  },
+  {
     "image": "docker.io/blackarchlinux/blackarch:latest",
     "containerfile": "blackarch.Containerfile",
     "name": "blackarch-otr",
