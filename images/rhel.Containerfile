@@ -90,7 +90,6 @@ RUN dnf install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-rele
         bash-completion \
         openssh-clients \
         dnf-plugins-core \
-        mscore-fonts-all \
         mesa-dri-drivers \
         util-linux-script \
         glibc-all-langpacks \
