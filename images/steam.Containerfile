@@ -342,6 +342,22 @@ RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman --
         /var/log/* \
         /var/tmp/*
 
+# Install common gaming launchers, emulation, and Steam device support.
+RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman -- \
+        steam \
+        lutris \
+        bottles \
+        retroarch \
+        steam-devices \
+        heroic-games-launcher) && \
+    pacman -Syy && \
+    pacman -Syu && \
+    pacman -Scc && \
+    rm -rf \
+        /var/cache/pacman/pkg/* \
+        /var/log/* \
+        /var/tmp/*
+
 # Timezone default
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
     && echo "UTC" > /etc/timezone
