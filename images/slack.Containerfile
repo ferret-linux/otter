@@ -177,6 +177,7 @@ RUN rm -f /var/lock/slackpkg.*; \
         bc \
         xz \
         atk \
+        glu \
         mtr \
         orc \
         sbc \
@@ -191,6 +192,7 @@ RUN rm -f /var/lock/slackpkg.*; \
         fftw \
         fish \
         flac \
+        glew \
         gzip \
         lame \
         less \
@@ -214,6 +216,7 @@ RUN rm -f /var/lock/slackpkg.*; \
         cairo \
         dav1d \
         faad2 \
+        glibc \
         gnupg \
         icu4c \
         Imath \
@@ -224,6 +227,7 @@ RUN rm -f /var/lock/slackpkg.*; \
         rsync \
         speex \
         which \
+        xauth \
         a52dec \
         dialog \
         ffmpeg \
@@ -237,6 +241,8 @@ RUN rm -f /var/lock/slackpkg.*; \
         libgcc \
         libogg \
         libvpx \
+        libX11 \
+        libXau \
         libxcb \
         man-db \
         mpg123 \
@@ -248,12 +254,14 @@ RUN rm -f /var/lock/slackpkg.*; \
         taglib \
         fribidi \
         infozip \
+        iputils \
         libcdio \
         libexif \
         liblrdf \
         libnice \
         librsvg \
         libtiff \
+        libXext \
         libxml2 \
         ncurses \
         openexr \
@@ -274,6 +282,8 @@ RUN rm -f /var/lock/slackpkg.*; \
         libglvnd \
         libgudev \
         libinput \
+        libvte-2 \
+        libXdmcp \
         nss-mdns \
         opusfile \
         pinentry \
@@ -293,6 +303,7 @@ RUN rm -f /var/lock/slackpkg.*; \
         libunwind \
         libvisual \
         libvorbis \
+        libXfixes \
         procps-ng \
         xorgproto \
         zxing-cpp \
@@ -303,11 +314,17 @@ RUN rm -f /var/lock/slackpkg.*; \
         libmodplug \
         libplacebo \
         libsndfile \
+        libxcb-glx \
+        libXdamage \
+        libXxf86vm \
         soundtouch \
         util-linux \
         vulkan-sdk \
         chromaprint \
         libunibreak \
+        libxcb-dri2 \
+        libxcb-dri3 \
+        libxcb-sync \
         wireplumber \
         xcb-util-wm \
         xisxwayland \
@@ -316,14 +333,20 @@ RUN rm -f /var/lock/slackpkg.*; \
         libgpg-error \
         libpciaccess \
         libunistring \
+        libxcb-randr \
+        libxcb-shape \
         libxkbcommon \
+        libxshmfence \
         opencore-amr \
         xcb-util-xrm \
         libjpeg-turbo \
         libsamplerate \
+        libxcb-render \
+        libxcb-xfixes \
         pipewire-jack \
         wayland-utils \
         glibc-zoneinfo \
+        libxcb-present \
         xcb-util-image \
         bash-completion \
         gst-plugins-bad \
