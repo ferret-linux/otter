@@ -17,44 +17,29 @@ RUN sh /tmp/setup-common.sh
 # Add otter image identifiers
 RUN touch /usr/lib/otter/container.steamos
 
-# Configure pacman
-RUN sed -i "s|NoExtract.*||g" /etc/pacman.conf \
-    && sed -i "s|NoProgressBar.*||g" /etc/pacman.conf \
-    && sed -i '/^\s*#\?\s*ILoveCandy/d; /^\s*#\?\s*Color/d' /etc/pacman.conf \
-    && sed -i '0,/^\[options\]/s/^\[options\]/\[options\]\nColor\nILoveCandy/' /etc/pacman.conf
+# CachyOS ships with a preconfigured pacman setup, including colored output,
+# ILoveCandy, signature verification, package extraction defaults, and progress
+# bar behavior. Keep the upstream configuration unchanged instead of overriding
+# or duplicating it here.
 
-# Set the container OS identity to SteamOS while retaining Arch compatibility.
-RUN rm -f /etc/os-release /usr/lib/os-release \
-    && touch /usr/lib/os-release \
-    && ln -s /usr/lib/os-release /etc/os-release \
-    && cat > /usr/lib/os-release <<'EOF'
-NAME="SteamOS"
-PRETTY_NAME="SteamOS OCI (otter)"
-ID=steamos
-ID_LIKE=arch
-EOF
+# Identify the container as SteamOS while preserving the complete upstream
+# CachyOS os-release metadata, including VERSION, BUILD_ID, HOME_URL, and
+# other compatibility fields used by applications and system tooling.
+RUN sed -i \
+        -e 's/^NAME=.*/NAME="SteamOS"/' \
+        -e 's/^PRETTY_NAME=.*/PRETTY_NAME="SteamOS OCI (cachyOSv3)"/' \
+        /usr/lib/os-release
 
-# Enable the multilib repository for Steam, gaming libraries, and 32-bit dependencies.
-RUN if grep -q '^\s*\[multilib\]' /etc/pacman.conf; then \
-        sed -i '/^\s*\[multilib\]/,/^\s*\[/ s/^\s*#\s*//' /etc/pacman.conf; \
-    else \
-        printf '\n[multilib]\nInclude = /etc/pacman.d/mirrorlist\n' >> /etc/pacman.conf; \
-    fi
-
-# Enable the Chaotic-AUR repository.
-RUN pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com \
-    && pacman-key --lsign-key 3056513887B78AEB \
-    && pacman -U --noconfirm \
-        'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
-        'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' \
-    && printf '\n[chaotic-aur]\nInclude = /etc/pacman.d/chaotic-mirrorlist\n' >> /etc/pacman.conf
+# CachyOS provides its own optimized repositories alongside the standard Arch
+# repositories, including multilib. The gaming stack used by this image is
+# sourced from these repositories, so Chaotic-AUR is intentionally not enabled
+# to avoid introducing an additional third-party package repository.
 
 # Upgrade all packages, install the complete package set, perform
 # pacman cleanup, and remove filesystem caches before this layer
 # is committed.
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
-RUN pacman -Sy --noconfirm --needed archlinux-keyring && \
-    pacman -Syyu --noconfirm --needed && \
+RUN pacman -Syyu --noconfirm --needed && \
     pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman -- \
         bc \
         zsh \
@@ -313,9 +298,9 @@ RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman --
 # are already installed above.
 RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman -- \
         wine \
-        wine-meta \
         wine-mono \
-        wine-gecko) && \
+        wine-gecko \
+        wine-cachyos-opt) && \
     pacman -Syy && \
     pacman -Syu && \
     pacman -Scc && \
