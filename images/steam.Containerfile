@@ -242,6 +242,73 @@ RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman --
         /var/log/* \
         /var/tmp/*
 
+# Install common native gaming infrastructure and runtime helpers for
+# Steam, Wine, Proton, Heroic, Lutris, and other game launchers.
+# 32-bit gaming libraries are installed separately above.
+RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman -- \
+        dxvk \
+        p7zip \
+        seatd \
+        unrar \
+        vkd3d \
+        hwdata \
+        openal \
+        glslang \
+        shaderc \
+        gamemode \
+        libdecor \
+        libinput \
+        mangohud \
+        pciutils \
+        usbutils \
+        vkbasalt \
+        gamescope \
+        gst-libav \
+        wine-mono \
+        xorg-xset \
+        cabextract \
+        fluidsynth \
+        mesa-demos \
+        mesa-utils \
+        noto-fonts \
+        ttf-dejavu \
+        wine-gecko \
+        winetricks \
+        xorg-xprop \
+        libva-utils \
+        spirv-tools \
+        xcb-util-wm \
+        xorg-xgamma \
+        xorg-xinput \
+        xorg-xrandr \
+        vulkan-tools \
+        pipewire-alsa \
+        xorg-xsetroot \
+        xorg-xwayland \
+        gst-plugin-gtk \
+        noto-fonts-cjk \
+        ttf-liberation \
+        vulkan-headers \
+        xcb-util-cursor \
+        xcb-util-errors \
+        noto-fonts-emoji \
+        noto-fonts-extra \
+        xcb-util-keysyms \
+        xorg-server-xvfb \
+        vulkan-icd-loader \
+        wayland-protocols \
+        gst-plugin-pipewire \
+        xcb-util-renderutil \
+        power-profiles-daemon \
+        xdg-desktop-portal-gtk) && \
+    pacman -Syy && \
+    pacman -Syu && \
+    pacman -Scc && \
+    rm -rf \
+        /var/cache/pacman/pkg/* \
+        /var/log/* \
+        /var/tmp/*
+
 # Timezone default
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
     && echo "UTC" > /etc/timezone
