@@ -155,6 +155,7 @@ RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman --
         lib32-libxi \
         lib32-pcre2 \
         lib32-vkd3d \
+        lib32-glib2 \
         lib32-brotli \
         lib32-giflib \
         lib32-gnutls \
@@ -184,6 +185,8 @@ RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman --
         lib32-p11-kit \
         lib32-systemd \
         lib32-wayland \
+        lib32-libcups \
+        lib32-libssh2 \
         lib32-alsa-lib \
         lib32-gcc-libs \
         lib32-libdecor \
@@ -193,6 +196,8 @@ RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman --
         lib32-libpulse \
         lib32-libtasn1 \
         lib32-pipewire \
+        lib32-gamemode \
+        lib32-mangohud \
         lib32-freetype2 \
         lib32-libgcrypt \
         lib32-libtheora \
@@ -202,6 +207,7 @@ RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman --
         lib32-libxfixes \
         lib32-libxrandr \
         lib32-llvm-libs \
+        lib32-libngtcp2 \
         lib32-fontconfig \
         lib32-jpeg-turbo \
         lib32-libasyncns \
@@ -209,6 +215,8 @@ RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman --
         lib32-libxdamage \
         lib32-libxrender \
         lib32-lm_sensors \
+        lib32-libnghttp2 \
+        lib32-libnghttp3 \
         lib32-libxinerama \
         lib32-spirv-tools \
         lib32-alsa-plugins \
@@ -216,10 +224,13 @@ RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman --
         lib32-libpciaccess \
         lib32-libxshmfence \
         lib32-vulkan-intel \
+        lib32-libxkbcommon \
         lib32-libxcomposite \
         lib32-vulkan-radeon \
+        lib32-libdisplay-info \
         lib32-libxcrypt-compat \
         lib32-xcb-util-keysyms \
+        lib32-libxkbcommon-x11 \
         lib32-vulkan-icd-loader \
         lib32-libsysprof-capture \
         lib32-vulkan-mesa-implicit-layers) && \
