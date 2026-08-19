@@ -15,7 +15,7 @@ COPY images/scripts/setup-common.sh /tmp/setup-common.sh
 RUN sh /tmp/setup-common.sh
 
 # Add otter image identifiers
-RUN touch /usr/lib/otter/container.steam
+RUN touch /usr/lib/otter/container.steamos
 
 # Configure pacman
 RUN sed -i "s|NoExtract.*||g" /etc/pacman.conf \
@@ -111,6 +111,67 @@ RUN pacman -Sy --noconfirm --needed archlinux-keyring && \
         gst-plugins-good \
         gst-plugins-ugly \
         xdg-desktop-portal) && \
+    pacman -Syy && \
+    pacman -Syu && \
+    pacman -Scc && \
+    rm -rf \
+        /var/cache/pacman/pkg/* \
+        /var/log/* \
+        /var/tmp/*
+
+# Install common 32-bit gaming dependencies from multilib for Steam, Wine, Proton, and games.
+RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman -- \
+        lib32-xz \
+        lib32-icu \
+        lib32-lz4 \
+        lib32-nss \
+        lib32-ogg \
+        lib32-curl \
+        lib32-dbus \
+        lib32-flac \
+        lib32-mesa \
+        lib32-nspr \
+        lib32-opus \
+        lib32-sdl2 \
+        lib32-sdl3 \
+        lib32-zlib \
+        lib32-bzip2 \
+        lib32-expat \
+        lib32-glibc \
+        lib32-libxi \
+        lib32-giflib \
+        lib32-gnutls \
+        lib32-libdrm \
+        lib32-libogg \
+        lib32-libpng \
+        lib32-libx11 \
+        lib32-openal \
+        lib32-libwebp \
+        lib32-libxext \
+        lib32-libxml2 \
+        lib32-systemd \
+        lib32-wayland \
+        lib32-alsa-lib \
+        lib32-gcc-libs \
+        lib32-libdecor \
+        lib32-libglvnd \
+        lib32-libpulse \
+        lib32-pipewire \
+        lib32-freetype2 \
+        lib32-libtheora \
+        lib32-libvorbis \
+        lib32-libxfixes \
+        lib32-fontconfig \
+        lib32-jpeg-turbo \
+        lib32-libasyncns \
+        lib32-libxcursor \
+        lib32-libxrender \
+        lib32-libxinerama \
+        lib32-alsa-plugins \
+        lib32-libpciaccess \
+        lib32-vulkan-intel \
+        lib32-vulkan-radeon \
+        lib32-vulkan-icd-loader) && \
     pacman -Syy && \
     pacman -Syu && \
     pacman -Scc && \
