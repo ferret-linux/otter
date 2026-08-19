@@ -208,9 +208,7 @@ RUN rm -f /var/lock/slackpkg.*; \
         pango \
         pcre2 \
         rsync \
-        rtkit \
         speex \
-        unzip \
         which \
         dialog \
         ffmpeg \
@@ -229,7 +227,6 @@ RUN rm -f /var/lock/slackpkg.*; \
         shadow \
         sqlite \
         taglib \
-        tzdata \
         fribidi \
         infozip \
         libexif \
@@ -277,7 +274,7 @@ RUN rm -f /var/lock/slackpkg.*; \
         libplacebo \
         libsndfile \
         util-linux \
-        at-spi2-atk \
+        vulkan-sdk \
         wireplumber \
         xcb-util-wm \
         xisxwayland \
@@ -287,12 +284,11 @@ RUN rm -f /var/lock/slackpkg.*; \
         libunistring \
         libxkbcommon \
         opencore-amr \
-        vulkan-tools \
         xcb-util-xrm \
         libjpeg-turbo \
         pipewire-jack \
-        vulkan-loader \
         wayland-utils \
+        glibc-zoneinfo \
         xcb-util-image \
         bash-completion \
         gst-plugins-bad \
@@ -301,7 +297,6 @@ RUN rm -f /var/lock/slackpkg.*; \
         gst-plugins-base \
         gst-plugins-good \
         gst-plugins-ugly \
-        libxkbcommon-x11 \
         shared-mime-info \
         xcb-util-keysyms \
         xkeyboard-config \
@@ -310,7 +305,6 @@ RUN rm -f /var/lock/slackpkg.*; \
         hicolor-icon-theme \
         xdg-desktop-portal \
         xcb-util-renderutil \
-        gst-plugins-bad-free \
         xorg-server-xwayland) && \
     rm -rf -- /var/cache/packages/*
 
