@@ -108,7 +108,7 @@
     "enabled": true
   },
   {
-    "image": "docker.io/library/archlinux:latest",
+    "image": "docker.io/cachyos/cachyos-v3:latest",
     "containerfile": "steam.Containerfile",
     "name": "steamos-otr",
     "tag": "latest",
