@@ -58,6 +58,7 @@ RUN apk update && \
         xauth \
         ffmpeg \
         libcap \
+        procps \
         shadow \
         tzdata \
         umount \
