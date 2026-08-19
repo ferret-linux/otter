@@ -83,6 +83,7 @@ RUN pacman -Sy --noconfirm --needed artix-keyring && \
         traceroute \
         util-linux \
         vte-common \
+        vpl-gpu-rt \
         xorg-xauth \
         vulkan-intel \
         pipewire-jack \
