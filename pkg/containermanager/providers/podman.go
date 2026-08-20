@@ -111,6 +111,7 @@ func (p *Podman) Create(
 		filepath.Join(scriptsDir, "otter-export"),
 		filepath.Join(scriptsDir, "otter-host-exec"),
 		filepath.Join(scriptsDir, "otter"),
+		filepath.Join(scriptsDir, "initialization-scripts"),
 	)
 
 	_, err = p.run(ctx, cmd, runOptions{})
@@ -131,6 +132,7 @@ func (p *Podman) makeCreateCommand(
 	otterExportPath string,
 	otterHostexecPath string,
 	otterPath string,
+	initScriptsPath string,
 ) []string {
 	containerName := opts.ContainerName
 	containerImage := opts.ContainerImage
@@ -470,6 +472,11 @@ func (p *Podman) makeCreateCommand(
 	// We set the entrypoint _before_ running the container image so that
 	// we can override any user provided entrypoint if need be
 	options = append(options, "--volume", fmt.Sprintf("%s:%s", otterInitPath, "/usr/lib/otter/scripts/otter-init:ro"))
+	options = append(
+		options,
+		"--volume",
+		fmt.Sprintf("%s:%s", initScriptsPath, "/usr/lib/otter/scripts/initialization-scripts:ro"),
+	)
 	options = append(options, "--entrypoint", "/usr/lib/otter/scripts/otter-init")
 
 	// Build the rest of the arguments for otter-init
