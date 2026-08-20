@@ -24,6 +24,18 @@ RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf 2>/dev/null || \
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 
+# Enable RPM Fusion Free/Nonfree repositories.
+RUN dnf install -y \
+        "https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm" \
+        "https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm" && \
+    dnf upgrade -y && \
+    dnf autoremove -y && \
+    dnf clean all && \
+    rm -rf \
+        /var/cache/dnf/* \
+        /var/log/* \
+        /var/tmp/*
+
 # Install EPEL, upgrade the system, install the requested packages,
 # and clean DNF metadata/cache in the same layer.
 RUN dnf install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm" && \
@@ -45,33 +57,31 @@ RUN dnf install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-rele
         time \
         tree \
         wget \
-        x264 \
-        x265 \
-        lame \
-        opus \
         bzip2 \
         rsync \
         unzip \
         which \
         whois \
         words \
+        ffmpeg \
         gnupg2 \
         man-db \
         passwd \
         tzdata \
         vulkan \
-        libvpx \
+        libaacs \
+        fdk-aac \
         iproute \
         iputils \
         ncurses \
         python3 \
         tcpdump \
         systemd \
+        pipewire \
         hostname \
         keyutils \
         nss-mdns \
         pinentry \
-        pipewire \
         diffutils \
         findutils \
         krb5-libs \
@@ -79,23 +89,37 @@ RUN dnf install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-rele
         procps-ng \
         traceroute \
         util-linux \
-        gstreamer1 \
+        wget2-wget \
+        ffmpeg-libs \
         vte-profile \
-        wireplumber \
         glibc-common \
         gnupg2-smime \
         shadow-utils \
+        pipewire-alsa \
+        mesa-freeworld \
         cracklib-dicts \
         xorg-x11-xauth \
         bash-completion \
         openssh-clients \
         dnf-plugins-core \
         mesa-dri-drivers \
+        libheif-freeworld \
         util-linux-script \
+        pipewire-gstreamer \
+        pipewire-pulseaudio \
+        pipewire-codec-aptx \
         glibc-all-langpacks \
         glibc-locale-source \
-        mesa-vulkan-drivers \
-        pipewire-pulseaudio) && \
+        libavcodec-freeworld \
+        xpra-codecs-freeworld \
+        gstreamer1-plugins-base \
+        gstreamer1-plugins-good \
+        gstreamer1-plugins-ugly \
+        xorg-x11-server-Xwayland \
+        mesa-va-drivers-freeworld \
+        mesa-vulkan-drivers-freeworld \
+        gstreamer1-plugins-bad-freeworld \
+        pipewire-jack-audio-connection-kit); \
     dnf upgrade -y && \
     dnf autoremove -y && \
     dnf clean all && \
