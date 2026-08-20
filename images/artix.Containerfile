@@ -52,6 +52,7 @@ RUN pacman -Sy --noconfirm --needed artix-keyring && \
         tree \
         wget \
         base \
+        libva \
         glibc \
         gnupg \
         rsync \
@@ -68,6 +69,7 @@ RUN pacman -Sy --noconfirm --needed artix-keyring && \
         ncurses \
         openssh \
         tcpdump \
+        wayland \
         pipewire \
         fakeroot \
         keyutils \
@@ -86,6 +88,8 @@ RUN pacman -Sy --noconfirm --needed artix-keyring && \
         vpl-gpu-rt \
         xorg-xauth \
         vulkan-intel \
+        xorg-xwayland \
+        pipewire-alsa \
         pipewire-jack \
         xdg-user-dirs \
         vulkan-radeon \
@@ -96,7 +100,8 @@ RUN pacman -Sy --noconfirm --needed artix-keyring && \
         gst-plugins-base \
         gst-plugins-good \
         gst-plugins-ugly \
-        xdg-desktop-portal) && \
+        xdg-desktop-portal \
+        gst-plugin-pipewire) && \
     pacman -Syy && \
     pacman -Syu && \
     pacman -Scc && \
