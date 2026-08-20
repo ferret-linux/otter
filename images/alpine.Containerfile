@@ -60,10 +60,14 @@ RUN apk update && \
         openrc \
         gcompat \
         findmnt \
+        mesa-gl \
         iputils \
         ncurses \
         python3 \
         tcpdump \
+        wayland \
+        alsa-lib \
+        mesa-egl \
         pipewire \
         iproute2 \
         keyutils \
@@ -74,6 +78,7 @@ RUN apk update && \
         diffutils \
         findutils \
         net-tools \
+        fontconfig \
         libc-utils \
         vpl-gpu-rt \
         util-linux \
@@ -86,12 +91,15 @@ RUN apk update && \
         bash-completion \
         gst-plugins-bad \
         util-linux-misc \
+        shared-mime-info \
         gst-plugins-base \
         gst-plugins-ugly \
         gst-plugins-good \
         ncurses-terminfo \
         util-linux-login \
         xdg-desktop-portal \
+        hicolor-icon-theme \
+        desktop-file-utils \
         openssh-client-default) && \
     apk update && \
     apk upgrade && \
