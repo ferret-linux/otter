@@ -65,6 +65,8 @@ RUN zypper -n install --auto-agree-with-licenses -y \
     systemd \
     python3 \
     libvpx2 \
+    wayland \
+    libdrm2 \
     Mesa-dri \
     hostname \
     keyutils \
@@ -73,6 +75,7 @@ RUN zypper -n install --auto-agree-with-licenses -y \
     timezone \
     pipewire \
     libopus0 \
+    xwayland \
     diffutils \
     findutils \
     man-pages \
@@ -87,13 +90,18 @@ RUN zypper -n install --auto-agree-with-licenses -y \
     libx264-164 \
     libx265-215 \
     glibc-locale \
+    pipewire-jack \
+    pipewire-alsa \
     glibc-i18ndata \
-    Mesa-dri-devel \
+    libwayland-egl1 \
     bash-completion \
     libvulkan_intel \
     openssh-clients \
     libvulkan_radeon \
     glibc-locale-base \
+    xdg-desktop-portal \
+    libwayland-server0 \
+    libwayland-client0 \
     system-group-wheel \
     util-linux-systemd \
     intel-media-driver \
