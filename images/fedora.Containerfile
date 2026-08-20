@@ -23,6 +23,18 @@ RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf 2>/dev/null || true
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 
+# Enable RPM Fusion Free and Nonfree repositories.
+RUN dnf install -y \
+        https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
+        https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
+    dnf upgrade -y && \
+    dnf autoremove -y && \
+    dnf clean all && \
+    rm -rf \
+        /var/cache/dnf/* \
+        /var/log/* \
+        /var/tmp/*
+
 # Configure DNF, enable OpenH264, refresh the GPG keyring,
 # upgrade the system, install the requested packages, and clean
 # DNF metadata/cache in the same layer.
@@ -61,17 +73,20 @@ RUN dnf install dnf5-plugins -y --refresh && \
         which \
         whois \
         words \
+        ffmpeg \
         gnupg2 \
         man-db \
         passwd \
         tzdata \
         vulkan \
+        fdk-aac \
         iproute \
         iputils \
         ncurses \
         python3 \
         tcpdump \
         systemd \
+        pipewire \
         hostname \
         keyutils \
         nss-mdns \
@@ -84,20 +99,35 @@ RUN dnf install dnf5-plugins -y --refresh && \
         traceroute \
         util-linux \
         wget2-wget \
+        ffmpeg-libs \
         vte-profile \
         glibc-common \
         gnupg2-smime \
         shadow-utils \
+        pipewire-alsa \
+        mesa-freeworld \
         cracklib-dicts \
         xorg-x11-xauth \
         bash-completion \
         openssh-clients \
         dnf-plugins-core \
         mesa-dri-drivers \
+        libheif-freeworld \
         util-linux-script \
+        pipewire-gstreamer \
+        pipewire-pulseaudio \
+        pipewire-codec-aptx \
         glibc-all-langpacks \
         glibc-locale-source \
-        mesa-vulkan-drivers); \
+        libavcodec-freeworld \
+        xpra-codecs-freeworld \
+        gstreamer1-plugins-base \
+        gstreamer1-plugins-good \
+        gstreamer1-plugins-ugly \
+        mesa-va-drivers-freeworld \
+        mesa-vulkan-drivers-freeworld \
+        gstreamer1-plugins-bad-freeworld \
+        pipewire-jack-audio-connection-kit); \
     dnf upgrade -y; \
     dnf autoremove -y; \
     dnf clean all \
