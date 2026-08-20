@@ -34,70 +34,70 @@ RUN emerge-webrsync && \
     emerge --ask=n --autounmask-continue --quiet-build --getbinpkg -uDN @world && \
     emerge --ask=n --autounmask-continue --noreplace --quiet-build --getbinpkg --keep-going $(sh /tmp/pkg-validator.sh --pkgmgr emerge -- \
         sys-devel/bc \
+        app-arch/pigz \
         app-text/tree \
         net-misc/curl \
         net-misc/wget \
-        app-arch/pigz \
         sys-apps/less \
+        app-admin/sudo \
         app-arch/unrar \
         app-shells/zsh \
-        app-admin/sudo \
         x11-apps/xauth \
-        app-shells/fish \
+        x11-libs/libXi \
         app-crypt/gnupg \
+        app-shells/bash \
+        app-shells/fish \
         dev-lang/python \
-        media-libs/x264 \
-        media-libs/x265 \
-        media-libs/opus \
         media-libs/flac \
         media-libs/mesa \
-        app-shells/bash \
-        sys-apps/shadow \
+        media-libs/opus \
+        media-libs/tiff \
+        media-libs/x264 \
+        media-libs/x265 \
         sys-apps/openrc \
+        sys-apps/shadow \
+        x11-libs/libX11 \
+        x11-libs/libxcb \
+        media-libs/libva \
         media-sound/lame \
         sys-libs/ncurses \
         sys-process/lsof \
+        x11-libs/libXext \
+        media-libs/libaom \
+        media-libs/libpng \
         media-libs/libvpx \
+        x11-base/xwayland \
         app-crypt/pinentry \
+        media-libs/libexif \
+        media-libs/libheif \
+        media-libs/libwebp \
         media-video/ffmpeg \
         sys-apps/diffutils \
         sys-apps/findutils \
         sys-process/procps \
-        sys-apps/util-linux \
-        media-video/pipewire \
-        media-libs/gstreamer \
-        media-libs/gst-libav \
-        app-portage/gentoolkit \
-        x11-libs/libXi \
-        media-libs/tiff \
-        x11-libs/libX11 \
-        x11-libs/libxcb \
-        media-libs/libva \
-        x11-libs/libXext \
-        media-libs/libaom \
-        media-libs/libpng \
-        x11-base/xwayland \
-        media-libs/libexif \
-        media-libs/libheif \
-        media-libs/libwebp \
         x11-libs/libXfixes \
         x11-libs/libXrandr \
         media-libs/libdav1d \
         media-libs/libde265 \
         media-libs/libvdpau \
         media-libs/openh264 \
+        sys-apps/util-linux \
         x11-libs/libXcursor \
         x11-libs/libXdamage \
+        media-libs/gst-libav \
+        media-libs/gstreamer \
+        media-video/pipewire \
         x11-libs/libXinerama \
         x11-libs/libxkbcommon \
+        app-portage/gentoolkit \
         x11-libs/libXcomposite \
+        media-video/wireplumber \
         media-libs/libjpeg-turbo \
         media-libs/vulkan-layers \
         media-libs/vulkan-loader \
-        gui-apps/xdg-desktop-portal \
-        media-video/wireplumber \
         app-shells/bash-completion \
         media-libs/gst-plugins-bad \
+        gui-apps/xdg-desktop-portal \
         media-libs/gst-plugins-base \
         media-libs/gst-plugins-good \
         media-libs/gst-plugins-ugly) && \
