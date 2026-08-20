@@ -72,6 +72,7 @@ RUN apk update && \
         iproute2 \
         keyutils \
         pinentry \
+        xwayland \
         man-pages \
         coreutils \
         xdg-utils \

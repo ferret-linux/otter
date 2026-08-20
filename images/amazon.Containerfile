@@ -119,6 +119,7 @@ RUN dnf clean expire-cache && \
         mesa-dri-drivers \
         shared-mime-info \
         util-linux-script \
+        xdg-desktop-portal \
         desktop-file-utils \
         hicolor-icon-theme \
         pipewire-gstreamer \
@@ -129,6 +130,7 @@ RUN dnf clean expire-cache && \
         pipewire-pulseaudio \
         gstreamer1-plugins-base \
         gstreamer1-plugins-good \
+        xorg-x11-server-Xwayland \
         gstreamer1-plugins-bad-free \
         pipewire-jack-audio-connection-kit) && \
     dnf upgrade -y && \

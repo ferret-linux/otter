@@ -48,6 +48,7 @@ RUN pacman -Sy --noconfirm --needed archlinux-keyring && \
         tree \
         wget \
         base \
+        libva \
         glibc \
         gnupg \
         rsync \
@@ -82,6 +83,8 @@ RUN pacman -Sy --noconfirm --needed archlinux-keyring && \
         vte-common \
         xorg-xauth \
         vulkan-intel \
+        xorg-xwayland \
+        pipewire-alsa \
         pipewire-jack \
         xdg-user-dirs \
         vulkan-radeon \
@@ -92,7 +95,8 @@ RUN pacman -Sy --noconfirm --needed archlinux-keyring && \
         gst-plugins-base \
         gst-plugins-good \
         gst-plugins-ugly \
-        xdg-desktop-portal) && \
+        xdg-desktop-portal \
+        gst-plugin-pipewire) && \
     pacman -Syy && \
     pacman -Syu --noconfirm && \
     pacman -Scc --noconfirm && \
