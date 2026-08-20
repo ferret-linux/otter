@@ -31,16 +31,17 @@ COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN dnf clean expire-cache && \
     dnf makecache --refresh && \
     dnf upgrade -y && \
+    dnf install -y spal-release && \
     dnf install -y --skip-broken $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
         bc \
         xz \
-        zsh \
         mtr \
         pam \
         zip \
-        fish \
+        zsh \
         bash \
         curl \
+        fish \
         less \
         lsof \
         pigz \
@@ -49,48 +50,87 @@ RUN dnf clean expire-cache && \
         tree \
         wget \
         bzip2 \
+        libXi \
         rsync \
         unzip \
         which \
         whois \
         words \
+        libva \
         gnupg2 \
+        libX11 \
+        libxcb \
         man-db \
         passwd \
         tzdata \
         vulkan \
         iproute \
         iputils \
+        libXext \
         ncurses \
         python3 \
-        tcpdump \
         systemd \
+        tcpdump \
+        wayland \
+        libvdpau \
+        alsa-lib \
         hostname \
         keyutils \
-        pinentry \
         nss-mdns \
+        pinentry \
+        pipewire \
         diffutils \
         findutils \
         krb5-libs \
+        libXfixes \
+        libXrandr \
         man-pages \
         procps-ng \
+        xdg-utils \
+        fontconfig \
+        gstreamer1 \
+        libXcursor \
+        libXdamage \
+        libXrender \
+        mesa-libGL \
         traceroute \
         util-linux \
         wget2-wget \
+        ffmpeg-free \
+        libXinerama \
+        mesa-libEGL \
+        mesa-libgbm \
         vte-profile \
         glibc-common \
         gnupg2-smime \
+        libxkbcommon \
         shadow-utils \
+        xdg-user-dirs \
+        libXcomposite \
+        pipewire-alsa \
+        vulkan-loader \
         cracklib-dicts \
         xorg-x11-xauth \
+        mesa-va-drivers \
         bash-completion \
         openssh-clients \
         dnf-plugins-core \
+        libxkbcommon-x11 \
         mesa-dri-drivers \
+        shared-mime-info \
         util-linux-script \
+        desktop-file-utils \
+        hicolor-icon-theme \
+        pipewire-gstreamer \
+        mesa-vdpau-drivers \
         glibc-all-langpacks \
         glibc-locale-source \
-        mesa-vulkan-drivers) && \
+        mesa-vulkan-drivers \
+        pipewire-pulseaudio \
+        gstreamer1-plugins-base \
+        gstreamer1-plugins-good \
+        gstreamer1-plugins-bad-free \
+        pipewire-jack-audio-connection-kit) && \
     dnf upgrade -y && \
     dnf autoremove -y && \
     dnf clean all && \
