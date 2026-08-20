@@ -339,12 +339,14 @@ RUN rm -f /var/lock/slackpkg.*; \
         libxshmfence \
         opencore-amr \
         xcb-util-xrm \
+        vulkan-loader \
         libjpeg-turbo \
         libsamplerate \
         libxcb-render \
         libxcb-xfixes \
         pipewire-jack \
         wayland-utils \
+        pipewire-pulse \
         glibc-zoneinfo \
         libxcb-present \
         xcb-util-image \
