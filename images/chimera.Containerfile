@@ -56,6 +56,7 @@ RUN apk update && \
         unzip \
         wget2 \
         xauth \
+        libva \
         ffmpeg \
         libcap \
         procps \
@@ -68,8 +69,10 @@ RUN apk update && \
         openssh \
         python3 \
         tcpdump \
+        wayland \
         pipewire \
         iproute2 \
+        xwayland \
         keyutils \
         mesa-dri \
         opendoas \
@@ -81,6 +84,7 @@ RUN apk update && \
         net-tools \
         vpl-gpu-rt \
         util-linux \
+        mesa-vulkan \
         libcap-progs \
         ncurses-term \
         base-full-man \
@@ -88,6 +92,7 @@ RUN apk update && \
         pipewire-jack \
         dinit-chimera \
         vulkan-loader \
+        pipewire-alsa \
         pipewire-pulse \
         base-bootstrap \
         bash-completion \
@@ -100,7 +105,8 @@ RUN apk update && \
         ncurses-terminfo \
         util-linux-login \
         util-linux-mount \
-        xdg-desktop-portal) && \
+        xdg-desktop-portal \
+        pipewire-gstreamer) && \
     apk update && \
     apk upgrade && \
     apk cache clean && \
