@@ -32,12 +32,12 @@ RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr apt -- \
         bc \
-        zsh \
         mtr \
         zip \
+        zsh \
+        bash \
         curl \
         fish \
-        bash \
         less \
         lsof \
         pigz \
@@ -52,16 +52,16 @@ RUN apt-get update && \
         unzip \
         xauth \
         dialog \
-        gnupg2 \
         libgl1 \
+        libva2 \
         man-db \
         passwd \
         procps \
         tzdata \
-        systemd \
         libegl1 \
         locales \
         python3 \
+        systemd \
         tcpdump \
         hostname \
         iproute2 \
@@ -72,26 +72,35 @@ RUN apt-get update && \
         diffutils \
         findutils \
         libkrb5-3 \
+        libva-drm2 \
         libvulkan1 \
         traceroute \
         util-linux \
         libcap2-bin \
         libnss-mdns \
+        libva-x11-2 \
         iputils-ping \
         libegl-mesa0 \
-        libegl1-mesa \
         libglx-mesa0 \
         ncurses-base \
         libvte-common \
+        va-driver-all \
+        libva-wayland2 \
         openssh-client \
         bash-completion \
-        libgl1-mesa-glx \
+        mesa-va-drivers \
         pinentry-curses \
         language-pack-en \
         libnss-myhostname \
+        gstreamer1.0-libav \
         mesa-vulkan-drivers \
+        gstreamer1.0-pipewire \
+        gstreamer1.0-plugins-bad \
         ubuntu-restricted-extras \
-        ubuntu-restricted-addons) && \
+        ubuntu-restricted-addons \
+        gstreamer1.0-plugins-base \
+        gstreamer1.0-plugins-good \
+        gstreamer1.0-plugins-ugly) && \
     apt-get update && \
     apt-get upgrade -y && \
     apt-get autoremove -y && \
