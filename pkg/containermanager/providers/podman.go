@@ -1203,6 +1203,6 @@ func (p *Podman) Journal(ctx context.Context, containerName string, opts contain
 		args = append(args, "--tail", strconv.Itoa(opts.Tail))
 	}
 	args = append(args, containerName)
-	_, err := p.run(ctx, args, runOptions{Interactive: true, Stdout: opts.Stdout, Stderr: opts.Stderr})
+	_, err := p.run(ctx, args, runOptions{Interactive: true})
 	return err
 }
