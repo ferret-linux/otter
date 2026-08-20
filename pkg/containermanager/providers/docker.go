@@ -826,6 +826,14 @@ func (d *Docker) ImageLabel(ctx context.Context, imageName, key string) (string,
 	return value, true
 }
 
+func (d *Docker) ImageID(ctx context.Context, imageName string) (string, bool) {
+	info, err := d.inspectImage(ctx, imageName)
+	if err != nil || info.ID == "" {
+		return "", false
+	}
+	return info.ID, true
+}
+
 func (d *Docker) PullImage(ctx context.Context, imageName string, platform string, out containermanager.PullOutput) error {
 	var args []string
 	if platform != "" {

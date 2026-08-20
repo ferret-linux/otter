@@ -627,6 +627,14 @@ func (p *Podman) ImageLabel(ctx context.Context, imageName, key string) (string,
 	return value, true
 }
 
+func (p *Podman) ImageID(ctx context.Context, imageName string) (string, bool) {
+	info, err := p.inspectImage(ctx, imageName)
+	if err != nil || info.ID == "" {
+		return "", false
+	}
+	return info.ID, true
+}
+
 func (p *Podman) PullImage(ctx context.Context, imageName string, platform string, out containermanager.PullOutput) error {
 	var args []string
 	if platform != "" {

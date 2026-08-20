@@ -13,6 +13,40 @@ import (
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
+// blockingContainers returns the names of otter-managed containers (running
+// or stopped) whose image resolves to the same local image ID as imageRef.
+// Comparison is done by ID rather than by string-matching Container.Image
+// against imageRef, because engines report Container.Image as a raw image ID
+// instead of a tag once that tag has moved or been removed — exactly the
+// state a registry pull refresh leaves behind for any container still on
+// the old build.
+func blockingContainers(
+	ctx context.Context,
+	cm containermanager.ContainerManager,
+	containers []containermanager.Container,
+	imageRef string,
+) ([]string, error) {
+	targetID, ok := cm.ImageID(ctx, imageRef)
+	if !ok {
+		return nil, fmt.Errorf("failed to resolve image ID for '%s'", imageRef)
+	}
+
+	var names []string
+	for _, c := range containers {
+		if !c.IsOtterContainer() {
+			continue
+		}
+		containerImageID, ok := cm.ImageID(ctx, c.Image)
+		if !ok {
+			continue
+		}
+		if containerImageID == targetID {
+			names = append(names, c.Name)
+		}
+	}
+	return names, nil
+}
+
 // relativeTime returns a human-readable relative time string for an RFC3339 timestamp.
 func relativeTime(s string) string {
 	if s == "" {
@@ -114,11 +148,52 @@ func (c *RegistryPullCommand) Execute(ctx context.Context, opts RegistryPullOpti
 		return fmt.Errorf("failed to resolve pull targets: %w", err)
 	}
 	for _, ref := range targets {
+		oldID, hadOld := c.containerManager.ImageID(ctx, ref)
+
 		if err := registry.Pull(ctx, c.containerManager, ref, "", c.progress); err != nil {
 			return fmt.Errorf("failed to pull image '%s': %w", ref, err)
 		}
+
+		if !hadOld {
+			continue
+		}
+		newID, ok := c.containerManager.ImageID(ctx, ref)
+		if !ok || newID == oldID {
+			continue
+		}
+		cleanupDanglingImage(ctx, c.containerManager, oldID)
 	}
 	return nil
+}
+
+// cleanupDanglingImage removes oldID if no otter container references it.
+// This only ever runs after a successful pull already replaced oldID's tag,
+// so any failure here is logged as a warning rather than returned — the
+// pull itself already succeeded and must not be reported as failed because
+// of a tidy-up step.
+func cleanupDanglingImage(ctx context.Context, cm containermanager.ContainerManager, oldID string) {
+	containers, err := cm.ListContainers(ctx)
+	if err != nil {
+		ui.DefaultLogger.Warn("failed to list containers, leaving old image in place", "image", oldID, "error", err)
+		return
+	}
+
+	for _, c := range containers {
+		if !c.IsOtterContainer() {
+			continue
+		}
+		containerImageID, ok := cm.ImageID(ctx, c.Image)
+		if ok && containerImageID == oldID {
+			ui.DefaultLogger.Info("old image still in use, leaving in place", "image", oldID, "container", c.Name)
+			return
+		}
+	}
+
+	if err := cm.RemoveImage(ctx, oldID, false); err != nil {
+		ui.DefaultLogger.Warn("failed to remove old image", "image", oldID, "error", err)
+		return
+	}
+	ui.DefaultLogger.Info("removed old image", "image", oldID)
 }
 
 type RegistryRemoveOptions struct {
@@ -146,15 +221,68 @@ func (c *RegistryRemoveCommand) Execute(ctx context.Context, opts RegistryRemove
 	if err != nil {
 		return fmt.Errorf("failed to resolve remove targets: %w", err)
 	}
+
+	if opts.Force {
+		return c.removeTargets(ctx, targets, opts.Force)
+	}
+
+	containers, err := c.containerManager.ListContainers(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to list containers: %w", err)
+	}
+
+	removable := make([]string, 0, len(targets))
+	blocked := make(map[string][]string)
+	for _, ref := range targets {
+		names, err := blockingContainers(ctx, c.containerManager, containers, ref)
+		if err != nil {
+			return fmt.Errorf("failed to check image usage for '%s': %w", ref, err)
+		}
+		if len(names) > 0 {
+			blocked[ref] = names
+			continue
+		}
+		removable = append(removable, ref)
+	}
+
+	if len(blocked) == len(targets) && len(targets) > 0 {
+		var b strings.Builder
+		b.WriteString("all target images are in use, nothing removed:")
+		for _, ref := range targets {
+			fmt.Fprintf(&b, "\n  %s (in use by: %s)", ref, strings.Join(blocked[ref], ", "))
+		}
+		return errors.New(b.String())
+	}
+
+	for _, ref := range targets {
+		if names, ok := blocked[ref]; ok {
+			ui.DefaultLogger.Warn("image in use, skipping", "image", ref, "containers", strings.Join(names, ", "))
+		}
+	}
+
+	return c.removeTargets(ctx, removable, opts.Force)
+}
+
+// removeTargets attempts to remove every ref in targets, continuing past
+// individual failures so every target is attempted before reporting. If
+// anything was skipped-as-missing or failed, a non-nil error is returned
+// after all targets have been tried.
+func (c *RegistryRemoveCommand) removeTargets(ctx context.Context, targets []string, force bool) error {
+	var failed []string
 	for _, ref := range targets {
 		if !c.containerManager.ImageExists(ctx, ref) {
 			ui.DefaultLogger.Warn("image not found locally, skipping", "image", ref)
 			continue
 		}
-		if err := c.containerManager.RemoveImage(ctx, ref, opts.Force); err != nil {
-			return fmt.Errorf("failed to remove image '%s': %w", ref, err)
+		if err := c.containerManager.RemoveImage(ctx, ref, force); err != nil {
+			ui.DefaultLogger.Warn("failed to remove image", "image", ref, "error", err)
+			failed = append(failed, ref)
+			continue
 		}
 		ui.DefaultLogger.Info("removed", "image", ref)
+	}
+	if len(failed) > 0 {
+		return fmt.Errorf("failed to remove: %s", strings.Join(failed, ", "))
 	}
 	return nil
 }

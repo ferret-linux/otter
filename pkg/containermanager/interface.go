@@ -36,6 +36,10 @@ type ContainerManager interface {
 	// engine call fails, or the label isn't set — no error, matching the
 	// ImageExists precedent.
 	ImageLabel(ctx context.Context, imageName, key string) (string, bool)
+	// ImageID returns the local image ID for the given image name/ref. It
+	// returns ("", false) if the image doesn't exist locally or the engine
+	// call fails — no error, matching the ImageExists/ImageLabel precedent.
+	ImageID(ctx context.Context, imageName string) (string, bool)
 	Start(ctx context.Context, containerName string) error
 	Stop(ctx context.Context, containerNames []string, force bool) error
 	InspectContainer(ctx context.Context, containerName string) (*InspectResult, error)
