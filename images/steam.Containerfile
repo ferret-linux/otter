@@ -97,6 +97,7 @@ RUN pacman -Syyu --noconfirm --needed && \
         vte-common \
         xorg-xauth \
         vulkan-intel \
+        vulkan-driver \
         pipewire-jack \
         xdg-user-dirs \
         vulkan-radeon \
@@ -153,7 +154,6 @@ RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman --
         lib32-libelf \
         lib32-libffi \
         lib32-libndp \
-        lib32-libogg \
         lib32-libpng \
         lib32-libpsl \
         lib32-libx11 \
@@ -214,6 +214,7 @@ RUN pacman -S --needed --noconfirm $(sh /tmp/pkg-validator.sh --pkgmgr pacman --
         lib32-vulkan-intel \
         lib32-libxkbcommon \
         lib32-libxcomposite \
+        lib32-vulkan-driver \
         lib32-vulkan-radeon \
         lib32-libdisplay-info \
         lib32-libxcrypt-compat \
