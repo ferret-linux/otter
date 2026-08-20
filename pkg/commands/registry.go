@@ -148,52 +148,11 @@ func (c *RegistryPullCommand) Execute(ctx context.Context, opts RegistryPullOpti
 		return fmt.Errorf("failed to resolve pull targets: %w", err)
 	}
 	for _, ref := range targets {
-		oldID, hadOld := c.containerManager.ImageID(ctx, ref)
-
 		if err := registry.Pull(ctx, c.containerManager, ref, "", c.progress); err != nil {
 			return fmt.Errorf("failed to pull image '%s': %w", ref, err)
 		}
-
-		if !hadOld {
-			continue
-		}
-		newID, ok := c.containerManager.ImageID(ctx, ref)
-		if !ok || newID == oldID {
-			continue
-		}
-		cleanupDanglingImage(ctx, c.containerManager, oldID)
 	}
 	return nil
-}
-
-// cleanupDanglingImage removes oldID if no otter container references it.
-// This only ever runs after a successful pull already replaced oldID's tag,
-// so any failure here is logged as a warning rather than returned — the
-// pull itself already succeeded and must not be reported as failed because
-// of a tidy-up step.
-func cleanupDanglingImage(ctx context.Context, cm containermanager.ContainerManager, oldID string) {
-	containers, err := cm.ListContainers(ctx)
-	if err != nil {
-		ui.DefaultLogger.Warn("failed to list containers, leaving old image in place", "image", oldID, "error", err)
-		return
-	}
-
-	for _, c := range containers {
-		if !c.IsOtterContainer() {
-			continue
-		}
-		containerImageID, ok := cm.ImageID(ctx, c.Image)
-		if ok && containerImageID == oldID {
-			ui.DefaultLogger.Info("old image still in use, leaving in place", "image", oldID, "container", c.Name)
-			return
-		}
-	}
-
-	if err := cm.RemoveImage(ctx, oldID, false); err != nil {
-		ui.DefaultLogger.Warn("failed to remove old image", "image", oldID, "error", err)
-		return
-	}
-	ui.DefaultLogger.Info("removed old image", "image", oldID)
 }
 
 type RegistryRemoveOptions struct {

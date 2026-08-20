@@ -172,6 +172,15 @@ func truncateLine(s string, width int) string {
 // Pull unconditionally pulls the given image ref using the provided
 // container manager. Callers are responsible for deciding whether a pull
 // is needed (e.g. via ImageExists or staleness checks) before calling Pull.
+//
+// If the pull replaces the image previously behind imageRef (e.g. a mutable
+// tag was refreshed to a new build), the old image is removed afterward
+// provided no otter container still references it. This runs for every
+// caller of Pull — otter create's auto-pull/always-pull/staleness paths and
+// otter registry pull alike — so a refreshed tag never leaves an orphaned
+// build behind regardless of which command triggered the pull. Any failure
+// in this cleanup step is logged as a warning only; it never fails Pull,
+// since the pull itself already succeeded by the time cleanup runs.
 func Pull(
 	ctx context.Context,
 	cm containermanager.ContainerManager,
@@ -179,6 +188,8 @@ func Pull(
 	platform string,
 	progress *ui.Progress,
 ) error {
+	oldID, hadOld := cm.ImageID(ctx, imageRef)
+
 	ui.DefaultLogger.Info("large images may take a while, please be patient...")
 	progress.Next("pulling '%s'...", imageRef)
 
@@ -198,5 +209,40 @@ func Pull(
 	}
 
 	progress.Done()
+
+	if hadOld {
+		if newID, ok := cm.ImageID(ctx, imageRef); ok && newID != oldID {
+			cleanupDanglingImage(ctx, cm, oldID)
+		}
+	}
+
 	return nil
+}
+
+// cleanupDanglingImage removes oldID if no otter container references it.
+// Only called after a pull has already replaced oldID's tag with a new
+// build, so any failure here is logged as a warning rather than returned.
+func cleanupDanglingImage(ctx context.Context, cm containermanager.ContainerManager, oldID string) {
+	containers, err := cm.ListContainers(ctx)
+	if err != nil {
+		ui.DefaultLogger.Warn("failed to list containers, leaving old image in place", "image", oldID, "error", err)
+		return
+	}
+
+	for _, c := range containers {
+		if !c.IsOtterContainer() {
+			continue
+		}
+		containerImageID, ok := cm.ImageID(ctx, c.Image)
+		if ok && containerImageID == oldID {
+			ui.DefaultLogger.Info("old image still in use, leaving in place", "image", oldID, "container", c.Name)
+			return
+		}
+	}
+
+	if err := cm.RemoveImage(ctx, oldID, false); err != nil {
+		ui.DefaultLogger.Warn("failed to remove old image", "image", oldID, "error", err)
+		return
+	}
+	ui.DefaultLogger.Info("removed old image", "image", oldID)
 }
