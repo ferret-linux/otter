@@ -83,6 +83,7 @@ RUN apt-get update && \
         libflac12 \
         libkrb5-3 \
         libvdpau1 \
+        libva-drm2 \
         libvulkan1 \
         libxfixes3 \
         libxrandr2 \
@@ -102,10 +103,13 @@ RUN apt-get update && \
         libglx-mesa0 \
         libxinerama1 \
         ncurses-base \
+        pipewire-alsa \
+        pipewire-jack \
         libxkbcommon0 \
         libxcomposite1 \
         openssh-client \
         pipewire-pulse \
+        mesa-va-drivers \
         bash-completion \
         libgl1-mesa-dri \
         libgl1-mesa-glx \
