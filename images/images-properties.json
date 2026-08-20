@@ -62,28 +62,6 @@
       "build_number": 17
     },
     {
-      "name": "kali-edge",
-      "official_image": "ghcr.io/ferret-linux/kali-otr:edge",
-      "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-20T08:17:54Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1575563648,
-          "disk_size": 1575563648
-        },
-        "arm64": {
-          "compressed_size": 1545850935,
-          "disk_size": 1545850935
-        }
-      },
-      "build_number": 110
-    },
-    {
       "name": "oracle",
       "official_image": "ghcr.io/ferret-linux/oracle-otr:stable",
       "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 110
+    },
+    {
+      "name": "kali-edge",
+      "official_image": "ghcr.io/ferret-linux/kali-otr:edge",
+      "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-20T13:39:41Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1602267551,
+          "disk_size": 1602267551
+        },
+        "arm64": {
+          "compressed_size": 1570921566,
+          "disk_size": 1570921566
+        }
+      },
+      "build_number": 111
     }
   ]
 }
