@@ -61,17 +61,20 @@ RUN xbps-install -Syu xbps && \
         unzip \
         which \
         xauth \
+        libdrm \
         gnupg2 \
         man-db \
         shadow \
         tzdata \
         ffmpeg \
         libvpx \
+        wayland \
         ncurses \
         openssh \
         python3 \
         libx264 \
         libflac \
+        alsa-lib \
         iproute2 \
         mesa-dri \
         mit-krb5 \
@@ -82,6 +85,8 @@ RUN xbps-install -Syu xbps && \
         inetutils \
         procps-ng \
         gstreamer \
+        gst-libav \
+        alsa-utils \
         fish-shell \
         traceroute \
         util-linux \
@@ -97,7 +102,9 @@ RUN xbps-install -Syu xbps && \
         gst-plugins-good \
         gst-plugins-ugly \
         mesa-vulkan-intel \
-        mesa-vulkan-radeon) && \
+        mesa-vulkan-radeon \
+        gstreamer1-pipewire \
+        xorg-server-xwayland) && \
     xbps-install -Su && \
     xbps-remove -O && \
     xbps-remove -o && \
