@@ -1,0 +1,124 @@
+# setup_xbps_exceptions will create path-excludes for host mounts, xbps only.
+# Arguments:
+#   None
+# Expected global variables:
+#   None
+# Expected env variables:
+#   None
+# Outputs:
+#   None
+setup_xbps_exceptions()
+{
+	# We have to lock this paths from xbps extraction, as it's incompatible with otter's
+	# mount process.
+	cat << EOF > /etc/xbps.d/otter-ignore.conf
+noextract=/etc/passwd
+noextract=/etc/hosts
+noextract=/etc/host.conf
+noextract=/etc/hostname
+noextract=/etc/localtime
+noextract=/etc/machine-id
+noextract=/etc/resolv.conf
+EOF
+}
+
+# setup_xbps will upgrade or setup all packages for xbps based systems.
+# Arguments:
+#   None
+# Expected global variables:
+#   upgrade: if we need to upgrade or not
+#   container_additional_packages: additional packages to install during this phase
+# Expected env variables:
+#   None
+# Outputs:
+#   None
+setup_xbps()
+{
+	# If we need to upgrade, do it and exit, no further action required.
+	if [ "${upgrade}" -ne 0 ]; then
+		xbps-install -Syu
+		exit
+	fi
+	# Ensure we avoid errors by keeping xbps updated
+	xbps-install -Syu xbps
+
+	# Check if shell_pkg is available in distro's repo. If not we
+	# fall back to bash, and we set the SHELL variable to bash so
+	# that it is set up correctly for the user.
+	if [ ! -f /usr/lib/otter/container.official ]; then
+		if ! xbps-install -Sy "${shell_pkg}"; then
+			shell_pkg="bash"
+		fi
+	fi
+	deps="
+		${shell_pkg}
+		bash-completion
+		bc
+		bzip2
+		curl
+		diffutils
+		findutils
+		gnupg2
+		inetutils
+		iproute2
+		less
+		lsof
+		man-db
+		mit-krb5
+		mit-krb5-client
+		mit-krb5-libs
+		mtr
+		ncurses
+		nss
+		openssh
+		pigz
+		pinentry
+		pinentry-tty
+		procps-ng
+		rsync
+		shadow
+		sudo
+		time
+		traceroute
+		tree
+		tzdata
+		which
+		unzip
+		util-linux
+		xauth
+		xz
+		zip
+		wget
+		vte3
+		python3
+		mesa-dri
+		vulkan-loader
+		mesa-vulkan-intel
+		mesa-vulkan-radeon
+	"
+	# shellcheck disable=SC2086,2046
+	xbps-install -Sy $(xbps-query -Rs '*' | awk '{print $2}' | sed 's/-[^-]*$//' | grep -E "^($(echo ${deps} | tr ' ' '|'))$")
+
+	# In case the locale is not available, install it
+	# will ensure we don't fallback to C.UTF-8
+	if command -v locale && {
+		! locale -a | grep -qi en_us.utf8 || ! locale -a | grep -qi "$(echo "${HOST_LOCALE}" | tr -d '-')"
+	}; then
+		sed -i "s|#.*en_US.UTF-8|en_US.UTF-8|g" /etc/default/libc-locales
+		sed -i "s|#.*${HOST_LOCALE}|${HOST_LOCALE}|g" /etc/default/libc-locales
+		xbps-reconfigure --force glibc-locales
+	fi
+
+	# Ensure we have tzdata installed and populated, sometimes container
+	# images blank the zoneinfo directory, so we reinstall the package to
+	# ensure population
+	if [ ! -e /usr/share/zoneinfo/UTC ]; then
+		xbps-install --force -y tzdata
+	fi
+
+	# Install additional packages passed at otter-create time
+	if [ -n "${container_additional_packages}" ]; then
+		# shellcheck disable=SC2086
+		xbps-install -Sy ${container_additional_packages}
+	fi
+}
