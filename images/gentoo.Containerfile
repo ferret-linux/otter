@@ -68,6 +68,33 @@ RUN emerge-webrsync && \
         media-libs/gstreamer \
         media-libs/gst-libav \
         app-portage/gentoolkit \
+        x11-libs/libXi \
+        media-libs/tiff \
+        x11-libs/libX11 \
+        x11-libs/libxcb \
+        media-libs/libva \
+        x11-libs/libXext \
+        media-libs/libaom \
+        media-libs/libpng \
+        x11-base/xwayland \
+        media-libs/libexif \
+        media-libs/libheif \
+        media-libs/libwebp \
+        x11-libs/libXfixes \
+        x11-libs/libXrandr \
+        media-libs/libdav1d \
+        media-libs/libde265 \
+        media-libs/libvdpau \
+        media-libs/openh264 \
+        x11-libs/libXcursor \
+        x11-libs/libXdamage \
+        x11-libs/libXinerama \
+        x11-libs/libxkbcommon \
+        x11-libs/libXcomposite \
+        media-libs/libjpeg-turbo \
+        media-libs/vulkan-layers \
+        media-libs/vulkan-loader \
+        gui-apps/xdg-desktop-portal \
         media-video/wireplumber \
         app-shells/bash-completion \
         media-libs/gst-plugins-bad \
