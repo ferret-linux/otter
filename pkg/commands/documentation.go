@@ -159,55 +159,6 @@ func buildDocsTree() ([]docEntry, error) {
 	return out, nil
 }
 
-// DocEntry is a public view of one node in the documentation tree, for
-// packages outside pkg/commands (e.g. the webui) that want to render a
-// docs browser of their own without depending on the TUI's tree-drawing
-// internals (docEntry.isLastAtDepth and friends, which exist only to
-// draw ├──/└── connector glyphs in the terminal).
-type DocEntry struct {
-	// Name is the display label, with any ordering prefix and .md
-	// extension stripped, e.g. "getting started" or "commands".
-	Name string
-
-	// Path identifies this entry within otter's embedded documentation
-	// and is the argument ReadDoc expects for non-directory entries,
-	// e.g. "assets/docs/03.commands/02.create.md".
-	Path string
-
-	// Depth is 0 for top-level entries, 1 for entries one directory
-	// down, and so on.
-	Depth int
-
-	IsDir bool
-}
-
-// DocsTree returns otter's embedded documentation as a flat,
-// depth-ordered list of entries — the same tree `otter documentation`
-// shows, without the TUI-specific tree-drawing fields. Safe to call
-// repeatedly; each call re-walks the embedded FS.
-func DocsTree() ([]DocEntry, error) {
-	entries, err := buildDocsTree()
-	if err != nil {
-		return nil, err
-	}
-	out := make([]DocEntry, len(entries))
-	for i, e := range entries {
-		out[i] = DocEntry{Name: e.name, Path: e.embedPath, Depth: e.depth, IsDir: e.isDir}
-	}
-	return out, nil
-}
-
-// ReadDoc returns the raw markdown contents of the documentation file at
-// path (as given by a DocEntry's Path field). It returns an error if
-// path does not exist within the embedded docs tree.
-func ReadDoc(path string) (string, error) {
-	raw, err := documentationFS.ReadFile(path)
-	if err != nil {
-		return "", err
-	}
-	return string(raw), nil
-}
-
 // srNumberPattern matches the leading "SR number" prefix on doc file and
 // directory names (e.g. "01." in "01.otter.md", "08." in "08.commands")
 // that exists only to control sort/tree order — see docChildrenOf — and
