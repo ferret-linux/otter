@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
 	"strings"
 
 	"github.com/ferret-linux/otter/pkg/containermanager"
@@ -22,13 +21,6 @@ type EnterOptions struct {
 	CleanPath       bool
 	EmptyEnv        bool
 	NoWorkDir       bool
-	// ForceTTY and Stdin/Stdout/Stderr are passed straight through to
-	// containermanager.EnterOptions; see the doc comments there. Non-CLI
-	// callers (e.g. the webui) set these, the CLI leaves them at zero value.
-	ForceTTY bool
-	Stdin    io.Reader
-	Stdout   io.Writer
-	Stderr   io.Writer
 }
 
 type EnterCommand struct {
@@ -71,10 +63,6 @@ func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterRe
 		CleanPath:       opts.CleanPath,
 		EmptyEnv:        opts.EmptyEnv,
 		NoWorkDir:       opts.NoWorkDir,
-		ForceTTY:        opts.ForceTTY,
-		Stdin:           opts.Stdin,
-		Stdout:          opts.Stdout,
-		Stderr:          opts.Stderr,
 	}
 
 	if !opts.NoTTY {

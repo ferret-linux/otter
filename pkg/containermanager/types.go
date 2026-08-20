@@ -1,9 +1,6 @@
 package containermanager
 
-import (
-	"io"
-	"strings"
-)
+import "strings"
 
 type Container struct {
 	ID     string
@@ -81,18 +78,6 @@ type EnterOptions struct {
 	NoWorkDir       bool
 	CleanPath       bool
 	EmptyEnv        bool
-	// ForceTTY requests TTY allocation on the container side regardless of
-	// whether the calling process itself is attached to a terminal. The CLI
-	// leaves this false and relies on auto-detection instead; non-CLI callers
-	// (e.g. the webui, which redirects Stdin/Stdout below) set this to true
-	// since the otter process's own terminal status is irrelevant to them.
-	ForceTTY bool
-	// Stdin, Stdout, and Stderr, when non-nil, are used instead of the
-	// process's own os.Stdin/os.Stdout/os.Stderr for the interactive
-	// session. Nil (the CLI default) preserves existing behavior exactly.
-	Stdin  io.Reader
-	Stdout io.Writer
-	Stderr io.Writer
 }
 
 type JournalOptions struct {

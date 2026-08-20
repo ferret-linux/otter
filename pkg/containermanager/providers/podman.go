@@ -522,15 +522,6 @@ func (p *Podman) run(ctx context.Context, args []string, opts runOptions) (strin
 		cmd.Stdout = os.Stdout
 		cmd.Stdin = os.Stdin
 		cmd.Stderr = os.Stderr
-		if opts.Stdin != nil {
-			cmd.Stdin = opts.Stdin
-		}
-		if opts.Stdout != nil {
-			cmd.Stdout = opts.Stdout
-		}
-		if opts.Stderr != nil {
-			cmd.Stderr = opts.Stderr
-		}
 
 		err := cmd.Run()
 		if err != nil {
@@ -570,7 +561,6 @@ func (p *Podman) Enter(
 		options.CleanPath,
 		options.EmptyEnv,
 		options.AddEnv,
-		options.ForceTTY,
 	)
 	if err != nil {
 		return err
@@ -583,7 +573,7 @@ func (p *Podman) Enter(
 		return fmt.Errorf("container '%s' is not running, use 'otter start' first", options.ContainerName)
 	}
 
-	runOpt := runOptions{Interactive: true, Stdin: options.Stdin, Stdout: options.Stdout, Stderr: options.Stderr}
+	runOpt := runOptions{Interactive: true}
 	if options.NoTTY {
 		runOpt = runOptions{}
 	}
@@ -940,7 +930,6 @@ func (p *Podman) generateEnterCommand(
 	cleanPath bool,
 	emptyEnv bool,
 	addEnv []string,
-	forceTTY bool,
 ) ([]string, *containermanager.InspectResult, error) {
 	cmd := []string{}
 
@@ -966,10 +955,8 @@ func (p *Podman) generateEnterCommand(
 	}
 
 	// TTY allocation — auto-detect headless mode like the shell version:
-	// if stdin or stdout is not a terminal, skip --tty. forceTTY bypasses
-	// this for callers (e.g. the webui) where otter's own terminal status
-	// is irrelevant and a container-side TTY is always wanted.
-	if !noTTY && (forceTTY || ttyutil.IsTTY()) {
+	// if stdin or stdout is not a terminal, skip --tty.
+	if !noTTY && ttyutil.IsTTY() {
 		cmd = append(cmd, "--tty")
 	}
 
