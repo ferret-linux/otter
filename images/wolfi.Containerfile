@@ -75,24 +75,32 @@ RUN apk update && \
         shadow \
         tzdata \
         umount \
+        libdrm \
         busybox \
         findmnt \
         iputils \
         ncurses \
         python3 \
         tcpdump \
+        wayland \
+        xwayland \
         iproute2 \
         keyutils \
         pinentry \
         pipewire \
+        alsa-lib \
+        gstreamer \
         coreutils \
         diffutils \
         findutils \
         net-tools \
         xdg-utils \
+        gst-libav \
+        alsa-utils \
         wolfi-base \
         util-linux \
         vpl-gpu-rt \
+        wireplumber \
         pipewire-jack \
         vulkan-loader \
         xdg-user-dirs \
@@ -107,6 +115,7 @@ RUN apk update && \
         ncurses-terminfo \
         posix-libc-utils \
         util-linux-login \
+        gstreamer-pipewire \
         xdg-desktop-portal) && \
     apk update && \
     apk upgrade && \
