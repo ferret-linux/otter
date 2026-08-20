@@ -69,6 +69,7 @@ RUN apt-get update && \
         libopus0 \
         manpages \
         xz-utils \
+        xwayland \
         apt-utils \
         diffutils \
         findutils \
@@ -89,18 +90,22 @@ RUN apt-get update && \
         libglx-mesa0 \
         ncurses-base \
         libvte-common \
+        pipewire-alsa \
         pipewire-pulse \
         openssh-client \
         bash-completion \
         libgl1-mesa-dri \
         libgl1-mesa-glx \
         pinentry-curses \
+        mesa-va-drivers \
         libavcodec-extra \
         libpipewire-0.3-0 \
         libnss-myhostname \
+        xdg-desktop-portal \
         gstreamer1.0-tools \
         gstreamer1.0-libav \
         mesa-vulkan-drivers \
+        gstreamer1.0-pipewire \
         gstreamer1.0-plugins-bad \
         gstreamer1.0-plugins-base \
         gstreamer1.0-plugins-good \
