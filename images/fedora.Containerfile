@@ -79,6 +79,7 @@ RUN dnf install dnf5-plugins -y --refresh && \
         passwd \
         tzdata \
         vulkan \
+        libaacs \
         fdk-aac \
         iproute \
         iputils \
@@ -124,6 +125,7 @@ RUN dnf install dnf5-plugins -y --refresh && \
         gstreamer1-plugins-base \
         gstreamer1-plugins-good \
         gstreamer1-plugins-ugly \
+        xorg-x11-server-Xwayland \
         mesa-va-drivers-freeworld \
         mesa-vulkan-drivers-freeworld \
         gstreamer1-plugins-bad-freeworld \
