@@ -30,6 +30,7 @@ var distroIconsFS embed.FS
 var distroIconMap = map[string]string{
 	"ol":                  "oracle-box.svg",
 	"nix":                 "nixos-box.svg",
+	"amzn":                "amazonlinux-box.svg",
 	"brew":                "brew-box.svg",
 	"guix":                "guix-box.svg",
 	"arch":                "arch-box.svg",
@@ -38,6 +39,7 @@ var distroIconMap = map[string]string{
 	"void":                "void-box.svg",
 	"rhel":                "rhel-box.svg",
 	"rocky":               "rocky-box.svg",
+	"artix":               "artix-box.svg",
 	"wolfi":               "wolfi-box.svg",
 	"ubuntu":              "ubuntu-box.svg",
 	"debian":              "debian-box.svg",
@@ -48,8 +50,13 @@ var distroIconMap = map[string]string{
 	"devuan":              "devuan-box.svg",
 	"chimera":             "chimera-box.svg",
 	"blackarch":           "blackarch-box.svg",
+	"slackware":           "slackware-box.svg",
 	"opensuse-leap":       "leap-box.svg",
 	"opensuse-tumbleweed": "tumbleweed-box.svg",
+	// cachyos: steamos images intentionally keep the upstream CachyOS
+	// ID= value (see images/steam.Containerfile), so we map it here
+	// rather than "steamos".
+	"cachyos": "steamos-box.svg",
 }
 
 type GenerateEntryOptions struct {
