@@ -26,8 +26,7 @@ COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 
 # Install EPEL, upgrade the system, install the requested packages,
 # and clean DNF metadata/cache in the same layer.
-RUN dnf install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm" && \
-    dnf upgrade -y && \
+RUN dnf upgrade -y && \
     dnf install -y --skip-broken $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
         bc \
         xz \
