@@ -29,12 +29,12 @@ RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr apt -- \
         bc \
-        zsh \
         mtr \
         zip \
+        zsh \
+        bash \
         curl \
         fish \
-        bash \
         less \
         lsof \
         pigz \
@@ -45,61 +45,83 @@ RUN apt-get update && \
         bzip2 \
         gnupg \
         gpgsm \
-        unrar \
         rsync \
+        unrar \
         unzip \
         xauth \
         dialog \
-        gnupg2 \
         ffmpeg \
+        gnupg2 \
         libgl1 \
+        libva2 \
+        libxi6 \
         man-db \
         passwd \
         procps \
         tzdata \
-        libvpx9 \
+        libdrm2 \
         libegl1 \
+        libvpx9 \
+        libxcb1 \
         locales \
-        systemd \
         python3 \
+        systemd \
         tcpdump \
         hostname \
         iproute2 \
         keyutils \
-        pipewire \
         libopus0 \
+        libx11-6 \
+        libxext6 \
         manpages \
+        pipewire \
+        xwayland \
         xz-utils \
         apt-utils \
         diffutils \
         findutils \
         libflac12 \
-        libvdpau1 \
         libkrb5-3 \
+        libvdpau1 \
         libvulkan1 \
+        libxfixes3 \
+        libxrandr2 \
         traceroute \
         util-linux \
         libcap2-bin \
-        wireplumber \
-        libx264-164 \
-        libx265-199 \
         libmp3lame0 \
         libnss-mdns \
+        libx264-164 \
+        libx265-199 \
+        libxcursor1 \
+        libxdamage1 \
+        libxrender1 \
+        wireplumber \
         iputils-ping \
         libegl-mesa0 \
         libglx-mesa0 \
+        libxinerama1 \
         ncurses-base \
-        pipewire-pulse \
+        libxkbcommon0 \
+        libxcomposite1 \
         openssh-client \
+        pipewire-pulse \
         bash-completion \
         libgl1-mesa-dri \
         libgl1-mesa-glx \
+        libwayland-egl1 \
         pinentry-curses \
         libavcodec-extra \
-        libpipewire-0.3-0 \
         libnss-myhostname \
-        gstreamer1.0-tools \
+        libpipewire-0.3-0 \
+        wayland-protocols \
         gstreamer1.0-libav \
+        gstreamer1.0-tools \
+        libwayland-client0 \
+        libwayland-cursor0 \
+        libwayland-server0 \
+        libxkbcommon-x11-0 \
+        xdg-desktop-portal \
         mesa-vulkan-drivers \
         gstreamer1.0-plugins-bad \
         gstreamer1.0-plugins-base \
