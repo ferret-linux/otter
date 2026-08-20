@@ -422,6 +422,22 @@ func (n *Nerdctl) ImageID(ctx context.Context, imageName string) (string, bool) 
 	return info.ID, true
 }
 
+func (n *Nerdctl) ContainerImageID(ctx context.Context, containerName string) (string, bool) {
+	args := []string{"container", "inspect", "--format", "json", containerName}
+	output, err := n.run(ctx, args, runOptions{})
+	if err != nil {
+		return "", false
+	}
+
+	var inspect inspectOutput
+	// nerdctl container inspect returns a single object, not an array.
+	if err := json.Unmarshal([]byte(output), &inspect); err != nil || inspect.Image == "" {
+		return "", false
+	}
+
+	return inspect.Image, true
+}
+
 func (n *Nerdctl) PullImage(ctx context.Context, imageName string, platform string, out containermanager.PullOutput) error {
 	var args []string
 	if platform != "" {

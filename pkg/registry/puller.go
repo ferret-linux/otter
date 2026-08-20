@@ -222,6 +222,9 @@ func Pull(
 // cleanupDanglingImage removes oldID if no otter container references it.
 // Only called after a pull has already replaced oldID's tag with a new
 // build, so any failure here is logged as a warning rather than returned.
+// Uses ContainerImageID (each container's frozen image binding) rather than
+// resolving Container.Image through ImageID, since oldID by definition is
+// no longer what the tag currently resolves to.
 func cleanupDanglingImage(ctx context.Context, cm containermanager.ContainerManager, oldID string) {
 	containers, err := cm.ListContainers(ctx)
 	if err != nil {
@@ -233,7 +236,7 @@ func cleanupDanglingImage(ctx context.Context, cm containermanager.ContainerMana
 		if !c.IsOtterContainer() {
 			continue
 		}
-		containerImageID, ok := cm.ImageID(ctx, c.Image)
+		containerImageID, ok := cm.ContainerImageID(ctx, c.Name)
 		if ok && containerImageID == oldID {
 			ui.DefaultLogger.Info("old image still in use, leaving in place", "image", oldID, "container", c.Name)
 			return

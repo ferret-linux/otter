@@ -15,11 +15,12 @@ import (
 
 // blockingContainers returns the names of otter-managed containers (running
 // or stopped) whose image resolves to the same local image ID as imageRef.
-// Comparison is done by ID rather than by string-matching Container.Image
-// against imageRef, because engines report Container.Image as a raw image ID
-// instead of a tag once that tag has moved or been removed — exactly the
-// state a registry pull refresh leaves behind for any container still on
-// the old build.
+// Comparison uses ContainerImageID, each container's frozen image binding
+// from when it was created, rather than resolving Container.Image (a tag
+// string) through ImageID — a tag can move to a different build after the
+// container was created (e.g. a later registry pull refresh), and
+// re-resolving it would silently report whatever the tag points to now,
+// not what the container is actually running on.
 func blockingContainers(
 	ctx context.Context,
 	cm containermanager.ContainerManager,
@@ -36,7 +37,7 @@ func blockingContainers(
 		if !c.IsOtterContainer() {
 			continue
 		}
-		containerImageID, ok := cm.ImageID(ctx, c.Image)
+		containerImageID, ok := cm.ContainerImageID(ctx, c.Name)
 		if !ok {
 			continue
 		}
