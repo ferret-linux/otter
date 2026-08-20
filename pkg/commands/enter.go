@@ -29,8 +29,6 @@ type EnterOptions struct {
 	Stdin    io.Reader
 	Stdout   io.Writer
 	Stderr   io.Writer
-	// Resize is passed straight through to containermanager.EnterOptions.Resize.
-	Resize <-chan containermanager.WinSize
 }
 
 type EnterCommand struct {
@@ -77,7 +75,6 @@ func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterRe
 		Stdin:           opts.Stdin,
 		Stdout:          opts.Stdout,
 		Stderr:          opts.Stderr,
-		Resize:          opts.Resize,
 	}
 
 	if !opts.NoTTY {

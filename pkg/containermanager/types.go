@@ -93,21 +93,6 @@ type EnterOptions struct {
 	Stdin  io.Reader
 	Stdout io.Writer
 	Stderr io.Writer
-	// Resize, when non-nil, switches the session to a local-pty bridge: the
-	// provider allocates its own pseudo-terminal for the podman/docker/
-	// nerdctl client to attach to (instead of wiring Stdin/Stdout directly
-	// to the child), so that client's own built-in SIGWINCH-driven resize
-	// forwarding activates. Sizes sent on this channel are applied to that
-	// local pty, which triggers the resize. Nil (the CLI default, and the
-	// webui's own base terminal before this field existed) preserves
-	// existing direct Stdin/Stdout wiring with no resize support.
-	Resize <-chan WinSize
-}
-
-// WinSize is a terminal size in rows/columns, used with EnterOptions.Resize.
-type WinSize struct {
-	Rows uint16
-	Cols uint16
 }
 
 type JournalOptions struct {

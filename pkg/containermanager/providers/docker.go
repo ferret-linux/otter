@@ -69,10 +69,6 @@ type runOptions struct {
 	Stdin  io.Reader
 	Stdout io.Writer
 	Stderr io.Writer
-	// Resize, when non-nil, switches an Interactive run to the local-pty
-	// bridge in runInteractivePTY instead of directly wiring Stdin/Stdout.
-	// See containermanager.EnterOptions.Resize for the full rationale.
-	Resize <-chan containermanager.WinSize
 }
 
 type inspectOutput struct {
@@ -538,13 +534,6 @@ func (d *Docker) run(ctx context.Context, args []string, opts runOptions) (strin
 	cmd := exec.CommandContext(ctx, command, args...)
 
 	if opts.Interactive {
-		if opts.Resize != nil {
-			if err := runInteractivePTY(ctx, cmd, opts); err != nil {
-				return "", fmt.Errorf("error running the interactive command :%w", err)
-			}
-			return "", nil
-		}
-
 		cmd.Stdout = os.Stdout
 		cmd.Stdin = os.Stdin
 		cmd.Stderr = os.Stderr
@@ -609,7 +598,7 @@ func (d *Docker) Enter(
 		return fmt.Errorf("container '%s' is not running, use 'otter start' first", options.ContainerName)
 	}
 
-	runOpt := runOptions{Interactive: true, Stdin: options.Stdin, Stdout: options.Stdout, Stderr: options.Stderr, Resize: options.Resize}
+	runOpt := runOptions{Interactive: true, Stdin: options.Stdin, Stdout: options.Stdout, Stderr: options.Stderr}
 	if options.NoTTY {
 		runOpt = runOptions{}
 	}
