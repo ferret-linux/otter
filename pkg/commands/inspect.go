@@ -99,7 +99,7 @@ func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) (*Ins
 		return nil, fmt.Errorf("failed to inspect container: %w", err)
 	}
 
-	locked := IsLocked(ctx, c.containerManager, opts.ContainerName)
+	locked := isLocked(ctx, c.containerManager, opts.ContainerName)
 
 	return &InspectResult{
 		ID:             result.ContainerID,

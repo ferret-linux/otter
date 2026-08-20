@@ -74,7 +74,7 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 	}
 
 	outcome := runBatch(ctx, containerNames, func(ctx context.Context, name string) (bool, error) {
-		if IsLocked(ctx, c.containerManager, name) {
+		if isLocked(ctx, c.containerManager, name) {
 			ui.DefaultLogger.Warn("locked, skipping", "name", name)
 			return true, nil
 		}

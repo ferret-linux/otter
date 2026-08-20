@@ -68,7 +68,7 @@ func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, 
 	var removedOtterContainers []containermanager.Container
 	outcome := runBatch(ctx, containerNames, func(ctx context.Context, name string) (bool, error) {
 		container := containersByName[name]
-		if !options.BypassLock && IsLocked(ctx, c.containerManager, name) {
+		if !options.BypassLock && isLocked(ctx, c.containerManager, name) {
 			ui.DefaultLogger.Warn(fmt.Sprintf("locked, run 'otter unlock %s' first, skipping", name), "name", name)
 			return true, nil
 		}

@@ -60,7 +60,7 @@ func (c *LockCommand) lockOne(ctx context.Context, name string) error {
 		return fmt.Errorf("container '%s' not found", name)
 	}
 
-	if IsLocked(ctx, c.containerManager, name) {
+	if isLocked(ctx, c.containerManager, name) {
 		return fmt.Errorf("'%s' %w", name, ErrAlreadyLocked)
 	}
 
@@ -81,9 +81,9 @@ func (c *LockCommand) lockOne(ctx context.Context, name string) error {
 	return nil
 }
 
-// IsLocked checks whether a container has a lock file present.
-// Shared by lock, unlock, remove, upgrade, inspect, and the webui.
-func IsLocked(ctx context.Context, cm containermanager.ContainerManager, containerName string) bool {
+// isLocked checks whether a container has a lock file present.
+// Shared by lock, unlock, remove, and upgrade.
+func isLocked(ctx context.Context, cm containermanager.ContainerManager, containerName string) bool {
 	tmp, err := os.CreateTemp("", "otter-lockcheck-*")
 	if err != nil {
 		return false

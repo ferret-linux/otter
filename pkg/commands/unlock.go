@@ -57,7 +57,7 @@ func (c *UnlockCommand) unlockOne(ctx context.Context, name string) error {
 		return fmt.Errorf("container '%s' not found", name)
 	}
 
-	if !IsLocked(ctx, c.containerManager, name) {
+	if !isLocked(ctx, c.containerManager, name) {
 		return fmt.Errorf("'%s' %w", name, ErrNotLocked)
 	}
 
