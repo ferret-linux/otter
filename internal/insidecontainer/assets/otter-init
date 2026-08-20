@@ -276,8 +276,7 @@ fi
 # upgraded by using 'otter upgrade'
 rm -f /usr/lib/otter/container.ready
 if [ "${upgrade}" -ne 0 ]; then
-	touch /usr/lib/otter/container.upgrading
-	trap 'rm -f /usr/lib/otter/container.upgrading; if [ $? -eq 0 ]; then touch /usr/lib/otter/container.ready; fi' EXIT
+	trap 'if [ $? -eq 0 ]; then touch /usr/lib/otter/container.ready; fi' EXIT
 fi
 # Add container type markers
 if [ "${rootful}" -eq 1 ]; then

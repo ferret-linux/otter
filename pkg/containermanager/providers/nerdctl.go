@@ -923,11 +923,6 @@ func (n *Nerdctl) IsSetupDone(ctx context.Context, containerName string) bool {
 	return err == nil
 }
 
-func (n *Nerdctl) IsUpgrading(ctx context.Context, containerName string) bool {
-	_, err := n.run(ctx, []string{"exec", containerName, "test", "-f", "/usr/lib/otter/container.upgrading"}, runOptions{})
-	return err == nil
-}
-
 func (n *Nerdctl) Journal(ctx context.Context, containerName string, opts containermanager.JournalOptions) error {
 	args := []string{"logs"}
 	if opts.Follow {
