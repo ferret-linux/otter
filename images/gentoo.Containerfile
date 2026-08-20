@@ -63,6 +63,7 @@ RUN emerge-webrsync && \
         sys-libs/ncurses \
         sys-process/lsof \
         x11-libs/libXext \
+        media-libs/libdrm \
         media-libs/libaom \
         media-libs/libpng \
         media-libs/libvpx \
