@@ -26,10 +26,8 @@ type preferencesConfig struct {
 }
 
 type webUIConfig struct {
-	Bind        string `toml:"bind"`
-	Port        int    `toml:"port"`
-	AllowRemote bool   `toml:"allow-remote"`
-	Token       string `toml:"token"`
+	Bind string `toml:"bind"`
+	Port int    `toml:"port"`
 }
 
 type fileConfig struct {
@@ -56,6 +54,4 @@ type Values struct {
 	StalenessAutopullThreshold int
 	DefaultWebUIBind           string
 	DefaultWebUIPort           int
-	DefaultWebUIAllowRemote    bool
-	DefaultWebUIToken          string
 }
