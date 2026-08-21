@@ -564,6 +564,10 @@ if [ "${upgrade}" -ne 0 ] || [ ! -e /.containersetupdone ]; then
 		# shellcheck disable=SC1091
 		. /usr/lib/otter/scripts/initialization-scripts/setup_dnf.sh
 		setup_dnf dnf
+	elif command -v slackpkg; then
+		# shellcheck disable=SC1091
+		. /usr/lib/otter/scripts/initialization-scripts/setup_slackpkg.sh
+		setup_slackpkg
 	else
 		printf "Error: could not find a supported package manager.\n"
 		printf "Error: could not set up base dependencies.\n"
