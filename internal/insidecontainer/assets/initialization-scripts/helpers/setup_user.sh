@@ -18,9 +18,11 @@ setup_user()
 {
 ###############################################################################
 # If not existing, ensure we have a group for our user.
+# shellcheck disable=SC2154 # assigned by parse_args.sh (sourced+called by otter-init) before sourcing this file
 if ! grep -q "^${container_user_name}:" /etc/group; then
 	printf "otter: Setting up user groups...\n"
 
+	# shellcheck disable=SC2154 # assigned by parse_args.sh (sourced+called by otter-init) before sourcing this file
 	if ! groupadd --force --gid "${container_user_gid}" "${container_user_name}"; then
 		# It may occur that we have users with unsupported user name (eg. on LDAP or AD)
 		# So let's try and force the group creation this way.
@@ -57,10 +59,11 @@ fi
 #
 # In case of AD or LDAP usernames, it is possible we will have a backslach in the name.
 # In that case grep would fail, so we replace the backslash with a point to make the regex work.
-# shellcheck disable=SC1003
+# shellcheck disable=SC1003,SC2154 # SC2154: container_user_uid assigned by parse_args.sh (sourced+called by otter-init) before sourcing this file
 if ! grep -q "^$(printf '%s' "${container_user_name}" | tr '\\' '.'):" /etc/passwd &&
 	! getent passwd "${container_user_uid}"; then
 	printf "otter: Adding user...\n"
+	# shellcheck disable=SC2154 # assigned by parse_args.sh (sourced+called by otter-init) before sourcing this file
 	if ! useradd \
 		--home-dir "${container_user_home}" \
 		--no-create-home \
@@ -211,6 +214,7 @@ if [ ! -e /etc/passwd.done ]; then
 		fi
 	fi
 
+	# shellcheck disable=SC2154 # assigned by parse_args.sh (sourced+called by otter-init) before sourcing this file
 	if [ "${rootful}" -eq 0 ]; then
 		# We're rootless so we don't care about account password, so we remove it
 		passwd_cmd=passwd

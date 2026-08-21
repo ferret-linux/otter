@@ -17,6 +17,7 @@ setup_host_mounts()
 ###############################################################################
 printf "otter: Setting up read-only mounts...\n"
 
+# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 for host_mount_ro in ${HOST_MOUNTS_RO}; do
 	# Mounting read-only in a user namespace will trigger a check to see if certain
 	# "locked" flags (line noexec,nodev,nosuid) are changed. This ensures we explicitly reuse those flags.
@@ -41,12 +42,14 @@ printf "otter: Setting up read-write mounts...\n"
 # Do something similar here with a bind mount. Skip this entirely when a custom
 # home is in use (OTTER_HOST_HOME set), since a custom home should stay isolated
 # from the real host home.
+# shellcheck disable=SC2154 # assigned by parse_args.sh (sourced+called by otter-init) before sourcing this file
 if [ -z "${OTTER_HOST_HOME-}" ] && [ -e "/var/home/${container_user_name}" ]; then
 	if ! mount_bind "/run/host/var/home/${container_user_name}" "/home/${container_user_name}"; then
 		printf "Warning: Cannot bind mount %s to /run/host%s\n" "/var/home" "/home"
 	fi
 fi
 
+# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 for host_mount in ${HOST_MOUNTS}; do
 	if ! mount_bind /run/host"${host_mount}" "${host_mount}"; then
 		printf "Warning: Cannot bind mount %s to /run/host%s\n" "${host_mount}" "${host_mount}"
