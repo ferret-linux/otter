@@ -35,6 +35,7 @@ EOF
 setup_xbps()
 {
 	# If we need to upgrade, do it and exit, no further action required.
+	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	if [ "${upgrade}" -ne 0 ]; then
 		xbps-install -Syu
 		exit
@@ -101,6 +102,7 @@ setup_xbps()
 
 	# In case the locale is not available, install it
 	# will ensure we don't fallback to C.UTF-8
+	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	if command -v locale && {
 		! locale -a | grep -qi en_us.utf8 || ! locale -a | grep -qi "$(echo "${HOST_LOCALE}" | tr -d '-')"
 	}; then

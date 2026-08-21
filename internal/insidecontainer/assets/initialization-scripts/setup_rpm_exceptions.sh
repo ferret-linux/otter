@@ -13,11 +13,13 @@ setup_rpm_exceptions()
 {
 	# In case of an RPM distro, we can specify that our bind_mount directories
 	# are in fact net shares. This prevents conflicts during package installations.
+	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	if [ "${init}" -eq 0 ]; then
 		mkdir -p /usr/lib/rpm/macros.d/
 		# Loop through all the environment vars
 		# and export them to the container.
 		net_mounts=""
+		# shellcheck disable=SC2154 # HOST_MOUNTS_RO, HOST_MOUNTS assigned by otter-init before sourcing this file
 		for net_mount in \
 			${HOST_MOUNTS_RO} ${HOST_MOUNTS} \
 			'/dev' '/proc' '/sys' '/tmp' \

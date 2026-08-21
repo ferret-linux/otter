@@ -15,11 +15,13 @@ setup_deb_exceptions()
 
 	# In case of an DEB distro, we can specify that our bind_mount directories
 	# have to be ignored. This prevents conflicts during package installations.
+	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	if [ "${init}" -eq 0 ]; then
 		# Loop through all the environment vars
 		# and export them to the container.
 		mkdir -p /etc/dpkg/dpkg.cfg.d/
 		printf "" > /etc/dpkg/dpkg.cfg.d/00_otter
+		# shellcheck disable=SC2154 # HOST_MOUNTS_RO, HOST_MOUNTS assigned by otter-init before sourcing this file
 		for net_mount in ${HOST_MOUNTS_RO} ${HOST_MOUNTS}; do
 			printf "path-exclude %s/*\n" "${net_mount}" >> /etc/dpkg/dpkg.cfg.d/00_otter
 		done
@@ -48,6 +50,7 @@ setup_apt()
 	export DEBIAN_FRONTEND=noninteractive
 
 	# If we need to upgrade, do it and exit, no further action required.
+	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	if [ "${upgrade}" -ne 0 ]; then
 		apt-get update
 		apt-get upgrade -o Dpkg::Options::="--force-confold" -y
@@ -154,6 +157,7 @@ setup_apt()
 
 	# In case the locale is not available, install it
 	# will ensure we don't fallback to C.UTF-8
+	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	if [ -e /etc/locale.gen ] && {
 		! locale -a | grep -qi en_us.utf8 || ! locale -a | grep -qi "$(echo "${HOST_LOCALE}" | tr -d '-')"
 	}; then

@@ -11,6 +11,7 @@
 setup_zypper()
 {
 	# If we need to upgrade, do it and exit, no further action required.
+	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	if [ "${upgrade}" -ne 0 ]; then
 		zypper dup -y
 		exit
@@ -111,6 +112,7 @@ EOF
 
 	# In case the locale is not available, install it
 	# will ensure we don't fallback to C.UTF-8
+	# shellcheck disable=SC2154 # HOST_LOCALE, HOST_LOCALE_LANG, HOST_LOCALE_ENCODING assigned by otter-init before sourcing this file
 	if ! locale -a | grep -qi en_us.utf8 || ! locale -a | grep -qi "$(echo "${HOST_LOCALE}" | tr -d '-')"; then
 		LANG="${HOST_LOCALE}" localedef -i "${HOST_LOCALE_LANG}" -f "${HOST_LOCALE_ENCODING}" "${HOST_LOCALE}" || true
 	fi

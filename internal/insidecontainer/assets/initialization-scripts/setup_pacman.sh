@@ -14,6 +14,7 @@ setup_pacman_exceptions()
 	# Workarounds for pacman. We need to exclude the paths by using a pre-hook to umount them and a
 	# post-hook to remount them. Additionally we neutralize the systemd-post-hooks as they do not
 	# work on a rootless container system.
+	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	if [ -d "/usr/share/libalpm/scripts" ] && [ "${init}" -eq 0 ]; then
 		# in case we're not using an init image, neutralize systemd post installation hooks
 		# so that we do not encounter problems along the way.
@@ -61,6 +62,7 @@ setup_pacman()
 	pacman -S -y -y
 
 	# If we need to upgrade, do it and exit, no further action required.
+	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	if [ "${upgrade}" -ne 0 ]; then
 		pacman -S -u --noconfirm
 		exit
@@ -130,6 +132,7 @@ setup_pacman()
 	# shellcheck disable=SC2086,2046
 	pacman -S --needed --noconfirm $(pacman -Ssq | grep -E "^($(echo ${deps} | tr ' ' '|'))$")
 
+	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	if [ ! -e "/usr/share/i18n/locales${HOST_LOCALE}" ]; then
 		pacman -S --noconfirm glibc glibc-locales
 	fi

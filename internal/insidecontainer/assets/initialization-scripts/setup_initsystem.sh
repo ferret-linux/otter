@@ -19,6 +19,7 @@ printf "otter: Setting up init system...\n"
 # some of this directories are needed by
 # the init system. If they're mounts, there might
 # be problems. Let's unmount them.
+# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 for host_mount in ${HOST_MOUNTS_RO_INIT}; do
 	if findmnt "${host_mount}" > /dev/null; then umount "${host_mount}"; fi
 done
@@ -104,6 +105,7 @@ if command -v systemctl 2> /dev/null; then
 	# in this case we're using network=host and systemd-resolved won't
 	# be able to bind to localhost:53
 	mount_source="$(findmnt -no SOURCE /etc/resolv.conf)" || :
+	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	if [ -n "${mount_source}" ] && ! echo "${mount_source}" | grep -q "${id}"; then
 		UNIT_TARGETS="${UNIT_TARGETS}
 			/usr/lib/systemd/system/systemd-resolved.service
@@ -161,6 +163,7 @@ printf "otter: Firing up init system...\n"
 
 if [ -e /usr/lib/systemd/systemd ] || [ -e /lib/systemd/systemd ]; then
 	# Start user Systemd unit, this will attempt until Systemd is ready
+	# shellcheck disable=SC2154 # container_user_name assigned by otter-init before sourcing this file
 	sh -c "timeout=120 && sleep 1 && while [ \"\${timeout}\" -gt 0 ]; do \
 	    systemctl is-system-running | grep -E 'running|degraded' && break; \
 		echo 'waiting for systemd to come up...\n' && sleep 1 && timeout=\$(( timeout -1 )); \

@@ -17,6 +17,7 @@ setup_emerge()
 		emerge-webrsync
 	fi
 	# If we need to upgrade, do it and exit, no further action required.
+	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	if [ "${upgrade}" -ne 0 ]; then
 		emerge --sync
 		exit
@@ -64,6 +65,7 @@ setup_emerge()
 
 	# In case the locale is not available, install it
 	# will ensure we don't fallback to C.UTF-8
+	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	if ! locale -a | grep -qi en_us.utf8 || ! locale -a | grep -qi "$(echo "${HOST_LOCALE}" | tr -d '-')"; then
 		sed -i "s|#.*en_US.UTF-8|en_US.UTF-8|g" /etc/locale.gen
 		sed -i "s|#.*${HOST_LOCALE}|${HOST_LOCALE}|g" /etc/locale.gen

@@ -11,6 +11,7 @@
 setup_apk()
 {
 	# If we need to upgrade, do it and exit, no further action required.
+	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	if [ "${upgrade}" -ne 0 ]; then
 		apk update
 		apk upgrade
