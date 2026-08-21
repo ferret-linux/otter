@@ -73,6 +73,7 @@ RUN apt-get update && \
         manpages \
         xz-utils \
         xwayland \
+        xdg-utils \
         apt-utils \
         diffutils \
         findutils \
@@ -92,6 +93,8 @@ RUN apt-get update && \
         libegl-mesa0 \
         libglx-mesa0 \
         ncurses-base \
+        xdg-user-dirs \
+        pipewire-jack \
         libvte-common \
         pipewire-alsa \
         pipewire-pulse \

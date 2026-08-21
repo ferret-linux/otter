@@ -85,6 +85,7 @@ RUN xbps-install -Syu xbps && \
         inetutils \
         procps-ng \
         gstreamer \
+        xdg-utils \
         gst-libav \
         alsa-utils \
         fish-shell \
@@ -94,6 +95,7 @@ RUN xbps-install -Syu xbps && \
         pinentry-tty \
         mit-krb5-libs \
         vulkan-loader \
+        xdg-user-dirs \
         pipewire-pulse \
         bash-completion \
         mit-krb5-client \
@@ -103,6 +105,7 @@ RUN xbps-install -Syu xbps && \
         gst-plugins-ugly \
         mesa-vulkan-intel \
         mesa-vulkan-radeon \
+        xdg-desktop-portal \
         gstreamer1-pipewire \
         xorg-server-xwayland) && \
     xbps-install -Su && \

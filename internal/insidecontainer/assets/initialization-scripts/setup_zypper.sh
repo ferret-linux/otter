@@ -95,6 +95,7 @@ EOF
 			libvte-2*
 			man-pages
 			pam-extra
+			xdg-utils
 			glibc-i18n
 			libvulkan1
 			mesa-libva
@@ -106,6 +107,7 @@ EOF
 			glibc-locale
 			pipewire-alsa
 			pipewire-jack
+			xdg-user-dirs
 			glibc-i18ndata
 			bash-completion
 			libvulkan_intel

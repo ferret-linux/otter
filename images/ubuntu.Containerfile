@@ -68,6 +68,8 @@ RUN apt-get update && \
         keyutils \
         manpages \
         xz-utils \
+        pipewire \
+        xdg-utils \
         apt-utils \
         diffutils \
         findutils \
@@ -76,6 +78,7 @@ RUN apt-get update && \
         libvulkan1 \
         traceroute \
         util-linux \
+        wireplumber \
         libcap2-bin \
         libnss-mdns \
         libva-x11-2 \
@@ -83,16 +86,22 @@ RUN apt-get update && \
         libegl-mesa0 \
         libglx-mesa0 \
         ncurses-base \
+        xdg-user-dirs \
         libvte-common \
+        pipewire-alsa \
+        pipewire-jack \
         va-driver-all \
         libva-wayland2 \
         openssh-client \
+        pipewire-pulse \
         bash-completion \
         mesa-va-drivers \
         pinentry-curses \
         language-pack-en \
         libnss-myhostname \
+        libpipewire-0.3-0 \
         gstreamer1.0-libav \
+        xdg-desktop-portal \
         mesa-vulkan-drivers \
         gstreamer1.0-pipewire \
         gstreamer1.0-plugins-bad \

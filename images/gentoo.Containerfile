@@ -68,6 +68,7 @@ RUN emerge-webrsync && \
         media-libs/libpng \
         media-libs/libvpx \
         x11-base/xwayland \
+        x11-misc/xdg-utils \
         app-crypt/pinentry \
         media-libs/libexif \
         media-libs/libheif \
@@ -90,6 +91,7 @@ RUN emerge-webrsync && \
         media-video/pipewire \
         x11-libs/libXinerama \
         x11-libs/libxkbcommon \
+        x11-misc/xdg-user-dirs \
         app-portage/gentoolkit \
         x11-libs/libXcomposite \
         media-video/wireplumber \
@@ -98,7 +100,7 @@ RUN emerge-webrsync && \
         media-libs/vulkan-loader \
         app-shells/bash-completion \
         media-libs/gst-plugins-bad \
-        gui-apps/xdg-desktop-portal \
+        sys-apps/xdg-desktop-portal \
         media-libs/gst-plugins-base \
         media-libs/gst-plugins-good \
         media-libs/gst-plugins-ugly) && \

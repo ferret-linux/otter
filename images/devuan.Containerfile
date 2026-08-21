@@ -76,6 +76,7 @@ RUN apt-get update && \
         libflac12 \
         libvdpau1 \
         libkrb5-3 \
+        xdg-utils \
         libvulkan1 \
         traceroute \
         util-linux \
@@ -89,8 +90,10 @@ RUN apt-get update && \
         libegl-mesa0 \
         libglx-mesa0 \
         ncurses-base \
+        xdg-user-dirs \
         libvte-common \
         pipewire-alsa \
+        pipewire-jack \
         pipewire-pulse \
         openssh-client \
         bash-completion \

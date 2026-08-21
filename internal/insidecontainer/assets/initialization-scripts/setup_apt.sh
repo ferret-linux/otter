@@ -156,6 +156,7 @@ setup_apt()
 			pipewire
 			xwayland
 			xz-utils
+			xdg-utils
 			apt-utils
 			diffutils
 			findutils
@@ -183,6 +184,7 @@ setup_apt()
 			libglx-mesa0
 			libxinerama1
 			ncurses-base
+			xdg-user-dirs
 			libvte-common
 			libxkbcommon0
 			pipewire-alsa

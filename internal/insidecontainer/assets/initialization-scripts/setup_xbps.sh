@@ -101,6 +101,7 @@ setup_xbps()
 			gstreamer
 			inetutils
 			procps-ng
+			xdg-utils
 			alsa-utils
 			fish-shell
 			traceroute
@@ -110,6 +111,8 @@ setup_xbps()
 			pinentry-tty
 			mit-krb5-libs
 			vulkan-loader
+			alsa-pipewire
+			xdg-user-dirs
 			pipewire-pulse
 			bash-completion
 			gst-plugins-bad
@@ -118,6 +121,7 @@ setup_xbps()
 			gst-plugins-good
 			gst-plugins-ugly
 			mesa-vulkan-intel
+			xdg-desktop-portal
 			mesa-vulkan-radeon
 			gstreamer1-pipewire
 			xorg-server-xwayland

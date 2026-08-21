@@ -92,6 +92,7 @@ RUN dnf install dnf5-plugins -y --refresh && \
         keyutils \
         nss-mdns \
         pinentry \
+        xdg-utils \
         diffutils \
         findutils \
         krb5-libs \
@@ -105,6 +106,7 @@ RUN dnf install dnf5-plugins -y --refresh && \
         glibc-common \
         gnupg2-smime \
         shadow-utils \
+        xdg-user-dirs \
         pipewire-alsa \
         mesa-freeworld \
         cracklib-dicts \
@@ -116,6 +118,7 @@ RUN dnf install dnf5-plugins -y --refresh && \
         libheif-freeworld \
         util-linux-script \
         pipewire-gstreamer \
+        xdg-desktop-portal \
         pipewire-pulseaudio \
         pipewire-codec-aptx \
         glibc-all-langpacks \

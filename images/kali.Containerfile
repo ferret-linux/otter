@@ -82,6 +82,7 @@ RUN apt-get update && \
         findutils \
         libflac12 \
         libkrb5-3 \
+        xdg-utils \
         libvdpau1 \
         libva-drm2 \
         libvulkan1 \
@@ -103,6 +104,7 @@ RUN apt-get update && \
         libglx-mesa0 \
         libxinerama1 \
         ncurses-base \
+        xdg-user-dirs \
         pipewire-alsa \
         pipewire-jack \
         libxkbcommon0 \

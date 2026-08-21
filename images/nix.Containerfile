@@ -288,6 +288,7 @@ common.onlySupported [
   libglvnd
   pipewire
   vpl-gpu-rt
+  wireplumber
   pipewire.jack
   vulkan-loader
   xdg-desktop-portal

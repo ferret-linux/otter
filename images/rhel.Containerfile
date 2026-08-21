@@ -76,6 +76,7 @@ RUN dnf upgrade -y && \
         krb5-libs \
         man-pages \
         procps-ng \
+        xdg-utils \
         traceroute \
         util-linux \
         gstreamer1 \
@@ -84,6 +85,8 @@ RUN dnf upgrade -y && \
         glibc-common \
         gnupg2-smime \
         shadow-utils \
+        xdg-user-dirs \
+        pipewire-alsa \
         cracklib-dicts \
         xorg-x11-xauth \
         bash-completion \
@@ -91,10 +94,13 @@ RUN dnf upgrade -y && \
         dnf-plugins-core \
         mesa-dri-drivers \
         util-linux-script \
+        xdg-desktop-portal \
+        pipewire-gstreamer \
         glibc-all-langpacks \
         glibc-locale-source \
         mesa-vulkan-drivers \
-        pipewire-pulseaudio) && \
+        pipewire-pulseaudio \
+        pipewire-jack-audio-connection-kit) && \
     dnf upgrade -y && \
     dnf autoremove -y && \
     dnf clean all && \

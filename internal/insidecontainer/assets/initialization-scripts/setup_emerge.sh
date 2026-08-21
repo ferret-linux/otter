@@ -64,6 +64,7 @@ setup_emerge()
 			media-libs/libpng
 			media-libs/libvpx
 			x11-base/xwayland
+			x11-misc/xdg-utils
 			app-crypt/pinentry
 			media-libs/libexif
 			media-libs/libheif
@@ -86,6 +87,7 @@ setup_emerge()
 			media-video/pipewire
 			x11-libs/libXinerama
 			x11-libs/libxkbcommon
+			x11-misc/xdg-user-dirs
 			app-portage/gentoolkit
 			x11-libs/libXcomposite
 			app-shells/${shell_pkg}
@@ -95,7 +97,7 @@ setup_emerge()
 			media-libs/vulkan-loader
 			app-shells/bash-completion
 			media-libs/gst-plugins-bad
-			gui-apps/xdg-desktop-portal
+			sys-apps/xdg-desktop-portal
 			media-libs/gst-plugins-base
 			media-libs/gst-plugins-good
 			media-libs/gst-plugins-ugly

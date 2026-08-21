@@ -98,7 +98,6 @@ setup_apk()
 					mesa-vulkan
 					libcap-progs
 					ncurses-term
-					pipewire-alsa
 					base-full-man
 					dinit-chimera
 					libarchive-progs
@@ -155,6 +154,7 @@ setup_apk()
 			xdg-utils
 			util-linux
 			vpl-gpu-rt
+			pipewire-alsa
 			pipewire-jack
 			vulkan-loader
 			xdg-user-dirs

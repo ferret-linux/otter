@@ -291,6 +291,7 @@ RUN rm -f /var/lock/slackpkg.*; \
         qrencode \
         xcb-util \
         xvidcore \
+        xdg-utils \
         dbus-glib \
         diffutils \
         findutils \
@@ -339,6 +340,7 @@ RUN rm -f /var/lock/slackpkg.*; \
         libxshmfence \
         opencore-amr \
         xcb-util-xrm \
+        xdg-user-dirs \
         vulkan-loader \
         libjpeg-turbo \
         libsamplerate \

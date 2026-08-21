@@ -82,6 +82,7 @@ RUN dnf install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-rele
         keyutils \
         nss-mdns \
         pinentry \
+        xdg-utils \
         diffutils \
         findutils \
         krb5-libs \
@@ -95,6 +96,7 @@ RUN dnf install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-rele
         glibc-common \
         gnupg2-smime \
         shadow-utils \
+        xdg-user-dirs \
         pipewire-alsa \
         mesa-freeworld \
         cracklib-dicts \
@@ -105,6 +107,7 @@ RUN dnf install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-rele
         mesa-dri-drivers \
         libheif-freeworld \
         util-linux-script \
+        xdg-desktop-portal \
         pipewire-gstreamer \
         pipewire-pulseaudio \
         pipewire-codec-aptx \

@@ -76,6 +76,7 @@ RUN zypper -n install --auto-agree-with-licenses -y \
     pipewire \
     libopus0 \
     xwayland \
+    xdg-utils \
     diffutils \
     findutils \
     man-pages \
@@ -90,6 +91,7 @@ RUN zypper -n install --auto-agree-with-licenses -y \
     libx264-164 \
     libx265-215 \
     glibc-locale \
+    xdg-user-dirs \
     pipewire-jack \
     pipewire-alsa \
     glibc-i18ndata \

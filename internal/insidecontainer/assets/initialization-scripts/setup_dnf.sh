@@ -94,7 +94,6 @@ setup_dnf()
 					libvdpau
 					libXfixes
 					libXrandr
-					xdg-utils
 					fontconfig
 					gstreamer1
 					libXcursor
@@ -115,7 +114,6 @@ setup_dnf()
 					desktop-file-utils
 					hicolor-icon-theme
 					mesa-vdpau-drivers
-					xdg-desktop-portal
 					gstreamer1-plugins-base
 					gstreamer1-plugins-good
 					xorg-x11-server-Xwayland
@@ -166,6 +164,7 @@ setup_dnf()
 			nss-mdns
 			pinentry
 			pipewire
+			xdg-utils
 			diffutils
 			findutils
 			krb5-libs
@@ -187,6 +186,7 @@ setup_dnf()
 			dnf-plugins-core
 			mesa-dri-drivers
 			util-linux-script
+			xdg-desktop-portal
 			pipewire-gstreamer
 			glibc-all-langpacks
 			glibc-locale-source
