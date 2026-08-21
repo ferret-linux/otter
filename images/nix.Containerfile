@@ -340,6 +340,8 @@ common.onlySupported [
   ffmpeg
   gnutar
   procps
+  wayland
+  xwayland
   man-pages
   xdg-utils
   glibcLocales
