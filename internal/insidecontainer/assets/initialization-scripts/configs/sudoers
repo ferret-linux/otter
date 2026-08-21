@@ -1,0 +1,5 @@
+Defaults !targetpw
+Defaults !fqdn
+%wheel ALL=(ALL:ALL) ALL
+%sudo ALL=(ALL:ALL) ALL
+%root ALL=(ALL:ALL) ALL
