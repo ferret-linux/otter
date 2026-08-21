@@ -56,7 +56,7 @@ lint-fix:
 	$(GO_BUILD_ENV) golangci-lint run --fix
 
 .PHONY: newline-fix
-fix-newline:
+newline-fix:
 	@files=$$(git ls-files '*.sh' '*.go' '*.help' '*.conf' '*.fish'; git ls-files | grep -E '(^|/)(sudoers|pam-su)$$'); \
 	files=$$(printf '%s\n' "$$files" | sort -u); \
 	for f in $$files; do \
