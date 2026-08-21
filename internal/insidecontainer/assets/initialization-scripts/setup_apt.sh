@@ -73,18 +73,154 @@ setup_apt()
 	distro_id="$(get_distro_id)"
 	case "${distro_id}" in
 		ubuntu)
+			echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections
 			distro_deps="
+				fish
+				gstreamer1.0-libav
+				gstreamer1.0-pipewire
+				gstreamer1.0-plugins-bad
+				gstreamer1.0-plugins-base
+				gstreamer1.0-plugins-good
+				gstreamer1.0-plugins-ugly
+				libva-drm2
+				libva-wayland2
+				libva-x11-2
+				libva2
+				mesa-va-drivers
 				systemd
+				ubuntu-restricted-addons
+				ubuntu-restricted-extras
+				va-driver-all
+				zsh
 			"
 			;;
 		debian)
 			distro_deps="
+				ffmpeg
+				fish
+				gstreamer1.0-libav
+				gstreamer1.0-pipewire
+				gstreamer1.0-plugins-bad
+				gstreamer1.0-plugins-base
+				gstreamer1.0-plugins-good
+				gstreamer1.0-plugins-ugly
+				gstreamer1.0-tools
+				intel-media-va-driver-non-free
+				libavcodec-extra
+				libflac12
+				libgl1-mesa-dri
+				libgl1-mesa-glx
+				libmp3lame0
+				libopus0
+				libpipewire-0.3-0
+				libvdpau1
+				libvpx9
+				libwayland-client0
+				libx264-164
+				libx265-199
+				mesa-va-drivers
+				pipewire
+				pipewire-alsa
+				pipewire-pulse
 				systemd
+				unrar
+				wireplumber
+				xdg-desktop-portal
+				xwayland
+				zsh
 			"
 			;;
 		devuan)
 			distro_deps="
+				ffmpeg
+				fish
+				gstreamer1.0-libav
+				gstreamer1.0-pipewire
+				gstreamer1.0-plugins-bad
+				gstreamer1.0-plugins-base
+				gstreamer1.0-plugins-good
+				gstreamer1.0-plugins-ugly
+				gstreamer1.0-tools
+				intel-media-va-driver-non-free
+				libavcodec-extra
+				libflac12
+				libgl1-mesa-dri
+				libgl1-mesa-glx
+				libmp3lame0
+				libopus0
+				libpipewire-0.3-0
+				libvdpau1
+				libvpx9
+				libx264-164
+				libx265-199
+				mesa-va-drivers
+				pipewire
+				pipewire-alsa
+				pipewire-pulse
 				sysvinit
+				unrar
+				wireplumber
+				xdg-desktop-portal
+				xwayland
+				zsh
+			"
+			;;
+		kali)
+			distro_deps="
+				bash
+				ffmpeg
+				fish
+				gstreamer1.0-libav
+				gstreamer1.0-plugins-bad
+				gstreamer1.0-plugins-base
+				gstreamer1.0-plugins-good
+				gstreamer1.0-plugins-ugly
+				gstreamer1.0-tools
+				intel-media-va-driver-non-free
+				kali-linux-core
+				kali-linux-headless
+				kali-tools-top10
+				libavcodec-extra
+				libdrm2
+				libflac12
+				libgl1-mesa-dri
+				libmp3lame0
+				libopus0
+				libpipewire-0.3-0
+				libva-drm2
+				libva2
+				libvdpau1
+				libvpx9
+				libwayland-client0
+				libwayland-cursor0
+				libwayland-egl1
+				libwayland-server0
+				libx11-6
+				libx264-164
+				libx265-199
+				libxcb1
+				libxcomposite1
+				libxcursor1
+				libxdamage1
+				libxext6
+				libxfixes3
+				libxinerama1
+				libxkbcommon-x11-0
+				libxkbcommon0
+				libxrandr2
+				libxrender1
+				mesa-va-drivers
+				pipewire
+				pipewire-alsa
+				pipewire-jack
+				pipewire-pulse
+				systemd
+				unrar
+				wayland-protocols
+				wireplumber
+				xdg-desktop-portal
+				xwayland
+				zsh
 			"
 			;;
 		*)

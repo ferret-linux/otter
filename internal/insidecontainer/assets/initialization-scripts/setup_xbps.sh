@@ -51,7 +51,33 @@ setup_xbps()
 			shell_pkg="bash"
 		fi
 	fi
+	xbps-install -Sy void-repo-nonfree
 	deps="
+		alsa-lib
+		alsa-utils
+		ffmpeg
+		fish-shell
+		gst-libav
+		gst-plugins-bad
+		gst-plugins-base
+		gst-plugins-good
+		gst-plugins-ugly
+		gstreamer
+		gstreamer1-pipewire
+		lame
+		libdrm
+		libflac
+		libvpx
+		libx264
+		opus
+		pipewire
+		pipewire-pulse
+		runit
+		wayland
+		wireplumber
+		x265
+		xorg-server-xwayland
+		zsh
 		${shell_pkg}
 		bash-completion
 		bc

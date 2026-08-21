@@ -36,7 +36,142 @@ setup_dnf()
 	if [ "${manager}" = "dnf" ]; then
 		flags="--allowerasing"
 	fi
-	deps="
+	distro_id="$(get_distro_id)"
+	case "${distro_id}" in
+		fedora)
+			${manager} install -y \
+				"https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" \
+				"https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm" 2> /dev/null || :
+			${manager} config-manager setopt fedora-cisco-openh264.enabled=1 2> /dev/null || :
+			distro_deps="
+				fdk-aac
+				ffmpeg
+				ffmpeg-libs
+				fish
+				gstreamer1-plugins-bad-freeworld
+				gstreamer1-plugins-base
+				gstreamer1-plugins-good
+				gstreamer1-plugins-ugly
+				libaacs
+				libavcodec-freeworld
+				libheif-freeworld
+				mesa-freeworld
+				mesa-va-drivers-freeworld
+				mesa-vulkan-drivers-freeworld
+				pipewire
+				pipewire-alsa
+				pipewire-codec-aptx
+				pipewire-gstreamer
+				pipewire-jack-audio-connection-kit
+				pipewire-pulseaudio
+				systemd
+				xorg-x11-server-Xwayland
+				xpra-codecs-freeworld
+				zsh
+			"
+			;;
+		alma | centos | ol | rocky)
+			${manager} install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm" 2> /dev/null || :
+			${manager} install -y \
+				"https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm" \
+				"https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm" 2> /dev/null || :
+			distro_deps="
+				fdk-aac
+				ffmpeg
+				ffmpeg-libs
+				fish
+				gstreamer1-plugins-bad-freeworld
+				gstreamer1-plugins-base
+				gstreamer1-plugins-good
+				gstreamer1-plugins-ugly
+				libaacs
+				libavcodec-freeworld
+				libheif-freeworld
+				mesa-freeworld
+				mesa-va-drivers-freeworld
+				mesa-vulkan-drivers-freeworld
+				pipewire
+				pipewire-alsa
+				pipewire-codec-aptx
+				pipewire-gstreamer
+				pipewire-jack-audio-connection-kit
+				pipewire-pulseaudio
+				systemd
+				xorg-x11-server-Xwayland
+				xpra-codecs-freeworld
+				zsh
+			"
+			;;
+		rhel)
+			distro_deps="
+				fish
+				gstreamer1
+				lame
+				opus
+				pipewire
+				pipewire-pulseaudio
+				systemd
+				wireplumber
+				x264
+				x265
+				zsh
+			"
+			;;
+		amzn)
+			${manager} install -y spal-release
+			distro_deps="
+				alsa-lib
+				desktop-file-utils
+				ffmpeg-free
+				fish
+				fontconfig
+				gstreamer1
+				gstreamer1-plugins-bad-free
+				gstreamer1-plugins-base
+				gstreamer1-plugins-good
+				hicolor-icon-theme
+				libva
+				libvdpau
+				libX11
+				libXcomposite
+				libXcursor
+				libXdamage
+				libXext
+				libXfixes
+				libXi
+				libXinerama
+				libxcb
+				libxkbcommon
+				libxkbcommon-x11
+				libXrandr
+				libXrender
+				mesa-libEGL
+				mesa-libGL
+				mesa-libgbm
+				mesa-va-drivers
+				mesa-vdpau-drivers
+				pipewire-alsa
+				pipewire-gstreamer
+				pipewire-jack-audio-connection-kit
+				pipewire-pulseaudio
+				shared-mime-info
+				systemd
+				vulkan-loader
+				wayland
+				xdg-desktop-portal
+				xdg-user-dirs
+				xdg-utils
+				xorg-x11-server-Xwayland
+				zsh
+			"
+			;;
+		*)
+			printf "Error: unsupported dnf-based distro '%s'.\n" "${distro_id}"
+			printf "Error: could not set up base dependencies.\n"
+			exit 127
+			;;
+	esac
+	deps="${distro_deps}
 		${shell_pkg}
 		bash-completion
 		bc

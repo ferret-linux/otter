@@ -52,30 +52,58 @@ EOF
 		bzip2
 		curl
 		diffutils
+		ffmpeg
 		findutils
+		fish
+		glibc
+		glibc-i18n
+		glibc-i18ndata
 		glibc-locale
 		glibc-locale-base
+		glibc-locale-source
 		gnupg
+		gstreamer
+		gstreamer-plugins-bad
+		gstreamer-plugins-base
+		gstreamer-plugins-good
+		gstreamer-plugins-libav
+		gstreamer-plugins-ugly
 		hostname
+		intel-media-driver
 		iputils
 		keyutils
 		less
+		libdrm2
+		libFLAC12
+		libopus0
+		libva-intel-driver
+		libva2
+		libvpx2
 		libvte-2*
+		libwayland-client0
+		libwayland-egl1
+		libwayland-server0
+		libx264-164
+		libx265-215
 		lsof
 		man
 		man-pages
+		Mesa
+		mesa-libva
 		mtr
-		ncurses
 		nss-mdns
 		openssh-clients
 		pam
 		pam-extra
 		pigz
 		pinentry
+		pipewire
+		pipewire-alsa
+		pipewire-jack
+		pipewire-pulseaudio
 		procps
 		rsync
 		shadow
-		sudo
 		system-group-wheel
 		systemd
 		time
@@ -84,10 +112,15 @@ EOF
 		unzip
 		util-linux
 		util-linux-systemd
+		wayland
 		wget
+		wireplumber
 		words
 		xauth
+		xdg-desktop-portal
+		xwayland
 		zip
+		zsh
 		python3
 		Mesa-dri
 		libvulkan1

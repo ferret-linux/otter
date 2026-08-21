@@ -52,6 +52,54 @@ setup_emerge()
 		app-text/tree
 		x11-apps/xauth
 		dev-lang/python
+		app-arch/unrar
+		app-portage/gentoolkit
+		app-shells/fish
+		gui-apps/xdg-desktop-portal
+		media-libs/flac
+		media-libs/gst-libav
+		media-libs/gst-plugins-bad
+		media-libs/gst-plugins-base
+		media-libs/gst-plugins-good
+		media-libs/gst-plugins-ugly
+		media-libs/gstreamer
+		media-libs/libaom
+		media-libs/libdav1d
+		media-libs/libde265
+		media-libs/libdrm
+		media-libs/libexif
+		media-libs/libheif
+		media-libs/libjpeg-turbo
+		media-libs/libpng
+		media-libs/libva
+		media-libs/libvdpau
+		media-libs/libvpx
+		media-libs/libwebp
+		media-libs/mesa
+		media-libs/openh264
+		media-libs/opus
+		media-libs/tiff
+		media-libs/vulkan-layers
+		media-libs/vulkan-loader
+		media-libs/x264
+		media-libs/x265
+		media-sound/lame
+		media-video/ffmpeg
+		media-video/pipewire
+		media-video/wireplumber
+		sys-apps/openrc
+		x11-base/xwayland
+		x11-libs/libX11
+		x11-libs/libXcomposite
+		x11-libs/libXcursor
+		x11-libs/libXdamage
+		x11-libs/libXext
+		x11-libs/libXfixes
+		x11-libs/libXi
+		x11-libs/libXinerama
+		x11-libs/libXrandr
+		x11-libs/libxcb
+		x11-libs/libxkbcommon
 	"
 	install_pkg=""
 	for dep in ${deps}; do
