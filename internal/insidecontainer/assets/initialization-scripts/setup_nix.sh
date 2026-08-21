@@ -299,32 +299,6 @@ EOF
 		mkdir -p /usr/lib
 		ln -sf /nix/var/nix/profiles/default/lib/systemd /usr/lib/systemd
 
-		# glibc on non-NixOS systems can't assume an FHS locale-archive path,
-		# so nixpkgs' glibc is patched to read from $LOCALE_ARCHIVE instead
-		# (documented nixpkgs behavior, not a workaround specific to this
-		# image). Without this, locale-dependent tools emit "cannot change
-		# locale" warnings or misbehave. ENV bakes into an image at build
-		# time, so a runtime script has to persist these another way --
-		# dropped into /etc/profile.d alongside otter's own profile scripts.
-		# LANG is set from the host's locale (HOST_LOCALE), matching every
-		# other setup_*.sh, rather than the Containerfile's hardcoded
-		# en_US.UTF-8 -- the Containerfile has no HOST_LOCALE to read since
-		# that's computed by otter-init at container runtime, not at image
-		# build time.
-		#
-		# NIXPKGS_ALLOW_UNFREE lets classic-style commands (nix-env,
-		# nix-build, nix-shell) install unfree packages without extra flags.
-		# Does NOT cover flake-style commands (nix profile/build/shell/develop)
-		# -- those run in pure evaluation mode, which blocks reading env vars
-		# regardless of this setting, so `--impure` is still required
-		# alongside this for e.g. `nix profile add --impure nixpkgs#vscode`.
-		# shellcheck disable=SC2154 # HOST_LOCALE assigned by otter-init before sourcing this file
-		cat > /etc/profile.d/otter_nix_env.sh <<EOF
-export LANG=${HOST_LOCALE}
-export LOCALE_ARCHIVE=/nix/var/nix/profiles/default/lib/locale/locale-archive
-export NIXPKGS_ALLOW_UNFREE=1
-EOF
-
 		# Timezone default
 		# NOTE: no /usr/share/zoneinfo here -- nothing lands at FHS paths in
 		# this image. tzdata's zoneinfo is symlinked into the Nix profile
@@ -332,6 +306,32 @@ EOF
 		ln -sf /nix/var/nix/profiles/default/share/zoneinfo/UTC /etc/localtime
 		echo "UTC" > /etc/timezone
 	fi
+
+	# glibc on non-NixOS systems can't assume an FHS locale-archive path, so
+	# nixpkgs' glibc is patched to read from $LOCALE_ARCHIVE instead
+	# (documented nixpkgs behavior, not a workaround specific to this
+	# image). Without this, locale-dependent tools emit "cannot change
+	# locale" warnings or misbehave. ENV bakes into an image at build time,
+	# so a runtime script has to persist these another way -- dropped into
+	# /etc/profile.d alongside otter's own profile scripts. Written
+	# unconditionally (official image or not), same as the HOST_LOCALE
+	# fixup in every other setup_*.sh (apt, dnf, pacman, slackpkg, zypper,
+	# emerge) -- an official nix image bakes LANG=en_US.UTF-8 at build time
+	# (nix.Containerfile), and this brings it in line with the host
+	# regardless of that gate above.
+	#
+	# NIXPKGS_ALLOW_UNFREE lets classic-style commands (nix-env, nix-build,
+	# nix-shell) install unfree packages without extra flags. Does NOT
+	# cover flake-style commands (nix profile/build/shell/develop) -- those
+	# run in pure evaluation mode, which blocks reading env vars regardless
+	# of this setting, so `--impure` is still required alongside this for
+	# e.g. `nix profile add --impure nixpkgs#vscode`.
+	# shellcheck disable=SC2154 # HOST_LOCALE assigned by otter-init before sourcing this file
+	cat > /etc/profile.d/otter_nix_env.sh <<EOF
+export LANG=${HOST_LOCALE}
+export LOCALE_ARCHIVE=/nix/var/nix/profiles/default/lib/locale/locale-archive
+export NIXPKGS_ALLOW_UNFREE=1
+EOF
 
 	# Install additional packages passed at otter-create time. Added one at a
 	# time, rather than in a single `nix profile add`, so a single bad or
