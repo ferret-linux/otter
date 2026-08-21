@@ -58,172 +58,173 @@ EOF
 #   None
 setup_pacman()
 {
-	# Update the package repository cache exactly once before installing packages.
-	pacman -S -y -y
-
 	# If we need to upgrade, do it and exit, no further action required.
 	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	if [ "${upgrade}" -ne 0 ]; then
+		pacman -S -y -y
 		pacman -S -u --noconfirm
 		exit
 	fi
-	# In archlinux official images, pacman is configured to ignore locale and docs
-	# This however, results in a rather poor out-of-the-box experience
-	# So, let's enable them.
-	sed -i "s|NoExtract.*||g" /etc/pacman.conf
-	sed -i "s|NoProgressBar.*||g" /etc/pacman.conf
-	sed -i '/^\s*#\?\s*ILoveCandy/d; /^\s*#\?\s*Color/d' /etc/pacman.conf
-    sed -i '0,/^\[options\]/s/^\[options\]/\[options\]\nColor\nILoveCandy/' /etc/pacman.conf
-
-	pacman -S -u --noconfirm
-	# Check if shell_pkg is available in distro's repo. If not we
-	# fall back to bash, and we set the SHELL variable to bash so
-	# that it is set up correctly for the user.
 	if [ ! -f /usr/lib/otter/container.official ]; then
+		# Update the package repository cache exactly once before installing packages.
+		pacman -S -y -y
+
+		# In archlinux official images, pacman is configured to ignore locale and docs
+		# This however, results in a rather poor out-of-the-box experience
+		# So, let's enable them.
+		sed -i "s|NoExtract.*||g" /etc/pacman.conf
+		sed -i "s|NoProgressBar.*||g" /etc/pacman.conf
+		sed -i '/^\s*#\?\s*ILoveCandy/d; /^\s*#\?\s*Color/d' /etc/pacman.conf
+	    sed -i '0,/^\[options\]/s/^\[options\]/\[options\]\nColor\nILoveCandy/' /etc/pacman.conf
+
+		pacman -S -u --noconfirm
+		# Check if shell_pkg is available in distro's repo. If not we
+		# fall back to bash, and we set the SHELL variable to bash so
+		# that it is set up correctly for the user.
 		if ! pacman -S --needed --noconfirm "${shell_pkg}"; then
 			shell_pkg="bash"
 		fi
+		distro_id="$(get_distro_id)"
+		case "${distro_id}" in
+			arch)
+				distro_deps="
+					systemd
+				"
+				;;
+			artix)
+				distro_deps="
+					openrc
+					wayland
+				"
+				;;
+			blackarch)
+				distro_deps="
+					ffuf
+					john
+					nmap
+					bully
+					hydra
+					nikto
+					crunch
+					dsniff
+					medusa
+					reaver
+					sqlmap
+					tshark
+					wifite
+					wpscan
+					binwalk
+					dnsenum
+					hashcat
+					masscan
+					radare2
+					systemd
+					whatweb
+					checksec
+					ettercap
+					exiftool
+					foremost
+					gobuster
+					hcxtools
+					bettercap
+					mitmproxy
+					aircrack-ng
+					theharvester
+				"
+				;;
+			cachyos)
+				distro_deps="
+					paru
+					wine
+					proton
+					systemd
+					wine-mono
+					protonplus
+					wine-gecko
+					protontricks
+					umu-launcher
+					vulkan-driver
+					wine-cachyos-opt
+					proton-cachyos-slr
+				"
+				;;
+			*)
+				printf "Error: unsupported pacman-based distro '%s'.\n" "${distro_id}"
+				printf "Error: could not set up base dependencies.\n"
+				exit 127
+				;;
+		esac
+		deps="${distro_deps}
+			bc
+			git
+			mtr
+			tar
+			zip
+			zsh
+			base
+			curl
+			fish
+			less
+			lsof
+			mesa
+			pigz
+			sudo
+			time
+			tree
+			wget
+			glibc
+			gnupg
+			libva
+			rsync
+			unzip
+			words
+			ffmpeg
+			man-db
+			python
+			shadow
+			tzdata
+			iputils
+			mlocate
+			ncurses
+			openssh
+			tcpdump
+			fakeroot
+			keyutils
+			nss-mdns
+			pinentry
+			pipewire
+			diffutils
+			findutils
+			inetutils
+			man-pages
+			procps-ng
+			xdg-utils
+			base-devel
+			traceroute
+			util-linux
+			vpl-gpu-rt
+			vte-common
+			xorg-xauth
+			${shell_pkg}
+			vulkan-intel
+			pipewire-alsa
+			pipewire-jack
+			vulkan-radeon
+			xdg-user-dirs
+			xorg-xwayland
+			pipewire-pulse
+			bash-completion
+			gst-plugins-bad
+			util-linux-libs
+			gst-plugins-base
+			gst-plugins-good
+			gst-plugins-ugly
+			xdg-desktop-portal
+			gst-plugin-pipewire
+		"
+		# shellcheck disable=SC2086,2046
+		pacman -S --needed --noconfirm $(pacman -Ssq | grep -E "^($(echo ${deps} | tr ' ' '|'))$")
 	fi
-	distro_id="$(get_distro_id)"
-	case "${distro_id}" in
-		arch)
-			distro_deps="
-				systemd
-			"
-			;;
-		artix)
-			distro_deps="
-				openrc
-				wayland
-			"
-			;;
-		blackarch)
-			distro_deps="
-				ffuf
-				john
-				nmap
-				bully
-				hydra
-				nikto
-				crunch
-				dsniff
-				medusa
-				reaver
-				sqlmap
-				tshark
-				wifite
-				wpscan
-				binwalk
-				dnsenum
-				hashcat
-				masscan
-				radare2
-				systemd
-				whatweb
-				checksec
-				ettercap
-				exiftool
-				foremost
-				gobuster
-				hcxtools
-				bettercap
-				mitmproxy
-				aircrack-ng
-				theharvester
-			"
-			;;
-		cachyos)
-			distro_deps="
-				paru
-				wine
-				proton
-				systemd
-				wine-mono
-				protonplus
-				wine-gecko
-				protontricks
-				umu-launcher
-				vulkan-driver
-				wine-cachyos-opt
-				proton-cachyos-slr
-			"
-			;;
-		*)
-			printf "Error: unsupported pacman-based distro '%s'.\n" "${distro_id}"
-			printf "Error: could not set up base dependencies.\n"
-			exit 127
-			;;
-	esac
-	deps="${distro_deps}
-		bc
-		git
-		mtr
-		tar
-		zip
-		zsh
-		base
-		curl
-		fish
-		less
-		lsof
-		mesa
-		pigz
-		sudo
-		time
-		tree
-		wget
-		glibc
-		gnupg
-		libva
-		rsync
-		unzip
-		words
-		ffmpeg
-		man-db
-		python
-		shadow
-		tzdata
-		iputils
-		mlocate
-		ncurses
-		openssh
-		tcpdump
-		fakeroot
-		keyutils
-		nss-mdns
-		pinentry
-		pipewire
-		diffutils
-		findutils
-		inetutils
-		man-pages
-		procps-ng
-		xdg-utils
-		base-devel
-		traceroute
-		util-linux
-		vpl-gpu-rt
-		vte-common
-		xorg-xauth
-		${shell_pkg}
-		vulkan-intel
-		pipewire-alsa
-		pipewire-jack
-		vulkan-radeon
-		xdg-user-dirs
-		xorg-xwayland
-		pipewire-pulse
-		bash-completion
-		gst-plugins-bad
-		util-linux-libs
-		gst-plugins-base
-		gst-plugins-good
-		gst-plugins-ugly
-		xdg-desktop-portal
-		gst-plugin-pipewire
-	"
-	# shellcheck disable=SC2086,2046
-	pacman -S --needed --noconfirm $(pacman -Ssq | grep -E "^($(echo ${deps} | tr ' ' '|'))$")
 
 	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	if [ ! -e "/usr/share/i18n/locales${HOST_LOCALE}" ]; then

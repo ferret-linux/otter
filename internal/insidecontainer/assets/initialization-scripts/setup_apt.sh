@@ -56,169 +56,169 @@ setup_apt()
 		apt-get upgrade -o Dpkg::Options::="--force-confold" -y
 		exit
 	fi
-	# In Ubuntu official images, dpkg is configured to ignore locale and docs
-	# This however, results in a rather poor out-of-the-box experience
-	# So, let's enable them.
-	rm -f /etc/dpkg/dpkg.cfg.d/excludes
-
-	apt-get update
-	# Check if shell_pkg is available in distro's repo. If not we
-	# fall back to bash, and we set the SHELL variable to bash so
-	# that it is set up correctly for the user.
 	if [ ! -f /usr/lib/otter/container.official ]; then
+		# In Ubuntu official images, dpkg is configured to ignore locale and docs
+		# This however, results in a rather poor out-of-the-box experience
+		# So, let's enable them.
+		rm -f /etc/dpkg/dpkg.cfg.d/excludes
+
+		apt-get update
+		# Check if shell_pkg is available in distro's repo. If not we
+		# fall back to bash, and we set the SHELL variable to bash so
+		# that it is set up correctly for the user.
 		if ! apt-get install -y "${shell_pkg}"; then
 			shell_pkg="bash"
 		fi
+		distro_id="$(get_distro_id)"
+		case "${distro_id}" in
+			ubuntu)
+				echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections
+				distro_deps="
+					libva2
+					systemd
+					libva-drm2
+					libva-x11-2
+					va-driver-all
+					libva-wayland2
+					ubuntu-restricted-addons
+					ubuntu-restricted-extras
+				"
+				;;
+			debian)
+				distro_deps="
+					systemd
+					libwayland-client0
+				"
+				;;
+			devuan)
+				distro_deps="
+					sysvinit
+				"
+				;;
+			kali)
+				distro_deps="
+					systemd
+					kali-linux-core
+					kali-tools-top10
+					kali-linux-headless
+				"
+				;;
+			*)
+				printf "Error: unsupported apt-based distro '%s'.\n" "${distro_id}"
+				printf "Error: could not set up base dependencies.\n"
+				exit 127
+				;;
+		esac
+		deps="${distro_deps}
+			bc
+			mtr
+			zip
+			zsh
+			bash
+			curl
+			fish
+			less
+			lsof
+			pigz
+			sudo
+			time
+			tree
+			wget
+			bzip2
+			gnupg
+			gpgsm
+			rsync
+			unrar
+			unzip
+			xauth
+			dialog
+			ffmpeg
+			gnupg2
+			libgl1
+			man-db
+			passwd
+			procps
+			tzdata
+			libdrm2
+			libegl1
+			libvpx9
+			libxcb1
+			locales
+			python3
+			tcpdump
+			hostname
+			iproute2
+			keyutils
+			libopus0
+			libx11-6
+			libxext6
+			manpages
+			pipewire
+			xwayland
+			xz-utils
+			apt-utils
+			diffutils
+			findutils
+			libflac12
+			libkrb5-3
+			libvdpau1
+			libvulkan1
+			libxfixes3
+			libxrandr2
+			traceroute
+			util-linux
+			libcap2-bin
+			libmp3lame0
+			libnss-mdns
+			libx264-164
+			libx265-199
+			libxcursor1
+			libxdamage1
+			libxrender1
+			wireplumber
+			${shell_pkg}
+			iputils-ping
+			libegl-mesa0
+			libegl1-mesa
+			libglx-mesa0
+			libxinerama1
+			ncurses-base
+			libvte-common
+			libxkbcommon0
+			pipewire-alsa
+			pipewire-jack
+			libxcomposite1
+			openssh-client
+			pipewire-pulse
+			bash-completion
+			libgl1-mesa-dri
+			libgl1-mesa-glx
+			libwayland-egl1
+			mesa-va-drivers
+			pinentry-curses
+			language-pack-en
+			libavcodec-extra
+			libnss-myhostname
+			libpipewire-0.3-0
+			wayland-protocols
+			gstreamer1.0-libav
+			gstreamer1.0-tools
+			libvte-2.9*-common
+			libwayland-cursor0
+			libwayland-server0
+			libxkbcommon-x11-0
+			xdg-desktop-portal
+			mesa-vulkan-drivers
+			gstreamer1.0-pipewire
+			gstreamer1.0-plugins-bad
+			gstreamer1.0-plugins-base
+			gstreamer1.0-plugins-good
+			gstreamer1.0-plugins-ugly
+			intel-media-va-driver-non-free
+		"
+		# shellcheck disable=SC2086,2046
+		apt-get install -y $(apt-cache show ${deps} 2> /dev/null | grep "Package:" | sort -u | cut -d' ' -f2-)
 	fi
-	distro_id="$(get_distro_id)"
-	case "${distro_id}" in
-		ubuntu)
-			echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections
-			distro_deps="
-				libva2
-				systemd
-				libva-drm2
-				libva-x11-2
-				va-driver-all
-				libva-wayland2
-				ubuntu-restricted-addons
-				ubuntu-restricted-extras
-			"
-			;;
-		debian)
-			distro_deps="
-				systemd
-				libwayland-client0
-			"
-			;;
-		devuan)
-			distro_deps="
-				sysvinit
-			"
-			;;
-		kali)
-			distro_deps="
-				systemd
-				kali-linux-core
-				kali-tools-top10
-				kali-linux-headless
-			"
-			;;
-		*)
-			printf "Error: unsupported apt-based distro '%s'.\n" "${distro_id}"
-			printf "Error: could not set up base dependencies.\n"
-			exit 127
-			;;
-	esac
-	deps="${distro_deps}
-		bc
-		mtr
-		zip
-		zsh
-		bash
-		curl
-		fish
-		less
-		lsof
-		pigz
-		sudo
-		time
-		tree
-		wget
-		bzip2
-		gnupg
-		gpgsm
-		rsync
-		unrar
-		unzip
-		xauth
-		dialog
-		ffmpeg
-		gnupg2
-		libgl1
-		man-db
-		passwd
-		procps
-		tzdata
-		libdrm2
-		libegl1
-		libvpx9
-		libxcb1
-		locales
-		python3
-		tcpdump
-		hostname
-		iproute2
-		keyutils
-		libopus0
-		libx11-6
-		libxext6
-		manpages
-		pipewire
-		xwayland
-		xz-utils
-		apt-utils
-		diffutils
-		findutils
-		libflac12
-		libkrb5-3
-		libvdpau1
-		libvulkan1
-		libxfixes3
-		libxrandr2
-		traceroute
-		util-linux
-		libcap2-bin
-		libmp3lame0
-		libnss-mdns
-		libx264-164
-		libx265-199
-		libxcursor1
-		libxdamage1
-		libxrender1
-		wireplumber
-		${shell_pkg}
-		iputils-ping
-		libegl-mesa0
-		libegl1-mesa
-		libglx-mesa0
-		libxinerama1
-		ncurses-base
-		libvte-common
-		libxkbcommon0
-		pipewire-alsa
-		pipewire-jack
-		libxcomposite1
-		openssh-client
-		pipewire-pulse
-		bash-completion
-		libgl1-mesa-dri
-		libgl1-mesa-glx
-		libwayland-egl1
-		mesa-va-drivers
-		pinentry-curses
-		language-pack-en
-		libavcodec-extra
-		libnss-myhostname
-		libpipewire-0.3-0
-		wayland-protocols
-		gstreamer1.0-libav
-		gstreamer1.0-tools
-		libvte-2.9*-common
-		libwayland-cursor0
-		libwayland-server0
-		libxkbcommon-x11-0
-		xdg-desktop-portal
-		mesa-vulkan-drivers
-		gstreamer1.0-pipewire
-		gstreamer1.0-plugins-bad
-		gstreamer1.0-plugins-base
-		gstreamer1.0-plugins-good
-		gstreamer1.0-plugins-ugly
-		intel-media-va-driver-non-free
-	"
-	# shellcheck disable=SC2086,2046
-	apt-get install -y $(apt-cache show ${deps} 2> /dev/null | grep "Package:" | sort -u | cut -d' ' -f2-)
 
 	# In case the locale is not available, install it
 	# will ensure we don't fallback to C.UTF-8
