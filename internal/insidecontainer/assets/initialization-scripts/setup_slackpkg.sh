@@ -27,22 +27,6 @@ setup_slackpkg()
 		fi
 		deps="
 			${shell_pkg}
-			git
-			curl
-			perl
-			zstd
-			dcron
-			wget2
-			brotli
-			c-ares
-			libpsl
-			ngtcp2
-			libidn2
-			libssh2
-			nghttp2
-			nghttp3
-			cyrus-sasl
-			ca-certificates
 			bc
 			xz
 			atk
@@ -54,6 +38,10 @@ setup_slackpkg()
 			tar
 			zix
 			zsh
+			git
+			curl
+			perl
+			zstd
 			bash
 			cups
 			dbus
@@ -97,6 +85,12 @@ setup_slackpkg()
 			speex
 			which
 			xauth
+			dcron
+			wget2
+			brotli
+			c-ares
+			libpsl
+			ngtcp2
 			a52dec
 			dialog
 			ffmpeg
@@ -121,6 +115,10 @@ setup_slackpkg()
 			sqlite
 			sratom
 			taglib
+			libidn2
+			libssh2
+			nghttp2
+			nghttp3
 			fribidi
 			infozip
 			iputils
@@ -190,6 +188,7 @@ setup_slackpkg()
 			soundtouch
 			util-linux
 			vulkan-sdk
+            cyrus-sasl
 			chromaprint
 			libunibreak
 			libxcb-dri2
@@ -221,6 +220,7 @@ setup_slackpkg()
 			glibc-zoneinfo
 			libxcb-present
 			xcb-util-image
+            ca-certificates
 			bash-completion
 			gst-plugins-bad
 			libdisplay-info
