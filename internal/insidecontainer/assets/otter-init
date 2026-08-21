@@ -44,6 +44,7 @@ exec 2>&1
 
 # We'll also bind mount READ-WRITE useful mountpoints to pass external drives and libvirt from
 # the host to the container
+# shellcheck disable=SC2034 # consumed by helpers/setup_host_mounts.sh
 HOST_MOUNTS="
 	/etc/host.conf
 	/etc/machine-id
@@ -62,6 +63,7 @@ HOST_MOUNTS="
 	/var/mnt"
 
 # We'll also bind mount in READ-ONLY useful directories from the host
+# shellcheck disable=SC2034 # consumed by helpers/setup_host_mounts.sh
 HOST_MOUNTS_RO="
 	/etc/localtime
 	/var/lib/systemd/coredump
@@ -78,6 +80,7 @@ HOST_MOUNTS_RO_INIT="
 	/var/log/journal"
 
 # Defaults
+# shellcheck disable=SC2034 # consumed by setup_<pkgmgr>.sh helpers
 container_additional_packages=""
 init=0
 init_hook=""
@@ -86,8 +89,10 @@ pre_init_hook=""
 rootful=0
 upgrade=0
 verbose=0
+# shellcheck disable=SC2034 # consumed by helpers/parse_args.sh
 version="0.0.7"
 
+# shellcheck disable=SC1091
 . /usr/lib/otter/scripts/initialization-scripts/helpers/parse_args.sh
 parse_args "$@"
 
@@ -104,6 +109,7 @@ fi
 # hooks & packages which might not be needed or break
 # the container or error out on a rerun.
 if [ -f /usr/lib/otter/container.bootstrapped ]; then
+	# shellcheck disable=SC2034 # consumed by setup_<pkgmgr>.sh helpers
 	container_additional_packages=""
 	pre_init_hook=""
 	init_hook=""
@@ -167,7 +173,9 @@ fi
 # Get host $LANG
 if [ -f "/run/host/etc/locale.conf" ]; then
 	HOST_LOCALE=$(grep -e '^LANG=' /run/host/etc/locale.conf | sed 's/LANG=//' | sed 's/"//g' | sed "s/'//g")
+	# shellcheck disable=SC2034 # consumed downstream (locale setup)
 	HOST_LOCALE_ENCODING=$(echo "${HOST_LOCALE}" | sed -n 's/^[^.]*\.\(.*\)$/\1/p')
+	# shellcheck disable=SC2034 # consumed downstream (locale setup)
 	HOST_LOCALE_LANG=$(echo "${HOST_LOCALE}" | sed -n 's/^\([^.]*\)\..*$/\1/p')
 elif [ -f "/run/host/etc/default/locale" ]; then
 	HOST_LOCALE=$(grep -e '^LANG=' /run/host/etc/default/locale | sed 's/LANG=//' | sed 's/"//g')
@@ -177,7 +185,9 @@ fi
 # Add fallback values in case host's locale is not set correctly
 if [ -z "${HOST_LOCALE:-}" ] || [ "${HOST_LOCALE:-}" = "C.UTF-8" ]; then
 	HOST_LOCALE="en_US.UTF-8"
+	# shellcheck disable=SC2034 # consumed downstream (locale setup)
 	HOST_LOCALE_ENCODING="UTF-8"
+	# shellcheck disable=SC2034 # consumed downstream (locale setup)
 	HOST_LOCALE_LANG="en_US"
 fi
 
@@ -499,18 +509,23 @@ setup_tmpfiles_exceptions
 
 # Setup pkg manager exceptions and excludes
 if command -v apt-get; then
+	# shellcheck disable=SC1091
 	. /usr/lib/otter/scripts/initialization-scripts/setup_apt.sh
 	setup_deb_exceptions
 elif command -v pacman; then
+	# shellcheck disable=SC1091
 	. /usr/lib/otter/scripts/initialization-scripts/setup_pacman.sh
 	setup_pacman_exceptions
 elif command -v xbps-install; then
+	# shellcheck disable=SC1091
 	. /usr/lib/otter/scripts/initialization-scripts/setup_xbps.sh
 	setup_xbps_exceptions
 elif command -v zypper; then
+	# shellcheck disable=SC1091
 	. /usr/lib/otter/scripts/initialization-scripts/setup_rpm_exceptions.sh
 	setup_rpm_exceptions
 elif command -v dnf; then
+	# shellcheck disable=SC1091
 	. /usr/lib/otter/scripts/initialization-scripts/setup_rpm_exceptions.sh
 	setup_rpm_exceptions
 fi
@@ -522,24 +537,31 @@ if [ "${upgrade}" -ne 0 ] || [ ! -e /.containersetupdone ]; then
 	# install minimal dependencies needed to bootstrap the container:
 	#	the same shell that's on the host + ${dependencies}
 	if command -v apk; then
+		# shellcheck disable=SC1091
 		. /usr/lib/otter/scripts/initialization-scripts/setup_apk.sh
 		setup_apk
 	elif command -v apt-get; then
+		# shellcheck disable=SC1091
 		. /usr/lib/otter/scripts/initialization-scripts/setup_apt.sh
 		setup_apt
 	elif command -v emerge; then
+		# shellcheck disable=SC1091
 		. /usr/lib/otter/scripts/initialization-scripts/setup_emerge.sh
 		setup_emerge
 	elif command -v pacman; then
+		# shellcheck disable=SC1091
 		. /usr/lib/otter/scripts/initialization-scripts/setup_pacman.sh
 		setup_pacman
 	elif command -v xbps-install; then
+		# shellcheck disable=SC1091
 		. /usr/lib/otter/scripts/initialization-scripts/setup_xbps.sh
 		setup_xbps
 	elif command -v zypper; then
+		# shellcheck disable=SC1091
 		. /usr/lib/otter/scripts/initialization-scripts/setup_zypper.sh
 		setup_zypper
 	elif command -v dnf; then
+		# shellcheck disable=SC1091
 		. /usr/lib/otter/scripts/initialization-scripts/setup_dnf.sh
 		setup_dnf dnf
 	else
@@ -624,11 +646,13 @@ mount --bind /dev/pts/ptmx /dev/ptmx
 mount --make-rshared /
 ###############################################################################
 
+# shellcheck disable=SC1091
 . /usr/lib/otter/scripts/initialization-scripts/helpers/setup_host_mounts.sh
 setup_host_mounts
 
 ###############################################################################
 if [ "${nvidia}" -eq 1 ]; then
+	# shellcheck disable=SC1091
 	. /usr/lib/otter/scripts/initialization-scripts/setup_nvidia_gpu.sh
 	setup_nvidia_gpu
 fi
@@ -729,6 +753,7 @@ if [ "${container_user_uid}" -ne 0 ] && [ "${rootful}" -eq 0 ]; then
 fi
 ###############################################################################
 
+# shellcheck disable=SC1091
 . /usr/lib/otter/scripts/initialization-scripts/helpers/setup_user.sh
 setup_user
 
@@ -855,5 +880,6 @@ if [ "${init}" -eq 0 ]; then
 fi
 ###############################################################################
 
+# shellcheck disable=SC1091
 . /usr/lib/otter/scripts/initialization-scripts/setup_initsystem.sh
 setup_initsystem
