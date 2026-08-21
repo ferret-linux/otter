@@ -62,22 +62,27 @@ parse_args()
 				;;
 			-v | --verbose)
 				shift
+				# shellcheck disable=SC2034 # consumed by otter-init after sourcing this file
 				verbose=1
 				;;
 			-V | --version)
+				# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 				printf "otter: %s\n" "${version}"
 				exit 0
 				;;
 			-U | --upgrade)
 				shift
+				# shellcheck disable=SC2034 # consumed by otter-init after sourcing this file
 				upgrade=1
 				;;
 			--rootful)
 				shift
+				# shellcheck disable=SC2034 # consumed by otter-init and helpers/setup_user.sh after sourcing this file
 				rootful=1
 				;;
 			-n | --name)
 				if [ -n "$2" ]; then
+					# shellcheck disable=SC2034 # consumed by otter-init and helpers/setup_user.sh, helpers/setup_host_mounts.sh after sourcing this file
 					container_user_name="$2"
 					shift
 					shift
@@ -85,6 +90,7 @@ parse_args()
 				;;
 			-i | --init)
 				if [ -n "$2" ]; then
+					# shellcheck disable=SC2034 # consumed by otter-init after sourcing this file
 					init="$2"
 					shift
 					shift
@@ -92,6 +98,7 @@ parse_args()
 				;;
 			-d | --home)
 				if [ -n "$2" ]; then
+					# shellcheck disable=SC2034 # consumed by otter-init and helpers/setup_user.sh after sourcing this file
 					container_user_home="$2"
 					shift
 					shift
@@ -99,6 +106,7 @@ parse_args()
 				;;
 			-u | --user)
 				if [ -n "$2" ]; then
+					# shellcheck disable=SC2034 # consumed by otter-init and helpers/setup_user.sh after sourcing this file
 					container_user_uid="$2"
 					shift
 					shift
@@ -106,6 +114,7 @@ parse_args()
 				;;
 			-g | --group)
 				if [ -n "$2" ]; then
+					# shellcheck disable=SC2034 # consumed by otter-init and helpers/setup_user.sh after sourcing this file
 					container_user_gid="$2"
 					shift
 					shift
@@ -113,6 +122,7 @@ parse_args()
 				;;
 			--pre-init-hooks)
 				if [ -n "$2" ]; then
+					# shellcheck disable=SC2034 # consumed by otter-init after sourcing this file
 					pre_init_hook="$2"
 				fi
 				shift
@@ -120,6 +130,7 @@ parse_args()
 				;;
 			--additional-packages)
 				if [ -n "$2" ]; then
+					# shellcheck disable=SC2034 # consumed by otter-init after sourcing this file
 					container_additional_packages="$2"
 				fi
 				shift
@@ -127,6 +138,7 @@ parse_args()
 				;;
 			--nvidia)
 				if [ -n "$2" ]; then
+					# shellcheck disable=SC2034 # consumed by otter-init after sourcing this file
 					nvidia="$2"
 					shift
 					shift
@@ -134,6 +146,7 @@ parse_args()
 				;;
 			--)
 				shift
+				# shellcheck disable=SC2034 # consumed by otter-init after sourcing this file
 				init_hook=$*
 				break
 				;;
