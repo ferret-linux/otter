@@ -731,16 +731,7 @@ if [ ! -e /usr/local/bin/su ] && {
 	! su --version | grep -q util-linux ||
 		su --version | awk '{printf  "%s\n%s", $4, 2.34}' | sort --check=quiet --version-sort
 }; then
-	cat << EOF > /usr/local/bin/su
-#!/bin/sh
-
-for i do
-  [ "\$i" = --pty ] || set -- "\$@" "\$i"
-  shift
-done
-
-/bin/su "\$@"
-EOF
+	cp /usr/lib/otter/scripts/initialization-scripts/configs/su-pty-wrapper.sh /usr/local/bin/su
 	chmod +x /usr/local/bin/su
 fi
 
@@ -887,108 +878,14 @@ if [ ! -d /etc/profile.d ]; then
 	done
 	mkdir -p /etc/profile.d
 fi
-cat << EOF > /etc/profile.d/otter_profile.sh
-# always TERM to xterm-256color
-export TERM=xterm-256color
-###############################
-test -z "\$USER" && export USER="\$(id -un 2> /dev/null)"
-test -z "\$UID"  && readonly UID="\$(id -ur 2> /dev/null)"
-test -z "\$EUID" && readonly EUID="\$(id -u  2> /dev/null)"
-export SHELL="\$(getent passwd "\${USER}" | cut -f 7 -d :)"
-
-test -z "\${XDG_RUNTIME_DIR:-}" && export XDG_RUNTIME_DIR="/run/user/\$(id -ru)"
-test -z "\${DBUS_SESSION_BUS_ADDRESS:-}" && export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/\$(id -ru)/bus"
-
-# Ensure we have these two variables from the host, so that graphical apps
-# also work in case we use a login session
-if [ -z "\$XAUTHORITY" ]; then
-    export XAUTHORITY="\$(host-spawn sh -c "printf "%s" \\\$XAUTHORITY")"
-    # if the variable is still empty, unset it, because empty it could be harmful
-    [ -z "\$XAUTHORITY" ] && unset XAUTHORITY
-fi
-if [ -z "\$XAUTHLOCALHOSTNAME" ]; then
-    export XAUTHLOCALHOSTNAME="\$(host-spawn sh -c "printf "%s" \\\$XAUTHLOCALHOSTNAME")"
-    [ -z "\$XAUTHLOCALHOSTNAME" ] && unset XAUTHLOCALHOSTNAME
-fi
-if [ -z "\$WAYLAND_DISPLAY" ]; then
-    export WAYLAND_DISPLAY="\$(host-spawn sh -c "printf "%s" \\\$WAYLAND_DISPLAY")"
-    [ -z "\$WAYLAND_DISPLAY" ] && unset WAYLAND_DISPLAY
-fi
-if [ -z "\$DISPLAY" ]; then
-    export DISPLAY="\$(host-spawn sh -c "printf "%s" \\\$DISPLAY")"
-    [ -z "\$DISPLAY" ] && unset DISPLAY
-fi
-
-# This will ensure a default prompt for a container, this will be remineshent of
-# toolbx prompt: https://github.com/containers/toolbox/blob/main/profile.d/toolbox.sh#L47
-# this will ensure greater compatibility between the two implementations
-if [ -f /run/.toolboxenv ]; then
-    [ "\${BASH_VERSION:-}" != "" ] && export PS1="\[\e[0;90m\]╭⟮\[\e[0;92m\]⬢\[\e[0;90m\]⟯─⟮\[\e[0;96m\]\u\[\e[0;90m\]@\[\e[0;95m\]\$CONTAINER_ID\[\e[0;90m\]⟯─⟮\[\e[0;92m\]\W\[\e[0;90m\]⟯─⟮\[\e[0;94m\]\$(date +%H:%M)\[\e[0;90m\]⟯\[\e[0m\]\n\[\e[0;90m\]╰─\[\e[0;92m\]▶ \[\e[0m\]"
-    [ "\${ZSH_VERSION:-}" != "" ] && export PS1="%F{7}╭⟮%F{10}⬢%F{7}⟯─⟮%F{14}%n%F{7}@%F{13}\$CONTAINER_ID%F{7}⟯─⟮%F{10}%1~%F{7}⟯─⟮%F{12}%D{%H:%M}%F{7}⟯%f"$'\n'"%F{7}╰─%F{10}▶ %f"
-fi
-
-# This will ensure we have a first-shell password setup for an user if needed.
-# We're going to use this later in case of rootful containers
-if [ -e /var/tmp/.\$USER.passwd.initialize ]; then
-	echo "⚠️  First time user password setup ⚠️ "
-	trap "echo; exit" INT
-	passwd && rm -f /var/tmp/.\$USER.passwd.initialize
-	trap - INT
-fi
-EOF
+cp /usr/lib/otter/scripts/initialization-scripts/configs/otter_profile.sh /etc/profile.d/otter_profile.sh
 
 # It's also importanto to keep this working on fish shells
 if [ -e "/etc/fish/config.fish" ]; then
 	mkdir -p /etc/fish/conf.d
-	cat << EOF > /etc/fish/conf.d/otter_config.fish
-if status --is-interactive
-	test -z "\$USER" && set -gx USER (id -un 2> /dev/null)
-	test -z "\$UID"  && set -gx UID (id -ur 2> /dev/null)
-	test -z "\$EUID" && set -gx EUID (id -u  2> /dev/null)
-	set -gx SHELL (getent passwd "\$USER" | cut -f 7 -d :)
-
-	test -z "\$XDG_RUNTIME_DIR && set -gx XDG_RUNTIME_DIR /run/user/(id -ru)
-	test -z "\$DBUS_SESSION_BUS_ADDRESS && set -gx DBUS_SESSION_BUS_ADDRESS unix:path=/run/user/(id -ru)/bus
-
-	# Ensure we have these two variables from the host, so that graphical apps
-	# also work in case we use a login session
-	if test -z \$XAUTHORITY
-		set -gx XAUTHORITY (host-spawn sh -c "printf "%s" \\\$XAUTHORITY")
-		# if the variable is still empty, unset it, because empty it could be harmful
-		test -z \$XAUTHORITY ; and set -e XAUTHORITY
-	end
-	if test -z \$XAUTHLOCALHOSTNAME
-		set -gx XAUTHLOCALHOSTNAME (host-spawn sh -c "printf "%s" \\\$XAUTHLOCALHOSTNAME")
-		test -z \$XAUTHLOCALHOSTNAME ; and set -e XAUTHLOCALHOSTNAME
-	end
-	if test -z \$WAYLAND_DISPLAY
-		set -gx WAYLAND_DISPLAY (host-spawn sh -c "printf "%s" \\\$WAYLAND_DISPLAY")
-		test -z \$WAYLAND_DISPLAY ; and set -e WAYLAND_DISPLAY
-	end
-	if test -z \$DISPLAY
-		set -gx DISPLAY (host-spawn sh -c "printf "%s" \\\$DISPLAY")
-		test -z \$DISPLAY ; and set -e DISPLAY
-	end
-
-	# This will ensure we have a first-shell password setup for an user if needed.
-	# We're going to use this later in case of rootful containers
-	if test -e /var/tmp/.\$USER.passwd.initialize
-		echo "⚠️  First time user password setup ⚠️ "
-		trap "echo; exit" INT
-		passwd && rm -f /var/tmp/.\$USER.passwd.initialize
-		trap - INT
-	end
-end
-EOF
+	cp /usr/lib/otter/scripts/initialization-scripts/configs/otter_config.fish /etc/fish/conf.d/otter_config.fish
 	mkdir -p /etc/fish/functions
-	cat << EOF > /etc/fish/functions/fish_prompt.fish
-function fish_prompt
-	set t (date +%H:%M)
-	set dir (basename \$PWD)
-	echo -s (set_color brblack)"╭⟮"(set_color green)"⬢"(set_color brblack)"⟯─⟮"(set_color cyan)"\$USER"(set_color brblack)"@"(set_color magenta)"\$CONTAINER_ID"(set_color brblack)"⟯─⟮"(set_color green)"\$dir"(set_color brblack)"⟯─⟮"(set_color blue)"\$t"(set_color brblack)"⟯"(set_color normal)
-	echo -s (set_color brblack)"╰─"(set_color green)"▶ "(set_color normal)
-end
-EOF
+	cp /usr/lib/otter/scripts/initialization-scripts/configs/fish_prompt.fish /etc/fish/functions/fish_prompt.fish
 fi
 ###############################################################################
 
@@ -1002,21 +899,10 @@ fi
 
 # Do not check fqdn when doing sudo, it will not work anyways
 # Also allow canonical groups to use sudo
-cat << EOF > /etc/sudoers.d/sudoers
-Defaults !targetpw
-Defaults !fqdn
-%wheel ALL=(ALL:ALL) ALL
-%sudo ALL=(ALL:ALL) ALL
-%root ALL=(ALL:ALL) ALL
-EOF
+cp /usr/lib/otter/scripts/initialization-scripts/configs/sudoers /etc/sudoers.d/sudoers
 # ditto for doas
 if [ -e /etc/doas.conf ]; then
-	cat << EOF > /etc/doas.conf
-permit persist :root
-permit persist :wheel
-permit nopass root
-permit nopass keepenv setenv { PATH } root as root
-EOF
+	cp /usr/lib/otter/scripts/initialization-scripts/configs/doas.conf /etc/doas.conf
 fi
 # if no sudo but doas is present, we want to have it as an alias
 # of sudo, so other part of the program will find it as expected
@@ -1027,13 +913,7 @@ fi
 # PAM config for "su" command
 if [ ! -e /etc/pam.d/su ]; then
 	mkdir -p /etc/pam.d
-	cat << EOF > /etc/pam.d/su
-auth            sufficient      pam_rootok.so
-auth            required        pam_unix.so
-account	        required        pam_unix.so
-session         required        pam_unix.so
--session        optional        pam_systemd.so
-EOF
+	cp /usr/lib/otter/scripts/initialization-scripts/configs/pam-su /etc/pam.d/su
 fi
 
 if ! grep -q "pam_systemd.so" /etc/pam.d/su; then
@@ -1077,11 +957,7 @@ if [ -d "/run/host/var/kerberos" ] &&
 
 	printf "otter: Setting up kerberos integration...\n"
 
-	cat << EOF > /etc/krb5.conf.d/kcm_default_ccache
-# # To disable the KCM credential cache, comment out the following lines.
-[libdefaults]
-    default_ccache_name = KCM:
-EOF
+	cp /usr/lib/otter/scripts/initialization-scripts/configs/krb5-kcm-default-ccache.conf /etc/krb5.conf.d/kcm_default_ccache
 fi
 
 printf "otter: Setting up user's group list...\n"
