@@ -116,6 +116,8 @@ EOF
 		wget
 		wireplumber
 		words
+		sudo
+		ncurses
 		xauth
 		xdg-desktop-portal
 		xwayland
