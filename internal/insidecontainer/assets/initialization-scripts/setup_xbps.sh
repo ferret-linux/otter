@@ -40,91 +40,91 @@ setup_xbps()
 		xbps-install -Syu
 		exit
 	fi
-	# Ensure we avoid errors by keeping xbps updated
-	xbps-install -Syu xbps
-
-	# Check if shell_pkg is available in distro's repo. If not we
-	# fall back to bash, and we set the SHELL variable to bash so
-	# that it is set up correctly for the user.
 	if [ ! -f /usr/lib/otter/container.official ]; then
+		# Ensure we avoid errors by keeping xbps updated
+		xbps-install -Syu xbps
+
+		# Check if shell_pkg is available in distro's repo. If not we
+		# fall back to bash, and we set the SHELL variable to bash so
+		# that it is set up correctly for the user.
 		if ! xbps-install -Sy "${shell_pkg}"; then
 			shell_pkg="bash"
 		fi
+		xbps-install -Sy void-repo-nonfree
+		deps="
+			bc
+			xz
+			mtr
+			nss
+			zip
+			zsh
+			curl
+			lame
+			less
+			lsof
+			opus
+			pigz
+			sudo
+			time
+			tree
+			vte3
+			wget
+			x265
+			bzip2
+			rsync
+			runit
+			unzip
+			which
+			xauth
+			ffmpeg
+			gnupg2
+			libdrm
+			libvpx
+			man-db
+			shadow
+			tzdata
+			libflac
+			libx264
+			ncurses
+			openssh
+			python3
+			wayland
+			alsa-lib
+			iproute2
+			mesa-dri
+			mit-krb5
+			pinentry
+			pipewire
+			diffutils
+			findutils
+			gst-libav
+			gstreamer
+			inetutils
+			procps-ng
+			alsa-utils
+			fish-shell
+			traceroute
+			util-linux
+			wireplumber
+			${shell_pkg}
+			pinentry-tty
+			mit-krb5-libs
+			vulkan-loader
+			pipewire-pulse
+			bash-completion
+			gst-plugins-bad
+			mit-krb5-client
+			gst-plugins-base
+			gst-plugins-good
+			gst-plugins-ugly
+			mesa-vulkan-intel
+			mesa-vulkan-radeon
+			gstreamer1-pipewire
+			xorg-server-xwayland
+		"
+		# shellcheck disable=SC2086,2046
+		xbps-install -Sy $(xbps-query -Rs '*' | awk '{print $2}' | sed 's/-[^-]*$//' | grep -E "^($(echo ${deps} | tr ' ' '|'))$")
 	fi
-	xbps-install -Sy void-repo-nonfree
-	deps="
-		bc
-		xz
-		mtr
-		nss
-		zip
-		zsh
-		curl
-		lame
-		less
-		lsof
-		opus
-		pigz
-		sudo
-		time
-		tree
-		vte3
-		wget
-		x265
-		bzip2
-		rsync
-		runit
-		unzip
-		which
-		xauth
-		ffmpeg
-		gnupg2
-		libdrm
-		libvpx
-		man-db
-		shadow
-		tzdata
-		libflac
-		libx264
-		ncurses
-		openssh
-		python3
-		wayland
-		alsa-lib
-		iproute2
-		mesa-dri
-		mit-krb5
-		pinentry
-		pipewire
-		diffutils
-		findutils
-		gst-libav
-		gstreamer
-		inetutils
-		procps-ng
-		alsa-utils
-		fish-shell
-		traceroute
-		util-linux
-		wireplumber
-		${shell_pkg}
-		pinentry-tty
-		mit-krb5-libs
-		vulkan-loader
-		pipewire-pulse
-		bash-completion
-		gst-plugins-bad
-		mit-krb5-client
-		gst-plugins-base
-		gst-plugins-good
-		gst-plugins-ugly
-		mesa-vulkan-intel
-		mesa-vulkan-radeon
-		gstreamer1-pipewire
-		xorg-server-xwayland
-	"
-	# shellcheck disable=SC2086,2046
-	xbps-install -Sy $(xbps-query -Rs '*' | awk '{print $2}' | sed 's/-[^-]*$//' | grep -E "^($(echo ${deps} | tr ' ' '|'))$")
 
 	# In case the locale is not available, install it
 	# will ensure we don't fallback to C.UTF-8

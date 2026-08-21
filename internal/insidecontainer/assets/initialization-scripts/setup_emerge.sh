@@ -22,94 +22,94 @@ setup_emerge()
 		emerge --sync
 		exit
 	fi
-	# Check if shell_pkg is available in distro's repo. If not we
-	# fall back to bash, and we set the SHELL variable to bash so
-	# that it is set up correctly for the user.
-	getuto 2>/dev/null || :
 	if [ ! -f /usr/lib/otter/container.official ]; then
+		# Check if shell_pkg is available in distro's repo. If not we
+		# fall back to bash, and we set the SHELL variable to bash so
+		# that it is set up correctly for the user.
+		getuto 2>/dev/null || :
 		if ! emerge --ask=n --autounmask-continue --noreplace --quiet-build --getbinpkg "${shell_pkg}"; then
 			shell_pkg="bash"
 		fi
+		deps="
+			sys-devel/bc
+			app-arch/pigz
+			app-text/tree
+			net-misc/curl
+			net-misc/wget
+			sys-apps/less
+			app-admin/sudo
+			app-arch/unrar
+			x11-apps/xauth
+			x11-libs/libXi
+			app-crypt/gnupg
+			app-shells/fish
+			dev-lang/python
+			media-libs/flac
+			media-libs/mesa
+			media-libs/opus
+			media-libs/tiff
+			media-libs/x264
+			media-libs/x265
+			sys-apps/openrc
+			sys-apps/shadow
+			x11-libs/libX11
+			x11-libs/libxcb
+			media-libs/libva
+			media-sound/lame
+			sys-libs/ncurses
+			sys-process/lsof
+			x11-libs/libXext
+			media-libs/libaom
+			media-libs/libdrm
+			media-libs/libpng
+			media-libs/libvpx
+			x11-base/xwayland
+			app-crypt/pinentry
+			media-libs/libexif
+			media-libs/libheif
+			media-libs/libwebp
+			media-video/ffmpeg
+			sys-apps/diffutils
+			sys-apps/findutils
+			sys-process/procps
+			x11-libs/libXfixes
+			x11-libs/libXrandr
+			media-libs/libdav1d
+			media-libs/libde265
+			media-libs/libvdpau
+			media-libs/openh264
+			sys-apps/util-linux
+			x11-libs/libXcursor
+			x11-libs/libXdamage
+			media-libs/gst-libav
+			media-libs/gstreamer
+			media-video/pipewire
+			x11-libs/libXinerama
+			x11-libs/libxkbcommon
+			app-portage/gentoolkit
+			x11-libs/libXcomposite
+			app-shells/${shell_pkg}
+			media-video/wireplumber
+			media-libs/libjpeg-turbo
+			media-libs/vulkan-layers
+			media-libs/vulkan-loader
+			app-shells/bash-completion
+			media-libs/gst-plugins-bad
+			gui-apps/xdg-desktop-portal
+			media-libs/gst-plugins-base
+			media-libs/gst-plugins-good
+			media-libs/gst-plugins-ugly
+		"
+		install_pkg=""
+		for dep in ${deps}; do
+			if [ "$(emerge --ask=n --search "${dep}" | grep "Applications found" | grep -Eo "[0-9]")" -gt 0 ]; then
+				# shellcheck disable=SC2086
+				install_pkg="${install_pkg} ${dep}"
+			fi
+		done
+		# shellcheck disable=SC2086
+		emerge --ask=n --autounmask-continue --noreplace --quiet-build --getbinpkg --keep-going ${install_pkg}
 	fi
-	deps="
-		sys-devel/bc
-		app-arch/pigz
-		app-text/tree
-		net-misc/curl
-		net-misc/wget
-		sys-apps/less
-		app-admin/sudo
-		app-arch/unrar
-		x11-apps/xauth
-		x11-libs/libXi
-		app-crypt/gnupg
-		app-shells/fish
-		dev-lang/python
-		media-libs/flac
-		media-libs/mesa
-		media-libs/opus
-		media-libs/tiff
-		media-libs/x264
-		media-libs/x265
-		sys-apps/openrc
-		sys-apps/shadow
-		x11-libs/libX11
-		x11-libs/libxcb
-		media-libs/libva
-		media-sound/lame
-		sys-libs/ncurses
-		sys-process/lsof
-		x11-libs/libXext
-		media-libs/libaom
-		media-libs/libdrm
-		media-libs/libpng
-		media-libs/libvpx
-		x11-base/xwayland
-		app-crypt/pinentry
-		media-libs/libexif
-		media-libs/libheif
-		media-libs/libwebp
-		media-video/ffmpeg
-		sys-apps/diffutils
-		sys-apps/findutils
-		sys-process/procps
-		x11-libs/libXfixes
-		x11-libs/libXrandr
-		media-libs/libdav1d
-		media-libs/libde265
-		media-libs/libvdpau
-		media-libs/openh264
-		sys-apps/util-linux
-		x11-libs/libXcursor
-		x11-libs/libXdamage
-		media-libs/gst-libav
-		media-libs/gstreamer
-		media-video/pipewire
-		x11-libs/libXinerama
-		x11-libs/libxkbcommon
-		app-portage/gentoolkit
-		x11-libs/libXcomposite
-		app-shells/${shell_pkg}
-		media-video/wireplumber
-		media-libs/libjpeg-turbo
-		media-libs/vulkan-layers
-		media-libs/vulkan-loader
-		app-shells/bash-completion
-		media-libs/gst-plugins-bad
-		gui-apps/xdg-desktop-portal
-		media-libs/gst-plugins-base
-		media-libs/gst-plugins-good
-		media-libs/gst-plugins-ugly
-	"
-	install_pkg=""
-	for dep in ${deps}; do
-		if [ "$(emerge --ask=n --search "${dep}" | grep "Applications found" | grep -Eo "[0-9]")" -gt 0 ]; then
-			# shellcheck disable=SC2086
-			install_pkg="${install_pkg} ${dep}"
-		fi
-	done
-	# shellcheck disable=SC2086
-	emerge --ask=n --autounmask-continue --noreplace --quiet-build --getbinpkg --keep-going ${install_pkg}
 
 	# In case the locale is not available, install it
 	# will ensure we don't fallback to C.UTF-8
