@@ -53,75 +53,75 @@ setup_xbps()
 	fi
 	xbps-install -Sy void-repo-nonfree
 	deps="
-		alsa-lib
-		alsa-utils
+		bc
+		xz
+		mtr
+		nss
+		zip
+		zsh
+		curl
+		lame
+		less
+		lsof
+		opus
+		pigz
+		sudo
+		time
+		tree
+		vte3
+		wget
+		x265
+		bzip2
+		rsync
+		runit
+		unzip
+		which
+		xauth
 		ffmpeg
-		fish-shell
+		gnupg2
+		libdrm
+		libvpx
+		man-db
+		shadow
+		tzdata
+		libflac
+		libx264
+		ncurses
+		openssh
+		python3
+		wayland
+		alsa-lib
+		iproute2
+		mesa-dri
+		mit-krb5
+		pinentry
+		pipewire
+		diffutils
+		findutils
 		gst-libav
+		gstreamer
+		inetutils
+		procps-ng
+		alsa-utils
+		fish-shell
+		traceroute
+		util-linux
+		wireplumber
+		${shell_pkg}
+		pinentry-tty
+		mit-krb5-libs
+		vulkan-loader
+		pipewire-pulse
+		bash-completion
 		gst-plugins-bad
+		mit-krb5-client
 		gst-plugins-base
 		gst-plugins-good
 		gst-plugins-ugly
-		gstreamer
-		gstreamer1-pipewire
-		lame
-		libdrm
-		libflac
-		libvpx
-		libx264
-		opus
-		pipewire
-		pipewire-pulse
-		runit
-		wayland
-		wireplumber
-		x265
-		xorg-server-xwayland
-		zsh
-		${shell_pkg}
-		bash-completion
-		bc
-		bzip2
-		curl
-		diffutils
-		findutils
-		gnupg2
-		inetutils
-		iproute2
-		less
-		lsof
-		man-db
-		mit-krb5
-		mit-krb5-client
-		mit-krb5-libs
-		mtr
-		ncurses
-		nss
-		openssh
-		pigz
-		pinentry
-		pinentry-tty
-		procps-ng
-		rsync
-		shadow
-		sudo
-		time
-		traceroute
-		tree
-		tzdata
-		which
-		unzip
-		util-linux
-		xauth
-		xz
-		zip
-		wget
-		vte3
-		python3
-		mesa-dri
-		vulkan-loader
 		mesa-vulkan-intel
 		mesa-vulkan-radeon
+		gstreamer1-pipewire
+		xorg-server-xwayland
 	"
 	# shellcheck disable=SC2086,2046
 	xbps-install -Sy $(xbps-query -Rs '*' | awk '{print $2}' | sed 's/-[^-]*$//' | grep -E "^($(echo ${deps} | tr ' ' '|'))$")

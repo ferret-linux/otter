@@ -38,131 +38,89 @@ setup_dnf()
 	fi
 	distro_id="$(get_distro_id)"
 	case "${distro_id}" in
-		fedora)
-			${manager} install -y \
-				"https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" \
-				"https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm" 2> /dev/null || :
-			${manager} config-manager setopt fedora-cisco-openh264.enabled=1 2> /dev/null || :
+		fedora | alma | centos | ol | rocky)
+			if [ "${distro_id}" = "fedora" ]; then
+				${manager} install -y \
+					dnf5-plugins \
+					"https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" \
+					"https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm" 2> /dev/null || :
+				${manager} config-manager setopt fedora-cisco-openh264.enabled=1 2> /dev/null || :
+			else
+				${manager} install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm" 2> /dev/null || :
+				${manager} install -y \
+					"https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm" \
+					"https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm" 2> /dev/null || :
+			fi
 			distro_deps="
-				fdk-aac
 				ffmpeg
+				fdk-aac
+				libaacs
 				ffmpeg-libs
-				fish
-				gstreamer1-plugins-bad-freeworld
+				mesa-freeworld
+				libheif-freeworld
+				pipewire-codec-aptx
+				libavcodec-freeworld
+				xpra-codecs-freeworld
 				gstreamer1-plugins-base
 				gstreamer1-plugins-good
 				gstreamer1-plugins-ugly
-				libaacs
-				libavcodec-freeworld
-				libheif-freeworld
-				mesa-freeworld
+				xorg-x11-server-Xwayland
 				mesa-va-drivers-freeworld
 				mesa-vulkan-drivers-freeworld
-				pipewire
-				pipewire-alsa
-				pipewire-codec-aptx
-				pipewire-gstreamer
-				pipewire-jack-audio-connection-kit
-				pipewire-pulseaudio
-				systemd
-				xorg-x11-server-Xwayland
-				xpra-codecs-freeworld
-				zsh
-			"
-			;;
-		alma | centos | ol | rocky)
-			${manager} install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm" 2> /dev/null || :
-			${manager} install -y \
-				"https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm" \
-				"https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm" 2> /dev/null || :
-			distro_deps="
-				fdk-aac
-				ffmpeg
-				ffmpeg-libs
-				fish
 				gstreamer1-plugins-bad-freeworld
-				gstreamer1-plugins-base
-				gstreamer1-plugins-good
-				gstreamer1-plugins-ugly
-				libaacs
-				libavcodec-freeworld
-				libheif-freeworld
-				mesa-freeworld
-				mesa-va-drivers-freeworld
-				mesa-vulkan-drivers-freeworld
-				pipewire
-				pipewire-alsa
-				pipewire-codec-aptx
-				pipewire-gstreamer
-				pipewire-jack-audio-connection-kit
-				pipewire-pulseaudio
-				systemd
-				xorg-x11-server-Xwayland
-				xpra-codecs-freeworld
-				zsh
 			"
 			;;
 		rhel)
+		# RHEL doesnt support adding non-free packages unless you have active subscription
+		# the UBI images have small repos by default so we are not gonna add all the packages
 			distro_deps="
-				fish
-				gstreamer1
 				lame
 				opus
-				pipewire
-				pipewire-pulseaudio
-				systemd
-				wireplumber
 				x264
 				x265
-				zsh
+				gstreamer1
+				wireplumber
 			"
 			;;
 		amzn)
 			${manager} install -y spal-release
 			distro_deps="
+				libXi
+				libva
+				libX11
+				libxcb
+				libXext
+				wayland
 				alsa-lib
-				desktop-file-utils
-				ffmpeg-free
-				fish
+				libvdpau
+				libXfixes
+				libXrandr
+				xdg-utils
 				fontconfig
 				gstreamer1
-				gstreamer1-plugins-bad-free
-				gstreamer1-plugins-base
-				gstreamer1-plugins-good
-				hicolor-icon-theme
-				libva
-				libvdpau
-				libX11
-				libXcomposite
 				libXcursor
 				libXdamage
-				libXext
-				libXfixes
-				libXi
-				libXinerama
-				libxcb
-				libxkbcommon
-				libxkbcommon-x11
-				libXrandr
 				libXrender
-				mesa-libEGL
 				mesa-libGL
+				ffmpeg-free
+				libXinerama
+				mesa-libEGL
 				mesa-libgbm
-				mesa-va-drivers
-				mesa-vdpau-drivers
-				pipewire-alsa
-				pipewire-gstreamer
-				pipewire-jack-audio-connection-kit
-				pipewire-pulseaudio
-				shared-mime-info
-				systemd
+				libxkbcommon
+				libXcomposite
 				vulkan-loader
-				wayland
-				xdg-desktop-portal
 				xdg-user-dirs
-				xdg-utils
+				mesa-va-drivers
+				libxkbcommon-x11
+				shared-mime-info
+				desktop-file-utils
+				hicolor-icon-theme
+				mesa-vdpau-drivers
+				xdg-desktop-portal
+				gstreamer1-plugins-base
+				gstreamer1-plugins-good
 				xorg-x11-server-Xwayland
-				zsh
+				gstreamer1-plugins-bad-free
 			"
 			;;
 		*)
@@ -172,62 +130,70 @@ setup_dnf()
 			;;
 	esac
 	deps="${distro_deps}
-		${shell_pkg}
-		bash-completion
 		bc
-		bzip2
-		cracklib-dicts
+		xz
+		mtr
+		pam
+		zip
+		zsh
 		curl
-		diffutils
-		dnf-plugins-core
-		findutils
-		glibc-all-langpacks
-		glibc-common
-		glibc-locale-source
-		gnupg2
-		gnupg2-smime
-		hostname
-		iproute
-		iputils
-		keyutils
-		krb5-libs
+		fish
 		less
 		lsof
-		man-db
-		man-pages
-		mtr
-		ncurses
-		nss-mdns
-		openssh-clients
-		pam
-		passwd
 		pigz
-		pinentry
-		procps-ng
-		python3
-		rsync
-		shadow-utils
 		sudo
-		tcpdump
 		time
-		traceroute
 		tree
-		tzdata
-		unzip
-		util-linux
-		util-linux-script
-		vte-profile
 		wget
-		wget2-wget
+		bzip2
+		rsync
+		unzip
 		which
 		whois
 		words
-		xorg-x11-xauth
-		xz
-		zip
-		mesa-dri-drivers
-		mesa-vulkan-drivers
+		gnupg2
+		man-db
+		passwd
+		tzdata
 		vulkan
+		iproute
+		iputils
+		ncurses
+		python3
+		systemd
+		tcpdump
+		hostname
+		keyutils
+		nss-mdns
+		pinentry
+		pipewire
+		diffutils
+		findutils
+		krb5-libs
+		man-pages
+		procps-ng
+		traceroute
+		util-linux
+		wget2-wget
+		vte-profile
+		${shell_pkg}
+		glibc-common
+		gnupg2-smime
+		shadow-utils
+		pipewire-alsa
+		cracklib-dicts
+		xorg-x11-xauth
+		bash-completion
+		openssh-clients
+		dnf-plugins-core
+		mesa-dri-drivers
+		util-linux-script
+		pipewire-gstreamer
+		glibc-all-langpacks
+		glibc-locale-source
+		mesa-vulkan-drivers
+		pipewire-pulseaudio
+		pipewire-jack-audio-connection-kit
 	"
 	# shellcheck disable=SC2086,2046,2248
 	${manager} install ${flags} -y $(${manager} list -q ${deps} |

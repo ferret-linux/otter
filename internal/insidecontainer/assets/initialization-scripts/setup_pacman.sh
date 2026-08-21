@@ -88,152 +88,64 @@ setup_pacman()
 	case "${distro_id}" in
 		arch)
 			distro_deps="
-				base
-				base-devel
-				ffmpeg
-				fakeroot
-				fish
-				git
-				gst-plugin-pipewire
-				gst-plugins-bad
-				gst-plugins-base
-				gst-plugins-good
-				gst-plugins-ugly
-				libva
-				pipewire
-				pipewire-alsa
-				pipewire-jack
-				pipewire-pulse
 				systemd
-				tar
-				vpl-gpu-rt
-				xdg-desktop-portal
-				xdg-user-dirs
-				xdg-utils
-				xorg-xwayland
-				zsh
 			"
 			;;
 		artix)
 			distro_deps="
-				base
-				base-devel
-				ffmpeg
-				fakeroot
-				fish
-				git
-				gst-plugin-pipewire
-				gst-plugins-bad
-				gst-plugins-base
-				gst-plugins-good
-				gst-plugins-ugly
-				libva
 				openrc
-				pipewire
-				pipewire-alsa
-				pipewire-jack
-				pipewire-pulse
-				tar
-				vpl-gpu-rt
 				wayland
-				xdg-desktop-portal
-				xdg-user-dirs
-				xdg-utils
-				xorg-xwayland
-				zsh
 			"
 			;;
 		blackarch)
 			distro_deps="
-				aircrack-ng
-				base
-				base-devel
-				bettercap
-				binwalk
-				bully
-				checksec
-				crunch
-				dnsenum
-				dsniff
-				ettercap
-				exiftool
-				ffmpeg
 				ffuf
-				fakeroot
-				fish
-				foremost
-				git
-				gobuster
-				gst-plugin-pipewire
-				gst-plugins-bad
-				gst-plugins-base
-				gst-plugins-good
-				gst-plugins-ugly
-				hashcat
-				hcxtools
-				hydra
 				john
-				libva
-				masscan
-				medusa
-				mitmproxy
-				nikto
 				nmap
-				pipewire
-				pipewire-alsa
-				pipewire-jack
-				pipewire-pulse
-				radare2
+				bully
+				hydra
+				nikto
+				crunch
+				dsniff
+				medusa
 				reaver
 				sqlmap
-				systemd
-				tar
-				theharvester
 				tshark
-				vpl-gpu-rt
-				whatweb
 				wifite
 				wpscan
-				xdg-desktop-portal
-				xdg-user-dirs
-				xdg-utils
-				xorg-xwayland
-				zsh
+				binwalk
+				dnsenum
+				hashcat
+				masscan
+				radare2
+				systemd
+				whatweb
+				checksec
+				ettercap
+				exiftool
+				foremost
+				gobuster
+				hcxtools
+				bettercap
+				mitmproxy
+				aircrack-ng
+				theharvester
 			"
 			;;
 		cachyos)
 			distro_deps="
-				base
-				base-devel
-				fakeroot
-				ffmpeg
-				fish
-				git
-				gst-plugins-bad
-				gst-plugins-base
-				gst-plugins-good
-				gst-plugins-ugly
 				paru
-				pipewire
-				pipewire-jack
-				pipewire-pulse
-				proton
-				proton-cachyos-slr
-				protonplus
-				protontricks
-				systemd
-				tar
-				umu-launcher
-				vpl-gpu-rt
-				vulkan-driver
 				wine
-				wine-cachyos-opt
-				wine-gecko
+				proton
+				systemd
 				wine-mono
-				xdg-desktop-portal
-				xdg-user-dirs
-				xdg-utils
-				zsh
+				protonplus
+				wine-gecko
+				protontricks
+				umu-launcher
+				vulkan-driver
+				wine-cachyos-opt
+				proton-cachyos-slr
 			"
 			;;
 		*)
@@ -243,49 +155,72 @@ setup_pacman()
 			;;
 	esac
 	deps="${distro_deps}
-		${shell_pkg}
-		bash-completion
 		bc
+		git
+		mtr
+		tar
+		zip
+		zsh
+		base
 		curl
-		diffutils
-		findutils
-		glibc
-		gnupg
-		iputils
-		inetutils
-		keyutils
+		fish
 		less
 		lsof
-		man-db
-		man-pages
-		mlocate
-		mtr
-		ncurses
-		nss-mdns
-		openssh
-		pigz
-		pinentry
-		procps-ng
-		python
-		rsync
-		shadow
-		sudo
-		tcpdump
-		time
-		traceroute
-		tree
-		tzdata
-		unzip
-		util-linux
-		util-linux-libs
-		vte-common
-		wget
-		words
-		xorg-xauth
-		zip
 		mesa
+		pigz
+		sudo
+		time
+		tree
+		wget
+		glibc
+		gnupg
+		libva
+		rsync
+		unzip
+		words
+		ffmpeg
+		man-db
+		python
+		shadow
+		tzdata
+		iputils
+		mlocate
+		ncurses
+		openssh
+		tcpdump
+		fakeroot
+		keyutils
+		nss-mdns
+		pinentry
+		pipewire
+		diffutils
+		findutils
+		inetutils
+		man-pages
+		procps-ng
+		xdg-utils
+		base-devel
+		traceroute
+		util-linux
+		vpl-gpu-rt
+		vte-common
+		xorg-xauth
+		${shell_pkg}
 		vulkan-intel
+		pipewire-alsa
+		pipewire-jack
 		vulkan-radeon
+		xdg-user-dirs
+		xorg-xwayland
+		pipewire-pulse
+		bash-completion
+		gst-plugins-bad
+		util-linux-libs
+		gst-plugins-base
+		gst-plugins-good
+		gst-plugins-ugly
+		xdg-desktop-portal
+		gst-plugin-pipewire
 	"
 	# shellcheck disable=SC2086,2046
 	pacman -S --needed --noconfirm $(pacman -Ssq | grep -E "^($(echo ${deps} | tr ' ' '|'))$")

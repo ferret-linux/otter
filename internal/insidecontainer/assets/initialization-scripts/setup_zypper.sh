@@ -46,88 +46,88 @@ EOF
 	# fall back to bash, and we set the SHELL variable to bash so
 	# that it is set up correctly for the user.
 	deps="
-		${shell_pkg}
-		bash-completion
 		bc
-		bzip2
+		man
+		mtr
+		pam
+		zip
+		zsh
+		Mesa
 		curl
-		diffutils
-		ffmpeg
-		findutils
 		fish
+		less
+		lsof
+		pigz
+		sudo
+		time
+		tree
+		wget
+		bzip2
 		glibc
-		glibc-i18n
-		glibc-i18ndata
-		glibc-locale
-		glibc-locale-base
-		glibc-locale-source
 		gnupg
+		rsync
+		unzip
+		words
+		xauth
+		ffmpeg
+		libva2
+		procps
+		shadow
+		iputils
+		libdrm2
+		libvpx2
+		ncurses
+		python3
+		systemd
+		wayland
+		Mesa-dri
+		hostname
+		keyutils
+		libopus0
+		nss-mdns
+		pinentry
+		pipewire
+		timezone
+		xwayland
+		diffutils
+		findutils
 		gstreamer
+		libFLAC12
+		libvte-2*
+		man-pages
+		pam-extra
+		glibc-i18n
+		libvulkan1
+		mesa-libva
+		util-linux
+		libx264-164
+		libx265-215
+		wireplumber
+		${shell_pkg}
+		glibc-locale
+		pipewire-alsa
+		pipewire-jack
+		glibc-i18ndata
+		bash-completion
+		libvulkan_intel
+		libwayland-egl1
+		openssh-clients
+		libvulkan_radeon
+		glibc-locale-base
+		intel-media-driver
+		libva-intel-driver
+		libwayland-client0
+		libwayland-server0
+		system-group-wheel
+		util-linux-systemd
+		xdg-desktop-portal
+		glibc-locale-source
+		pipewire-pulseaudio
 		gstreamer-plugins-bad
 		gstreamer-plugins-base
 		gstreamer-plugins-good
-		gstreamer-plugins-libav
 		gstreamer-plugins-ugly
-		hostname
-		intel-media-driver
-		iputils
-		keyutils
-		less
-		libdrm2
-		libFLAC12
-		libopus0
-		libva-intel-driver
-		libva2
-		libvpx2
-		libvte-2*
-		libwayland-client0
-		libwayland-egl1
-		libwayland-server0
-		libx264-164
-		libx265-215
-		lsof
-		man
-		man-pages
-		Mesa
-		mesa-libva
-		mtr
-		nss-mdns
-		openssh-clients
-		pam
-		pam-extra
-		pigz
-		pinentry
-		pipewire
-		pipewire-alsa
-		pipewire-jack
-		pipewire-pulseaudio
-		procps
-		rsync
-		shadow
-		system-group-wheel
-		systemd
-		time
-		timezone
-		tree
-		unzip
-		util-linux
-		util-linux-systemd
-		wayland
-		wget
-		wireplumber
-		words
-		sudo
-		ncurses
-		xauth
-		xdg-desktop-portal
-		xwayland
-		zip
-		zsh
-		python3
-		Mesa-dri
-		libvulkan1
-		libvulkan_intel
-		libvulkan_radeon
+		gstreamer-plugins-libav
 	"
 	# zypper reserves exit codes >= 100 as informational: the transaction
 	# committed, but something is worth noting - e.g. 106 (a repo was skipped) or

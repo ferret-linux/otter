@@ -35,42 +35,26 @@ setup_apk()
 		alpine)
 			apk add alpine-base
 			deps="
-				alsa-lib
-				coreutils
-				desktop-file-utils
-				docs
-				ffmpeg
-				fish
-				fontconfig
-				gcompat
-				gst-plugins-bad
-				gst-plugins-base
-				gst-plugins-good
-				gst-plugins-ugly
-				hicolor-icon-theme
-				libc-utils
-				lsof
-				man-pages
-				mandoc
-				mesa-egl
-				mesa-gl
-				musl-utils
-				openrc
-				openssh-client-default
-				pinentry
-				pipewire
-				pipewire-jack
-				pipewire-pulse
-				shared-mime-info
 				tar
-				vpl-gpu-rt
+				docs
+				lsof
 				vte3
-				wayland
-				xdg-desktop-portal
-				xdg-user-dirs
-				xdg-utils
-				xwayland
-				zsh
+				mandoc
+				openrc
+				gcompat
+				mesa-gl
+				alsa-lib
+				mesa-egl
+				pinentry
+				coreutils
+				man-pages
+				fontconfig
+				libc-utils
+				musl-utils
+				shared-mime-info
+				desktop-file-utils
+				hicolor-icon-theme
+				openssh-client-default
 				$(apk search -q mesa-dri)
 				$(apk search -q mesa-vulkan)
 			"
@@ -78,38 +62,22 @@ setup_apk()
 		wolfi)
 			apk add wolfi-base
 			deps="
-				alsa-lib
-				alsa-utils
-				busybox
-				coreutils
-				ffmpeg
-				fish
+				mesa
 				gnutar
-				gst-libav
-				gst-plugins-bad
-				gst-plugins-base
-				gst-plugins-good
-				gst-plugins-ugly
-				gstreamer
-				gstreamer-pipewire
 				libdrm
 				man-db
-				mesa
-				openssh-client
-				pinentry
-				pipewire
-				pipewire-jack
-				pipewire-pulse
-				posix-libc-utils
 				script
-				vpl-gpu-rt
-				wayland
+				busybox
+				alsa-lib
+				pinentry
+				coreutils
+				gst-libav
+				gstreamer
+				alsa-utils
 				wireplumber
-				xdg-desktop-portal
-				xdg-user-dirs
-				xdg-utils
-				xwayland
-				zsh
+				openssh-client
+				posix-libc-utils
+				gstreamer-pipewire
 			"
 			;;
 		chimera)
@@ -118,42 +86,25 @@ setup_apk()
 			apk add chimera-repo-user
 			apk update
 			deps="
-				base-full-man
+				vte
+				gtar
+				lsof
 				bc-gh
 				dinit
-				dinit-chimera
-				ffmpeg
-				fish
-				gst-plugins-bad
-				gst-plugins-base
-				gst-plugins-good
-				gst-plugins-ugly
-				gtar
-				libarchive-progs
-				libcap-progs
 				libva
-				lsof
-				mesa-dri
-				mesa-vulkan
-				ncurses-term
-				opendoas
-				openssh
-				pipewire
-				pipewire-alsa
-				pipewire-gstreamer
-				pipewire-jack
-				pipewire-pulse
-				util-linux-mount
-				vpl-gpu-rt
-				vte
-				vulkan-loader
-				wayland
 				wget2
-				xdg-desktop-portal
-				xdg-user-dirs
-				xdg-utils
-				xwayland
-				zsh
+				openssh
+				mesa-dri
+				opendoas
+				mesa-vulkan
+				libcap-progs
+				ncurses-term
+				pipewire-alsa
+				base-full-man
+				dinit-chimera
+				libarchive-progs
+				util-linux-mount
+				pipewire-gstreamer
 			"
 			;;
 		*)
@@ -164,44 +115,60 @@ setup_apk()
 	esac
 	deps="${deps}
 		${shell_pkg}
-		bash
-		bash-completion
 		bc
-		bzip2
-		curl
-		diffutils
-		findmnt
-		findutils
-		gnupg
+		xz
 		gpg
-		iproute2
-		iputils
-		keyutils
+		zip
+		zsh
+		bash
+		curl
+		fish
 		less
-		libcap
-		mount
-		ncurses
-		ncurses-terminfo
-		net-tools
 		pigz
-		python3
-		rsync
-		shadow
 		sudo
-		tcpdump
 		tree
-		tzdata
-		umount
-		unzip
-		util-linux
-		util-linux-login
-		util-linux-misc
-		vulkan-loader
 		wget
+		bzip2
+		gnupg
+		mount
+		rsync
+		unzip
 		which
 		xauth
-		xz
-		zip
+		ffmpeg
+		libcap
+		shadow
+		tzdata
+		umount
+		findmnt
+		iputils
+		ncurses
+		python3
+		tcpdump
+		wayland
+		iproute2
+		keyutils
+		pipewire
+		xwayland
+		diffutils
+		findutils
+		net-tools
+		xdg-utils
+		util-linux
+		vpl-gpu-rt
+		pipewire-jack
+		vulkan-loader
+		xdg-user-dirs
+		pipewire-pulse
+		bash-completion
+		gst-plugins-bad
+		util-linux-misc
+		gst-plugins-base
+		gst-plugins-good
+		gst-plugins-ugly
+		ncurses-terminfo
+		util-linux-login
+		xdg-desktop-portal
 		$(apk search -qe procps)
 	"
 	# shellcheck disable=SC2086
