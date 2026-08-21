@@ -66,37 +66,46 @@ func ProvisionScripts(scriptsDir string) (string, bool, error) {
 
 	const initScriptsSrcDir = "assets/initialization-scripts"
 	initScriptsDestDir := filepath.Join(dir, "initialization-scripts")
-	//nolint:gosec // 0755 is correct for directories: executable bit grants traversal permission to all users
-	if err := os.MkdirAll(initScriptsDestDir, 0755); err != nil {
-		return "", false, fmt.Errorf("failed to create initialization-scripts directory: %w", err)
-	}
 
-	entries, err := fs.ReadDir(initScriptsFS, initScriptsSrcDir)
-	if err != nil {
-		return "", false, fmt.Errorf("failed to read embedded initialization-scripts: %w", err)
-	}
-
-	for _, entry := range entries {
-		if entry.IsDir() {
-			continue
-		}
-		content, err := initScriptsFS.ReadFile(initScriptsSrcDir + "/" + entry.Name())
+	walkErr := fs.WalkDir(initScriptsFS, initScriptsSrcDir, func(path string, entry fs.DirEntry, err error) error {
 		if err != nil {
-			return "", false, fmt.Errorf("failed to read embedded script %s: %w", entry.Name(), err)
+			return err
 		}
 
-		destFilePath := filepath.Join(initScriptsDestDir, entry.Name())
+		relPath, err := filepath.Rel(initScriptsSrcDir, path)
+		if err != nil {
+			return err
+		}
+		destPath := filepath.Join(initScriptsDestDir, relPath)
+
+		if entry.IsDir() {
+			//nolint:gosec // 0755 is correct for directories: executable bit grants traversal permission to all users
+			if err := os.MkdirAll(destPath, 0755); err != nil {
+				return fmt.Errorf("failed to create directory %s: %w", destPath, err)
+			}
+			return nil
+		}
+
+		content, err := fs.ReadFile(initScriptsFS, path)
+		if err != nil {
+			return fmt.Errorf("failed to read embedded script %s: %w", path, err)
+		}
+
 		newHash := sha256.Sum256(content)
-		if existing, err := os.ReadFile(destFilePath); err == nil {
+		if existing, err := os.ReadFile(destPath); err == nil {
 			if sha256.Sum256(existing) == newHash {
-				continue
+				return nil
 			}
 		}
 		//nolint:gosec // 0755 is required: scripts must be executable by the container runtime
-		if err := os.WriteFile(destFilePath, content, 0755); err != nil {
-			return "", false, fmt.Errorf("failed to write script %s: %w", entry.Name(), err)
+		if err := os.WriteFile(destPath, content, 0755); err != nil {
+			return fmt.Errorf("failed to write script %s: %w", destPath, err)
 		}
 		updated = true
+		return nil
+	})
+	if walkErr != nil {
+		return "", false, fmt.Errorf("failed to provision initialization-scripts: %w", walkErr)
 	}
 
 	return dir, updated, nil
