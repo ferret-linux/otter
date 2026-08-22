@@ -106,6 +106,60 @@ RUN su - linuxbrew -c ' \
     NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" \
     '
 
+# Brew coverage of the four stacks: pipewire/wireplumber cover the
+# pipewire stack (no split pipewire-alsa/-jack/-pulse formulae exist
+# in homebrew-core -- upstream builds those backends into the one
+# formula); wayland/wayland-protocols cover the wayland half of the
+# wayland+xwayland stack (xwayland itself is apt-only, see below);
+# gstreamer is homebrew-core's single merged formula covering what
+# Debian/Arch split into gst-plugins-base/good/bad/ugly plus
+# gst-libav; ffmpeg, mesa, vulkan-loader, and libva round out
+# audio/codecs/multimedia. Run as linuxbrew (brew refuses to run as
+# root) with PATH exported explicitly inside this su session, rather
+# than relying on the ENV PATH below being inherited through `su
+# -`'s login-shell environment reset.
+RUN su - linuxbrew -c ' \
+    export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH" && \
+    brew install $(sh /tmp/pkg-validator.sh --pkgmgr brew -- \
+        pipewire \
+        wireplumber \
+        wayland \
+        wayland-protocols \
+        gstreamer \
+        ffmpeg \
+        mesa \
+        vulkan-loader \
+        libva) \
+    '
+
+# Homebrew's Linux packaging doesn't cover XWayland (a display-server
+# component, not a CLI tool/library brew formulae target) or the XDG
+# desktop-integration stack -- xdg-desktop-portal, xdg-user-dirs, and
+# xdg-utils are all absent from homebrew-core. Homebrew's mesa
+# formula's default Vulkan/VA-API driver coverage is unverified, so
+# the driver split-packages Debian already ships (see
+# debian.Containerfile) are installed here too rather than assumed
+# redundant with brew's mesa.
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr apt -- \
+        xwayland \
+        xdg-utils \
+        xdg-user-dirs \
+        xdg-desktop-portal \
+        mesa-va-drivers \
+        mesa-vulkan-drivers \
+        intel-media-va-driver-non-free) && \
+    apt-get update && \
+    apt-get upgrade -y && \
+    apt-get autoremove -y && \
+    apt-get autoclean && \
+    apt-get clean && \
+    rm -rf \
+        /var/lib/apt/lists/* \
+        /var/log/* \
+        /var/tmp/*
+
 # Homebrew installs to /home/linuxbrew/.linuxbrew on Linux (not
 # /usr/local -- that's macOS-only). Nothing puts its bin dir on
 # $PATH by default outside of an interactive shell sourcing
