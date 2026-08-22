@@ -25,9 +25,9 @@ RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf 2>/dev/null || \
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 
 # Enable RPM Fusion Free/Nonfree repositories.
-RUN dnf install -y \
-        "https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm" \
-        "https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm" && \
+RUN dnf install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm" && \
+    dnf install -y "https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm" \
+                   "https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm" && \
     dnf upgrade -y && \
     dnf autoremove -y && \
     dnf clean all && \
@@ -38,8 +38,7 @@ RUN dnf install -y \
 
 # Install EPEL, upgrade the system, install the requested packages,
 # and clean DNF metadata/cache in the same layer.
-RUN dnf install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm" && \
-    dnf upgrade -y && \
+RUN dnf upgrade -y && \
     dnf install -y --skip-broken $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
         bc \
         xz \
