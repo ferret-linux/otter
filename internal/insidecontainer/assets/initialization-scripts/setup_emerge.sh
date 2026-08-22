@@ -41,6 +41,7 @@ setup_emerge()
 			app-arch/unrar
 			x11-apps/xauth
 			x11-libs/libXi
+			x11-libs/libdrm
 			app-crypt/gnupg
 			app-shells/fish
 			dev-lang/python
@@ -54,13 +55,14 @@ setup_emerge()
 			sys-apps/shadow
 			x11-libs/libX11
 			x11-libs/libxcb
+        	media-libs/dav1d
 			media-libs/libva
 			media-sound/lame
 			sys-libs/ncurses
 			sys-process/lsof
 			x11-libs/libXext
+			x11-libs/libvdpau
 			media-libs/libaom
-			media-libs/libdrm
 			media-libs/libpng
 			media-libs/libvpx
 			x11-base/xwayland
@@ -75,14 +77,11 @@ setup_emerge()
 			sys-process/procps
 			x11-libs/libXfixes
 			x11-libs/libXrandr
-			media-libs/libdav1d
 			media-libs/libde265
-			media-libs/libvdpau
 			media-libs/openh264
 			sys-apps/util-linux
 			x11-libs/libXcursor
 			x11-libs/libXdamage
-			media-libs/gst-libav
 			media-libs/gstreamer
 			media-video/pipewire
 			x11-libs/libXinerama
@@ -101,6 +100,7 @@ setup_emerge()
 			media-libs/gst-plugins-base
 			media-libs/gst-plugins-good
 			media-libs/gst-plugins-ugly
+			media-plugins/gst-plugins-libav
 		"
 		install_pkg=""
 		for dep in ${deps}; do

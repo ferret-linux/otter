@@ -58,12 +58,14 @@ RUN emerge-webrsync && \
         sys-apps/shadow \
         x11-libs/libX11 \
         x11-libs/libxcb \
+        x11-libs/libdrm \
+        media-libs/dav1d \
         media-libs/libva \
         media-sound/lame \
         sys-libs/ncurses \
         sys-process/lsof \
         x11-libs/libXext \
-        media-libs/libdrm \
+        x11-libs/libvdpau \
         media-libs/libaom \
         media-libs/libpng \
         media-libs/libvpx \
@@ -79,14 +81,11 @@ RUN emerge-webrsync && \
         sys-process/procps \
         x11-libs/libXfixes \
         x11-libs/libXrandr \
-        media-libs/libdav1d \
         media-libs/libde265 \
-        media-libs/libvdpau \
         media-libs/openh264 \
         sys-apps/util-linux \
         x11-libs/libXcursor \
         x11-libs/libXdamage \
-        media-libs/gst-libav \
         media-libs/gstreamer \
         media-video/pipewire \
         x11-libs/libXinerama \
@@ -103,7 +102,8 @@ RUN emerge-webrsync && \
         sys-apps/xdg-desktop-portal \
         media-libs/gst-plugins-base \
         media-libs/gst-plugins-good \
-        media-libs/gst-plugins-ugly) && \
+        media-libs/gst-plugins-ugly \
+        media-plugins/gst-plugins-libav) && \
     emerge --sync && \
     emerge --with-bdeps=y -uDN @world && \
     emerge --depclean && \
