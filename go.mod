@@ -10,6 +10,7 @@ require (
 	charm.land/log/v2 v2.0.0
 	github.com/BurntSushi/toml v1.6.0
 	github.com/charmbracelet/colorprofile v0.4.3
+	github.com/creack/pty v1.1.24
 	github.com/urfave/cli/v3 v3.11.0
 	golang.org/x/term v0.45.0
 )

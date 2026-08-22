@@ -20,6 +20,22 @@ type PullOutput interface {
 	io.Writer
 }
 
+// PullOutputSizer is an optional extension of PullOutput. Implementations
+// that render into a resizable region (e.g. a live-resized box) implement
+// it so PullImage can give the pulling process a pseudo-terminal sized to
+// match, and keep it in sync as the region is resized. Implementations
+// that don't need this (e.g. tests, or a plain io.Writer) simply don't
+// implement it — PullImage falls back to no live sizing.
+type PullOutputSizer interface {
+	// Size returns the current size, in cells, of the region PullOutput
+	// renders into.
+	Size() (rows, cols int)
+	// OnResize registers a callback invoked with the new size every time
+	// the region is resized, for as long as the PullOutput is active.
+	// Replaces any previously registered callback.
+	OnResize(func(rows, cols int))
+}
+
 type ContainerManager interface {
 	Name() string
 	// CloneAsRoot returns a copy of the manager configured to run in root

@@ -679,9 +679,7 @@ func (p *Podman) PullImage(ctx context.Context, imageName string, platform strin
 		command = p.sudoCommand
 	}
 	cmd := exec.CommandContext(ctx, command, args...)
-	cmd.Stdout = out
-	cmd.Stderr = out
-	if err := cmd.Run(); err != nil {
+	if err := containermanager.RunWithPullOutput(cmd, out); err != nil {
 		return fmt.Errorf("failed to pull image: %w", err)
 	}
 	return nil

@@ -43,6 +43,25 @@ type scrollWindow struct {
 
 	resizeCh   chan os.Signal // SIGWINCH notifications, live between Start and Close
 	resizeDone chan struct{}  // closed to stop the resize-watching goroutine
+
+	onResize func(rows, cols int) // optional; see OnResize
+}
+
+// Size implements PullOutputSizer. It returns the box's current content
+// area, in cells — the same dimensions a process writing into the box
+// should assume it has to work with.
+func (s *scrollWindow) Size() (rows, cols int) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return len(s.lines), s.innerWidth
+}
+
+// OnResize implements PullOutputSizer. fn is called with the box's new
+// content-area size after every resize for as long as the window is open.
+func (s *scrollWindow) OnResize(fn func(rows, cols int)) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.onResize = fn
 }
 
 // scaledSize returns the box dimension (in cells) to use for a terminal
@@ -239,6 +258,10 @@ func (s *scrollWindow) resizeLocked() {
 	s.resizeLinesLocked(windowLines)
 
 	s.redrawLocked()
+
+	if s.onResize != nil {
+		s.onResize(windowLines, s.innerWidth)
+	}
 }
 
 // resizeLinesLocked replaces s.lines with a ring of the given size,
