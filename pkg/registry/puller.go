@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"strings"
 	"sync"
@@ -35,8 +36,32 @@ type scrollWindow struct {
 	partial []byte   // bytes received since the last '\n'
 	drawn   bool
 
-	style      lipgloss.Style // bordered box style, fixed at 50% of the terminal width
+	style      lipgloss.Style // bordered box style, sized responsively to the terminal (see scaledSize)
 	innerWidth int            // content width inside the box's border and padding
+}
+
+// scaledSize returns the box dimension (in cells) to use for a terminal
+// dimension of x cells, along one axis (width or height independently).
+//
+// The box occupies a fraction of x that decreases smoothly as x grows,
+// asymptotically approaching floor, while the box's absolute size in
+// cells never decreases as x grows. This is achieved by scaling the
+// fraction itself, rather than the absolute size, with a saturating
+// arctangent curve: fraction(x) = floor + (ceiling-floor)*(2/pi)*atan(k/x).
+// atan(k/x) is 1 as x -> 0 and decays like k/x for large x, so
+// x*fraction(x) trends toward x*floor (still growing) instead of settling
+// or shrinking, unlike a plain inverse (k/x) fraction, which would let the
+// absolute size shrink as the terminal grows past a certain point.
+//
+// k and floor are fit per-axis (see callers) so that small terminals get a
+// large fraction of their size and large terminals settle toward floor.
+func scaledSize(x int, k, floor float64) int {
+	if x <= 0 {
+		return 0
+	}
+	const ceiling = 1.0
+	fraction := floor + (ceiling-floor)*(2/math.Pi)*math.Atan(k/float64(x))
+	return int(math.Round(float64(x) * fraction))
 }
 
 func newScrollWindow(w io.Writer) *scrollWindow {
@@ -46,12 +71,23 @@ func newScrollWindow(w io.Writer) *scrollWindow {
 		height = hh
 	}
 
-	windowLines := height * 33 / 100
+	// k and floor below are fit so that fraction(120 cols) = 50% (width)
+	// and fraction(20 rows) ≈ 70%, fraction(40 rows) ≈ 35% (height),
+	// while keeping the box's absolute size non-decreasing as the
+	// terminal grows; see scaledSize.
+	const (
+		widthK      = 110.47
+		widthFloor  = 0.05
+		heightK     = 28.3
+		heightFloor = 0.05
+	)
+
+	windowLines := scaledSize(height, heightK, heightFloor)
 	if windowLines < 1 {
 		windowLines = 1
 	}
 
-	boxWidth := width * 40 / 100
+	boxWidth := scaledSize(width, widthK, widthFloor)
 	style := ui.BorderStyle(boxWidth)
 
 	return &scrollWindow{
