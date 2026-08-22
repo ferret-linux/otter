@@ -319,6 +319,7 @@ common.onlySupported [
   nettools
   diffutils
   traceroute
+  glibc.getent
   coreutils-full
 ]
 EOF
