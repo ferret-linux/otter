@@ -217,11 +217,11 @@ func (s *scrollWindow) pushLineLocked(line string) {
 }
 
 // resizeLocked re-reads the terminal size and, if the box's dimensions
-// have changed, erases the current (old-sized) box, recomputes the style,
-// inner width, and line ring at the new size, and redraws. The content
-// buffered in the old ring is discarded — it is a transient tail of pull
-// output, not history worth preserving across a resize. Must be called
-// with s.mu held.
+// have changed, erases the current (old-sized) box, recomputes the style
+// and inner width, resizes the line ring to match, and redraws. The
+// content currently visible is preserved across the resize (see
+// resizeLinesLocked); only lines that scroll off as a result of the new,
+// smaller size are dropped. Must be called with s.mu held.
 func (s *scrollWindow) resizeLocked() {
 	windowLines, boxWidth := dimensions()
 
@@ -236,9 +236,25 @@ func (s *scrollWindow) resizeLocked() {
 
 	s.style = ui.BorderStyle(boxWidth)
 	s.innerWidth = boxWidth - s.style.GetHorizontalFrameSize()
-	s.lines = make([]string, windowLines)
+	s.resizeLinesLocked(windowLines)
 
 	s.redrawLocked()
+}
+
+// resizeLinesLocked replaces s.lines with a ring of the given size,
+// carrying over as much of the currently-visible content as fits: on
+// shrink, the newest lines are kept and the oldest are dropped, matching
+// how pushLineLocked already ages lines out; on grow, the existing lines
+// are kept in place at the end and the new, older-history slots at the
+// front are left blank, since that history was never captured. Must be
+// called with s.mu held.
+func (s *scrollWindow) resizeLinesLocked(windowLines int) {
+	newLines := make([]string, windowLines)
+	// Copy from the end of both slices so the newest lines line up,
+	// regardless of whether windowLines grew or shrank.
+	n := min(len(s.lines), windowLines)
+	copy(newLines[windowLines-n:], s.lines[len(s.lines)-n:])
+	s.lines = newLines
 }
 
 // redrawLocked reprints the current window contents in place: it moves
