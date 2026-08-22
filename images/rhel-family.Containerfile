@@ -39,7 +39,7 @@ RUN dnf install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-rele
 # Install EPEL, upgrade the system, install the requested packages,
 # and clean DNF metadata/cache in the same layer.
 RUN dnf upgrade -y && \
-    dnf install -y --skip-broken $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
+    dnf install -y --allowerasing $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
         bc \
         xz \
         zsh \

@@ -50,7 +50,7 @@ RUN dnf install dnf5-plugins -y --refresh && \
     fi; \
     dnf upgrade -y --refresh distribution-gpg-keys 2>/dev/null || true; \
     dnf upgrade -y --refresh; \
-    dnf install -y $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
+    dnf install -y --allowerasing $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
         bc \
         xz \
         zsh \
