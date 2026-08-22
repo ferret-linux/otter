@@ -65,6 +65,16 @@ case "${pkgmgr}" in
             esac
         done
         ;;
+    brew)
+        # shellcheck disable=SC2046,SC2086
+        found="$(brew formulae 2>/dev/null | grep -E "^($(echo ${packages} | tr ' ' '|'))$" | tr '\n' ' ')"
+        for pkg in ${packages}; do
+            case " ${found} " in
+                *" ${pkg} "*) valid="${valid} ${pkg}" ;;
+                *) printf "${YELLOW}WARN: ${RED}%s${YELLOW} not found in repos${RESET}\n" "${pkg}" >&2 ;;
+            esac
+        done
+        ;;
     dnf)
         # shellcheck disable=SC2086
         found="$(dnf list -q ${packages} 2>/dev/null | \
