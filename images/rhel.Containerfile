@@ -27,7 +27,7 @@ COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 # Install EPEL, upgrade the system, install the requested packages,
 # and clean DNF metadata/cache in the same layer.
 RUN dnf upgrade -y && \
-    dnf install -y --allowerasing $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
+    dnf install -y --allowerasing --skip-broken $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
         bc \
         xz \
         zsh \
