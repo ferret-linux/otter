@@ -29,10 +29,9 @@
 
 # Network check: verify connectivity before doing anything else.
 # Runs before the borked trap so a failed check does not mark the container as borked.
-if ! getent hosts one.one.one.one > /dev/null 2>&1; then
-	printf "Error: no network connectivity, otter-init requires network access\n"
-	exit 1
-fi
+# shellcheck disable=SC1091
+. /usr/lib/otter/scripts/initialization-scripts/helpers/network_check.sh
+network_check
 
 # Early exit trap , errors on first faliure & creates a broked state file
 # useful to distinguish a semi-broken container from a working one
