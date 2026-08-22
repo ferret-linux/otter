@@ -67,28 +67,6 @@
       "build_number": 35
     },
     {
-      "name": "void-musl",
-      "official_image": "ghcr.io/ferret-linux/void-otr:musl",
-      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-22T19:02:41Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 983039026,
-          "disk_size": 983039026
-        },
-        "arm64": {
-          "compressed_size": 965098336,
-          "disk_size": 965098336
-        }
-      },
-      "build_number": 123
-    },
-    {
       "name": "oracle",
       "official_image": "ghcr.io/ferret-linux/oracle-otr:stable",
       "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 121
+    },
+    {
+      "name": "void-musl",
+      "official_image": "ghcr.io/ferret-linux/void-otr:musl",
+      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-22T23:54:21Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 983039026,
+          "disk_size": 983039026
+        },
+        "arm64": {
+          "compressed_size": 965098337,
+          "disk_size": 965098337
+        }
+      },
+      "build_number": 124
     }
   ]
 }
