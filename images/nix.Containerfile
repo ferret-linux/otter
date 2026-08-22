@@ -242,6 +242,7 @@ common.onlySupported [
   lsof
   sudo
   tree
+  gnused
   libcap
   python3
   ncurses
