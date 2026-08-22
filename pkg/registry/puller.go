@@ -1,7 +1,6 @@
 package registry
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"io"
@@ -13,6 +12,7 @@ import (
 	"syscall"
 
 	"charm.land/lipgloss/v2"
+	"github.com/charmbracelet/x/vt"
 	"golang.org/x/term"
 
 	"github.com/ferret-linux/otter/pkg/containermanager"
@@ -20,12 +20,15 @@ import (
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
-// scrollWindow is an io.Writer that renders the most recent N lines
-// written to it in a fixed-size region of the real terminal, redrawing
-// that region in place (cursor up + clear + reprint) each time a new
-// line completes. It has no knowledge of what produced the bytes beyond
-// splitting them on '\n'; partial (unterminated) lines are held back
-// until either a newline arrives or Close flushes them.
+// scrollWindow is an io.Writer that renders the pty bytes written to it in
+// a fixed-size, bordered region of the real terminal. Bytes are fed into a
+// vt.Emulator, which interprets cursor movement, carriage returns, and
+// other ANSI control sequences the way a real terminal would; the box is
+// then redrawn (cursor up + clear + reprint) from the emulator's current
+// screen state on every Write. This lets a pty-driven process (e.g.
+// docker/podman/nerdctl doing its own in-place, multi-line pull-progress
+// animation) render correctly inside the box, instead of its control
+// sequences being treated as opaque line content.
 //
 // scrollWindow assumes exclusive control of the terminal region it
 // draws into between Start and Close — nothing else should write to w
@@ -33,13 +36,11 @@ import (
 type scrollWindow struct {
 	w io.Writer
 
-	mu      sync.Mutex
-	lines   []string // fixed-size ring, oldest-to-newest, blank-padded
-	partial []byte   // bytes received since the last '\n'
-	drawn   bool
+	mu    sync.Mutex
+	emu   *vt.Emulator // virtual terminal; owns the current screen content and dimensions
+	drawn bool
 
-	style      lipgloss.Style // bordered box style, sized responsively to the terminal (see scaledSize)
-	innerWidth int            // content width inside the box's border and padding
+	style lipgloss.Style // bordered box style, sized responsively to the terminal (see scaledSize)
 
 	resizeCh   chan os.Signal // SIGWINCH notifications, live between Start and Close
 	resizeDone chan struct{}  // closed to stop the resize-watching goroutine
@@ -53,7 +54,7 @@ type scrollWindow struct {
 func (s *scrollWindow) Size() (rows, cols int) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	return len(s.lines), s.innerWidth
+	return s.emu.Height(), s.emu.Width()
 }
 
 // OnResize implements PullOutputSizer. fn is called with the box's new
@@ -121,12 +122,12 @@ func dimensions() (windowLines, boxWidth int) {
 func newScrollWindow(w io.Writer) *scrollWindow {
 	windowLines, boxWidth := dimensions()
 	style := ui.BorderStyle(boxWidth)
+	innerWidth := boxWidth - style.GetHorizontalFrameSize()
 
 	return &scrollWindow{
-		w:          w,
-		lines:      make([]string, windowLines),
-		style:      style,
-		innerWidth: boxWidth - style.GetHorizontalFrameSize(),
+		w:     w,
+		emu:   vt.NewEmulator(innerWidth, windowLines),
+		style: style,
 	}
 }
 
@@ -186,7 +187,7 @@ func (s *scrollWindow) Close() {
 // cursor at the row the window started on. Must be called with s.mu held
 // and s.drawn true.
 func (s *scrollWindow) eraseLocked() {
-	total := len(s.lines) + 2
+	total := s.emu.Height() + 2
 	fmt.Fprintf(s.w, "\033[%dA", total)
 	for i := range total {
 		fmt.Fprint(s.w, "\033[2K")
@@ -197,42 +198,22 @@ func (s *scrollWindow) eraseLocked() {
 	fmt.Fprintf(s.w, "\033[%dA", total-1)
 }
 
-// Write implements io.Writer. Complete lines (terminated by '\n') are
-// pushed into the scrolling window and the window is redrawn; a
-// trailing incomplete line is held in s.partial until completed.
+// Write implements io.Writer. Bytes are fed directly into the virtual
+// terminal emulator, which interprets cursor movement, carriage returns,
+// and other ANSI control sequences the way a real terminal would, then
+// the window is redrawn from the emulator's current screen state.
 func (s *scrollWindow) Write(p []byte) (int, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	data := p
-	if len(s.partial) > 0 {
-		data = append(append([]byte(nil), s.partial...), p...)
-		s.partial = nil
+	n, err := s.emu.Write(p)
+	if err != nil {
+		return n, err
 	}
 
-	pushed := false
-	for {
-		idx := bytes.IndexByte(data, '\n')
-		if idx < 0 {
-			s.partial = append([]byte(nil), data...)
-			break
-		}
-		line := strings.TrimRight(string(data[:idx]), "\r")
-		s.pushLineLocked(line)
-		pushed = true
-		data = data[idx+1:]
-	}
+	s.redrawLocked()
 
-	if pushed {
-		s.redrawLocked()
-	}
-
-	return len(p), nil
-}
-
-func (s *scrollWindow) pushLineLocked(line string) {
-	copy(s.lines, s.lines[1:])
-	s.lines[len(s.lines)-1] = line
+	return n, nil
 }
 
 // resizeLocked re-reads the terminal size and, if the box's dimensions
@@ -244,7 +225,7 @@ func (s *scrollWindow) pushLineLocked(line string) {
 func (s *scrollWindow) resizeLocked() {
 	windowLines, boxWidth := dimensions()
 
-	if windowLines == len(s.lines) && boxWidth == s.style.GetWidth() {
+	if windowLines == s.emu.Height() && boxWidth == s.style.GetWidth() {
 		return
 	}
 
@@ -254,68 +235,32 @@ func (s *scrollWindow) resizeLocked() {
 	}
 
 	s.style = ui.BorderStyle(boxWidth)
-	s.innerWidth = boxWidth - s.style.GetHorizontalFrameSize()
-	s.resizeLinesLocked(windowLines)
+	innerWidth := boxWidth - s.style.GetHorizontalFrameSize()
+	s.emu.Resize(innerWidth, windowLines)
 
 	s.redrawLocked()
 
 	if s.onResize != nil {
-		s.onResize(windowLines, s.innerWidth)
+		s.onResize(windowLines, innerWidth)
 	}
-}
-
-// resizeLinesLocked replaces s.lines with a ring of the given size,
-// carrying over as much of the currently-visible content as fits: on
-// shrink, the newest lines are kept and the oldest are dropped, matching
-// how pushLineLocked already ages lines out; on grow, the existing lines
-// are kept in place at the end and the new, older-history slots at the
-// front are left blank, since that history was never captured. Must be
-// called with s.mu held.
-func (s *scrollWindow) resizeLinesLocked(windowLines int) {
-	newLines := make([]string, windowLines)
-	// Copy from the end of both slices so the newest lines line up,
-	// regardless of whether windowLines grew or shrank.
-	n := min(len(s.lines), windowLines)
-	copy(newLines[windowLines-n:], s.lines[len(s.lines)-n:])
-	s.lines = newLines
 }
 
 // redrawLocked reprints the current window contents in place: it moves
 // the cursor back to the top of the previously-drawn window (if any),
-// clears each line, and reprints. Must be called with s.mu held.
+// clears each line, and reprints the emulator's current screen state.
+// Must be called with s.mu held.
 func (s *scrollWindow) redrawLocked() {
 	if s.drawn {
-		fmt.Fprintf(s.w, "\033[%dA", len(s.lines)+2)
+		fmt.Fprintf(s.w, "\033[%dA", s.emu.Height()+2)
 	}
 
-	truncated := make([]string, len(s.lines))
-	for i, line := range s.lines {
-		truncated[i] = truncateLine(line, s.innerWidth)
-	}
-	box := s.style.Render(strings.Join(truncated, "\n"))
+	box := s.style.Render(s.emu.String())
 
 	for _, line := range strings.Split(box, "\n") {
 		fmt.Fprint(s.w, "\033[2K")
 		fmt.Fprintln(s.w, line)
 	}
 	s.drawn = true
-}
-
-// truncateLine truncates s to at most width terminal cells. Cell width
-// (not byte or rune count) is used so wide characters and ANSI sequences
-// are measured correctly.
-func truncateLine(s string, width int) string {
-	if width <= 0 {
-		return ""
-	}
-	if lipgloss.Width(s) <= width {
-		return s
-	}
-	r := []rune(s)
-	for len(r) > 0 && lipgloss.Width(string(r)) > width {
-		r = r[:len(r)-1]
-	}
-	return string(r)
 }
 
 // Pull unconditionally pulls the given image ref using the provided
