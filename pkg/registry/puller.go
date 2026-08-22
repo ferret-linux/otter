@@ -7,8 +7,10 @@ import (
 	"io"
 	"math"
 	"os"
+	"os/signal"
 	"strings"
 	"sync"
+	"syscall"
 
 	"charm.land/lipgloss/v2"
 	"golang.org/x/term"
@@ -38,6 +40,9 @@ type scrollWindow struct {
 
 	style      lipgloss.Style // bordered box style, sized responsively to the terminal (see scaledSize)
 	innerWidth int            // content width inside the box's border and padding
+
+	resizeCh   chan os.Signal // SIGWINCH notifications, live between Start and Close
+	resizeDone chan struct{}  // closed to stop the resize-watching goroutine
 }
 
 // scaledSize returns the box dimension (in cells) to use for a terminal
@@ -64,30 +69,38 @@ func scaledSize(x int, k, floor float64) int {
 	return int(math.Round(float64(x) * fraction))
 }
 
-func newScrollWindow(w io.Writer) *scrollWindow {
+// k and floor below are fit so that fraction(120 cols) = 50% (width) and
+// fraction(20 rows) ≈ 70%, fraction(40 rows) ≈ 35% (height), while
+// keeping the box's absolute size non-decreasing as the terminal grows;
+// see scaledSize. Shared by newScrollWindow and resizeLocked so both use
+// the same curve.
+const (
+	widthK      = 110.47
+	widthFloor  = 0.05
+	heightK     = 28.3
+	heightFloor = 0.05
+)
+
+// dimensions reads the current terminal size and returns the box's
+// window-line count and total width, per scaledSize.
+func dimensions() (windowLines, boxWidth int) {
 	width, height := 80, 24
 	if ww, hh, err := term.GetSize(int(os.Stderr.Fd())); err == nil {
 		width = ww
 		height = hh
 	}
 
-	// k and floor below are fit so that fraction(120 cols) = 50% (width)
-	// and fraction(20 rows) ≈ 70%, fraction(40 rows) ≈ 35% (height),
-	// while keeping the box's absolute size non-decreasing as the
-	// terminal grows; see scaledSize.
-	const (
-		widthK      = 110.47
-		widthFloor  = 0.05
-		heightK     = 28.3
-		heightFloor = 0.05
-	)
-
-	windowLines := scaledSize(height, heightK, heightFloor)
+	windowLines = scaledSize(height, heightK, heightFloor)
 	if windowLines < 1 {
 		windowLines = 1
 	}
 
-	boxWidth := scaledSize(width, widthK, widthFloor)
+	boxWidth = scaledSize(width, widthK, widthFloor)
+	return windowLines, boxWidth
+}
+
+func newScrollWindow(w io.Writer) *scrollWindow {
+	windowLines, boxWidth := dimensions()
 	style := ui.BorderStyle(boxWidth)
 
 	return &scrollWindow{
@@ -98,11 +111,34 @@ func newScrollWindow(w io.Writer) *scrollWindow {
 	}
 }
 
-// Start draws the initial empty window.
+// Start draws the initial empty window and begins watching for terminal
+// resizes (SIGWINCH), redrawing the box at its new size whenever the
+// terminal is resized for as long as the window stays open.
 func (s *scrollWindow) Start() {
 	s.mu.Lock()
-	defer s.mu.Unlock()
 	s.redrawLocked()
+	s.mu.Unlock()
+
+	s.resizeCh = make(chan os.Signal, 1)
+	s.resizeDone = make(chan struct{})
+	signal.Notify(s.resizeCh, syscall.SIGWINCH)
+
+	go s.watchResize()
+}
+
+// watchResize redraws the box at its new size on every SIGWINCH, until
+// resizeDone is closed by Close.
+func (s *scrollWindow) watchResize() {
+	for {
+		select {
+		case <-s.resizeCh:
+			s.mu.Lock()
+			s.resizeLocked()
+			s.mu.Unlock()
+		case <-s.resizeDone:
+			return
+		}
+	}
 }
 
 // Close finalizes the pull box: any trailing partial line is discarded,
@@ -110,6 +146,11 @@ func (s *scrollWindow) Start() {
 // started on. The box is a transient progress indicator, not output
 // meant to remain on screen once the pull is done.
 func (s *scrollWindow) Close() {
+	if s.resizeCh != nil {
+		signal.Stop(s.resizeCh)
+		close(s.resizeDone)
+	}
+
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -117,6 +158,15 @@ func (s *scrollWindow) Close() {
 		return
 	}
 
+	s.eraseLocked()
+	s.drawn = false
+}
+
+// eraseLocked clears the currently-drawn window (len(s.lines)+2 rows: the
+// content lines plus the box's top and bottom border) and leaves the
+// cursor at the row the window started on. Must be called with s.mu held
+// and s.drawn true.
+func (s *scrollWindow) eraseLocked() {
 	total := len(s.lines) + 2
 	fmt.Fprintf(s.w, "\033[%dA", total)
 	for i := range total {
@@ -126,7 +176,6 @@ func (s *scrollWindow) Close() {
 		}
 	}
 	fmt.Fprintf(s.w, "\033[%dA", total-1)
-	s.drawn = false
 }
 
 // Write implements io.Writer. Complete lines (terminated by '\n') are
@@ -165,6 +214,31 @@ func (s *scrollWindow) Write(p []byte) (int, error) {
 func (s *scrollWindow) pushLineLocked(line string) {
 	copy(s.lines, s.lines[1:])
 	s.lines[len(s.lines)-1] = line
+}
+
+// resizeLocked re-reads the terminal size and, if the box's dimensions
+// have changed, erases the current (old-sized) box, recomputes the style,
+// inner width, and line ring at the new size, and redraws. The content
+// buffered in the old ring is discarded — it is a transient tail of pull
+// output, not history worth preserving across a resize. Must be called
+// with s.mu held.
+func (s *scrollWindow) resizeLocked() {
+	windowLines, boxWidth := dimensions()
+
+	if windowLines == len(s.lines) && boxWidth == s.style.GetWidth() {
+		return
+	}
+
+	if s.drawn {
+		s.eraseLocked()
+		s.drawn = false
+	}
+
+	s.style = ui.BorderStyle(boxWidth)
+	s.innerWidth = boxWidth - s.style.GetHorizontalFrameSize()
+	s.lines = make([]string, windowLines)
+
+	s.redrawLocked()
 }
 
 // redrawLocked reprints the current window contents in place: it moves
