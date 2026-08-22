@@ -18,7 +18,7 @@
     "enabled": true
   },
   {
-    "image": "docker.io/library/debian:stable",
+    "image": "docker.io/library/debian:stable-slim",
     "containerfile": "brew.Containerfile",
     "name": "brew-otr",
     "tag": "latest",
@@ -27,7 +27,7 @@
     "enabled": true
   },
   {
-    "image": "docker.io/library/debian:stable",
+    "image": "docker.io/library/debian:stable-slim",
     "containerfile": "guix.Containerfile",
     "name": "guix-otr",
     "tag": "latest",
