@@ -1,5 +1,7 @@
-# setup_initsystem fires up the container's init system (systemd or sysvinit),
-# masking host-conflicting units and setting up console/user integration first.
+# setup_initsystem fires up the container's init system (systemd or generic
+# sysvinit-style /sbin/init), masking host-conflicting units and setting up
+# console/user integration first. Detection happens here; each supported init
+# system does its own setup/launch in a dedicated setup_init_<name> function.
 # Arguments:
 #   None
 # Expected global variables:
@@ -12,119 +14,146 @@
 #   None
 setup_initsystem()
 {
-###############################################################################
-# If we're here, the init support has been enabled.
-printf "otter: Setting up init system...\n"
+	###############################################################################
+	# If we're here, the init support has been enabled.
+	printf "otter: Setting up init system...\n"
 
-# some of this directories are needed by
-# the init system. If they're mounts, there might
-# be problems. Let's unmount them.
-# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
-for host_mount in ${HOST_MOUNTS_RO_INIT}; do
-	if findmnt "${host_mount}" > /dev/null; then umount "${host_mount}"; fi
-done
-
-# Remove symlinks
-rm -f /run/systemd/coredump
-rm -f /run/systemd/io.system.ManagedOOM
-rm -f /run/systemd/notify
-rm -f /run/systemd/private
-
-# Restore the symlink to host's timezone
-if [ -f /run/host/etc/localtime ]; then
-	rm -f /etc/localtime
-	ln -sf /run/host/etc/localtime /etc/localtime
-fi
-
-# Remove /dev/console when using init systems, this will confuse host system if
-# we use rootful containers
-# Instantiate a new pty to mount over /dev/console
-# this way we will have init output right of the logs
-[ -e /dev/console ] || touch /dev/console
-rm -f /var/console
-mkfifo /var/console
-script -c "cat /var/console" /dev/null &
-
-# Ensure the pty is created
-sleep 0.5
-
-# Mount the created pty over /dev/console in order to have systemd logs
-# right into container logs
-if ! mount --bind /dev/pts/0 /dev/console; then
-	# Fallback to older behaviour or fake plaintext file in case it fails
-	# this ensures rootful + initful boxes do not interfere with host's /dev/console
-	rm -f /var/console
-	touch /var/console
-	mount --bind /var/console /dev/console
-fi
-
-if [ -e /etc/inittab ]; then
-	# Cleanup openrc to not interfere with the host
-	sed -i 's/^\(tty\d\:\:\)/#\1/g' /etc/inittab
-fi
-
-if [ -e /etc/rc.conf ]; then
-	sed -i \
-		-e 's/#rc_env_allow=".*"/rc_env_allow="\*"/g' \
-		-e 's/#rc_crashed_stop=.*/rc_crashed_stop=NO/g' \
-		-e 's/#rc_crashed_start=.*/rc_crashed_start=YES/g' \
-		-e 's/#rc_provide=".*"/rc_provide="loopback net"/g' \
-		/etc/rc.conf
-fi
-
-if [ -e /etc/init.d ]; then
-	rm -f /etc/init.d/hwdrivers \
-		/etc/init.d/hwclock \
-		/etc/init.d/hwdrivers \
-		/etc/init.d/modules \
-		/etc/init.d/modules-load \
-		/etc/init.d/modloop
-fi
-
-if command -v systemctl 2> /dev/null; then
-	# Cleanup Systemd to not interfere with the host
-	UNIT_TARGETS="
-		/usr/lib/systemd/system/*.mount
-		/usr/lib/systemd/system/console-getty.service
-		/usr/lib/systemd/system/getty@.service
-		/usr/lib/systemd/system/systemd-machine-id-commit.service
-		/usr/lib/systemd/system/systemd-binfmt.service
-		/usr/lib/systemd/system/systemd-tmpfiles*
-		/usr/lib/systemd/system/systemd-udevd.service
-		/usr/lib/systemd/system/systemd-udev-trigger.service
-		/usr/lib/systemd/system/systemd-update-utmp*
-		/usr/lib/systemd/user/pipewire*
-		/usr/lib/systemd/user/wireplumber*
-		/usr/lib/systemd/system/suspend.target
-		/usr/lib/systemd/system/hibernate.target
-		/usr/lib/systemd/system/hybrid-sleep.target
-		/usr/lib/systemd/system/systemd-remount-fs.service
-	"
-
-	# in case /etc/resolv.conf is a mount, we need to mask resolved
-	# in this case we're using network=host and systemd-resolved won't
-	# be able to bind to localhost:53
-	mount_source="$(findmnt -no SOURCE /etc/resolv.conf)" || :
+	# some of this directories are needed by
+	# the init system. If they're mounts, there might
+	# be problems. Let's unmount them.
 	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
-	if [ -n "${mount_source}" ] && ! echo "${mount_source}" | grep -q "${id}"; then
-		UNIT_TARGETS="${UNIT_TARGETS}
-			/usr/lib/systemd/system/systemd-resolved.service
-		"
+	for host_mount in ${HOST_MOUNTS_RO_INIT}; do
+		if findmnt "${host_mount}" > /dev/null; then umount "${host_mount}"; fi
+	done
+
+	# Restore the symlink to host's timezone
+	if [ -f /run/host/etc/localtime ]; then
+		rm -f /etc/localtime
+		ln -sf /run/host/etc/localtime /etc/localtime
 	fi
 
-	# shellcheck disable=SC2086,SC2044
-	for unit in $(find ${UNIT_TARGETS} 2> /dev/null); do
-		systemctl mask "$(basename "${unit}")" || :
-	done
-fi
+	# Remove /dev/console when using init systems, this will confuse host system if
+	# we use rootful containers
+	# Instantiate a new pty to mount over /dev/console
+	# this way we will have init output right of the logs
+	[ -e /dev/console ] || touch /dev/console
+	rm -f /var/console
+	mkfifo /var/console
+	script -c "cat /var/console" /dev/null &
 
-# Let's do a minimal user-integration for the user when using system
-# as the user@.service will trigger the user-runtime-dir@.service which will
-# undo all the integration we did at the start of the script
-#
-# This will ensure the basic integration for x11/wayland/pipewire/keyring
-if [ -e /usr/lib/systemd/system/user@.service ]; then
-	cat << EOF > /usr/local/bin/user-integration
+	# Ensure the pty is created
+	sleep 0.5
+
+	# Mount the created pty over /dev/console in order to have systemd logs
+	# right into container logs
+	if ! mount --bind /dev/pts/0 /dev/console; then
+		# Fallback to older behaviour or fake plaintext file in case it fails
+		# this ensures rootful + initful boxes do not interfere with host's /dev/console
+		rm -f /var/console
+		touch /var/console
+		mount --bind /var/console /dev/console
+	fi
+
+	if [ -e /etc/inittab ]; then
+		# Cleanup openrc to not interfere with the host
+		sed -i 's/^\(tty\d\:\:\)/#\1/g' /etc/inittab
+	fi
+
+	if [ -e /etc/rc.conf ]; then
+		sed -i \
+			-e 's/#rc_env_allow=".*"/rc_env_allow="\*"/g' \
+			-e 's/#rc_crashed_stop=.*/rc_crashed_stop=NO/g' \
+			-e 's/#rc_crashed_start=.*/rc_crashed_start=YES/g' \
+			-e 's/#rc_provide=".*"/rc_provide="loopback net"/g' \
+			/etc/rc.conf
+	fi
+
+	if [ -e /etc/init.d ]; then
+		rm -f /etc/init.d/hwdrivers \
+			/etc/init.d/hwclock \
+			/etc/init.d/hwdrivers \
+			/etc/init.d/modules \
+			/etc/init.d/modules-load \
+			/etc/init.d/modloop
+	fi
+
+	# Now we can launch init
+	printf "otter: Firing up init system...\n"
+
+	if [ -e /usr/lib/systemd/systemd ] || [ -e /lib/systemd/systemd ]; then
+		setup_init_systemd
+	elif [ -e /sbin/init ]; then
+		setup_init_generic
+	else
+		printf "Error: could not set up init system, no init found! Consider using an image that ships with an init system, or add it with \"--additional-packages\" during creation.!\n"
+		exit 1
+	fi
+}
+
+# setup_init_systemd masks host-conflicting systemd units, wires up minimal
+# user-session integration (Wayland/Pipewire/D-Bus/keyring), then launches
+# systemd and waits for it to report ready before finishing container setup.
+# Arguments:
+#   None
+# Expected global variables:
+#   id: container id, used to detect host-owned mounts
+#   container_user_name: the container's primary user, for user@.service/lingering
+# Expected env variables:
+#   None
+# Outputs:
+#   None
+setup_init_systemd()
+{
+	# Remove symlinks
+	rm -f /run/systemd/coredump
+	rm -f /run/systemd/io.system.ManagedOOM
+	rm -f /run/systemd/notify
+	rm -f /run/systemd/private
+
+	if command -v systemctl 2> /dev/null; then
+		# Cleanup Systemd to not interfere with the host
+		UNIT_TARGETS="
+			/usr/lib/systemd/system/*.mount
+			/usr/lib/systemd/system/console-getty.service
+			/usr/lib/systemd/system/getty@.service
+			/usr/lib/systemd/system/systemd-machine-id-commit.service
+			/usr/lib/systemd/system/systemd-binfmt.service
+			/usr/lib/systemd/system/systemd-tmpfiles*
+			/usr/lib/systemd/system/systemd-udevd.service
+			/usr/lib/systemd/system/systemd-udev-trigger.service
+			/usr/lib/systemd/system/systemd-update-utmp*
+			/usr/lib/systemd/user/pipewire*
+			/usr/lib/systemd/user/wireplumber*
+			/usr/lib/systemd/system/suspend.target
+			/usr/lib/systemd/system/hibernate.target
+			/usr/lib/systemd/system/hybrid-sleep.target
+			/usr/lib/systemd/system/systemd-remount-fs.service
+		"
+
+		# in case /etc/resolv.conf is a mount, we need to mask resolved
+		# in this case we're using network=host and systemd-resolved won't
+		# be able to bind to localhost:53
+		mount_source="$(findmnt -no SOURCE /etc/resolv.conf)" || :
+		# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
+		if [ -n "${mount_source}" ] && ! echo "${mount_source}" | grep -q "${id}"; then
+			UNIT_TARGETS="${UNIT_TARGETS}
+				/usr/lib/systemd/system/systemd-resolved.service
+			"
+		fi
+
+		# shellcheck disable=SC2086,SC2044
+		for unit in $(find ${UNIT_TARGETS} 2> /dev/null); do
+			systemctl mask "$(basename "${unit}")" || :
+		done
+	fi
+
+	# Let's do a minimal user-integration for the user when using system
+	# as the user@.service will trigger the user-runtime-dir@.service which will
+	# undo all the integration we did at the start of the script
+	#
+	# This will ensure the basic integration for x11/wayland/pipewire/keyring
+	if [ -e /usr/lib/systemd/system/user@.service ]; then
+		cat << EOF > /usr/local/bin/user-integration
 #!/bin/sh
 sleep 1
 ln -sf /run/host/run/user/\$(id -ru)/wayland-* /run/user/\$(id -ru)/
@@ -141,9 +170,9 @@ mkdir -p /run/user/\$(id -ru)/pulse && ln -sf /run/host/run/user/\$(id -ru)/puls
 find /run/user/\$(id -ru) -maxdepth 2 -xtype l -delete
 EOF
 
-	chmod +x /usr/local/bin/user-integration
+		chmod +x /usr/local/bin/user-integration
 
-	cat << EOF > /usr/lib/systemd/system/user-integration@.service
+		cat << EOF > /usr/lib/systemd/system/user-integration@.service
 [Unit]
 Description=User runtime integration for UID %i
 After=user@%i.service
@@ -156,12 +185,8 @@ ExecStart=/usr/local/bin/user-integration
 
 Slice=user-%i.slice
 EOF
-fi
+	fi
 
-# Now we can launch init
-printf "otter: Firing up init system...\n"
-
-if [ -e /usr/lib/systemd/systemd ] || [ -e /lib/systemd/systemd ]; then
 	# Start user Systemd unit, this will attempt until Systemd is ready
 	# shellcheck disable=SC2154 # container_user_name assigned by otter-init before sourcing this file
 	sh -c "timeout=120 && sleep 1 && while [ \"\${timeout}\" -gt 0 ]; do \
@@ -177,8 +202,21 @@ if [ -e /usr/lib/systemd/systemd ] || [ -e /lib/systemd/systemd ]; then
 
 	[ -e /usr/lib/systemd/systemd ] && exec /usr/lib/systemd/systemd --system --log-target=console --unit=multi-user.target
 	[ -e /lib/systemd/systemd ] && exec /lib/systemd/systemd --system --log-target=console --unit=multi-user.target
+}
 
-elif [ -e /sbin/init ]; then
+# setup_init_generic is the fallback path used for any non-systemd init that
+# ships a standard /sbin/init entrypoint (e.g. an openrc alpine image today).
+# It performs no init-specific readiness wait or user-session integration.
+# Arguments:
+#   None
+# Expected global variables:
+#   None
+# Expected env variables:
+#   None
+# Outputs:
+#   None
+setup_init_generic()
+{
 	touch /usr/lib/otter/container.ready
 	touch /usr/lib/otter/container.bootstrapped
 	printf "container_setup_done\n"
@@ -186,8 +224,4 @@ elif [ -e /sbin/init ]; then
 	# Fallback to standard init path, this is useful in case of non-Systemd containers
 	# like an openrc alpine
 	exec /sbin/init
-else
-	printf "Error: could not set up init system, no init found! Consider using an image that ships with an init system, or add it with \"--additional-packages\" during creation.!\n"
-	exit 1
-fi
 }
