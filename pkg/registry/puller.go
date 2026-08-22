@@ -287,15 +287,23 @@ func Pull(
 	ui.DefaultLogger.Info("large images may take a while, please be patient...")
 	progress.Next("pulling '%s'...", imageRef)
 
+	var win *scrollWindow
 	var out containermanager.PullOutput
 	if ttyutil.IsInteractive() {
-		win := newScrollWindow(os.Stderr)
+		win = newScrollWindow(os.Stderr)
 		win.Start()
-		defer win.Close()
 		out = win
 	}
 
 	err := cm.PullImage(ctx, imageRef, platform, out)
+
+	// Close the box before anything below writes to the same stream
+	// (progress.Fail/Done, cleanupDanglingImage's logging) — Close's
+	// erase math assumes the cursor is still exactly where the box's
+	// last redraw left it, so any interleaved write here would corrupt it.
+	if win != nil {
+		win.Close()
+	}
 
 	if err != nil {
 		progress.Fail()
