@@ -1,8 +1,8 @@
 # setup_initsystem fires up the container's init system (systemd, OpenRC,
-# sysvinit, or generic /sbin/init), masking host-conflicting units and setting
-# up console/user integration first. Detection happens here; each supported
-# init system does its own setup/launch in a dedicated setup_init_<name>
-# function.
+# sysvinit, runit, or generic /sbin/init), masking host-conflicting units and
+# setting up console/user integration first. Detection happens here; each
+# supported init system does its own setup/launch in a dedicated
+# setup_init_<name> function.
 # Arguments:
 #   None
 # Expected global variables:
@@ -87,6 +87,8 @@ setup_initsystem()
 		setup_init_openrc
 	elif [ -e /usr/sbin/telinit ] || [ -e /sbin/telinit ]; then
 		setup_init_sysvinit
+	elif [ -e /usr/bin/runit ] || [ -e /usr/sbin/runit ] || [ -e /sbin/runit ]; then
+		setup_init_runit
 	elif [ -e /sbin/init ]; then
 		setup_init_generic
 	else
@@ -389,9 +391,99 @@ EOF
 	fi
 }
 
+# setup_init_runit handles Void's runit. Detected via the "runit" binary's
+# existence (/usr/bin, plus /usr/sbin and /sbin for older/non-relocated
+# layouts) rather than by distro, matching the systemd/openrc/sysvinit
+# precedent. Void's own packaging relocates the real binary to
+# /usr/bin/runit (void-packages runit template: "vsed -e
+# 's,sbin/runit,usr/bin/runit,g' -i runit.h"); /sbin/init itself is a
+# symlink to "runit-init", a tiny shim that, once it detects it's running
+# as PID 1, immediately execve()s the real runit binary and never returns
+# (void-linux/runit's runit-init.c: "if (getpid() == 1) { ... execve(RUNIT,
+# ...) }"). We exec the resolved runit path directly instead of going
+# through /sbin/init, skipping that redundant (and already a no-op) hop.
+# Two known-shipped agetty services (agetty-console, agetty-serial,
+# agetty-tty1, agetty-hvc0, agetty-hvsi0 - confirmed via runit-void's
+# packaging template, which ships conf files for exactly these five and
+# documents them as enabled by default) are explicitly disabled before
+# boot, the same host-getty-conflict concern already handled for systemd
+# (getty@.service masking) and sysvinit (inittab sed); only the five
+# confirmed names are targeted, not a glob, to avoid touching any
+# additional agetty service a user might add later via
+# "--additional-packages". Readiness is polled via "sv status
+# /var/service/*" - /var/service is runit's own documented live symlink to
+# the active runsvdir (confirmed in runsvchdir(8): "Normally /var/service
+# is a symlink to current") - guarded against not existing yet, since it's
+# only created once stage 2 actually runs. User-session integration uses a
+# oneshot run script that execs the "pause" binary Void ships specifically
+# for this (a no-op signal-blocking process) after running the integration
+# script once, to avoid runsv's normal respawn-on-exit behaviour; the
+# service is statically enabled into runsvdir/default before exec, the
+# same static enable-then-boot pattern already used for OpenRC/sysvinit
+# (runit has no systemd-style lazy-instantiation to hook into instead).
+# Arguments:
+#   None
+# Expected global variables:
+#   container_user_name: the container's primary user, for the
+#     user-integration run script
+# Expected env variables:
+#   None
+# Outputs:
+#   None
+setup_init_runit()
+{
+	# Known agetty services shipped enabled-by-default by runit-void's
+	# packaging (confirmed via its template's conf_files list). Removing
+	# only the enable-symlink, not the service definition under /etc/sv -
+	# fully reversible, and harmless if a given image never enabled them.
+	rm -f /etc/runit/runsvdir/default/agetty-console \
+		/etc/runit/runsvdir/default/agetty-serial \
+		/etc/runit/runsvdir/default/agetty-tty1 \
+		/etc/runit/runsvdir/default/agetty-hvc0 \
+		/etc/runit/runsvdir/default/agetty-hvsi0
+
+	write_user_integration_script
+
+	mkdir -p /etc/sv/otter-user-integration
+
+	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
+	cat << EOF > /etc/sv/otter-user-integration/run
+#!/bin/sh
+su - "${container_user_name}" -c /usr/local/bin/user-integration
+exec pause
+EOF
+
+	chmod +x /etc/sv/otter-user-integration/run
+
+	if [ -d /etc/runit/runsvdir/default ]; then
+		ln -sf /etc/sv/otter-user-integration /etc/runit/runsvdir/default/otter-user-integration
+	fi
+
+	# Wait for runit's services to report "run" status before marking the
+	# container ready. /var/service only exists once stage 2 has actually
+	# run (it's created by "runsvchdir" via a symlink, not present from the
+	# start), so the check tolerates it being briefly absent.
+	sh -c "timeout=120 && sleep 1 && while [ \"\${timeout}\" -gt 0 ]; do \
+	    [ -e /var/service ] && ! sv status /var/service/* 2> /dev/null | grep -qv '^run:' && break; \
+		echo 'waiting for runit services to come up...\n' && sleep 1 && timeout=\$(( timeout -1 )); \
+	done && \
+	touch /usr/lib/otter/container.ready && \
+	touch /usr/lib/otter/container.bootstrapped && \
+	echo container_setup_done" &
+
+	if [ -e /usr/bin/runit ]; then
+		exec /usr/bin/runit
+	elif [ -e /usr/sbin/runit ]; then
+		exec /usr/sbin/runit
+	else
+		exec /sbin/runit
+	fi
+}
+
 # setup_init_generic is the last-resort fallback for any init that ships a
-# standard /sbin/init entrypoint but isn't systemd, OpenRC, or sysvinit (all
-# of which are detected and handled by their own dedicated functions above).
+# standard /sbin/init entrypoint but isn't systemd, OpenRC, sysvinit, or
+# runit (all of which are detected and handled by their own dedicated
+# functions above).
 # It performs no init-specific readiness wait or user-session integration.
 # Arguments:
 #   None
