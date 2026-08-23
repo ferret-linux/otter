@@ -62,28 +62,6 @@
       "build_number": 128
     },
     {
-      "name": "amazonlinux",
-      "official_image": "ghcr.io/ferret-linux/amazon-otr:latest",
-      "fallback_vendor_image": "docker.io/library/amazonlinux:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-23T10:16:09Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1691246309,
-          "disk_size": 1691246309
-        },
-        "arm64": {
-          "compressed_size": 1879647766,
-          "disk_size": 1879647766
-        }
-      },
-      "build_number": 36
-    },
-    {
       "name": "centos",
       "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
       "fallback_vendor_image": "quay.io/centos/centos:stream10",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 123
+    },
+    {
+      "name": "amazonlinux",
+      "official_image": "ghcr.io/ferret-linux/amazon-otr:latest",
+      "fallback_vendor_image": "docker.io/library/amazonlinux:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-23T15:34:33Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1691246310,
+          "disk_size": 1691246310
+        },
+        "arm64": {
+          "compressed_size": 1879647765,
+          "disk_size": 1879647765
+        }
+      },
+      "build_number": 37
     }
   ]
 }
