@@ -82,12 +82,49 @@ setup_initsystem()
 
 	if [ -e /usr/lib/systemd/systemd ] || [ -e /lib/systemd/systemd ]; then
 		setup_init_systemd
+	elif command -v runlevel > /dev/null 2>&1; then
+		setup_init_sysvinit
 	elif [ -e /sbin/init ]; then
 		setup_init_generic
 	else
 		printf "Error: could not set up init system, no init found! Consider using an image that ships with an init system, or add it with \"--additional-packages\" during creation.!\n"
 		exit 1
 	fi
+}
+
+# write_user_integration_script generates the shared /usr/local/bin/user-integration
+# script that mirrors host X11/Wayland/Pipewire/D-Bus/keyring sockets into the
+# container user's runtime dir. The script itself is init-agnostic; only how/when
+# each init triggers it differs (systemd via a oneshot unit, sysvinit via an LSB
+# init script).
+# Arguments:
+#   None
+# Expected global variables:
+#   None
+# Expected env variables:
+#   None
+# Outputs:
+#   None
+write_user_integration_script()
+{
+	cat << EOF > /usr/local/bin/user-integration
+#!/bin/sh
+sleep 1
+ln -sf /run/host/run/user/\$(id -ru)/wayland-* /run/user/\$(id -ru)/
+ln -sf /run/host/run/user/\$(id -ru)/pipewire-* /run/user/\$(id -ru)/
+find /run/host/run/user/\$(id -ru)/ -maxdepth 1 -type f -exec sh -c 'grep -qlE COOKIE \$0 && ln -sf \$0 /run/user/\$(id -ru)/\$(basename \$0)' {} \;
+mkdir -p /run/user/\$(id -ru)/app && ln -sf /run/host/run/user/\$(id -ru)/app/* /run/user/\$(id -ru)/app/
+mkdir -p /run/user/\$(id -ru)/at-spi && ln -sf /run/host/run/user/\$(id -ru)/at-spi/* /run/user/\$(id -ru)/at-spi/
+mkdir -p /run/user/\$(id -ru)/dbus-1 && ln -sf /run/host/run/user/\$(id -ru)/dbus-1/* /run/user/\$(id -ru)/dbus-1/
+mkdir -p /run/user/\$(id -ru)/dconf && ln -sf /run/host/run/user/\$(id -ru)/dconf/* /run/user/\$(id -ru)/dconf/
+mkdir -p /run/user/\$(id -ru)/gnupg && ln -sf /run/host/run/user/\$(id -ru)/gnupg/* /run/user/\$(id -ru)/gnupg/
+mkdir -p /run/user/\$(id -ru)/keyring && ln -sf /run/host/run/user/\$(id -ru)/keyring/* /run/user/\$(id -ru)/keyring/
+mkdir -p /run/user/\$(id -ru)/p11-kit && ln -sf /run/host/run/user/\$(id -ru)/p11-kit/* /run/user/\$(id -ru)/p11-kit/
+mkdir -p /run/user/\$(id -ru)/pulse && ln -sf /run/host/run/user/\$(id -ru)/pulse/* /run/user/\$(id -ru)/pulse/
+find /run/user/\$(id -ru) -maxdepth 2 -xtype l -delete
+EOF
+
+	chmod +x /usr/local/bin/user-integration
 }
 
 # setup_init_systemd masks host-conflicting systemd units, wires up minimal
@@ -153,24 +190,7 @@ setup_init_systemd()
 	#
 	# This will ensure the basic integration for x11/wayland/pipewire/keyring
 	if [ -e /usr/lib/systemd/system/user@.service ]; then
-		cat << EOF > /usr/local/bin/user-integration
-#!/bin/sh
-sleep 1
-ln -sf /run/host/run/user/\$(id -ru)/wayland-* /run/user/\$(id -ru)/
-ln -sf /run/host/run/user/\$(id -ru)/pipewire-* /run/user/\$(id -ru)/
-find /run/host/run/user/\$(id -ru)/ -maxdepth 1 -type f -exec sh -c 'grep -qlE COOKIE \$0 && ln -sf \$0 /run/user/\$(id -ru)/\$(basename \$0)' {} \;
-mkdir -p /run/user/\$(id -ru)/app && ln -sf /run/host/run/user/\$(id -ru)/app/* /run/user/\$(id -ru)/app/
-mkdir -p /run/user/\$(id -ru)/at-spi && ln -sf /run/host/run/user/\$(id -ru)/at-spi/* /run/user/\$(id -ru)/at-spi/
-mkdir -p /run/user/\$(id -ru)/dbus-1 && ln -sf /run/host/run/user/\$(id -ru)/dbus-1/* /run/user/\$(id -ru)/dbus-1/
-mkdir -p /run/user/\$(id -ru)/dconf && ln -sf /run/host/run/user/\$(id -ru)/dconf/* /run/user/\$(id -ru)/dconf/
-mkdir -p /run/user/\$(id -ru)/gnupg && ln -sf /run/host/run/user/\$(id -ru)/gnupg/* /run/user/\$(id -ru)/gnupg/
-mkdir -p /run/user/\$(id -ru)/keyring && ln -sf /run/host/run/user/\$(id -ru)/keyring/* /run/user/\$(id -ru)/keyring/
-mkdir -p /run/user/\$(id -ru)/p11-kit && ln -sf /run/host/run/user/\$(id -ru)/p11-kit/* /run/user/\$(id -ru)/p11-kit/
-mkdir -p /run/user/\$(id -ru)/pulse && ln -sf /run/host/run/user/\$(id -ru)/pulse/* /run/user/\$(id -ru)/pulse/
-find /run/user/\$(id -ru) -maxdepth 2 -xtype l -delete
-EOF
-
-		chmod +x /usr/local/bin/user-integration
+		write_user_integration_script
 
 		cat << EOF > /usr/lib/systemd/system/user-integration@.service
 [Unit]
@@ -202,6 +222,82 @@ EOF
 
 	[ -e /usr/lib/systemd/systemd ] && exec /usr/lib/systemd/systemd --system --log-target=console --unit=multi-user.target
 	[ -e /lib/systemd/systemd ] && exec /lib/systemd/systemd --system --log-target=console --unit=multi-user.target
+}
+
+# setup_init_sysvinit disables host-conflicting getty respawns, wires up the
+# host user-session integration via an LSB init script (sysvinit has no
+# user@.service equivalent to hook into), waits for a valid runlevel, then
+# launches sysvinit. Detected via the "runlevel" command (shipped by
+# sysvinit-utils), not by distro, since /sbin/init and /etc/inittab alone
+# can't reliably distinguish sysvinit from other inits (e.g. busybox-init/
+# OpenRC also ship an /sbin/init and inittab-style file).
+# Arguments:
+#   None
+# Expected global variables:
+#   container_user_name: the container's primary user, for the user-integration
+#     LSB script
+# Expected env variables:
+#   None
+# Outputs:
+#   None
+setup_init_sysvinit()
+{
+	# Classic sysvinit inittab uses "N:RUNLEVELS:ACTION:PROCESS" lines, e.g.
+	# "1:2345:respawn:/sbin/getty 38400 tty1" — different syntax from the
+	# BusyBox/OpenRC "ttyN::respawn:..." lines already handled above. Comment
+	# these out too, so sysvinit doesn't spawn gettys that conflict with the host.
+	if [ -e /etc/inittab ]; then
+		sed -i 's/^\([^:]*:[^:]*:respawn:.*getty.*\)/#\1/' /etc/inittab
+	fi
+
+	write_user_integration_script
+
+	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
+	cat << EOF > /etc/init.d/otter-user-integration
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          otter-user-integration
+# Required-Start:    \$local_fs \$remote_fs
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:
+# Short-Description: Otter host user-session integration
+### END INIT INFO
+
+case "\$1" in
+	start)
+		su - "${container_user_name}" -c /usr/local/bin/user-integration
+		;;
+	stop | restart | reload | force-reload | status)
+		;;
+	*)
+		echo "Usage: \$0 start" >&2
+		exit 1
+		;;
+esac
+
+exit 0
+EOF
+
+	chmod +x /etc/init.d/otter-user-integration
+
+	if command -v update-rc.d > /dev/null 2>&1; then
+		update-rc.d otter-user-integration defaults > /dev/null 2>&1 || :
+	fi
+
+	# Wait for sysvinit to report a real runlevel before marking the
+	# container ready. "runlevel" prints "<previous> <current>", e.g.
+	# "N 2"; it prints "unknown" for both fields before the switch happens.
+	sh -c "timeout=120 && sleep 1 && while [ \"\${timeout}\" -gt 0 ]; do \
+	    current_runlevel=\$(runlevel | awk '{print \$2}'); \
+	    [ \"\${current_runlevel}\" != \"unknown\" ] && [ -n \"\${current_runlevel}\" ] && break; \
+		echo 'waiting for sysvinit to come up...\n' && sleep 1 && timeout=\$(( timeout -1 )); \
+	done && \
+	touch /usr/lib/otter/container.ready && \
+	touch /usr/lib/otter/container.bootstrapped && \
+	echo container_setup_done" &
+
+	exec /sbin/init
 }
 
 # setup_init_generic is the fallback path used for any non-systemd init that
