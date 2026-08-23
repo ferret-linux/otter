@@ -1,7 +1,8 @@
-# setup_initsystem fires up the container's init system (systemd or generic
-# sysvinit-style /sbin/init), masking host-conflicting units and setting up
-# console/user integration first. Detection happens here; each supported init
-# system does its own setup/launch in a dedicated setup_init_<name> function.
+# setup_initsystem fires up the container's init system (systemd, OpenRC,
+# sysvinit, or generic /sbin/init), masking host-conflicting units and setting
+# up console/user integration first. Detection happens here; each supported
+# init system does its own setup/launch in a dedicated setup_init_<name>
+# function.
 # Arguments:
 #   None
 # Expected global variables:
@@ -82,6 +83,8 @@ setup_initsystem()
 
 	if [ -e /usr/lib/systemd/systemd ] || [ -e /lib/systemd/systemd ]; then
 		setup_init_systemd
+	elif [ -e /usr/sbin/openrc ] || [ -e /sbin/openrc ]; then
+		setup_init_openrc
 	elif [ -e /usr/sbin/telinit ] || [ -e /sbin/telinit ]; then
 		setup_init_sysvinit
 	elif [ -e /sbin/init ]; then
@@ -304,8 +307,91 @@ EOF
 	exec /sbin/init
 }
 
-# setup_init_generic is the fallback path used for any non-systemd init that
-# ships a standard /sbin/init entrypoint (e.g. an openrc alpine image today).
+# setup_init_openrc handles OpenRC regardless of which process actually owns
+# PID 1. Detected via the "openrc" binary's existence (both /usr/sbin and
+# /sbin, for merged- and non-merged-/usr layouts) rather than by distro, since
+# OpenRC is layered on top of another init rather than being one itself.
+# Concretely, two real cases exist and are handled internally rather than as
+# separate dispatch branches:
+#   - "openrc-init" is present: OpenRC's own real init binary is PID 1 (it can
+#     be launched directly or symlinked to /sbin/init).
+#   - "openrc-init" is absent: some other program (e.g. busybox-init, or
+#     sysvinit as on default Gentoo) is PID 1 and hands off to OpenRC via
+#     "openrc sysinit"/"boot"/"default" calls from its own inittab. This is
+#     detected here, not by distro, because the /sbin/init this case launches
+#     is a foreign binary we don't own and can't distro-match reliably.
+# Either way, OpenRC itself does the same service management (dependency
+# resolution, /etc/init.d, "default" runlevel), so integration and readiness
+# are handled identically; only the final exec target differs.
+# Arguments:
+#   None
+# Expected global variables:
+#   container_user_name: the container's primary user, for the user-integration
+#     openrc-run script
+# Expected env variables:
+#   None
+# Outputs:
+#   None
+setup_init_openrc()
+{
+	write_user_integration_script
+
+	# openrc-run scripts must use this shebang: it's a real shell wrapper
+	# (see openrc's sh/openrc-run.sh.in) that parses the "--lockfd <fd> start"
+	# arguments openrc's exec_service() actually invokes services with — a
+	# plain "case "$1" in start)" LSB-style script (as used for sysvinit)
+	# would see "--lockfd" as $1 and never match.
+	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
+	cat << EOF > /etc/init.d/otter-user-integration
+#!/sbin/openrc-run
+description="Otter host user-session integration"
+
+depend()
+{
+	after *
+	keyword -timeout
+}
+
+start()
+{
+	su - "${container_user_name}" -c /usr/local/bin/user-integration
+}
+EOF
+
+	chmod +x /etc/init.d/otter-user-integration
+
+	if command -v rc-update > /dev/null 2>&1; then
+		rc-update add otter-user-integration default > /dev/null 2>&1 || :
+	fi
+
+	# Wait for OpenRC to finish reaching the "default" runlevel before
+	# marking the container ready. OpenRC writes the active runlevel's name
+	# to /run/openrc/softlevel only after every service in it has started
+	# (rc_runlevel_set() in librc runs after wait_for_services()), so this
+	# is a genuine boot-complete signal, not a guess.
+	sh -c "timeout=120 && sleep 1 && while [ \"\${timeout}\" -gt 0 ]; do \
+	    current_softlevel=\$(cat /run/openrc/softlevel 2> /dev/null); \
+	    [ \"\${current_softlevel}\" = \"default\" ] && break; \
+		echo 'waiting for openrc to come up...\n' && sleep 1 && timeout=\$(( timeout -1 )); \
+	done && \
+	touch /usr/lib/otter/container.ready && \
+	touch /usr/lib/otter/container.bootstrapped && \
+	echo container_setup_done" &
+
+	if [ -e /usr/sbin/openrc-init ]; then
+		exec /usr/sbin/openrc-init
+	elif [ -e /sbin/openrc-init ]; then
+		exec /sbin/openrc-init
+	else
+		# Some other program (busybox-init, sysvinit, ...) is PID 1 and is
+		# the one that actually calls into openrc; just hand off to it.
+		exec /sbin/init
+	fi
+}
+
+# setup_init_generic is the last-resort fallback for any init that ships a
+# standard /sbin/init entrypoint but isn't systemd, OpenRC, or sysvinit (all
+# of which are detected and handled by their own dedicated functions above).
 # It performs no init-specific readiness wait or user-session integration.
 # Arguments:
 #   None
@@ -321,7 +407,7 @@ setup_init_generic()
 	touch /usr/lib/otter/container.bootstrapped
 	printf "container_setup_done\n"
 
-	# Fallback to standard init path, this is useful in case of non-Systemd containers
-	# like an openrc alpine
+	# Fallback to standard init path for any init system not specifically
+	# detected above
 	exec /sbin/init
 }
