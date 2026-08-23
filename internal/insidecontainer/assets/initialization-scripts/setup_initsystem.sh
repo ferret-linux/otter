@@ -82,7 +82,7 @@ setup_initsystem()
 
 	if [ -e /usr/lib/systemd/systemd ] || [ -e /lib/systemd/systemd ]; then
 		setup_init_systemd
-	elif command -v runlevel > /dev/null 2>&1; then
+	elif [ -e /usr/sbin/telinit ] || [ -e /sbin/telinit ]; then
 		setup_init_sysvinit
 	elif [ -e /sbin/init ]; then
 		setup_init_generic
@@ -227,10 +227,14 @@ EOF
 # setup_init_sysvinit disables host-conflicting getty respawns, wires up the
 # host user-session integration via an LSB init script (sysvinit has no
 # user@.service equivalent to hook into), waits for a valid runlevel, then
-# launches sysvinit. Detected via the "runlevel" command (shipped by
-# sysvinit-utils), not by distro, since /sbin/init and /etc/inittab alone
-# can't reliably distinguish sysvinit from other inits (e.g. busybox-init/
-# OpenRC also ship an /sbin/init and inittab-style file).
+# launches sysvinit. Detected via the "telinit" binary's existence — hardlinked
+# to the real sysvinit "init" binary itself (same file, not a companion utility)
+# — checked the same way as the systemd binary itself (both /usr/sbin and /sbin,
+# for merged- and non-merged-/usr layouts), rather than by distro, since
+# /sbin/init and /etc/inittab alone can't reliably distinguish sysvinit from
+# other inits (e.g. busybox-init/OpenRC also ship an /sbin/init and
+# inittab-style file, and neither ships telinit). Readiness is polled
+# separately via the "runlevel" command (also shipped by sysvinit-utils).
 # Arguments:
 #   None
 # Expected global variables:
