@@ -206,23 +206,6 @@
       "build_number": 124
     },
     {
-      "name": "slackware-current",
-      "official_image": "ghcr.io/ferret-linux/slackware-otr:current",
-      "fallback_vendor_image": "docker.io/aclemons/slackware:current",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-23T10:38:00Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 5377204967,
-          "disk_size": 5377204967
-        }
-      },
-      "build_number": 25
-    },
-    {
       "name": "alma",
       "official_image": "ghcr.io/ferret-linux/alma-otr:stable",
       "fallback_vendor_image": "docker.io/library/almalinux:latest",
@@ -768,6 +751,23 @@
         }
       },
       "build_number": 40
+    },
+    {
+      "name": "slackware-current",
+      "official_image": "ghcr.io/ferret-linux/slackware-otr:current",
+      "fallback_vendor_image": "docker.io/aclemons/slackware:current",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-23T15:35:59Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 5377204968,
+          "disk_size": 5377204968
+        }
+      },
+      "build_number": 26
     }
   ]
 }
