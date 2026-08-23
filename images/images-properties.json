@@ -355,28 +355,6 @@
       "build_number": 37
     },
     {
-      "name": "homebrew",
-      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
-      "fallback_vendor_image": "docker.io/library/debian:stable-slim",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-23T15:35:30Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 846930267,
-          "disk_size": 846930267
-        },
-        "arm64": {
-          "compressed_size": 866985760,
-          "disk_size": 866985760
-        }
-      },
-      "build_number": 50
-    },
-    {
       "name": "ubuntu",
       "official_image": "ghcr.io/ferret-linux/ubuntu-otr:stable",
       "fallback_vendor_image": "docker.io/library/ubuntu:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 126
+    },
+    {
+      "name": "homebrew",
+      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
+      "fallback_vendor_image": "docker.io/library/debian:stable-slim",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-23T19:42:22Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 846981977,
+          "disk_size": 846981977
+        },
+        "arm64": {
+          "compressed_size": 867467045,
+          "disk_size": 867467045
+        }
+      },
+      "build_number": 51
     }
   ]
 }
