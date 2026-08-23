@@ -84,6 +84,7 @@ RUN apk update && \
         vpl-gpu-rt \
         util-linux \
         musl-utils \
+        openrc-init \
         alpine-base \
         xdg-user-dirs \
         pipewire-jack \
