@@ -128,28 +128,6 @@
       "build_number": 122
     },
     {
-      "name": "debian-testing",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:testing",
-      "fallback_vendor_image": "docker.io/library/debian:testing",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-24T16:06:26Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1692451135,
-          "disk_size": 1692451135
-        },
-        "arm64": {
-          "compressed_size": 1669721152,
-          "disk_size": 1669721152
-        }
-      },
-      "build_number": 130
-    },
-    {
       "name": "rhel",
       "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
       "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 39
+    },
+    {
+      "name": "debian-testing",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:testing",
+      "fallback_vendor_image": "docker.io/library/debian:testing",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-24T20:27:04Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1692451135,
+          "disk_size": 1692451135
+        },
+        "arm64": {
+          "compressed_size": 1669721151,
+          "disk_size": 1669721151
+        }
+      },
+      "build_number": 131
     }
   ]
 }
