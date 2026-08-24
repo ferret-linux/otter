@@ -336,7 +336,15 @@ since there's no human review checkpoint before a change lands.
    current change to be fully correct), flag it and ask before also fixing
    it, rather than silently expanding scope — even when the fix seems small
    or clearly correct. The human may want it done separately, later, or not
-   at all.
+   at all. Staying scoped to what was asked applies to what gets
+   implemented, not to what gets looked for or reported: keep investigating
+   and surfacing bugs, gaps, and risks at full strength even in areas beyond
+   the current task, the same as AI-Assisted Mode's review rules expect.
+   Restraint means asking before building the fix, not staying quiet about
+   having found the problem. If the human reviews a flagged finding and
+   says to go ahead, it becomes agreed, in-scope work from that point on —
+   implement it as such, rather than re-flagging it again or continuing to
+   treat it as optional.
 
 ## Implementation Rules
 
@@ -557,3 +565,11 @@ version directly once the human agreed. Along the way, the assistant noticed
 an unrelated, pre-existing gap affecting a different image entirely; rather
 than fixing it inline, it flagged the gap and asked, since it was outside
 what had actually been requested (rule 7).
+
+> **Human:** good catch, yeah add that too
+
+Once the human reviewed the finding and asked for it, the assistant treated
+it as newly agreed, in-scope work — implementing it as part of the change
+rather than flagging it again or leaving it as a caveat, since staying
+scoped to what was asked never meant staying quiet about what investigation
+actually turned up (rule 7).
