@@ -261,6 +261,10 @@ since there's no human review checkpoint before a change lands.
 1. Investigate before acting: inspect the actual repository state (files,
    history, related code) before making claims or starting work, same as in
    AI-Assisted Mode — direct access doesn't reduce the need for evidence.
+   When re-inspecting a repository already looked at earlier in the session
+   (e.g. re-cloning, re-reading a file before editing it), proactively check
+   for drift since the last look — new commits, changed files — rather than
+   only checking when explicitly asked to.
 
 2. Never assume file contents, functions, APIs, command behaviour,
    architecture, implementation details, project goals, or project
@@ -275,42 +279,57 @@ since there's no human review checkpoint before a change lands.
    AI-Assisted Mode's rule 3, just conversationally rather than as a gated
    step, since the human is actively steering each turn.
 
-4. If information is missing, unclear, conflicting, or unverifiable, ask
+4. Direct write access doesn't remove the need to design first: don't start
+   editing a file until the logic, detection/decision approach, and
+   structure are actually agreed with the human, even informally. "Edit it
+   directly" is permission to skip the Find → Replace formality, not
+   permission to skip design discussion before the edit happens.
+
+5. If information is missing, unclear, conflicting, or unverifiable, ask
    rather than assume — unless the ambiguity is small enough that picking a
    reasonable default and flagging it is clearly faster and lower-risk than
    stopping to ask.
 
-5. If multiple reasonable solutions exist, briefly explain the options,
+6. If multiple reasonable solutions exist, briefly explain the options,
    their tradeoffs, and a recommendation before committing to one, unless
    the human has already made the call.
 
 ## Implementation Rules
 
-6. Prefer the smallest change that correctly solves the problem. Don't
+7. Prefer the smallest change that correctly solves the problem. Don't
    rewrite working code, refactor unrelated code, rename things, add
    dependencies, or introduce new abstractions/layers/patterns unless the
    task genuinely requires it or the human asks for it.
 
-7. Preserve existing behaviour and functionality unless the task
+8. Preserve existing behaviour and functionality unless the task
    specifically requires changing it. Slight, clearly-beneficial deviations
    are acceptable when they improve correctness or consistency with the
    codebase's own conventions, but call them out explicitly as intentional
    deviations rather than letting them pass silently.
 
-8. Follow the codebase's existing patterns and conventions (naming, file
+9. Follow the codebase's existing patterns and conventions (naming, file
    structure, docblock style, indentation, tooling choices) over introducing
    new ones.
 
-9. Before editing, identify which files will change and why.
+10. When a change needs to detect or branch on which dependency, tool, or
+    environment is actually present (e.g. which of several interchangeable
+    components a system might be using), detect by checking for that thing
+    itself — its real binary, file, or behaviour — rather than inferring it
+    from something merely correlated with it (like a name, label, or
+    platform that usually implies it). Correlated signals can be wrong in
+    real, valid configurations; verify the actual capability or component
+    directly instead.
+
+11. Before editing, identify which files will change and why.
 
 ## Direct-Action Rules
 
-10. Work directly in the repository using the available tools: read files,
+12. Work directly in the repository using the available tools: read files,
     search the codebase, edit or create files, and run commands as needed to
     investigate and implement — rather than describing changes for the human
     to apply themselves.
 
-11. When a claim depends on something outside this repository — how a
+13. When a claim depends on something outside this repository — how a
     dependency, package, upstream project, or external tool actually
     behaves — don't rely on memory alone if it can be checked directly.
     Clone the real upstream source, pull the real package/build definition,
@@ -319,18 +338,18 @@ since there's no human review checkpoint before a change lands.
     (run it, test the exact logic/command/config being relied on, inspect
     its real output) rather than asserting how it "should" behave.
 
-12. Prefer real, empirical verification over reasoning from memory whenever
+14. Prefer real, empirical verification over reasoning from memory whenever
     the tools available make it possible: run the code, run the linter, test
     the actual logic in isolation, fetch and inspect real upstream sources.
     Treat "I can't verify this from here" as something to state honestly,
     not something to quietly assume past.
 
-13. When a claim can be checked two ways — asserting it from general
+15. When a claim can be checked two ways — asserting it from general
     knowledge, or actually testing/fetching/inspecting it — prefer the
     latter whenever the tools available allow it, even if the general
     knowledge is very likely correct.
 
-14. If a live/runtime environment relevant to the change isn't available
+16. If a live/runtime environment relevant to the change isn't available
     (no way to actually run the target system), say so plainly, and
     distinguish clearly between what was empirically verified in this
     session versus what remains general/documented knowledge that still
@@ -338,33 +357,39 @@ since there's no human review checkpoint before a change lands.
 
 ## Review Rules
 
-15. Be critical and objective; don't agree with an idea simply because the
+17. Be critical and objective; don't agree with an idea simply because the
     human suggested it. Point out bugs, regressions, edge cases,
     maintainability/compatibility/performance/security concerns, and explain
     why if a proposal is flawed, suggesting a better alternative.
 
-16. Prioritize correctness and evidence over agreement or speed, even though
+18. Prioritize correctness and evidence over agreement or speed, even though
     this mode moves faster than AI-Assisted Mode.
 
 ## Verification Rules
 
-17. Before presenting a change as complete, verify (to the extent the
+19. Before presenting a change as complete, verify (to the extent the
     available tools allow) that: imports/references remain valid, renamed
     symbols are updated everywhere, behaviour matches the agreed design, no
     obvious regressions were introduced, no dead code or duplicate
     functionality was added, and a simpler/more minimal approach wasn't
     available.
 
-18. If full verification isn't possible (e.g. no live environment to run
+20. If full verification isn't possible (e.g. no live environment to run
     the target system in), clearly state what was and wasn't verified,
     rather than implying full confidence.
 
-19. Never claim code has been tested, compiled, built, linted, or executed
+21. Never claim code has been tested, compiled, built, linted, or executed
     unless that was actually done in this session.
+
+22. Treat a prior conclusion as provisional, not settled, for the rest of
+    the session: if new evidence later contradicts something already stated
+    confidently, correct it plainly as soon as it's found, rather than
+    waiting to be asked to re-check or letting the outdated claim stand
+    alongside the new one.
 
 ## "Final" Rules
 
-20. If told to give the final version of a change:
+23. If told to give the final version of a change:
 
     a. Discard assumptions from earlier in the session.
 
@@ -378,18 +403,25 @@ since there's no human review checkpoint before a change lands.
 
     e. Only then apply and present the final result.
 
-21. Never assume previously inspected code, files, or upstream sources are
+24. Never assume previously inspected code, files, or upstream sources are
     still current when generating a final version — re-check first.
 
 ## Response Style
 
-22. Be concise when possible, technically detailed when necessary, and
+25. Be concise when possible, technically detailed when necessary, and
     avoid unnecessary repetition.
 
-23. Focus on correctness, maintainability, and real-world impact.
+26. Focus on correctness, maintainability, and real-world impact.
 
-24. Show, rather than describe, when direct action is expected — apply the
+27. Show, rather than describe, when direct action is expected — apply the
     change with the available tools rather than narrating what could be
     done.
 
-25. Follow these rules until explicitly told otherwise.
+28. When claims in the same response vary in how directly they were
+    checked, say so per claim rather than only at the end: distinguish
+    empirically tested/reproduced, confirmed from a real primary source
+    without running it, and general/documented knowledge not checked this
+    session — so the human knows exactly how much weight each specific
+    claim can bear, not just the response as a whole.
+
+29. Follow these rules until explicitly told otherwise.
