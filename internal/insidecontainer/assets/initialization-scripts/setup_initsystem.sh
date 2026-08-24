@@ -1,7 +1,7 @@
 # setup_initsystem fires up the container's init system (systemd, OpenRC,
-# sysvinit, runit, or generic /sbin/init), masking host-conflicting units and
-# setting up console/user integration first. Detection happens here; each
-# supported init system does its own setup/launch in a dedicated
+# sysvinit, runit, dinit, or generic /sbin/init), masking host-conflicting
+# units and setting up console/user integration first. Detection happens
+# here; each supported init system does its own setup/launch in a dedicated
 # setup_init_<name> function.
 # Arguments:
 #   None
@@ -89,6 +89,8 @@ setup_initsystem()
 		setup_init_sysvinit
 	elif [ -e /usr/bin/runit ] || [ -e /usr/sbin/runit ] || [ -e /sbin/runit ]; then
 		setup_init_runit
+	elif [ -e /usr/bin/dinit ] || [ -e /usr/sbin/dinit ] || [ -e /sbin/dinit ]; then
+		setup_init_dinit
 	elif [ -e /sbin/init ]; then
 		setup_init_generic
 	else
@@ -480,9 +482,98 @@ EOF
 	fi
 }
 
+# setup_init_dinit handles dinit (Chimera Linux, and Wolfi's from-source
+# build - dinit is not distro-specific, so detection is by binary
+# existence, same as the other three non-systemd inits). On both, the real
+# binary lives at /usr/bin/dinit (Chimera: cports' own Packaging.md states
+# "/usr/sbin, /bin and /sbin are symbolic links to the primary /usr/bin
+# path and should never be present in packages", i.e. full usr-merge by
+# policy; Wolfi: its Containerfile builds vanilla dinit from source and
+# does "ln -sf /usr/bin/dinit /sbin/init" directly) - /usr/sbin and /sbin
+# are still checked for defensiveness, matching the systemd/openrc/runit
+# precedent, since dinit itself is not tied to either distro's layout.
+# User-session integration is a "scripted" (run-once) dinit service,
+# enabled the same static pre-boot way as OpenRC/sysvinit/runit: a symlink
+# into /etc/dinit.d/boot.d (Chimera's own service docs, verbatim: "What
+# this does is simply create a symlink in /etc/dinit.d/boot.d" - this is
+# the documented, generic dinit enablement mechanism, not Chimera-specific
+# tooling). The boot.d directory's existence is only checked, never
+# created - on Chimera dinit-chimera already provides it; a from-scratch
+# dinit setup (e.g. today's Wolfi image) has no "boot" service at all yet,
+# which is a separate, already-flagged gap to be fixed in the Containerfile
+# itself, not papered over here.
+# Readiness is polled via "dinitctl status boot", empirically verified
+# against a real dinit build (cloned and built davmac314/dinit from source
+# in a sandbox, ran it against a live service tree matching this design):
+# output is confirmed to be "State: STARTED" on a running/completed
+# service, exit code 0 - not assumed from docs.
+# No getty-conflict handling is included, and none is needed: cloned
+# chimera-linux/dinit-chimera directly and grepped its full, authoritative
+# service list (services/meson.build - every file the package installs,
+# 50 total) for getty/agetty - zero matches. "login.target" (previously
+# suspected) is confirmed to be a plain synchronization point (type =
+# internal, options: runs-on-console) that starts nothing itself. Chimera
+# ships a getty implementation ("nyagetty") only as a separate,
+# independently-installed package, and chimera.Containerfile never
+# installs it. Unlike systemd/sysvinit/runit, there is genuinely nothing
+# to mask here for this image today.
+# The exec line passes "--container" (a real, documented dinit flag: "run
+# in container mode (do not manage system)") - confirmed via "dinit
+# --help" against the real build. This isn't needed for dinit to stay
+# resident as PID 1 (verified separately with "unshare --pid": a bare
+# exec with no flags, actually running as PID 1, correctly stays up as
+# the persistent service manager - dinit auto-detects PID 1 same as
+# runit-init did). It's added because, unlike systemd (masks host-only
+# units via the "container=" env var already set by otter's docker.go/
+# podman.go) and OpenRC/runit (self-detect via similar container checks),
+# dinit has no equivalent auto-detection found in its source - "--container"
+# is the explicit, documented way to tell it the same thing, so it's
+# passed rather than relying on default (system-install-assuming) behaviour.
+# Arguments:
+#   None
+# Expected global variables:
+#   container_user_name: the container's primary user, for the
+#     user-integration service's command
+# Expected env variables:
+#   None
+# Outputs:
+#   None
+setup_init_dinit()
+{
+	write_user_integration_script
+
+	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
+	cat << EOF > /etc/dinit.d/otter-user-integration
+type = scripted
+command = /bin/sh -c "su - ${container_user_name} -c /usr/local/bin/user-integration"
+EOF
+
+	if [ -d /etc/dinit.d/boot.d ]; then
+		ln -sf /etc/dinit.d/otter-user-integration /etc/dinit.d/boot.d/otter-user-integration
+	fi
+
+	# Wait for dinit's "boot" service (the universal root of the dependency
+	# tree) to report started before marking the container ready.
+	sh -c "timeout=120 && sleep 1 && while [ \"\${timeout}\" -gt 0 ]; do \
+	    dinitctl status boot 2> /dev/null | grep -q 'State: STARTED' && break; \
+		echo 'waiting for dinit to come up...\n' && sleep 1 && timeout=\$(( timeout -1 )); \
+	done && \
+	touch /usr/lib/otter/container.ready && \
+	touch /usr/lib/otter/container.bootstrapped && \
+	echo container_setup_done" &
+
+	if [ -e /usr/bin/dinit ]; then
+		exec /usr/bin/dinit --container
+	elif [ -e /usr/sbin/dinit ]; then
+		exec /usr/sbin/dinit --container
+	else
+		exec /sbin/dinit --container
+	fi
+}
+
 # setup_init_generic is the last-resort fallback for any init that ships a
-# standard /sbin/init entrypoint but isn't systemd, OpenRC, sysvinit, or
-# runit (all of which are detected and handled by their own dedicated
+# standard /sbin/init entrypoint but isn't systemd, OpenRC, sysvinit, runit,
+# or dinit (all of which are detected and handled by their own dedicated
 # functions above).
 # It performs no init-specific readiness wait or user-session integration.
 # Arguments:
