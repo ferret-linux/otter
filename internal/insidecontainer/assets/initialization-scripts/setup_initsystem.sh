@@ -507,16 +507,19 @@ EOF
 # in a sandbox, ran it against a live service tree matching this design):
 # output is confirmed to be "State: STARTED" on a running/completed
 # service, exit code 0 - not assumed from docs.
-# No getty-conflict handling is included, and none is needed: cloned
+# No getty conflict exists from dinit-chimera itself: cloned
 # chimera-linux/dinit-chimera directly and grepped its full, authoritative
 # service list (services/meson.build - every file the package installs,
 # 50 total) for getty/agetty - zero matches. "login.target" (previously
 # suspected) is confirmed to be a plain synchronization point (type =
-# internal, options: runs-on-console) that starts nothing itself. Chimera
-# ships a getty implementation ("nyagetty") only as a separate,
-# independently-installed package, and chimera.Containerfile never
-# installs it. Unlike systemd/sysvinit/runit, there is genuinely nothing
-# to mask here for this image today.
+# internal, options: runs-on-console) that starts nothing itself.
+# A conflict does become real if a third-party image additionally installs
+# "nyagetty" (Chimera's standalone agetty), confirmed via its actual
+# cports package (main/nyagetty/template.py): post_install() calls
+# install_service(..., enable=True) on a milestone that dynamically spawns
+# per-tty getty instances - so the milestone symlink is proactively
+# removed above; chimera.Containerfile itself never installs nyagetty, so
+# this is a no-op today and a real fix for images that do.
 # The exec line passes "--container" (a real, documented dinit flag: "run
 # in container mode (do not manage system)") - confirmed via "dinit
 # --help" against the real build. This isn't needed for dinit to stay
@@ -540,6 +543,20 @@ EOF
 #   None
 setup_init_dinit()
 {
+	# If a image installs "nyagetty" alongside dinit-chimera,
+	# its package auto-enables this milestone (cports' own install_service
+	# helper, called with enable=True, symlinks it into
+	# /usr/lib/dinit.d/boot.d unconditionally at package-install time).
+	# The milestone itself dynamically spawns per-tty getty instances on
+	# demand rather than shipping them as fixed pre-enabled services, so
+	# stopping this one symlink from running is sufficient to prevent all
+	# of them - same host-getty-conflict concern already handled for
+	# systemd/sysvinit/runit. Removing only the enable-symlink, not the
+	# service definition at /usr/lib/dinit.d/agetty - fully reversible,
+	# and a harmless no-op on today's chimera.Containerfile, which never
+	# installs nyagetty.
+	rm -f /usr/lib/dinit.d/boot.d/agetty
+
 	write_user_integration_script
 
 	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
