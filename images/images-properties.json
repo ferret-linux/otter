@@ -372,28 +372,6 @@
       "build_number": 131
     },
     {
-      "name": "ubuntu-lts",
-      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts",
-      "fallback_vendor_image": "docker.io/library/ubuntu:26.04",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-24T20:31:12Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1457981952,
-          "disk_size": 1457981952
-        },
-        "arm64": {
-          "compressed_size": 1477931699,
-          "disk_size": 1477931699
-        }
-      },
-      "build_number": 131
-    },
-    {
       "name": "kali",
       "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
       "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 44
+    },
+    {
+      "name": "ubuntu-lts",
+      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts",
+      "fallback_vendor_image": "docker.io/library/ubuntu:26.04",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-25T02:41:06Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1457981949,
+          "disk_size": 1457981949
+        },
+        "arm64": {
+          "compressed_size": 1477931699,
+          "disk_size": 1477931699
+        }
+      },
+      "build_number": 132
     }
   ]
 }
