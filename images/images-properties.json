@@ -257,28 +257,6 @@
       "build_number": 136
     },
     {
-      "name": "guix",
-      "official_image": "ghcr.io/ferret-linux/guix-otr:latest",
-      "fallback_vendor_image": "docker.io/library/debian:stable-slim",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-25T21:22:36Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 2254757191,
-          "disk_size": 2254757191
-        },
-        "arm64": {
-          "compressed_size": 2494931540,
-          "disk_size": 2494931540
-        }
-      },
-      "build_number": 42
-    },
-    {
       "name": "opensuse-tumbleweed",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 140
+    },
+    {
+      "name": "guix",
+      "official_image": "ghcr.io/ferret-linux/guix-otr:latest",
+      "fallback_vendor_image": "docker.io/library/debian:stable-slim",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-26T03:43:29Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 2254757188,
+          "disk_size": 2254757188
+        },
+        "arm64": {
+          "compressed_size": 2494931544,
+          "disk_size": 2494931544
+        }
+      },
+      "build_number": 43
     }
   ]
 }
