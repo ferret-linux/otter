@@ -5,17 +5,17 @@ import (
 	"path/filepath"
 )
 
-func defaults() fileConfig {
-	return fileConfig{
-		Container: containerConfig{
+func defaults() FileConfig {
+	return FileConfig{
+		Container: ContainerConfig{
 			Name: "my-container",
 		},
-		Images: imagesConfig{
+		Images: ImagesConfig{
 			Default:                    "ghcr.io/ferret-linux/ubuntu-otr:lts",
 			StalenessWarnThreshold:     5,
 			StalenessAutopullThreshold: 10,
 		},
-		Preferences: preferencesConfig{
+		Preferences: PreferencesConfig{
 			ContainerManager: "autodetect",
 			SudoProgram:      "autodetect",
 		},
@@ -26,7 +26,7 @@ func DefaultValues() *Values {
 	return toValues(defaults())
 }
 
-func toValues(cfg fileConfig) *Values {
+func toValues(cfg FileConfig) *Values {
 	return &Values{
 		ContainerManagerType:       cfg.Preferences.ContainerManager,
 		SudoProgram:                cfg.Preferences.SudoProgram,

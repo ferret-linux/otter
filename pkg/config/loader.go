@@ -8,7 +8,12 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-func LoadValues() (*Values, error) {
+// LoadFileConfig loads and merges otter.conf from all four layered
+// locations (see getConfigFilePaths), returning the raw FileConfig shape
+// rather than the derived Values. This is what the settings TUI edits
+// directly, so it starts from the actual effective on-disk values rather
+// than zero values or Values' resolved defaults.
+func LoadFileConfig() (*FileConfig, error) {
 	files, err := getConfigFilePaths()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get config file paths: %w", err)
@@ -22,7 +27,28 @@ func LoadValues() (*Values, error) {
 		}
 	}
 
-	return toValues(cfg), nil
+	return &cfg, nil
+}
+
+func LoadValues() (*Values, error) {
+	cfg, err := LoadFileConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return toValues(*cfg), nil
+}
+
+// userConfigPath returns the path to the user's own otter.conf, under
+// XDG_CONFIG_HOME (or ~/.config if that's unset). This is the only
+// location SaveFileConfig is ever allowed to write to, and the last
+// (highest-priority) entry getConfigFilePaths returns.
+func userConfigPath() string {
+	xdgConfigHome := os.Getenv("XDG_CONFIG_HOME")
+	if xdgConfigHome == "" {
+		xdgConfigHome = filepath.Join(os.Getenv("HOME"), ".config")
+	}
+	return filepath.Join(xdgConfigHome, "otter", "otter.conf")
 }
 
 func getConfigFilePaths() ([]string, error) {
@@ -38,11 +64,6 @@ func getConfigFilePaths() ([]string, error) {
 
 	selfDir := filepath.Dir(execPath)
 
-	xdgConfigHome := os.Getenv("XDG_CONFIG_HOME")
-	if xdgConfigHome == "" {
-		xdgConfigHome = filepath.Join(os.Getenv("HOME"), ".config")
-	}
-
 	// Source configuration files in increasing priority order: each later
 	// file's values override earlier ones for any key it sets, giving the
 	// user's own local config priority over system-wide defaults.
@@ -53,11 +74,11 @@ func getConfigFilePaths() ([]string, error) {
 		filepath.Join(selfDir, "..", "share", "otter", "otter.conf"), // for NixOS
 		"/usr/share/otter/otter.conf",
 		"/etc/otter/otter.conf",
-		filepath.Join(xdgConfigHome, "otter", "otter.conf"),
+		userConfigPath(),
 	}, nil
 }
 
-func readConfigFile(filePath string, cfg *fileConfig) error {
+func readConfigFile(filePath string, cfg *FileConfig) error {
 	data, err := os.ReadFile(filePath)
 	if err != nil {
 		if os.IsNotExist(err) {

@@ -120,6 +120,7 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		{newRegistryCommand, nil},
 		{newRmCommand, stdOpts},
 		{newRestartCommand, stdOpts},
+		{newSettingsCommand, documentationOpts},
 		{newStartCommand, stdOpts},
 		{newStopCommand, stdOpts},
 		{newUnlockCommand, stdOpts},

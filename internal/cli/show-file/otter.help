@@ -17,6 +17,7 @@
 {2}│{R} {0}upgrade{R}        {2}┆{R} {0}syu{R}  {5}Update packages in containers{R}  {2}│{R}
 {2}│{R} {0}assemble{R}       {2}┆{R} {0}dmf{R}  {5}Manage containers from a spec{R}  {2}│{R}
 {2}│{R} {0}registry{R}       {2}┆{R} {0}reg{R}  {5}Browse and manage otter images{R} {2}│{R}
+{2}│{R} {0}settings{R}       {2}┆{R} {0}conf{R} {5}Set otter's config settings{R}    {2}│{R}
 {2}│{R} {0}documentation{R}  {2}┆{R} {0}docs{R} {5}Browse otter's documentation{R}   {2}│{R}
 {2}│{R} {0}generate-entry{R} {2}┆{R} {0}pin{R}  {5}Create clickable desktop entry{R} {2}│{R}
 {2}├────────────────┴─────────────────────────────────────┤{R}
