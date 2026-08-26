@@ -135,6 +135,8 @@ func newScrollWindow(w io.Writer) *scrollWindow {
 // resizes (SIGWINCH), redrawing the box at its new size whenever the
 // terminal is resized for as long as the window stays open.
 func (s *scrollWindow) Start() {
+	fmt.Fprint(s.w, "\033[?25l")
+
 	s.mu.Lock()
 	s.redrawLocked()
 	s.mu.Unlock()
@@ -180,6 +182,7 @@ func (s *scrollWindow) Close() {
 
 	s.eraseLocked()
 	s.drawn = false
+	fmt.Fprint(s.w, "\033[?25h")
 }
 
 // eraseLocked clears the currently-drawn window (len(s.lines)+2 rows: the
