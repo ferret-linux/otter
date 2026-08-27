@@ -89,28 +89,6 @@
       "build_number": 56
     },
     {
-      "name": "amazonlinux",
-      "official_image": "ghcr.io/ferret-linux/amazon-otr:latest",
-      "fallback_vendor_image": "docker.io/library/amazonlinux:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-27T01:15:08Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1691246310,
-          "disk_size": 1691246310
-        },
-        "arm64": {
-          "compressed_size": 1879647765,
-          "disk_size": 1879647765
-        }
-      },
-      "build_number": 53
-    },
-    {
       "name": "opensuse-leap",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 143
+    },
+    {
+      "name": "amazonlinux",
+      "official_image": "ghcr.io/ferret-linux/amazon-otr:latest",
+      "fallback_vendor_image": "docker.io/library/amazonlinux:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-27T13:24:35Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1691246310,
+          "disk_size": 1691246310
+        },
+        "arm64": {
+          "compressed_size": 1879647765,
+          "disk_size": 1879647765
+        }
+      },
+      "build_number": 54
     }
   ]
 }
