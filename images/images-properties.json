@@ -67,23 +67,6 @@
       "build_number": 56
     },
     {
-      "name": "steamos",
-      "official_image": "ghcr.io/ferret-linux/steamos-otr:latest",
-      "fallback_vendor_image": "docker.io/cachyos/cachyos-v3:latest",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-27T01:37:01Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 8350260029,
-          "disk_size": 8350260029
-        }
-      },
-      "build_number": 39
-    },
-    {
       "name": "wolfi",
       "official_image": "ghcr.io/ferret-linux/wolfi-otr:latest",
       "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest",
@@ -768,6 +751,23 @@
         }
       },
       "build_number": 52
+    },
+    {
+      "name": "steamos",
+      "official_image": "ghcr.io/ferret-linux/steamos-otr:latest",
+      "fallback_vendor_image": "docker.io/cachyos/cachyos-v3:latest",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-27T13:28:09Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 8350253885,
+          "disk_size": 8350253885
+        }
+      },
+      "build_number": 40
     }
   ]
 }
