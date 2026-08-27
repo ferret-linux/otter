@@ -45,6 +45,7 @@ type AssembleCommand struct {
 	containerManagerRoot containermanager.ContainerManager
 	enterCmdRoot         *EnterCommand
 	progress             *ui.Progress
+	cfg                  *config.Values
 }
 
 func NewAssembleCommand(
@@ -64,6 +65,7 @@ func NewAssembleCommand(
 		containerManagerRoot: cmRoot,
 		enterCmdRoot:         NewEnterCommand(cmRoot),
 		progress:             ui.NewProgress(os.Stderr),
+		cfg:                  cfg,
 	}
 }
 
@@ -79,7 +81,7 @@ func (ac *AssembleCommand) Execute(ctx context.Context, opts AssembleOptions) er
 	}
 
 	for _, item := range items {
-		if *item.Settings.Rootful {
+		if *item.Settings.Rootful || ac.cfg.DefaultRootful {
 			if _, err := rootcheck.Validate(ctx, opts.SudoCommand); err != nil {
 				return fmt.Errorf("cannot run in root mode: %w", err)
 			}
@@ -147,7 +149,7 @@ func (ac *AssembleCommand) deleteItem(ctx context.Context, item manifest.Item) e
 	}
 
 	rmCmd := ac.rmCmd
-	if *item.Settings.Rootful {
+	if *item.Settings.Rootful || ac.cfg.DefaultRootful {
 		rmCmd = ac.rmCmdRoot
 	}
 
@@ -171,6 +173,9 @@ func (ac *AssembleCommand) replaceItem(ctx context.Context, item manifest.Item) 
 
 func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item) error {
 	ac.progress.Next("creating %s...", item.Name)
+	rootful := *item.Settings.Rootful || ac.cfg.DefaultRootful
+	initSystem := *item.Settings.InitSystem || ac.cfg.DefaultInitSystem
+
 	opts := CreateOptions{
 		ContainerClone:          item.Clone,
 		ContainerName:           item.Name,
@@ -178,28 +183,28 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item) e
 		ContainerHostname:       item.Settings.Hostname,
 		UnshareNetNs:            *item.Isolation.Netns || *item.Isolation.All,
 		UnshareDevsys:           *item.Isolation.Devsys || *item.Isolation.All,
-		UnshareGroups:           *item.Isolation.Groups || *item.Isolation.All || *item.Settings.InitSystem,
+		UnshareGroups:           *item.Isolation.Groups || *item.Isolation.All || initSystem,
 		UnshareIpc:              *item.Isolation.IPC || *item.Isolation.All,
-		UnshareProcess:          *item.Isolation.Process || *item.Isolation.All || *item.Settings.InitSystem,
+		UnshareProcess:          *item.Isolation.Process || *item.Isolation.All || initSystem,
 		AdditionalFlags:         item.Additional.Flags,
 		AdditionalVolumes:       item.Additional.Volumes,
 		AdditionalPackages:      item.Additional.Packages,
 		ContainerPreInitHook:    ac.joinHooks(item.Hooks.PreInit),
 		ContainerInitHook:       ac.joinHooks(item.Hooks.PostInit),
 		ContainerUserCustomHome: "",
-		Init:                    *item.Settings.InitSystem,
+		Init:                    initSystem,
 		Nvidia:                  *item.Hardware.Nvidia,
-		NoUsernsLimit:           *item.Isolation.UsernsNoLimit,
+		NoUsernsLimit:           *item.Isolation.UsernsNoLimit || ac.cfg.DefaultUsernsNoLimit,
 		Memory:                  item.Hardware.Memory,
 		CPUThreads:              item.Hardware.CPU,
-		GenerateEntry:           *item.Settings.Entry,
-		Rootful:                 *item.Settings.Rootful,
+		GenerateEntry:           *item.Settings.Entry && !ac.cfg.DefaultNoEntry,
+		Rootful:                 rootful,
 		ContainerAlwaysPull:     *item.ForcePull,
 		ContainerShell:          item.Settings.Shell,
 	}
 
 	createCmd := ac.createCmd
-	if *item.Settings.Rootful {
+	if rootful {
 		createCmd = ac.createCmdRoot
 	}
 	_, err := createCmd.Execute(ctx, opts)
@@ -216,12 +221,12 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item) e
 		cleanupCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), assembleCleanupTimeout)
 		defer cancel()
 		rmCmd := ac.rmCmd
-		if *item.Settings.Rootful {
+		if rootful {
 			rmCmd = ac.rmCmdRoot
 		}
 		if _, rmErr := rmCmd.Execute(cleanupCtx, RmOptions{
 			Force:          true,
-			Root:           *item.Settings.Rootful,
+			Root:           rootful,
 			ContainerNames: []string{item.Name},
 		}); rmErr != nil {
 			ui.DefaultLogger.Warn("failed to remove item", "name", item.Name, "err", rmErr)
@@ -236,7 +241,7 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item) e
 
 	if *item.Settings.Lock {
 		lockCmd := ac.lockCmd
-		if *item.Settings.Rootful {
+		if rootful {
 			lockCmd = ac.lockCmdRoot
 		}
 		if err := lockCmd.Execute(ctx, LockOptions{ContainerNames: []string{item.Name}}); err != nil {
@@ -274,7 +279,7 @@ func (ac *AssembleCommand) joinHooks(hooks []string) string {
 func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) error {
 	cm := ac.containerManager
 	enterCmd := ac.enterCmd
-	if *item.Settings.Rootful {
+	if *item.Settings.Rootful || ac.cfg.DefaultRootful {
 		cm = ac.containerManagerRoot
 		enterCmd = ac.enterCmdRoot
 	}

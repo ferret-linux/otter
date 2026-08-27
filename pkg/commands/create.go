@@ -129,10 +129,11 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 	if err != nil {
 		return nil, fmt.Errorf("failed to resolve container hostname: %w", err)
 	}
-	// Capture whether --hostname was explicitly passed before any defaulting
-	// happens, so providers can rely on this instead of comparing the
-	// resolved hostname string against the host's current hostname.
-	containerHostnameExplicit := opts.ContainerHostname != ""
+	// Capture whether --hostname (or its otter.conf default) was explicitly
+	// set before any further defaulting happens, so providers can rely on
+	// this instead of comparing the resolved hostname string against the
+	// host's current hostname.
+	containerHostnameExplicit := opts.ContainerHostname != "" || c.cfg.DefaultHostname != ""
 
 	containerUserCustomHome := c.makeContainerUserCustomHome(&opts, containerName)
 
@@ -332,6 +333,9 @@ func (c *CreateCommand) makeContainerShell(opts *CreateOptions) string {
 	if opts.ContainerShell != "" {
 		return opts.ContainerShell
 	}
+	if c.cfg.DefaultShell != "" {
+		return c.cfg.DefaultShell
+	}
 	switch filepath.Base(os.Getenv("SHELL")) {
 	case "bash", "zsh", "fish":
 		return filepath.Base(os.Getenv("SHELL"))
@@ -443,6 +447,9 @@ func (c *CreateCommand) makeContainerName(opts *CreateOptions, containerImage st
 
 func (c *CreateCommand) makeContainerHostname(opts *CreateOptions) (string, error) {
 	containerHostname := opts.ContainerHostname
+	if containerHostname == "" {
+		containerHostname = c.cfg.DefaultHostname
+	}
 	if containerHostname == "" {
 		hostname, err := os.Hostname()
 		if err != nil {

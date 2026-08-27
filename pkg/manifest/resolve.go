@@ -53,7 +53,8 @@ func finalizeBoolDefaults(item *Item) {
 		item.Settings.Lock = new(bool)
 	}
 	if item.Settings.Entry == nil {
-		item.Settings.Entry = new(bool)
+		entryDefault := true
+		item.Settings.Entry = &entryDefault
 	}
 	if item.Settings.Rootful == nil {
 		item.Settings.Rootful = new(bool)
