@@ -12,7 +12,7 @@ ARG IMAGE
 # the final image the binaries will run in.
 FROM ${IMAGE} AS dinit-builder
 RUN apk update && apk add --no-cache build-base git curl m4
-RUN DINIT_TAG="$(curl -fsSL https://api.github.com/repos/davmac314/dinit/releases/latest | grep '"tag_name"' | head -1 | cut -d'"' -f4)"; \
+RUN DINIT_TAG=$(curl -fsSL https://api.github.com/repos/davmac314/dinit/releases/latest | grep '"tag_name"' | head -1 | cut -d'"' -f4); \
     if [ -z "${DINIT_TAG}" ]; then DINIT_TAG="v0.22.1"; fi; \
     echo "Building dinit ${DINIT_TAG}"; \
     git clone --branch "${DINIT_TAG}" --depth 1 https://github.com/davmac314/dinit /usr/src/dinit
