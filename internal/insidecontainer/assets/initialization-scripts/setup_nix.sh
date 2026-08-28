@@ -290,6 +290,35 @@ EOF
 			--priority 4 \
 			--file /etc/otter/packages-utilities.nix
 
+		# This image has no NixOS module system to generate PAM service
+		# files or /etc/login.defs the way a real NixOS install would, so
+		# shadow's password tools (passwd, chpasswd) have no policy to
+		# authenticate against and fail outright. shadow's own PAM linkage
+		# is left enabled (not nulled out) so this matches every other
+		# image, which all get working PAM-backed passwd/chpasswd from
+		# their distro's package manager. pam_unix.so is referenced by
+		# bare name, same as the existing pam-su template (otter-init) --
+		# this resolves correctly against this build's own Nix store path
+		# because libpam compiles its module search path in at build time
+		# (DEFAULT_MODULE_PATH), rather than reading it from the config
+		# file, so no store path needs to be hardcoded here.
+		#
+		# ENCRYPT_METHOD is pinned to SHA512 explicitly, rather than
+		# relying on whatever this shadow build's compiled-in default
+		# resolves to, since it's supported unconditionally by every
+		# libxcrypt build, with or without the optional yescrypt/bcrypt
+		# modules this build also enables.
+		mkdir -p /etc/pam.d
+		printf '%s\n' \
+			'password    required    pam_unix.so' \
+			> /etc/pam.d/passwd
+		printf '%s\n' \
+			'password    required    pam_unix.so' \
+			> /etc/pam.d/chpasswd
+		printf '%s\n' \
+			'ENCRYPT_METHOD SHA512' \
+			> /etc/login.defs
+
 		# otter-init looks for the systemd binary and unit files at the FHS
 		# paths /usr/lib/systemd/systemd and /usr/lib/systemd/system/*, and
 		# expects `systemctl` on $PATH. Nix profile-installs systemd's own
