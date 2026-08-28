@@ -97,7 +97,6 @@ RUN apk update && \
         xdg-utils \
         gst-libav \
         alsa-utils \
-        wolfi-base \
         util-linux \
         vpl-gpu-rt \
         wireplumber \
