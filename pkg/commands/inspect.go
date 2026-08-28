@@ -70,7 +70,7 @@ func printInspectJSON(result *containermanager.InspectResult, locked bool, opts 
 		Memory         string `json:"memory"`
 		CPUThreads     int    `json:"cpu_threads"`
 		Init           bool   `json:"init"`
-		Nvidia         bool   `json:"nvidia"`
+		GPU            string `json:"gpu"`
 		UnshareIPC     bool   `json:"unshare_ipc"`
 		UnshareNetNS   bool   `json:"unshare_netns"`
 		UnshareProcess bool   `json:"unshare_process"`
@@ -93,7 +93,7 @@ func printInspectJSON(result *containermanager.InspectResult, locked bool, opts 
 		Memory:         result.Memory,
 		CPUThreads:     result.CPUThreads,
 		Init:           result.Init,
-		Nvidia:         result.Nvidia,
+		GPU:            result.GPU,
 		UnshareIPC:     result.UnshareIPC,
 		UnshareNetNS:   result.UnshareNetNS,
 		UnshareProcess: result.UnshareProcess,
@@ -177,7 +177,7 @@ func (c *InspectCommand) Execute(ctx context.Context, opts InspectOptions) error
 		{"Resources", "Memory", memory},
 		{"Resources", "CPU", cpuThreads},
 		{"Features", "Init", boolToEnabledStr(result.Init)},
-		{"Features", "Nvidia", boolToEnabledStr(result.Nvidia)},
+		{"Features", "GPU", result.GPU},
 		{"Isolation", "IPC", boolToSharedStr(result.UnshareIPC)},
 		{"Isolation", "Network", boolToSharedStr(result.UnshareNetNS)},
 		{"Isolation", "Process", boolToSharedStr(result.UnshareProcess)},

@@ -30,7 +30,7 @@ settings.init-system = false  # true | false — enable systemd/init inside cont
 settings.hostname    = ""     # hostname inside the container
 
 hardware.memory = ""     # max memory, e.g. 512m | 2g
-hardware.nvidia = false  # true | false — enable nvidia gpu passthrough
+hardware.gpu    = "mesa" # mesa | nvidia | nvidia-toolkit
 hardware.cpu    = 0      # max number of cpu threads, 0 means unlimited
 
 isolation.netns           = false  # true | false — isolate network namespace
@@ -58,7 +58,7 @@ additional = { packages = [], volumes = [], flags = [] }
 exported   = { apps = [], bins = [], path = "" }
 hooks      = { pre-init = [], post-init = [] }
 settings   = { lock = false, entry = false, shell = "", rootful = false, init-system = false, hostname = "" }
-hardware   = { memory = "", nvidia = false, cpu = 0 }
+hardware   = { memory = "", gpu = "mesa", cpu = 0 }
 isolation  = { netns = false, ipc = false, process = false, devsys = false, groups = false, all = false, userns-nolimit = false }
 
 # Format-3
@@ -98,7 +98,7 @@ hostname    = ""
 
 [container.hardware]
 memory = ""
-nvidia = false
+gpu    = "mesa"
 cpu    = 0
 
 [container.isolation]
@@ -136,7 +136,7 @@ pre-init  = []
 post-init = []
 
 settings  = { lock = false, entry = false, shell = "", rootful = false, init-system = false, hostname = "" }
-hardware  = { memory = "", nvidia = false, cpu = 0 }
+hardware  = { memory = "", gpu = "mesa", cpu = 0 }
 isolation = { netns = false, ipc = false, process = false, devsys = false, groups = false, all = false, userns-nolimit = false }
 
 # NOTE : All four formats produce identical parsed output. The parser does not distinguish between them.

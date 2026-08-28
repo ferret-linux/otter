@@ -75,7 +75,7 @@ type CreateOptions struct {
 	ContainerHomePrefix     string
 	Init                    bool
 
-	Nvidia        bool
+	GPU           string
 	NoUsernsLimit bool
 	Memory        string
 	CPUThreads    int
@@ -111,6 +111,19 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 
 	if err := validateShell(opts.ContainerShell); err != nil {
 		return nil, fmt.Errorf("shell validation failed: %w", err)
+	}
+
+	opts.GPU = c.makeGpu(&opts)
+
+	if err := validateGpu(opts.GPU); err != nil {
+		return nil, fmt.Errorf("gpu validation failed: %w", err)
+	}
+	if opts.GPU == "nvidia-toolkit" && !containermanager.NvidiaToolkitAvailable() {
+		return nil, errors.New(
+			"--gpu=nvidia-toolkit requires the NVIDIA Container Toolkit to be installed " +
+				"and a CDI spec generated on the host (nvidia-ctk cdi generate); " +
+				"neither nvidia-ctk nor a CDI spec file could be found",
+		)
 	}
 	if err := validateMemory(opts.Memory); err != nil {
 		return nil, fmt.Errorf("memory validation failed: %w", err)
@@ -195,7 +208,7 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 			ContainerPreInitHook:      opts.ContainerPreInitHook,
 			ContainerInitHook:         opts.ContainerInitHook,
 			Init:                      opts.Init,
-			Nvidia:                    opts.Nvidia,
+			GPU:                       opts.GPU,
 			NoUsernsLimit:             opts.NoUsernsLimit,
 			Memory:                    opts.Memory,
 			CPUThreads:                opts.CPUThreads,
@@ -266,6 +279,15 @@ func validateShell(shell string) error {
 	}
 }
 
+func validateGpu(gpu string) error {
+	switch gpu {
+	case "", "mesa", "nvidia", "nvidia-toolkit":
+		return nil
+	default:
+		return fmt.Errorf("invalid gpu %q, must be one of: mesa, nvidia, nvidia-toolkit", gpu)
+	}
+}
+
 func validateMemory(memory string) error {
 	if memory == "" {
 		return nil
@@ -327,6 +349,13 @@ func validateCPUThreads(threads int) error {
 		return fmt.Errorf("not enough threads, host has max %d threads available", hostThreads)
 	}
 	return nil
+}
+
+func (c *CreateCommand) makeGpu(opts *CreateOptions) string {
+	if opts.GPU != "" {
+		return opts.GPU
+	}
+	return "mesa"
 }
 
 func (c *CreateCommand) makeContainerShell(opts *CreateOptions) string {

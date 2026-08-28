@@ -30,7 +30,7 @@ settings.init-system = false
 settings.hostname = "arch-linux"
 
 hardware.memory = "512m"
-hardware.nvidia = false
+hardware.gpu    = "mesa"
 hardware.cpu    = 0
 
 isolation.netns            = true
@@ -55,7 +55,7 @@ additional = { packages = ["git", "vim", "tmux", "nodejs"], volumes = ["/tmp/tes
 exported = { apps = ["htop"], bins = ["/usr/bin/htop", "/usr/bin/git"], path = "~/.local/bin" }
 hooks = { pre-init = ["touch /pre-init"], post-init = ["touch /init-normal", "ln -sf /usr/bin/otter-host-exec /usr/local/bin/docker"] }
 settings = { lock = false, entry = false, shell = "fish", rootful = false, init-system = false, hostname = "arch-linux" }
-hardware = { memory = "512m", nvidia = false, cpu = 0 }
+hardware = { memory = "512m", gpu = "mesa", cpu = 0 }
 isolation = { netns = true, ipc = true, process = false, devsys = false, groups = false, all = false, userns-nolimit = false }
 
 # Format-3
@@ -95,7 +95,7 @@ hostname    = "arch-linux"
 
 [container.hardware]
 memory = "512m"
-nvidia = false
+gpu    = "mesa"
 cpu    = 0
 
 [container.isolation]
@@ -141,7 +141,7 @@ post-init = [
 ]
 
 settings = { lock = false, entry = false, shell = "fish", rootful = false, init-system = false, hostname = "arch-linux" }
-hardware  = { memory = "512m", nvidia = false, cpu = 0 }
+hardware  = { memory = "512m", gpu = "mesa", cpu = 0 }
 isolation = { netns = true, ipc = true, process = false, devsys = false, groups = false, all = false, userns-nolimit = false }
 
 [[container]]

@@ -74,9 +74,9 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 				Name:    "cpu-threads",
 				Aliases: []string{"t"},
 			},
-			&cli.BoolFlag{
-				Name:    "nvidia",
-				Aliases: []string{"N"},
+			&cli.StringFlag{
+				Name:    "gpu",
+				Aliases: []string{"g"},
 			},
 			&cli.BoolFlag{
 				Name:    "no-userns-limit",
@@ -146,7 +146,7 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 		Nopasswd:                cmd.Bool("disable-root-password-i-fully-understand-the-risks-and-accept-the-responsibilities"),
 		ContainerUserCustomHome: cmd.String("home"),
 		Init:                    cmd.Bool("init") || cfg.DefaultInitSystem,
-		Nvidia:                  cmd.Bool("nvidia"),
+		GPU:                     cmd.String("gpu"),
 		NoUsernsLimit:           cmd.Bool("no-userns-limit") || cfg.DefaultUsernsNoLimit,
 		Memory:                  cmd.String("memory"),
 		CPUThreads:              cmd.Int("cpu-threads"),

@@ -45,6 +45,17 @@ func PathExists(path string) bool {
 	return err == nil
 }
 
+// NvidiaToolkitAvailable reports whether the NVIDIA Container Toolkit is
+// actually usable on this host: nvidia-ctk on PATH (the real binary, not an
+// inference from OS/distro), and a generated CDI spec present at one of the
+// two locations nvidia-ctk writes to by default.
+func NvidiaToolkitAvailable() bool {
+	if _, err := exec.LookPath("nvidia-ctk"); err != nil {
+		return false
+	}
+	return PathExists("/etc/cdi/nvidia.yaml") || PathExists("/var/run/cdi/nvidia.yaml")
+}
+
 func IsSymlink(path string) bool {
 	info, err := os.Lstat(path)
 	if err != nil {

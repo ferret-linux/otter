@@ -12,6 +12,7 @@
 {2}│{R}  {5}otter create --image centos:stream10 --always-pull --home ~/otter/centos10{R}         {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                                                           {2}│{R}
+{2}│{R} {4}--gpu{R}                 {2}┆{R} {4}-g{R}   {5}GPU mode: mesa, nvidia, or nvidia-toolkit{R}              {2}│{R}
 {2}│{R} {4}--home{R}                {2}┆{R} {4}-H{R}   {5}Custom HOME directory for the container{R}                {2}│{R}
 {2}│{R} {4}--init{R}                {2}┆{R} {4}-I{R}   {5}Use init system (e.g. systemd) inside the container{R}    {2}│{R}
 {2}│{R} {4}--root{R}                {2}┆{R} {4}-r{R}   {5}Launch container manager with root privileges{R}          {2}│{R}
@@ -19,7 +20,6 @@
 {2}│{R} {4}--image{R}               {2}┆{R} {4}-i{R}   {5}Image to use for the container{R}                         {2}│{R}
 {2}│{R} {4}--shell{R}               {2}┆{R} {4}-s{R}   {5}Shell to use inside the container{R}                      {2}│{R}
 {2}│{R} {4}--memory{R}              {2}┆{R} {4}-m{R}   {5}Memory limit for the container (e.g. 512m, 2g){R}         {2}│{R}
-{2}│{R} {4}--nvidia{R}              {2}┆{R} {4}-N{R}   {5}Integrate host's Nvidia drivers into container{R}         {2}│{R}
 {2}│{R} {4}--volume{R}              {2}┆{R} {4}-v{R}   {5}Additional volumes to add to the container{R}             {2}│{R}
 {2}│{R} {4}--hostname{R}            {2}┆{R} {4}-n{R}   {5}Hostname for the container{R}                             {2}│{R}
 {2}│{R} {4}--no-entry{R}            {2}┆{R} {4}-E{R}   {5}Do not generate a container entry on host system{R}       {2}│{R}
@@ -53,9 +53,10 @@
 {2}│{R} {4}--clone{R}   {5}Useful to rename an existing container or create multiple copies of the{R}   {2}│{R}
 {2}│{R}           {5}same container environment.{R}                                               {2}│{R}
 {2}│{R}                                                                                     {2}│{R}
-{2}│{R} {4}--nvidia{R}  {5}Best effort attempt to integrate host nvidia drivers into the container.{R}  {2}│{R}
-{2}│{R}           {5}For a better experience consider nvidia's nvidia-container-toolkit,{R}       {2}│{R}
-{2}│{R}           {5}the official way to use nvidia cards inside containers.{R}                   {2}│{R}
+{2}│{R} {4}--gpu{R}     {5}Selects GPU integration mode. 'mesa' (default) needs no extra setup.{R}      {2}│{R}
+{2}│{R}           {5}'nvidia' is otter's best-effort mirror of the host's drivers. For a{R}       {2}│{R}
+{2}│{R}           {5}more robust setup, prefer 'nvidia-toolkit', which delegates to{R}            {2}│{R}
+{2}│{R}           {5}nvidia's own nvidia-container-toolkit CDI injection.{R}                      {2}│{R}
 {2}│{R}                                                                                     {2}│{R}
 {2}│{R} {4}Pulling{R}   {5}A missing image is always pulled automatically. An existing{R}               {2}│{R}
 {2}│{R}           {5}image is warned about, or auto-pulled, once it falls behind{R}               {2}│{R}

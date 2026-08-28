@@ -164,7 +164,7 @@ func (d *Docker) makeCreateCommand(
 	init := opts.Init
 	containerPreInitHook := opts.ContainerPreInitHook
 	containerInitHook := opts.ContainerInitHook
-	nvidia := opts.Nvidia
+	gpu := opts.GPU
 	memory := opts.Memory
 	cpuThreads := opts.CPUThreads
 	unshareDevsys := opts.UnshareDevsys
@@ -229,6 +229,14 @@ func (d *Docker) makeCreateCommand(
 		options = append(options, "--pid", "host")
 	}
 
+	// --gpu=nvidia-toolkit delegates GPU access to the NVIDIA Container
+	// Toolkit's CDI injection instead of otter's own driver-mirroring
+	// (setup_nvidia_gpu.sh, which only runs when --gpu=nvidia is set). No
+	// /run/host involvement here.
+	if gpu == "nvidia-toolkit" {
+		options = append(options, "--gpus", "all")
+	}
+
 	// Mount useful stuff inside the container.
 	// We also mount host's root filesystem to /run/host, to be able to syphon
 	// dynamic configurations from the host.
@@ -248,7 +256,7 @@ func (d *Docker) makeCreateCommand(
 	options = append(options, "--label", fmt.Sprintf("otter.unshare_process=%d", containermanager.Btoi(unshareProcess)))
 	options = append(options, "--label", fmt.Sprintf("otter.unshare_devsys=%d", containermanager.Btoi(unshareDevsys)))
 	options = append(options, "--label", fmt.Sprintf("otter.init=%d", containermanager.Btoi(init)))
-	options = append(options, "--label", fmt.Sprintf("otter.nvidia=%d", containermanager.Btoi(nvidia)))
+	options = append(options, "--label", "otter.gpu="+gpu)
 	options = append(options, "--label", fmt.Sprintf("otter.rootful=%d", containermanager.Btoi(d.root)))
 	options = append(options, "--env", fmt.Sprintf("SHELL=%s", shellFilepath))
 	options = append(options, "--env", fmt.Sprintf("HOME=%s", effectiveHome))
@@ -497,7 +505,7 @@ func (d *Docker) makeCreateCommand(
 		"--group", containerUserGID,
 		"--home", effectiveHome,
 		"--init", strconv.Itoa(containermanager.Btoi(init)),
-		"--nvidia", strconv.Itoa(containermanager.Btoi(nvidia)),
+		"--nvidia", strconv.Itoa(containermanager.Btoi(gpu == "nvidia")),
 		"--pre-init-hooks", containerPreInitHook,
 		"--additional-packages", strings.Join(containerAdditionalPackages, " "),
 	}
@@ -771,7 +779,10 @@ func (d *Docker) InspectContainer(ctx context.Context, containerName string) (*c
 	config.UnshareProcess = labels["otter.unshare_process"] == "1"
 	config.UnshareDevsys = labels["otter.unshare_devsys"] == "1"
 	config.Init = labels["otter.init"] == "1"
-	config.Nvidia = labels["otter.nvidia"] == "1"
+	config.GPU = labels["otter.gpu"]
+	if config.GPU == "" {
+		config.GPU = "mesa"
+	}
 	config.Rootful = labels["otter.rootful"] == "1"
 
 	for _, env := range inspect.Config.Env {

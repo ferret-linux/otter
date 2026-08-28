@@ -38,10 +38,12 @@ func Parse(ctx context.Context, filepath string) ([]Item, error) {
 	return m.Containers, nil
 }
 
-// finalizeBoolDefaults ensures every *bool field on item is non-nil before
-// Parse returns, so callers never have to nil-check them. Any field still
-// nil at this point was never set by this item or any base it includes, so
-// it defaults to false — new(bool) conveniently yields a pointer to false.
+// finalizeBoolDefaults ensures every *bool field on item — plus
+// Hardware.GPU, a *string using the same nil-sentinel pattern — is non-nil
+// before Parse returns, so callers never have to nil-check them. Any field
+// still nil at this point was never set by this item or any base it
+// includes, so it defaults to false (new(bool) conveniently yields a
+// pointer to false) or, for GPU, to "mesa".
 func finalizeBoolDefaults(item *Item) {
 	if item.StartNow == nil {
 		item.StartNow = new(bool)
@@ -62,8 +64,9 @@ func finalizeBoolDefaults(item *Item) {
 	if item.Settings.InitSystem == nil {
 		item.Settings.InitSystem = new(bool)
 	}
-	if item.Hardware.Nvidia == nil {
-		item.Hardware.Nvidia = new(bool)
+	if item.Hardware.GPU == nil {
+		gpuDefault := "mesa"
+		item.Hardware.GPU = &gpuDefault
 	}
 	if item.Isolation.Netns == nil {
 		item.Isolation.Netns = new(bool)
@@ -209,8 +212,8 @@ func mergeItems(base, item Item) Item {
 	if item.Hardware.Memory == "" {
 		item.Hardware.Memory = base.Hardware.Memory
 	}
-	if item.Hardware.Nvidia == nil {
-		item.Hardware.Nvidia = base.Hardware.Nvidia
+	if item.Hardware.GPU == nil {
+		item.Hardware.GPU = base.Hardware.GPU
 	}
 	if item.Hardware.CPU == 0 {
 		item.Hardware.CPU = base.Hardware.CPU

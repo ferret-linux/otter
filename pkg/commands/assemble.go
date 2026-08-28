@@ -193,7 +193,7 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item) e
 		ContainerInitHook:       ac.joinHooks(item.Hooks.PostInit),
 		ContainerUserCustomHome: "",
 		Init:                    initSystem,
-		Nvidia:                  *item.Hardware.Nvidia,
+		GPU:                     *item.Hardware.GPU,
 		NoUsernsLimit:           *item.Isolation.UsernsNoLimit || ac.cfg.DefaultUsernsNoLimit,
 		Memory:                  item.Hardware.Memory,
 		CPUThreads:              item.Hardware.CPU,

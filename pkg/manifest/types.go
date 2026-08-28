@@ -37,11 +37,14 @@ type Settings struct {
 
 // Hardware holds resource and hardware settings.
 //
-// Nvidia is *bool for the same reason as the Settings booleans above.
+// GPU is *string for the same reason as the Settings booleans above: nil
+// must mean "never set by this item or any base it includes" so inheritance
+// can tell that apart from an explicit value, which a zero-value string
+// can't do on its own (unlike Memory, "" is never a real gpu mode anyway).
 type Hardware struct {
-	Memory string `toml:"memory"`
-	Nvidia *bool  `toml:"nvidia"`
-	CPU    int    `toml:"cpu"`
+	Memory string  `toml:"memory"`
+	GPU    *string `toml:"gpu"`
+	CPU    int     `toml:"cpu"`
 }
 
 // Isolation holds namespace isolation settings.

@@ -29,7 +29,7 @@ type InspectResult struct {
 	UnshareProcess            bool
 	UnshareDevsys             bool
 	Init                      bool
-	Nvidia                    bool
+	GPU                       string
 	Rootful                   bool
 	UsernsNoLimit             bool
 }
@@ -62,7 +62,7 @@ type CreateOptions struct {
 	ContainerPreInitHook      string
 	ContainerInitHook         string
 	Init                      bool
-	Nvidia                    bool
+	GPU                       string
 	NoUsernsLimit             bool
 	Memory                    string
 	CPUThreads                int
