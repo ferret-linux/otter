@@ -43,6 +43,11 @@
 {2}│{R} {4}--disable-root-password-i-fully-understand-the-risks-and-accept-the-responsibilities{R}{2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Notes:{R}                                                                             {2}│{R}
+{2}│{R} {4}--gpu{R}     {5}Selects GPU integration mode. 'mesa' (default) needs no extra setup.{R}      {2}│{R}
+{2}│{R}           {5}'nvidia' is otter's best-effort mirror of the host's drivers. For a{R}       {2}│{R}
+{2}│{R}           {5}more robust setup, prefer 'nvidia-toolkit', which delegates to{R}            {2}│{R}
+{2}│{R}           {5}nvidia's own nvidia-container-toolkit CDI injection.{R}                      {2}│{R}
+{2}│{R}                                                                                     {2}│{R}
 {2}│{R} {4}--root{R}    {5}Preferred over 'sudo otter' when root is needed. To use a program{R}         {2}│{R}
 {2}│{R}           {5}other than sudo, set OTR_SUDO_PROGRAM or 'otter_sudo_program' config var.{R} {2}│{R}
 {2}│{R}                                                                                     {2}│{R}
@@ -52,11 +57,6 @@
 {2}│{R}                                                                                     {2}│{R}
 {2}│{R} {4}--clone{R}   {5}Useful to rename an existing container or create multiple copies of the{R}   {2}│{R}
 {2}│{R}           {5}same container environment.{R}                                               {2}│{R}
-{2}│{R}                                                                                     {2}│{R}
-{2}│{R} {4}--gpu{R}     {5}Selects GPU integration mode. 'mesa' (default) needs no extra setup.{R}      {2}│{R}
-{2}│{R}           {5}'nvidia' is otter's best-effort mirror of the host's drivers. For a{R}       {2}│{R}
-{2}│{R}           {5}more robust setup, prefer 'nvidia-toolkit', which delegates to{R}            {2}│{R}
-{2}│{R}           {5}nvidia's own nvidia-container-toolkit CDI injection.{R}                      {2}│{R}
 {2}│{R}                                                                                     {2}│{R}
 {2}│{R} {4}Pulling{R}   {5}A missing image is always pulled automatically. An existing{R}               {2}│{R}
 {2}│{R}           {5}image is warned about, or auto-pulled, once it falls behind{R}               {2}│{R}
