@@ -119,6 +119,7 @@ write_user_integration_script()
 sleep 1
 ln -sf /run/host/run/user/\$(id -ru)/wayland-* /run/user/\$(id -ru)/
 ln -sf /run/host/run/user/\$(id -ru)/pipewire-* /run/user/\$(id -ru)/
+ln -sf /run/host/run/user/\$(id -ru)/bus /run/user/\$(id -ru)/bus
 find /run/host/run/user/\$(id -ru)/ -maxdepth 1 -type f -exec sh -c 'grep -qlE COOKIE \$0 && ln -sf \$0 /run/user/\$(id -ru)/\$(basename \$0)' {} \;
 mkdir -p /run/user/\$(id -ru)/app && ln -sf /run/host/run/user/\$(id -ru)/app/* /run/user/\$(id -ru)/app/
 mkdir -p /run/user/\$(id -ru)/at-spi && ln -sf /run/host/run/user/\$(id -ru)/at-spi/* /run/user/\$(id -ru)/at-spi/
@@ -189,6 +190,13 @@ setup_init_systemd()
 		for unit in $(find ${UNIT_TARGETS} 2> /dev/null); do
 			systemctl mask "$(basename "${unit}")" || :
 		done
+
+		# logind is masked by default in some images, but user@.service's PAM
+		# session registration depends on it: without it, $XDG_RUNTIME_DIR
+		# never gets set correctly for the user's systemd instance, which
+		# causes it to create some of its own state (e.g. ~/.cache,
+		# ~/.local/share) as root instead of as the mapped user.
+		systemctl unmask systemd-logind.service dbus-org.freedesktop.login1.service || :
 	fi
 
 	# Let's do a minimal user-integration for the user when using system
