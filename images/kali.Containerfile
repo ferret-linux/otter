@@ -161,6 +161,11 @@ RUN apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr
         /var/log/* \
         /var/tmp/*
 
+# Install gum (static binary, amd64/arm64) into otter's helpers dir.
+# Requires curl, so this must come after curl is installed above.
+COPY images/scripts/install-gum.sh /tmp/install-gum.sh
+RUN sh /tmp/install-gum.sh
+
 # Locale setup
 RUN sed -i "s|# en_US.UTF-8|en_US.UTF-8|g" /etc/locale.gen \
     && locale-gen \

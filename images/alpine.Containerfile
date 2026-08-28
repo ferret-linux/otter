@@ -111,6 +111,11 @@ RUN apk update && \
         /var/log/* \
         /var/tmp/*
 
+# Install gum (static binary, amd64/arm64) into otter's helpers dir.
+# Requires curl, so this must come after curl is installed above.
+COPY images/scripts/install-gum.sh /tmp/install-gum.sh
+RUN sh /tmp/install-gum.sh
+
 # Install GPU driver packages for Alpine. Alpine splits mesa-dri and
 # mesa-vulkan into multiple arch/vendor-specific sub-packages, so we
 # resolve them by prefix search here, the same way otter-init does

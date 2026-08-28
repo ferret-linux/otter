@@ -169,3 +169,8 @@ ENV PATH="/root/.config/guix/current/bin:/root/.guix-profile/bin:/root/.guix-pro
 RUN guix gc -d 2>/dev/null || true
 
 RUN rm -rf /var/log/* /var/tmp/*
+
+# Install gum (static binary, amd64/arm64) into otter's helpers dir.
+# Requires curl, so this must come after curl is installed above.
+COPY images/scripts/install-gum.sh /tmp/install-gum.sh
+RUN sh /tmp/install-gum.sh

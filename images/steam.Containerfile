@@ -355,3 +355,8 @@ RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
 # python3.X only, no unversioned symlink)
 COPY images/scripts/python-fix.sh /tmp/python-fix.sh
 RUN sh /tmp/python-fix.sh
+
+# Install gum (static binary, amd64/arm64) into otter's helpers dir.
+# Requires curl, so this must come after curl is installed above.
+COPY images/scripts/install-gum.sh /tmp/install-gum.sh
+RUN sh /tmp/install-gum.sh

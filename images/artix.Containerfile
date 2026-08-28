@@ -110,6 +110,11 @@ RUN pacman -Sy --noconfirm --needed artix-keyring && \
         /var/log/* \
         /var/tmp/*
 
+# Install gum (static binary, amd64/arm64) into otter's helpers dir.
+# Requires curl, so this must come after curl is installed above.
+COPY images/scripts/install-gum.sh /tmp/install-gum.sh
+RUN sh /tmp/install-gum.sh
+
 # Timezone default
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
     && echo "UTC" > /etc/timezone

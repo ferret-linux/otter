@@ -129,6 +129,11 @@ ENV INFOPATH="/home/linuxbrew/.linuxbrew/share/info:${INFOPATH}"
 USER linuxbrew
 WORKDIR /home/linuxbrew
 
+# Install gum (static binary, amd64/arm64) into otter's helpers dir.
+# Requires curl, so this must come after curl is installed above.
+COPY images/scripts/install-gum.sh /tmp/install-gum.sh
+RUN sh /tmp/install-gum.sh
+
 # Housekeeping: Homebrew's own installer leaves a git checkout and
 # cache behind under HOMEBREW_REPOSITORY; brew cleanup trims
 # formula caches/old versions without removing the install itself.
