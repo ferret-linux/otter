@@ -111,23 +111,6 @@
       "build_number": 147
     },
     {
-      "name": "devuan",
-      "official_image": "ghcr.io/ferret-linux/devuan-otr:stable",
-      "fallback_vendor_image": "docker.io/devuan/devuan:stable",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-29T14:59:12Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1472771594,
-          "disk_size": 1472771594
-        }
-      },
-      "build_number": 154
-    },
-    {
       "name": "ubuntu-lts",
       "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts",
       "fallback_vendor_image": "docker.io/library/ubuntu:26.04",
@@ -768,6 +751,23 @@
         }
       },
       "build_number": 55
+    },
+    {
+      "name": "devuan",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:stable",
+      "fallback_vendor_image": "docker.io/devuan/devuan:stable",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-29T19:32:02Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1472771598,
+          "disk_size": 1472771598
+        }
+      },
+      "build_number": 155
     }
   ]
 }
