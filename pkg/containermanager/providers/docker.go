@@ -261,6 +261,7 @@ func (d *Docker) makeCreateCommand(
 	options = append(options, "--label", "otter.gpu="+gpu)
 	options = append(options, "--label", fmt.Sprintf("otter.rootful=%d", containermanager.Btoi(d.root)))
 	options = append(options, "--env", fmt.Sprintf("SHELL=%s", shellFilepath))
+	options = append(options, "--env", fmt.Sprintf("HOME=%s", effectiveHome))
 	options = append(options, "--env", fmt.Sprintf("container=%s", containerManager))
 	options = append(
 		options,
