@@ -605,7 +605,12 @@ fi
 # first-match-wins behavior can resolve to the root-only path, which then
 # gets written verbatim into a non-root user's /etc/passwd shell field by
 # setup_user.sh, leaving that user with a login shell they can't execute.
-portable_path="$(printf '%s' "${PATH}" | tr ':' '\n' | grep -v "^${HOME}/" | tr '\n' ':')"
+# root's real home is looked up via getent, not $HOME -- otter sets HOME
+# container-wide to the target (non-root) user's home for otter-init's
+# entire run, even though this point in the script still runs as uid 0, so
+# $HOME can't be used to identify root's own per-user profile dirs here.
+root_home="$(getent passwd root | cut -f 6 -d :)"
+portable_path="$(printf '%s' "${PATH}" | tr ':' '\n' | grep -v "^${root_home}/" | tr '\n' ':')"
 SHELL="$(PATH="${portable_path}" command -v "${shell_pkg}")"
 
 # Fix broken prompt for zsh shell (debian, ubuntu... need it)
