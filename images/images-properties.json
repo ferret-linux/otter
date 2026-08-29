@@ -177,28 +177,6 @@
       "build_number": 150
     },
     {
-      "name": "debian-unstable",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:unstable",
-      "fallback_vendor_image": "docker.io/library/debian:unstable",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-28T23:26:43Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1903532538,
-          "disk_size": 1903532538
-        },
-        "arm64": {
-          "compressed_size": 1889615991,
-          "disk_size": 1889615991
-        }
-      },
-      "build_number": 147
-    },
-    {
       "name": "rhel",
       "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
       "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 150
+    },
+    {
+      "name": "debian-unstable",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:unstable",
+      "fallback_vendor_image": "docker.io/library/debian:unstable",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-29T02:26:49Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1903532539,
+          "disk_size": 1903532539
+        },
+        "arm64": {
+          "compressed_size": 1889615989,
+          "disk_size": 1889615989
+        }
+      },
+      "build_number": 148
     }
   ]
 }
