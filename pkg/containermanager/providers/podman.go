@@ -243,7 +243,6 @@ func (p *Podman) makeCreateCommand(
 	options = append(options, "--label", fmt.Sprintf("otter.rootful=%d", containermanager.Btoi(p.root)))
 	options = append(options, "--label", fmt.Sprintf("otter.userns_nolimit=%d", containermanager.Btoi(noUsernsLimit)))
 	options = append(options, "--env", fmt.Sprintf("SHELL=%s", shellFilepath))
-	options = append(options, "--env", fmt.Sprintf("HOME=%s", effectiveHome))
 	options = append(options, "--env", "container=podman")
 	options = append(
 		options,

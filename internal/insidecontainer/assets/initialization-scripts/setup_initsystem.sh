@@ -40,7 +40,11 @@ setup_initsystem()
 	[ -e /dev/console ] || touch /dev/console
 	rm -f /var/console
 	mkfifo /var/console
-	script -c "cat /var/console" /dev/null &
+	# script(1) runs its -c command through $SHELL; override it to a plain
+	# POSIX shell here so this internal, non-interactive use doesn't spawn
+	# the container user's shell (e.g. fish) as root, which otherwise creates
+	# stray root-owned ~/.cache, ~/.config, ~/.local state for no reason.
+	SHELL=/bin/sh script -c "cat /var/console" /dev/null &
 
 	# Ensure the pty is created
 	sleep 0.5

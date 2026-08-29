@@ -201,7 +201,6 @@ func (n *Nerdctl) makeCreateCommand(
 	options = append(options, "--label", "otter.gpu="+gpu)
 	options = append(options, "--label", fmt.Sprintf("otter.rootful=%d", containermanager.Btoi(n.root)))
 	options = append(options, "--env", fmt.Sprintf("SHELL=%s", shellFilepath))
-	options = append(options, "--env", fmt.Sprintf("HOME=%s", effectiveHome))
 	options = append(options, "--env", "container=nerdctl")
 	options = append(
 		options,
