@@ -174,3 +174,7 @@ RUN rm -rf /var/log/* /var/tmp/*
 # Requires curl, so this must come after curl is installed above.
 COPY images/scripts/install-gum.sh /tmp/install-gum.sh
 RUN sh /tmp/install-gum.sh
+
+# Install host-spawn (static binary, amd64/arm64) for host D-Bus/session integration.
+COPY images/scripts/install-host-spawn.sh /tmp/install-host-spawn.sh
+RUN sh /tmp/install-host-spawn.sh

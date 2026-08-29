@@ -134,6 +134,10 @@ WORKDIR /home/linuxbrew
 COPY images/scripts/install-gum.sh /tmp/install-gum.sh
 RUN sh /tmp/install-gum.sh
 
+# Install host-spawn (static binary, amd64/arm64) for host D-Bus/session integration.
+COPY images/scripts/install-host-spawn.sh /tmp/install-host-spawn.sh
+RUN sh /tmp/install-host-spawn.sh
+
 # Housekeeping: Homebrew's own installer leaves a git checkout and
 # cache behind under HOMEBREW_REPOSITORY; brew cleanup trims
 # formula caches/old versions without removing the install itself.

@@ -166,6 +166,10 @@ RUN apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr
 COPY images/scripts/install-gum.sh /tmp/install-gum.sh
 RUN sh /tmp/install-gum.sh
 
+# Install host-spawn (static binary, amd64/arm64) for host D-Bus/session integration.
+COPY images/scripts/install-host-spawn.sh /tmp/install-host-spawn.sh
+RUN sh /tmp/install-host-spawn.sh
+
 # Locale setup
 RUN sed -i "s|# en_US.UTF-8|en_US.UTF-8|g" /etc/locale.gen \
     && locale-gen \

@@ -116,6 +116,10 @@ RUN apk update && \
 COPY images/scripts/install-gum.sh /tmp/install-gum.sh
 RUN sh /tmp/install-gum.sh
 
+# Install host-spawn (static binary, amd64/arm64) for host D-Bus/session integration.
+COPY images/scripts/install-host-spawn.sh /tmp/install-host-spawn.sh
+RUN sh /tmp/install-host-spawn.sh
+
 # Install GPU driver packages for Alpine. Alpine splits mesa-dri and
 # mesa-vulkan into multiple arch/vendor-specific sub-packages, so we
 # resolve them by prefix search here, the same way otter-init does

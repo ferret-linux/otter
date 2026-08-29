@@ -120,6 +120,10 @@ RUN apk update && \
 COPY images/scripts/install-gum.sh /tmp/install-gum.sh
 RUN sh /tmp/install-gum.sh
 
+# Install host-spawn (static binary, amd64/arm64) for host D-Bus/session integration.
+COPY images/scripts/install-host-spawn.sh /tmp/install-host-spawn.sh
+RUN sh /tmp/install-host-spawn.sh
+
 # Timezone default
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
     && echo "UTC" > /etc/timezone

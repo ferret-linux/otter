@@ -121,6 +121,10 @@ RUN xbps-install -Syu xbps && \
 COPY images/scripts/install-gum.sh /tmp/install-gum.sh
 RUN sh /tmp/install-gum.sh
 
+# Install host-spawn (static binary, amd64/arm64) for host D-Bus/session integration.
+COPY images/scripts/install-host-spawn.sh /tmp/install-host-spawn.sh
+RUN sh /tmp/install-host-spawn.sh
+
 # Locale setup (glibc only, musl does not use libc-locales)
 RUN if [ -f /etc/default/libc-locales ]; then \
     sed -i "s|#.*en_US.UTF-8|en_US.UTF-8|g" /etc/default/libc-locales \
