@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 otter-subreaper marks the current process as a Linux "child subreaper"
-(see prctl(2), PR_SET_CHILD_SUBREAPER) and then execs into the command it
-was given.
+(see prctl(2), PR_SET_CHILD_SUBREAPER), then forks and execs the command
+it was given in the child, staying alive itself to reap orphans.
 
 This exists so otter's `sh`/`enter` sessions have a correct process to
 catch orphaned/double-forked descendants (e.g. fish's own detached
@@ -11,23 +11,90 @@ through to the container's real PID 1. It's independent of whichever init
 system the container runs, since it doesn't rely on any init system's own
 session manager.
 
-The subreaper attribute survives execve(2), so this process can set it on
-itself and then exec into the target command directly -- no separate,
-long-lived wrapper process is needed; the exec'd command (and everything
-it spawns for the rest of the session) simply inherits the attribute.
+This process deliberately forks rather than exec-replacing itself: the
+target command (su --pty ...) runs its own internal event loop that waits
+on a specific, known child pid via signalfd-driven SIGCHLD notifications.
+Per prctl(2), the "child subreaper" attribute is NOT inherited across
+fork(2)/clone(2) (only across execve(2)) -- so if this process exec'd
+directly into su, su itself would inherit the subreaper attribute and
+start receiving SIGCHLD for unrelated reparented orphans. Since Linux does
+not queue multiple pending instances of the same standard signal, that
+extra SIGCHLD traffic can coalesce with the one su is actually waiting for
+and be missed, leaving su's session-proxy loop stuck waiting forever --
+observed in practice as a completely unresponsive `otter sh` session.
+
+Keeping this process alive instead means the subreaper attribute stays on
+*this* process, not on su: su's own child/signal handling is completely
+undisturbed, and this process's plain blocking waitpid(-1) loop reaps
+whichever child (its own or a reparented orphan) exits next, with no
+signal-coalescing hazard, since zombies persist until reaped regardless of
+how many SIGCHLD deliveries were merged.
 """
 import ctypes
 import os
+import signal
 import sys
 
 PR_SET_CHILD_SUBREAPER = 36
 
-if len(sys.argv) < 2:
-    sys.exit("otter-subreaper: no command given to exec into")
+# Signals relevant to an interactive --pty session that must reach the real
+# child (su and, through it, the user's shell) rather than stopping at this
+# wrapper: terminal resize, interrupt/terminate/hangup, and job control.
+FORWARDED_SIGNALS = (
+    signal.SIGINT,
+    signal.SIGTERM,
+    signal.SIGHUP,
+    signal.SIGTSTP,
+    signal.SIGCONT,
+    signal.SIGWINCH,
+)
 
-libc = ctypes.CDLL(None, use_errno=True)
-if libc.prctl(PR_SET_CHILD_SUBREAPER, 1, 0, 0, 0) != 0:
-    errno = ctypes.get_errno()
-    sys.exit(f"otter-subreaper: prctl(PR_SET_CHILD_SUBREAPER) failed: {os.strerror(errno)}")
 
-os.execvp(sys.argv[1], sys.argv[1:])
+def main():
+    if len(sys.argv) < 2:
+        sys.exit("otter-subreaper: no command given to exec into")
+
+    libc = ctypes.CDLL(None, use_errno=True)
+    if libc.prctl(PR_SET_CHILD_SUBREAPER, 1, 0, 0, 0) != 0:
+        errno = ctypes.get_errno()
+        sys.exit(f"otter-subreaper: prctl(PR_SET_CHILD_SUBREAPER) failed: {os.strerror(errno)}")
+
+    child_pid = os.fork()
+    if child_pid == 0:
+        os.execvp(sys.argv[1], sys.argv[1:])
+        os._exit(127)  # only reached if execvp itself failed
+
+    def forward(signum, _frame):
+        try:
+            os.kill(child_pid, signum)
+        except ProcessLookupError:
+            pass
+
+    for sig in FORWARDED_SIGNALS:
+        signal.signal(sig, forward)
+
+    child_status = None
+    while True:
+        try:
+            reaped_pid, status = os.waitpid(-1, 0)
+        except InterruptedError:
+            continue
+        except ChildProcessError:
+            break  # no children left to wait on
+        if reaped_pid == child_pid:
+            child_status = status
+            break
+        # a reparented orphan exited - already reaped by waitpid() above,
+        # nothing further to do; keep waiting for our own child
+
+    if child_status is None:
+        sys.exit("otter-subreaper: lost track of child before it exited")
+    if os.WIFEXITED(child_status):
+        sys.exit(os.WEXITSTATUS(child_status))
+    if os.WIFSIGNALED(child_status):
+        sys.exit(128 + os.WTERMSIG(child_status))
+    sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
