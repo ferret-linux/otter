@@ -1101,13 +1101,12 @@ func (d *Docker) waitForSetup(
 		}
 
 		// Get logs
-		nextSince := containermanager.TimestampNow()
 		output, err := d.run(ctx, []string{"logs", "--since", since, containerName}, runOptions{})
 		if err != nil {
 			time.Sleep(logsRetryInterval)
 			continue
 		}
-		since = nextSince
+		since = containermanager.TimestampNow()
 
 		lines := strings.Split(output, "\n")
 		for _, line := range lines {

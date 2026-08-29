@@ -905,13 +905,12 @@ func (n *Nerdctl) waitForSetup(
 			)
 		}
 
-		nextSince := containermanager.TimestampNow()
 		output, err := n.run(ctx, []string{"logs", "--since", since, containerName}, runOptions{})
 		if err != nil {
 			time.Sleep(logsRetryInterval)
 			continue
 		}
-		since = nextSince
+		since = containermanager.TimestampNow()
 
 		lines := strings.Split(output, "\n")
 		for _, line := range lines {
