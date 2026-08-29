@@ -245,13 +245,17 @@ func BuildCommandArgs(customCommand []string, user string, noTTY bool, unshareGr
 		args = []string{"/bin/sh", "-c", fmt.Sprintf("$(getent passwd '%s' | cut -f 7 -d :) -l", user)}
 	}
 
-	// Handle unshare_groups mode - use su to trigger proper login
+	// Handle unshare_groups mode - use su to trigger proper login.
+	// Deliberately not passing -m/--preserve-environment: a real login is
+	// exactly what should resolve $HOME (and other login-context vars) from
+	// the target user's own passwd entry, rather than inheriting whatever
+	// the outer (typically root) exec's environment happened to have.
 	if unshareGroups {
 		unshareArgs := []string{"su"}
 		if !noTTY {
 			unshareArgs = append(unshareArgs, "--pty")
 		}
-		unshareArgs = append(unshareArgs, "-m", "-s", "/bin/sh", "-c", `"$0" "$@"`, "--", user)
+		unshareArgs = append(unshareArgs, "-s", "/bin/sh", "-c", `"$0" "$@"`, "--", user)
 		unshareArgs = append(unshareArgs, args...)
 		return unshareArgs
 	}
