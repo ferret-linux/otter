@@ -4,26 +4,26 @@ if status --is-interactive
 	test -z "$EUID" && set -gx EUID (id -u  2> /dev/null)
 	set -gx SHELL (getent passwd "$USER" | cut -f 7 -d :)
 
-	test -z "$XDG_RUNTIME_DIR && set -gx XDG_RUNTIME_DIR /run/user/(id -ru)
-	test -z "$DBUS_SESSION_BUS_ADDRESS && set -gx DBUS_SESSION_BUS_ADDRESS unix:path=/run/user/(id -ru)/bus
+	test -z "$XDG_RUNTIME_DIR"; and set -gx XDG_RUNTIME_DIR /run/user/(id -ru)
+	test -z "$DBUS_SESSION_BUS_ADDRESS"; and set -gx DBUS_SESSION_BUS_ADDRESS unix:path=/run/user/(id -ru)/bus
 
 	# Ensure we have these two variables from the host, so that graphical apps
 	# also work in case we use a login session
 	if test -z $XAUTHORITY
-		set -gx XAUTHORITY (host-spawn sh -c "printf "%s" \$XAUTHORITY")
+		set -gx XAUTHORITY (host-spawn --cwd / sh -c "printf "%s" \$XAUTHORITY" 2>/dev/null)
 		# if the variable is still empty, unset it, because empty it could be harmful
 		test -z $XAUTHORITY ; and set -e XAUTHORITY
 	end
 	if test -z $XAUTHLOCALHOSTNAME
-		set -gx XAUTHLOCALHOSTNAME (host-spawn sh -c "printf "%s" \$XAUTHLOCALHOSTNAME")
+		set -gx XAUTHLOCALHOSTNAME (host-spawn --cwd / sh -c "printf "%s" \$XAUTHLOCALHOSTNAME" 2>/dev/null)
 		test -z $XAUTHLOCALHOSTNAME ; and set -e XAUTHLOCALHOSTNAME
 	end
 	if test -z $WAYLAND_DISPLAY
-		set -gx WAYLAND_DISPLAY (host-spawn sh -c "printf "%s" \$WAYLAND_DISPLAY")
+		set -gx WAYLAND_DISPLAY (host-spawn --cwd / sh -c "printf "%s" \$WAYLAND_DISPLAY" 2>/dev/null)
 		test -z $WAYLAND_DISPLAY ; and set -e WAYLAND_DISPLAY
 	end
 	if test -z $DISPLAY
-		set -gx DISPLAY (host-spawn sh -c "printf "%s" \$DISPLAY")
+		set -gx DISPLAY (host-spawn --cwd / sh -c "printf "%s" \$DISPLAY" 2>/dev/null)
 		test -z $DISPLAY ; and set -e DISPLAY
 	end
 

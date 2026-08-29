@@ -29,26 +29,26 @@ fi
 # also work in case we use a login session
 if [ -z "${XAUTHORITY}" ]; then
     # shellcheck disable=SC2140 # inherited from distrobox: adjacent quotes intentionally concatenate into `printf %s $XAUTHORITY` for the inner sh -c
-    XAUTHORITY="$(host-spawn sh -c "printf "%s" \$XAUTHORITY")"
+    XAUTHORITY="$(host-spawn --cwd / sh -c "printf "%s" \$XAUTHORITY" 2>/dev/null)"
     export XAUTHORITY
     # if the variable is still empty, unset it, because empty it could be harmful
     [ -z "${XAUTHORITY}" ] && unset XAUTHORITY
 fi
 if [ -z "${XAUTHLOCALHOSTNAME}" ]; then
     # shellcheck disable=SC2140 # inherited from distrobox: adjacent quotes intentionally concatenate into `printf %s $XAUTHLOCALHOSTNAME` for the inner sh -c
-    XAUTHLOCALHOSTNAME="$(host-spawn sh -c "printf "%s" \$XAUTHLOCALHOSTNAME")"
+    XAUTHLOCALHOSTNAME="$(host-spawn --cwd / sh -c "printf "%s" \$XAUTHLOCALHOSTNAME" 2>/dev/null)"
     export XAUTHLOCALHOSTNAME
     [ -z "${XAUTHLOCALHOSTNAME}" ] && unset XAUTHLOCALHOSTNAME
 fi
 if [ -z "${WAYLAND_DISPLAY}" ]; then
     # shellcheck disable=SC2140 # inherited from distrobox: adjacent quotes intentionally concatenate into `printf %s $WAYLAND_DISPLAY` for the inner sh -c
-    WAYLAND_DISPLAY="$(host-spawn sh -c "printf "%s" \$WAYLAND_DISPLAY")"
+    WAYLAND_DISPLAY="$(host-spawn --cwd / sh -c "printf "%s" \$WAYLAND_DISPLAY" 2>/dev/null)"
     export WAYLAND_DISPLAY
     [ -z "${WAYLAND_DISPLAY}" ] && unset WAYLAND_DISPLAY
 fi
 if [ -z "${DISPLAY}" ]; then
     # shellcheck disable=SC2140 # inherited from distrobox: adjacent quotes intentionally concatenate into `printf %s $DISPLAY` for the inner sh -c
-    DISPLAY="$(host-spawn sh -c "printf "%s" \$DISPLAY")"
+    DISPLAY="$(host-spawn --cwd / sh -c "printf "%s" \$DISPLAY" 2>/dev/null)"
     export DISPLAY
     [ -z "${DISPLAY}" ] && unset DISPLAY
 fi

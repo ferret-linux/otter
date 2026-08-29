@@ -121,6 +121,8 @@ write_user_integration_script()
 	cat << EOF > /usr/local/bin/user-integration
 #!/bin/sh
 sleep 1
+mkdir -p /run/user/\$(id -ru)
+chmod 700 /run/user/\$(id -ru)
 ln -sf /run/host/run/user/\$(id -ru)/wayland-* /run/user/\$(id -ru)/
 ln -sf /run/host/run/user/\$(id -ru)/pipewire-* /run/user/\$(id -ru)/
 ln -sf /run/host/run/user/\$(id -ru)/bus /run/user/\$(id -ru)/bus
