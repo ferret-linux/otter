@@ -22,6 +22,9 @@ var exportScripts string
 //go:embed assets/otter
 var otterScript string
 
+//go:embed assets/otter-subreaper
+var subreaperScript string
+
 //go:embed assets/initialization-scripts
 var initScriptsFS embed.FS
 
@@ -46,6 +49,7 @@ func ProvisionScripts(scriptsDir string) (string, bool, error) {
 		{"otter-init", initScript},
 		{"otter-export", exportScripts},
 		{"otter", otterScript},
+		{"otter-subreaper", subreaperScript},
 	}
 
 	updated := false

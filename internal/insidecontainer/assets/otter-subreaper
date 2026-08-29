@@ -1,0 +1,33 @@
+#!/usr/bin/env python3
+"""
+otter-subreaper marks the current process as a Linux "child subreaper"
+(see prctl(2), PR_SET_CHILD_SUBREAPER) and then execs into the command it
+was given.
+
+This exists so otter's `sh`/`enter` sessions have a correct process to
+catch orphaned/double-forked descendants (e.g. fish's own detached
+fish_update_completions worker) instead of those descendants falling
+through to the container's real PID 1. It's independent of whichever init
+system the container runs, since it doesn't rely on any init system's own
+session manager.
+
+The subreaper attribute survives execve(2), so this process can set it on
+itself and then exec into the target command directly -- no separate,
+long-lived wrapper process is needed; the exec'd command (and everything
+it spawns for the rest of the session) simply inherits the attribute.
+"""
+import ctypes
+import os
+import sys
+
+PR_SET_CHILD_SUBREAPER = 36
+
+if len(sys.argv) < 2:
+    sys.exit("otter-subreaper: no command given to exec into")
+
+libc = ctypes.CDLL(None, use_errno=True)
+if libc.prctl(PR_SET_CHILD_SUBREAPER, 1, 0, 0, 0) != 0:
+    errno = ctypes.get_errno()
+    sys.exit(f"otter-subreaper: prctl(PR_SET_CHILD_SUBREAPER) failed: {os.strerror(errno)}")
+
+os.execvp(sys.argv[1], sys.argv[1:])

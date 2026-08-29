@@ -250,8 +250,14 @@ func BuildCommandArgs(customCommand []string, user string, noTTY bool, unshareGr
 	// exactly what should resolve $HOME (and other login-context vars) from
 	// the target user's own passwd entry, rather than inheriting whatever
 	// the outer (typically root) exec's environment happened to have.
+	//
+	// The whole su invocation is run through otter-subreaper first: it marks
+	// itself as a child subreaper (prctl PR_SET_CHILD_SUBREAPER) and execs
+	// into su, so any process the session double-forks and detaches (e.g.
+	// fish's own fish_update_completions worker) reparents to this session
+	// instead of falling through to the container's real PID 1.
 	if unshareGroups {
-		unshareArgs := []string{"su"}
+		unshareArgs := []string{"python3", "/usr/lib/otter/scripts/otter-subreaper", "su"}
 		if !noTTY {
 			unshareArgs = append(unshareArgs, "--pty")
 		}
