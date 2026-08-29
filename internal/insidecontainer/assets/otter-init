@@ -539,6 +539,18 @@ if [ "${upgrade}" -ne 0 ] || [ ! -e /.containersetupdone ]; then
 		# shellcheck disable=SC1091
 		. /usr/lib/otter/scripts/initialization-scripts/setup_apk.sh
 		setup_apk
+	elif command -v guix; then
+		# Checked before apt-get: the guix image is Debian-based and has
+		# apt-get present too, so guix would never be reached otherwise.
+		# shellcheck disable=SC1091
+		. /usr/lib/otter/scripts/initialization-scripts/setup_guix.sh
+		setup_guix
+	elif command -v brew; then
+		# Checked before apt-get: the brew image is Debian-based and has
+		# apt-get present too, so brew would never be reached otherwise.
+		# shellcheck disable=SC1091
+		. /usr/lib/otter/scripts/initialization-scripts/setup_brew.sh
+		setup_brew
 	elif command -v apt-get; then
 		# shellcheck disable=SC1091
 		. /usr/lib/otter/scripts/initialization-scripts/setup_apt.sh
