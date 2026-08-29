@@ -16,6 +16,25 @@ fi
 SHELL="$(getent passwd "${USER}" | cut -f 7 -d :)"
 export SHELL
 
+# Append the host's PATH (passed in as HOST_PATH, since PATH itself is left
+# untouched on entry so the container's own package manager stays reachable
+# -- see BuildCommandArgs's getent/cut shell resolution above, which needs
+# the container's native PATH, not a host-overridden one) onto the
+# container's PATH, skipping any entry already present so host CLI tools
+# stay reachable without ever taking priority over the container's own.
+if [ -n "${HOST_PATH:-}" ]; then
+	old_ifs="${IFS}"
+	IFS=:
+	for host_path_entry in ${HOST_PATH}; do
+		case ":${PATH}:" in
+			*":${host_path_entry}:"*) ;;
+			*) PATH="${PATH}:${host_path_entry}" ;;
+		esac
+	done
+	IFS="${old_ifs}"
+	export PATH
+fi
+
 if [ -z "${XDG_RUNTIME_DIR:-}" ]; then
 	XDG_RUNTIME_DIR="/run/user/$(id -ru)"
 	export XDG_RUNTIME_DIR

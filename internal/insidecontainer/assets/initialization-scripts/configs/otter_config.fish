@@ -4,6 +4,21 @@ if status --is-interactive
 	test -z "$EUID" && set -gx EUID (id -u  2> /dev/null)
 	set -gx SHELL (getent passwd "$USER" | cut -f 7 -d :)
 
+	# Append the host's PATH (passed in as HOST_PATH, since PATH itself is
+	# left untouched on entry so the container's own package manager stays
+	# reachable -- see BuildCommandArgs's getent/cut shell resolution,
+	# which needs the container's native PATH, not a host-overridden one)
+	# onto the container's PATH, skipping any entry already present so
+	# host CLI tools stay reachable without ever taking priority over the
+	# container's own.
+	if test -n "$HOST_PATH"
+		for host_path_entry in (string split : -- "$HOST_PATH")
+			if not contains -- "$host_path_entry" $PATH
+				set -gx PATH $PATH "$host_path_entry"
+			end
+		end
+	end
+
 	test -z "$XDG_RUNTIME_DIR"; and set -gx XDG_RUNTIME_DIR /run/user/(id -ru)
 	test -z "$DBUS_SESSION_BUS_ADDRESS"; and set -gx DBUS_SESSION_BUS_ADDRESS unix:path=/run/user/(id -ru)/bus
 

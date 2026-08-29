@@ -780,8 +780,18 @@ func (n *Nerdctl) generateEnterCommand(
 		}
 	}
 
-	containerPaths := containermanager.BuildContainerPath(cleanPath, os.Getenv("PATH"), containerConfig.ContainerPath)
-	cmd = append(cmd, fmt.Sprintf("--env=PATH=%s", containerPaths))
+	// PATH is deliberately left unset here so the exec inherits the
+	// container's own native PATH (needed by BuildCommandArgs's
+	// getent/cut shell resolution below, which only exists under the
+	// image's own package-manager-specific paths on some images, e.g.
+	// Nix). The host's PATH is passed separately as HOST_PATH and merged
+	// in by otter_profile.sh/otter_config.fish once an interactive shell
+	// actually starts, so host CLI tools stay reachable without
+	// clobbering the container's own PATH first. --clean-path means "no
+	// host paths added", so HOST_PATH is omitted entirely in that case.
+	if !cleanPath {
+		cmd = append(cmd, fmt.Sprintf("--env=HOST_PATH=%s", os.Getenv("PATH")))
+	}
 
 	xdgDataDirs := containermanager.BuildXDGPaths("XDG_DATA_DIRS", []string{"/usr/local/share", "/usr/share"})
 	cmd = append(cmd, fmt.Sprintf("--env=XDG_DATA_DIRS=%s", xdgDataDirs))

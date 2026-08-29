@@ -597,8 +597,16 @@ if [ "${upgrade}" -ne 0 ] || [ ! -e /.containersetupdone ]; then
 	fi
 fi
 
-# Set SHELL to the install path inside the container
-SHELL="$(command -v "${shell_pkg}")"
+# Set SHELL to the install path inside the container. Resolved against a
+# $PATH with root's own per-user dirs (e.g. Nix's ~/.nix-profile/bin, which
+# only root can traverse) stripped out first -- otherwise, on images where a
+# shell binary exists in both a root-only per-user profile and a shared
+# system-wide path (Nix's /nix/var/nix/profiles/default/bin), command -v's
+# first-match-wins behavior can resolve to the root-only path, which then
+# gets written verbatim into a non-root user's /etc/passwd shell field by
+# setup_user.sh, leaving that user with a login shell they can't execute.
+portable_path="$(printf '%s' "${PATH}" | tr ':' '\n' | grep -v "^${HOME}/" | tr '\n' ':')"
+SHELL="$(PATH="${portable_path}" command -v "${shell_pkg}")"
 
 # Fix broken prompt for zsh shell (debian, ubuntu... need it)
 if [ "${shell_pkg}" = "zsh" ]; then
