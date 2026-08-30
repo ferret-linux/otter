@@ -316,23 +316,6 @@
       "build_number": 160
     },
     {
-      "name": "arch",
-      "official_image": "ghcr.io/ferret-linux/arch-otr:latest",
-      "fallback_vendor_image": "docker.io/library/archlinux:latest",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-30T04:59:34Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 2156507540,
-          "disk_size": 2156507540
-        }
-      },
-      "build_number": 160
-    },
-    {
       "name": "debian",
       "official_image": "ghcr.io/ferret-linux/debian-otr:stable",
       "fallback_vendor_image": "docker.io/library/debian:stable",
@@ -768,6 +751,23 @@
         }
       },
       "build_number": 162
+    },
+    {
+      "name": "arch",
+      "official_image": "ghcr.io/ferret-linux/arch-otr:latest",
+      "fallback_vendor_image": "docker.io/library/archlinux:latest",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-08-30T10:41:25Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 2156509079,
+          "disk_size": 2156509079
+        }
+      },
+      "build_number": 161
     }
   ]
 }
