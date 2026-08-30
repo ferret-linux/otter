@@ -131,6 +131,7 @@ func (d *Docker) Create(
 		filepath.Join(scriptsDir, "otter"),
 		filepath.Join(scriptsDir, "otter-subreaper"),
 		filepath.Join(scriptsDir, "otter-doctor"),
+		filepath.Join(scriptsDir, "otter-redirect"),
 		filepath.Join(scriptsDir, "initialization-scripts"),
 	)
 
@@ -153,6 +154,7 @@ func (d *Docker) makeCreateCommand(
 	otterPath string,
 	otterSubreaperPath string,
 	otterDoctorPath string,
+	otterRedirectPath string,
 	initScriptsPath string,
 ) []string {
 	containerName := opts.ContainerName
@@ -288,6 +290,11 @@ func (d *Docker) makeCreateCommand(
 		options,
 		"--volume",
 		fmt.Sprintf("%s:%s", otterDoctorPath, "/usr/lib/otter/scripts/otter-doctor:ro"),
+	)
+	options = append(
+		options,
+		"--volume",
+		fmt.Sprintf("%s:%s", otterRedirectPath, "/usr/lib/otter/scripts/otter-redirect:ro"),
 	)
 	options = append(options, "--volume", fmt.Sprintf("%s:%s", otterPath, "/usr/bin/otter:ro"))
 	if customHome == "" {

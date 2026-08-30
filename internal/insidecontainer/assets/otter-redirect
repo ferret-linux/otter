@@ -1,0 +1,224 @@
+#!/usr/bin/env python3
+# shellcheck disable=all
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the otter project:
+#    https://github.com/ferret-project/otter
+# Copyright (C) 2026 otter contributors
+#
+# otter is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License version 3
+# as published by the Free Software Foundation.
+#
+# otter is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with otter; if not, see <http://www.gnu.org/licenses/>.
+
+import argparse
+import os
+import shlex
+import shutil
+import sys
+from pathlib import Path
+
+VERSION = "0.0.8"
+REDIRECT_DIR = "/usr/local/bin"
+MARKER_LINE = "# otter_redirect"
+
+
+def render_help(text):
+    color_green = "\033[32m"
+    color_teal = "\033[96m"
+    color_cyan = "\033[36m"
+    color_yellow = "\033[33m"
+    color_blue = "\033[34m"
+    color_dim = "\033[37m"
+    slots = [color_green, color_teal, color_cyan, color_yellow, color_blue, color_dim]
+    if os.environ.get("NO_COLOR") is not None or os.environ.get("TERM") == "dumb":
+        for i in range(len(slots)):
+            text = text.replace(f"{{{i}}}", "")
+        return text.replace("{R}", "")
+    for i, code in enumerate(slots):
+        text = text.replace(f"{{{i}}}", code)
+    return text.replace("{R}", "\033[0m")
+
+
+HELP_TEXT = """\
+{2}╭─────────────────────────────────────────────────────────────────╮{R}
+{2}│{R}{3}▸ Usage:{R}                                                         {2}│{R}
+{2}│{R}  {5}otter-redirect <add|remove|list> [options]{R}                     {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                                      {2}│{R}
+{2}│{R}  {5}otter-redirect add --host-cmd flatpak{R}                          {2}│{R}
+{2}│{R}  {5}otter-redirect add --host-cmd "rpm-ostree upgrade" --as rpm-up{R}  {2}│{R}
+{2}│{R}  {5}otter-redirect remove rpm-up{R}                                   {2}│{R}
+{2}│{R}  {5}otter-redirect list{R}                                            {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Commands:{R}                                                      {2}│{R}
+{2}│{R} {4}add{R}     {5}Create a wrapper that redirects to a host command{R}      {2}│{R}
+{2}│{R} {4}remove{R}  {5}Remove a previously created redirect{R}                  {2}│{R}
+{2}│{R} {4}list{R}    {5}List redirects created in this container{R}              {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Options (add):{R}                                                 {2}│{R}
+{2}│{R} {4}--host-cmd{R} {2}┆{R} {4}-c{R}  {5}Host command to redirect to (quote if multi-word){R}{2}│{R}
+{2}│{R} {4}--as{R}       {2}┆{R} {4}-n{R}  {5}Name to create in the container's PATH{R}    {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                                        {2}│{R}
+{2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}                          {2}│{R}
+{2}│{R} {4}--version{R} {2}┆{R} {4}-V{R}  {5}Show version information{R}                        {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Notes:{R}                                                         {2}│{R}
+{2}│{R} {5}--as is required when --host-cmd is more than one word.{R}         {2}│{R}
+{2}│{R} {5}add refuses if the name already resolves to a real binary --{R}    {2}│{R}
+{2}│{R} {5}remove it first if you want to redefine an existing redirect.{R}   {2}│{R}
+{2}╰─────────────────────────────────────────────────────────────────╯{R}"""
+
+
+def _error(message):
+    print(f"ERROR: {message}\n", file=sys.stderr)
+    print(render_help(HELP_TEXT))
+    sys.exit(1)
+
+
+def redirect_path(name):
+    return Path(REDIRECT_DIR) / name
+
+
+def generate_wrapper(args_list, host_cmd_raw):
+    quoted = " ".join(shlex.quote(a) for a in args_list)
+    return f"""#!/bin/sh
+{MARKER_LINE}
+# host-cmd: {host_cmd_raw}
+exec otter-host-exec {quoted} "$@"
+"""
+
+
+def add_redirect(host_cmd, as_name):
+    if not host_cmd:
+        _error("--host-cmd is required.")
+
+    args_list = shlex.split(host_cmd)
+    if not args_list:
+        _error("--host-cmd cannot be empty.")
+
+    if as_name:
+        name = as_name
+    elif len(args_list) == 1:
+        name = args_list[0]
+    else:
+        _error("--as is required when --host-cmd is more than one word.")
+
+    if shutil.which(name):
+        print(f"Error: '{name}' already resolves to a real binary; refusing to overwrite.", file=sys.stderr)
+        print(f"Error: remove it first with 'otter redirect remove {name}' if you want to redefine it.", file=sys.stderr)
+        return 1
+
+    dest_file = redirect_path(name)
+
+    try:
+        dest_file.write_text(generate_wrapper(args_list, host_cmd))
+        dest_file.chmod(0o755)
+    except OSError as exc:
+        print(f"Error: cannot create {dest_file}: {exc}", file=sys.stderr)
+        return 1
+
+    print(f"'{name}' now redirects to '{host_cmd}' on the host.\nOK!")
+    return 0
+
+
+def remove_redirect(name):
+    dest_file = redirect_path(name)
+
+    if not dest_file.is_file():
+        print(f"Error: '{name}' is not a redirect.", file=sys.stderr)
+        return 1
+
+    try:
+        content = dest_file.read_text()
+    except OSError as exc:
+        print(f"Error: cannot read {dest_file}: {exc}", file=sys.stderr)
+        return 1
+
+    if MARKER_LINE not in content:
+        print(f"Error: '{name}' is not a redirect.", file=sys.stderr)
+        return 1
+
+    try:
+        dest_file.unlink()
+    except OSError as exc:
+        print(f"Error: cannot remove {dest_file}: {exc}", file=sys.stderr)
+        return 1
+
+    print(f"'{name}' redirect removed.\nOK!")
+    return 0
+
+
+def list_redirects():
+    try:
+        entries = sorted(Path(REDIRECT_DIR).iterdir())
+    except OSError:
+        entries = []
+
+    for entry in entries:
+        if not entry.is_file():
+            continue
+        try:
+            content = entry.read_text(errors="replace")
+        except OSError:
+            continue
+        if MARKER_LINE not in content:
+            continue
+        host_cmd = ""
+        for line in content.splitlines():
+            if line.startswith("# host-cmd: "):
+                host_cmd = line[len("# host-cmd: "):]
+                break
+        print(f"{entry.name:<20} | {host_cmd}")
+
+    return 0
+
+
+if len(sys.argv) < 2 or sys.argv[1] in ("--help", "-h"):
+    print(render_help(HELP_TEXT))
+    sys.exit(0)
+
+if sys.argv[1] in ("--version", "-V"):
+    print(f"otter: {VERSION}")
+    sys.exit(0)
+
+action = sys.argv[1]
+remaining = sys.argv[2:]
+
+if action == "add":
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.error = _error
+    parser.add_argument("-h", "--help", action="store_true")
+    parser.add_argument("-c", "--host-cmd", dest="host_cmd", default="")
+    parser.add_argument("-n", "--as", dest="as_name", default="")
+    args = parser.parse_args(remaining)
+
+    if args.help:
+        print(render_help(HELP_TEXT))
+        sys.exit(0)
+
+    sys.exit(add_redirect(args.host_cmd, args.as_name))
+elif action == "remove":
+    if not remaining or remaining[0] in ("-h", "--help"):
+        print(render_help(HELP_TEXT))
+        sys.exit(0)
+    if len(remaining) != 1:
+        _error("remove takes exactly one argument: the redirect name.")
+    sys.exit(remove_redirect(remaining[0]))
+elif action == "list":
+    if remaining and remaining[0] in ("-h", "--help"):
+        print(render_help(HELP_TEXT))
+        sys.exit(0)
+    sys.exit(list_redirects())
+else:
+    print(f"ERROR: unknown command '{action}'\n", file=sys.stderr)
+    print(render_help(HELP_TEXT))
+    sys.exit(1)

@@ -25,6 +25,9 @@ var otterScript string
 //go:embed assets/otter-doctor
 var doctorScript string
 
+//go:embed assets/otter-redirect
+var redirectScript string
+
 //go:embed assets/otter-subreaper
 var subreaperScript string
 
@@ -53,6 +56,7 @@ func ProvisionScripts(scriptsDir string) (string, bool, error) {
 		{"otter-export", exportScripts},
 		{"otter", otterScript},
 		{"otter-doctor", doctorScript},
+		{"otter-redirect", redirectScript},
 		{"otter-subreaper", subreaperScript},
 	}
 
