@@ -86,16 +86,23 @@ setup_initsystem()
 	printf "otter: Firing up init system...\n"
 
 	if [ -e /usr/lib/systemd/systemd ] || [ -e /lib/systemd/systemd ]; then
+		printf "systemd" > /usr/lib/otter/container.initsystem
 		setup_init_systemd
 	elif [ -e /usr/sbin/openrc ] || [ -e /sbin/openrc ]; then
+		printf "openrc" > /usr/lib/otter/container.initsystem
 		setup_init_openrc
 	elif [ -e /usr/sbin/telinit ] || [ -e /sbin/telinit ]; then
+		# setup_init_sysvinit writes container.initsystem itself, once it
+		# knows whether this is the LSB or BSD sysvinit layout.
 		setup_init_sysvinit
 	elif [ -e /usr/bin/runit ] || [ -e /usr/sbin/runit ] || [ -e /sbin/runit ]; then
+		printf "runit" > /usr/lib/otter/container.initsystem
 		setup_init_runit
 	elif [ -e /usr/bin/dinit ] || [ -e /usr/sbin/dinit ] || [ -e /sbin/dinit ]; then
+		printf "dinit" > /usr/lib/otter/container.initsystem
 		setup_init_dinit
 	elif [ -e /sbin/init ]; then
+		printf "generic" > /usr/lib/otter/container.initsystem
 		setup_init_generic
 	else
 		printf "Error: could not set up init system, no init found! Consider using an image that ships with an init system, or add it with \"--additional-packages\" during creation.!\n"
