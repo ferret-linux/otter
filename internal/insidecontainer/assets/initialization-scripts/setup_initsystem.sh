@@ -148,6 +148,37 @@ EOF
 	chmod +x /usr/local/bin/user-integration
 }
 
+# write_resync_loop_script generates the shared
+# /usr/local/bin/user-integration-resync script: a resident loop that
+# blindly re-runs /usr/local/bin/user-integration every 60 seconds. Used
+# only by the init systems with no native repeat/supervision primitive of
+# their own (openrc, sysvinit-lsb, sysvinit-bsd, runit); systemd and dinit
+# each re-trigger user-integration via their own native mechanisms instead
+# (a .timer unit, and restart=true, respectively) and don't call this
+# script.
+# Arguments:
+#   None
+# Expected global variables:
+#   container_user_name: the container's primary user, passed through to
+#     user-integration on each loop iteration
+# Expected env variables:
+#   None
+# Outputs:
+#   None
+write_resync_loop_script()
+{
+	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
+	cat << EOF > /usr/local/bin/user-integration-resync
+#!/bin/sh
+while true; do
+	su - "${container_user_name}" -c /usr/local/bin/user-integration
+	sleep 60
+done
+EOF
+
+	chmod +x /usr/local/bin/user-integration-resync
+}
+
 # setup_init_systemd masks host-conflicting systemd units, wires up minimal
 # user-session integration (Wayland/Pipewire/D-Bus/keyring), then launches
 # systemd and waits for it to report ready before finishing container setup.
@@ -233,6 +264,21 @@ ExecStart=/usr/local/bin/user-integration
 
 Slice=user-%i.slice
 EOF
+
+		# Periodically re-fires the oneshot service above, so integration
+		# survives user-runtime-dir@.service wiping it mid-session and
+		# picks up any host socket that appears after boot.
+		cat << EOF > /usr/lib/systemd/system/user-integration@.timer
+[Unit]
+Description=Periodic user runtime integration resync for UID %i
+
+[Timer]
+OnBootSec=60s
+OnUnitActiveSec=60s
+
+[Install]
+WantedBy=timers.target
+EOF
 	fi
 
 	# Start user Systemd unit, this will attempt until Systemd is ready
@@ -243,6 +289,7 @@ EOF
 	done && \
 	systemctl start user@${container_user_name}.service && \
 	systemctl start user-integration@${container_user_name}.service && \
+	systemctl start user-integration@${container_user_name}.timer && \
 	loginctl enable-linger ${container_user_name} || : && \
 	touch /usr/lib/otter/container.ready && \
 	touch /usr/lib/otter/container.bootstrapped && \
@@ -320,6 +367,7 @@ wait_for_sysvinit_runlevel()
 setup_init_sysvinit_lsb()
 {
 	write_user_integration_script
+	write_resync_loop_script
 
 	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	cat << EOF > /etc/init.d/otter-user-integration
@@ -335,7 +383,7 @@ setup_init_sysvinit_lsb()
 
 case "\$1" in
 	start)
-		su - "${container_user_name}" -c /usr/local/bin/user-integration
+		/usr/local/bin/user-integration-resync &
 		;;
 	stop | restart | reload | force-reload | status)
 		;;
@@ -376,6 +424,7 @@ EOF
 setup_init_sysvinit_bsd()
 {
 	write_user_integration_script
+	write_resync_loop_script
 
 	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	cat << EOF > /etc/rc.d/rc.otter-user-integration
@@ -383,7 +432,7 @@ setup_init_sysvinit_bsd()
 
 case "\$1" in
 	start)
-		su - "${container_user_name}" -c /usr/local/bin/user-integration
+		/usr/local/bin/user-integration-resync &
 		;;
 	stop | restart | status)
 		;;
@@ -441,6 +490,7 @@ EOF
 setup_init_openrc()
 {
 	write_user_integration_script
+	write_resync_loop_script
 
 	# openrc-run scripts must use this shebang: it's a real shell wrapper
 	# (see openrc's sh/openrc-run.sh.in) that parses the "--lockfd <fd> start"
@@ -460,7 +510,7 @@ depend()
 
 start()
 {
-	su - "${container_user_name}" -c /usr/local/bin/user-integration
+	/usr/local/bin/user-integration-resync &
 }
 EOF
 
@@ -547,14 +597,13 @@ setup_init_runit()
 		/etc/runit/runsvdir/default/agetty-hvsi0
 
 	write_user_integration_script
+	write_resync_loop_script
 
 	mkdir -p /etc/sv/otter-user-integration
 
-	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	cat << EOF > /etc/sv/otter-user-integration/run
 #!/bin/sh
-su - "${container_user_name}" -c /usr/local/bin/user-integration
-exec pause
+exec /usr/local/bin/user-integration-resync
 EOF
 
 	chmod +x /etc/sv/otter-user-integration/run
@@ -664,7 +713,8 @@ setup_init_dinit()
 	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	cat << EOF > /etc/dinit.d/otter-user-integration
 type = scripted
-command = /bin/sh -c "su - ${container_user_name} -c /usr/local/bin/user-integration"
+command = /bin/sh -c "su - ${container_user_name} -c /usr/local/bin/user-integration; sleep 60"
+restart = true
 EOF
 
 	if [ -d /etc/dinit.d/boot.d ]; then
