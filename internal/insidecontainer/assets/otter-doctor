@@ -31,7 +31,8 @@ VERSION = "0.0.8"
 HOST_SPAWN_VERSION = "v1.6.2"
 SCRIPTS_DIR = "/usr/lib/otter/scripts"
 MARKERS_DIR = "/usr/lib/otter"
-CORE_SCRIPTS = ["otter", "otter-export", "otter-host-exec", "otter-init", "otter-subreaper"]
+OTTER_WRAPPER_PATH = "/usr/bin/otter"
+CORE_SCRIPTS = ["otter-export", "otter-host-exec", "otter-init", "otter-subreaper"]
 
 
 def render_help(text):
@@ -192,7 +193,10 @@ else:
     report("env-vars", "ok", "CONTAINER_ID and OTTER_HOST_UID are set")
 
 # 10. Core otter scripts present & executable
-missing_scripts = [
+missing_scripts = []
+if not os.access(OTTER_WRAPPER_PATH, os.X_OK):
+    missing_scripts.append("otter")
+missing_scripts += [
     s for s in CORE_SCRIPTS if not os.access(f"{SCRIPTS_DIR}/{s}", os.X_OK)
 ]
 if missing_scripts:
