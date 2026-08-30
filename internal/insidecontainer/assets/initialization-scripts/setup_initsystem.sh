@@ -170,10 +170,12 @@ write_resync_loop_script()
 	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	cat << EOF > /usr/local/bin/user-integration-resync
 #!/bin/sh
-while true; do
-	su - "${container_user_name}" -c /usr/local/bin/user-integration
-	sleep 60
-done
+setsid su - "${container_user_name}" -c '
+    while true; do
+        /usr/local/bin/user-integration
+        sleep 60
+    done
+' &
 EOF
 
 	chmod +x /usr/local/bin/user-integration-resync
