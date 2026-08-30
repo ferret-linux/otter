@@ -1,0 +1,352 @@
+#!/usr/bin/env python3
+# shellcheck disable=all
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the otter project:
+#    https://github.com/ferret-project/otter
+# Copyright (C) 2026 otter contributors
+#
+# otter is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License version 3
+# as published by the Free Software Foundation.
+#
+# otter is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with otter; if not, see <http://www.gnu.org/licenses/>.
+
+import argparse
+import glob
+import os
+import re
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+VERSION = "0.0.8"
+HOST_SPAWN_VERSION = "v1.6.2"
+SCRIPTS_DIR = "/usr/lib/otter/scripts"
+MARKERS_DIR = "/usr/lib/otter"
+CORE_SCRIPTS = ["otter", "otter-export", "otter-host-exec", "otter-init", "otter-subreaper"]
+
+
+def render_help(text):
+    color_green = "\033[32m"
+    color_teal = "\033[96m"
+    color_cyan = "\033[36m"
+    color_yellow = "\033[33m"
+    color_blue = "\033[34m"
+    color_dim = "\033[37m"
+    slots = [color_green, color_teal, color_cyan, color_yellow, color_blue, color_dim]
+    if os.environ.get("NO_COLOR") is not None or os.environ.get("TERM") == "dumb":
+        for i in range(len(slots)):
+            text = text.replace(f"{{{i}}}", "")
+        return text.replace("{R}", "")
+    for i, code in enumerate(slots):
+        text = text.replace(f"{{{i}}}", code)
+    return text.replace("{R}", "\033[0m")
+
+
+HELP_TEXT = """\
+{2}╭─────────────────────────────────────────────────╮{R}
+{2}│{R}{3}▸ Usage:{R}                                         {2}│{R}
+{2}│{R}  {5}otter-doctor{R}                                   {2}│{R}
+{2}├─────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                        {2}│{R}
+{2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}          {2}│{R}
+{2}│{R} {4}--version{R} {2}┆{R} {4}-V{R}  {5}Show version information{R}        {2}│{R}
+{2}╰─────────────────────────────────────────────────╯{R}"""
+
+
+def _parser_error(message):
+    print(f"ERROR: {message}\n", file=sys.stderr)
+    print(render_help(HELP_TEXT))
+    sys.exit(1)
+
+
+parser = argparse.ArgumentParser(add_help=False)
+parser.error = _parser_error
+parser.add_argument("-h", "--help", action="store_true")
+parser.add_argument("-V", "--version", action="store_true")
+args = parser.parse_args()
+
+if args.help:
+    print(render_help(HELP_TEXT))
+    sys.exit(0)
+
+if args.version:
+    print(f"otter-doctor: {VERSION}")
+    sys.exit(0)
+
+exit_code = 0
+results = []  # (label, "ok" | "warn" | "fail", message)
+
+
+def report(label, status, message):
+    results.append((label, status, message))
+
+
+def fail(label, message):
+    global exit_code
+    report(label, "fail", message)
+    exit_code = 1
+
+
+def version_tuple(v):
+    v = v.lstrip("v")
+    return tuple(int(x) for x in re.split(r"[.\-]", v) if x.isdigit())
+
+
+# 1. Running inside a container
+in_container = (
+    Path("/run/.containerenv").is_file()
+    or Path("/.dockerenv").is_file()
+    or bool(os.environ.get("container"))
+)
+if in_container:
+    report("container", "ok", "running inside a container")
+else:
+    fail("container", "not running inside a container")
+
+# 2. Not borked
+if Path(f"{MARKERS_DIR}/container.borked").is_file():
+    fail("borked", "container is marked borked (an error occurred during setup)")
+else:
+    report("borked", "ok", "container is not borked")
+
+# 3. Ready / bootstrapped
+ready = Path(f"{MARKERS_DIR}/container.ready").is_file()
+bootstrapped = Path(f"{MARKERS_DIR}/container.bootstrapped").is_file()
+if ready and bootstrapped:
+    report("ready", "ok", "container is ready and bootstrapped")
+else:
+    fail("ready", f"container.ready={ready} container.bootstrapped={bootstrapped}")
+
+# 4. Official vs non-official (informational)
+if Path(f"{MARKERS_DIR}/container.official").is_file():
+    report("official", "ok", "official otter image")
+else:
+    report("official", "warn", "non-official image (unsupported)")
+
+# 5. Rootful vs rootless (informational)
+rootful = Path(f"{MARKERS_DIR}/container.rootful").is_file()
+rootless = Path(f"{MARKERS_DIR}/container.rootless").is_file()
+if rootful:
+    report("root-mode", "ok", "rootful container")
+elif rootless:
+    report("root-mode", "ok", "rootless container")
+else:
+    report("root-mode", "warn", "root mode marker not found")
+
+# 6. host-spawn present and version >= HOST_SPAWN_VERSION
+host_spawn_path = shutil.which("host-spawn")
+if not host_spawn_path:
+    fail("host-spawn", "host-spawn not found in PATH")
+else:
+    try:
+        installed_ver = subprocess.run(
+            ["host-spawn", "--version"], capture_output=True, text=True
+        ).stdout.strip()
+        if version_tuple(installed_ver) >= version_tuple(HOST_SPAWN_VERSION):
+            report("host-spawn", "ok", f"host-spawn {installed_ver} (>= {HOST_SPAWN_VERSION})")
+        else:
+            fail("host-spawn", f"host-spawn {installed_ver} is older than required {HOST_SPAWN_VERSION}")
+    except Exception as exc:
+        fail("host-spawn", f"could not determine host-spawn version: {exc}")
+
+# 7. /run/host mount bridge alive
+try:
+    mounted = subprocess.run(
+        ["findmnt", "/run/host"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+    ).returncode == 0
+except FileNotFoundError:
+    mounted = False
+if mounted:
+    report("run-host", "ok", "/run/host is mounted")
+else:
+    fail("run-host", "/run/host is not mounted")
+
+# 8. Network reachable (informational only — offline use is legitimate)
+network_check_script = f"{SCRIPTS_DIR}/initialization-scripts/helpers/network_check.sh"
+if Path(network_check_script).is_file():
+    net_rc = subprocess.run(
+        ["sh", "-c", f". {network_check_script} && network_check"],
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+    ).returncode
+    if net_rc == 0:
+        report("network", "ok", "network is reachable")
+    else:
+        report("network", "warn", "no network connectivity (offline use may be intentional)")
+else:
+    report("network", "warn", f"{network_check_script} not found, could not check")
+
+# 9. Required identity env vars
+missing_env = [v for v in ("CONTAINER_ID", "OTTER_HOST_UID") if not os.environ.get(v)]
+if missing_env:
+    fail("env-vars", f"missing required env var(s): {', '.join(missing_env)}")
+else:
+    report("env-vars", "ok", "CONTAINER_ID and OTTER_HOST_UID are set")
+
+# 10. Core otter scripts present & executable
+missing_scripts = [
+    s for s in CORE_SCRIPTS if not os.access(f"{SCRIPTS_DIR}/{s}", os.X_OK)
+]
+if missing_scripts:
+    fail("core-scripts", f"missing/non-executable: {', '.join(missing_scripts)}")
+else:
+    report("core-scripts", "ok", "all core scripts present and executable")
+
+# 11. Init system status
+initsystem_marker = Path(f"{MARKERS_DIR}/container.initsystem")
+if not initsystem_marker.is_file():
+    report("init-system", "warn", "non-init container")
+else:
+    initsystem = initsystem_marker.read_text().strip()
+    status_ok = None
+    status_detail = ""
+    try:
+        if initsystem == "systemd":
+            out = subprocess.run(
+                ["systemctl", "is-system-running"], capture_output=True, text=True
+            ).stdout.strip()
+            status_detail = out
+            status_ok = out in ("running", "starting")
+        elif initsystem == "openrc":
+            rc = subprocess.run(
+                ["rc-status"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            ).returncode
+            status_ok = rc == 0
+            status_detail = f"rc-status exit {rc}"
+        elif initsystem in ("sysvinit-lsb", "sysvinit-bsd"):
+            out = subprocess.run(["runlevel"], capture_output=True, text=True).stdout.strip()
+            status_detail = out
+            status_ok = bool(out) and "unknown" not in out
+        elif initsystem == "runit":
+            out = subprocess.run(
+                ["sh", "-c", "sv status /var/service/* 2>/dev/null"],
+                capture_output=True, text=True,
+            ).stdout
+            status_detail = out.strip() or "no services reported"
+            status_ok = bool(out) and all(
+                line.startswith("run:") for line in out.splitlines() if line.strip()
+            )
+        elif initsystem == "dinit":
+            out = subprocess.run(
+                ["dinitctl", "status", "boot"], capture_output=True, text=True
+            ).stdout.strip()
+            status_detail = out
+            status_ok = "State: STARTED" in out
+        elif initsystem == "generic":
+            status_ok = None
+            status_detail = "generic init has no structured status concept"
+        else:
+            status_ok = None
+            status_detail = f"unrecognized container.initsystem value: {initsystem}"
+    except FileNotFoundError as exc:
+        status_ok = False
+        status_detail = f"status command not found: {exc}"
+
+    if status_ok is None:
+        report("init-system", "warn", f"{initsystem}: {status_detail}")
+    elif status_ok:
+        report("init-system", "ok", f"{initsystem}: {status_detail}")
+    else:
+        fail("init-system", f"{initsystem} unhealthy: {status_detail}")
+
+# 12. Custom home correctness (only when OTTER_HOST_HOME set)
+custom_home = os.environ.get("OTTER_HOST_HOME")
+if custom_home:
+    home_path = Path(custom_home)
+    if not home_path.is_dir():
+        fail("custom-home", f"{custom_home} does not exist")
+    else:
+        try:
+            st = home_path.stat()
+            uid = os.environ.get("OTTER_HOST_UID")
+            if uid is not None and str(st.st_uid) != str(uid):
+                fail("custom-home", f"{custom_home} is not owned by uid {uid} (owner: {st.st_uid})")
+            else:
+                report("custom-home", "ok", f"{custom_home} exists with correct ownership")
+        except OSError as exc:
+            fail("custom-home", f"could not stat {custom_home}: {exc}")
+else:
+    report("custom-home", "ok", "no custom home configured")
+
+# 13. User/root settings
+container_user_uid = os.environ.get("OTTER_HOST_UID")
+if not container_user_uid:
+    fail("user-settings", "OTTER_HOST_UID not set, cannot verify user")
+else:
+    passwd_entry = subprocess.run(
+        ["getent", "passwd", container_user_uid], capture_output=True, text=True
+    ).stdout.strip()
+    if not passwd_entry:
+        fail("user-settings", f"no passwd entry resolves for uid {container_user_uid}")
+    else:
+        user_name = passwd_entry.split(":")[0]
+        groups_out = subprocess.run(
+            ["id", "-nG", user_name], capture_output=True, text=True
+        ).stdout.strip()
+        user_groups = set(groups_out.split())
+        fallback_group = None
+        for candidate in ("sudo", "wheel", "root"):
+            group_check = subprocess.run(
+                ["getent", "group", candidate], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            ).returncode
+            if group_check == 0:
+                fallback_group = candidate
+                break
+        if fallback_group and fallback_group not in user_groups:
+            fail("user-settings", f"{user_name} is not in expected group '{fallback_group}'")
+        else:
+            report("user-settings", "ok", f"{user_name} resolves correctly (uid {container_user_uid})")
+
+# 14. Locked status (informational only, never affects exit code)
+if Path(f"{MARKERS_DIR}/container.lock").is_file():
+    report("lock", "warn", "container is locked")
+else:
+    report("lock", "ok", "container is not locked")
+
+# 15. Integration sockets (only on init-enabled containers)
+if initsystem_marker.is_file():
+    uid = os.environ.get("OTTER_HOST_UID")
+    if not uid:
+        report("integration-sockets", "warn", "OTTER_HOST_UID not set, cannot verify sockets")
+    else:
+        host_dir = f"/run/host/run/user/{uid}"
+        container_dir = f"/run/user/{uid}"
+        stale = []
+        simple_categories = ["wayland-*", "pipewire-*"]
+        for pattern in simple_categories:
+            for host_match in glob.glob(f"{host_dir}/{pattern}"):
+                name = os.path.basename(host_match)
+                container_path = f"{container_dir}/{name}"
+                if not os.path.exists(container_path):
+                    stale.append(name)
+        if os.path.exists(f"{host_dir}/bus") and not os.path.exists(f"{container_dir}/bus"):
+            stale.append("bus")
+        dir_categories = ["app", "at-spi", "dbus-1", "dconf", "gnupg", "keyring", "p11-kit", "pulse"]
+        for name in dir_categories:
+            host_sub = f"{host_dir}/{name}"
+            if os.path.isdir(host_sub) and os.listdir(host_sub):
+                container_sub = f"{container_dir}/{name}"
+                if not os.path.isdir(container_sub) or not os.listdir(container_sub):
+                    stale.append(name)
+        if stale:
+            fail("integration-sockets", f"stale/missing: {', '.join(stale)}")
+        else:
+            report("integration-sockets", "ok", "all detected host integration sockets are mirrored")
+else:
+    report("integration-sockets", "warn", "non-init container, nothing to check")
+
+# Print results
+status_colors = {"ok": "{0}OK{R}", "warn": "{5}WARN{R}", "fail": "{4}FAIL{R}"}
+for label, status, message in results:
+    tag = render_help(status_colors[status])
+    print(f"[{tag}] {label}: {message}")
+
+sys.exit(exit_code)
