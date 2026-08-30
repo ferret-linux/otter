@@ -15,9 +15,21 @@ setup_guix()
 	# pulled -- `guix pull` (which upgrades Guix itself, its package
 	# definitions and the daemon) is left to the user to run explicitly,
 	# same as the Nix image leaves `nix flake update` to the user.
+	# --profile is pinned explicitly to the target user's own profile,
+	# matching Guix's own per-user convention (its installer's
+	# /etc/profile.d/guix.sh sources $HOME/.guix-profile at each user's own
+	# login) -- this call runs as root, with root's own $HOME now correctly
+	# pointing at /root, so leaving --profile unset here would silently
+	# install into /root/.guix-profile instead, invisible to the target
+	# user (and unreachable regardless, since /root is chmod 700 on every
+	# otter image). Ownership is fixed up afterward since guix, run as
+	# root, otherwise leaves these paths root-owned inside a directory tree
+	# the target user otherwise owns.
 	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	if [ "${upgrade}" -ne 0 ]; then
-		guix upgrade
+		guix upgrade --profile="${container_user_home}/.guix-profile"
+		chown -R "${container_user_uid}:${container_user_gid}" "${container_user_home}/.guix-profile" \
+			"${container_user_home}/.cache/guix" 2> /dev/null || :
 		exit
 	fi
 
@@ -37,9 +49,11 @@ setup_guix()
 	# errexit` -- warn and continue instead.
 	if [ -n "${container_additional_packages}" ]; then
 		for pkg in ${container_additional_packages}; do
-			if ! guix install "${pkg}"; then
+			if ! guix install --profile="${container_user_home}/.guix-profile" "${pkg}"; then
 				printf "Warning: failed to install additional package '%s'.\n" "${pkg}"
 			fi
 		done
+		chown -R "${container_user_uid}:${container_user_gid}" "${container_user_home}/.guix-profile" \
+			"${container_user_home}/.cache/guix" 2> /dev/null || :
 	fi
 }

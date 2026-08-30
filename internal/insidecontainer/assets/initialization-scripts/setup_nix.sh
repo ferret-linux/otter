@@ -13,7 +13,17 @@ setup_nix()
 	# If we need to upgrade, do it and exit, no further action required.
 	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	if [ "${upgrade}" -ne 0 ]; then
-		nix profile upgrade '.*'
+		# --profile pins this to the same shared profile every other nix
+		# profile call in this file targets explicitly. Without it, this
+		# resolves the default $HOME/.nix-profile instead -- which, being
+		# root-invoked, gets auto-created pointing at this same profile on a
+		# container that's never had it touched directly, but which instead
+		# resolves to the target user's own personal profile (if the target
+		# user has ever run a bare `nix profile install` themselves) and
+		# upgrades that one instead, as root.
+		nix profile upgrade \
+			--profile /nix/var/nix/profiles/default \
+			'.*'
 		exit
 	fi
 	if [ ! -f /usr/lib/otter/container.official ]; then

@@ -167,6 +167,21 @@ if [ "${verbose}" -ne 0 ]; then
 	set -o xtrace
 fi
 
+# otter's container creation sets --env HOME=<target user's home> container-
+# wide (inherited from distrobox, where root is namespace-mapped to the same
+# identity as the target user under keep-id, so there's no separate root
+# home to conflict with). otter additionally layers a real, separate root
+# identity on top via setup_user.sh, so otter-init -- which always runs as
+# uid 0 here, regardless of rootful/rootless, since container creation
+# explicitly passes --user root:root -- inherits the wrong $HOME for its
+# entire root-context setup phase, right up until setup_user.sh runs.
+# Re-derive root's real home via getent rather than trusting ambient $HOME,
+# so every setup_*.sh sourced below (and otter-init itself) sees a correct
+# $HOME while still running as root.
+root_home="$(getent passwd root | cut -f 6 -d :)"
+HOME="${root_home:-/root}"
+export HOME
+
 # rootful is set explicitly via --rootful flag passed by otter-create at container creation time.
 
 # Get host $LANG
@@ -605,12 +620,9 @@ fi
 # first-match-wins behavior can resolve to the root-only path, which then
 # gets written verbatim into a non-root user's /etc/passwd shell field by
 # setup_user.sh, leaving that user with a login shell they can't execute.
-# root's real home is looked up via getent, not $HOME -- otter sets HOME
-# container-wide to the target (non-root) user's home for otter-init's
-# entire run, even though this point in the script still runs as uid 0, so
-# $HOME can't be used to identify root's own per-user profile dirs here.
-root_home="$(getent passwd root | cut -f 6 -d :)"
-portable_path="$(printf '%s' "${PATH}" | tr ':' '\n' | grep -v "^${root_home}/" | tr '\n' ':')"
+# $HOME is corrected to root's real home near the top of this script, so it
+# can be used directly here instead of a separate getent lookup.
+portable_path="$(printf '%s' "${PATH}" | tr ':' '\n' | grep -v "^${HOME}/" | tr '\n' ':')"
 SHELL="$(PATH="${portable_path}" command -v "${shell_pkg}")"
 
 # Fix broken prompt for zsh shell (debian, ubuntu... need it)
