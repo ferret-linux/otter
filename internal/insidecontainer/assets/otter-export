@@ -61,7 +61,7 @@ host_home = os.environ.get("OTTER_HOST_HOME") or os.environ.get("HOME", "")
 dest_path = os.environ.get("OTTER_EXPORT_PATH") or f"{host_home}/.local/bin"
 rootful = ""
 sudo_prefix = ""
-VERSION = "0.0.7"
+VERSION = "0.0.8"
 
 def render_help(text):
     color_green  = "\033[32m"  # {0} green  — command names
