@@ -284,15 +284,15 @@ EOF
 	fi
 
 	# Start user Systemd unit, this will attempt until Systemd is ready
-	# shellcheck disable=SC2154 # container_user_name assigned by otter-init before sourcing this file
+	# shellcheck disable=SC2154 # container_user_uid assigned by otter-init before sourcing this file
 	sh -c "timeout=120 && sleep 1 && while [ \"\${timeout}\" -gt 0 ]; do \
 	    systemctl is-system-running | grep -E 'running|degraded' && break; \
 		echo 'waiting for systemd to come up...\n' && sleep 1 && timeout=\$(( timeout -1 )); \
 	done && \
-	systemctl start user@${container_user_name}.service && \
-	systemctl start user-integration@${container_user_name}.service && \
-	systemctl start user-integration@${container_user_name}.timer && \
-	loginctl enable-linger ${container_user_name} || : && \
+	systemctl start user@${container_user_uid}.service && \
+	systemctl start user-integration@${container_user_uid}.service && \
+	systemctl start user-integration@${container_user_uid}.timer && \
+	loginctl enable-linger ${container_user_uid} || : && \
 	touch /usr/lib/otter/container.ready && \
 	touch /usr/lib/otter/container.bootstrapped && \
 	echo container_setup_done" &
