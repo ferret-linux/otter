@@ -175,7 +175,7 @@ setsid su - "${container_user_name}" -c '
         /usr/local/bin/user-integration
         sleep 60
     done
-' &
+'
 EOF
 
 	chmod +x /usr/local/bin/user-integration-resync
