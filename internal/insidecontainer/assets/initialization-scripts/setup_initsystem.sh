@@ -252,22 +252,16 @@ EOF
 	[ -e /lib/systemd/systemd ] && exec /lib/systemd/systemd --system --log-target=console --unit=multi-user.target
 }
 
-# setup_init_sysvinit disables host-conflicting getty respawns, wires up the
-# host user-session integration via an LSB init script (sysvinit has no
-# user@.service equivalent to hook into), waits for a valid runlevel, then
-# launches sysvinit. Detected via the "telinit" binary's existence — hardlinked
-# to the real sysvinit "init" binary itself (same file, not a companion utility)
-# — checked the same way as the systemd binary itself (both /usr/sbin and /sbin,
-# for merged- and non-merged-/usr layouts), rather than by distro, since
-# /sbin/init and /etc/inittab alone can't reliably distinguish sysvinit from
-# other inits (e.g. busybox-init/OpenRC also ship an /sbin/init and
-# inittab-style file, and neither ships telinit). Readiness is polled
-# separately via the "runlevel" command (also shipped by sysvinit-utils).
+# setup_init_sysvinit disables host-conflicting getty respawns, then
+# dispatches to the real sysvinit layout in use: LSB-style (Devuan) or
+# BSD-style (Slackware — detected via /etc/rc.d/rc.M's real presence, not
+# by distro). Both run the same upstream sysvinit package, so readiness
+# ("runlevel" command) is identical for either; only the service-script
+# layout differs.
 # Arguments:
 #   None
 # Expected global variables:
-#   container_user_name: the container's primary user, for the user-integration
-#     LSB script
+#   None
 # Expected env variables:
 #   None
 # Outputs:
@@ -282,6 +276,49 @@ setup_init_sysvinit()
 		sed -i 's/^\([^:]*:[^:]*:respawn:.*getty.*\)/#\1/' /etc/inittab
 	fi
 
+	if [ -e /etc/rc.d/rc.M ]; then
+		setup_init_sysvinit_bsd
+	else
+		setup_init_sysvinit_lsb
+	fi
+}
+
+# wait_for_sysvinit_runlevel blocks until sysvinit reports a real runlevel,
+# then marks the container ready. Shared by both sysvinit layouts.
+# Arguments:
+#   None
+# Expected global variables:
+#   None
+# Expected env variables:
+#   None
+# Outputs:
+#   None
+wait_for_sysvinit_runlevel()
+{
+	# "runlevel" prints "<previous> <current>", e.g. "N 2"; it prints
+	# "unknown" for both fields before the switch happens.
+	sh -c "timeout=120 && sleep 1 && while [ \"\${timeout}\" -gt 0 ]; do \
+	    current_runlevel=\$(runlevel | awk '{print \$2}'); \
+	    [ \"\${current_runlevel}\" != \"unknown\" ] && [ -n \"\${current_runlevel}\" ] && break; \
+		echo 'waiting for sysvinit to come up...\n' && sleep 1 && timeout=\$(( timeout -1 )); \
+	done && \
+	touch /usr/lib/otter/container.ready && \
+	touch /usr/lib/otter/container.bootstrapped && \
+	echo container_setup_done" &
+}
+
+# setup_init_sysvinit_lsb handles the LSB-style layout (Devuan).
+# Arguments:
+#   None
+# Expected global variables:
+#   container_user_name: the container's primary user, for the user-integration
+#     LSB script
+# Expected env variables:
+#   None
+# Outputs:
+#   None
+setup_init_sysvinit_lsb()
+{
 	write_user_integration_script
 
 	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
@@ -317,17 +354,61 @@ EOF
 		update-rc.d otter-user-integration defaults > /dev/null 2>&1 || :
 	fi
 
-	# Wait for sysvinit to report a real runlevel before marking the
-	# container ready. "runlevel" prints "<previous> <current>", e.g.
-	# "N 2"; it prints "unknown" for both fields before the switch happens.
-	sh -c "timeout=120 && sleep 1 && while [ \"\${timeout}\" -gt 0 ]; do \
-	    current_runlevel=\$(runlevel | awk '{print \$2}'); \
-	    [ \"\${current_runlevel}\" != \"unknown\" ] && [ -n \"\${current_runlevel}\" ] && break; \
-		echo 'waiting for sysvinit to come up...\n' && sleep 1 && timeout=\$(( timeout -1 )); \
-	done && \
-	touch /usr/lib/otter/container.ready && \
-	touch /usr/lib/otter/container.bootstrapped && \
-	echo container_setup_done" &
+	printf "sysvinit-lsb" > /usr/lib/otter/container.initsystem
+
+	wait_for_sysvinit_runlevel
+
+	exec /sbin/init
+}
+
+# setup_init_sysvinit_bsd handles the BSD-style layout (Slackware). Unlike
+# LSB, scripts under /etc/init.d don't autostart here — the documented
+# mechanism is a native /etc/rc.d/rc.<name> script invoked from rc.local.
+# Arguments:
+#   None
+# Expected global variables:
+#   container_user_name: the container's primary user, for the user-integration
+#     rc script
+# Expected env variables:
+#   None
+# Outputs:
+#   None
+setup_init_sysvinit_bsd()
+{
+	write_user_integration_script
+
+	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
+	cat << EOF > /etc/rc.d/rc.otter-user-integration
+#!/bin/sh
+
+case "\$1" in
+	start)
+		su - "${container_user_name}" -c /usr/local/bin/user-integration
+		;;
+	stop | restart | status)
+		;;
+	*)
+		echo "Usage: \$0 start" >&2
+		exit 1
+		;;
+esac
+
+exit 0
+EOF
+
+	chmod +x /etc/rc.d/rc.otter-user-integration
+
+	# Append once, guarded by a marker, so a container restart doesn't
+	# duplicate the line or clobber any existing rc.local content.
+	[ -e /etc/rc.d/rc.local ] || touch /etc/rc.d/rc.local
+	if ! grep -qF "# otter-user-integration" /etc/rc.d/rc.local 2> /dev/null; then
+		printf '\n# otter-user-integration\n[ -x /etc/rc.d/rc.otter-user-integration ] && /etc/rc.d/rc.otter-user-integration start\n' >> /etc/rc.d/rc.local
+	fi
+	chmod +x /etc/rc.d/rc.local
+
+	printf "sysvinit-bsd" > /usr/lib/otter/container.initsystem
+
+	wait_for_sysvinit_runlevel
 
 	exec /sbin/init
 }
