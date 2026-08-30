@@ -32,7 +32,7 @@ HOST_SPAWN_VERSION = "v1.6.2"
 SCRIPTS_DIR = "/usr/lib/otter/scripts"
 MARKERS_DIR = "/usr/lib/otter"
 OTTER_WRAPPER_PATH = "/usr/bin/otter"
-CORE_SCRIPTS = ["otter-export", "otter-host-exec", "otter-init", "otter-subreaper"]
+CORE_SCRIPTS = ["otter-export", "otter-host-exec", "otter-init", "otter-redirect", "otter-service", "otter-subreaper"]
 
 
 def render_help(text):

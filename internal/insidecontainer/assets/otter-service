@@ -1,0 +1,186 @@
+#!/usr/bin/env python3
+# shellcheck disable=all
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the otter project:
+#    https://github.com/ferret-project/otter
+# Copyright (C) 2026 otter contributors
+#
+# otter is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License version 3
+# as published by the Free Software Foundation.
+#
+# otter is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with otter; if not, see <http://www.gnu.org/licenses/>.
+
+import os
+import sys
+from pathlib import Path
+
+VERSION = "0.0.8"
+MARKERS_DIR = "/usr/lib/otter"
+ACTIONS = ("start", "stop", "restart", "status", "enable", "disable")
+
+
+def render_help(text):
+    color_green = "\033[32m"
+    color_teal = "\033[96m"
+    color_cyan = "\033[36m"
+    color_yellow = "\033[33m"
+    color_blue = "\033[34m"
+    color_dim = "\033[37m"
+    slots = [color_green, color_teal, color_cyan, color_yellow, color_blue, color_dim]
+    if os.environ.get("NO_COLOR") is not None or os.environ.get("TERM") == "dumb":
+        for i in range(len(slots)):
+            text = text.replace(f"{{{i}}}", "")
+        return text.replace("{R}", "")
+    for i, code in enumerate(slots):
+        text = text.replace(f"{{{i}}}", code)
+    return text.replace("{R}", "\033[0m")
+
+
+HELP_TEXT = """\
+{2}╭─────────────────────────────────────────────────────────────────╮{R}
+{2}│{R}{3}▸ Usage:{R}                                                         {2}│{R}
+{2}│{R}  {5}otter-service <action> <name>{R}                                  {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Actions:{R}                                                       {2}│{R}
+{2}│{R} {4}start{R}    {5}Start the service now{R}                                {2}│{R}
+{2}│{R} {4}stop{R}     {5}Stop a running service{R}                              {2}│{R}
+{2}│{R} {4}restart{R}  {5}Stop then start the service{R}                        {2}│{R}
+{2}│{R} {4}status{R}   {5}Show the service's current status{R}                  {2}│{R}
+{2}│{R} {4}enable{R}   {5}Auto-start the service on boot/init{R}                {2}│{R}
+{2}│{R} {4}disable{R}  {5}Stop auto-starting the service on boot/init{R}       {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                                      {2}│{R}
+{2}│{R}  {5}otter-service start sshd{R}                                       {2}│{R}
+{2}│{R}  {5}otter-service enable sshd{R}                                      {2}│{R}
+{2}│{R}  {5}otter-service status sshd{R}                                      {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                                        {2}│{R}
+{2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}                          {2}│{R}
+{2}│{R} {4}--version{R} {2}┆{R} {4}-V{R}  {5}Show version information{R}                        {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Notes:{R}                                                         {2}│{R}
+{2}│{R} {5}service is a convenience tool, not a full init-system{R}           {2}│{R}
+{2}│{R} {5}implementation -- it dispatches to the real, native tool{R}        {2}│{R}
+{2}│{R} {5}for whichever init system the container actually uses.{R}          {2}│{R}
+{2}╰─────────────────────────────────────────────────────────────────╯{R}"""
+
+
+def _error(message):
+    print(f"ERROR: {message}\n", file=sys.stderr)
+    print(render_help(HELP_TEXT))
+    sys.exit(1)
+
+
+def _exec(argv):
+    try:
+        os.execvp(argv[0], argv)
+    except FileNotFoundError as exc:
+        print(f"otter-service: {exc.filename}: No such file or directory", file=sys.stderr)
+        sys.exit(127)
+
+
+def _fs_op(action, ok_message, fail_message, func):
+    try:
+        func()
+    except OSError as exc:
+        print(f"otter-service: {fail_message}: {exc}", file=sys.stderr)
+        sys.exit(1)
+    print(ok_message)
+    sys.exit(0)
+
+
+def dispatch(initsystem, action, name):
+    if initsystem == "systemd":
+        _exec(["systemctl", action, name])
+    elif initsystem == "openrc":
+        if action in ("enable", "disable"):
+            tool = "add" if action == "enable" else "del"
+            _exec(["rc-update", tool, name])
+        else:
+            _exec(["rc-service", name, action])
+    elif initsystem == "sysvinit-lsb":
+        if action in ("enable", "disable"):
+            _exec(["update-rc.d", name, action])
+        else:
+            _exec([f"/etc/init.d/{name}", action])
+    elif initsystem == "sysvinit-bsd":
+        rc_script = f"/etc/rc.d/rc.{name}"
+        if action == "enable":
+            _fs_op(
+                action,
+                f"'{name}' enabled.\nOK!",
+                f"cannot enable '{name}'",
+                lambda: os.chmod(rc_script, 0o755),
+            )
+        elif action == "disable":
+            _fs_op(
+                action,
+                f"'{name}' disabled.\nOK!",
+                f"cannot disable '{name}'",
+                lambda: os.chmod(rc_script, 0o644),
+            )
+        else:
+            _exec([rc_script, action])
+    elif initsystem == "runit":
+        service_link = f"/var/service/{name}"
+        if action == "enable":
+            _fs_op(
+                action,
+                f"'{name}' enabled.\nOK!",
+                f"cannot enable '{name}'",
+                lambda: os.symlink(f"/etc/sv/{name}", service_link),
+            )
+        elif action == "disable":
+            _fs_op(
+                action,
+                f"'{name}' disabled.\nOK!",
+                f"cannot disable '{name}'",
+                lambda: os.remove(service_link),
+            )
+        else:
+            _exec(["sv", action, service_link])
+    elif initsystem == "dinit":
+        _exec(["dinitctl", action, name])
+
+
+if len(sys.argv) < 2 or sys.argv[1] in ("--help", "-h"):
+    print(render_help(HELP_TEXT))
+    sys.exit(0)
+
+if sys.argv[1] in ("--version", "-V"):
+    print(f"otter: {VERSION}")
+    sys.exit(0)
+
+if len(sys.argv) != 3:
+    _error("usage: otter service <action> <name>")
+
+action, name = sys.argv[1], sys.argv[2]
+
+if action not in ACTIONS:
+    _error(f"unknown action '{action}'. Must be one of: {', '.join(ACTIONS)}")
+
+initsystem_marker = Path(f"{MARKERS_DIR}/container.initsystem")
+if not initsystem_marker.is_file():
+    print(
+        "bro your container is maidenless ( initless ) like you , this command aint gonna work on it"
+    )
+    sys.exit(0)
+
+initsystem = initsystem_marker.read_text().strip()
+
+if initsystem == "generic":
+    print(
+        "bro , I aint doing a generic implementation , use any of the above/supported init systems for gods sake",
+        file=sys.stderr,
+    )
+    sys.exit(1)
+
+dispatch(initsystem, action, name)
