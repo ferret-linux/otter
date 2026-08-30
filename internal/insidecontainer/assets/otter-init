@@ -743,7 +743,7 @@ fi
 cp /usr/lib/otter/scripts/initialization-scripts/configs/otter_profile.sh /etc/profile.d/otter_profile.sh
 
 # It's also importanto to keep this working on fish shells
-if [ -e "/etc/fish/config.fish" ]; then
+if command -v fish > /dev/null || [ -e "/etc/fish/config.fish" ]; then
 	mkdir -p /etc/fish/conf.d
 	cp /usr/lib/otter/scripts/initialization-scripts/configs/otter_config.fish /etc/fish/conf.d/otter_config.fish
 	mkdir -p /etc/fish/functions
