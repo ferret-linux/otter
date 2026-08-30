@@ -218,7 +218,18 @@ else:
                 ["systemctl", "is-system-running"], capture_output=True, text=True
             ).stdout.strip()
             status_detail = out
-            status_ok = out in ("running", "starting")
+            if out in ("running", "starting"):
+                status_ok = True
+            elif out == "degraded":
+                # otter's own setup_initsystem.sh treats "degraded" as an
+                # acceptable ready-state for a freshly booted container
+                # (its readiness wait accepts "running|degraded"), since
+                # some unit commonly fails to start under container
+                # restrictions even after host-conflicting units are
+                # masked. Surface it, but don't fail the check over it.
+                status_ok = None
+            else:
+                status_ok = False
         elif initsystem == "openrc":
             rc = subprocess.run(
                 ["rc-status"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
