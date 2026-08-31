@@ -160,3 +160,8 @@ RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
 # Ensure a python3 binary is resolvable
 COPY images/scripts/python-fix.sh /tmp/python-fix.sh
 RUN sh /tmp/python-fix.sh
+
+# Static-binary backstop for fish/nushell where the distro's own package
+# manager doesn't carry them (checked via command -v inside the script).
+COPY images/scripts/install-shell.sh /tmp/install-shell.sh
+RUN sh /tmp/install-shell.sh fish nu

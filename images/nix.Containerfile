@@ -478,3 +478,8 @@ RUN sh /tmp/install-gum.sh
 # Install host-spawn (static binary, amd64/arm64) for host D-Bus/session integration.
 COPY images/scripts/install-host-spawn.sh /tmp/install-host-spawn.sh
 RUN sh /tmp/install-host-spawn.sh
+
+# Static-binary backstop for fish/nushell where the distro's own package
+# manager doesn't carry them (checked via command -v inside the script).
+COPY images/scripts/install-shell.sh /tmp/install-shell.sh
+RUN sh /tmp/install-shell.sh fish nu

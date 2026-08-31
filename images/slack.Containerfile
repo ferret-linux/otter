@@ -393,24 +393,10 @@ RUN missing=0; \
     done; \
     [ "$missing" -eq 0 ] || echo "WARNING: missing shared library dependencies detected above"
 
-# Fish is not in official slackware repos at the moment
-RUN if [ -x /usr/bin/fish ]; then \
-      echo "fish: already installed ($(/usr/bin/fish --version))"; \
-    else \
-      echo "fish: not installed, fetching latest AMD64 release"; \
-      set -eux; \
-      tmp="$(mktemp -d)"; \
-      url="$(curl -fsSL https://api.github.com/repos/fish-shell/fish-shell/releases/latest \
-        | grep -o '"browser_download_url": "[^"]*linux-x86_64\.tar\.xz"' \
-        | head -1 \
-        | cut -d'"' -f4)"; \
-      [ -n "$url" ]; \
-      curl -fL -o "$tmp/fish.tar.xz" "$url"; \
-      tar -xJf "$tmp/fish.tar.xz" -C "$tmp"; \
-      install -m 0755 "$tmp/fish" /usr/bin/fish; \
-      echo "fish: installed $(/usr/bin/fish --version)"; \
-      rm -rf "$tmp"; \
-    fi
+# Fish and nushell are not in official slackware repos at the moment --
+# fall back to static musl binaries, amd64/arm64 (mirrors install-gum.sh).
+COPY images/scripts/install-shell.sh /tmp/install-shell.sh
+RUN sh /tmp/install-shell.sh fish nu
 
 # Install gum (static binary, amd64/arm64) into otter's helpers dir.
 # Requires curl, so this must come after curl is installed above.
