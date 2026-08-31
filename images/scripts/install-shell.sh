@@ -46,8 +46,8 @@ install_fish()
 	bin="$(find "${tmp}" -type f -name fish | head -n1)"
 	[ -n "${bin}" ]
 
-	install -m 0755 "${bin}" /usr/bin/fish
-	echo "fish: installed $(/usr/bin/fish --version)"
+	install -m 0755 "${bin}" /usr/local/bin/fish
+	echo "fish: installed $(/usr/local/bin/fish --version)"
 
 	rm -rf "${tmp}"
 	trap - EXIT
