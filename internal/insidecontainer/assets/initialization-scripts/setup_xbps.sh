@@ -44,11 +44,17 @@ setup_xbps()
 		# Ensure we avoid errors by keeping xbps updated
 		xbps-install -Syu xbps
 
-		# Check if shell_pkg is available in distro's repo. If not we
+		# Check if shell_bin is available in distro's repo. If not we
 		# fall back to bash, and we set the SHELL variable to bash so
-		# that it is set up correctly for the user.
+		# that it is set up correctly for the user. xbps names fish and
+		# nushell differently from their binary names.
+		case "${shell_bin}" in
+			fish) shell_pkg="fish-shell" ;;
+			nu) shell_pkg="nushell" ;;
+			*) shell_pkg="${shell_bin}" ;;
+		esac
 		if ! xbps-install -Sy "${shell_pkg}"; then
-			shell_pkg="bash"
+			shell_bin="bash"
 		fi
 		xbps-install -Sy void-repo-nonfree
 		deps="
@@ -103,7 +109,6 @@ setup_xbps()
 			procps-ng
 			xdg-utils
 			alsa-utils
-			fish-shell
 			traceroute
 			util-linux
 			wireplumber

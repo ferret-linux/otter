@@ -24,7 +24,7 @@ hooks.post-init = []  # commands to run after container initialization
 
 settings.lock        = false  # true | false — prevent upgrades and removal
 settings.entry       = false  # true | false — generate a desktop entry on creation
-settings.shell       = ""     # bash | zsh | fish
+settings.shell       = ""     # bash | zsh | fish | nu
 settings.rootful     = false  # true | false — run container as root
 settings.init-system = false  # true | false — enable systemd/init inside container
 settings.hostname    = ""     # hostname inside the container

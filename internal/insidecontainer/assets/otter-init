@@ -366,11 +366,11 @@ fi
 printf "otter: Installing basic packages...\n"
 # Extract shell name from the $SHELL environment variable
 # If not present as package in the container, we want to install it.
-shell_pkg="$(basename "${SHELL:-"bash"}")"
+shell_bin="$(basename "${SHELL:-"bash"}")"
 # Ash shell is an exception, it is not a standalone package, but part of busybox.
 # for this reason, use this quirk to adjust the package name to standard bash.
-if [ "${shell_pkg}" = "ash" ]; then
-	shell_pkg="bash"
+if [ "${shell_bin}" = "ash" ]; then
+	shell_bin="bash"
 fi
 
 # get_distro_id will read the ID field from /etc/os-release, falling back to
@@ -467,7 +467,7 @@ setup_tmpfiles_exceptions()
 # Arguments:
 #   None
 # Expected global variables:
-#   shell_pkg: shell package of the container shell
+#   shell_bin: shell binary name of the container shell
 # Expected env variables:
 #   None
 # Outputs:
@@ -506,7 +506,7 @@ check_missing_packages()
 		wget
 		xauth
 		zip
-		${shell_pkg}
+		${shell_bin}
 	"
 	for dep in ${dependencies}; do
 		! command -v "${dep}" && return 1
@@ -623,10 +623,10 @@ fi
 # $HOME is corrected to root's real home near the top of this script, so it
 # can be used directly here instead of a separate getent lookup.
 portable_path="$(printf '%s' "${PATH}" | tr ':' '\n' | grep -v "^${HOME}/" | tr '\n' ':')"
-SHELL="$(PATH="${portable_path}" command -v "${shell_pkg}")"
+SHELL="$(PATH="${portable_path}" command -v "${shell_bin}")"
 
 # Fix broken prompt for zsh shell (debian, ubuntu... need it)
-if [ "${shell_pkg}" = "zsh" ]; then
+if [ "${shell_bin}" = "zsh" ]; then
 	mkdir -p /etc/zsh
 	printf 'emulate sh -c '\''source /etc/profile'\''\n' > /etc/zsh/zprofile
 	printf 'emulate sh -c '\''source /etc/profile'\''\n' > /etc/zshenv
@@ -766,6 +766,13 @@ if command -v fish > /dev/null; then
 	cp /usr/lib/otter/scripts/initialization-scripts/configs/otter_config.fish /usr/local/share/fish/vendor_conf.d/otter_config.fish
 	mkdir -p /usr/local/share/fish/vendor_functions.d
 	cp /usr/lib/otter/scripts/initialization-scripts/configs/fish_prompt.fish /usr/local/share/fish/vendor_functions.d/fish_prompt.fish
+fi
+
+# nushell uses the same XDG_DATA_DIRS-driven vendor-autoload mechanism as
+# fish (see above), just under its own nushell/vendor/autoload/*.nu lookup.
+if command -v nu > /dev/null; then
+	mkdir -p /usr/local/share/nushell/vendor/autoload
+	cp /usr/lib/otter/scripts/initialization-scripts/configs/otter_config.nu /usr/local/share/nushell/vendor/autoload/otter_config.nu
 fi
 ###############################################################################
 

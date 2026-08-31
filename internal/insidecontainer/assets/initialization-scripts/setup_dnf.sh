@@ -25,11 +25,16 @@ setup_dnf()
 		[ -e /etc/dnf/dnf.conf ] && sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf
 		[ -e /etc/yum.conf ] && sed -i '/tsflags=nodocs/d' /etc/yum.conf
 
-		# Check if shell_pkg is available in distro's repo. If not we
+		# Check if shell_bin is available in distro's repo. If not we
 		# fall back to bash, and we set the SHELL variable to bash so
-		# that it is set up correctly for the user.
-		if ! ${manager} install -y "${shell_pkg}" 2> /dev/null; then
-			shell_pkg="bash"
+		# that it is set up correctly for the user. nu only ships an
+		# official dnf package on Fedora itself (as "nu") -- everywhere
+		# else on dnf (RHEL-family, Amazon) it isn't packaged at all, so
+		# skip the doomed install attempt there.
+		if [ "${shell_bin}" = "nu" ] && [ "$(get_distro_id)" != "fedora" ]; then
+			shell_bin="bash"
+		elif ! ${manager} install -y "${shell_bin}" 2> /dev/null; then
+			shell_bin="bash"
 		fi
 		flags=""
 		if [ "${manager}" = "dnf" ]; then

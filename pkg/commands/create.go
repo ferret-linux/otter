@@ -272,10 +272,10 @@ func validateShell(shell string) error {
 		return nil
 	}
 	switch shell {
-	case "bash", "zsh", "fish": //nolint:goconst // shell name literals are self-documenting
+	case "bash", "zsh", "fish", "nu": //nolint:goconst // shell name literals are self-documenting
 		return nil
 	default:
-		return fmt.Errorf("invalid shell %q, must be one of: bash, zsh, fish", shell)
+		return fmt.Errorf("invalid shell %q, must be one of: bash, zsh, fish, nu", shell)
 	}
 }
 
@@ -366,7 +366,7 @@ func (c *CreateCommand) makeContainerShell(opts *CreateOptions) string {
 		return c.cfg.DefaultShell
 	}
 	switch filepath.Base(os.Getenv("SHELL")) {
-	case "bash", "zsh", "fish":
+	case "bash", "zsh", "fish", "nu":
 		return filepath.Base(os.Getenv("SHELL"))
 	default:
 		return "bash"

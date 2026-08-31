@@ -19,12 +19,19 @@ setup_slackpkg()
 	if [ ! -f /usr/lib/otter/container.official ]; then
 		slackpkg update
 
-		# Check if shell_pkg is available in distro's repo. If not we
+		# Check if shell_bin is available in distro's repo. If not we
 		# fall back to bash, and we set the SHELL variable to bash so
-		# that it is set up correctly for the user.
-		if ! yes | slackpkg install -default_answer=yes -batch=yes "${shell_pkg}"; then
-			shell_pkg="bash"
-		fi
+		# that it is set up correctly for the user. Neither fish nor nu
+		# is in Slackware's official repos -- the build-time
+		# install-shell.sh static-binary backstop covers those instead.
+		case "${shell_bin}" in
+			fish | nu) shell_bin="bash" ;;
+			*)
+				if ! yes | slackpkg install -default_answer=yes -batch=yes "${shell_bin}"; then
+					shell_bin="bash"
+				fi
+				;;
+		esac
 		deps="
 			${shell_pkg}
 			bc

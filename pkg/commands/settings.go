@@ -141,8 +141,8 @@ func buildSettingsEntries() []settingsEntry {
 
 		{isSection: true, section: "settings"},
 		{
-			section: "settings", field: "shell", kind: settingsKindText, options: []string{"bash", "zsh", "fish"},
-			description: "Default shell inside new containers: bash, zsh, or fish.",
+			section: "settings", field: "shell", kind: settingsKindText, options: []string{"bash", "zsh", "fish", "nu"},
+			description: "Default shell inside new containers: bash, zsh, fish, or nu.",
 			getText:     func(c *config.FileConfig) string { return c.Settings.Shell },
 			setText:     func(c *config.FileConfig, v string) { c.Settings.Shell = v },
 		},

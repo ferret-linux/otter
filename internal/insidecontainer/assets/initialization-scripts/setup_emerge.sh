@@ -27,8 +27,15 @@ setup_emerge()
 		# fall back to bash, and we set the SHELL variable to bash so
 		# that it is set up correctly for the user.
 		getuto 2>/dev/null || :
+		# Portage packages live under app-shells/ -- this was previously
+		# missing here (though present in the deps list below), and nu's
+		# package is named nushell, not nu.
+		case "${shell_bin}" in
+			nu) shell_pkg="app-shells/nushell" ;;
+			*) shell_pkg="app-shells/${shell_bin}" ;;
+		esac
 		if ! emerge --ask=n --autounmask-continue --noreplace --quiet-build --getbinpkg "${shell_pkg}"; then
-			shell_pkg="bash"
+			shell_bin="bash"
 		fi
 		deps="
 			sys-devel/bc

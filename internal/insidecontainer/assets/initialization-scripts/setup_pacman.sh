@@ -78,11 +78,16 @@ setup_pacman()
 	    sed -i '0,/^\[options\]/s/^\[options\]/\[options\]\nColor\nILoveCandy/' /etc/pacman.conf
 
 		pacman -S -u --noconfirm
-		# Check if shell_pkg is available in distro's repo. If not we
+		# Check if shell_bin is available in distro's repo. If not we
 		# fall back to bash, and we set the SHELL variable to bash so
-		# that it is set up correctly for the user.
+		# that it is set up correctly for the user. nu's pacman package
+		# is named nushell, not nu.
+		case "${shell_bin}" in
+			nu) shell_pkg="nushell" ;;
+			*) shell_pkg="${shell_bin}" ;;
+		esac
 		if ! pacman -S --needed --noconfirm "${shell_pkg}"; then
-			shell_pkg="bash"
+			shell_bin="bash"
 		fi
 		distro_id="$(get_distro_id)"
 		case "${distro_id}" in

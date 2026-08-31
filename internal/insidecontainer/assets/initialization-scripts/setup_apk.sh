@@ -23,11 +23,16 @@ setup_apk()
 		# installing anything new — an outdated base can cause newly installed
 		# binaries to fail resolving newer symbols (e.g. renameat2).
 		apk upgrade -Ua
-		# Check if shell_pkg is available in distro's repo. If not we
+		# Check if shell_bin is available in distro's repo. If not we
 		# fall back to bash, and we set the SHELL variable to bash so
-		# that it is set up correctly for the user.
+		# that it is set up correctly for the user. nu's apk package is
+		# named nushell, not nu.
+		case "${shell_bin}" in
+			nu) shell_pkg="nushell" ;;
+			*) shell_pkg="${shell_bin}" ;;
+		esac
 		if ! apk add "${shell_pkg}"; then
-			shell_pkg="bash"
+			shell_bin="bash"
 		fi
 		distro_id="$(get_distro_id)"
 		case "${distro_id}" in

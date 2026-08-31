@@ -63,11 +63,14 @@ setup_apt()
 		rm -f /etc/dpkg/dpkg.cfg.d/excludes
 
 		apt-get update
-		# Check if shell_pkg is available in distro's repo. If not we
+		# Check if shell_bin is available in distro's repo. If not we
 		# fall back to bash, and we set the SHELL variable to bash so
-		# that it is set up correctly for the user.
-		if ! apt-get install -y "${shell_pkg}"; then
-			shell_pkg="bash"
+		# that it is set up correctly for the user. nu has no official
+		# apt package, so skip the doomed install attempt entirely.
+		if [ "${shell_bin}" = "nu" ]; then
+			shell_bin="bash"
+		elif ! apt-get install -y "${shell_bin}"; then
+			shell_bin="bash"
 		fi
 		distro_id="$(get_distro_id)"
 		case "${distro_id}" in

@@ -17,8 +17,13 @@ setup_zypper()
 		exit
 	fi
 	if [ ! -f /usr/lib/otter/container.official ]; then
-		if ! zypper install -y "${shell_pkg}"; then
-			shell_pkg="bash"
+		# nu isn't in openSUSE's default repos (it's only reachable via the
+		# shells OBS repo) -- adding third-party repos is out of scope here,
+		# so skip the doomed install attempt and fall back to bash directly.
+		if [ "${shell_bin}" = "nu" ]; then
+			shell_bin="bash"
+		elif ! zypper install -y "${shell_bin}"; then
+			shell_bin="bash"
 		fi
 
 		# In openSUSE official images, zypper is configured to ignore recommended
