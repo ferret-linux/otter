@@ -36,8 +36,10 @@ setup_emerge()
 		esac
 		if ! emerge --ask=n --autounmask-continue --noreplace --quiet-build --getbinpkg "${shell_pkg}"; then
 			shell_bin="bash"
+			shell_pkg="app-shells/bash"
 		fi
 		deps="
+			${shell_pkg}
 			sys-devel/bc
 			app-arch/pigz
 			app-text/tree
@@ -96,7 +98,6 @@ setup_emerge()
 			x11-misc/xdg-user-dirs
 			app-portage/gentoolkit
 			x11-libs/libXcomposite
-			app-shells/${shell_pkg}
 			media-video/wireplumber
 			media-libs/libjpeg-turbo
 			media-libs/vulkan-layers
