@@ -32,6 +32,7 @@ setup_slackpkg()
 				fi
 				;;
 		esac
+		shell_pkg="${shell_bin}"
 		deps="
 			${shell_pkg}
 			bc

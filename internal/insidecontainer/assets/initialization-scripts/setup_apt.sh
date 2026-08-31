@@ -72,6 +72,7 @@ setup_apt()
 		elif ! apt-get install -y "${shell_bin}"; then
 			shell_bin="bash"
 		fi
+		shell_pkg="${shell_bin}"
 		distro_id="$(get_distro_id)"
 		case "${distro_id}" in
 			ubuntu)

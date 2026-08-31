@@ -25,6 +25,7 @@ setup_zypper()
 		elif ! zypper install -y "${shell_bin}"; then
 			shell_bin="bash"
 		fi
+		shell_pkg="${shell_bin}"
 
 		# In openSUSE official images, zypper is configured to ignore recommended
 		# packages (i.e., weak dependencies). This however, results in a rather

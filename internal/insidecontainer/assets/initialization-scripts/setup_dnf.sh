@@ -36,6 +36,7 @@ setup_dnf()
 		elif ! ${manager} install -y "${shell_bin}" 2> /dev/null; then
 			shell_bin="bash"
 		fi
+		shell_pkg="${shell_bin}"
 		flags=""
 		if [ "${manager}" = "dnf" ]; then
 			flags="--allowerasing"
