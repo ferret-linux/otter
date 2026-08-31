@@ -753,12 +753,19 @@ if [ "${patched}" -eq 0 ] && [ ! -e /etc/profile ]; then
 fi
 cp /usr/lib/otter/scripts/initialization-scripts/configs/otter_profile.sh /etc/profile.d/otter_profile.sh
 
-# It's also importanto to keep this working on fish shells
-if command -v fish > /dev/null || [ -e "/etc/fish/config.fish" ]; then
-	mkdir -p /etc/fish/conf.d
-	cp /usr/lib/otter/scripts/initialization-scripts/configs/otter_config.fish /etc/fish/conf.d/otter_config.fish
-	mkdir -p /etc/fish/functions
-	cp /usr/lib/otter/scripts/initialization-scripts/configs/fish_prompt.fish /etc/fish/functions/fish_prompt.fish
+# Fish doesn't read /etc/fish reliably on every image -- some fish builds
+# (e.g. nixpkgs') bake $__fish_sysconfdir into the read-only package output
+# instead of /etc/fish, so /etc/fish/conf.d and /etc/fish/functions are never
+# sourced there. The vendor_conf.d/vendor_functions.d mechanism is a separate
+# lookup fish has supported since 2.3, driven by XDG_DATA_DIRS instead of
+# sysconfdir, so it isn't affected by that. otter already puts
+# /usr/local/share in XDG_DATA_DIRS on every session (see docker.go), so
+# nothing else needs to change for fish to pick these up.
+if command -v fish > /dev/null; then
+	mkdir -p /usr/local/share/fish/vendor_conf.d
+	cp /usr/lib/otter/scripts/initialization-scripts/configs/otter_config.fish /usr/local/share/fish/vendor_conf.d/otter_config.fish
+	mkdir -p /usr/local/share/fish/vendor_functions.d
+	cp /usr/lib/otter/scripts/initialization-scripts/configs/fish_prompt.fish /usr/local/share/fish/vendor_functions.d/fish_prompt.fish
 fi
 ###############################################################################
 
