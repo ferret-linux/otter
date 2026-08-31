@@ -726,19 +726,30 @@ printf "otter: Setting up container profile...\n"
 touch /run/.toolboxenv
 
 # Ensure we have some basic env variables and prompt as base if /etc/profile.d is missing
-if [ ! -d /etc/profile.d ]; then
-	rcfiles="
-		/etc/profile
-		/etc/bash.bashrc
-		/etc/bashrc
-		/etc/zshrc
-	"
-	for rcfile in ${rcfiles}; do
-		if [ -e "${rcfile}" ] && ! grep -q 'otter_profile.sh' "${rcfile}"; then
+mkdir -p /etc/profile.d
+rcfiles="
+	/etc/profile
+	/etc/bash.bashrc
+	/etc/bashrc
+	/etc/zshrc
+"
+patched=0
+for rcfile in ${rcfiles}; do
+	if [ -e "${rcfile}" ]; then
+		patched=1
+		if ! grep -q 'otter_profile.sh' "${rcfile}"; then
 			echo "[ -e /etc/profile.d/otter_profile.sh ] && . /etc/profile.d/otter_profile.sh" >> "${rcfile}"
 		fi
-	done
-	mkdir -p /etc/profile.d
+	fi
+done
+if [ "${patched}" -eq 0 ] && [ ! -e /etc/profile ]; then
+	# shellcheck disable=SC2016 # ${f} is meant to stay literal — it's written into the generated /etc/profile
+	printf '%s\n' \
+		'for f in /etc/profile.d/*.sh; do' \
+		'	[ -r "${f}" ] && . "${f}"' \
+		'done' \
+		'unset f' \
+		> /etc/profile
 fi
 cp /usr/lib/otter/scripts/initialization-scripts/configs/otter_profile.sh /etc/profile.d/otter_profile.sh
 
