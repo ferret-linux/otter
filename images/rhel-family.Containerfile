@@ -158,3 +158,8 @@ RUN rm -rf /etc/zlogout && touch /etc/zlogout
 # manager doesn't carry them (checked via command -v inside the script).
 COPY images/scripts/install-shell.sh /tmp/install-shell.sh
 RUN sh /tmp/install-shell.sh fish nu
+
+# Install starship (static musl binary, amd64/arm64) into
+# /usr/local/bin. Official images only.
+COPY images/scripts/install-starship.sh /tmp/install-starship.sh
+RUN sh /tmp/install-starship.sh

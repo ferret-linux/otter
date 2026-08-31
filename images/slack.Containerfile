@@ -414,3 +414,8 @@ RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
 # Ensure a python3 binary is resolvable
 COPY images/scripts/python-fix.sh /tmp/python-fix.sh
 RUN sh /tmp/python-fix.sh
+
+# Install starship (static musl binary, amd64/arm64) into
+# /usr/local/bin. Official images only.
+COPY images/scripts/install-starship.sh /tmp/install-starship.sh
+RUN sh /tmp/install-starship.sh
