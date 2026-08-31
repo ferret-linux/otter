@@ -11,11 +11,8 @@ ARG OTTER_BUILD_NUMBER
 LABEL otter.image_build=${OTTER_BUILD_NUMBER}
 
 # Pre-create otter dirs
-RUN mkdir -p \
-    /etc/profile.d \
-    /etc/sudoers.d \
-    /usr/lib/otter \
-    /usr/local/bin
+COPY images/scripts/setup-common.sh /tmp/setup-common.sh
+RUN sh /tmp/setup-common.sh
 
 # Add otter image identifiers
 RUN touch /usr/lib/otter/container.void
