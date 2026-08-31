@@ -50,22 +50,22 @@ def render_help(text):
 HELP_TEXT = """\
 {2}╭─────────────────────────────────────────────────────────────────╮{R}
 {2}│{R}{3}▸ Usage:{R}                                                         {2}│{R}
-{2}│{R}  {5}otter-redirect <add|remove|list> [options]{R}                     {2}│{R}
+{2}│{R}  {5}otter redirect <add|remove|list> [options]{R}                     {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                                      {2}│{R}
-{2}│{R}  {5}otter-redirect add --host-cmd flatpak{R}                          {2}│{R}
-{2}│{R}  {5}otter-redirect add --host-cmd "rpm-ostree upgrade" --as rpm-up{R}  {2}│{R}
-{2}│{R}  {5}otter-redirect remove rpm-up{R}                                   {2}│{R}
-{2}│{R}  {5}otter-redirect list{R}                                            {2}│{R}
+{2}│{R}  {5}otter redirect add --host-cmd flatpak{R}                          {2}│{R}
+{2}│{R}  {5}otter redirect add --host-cmd "rpm-ostree upgrade" --as rpm-up{R} {2}│{R}
+{2}│{R}  {5}otter redirect remove rpm-up{R}                                   {2}│{R}
+{2}│{R}  {5}otter redirect list{R}                                            {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Commands:{R}                                                      {2}│{R}
-{2}│{R} {4}add{R}     {5}Create a wrapper that redirects to a host command{R}      {2}│{R}
-{2}│{R} {4}remove{R}  {5}Remove a previously created redirect{R}                  {2}│{R}
-{2}│{R} {4}list{R}    {5}List redirects created in this container{R}              {2}│{R}
+{2}│{R} {4}add{R}     {5}Create a wrapper that redirects to a host command{R}       {2}│{R}
+{2}│{R} {4}remove{R}  {5}Remove a previously created redirect{R}                    {2}│{R}
+{2}│{R} {4}list{R}    {5}List redirects created in this container{R}                {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options (add):{R}                                                 {2}│{R}
-{2}│{R} {4}--host-cmd{R} {2}┆{R} {4}-c{R}  {5}Host command to redirect to (quote if multi-word){R}{2}│{R}
-{2}│{R} {4}--as{R}       {2}┆{R} {4}-n{R}  {5}Name to create in the container's PATH{R}    {2}│{R}
+{2}│{R} {4}--host-cmd{R} {2}┆{R} {4}-c{R}  {5}Host command to redirect (quote if multi-word){R} {2}│{R}
+{2}│{R} {4}--as{R}       {2}┆{R} {4}-n{R}  {5}Name to create in the container's PATH{R}         {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                                        {2}│{R}
 {2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}                          {2}│{R}

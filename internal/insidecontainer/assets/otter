@@ -52,7 +52,7 @@ HELP_TEXT = """\
 {2}│{R} {4}host-exec{R} {5}Run a command on the host{R}             {2}│{R}
 {2}│{R} {4}doctor{R}    {5}Diagnose the container's health{R}       {2}│{R}
 {2}│{R} {4}redirect{R}  {5}Redirect a command to run on the host{R} {2}│{R}
-{2}│{R} {4}service{R}   {5}Manage a service inside the container{R}  {2}│{R}
+{2}│{R} {4}service{R}   {5}Manage a service inside the container{R} {2}│{R}
 {2}├─────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                        {2}│{R}
 {2}│{R} {4}--help{R} {2}┆{R} {4}-h{R}  {5}Show this help message{R}             {2}│{R}

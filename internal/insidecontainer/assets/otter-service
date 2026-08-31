@@ -45,32 +45,32 @@ def render_help(text):
 
 
 HELP_TEXT = """\
-{2}╭─────────────────────────────────────────────────────────────────╮{R}
-{2}│{R}{3}▸ Usage:{R}                                                         {2}│{R}
-{2}│{R}  {5}otter-service <action> <name>{R}                                  {2}│{R}
-{2}├─────────────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Actions:{R}                                                       {2}│{R}
-{2}│{R} {4}start{R}    {5}Start the service now{R}                                {2}│{R}
-{2}│{R} {4}stop{R}     {5}Stop a running service{R}                              {2}│{R}
-{2}│{R} {4}restart{R}  {5}Stop then start the service{R}                        {2}│{R}
-{2}│{R} {4}status{R}   {5}Show the service's current status{R}                  {2}│{R}
-{2}│{R} {4}enable{R}   {5}Auto-start the service on boot/init{R}                {2}│{R}
-{2}│{R} {4}disable{R}  {5}Stop auto-starting the service on boot/init{R}       {2}│{R}
-{2}├─────────────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Examples:{R}                                                      {2}│{R}
-{2}│{R}  {5}otter-service start sshd{R}                                       {2}│{R}
-{2}│{R}  {5}otter-service enable sshd{R}                                      {2}│{R}
-{2}│{R}  {5}otter-service status sshd{R}                                      {2}│{R}
-{2}├─────────────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Extras:{R}                                                        {2}│{R}
-{2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}                          {2}│{R}
-{2}│{R} {4}--version{R} {2}┆{R} {4}-V{R}  {5}Show version information{R}                        {2}│{R}
-{2}├─────────────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Notes:{R}                                                         {2}│{R}
-{2}│{R} {5}service is a convenience tool, not a full init-system{R}           {2}│{R}
-{2}│{R} {5}implementation -- it dispatches to the real, native tool{R}        {2}│{R}
-{2}│{R} {5}for whichever init system the container actually uses.{R}          {2}│{R}
-{2}╰─────────────────────────────────────────────────────────────────╯{R}"""
+{2}╭──────────────────────────────────────────────────────────╮{R}
+{2}│{R}{3}▸ Usage:{R}                                                  {2}│{R}
+{2}│{R}  {5}otter service <action> <name>{R}                           {2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Actions:{R}                                                {2}│{R}
+{2}│{R} {4}start{R}    {5}Start the service now{R}                           {2}│{R}
+{2}│{R} {4}stop{R}     {5}Stop a running service{R}                          {2}│{R}
+{2}│{R} {4}restart{R}  {5}Stop then start the service{R}                     {2}│{R}
+{2}│{R} {4}status{R}   {5}Show the service's current status{R}               {2}│{R}
+{2}│{R} {4}enable{R}   {5}Auto-start the service on boot/init{R}             {2}│{R}
+{2}│{R} {4}disable{R}  {5}Stop auto-starting the service on boot/init{R}     {2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                               {2}│{R}
+{2}│{R}  {5}otter service start sshd{R}                                {2}│{R}
+{2}│{R}  {5}otter service enable sshd{R}                               {2}│{R}
+{2}│{R}  {5}otter service status sshd{R}                               {2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                                 {2}│{R}
+{2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}                   {2}│{R}
+{2}│{R} {4}--version{R} {2}┆{R} {4}-V{R}  {5}Show version information{R}                 {2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Notes:{R}                                                  {2}│{R}
+{2}│{R} {5}service is a convenience tool, not a full init-system{R}    {2}│{R}
+{2}│{R} {5}implementation -- it dispatches to the real, native tool{R} {2}│{R}
+{2}│{R} {5}for whichever init system the container actually uses.{R}   {2}│{R}
+{2}╰──────────────────────────────────────────────────────────╯{R}"""
 
 
 def _error(message):

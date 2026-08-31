@@ -2,7 +2,7 @@ if (is-terminal --stdin) {
 	if ($env.USER? | is-empty) { $env.USER = (id -un | str trim) }
 	if ($env.UID? | is-empty) { $env.UID = (id -ur | str trim) }
 	if ($env.EUID? | is-empty) { $env.EUID = (id -u | str trim) }
-	$env.SHELL = (^getent passwd $env.USER | split column ':' | get column7.0)
+	$env.SHELL = (^getent passwd $env.USER | split column ':' | get column6.0)
 
 	# Append the host's PATH (passed in as HOST_PATH, since PATH itself is
 	# left untouched on entry so the container's own package manager stays

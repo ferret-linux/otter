@@ -83,14 +83,14 @@ def render_help(text):
 HELP_TEXT = """\
 {2}╭─────────────────────────────────────────────────────────────────╮{R}
 {2}│{R}{3}▸ Usage:{R}                                                         {2}│{R}
-{2}│{R}  {5}otter-export <--app|--bin> [options]{R}                           {2}│{R}
+{2}│{R}  {5}otter export <--app|--bin> [options]{R}                           {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                                      {2}│{R}
-{2}│{R}  {5}otter-export --app firefox{R}                                     {2}│{R}
-{2}│{R}  {5}otter-export --app firefox --delete{R}                            {2}│{R}
-{2}│{R}  {5}otter-export --bin /usr/bin/docker --sudo{R}                      {2}│{R}
-{2}│{R}  {5}otter-export --bin /usr/bin/zeditor --export-path ~/.local/bin{R} {2}│{R}
-{2}│{R}  {5}otter-export --bin /usr/bin/htop --as htop-custom{R}              {2}│{R}
+{2}│{R}  {5}otter export --app firefox{R}                                     {2}│{R}
+{2}│{R}  {5}otter export --app firefox --delete{R}                            {2}│{R}
+{2}│{R}  {5}otter export --bin /usr/bin/docker --sudo{R}                      {2}│{R}
+{2}│{R}  {5}otter export --bin /usr/bin/zeditor --export-path ~/.local/bin{R} {2}│{R}
+{2}│{R}  {5}otter export --bin /usr/bin/htop --as htop-custom{R}              {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                                       {2}│{R}
 {2}│{R} {4}--app{R}          {2}┆{R} {4}-a{R}   {5}Name of the application to export{R}         {2}│{R}
@@ -111,8 +111,8 @@ HELP_TEXT = """\
 {2}├─────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Notes:{R}                                                         {2}│{R}
 {2}│{R} {4}--bin{R}           {5}Refuses to overwrite an existing file that{R}      {2}│{R}
-{2}│{R}                 {5}wasn't created by otter-export. Use --as to{R}    {2}│{R}
-{2}│{R}                 {5}export under a different name instead.{R}        {2}│{R}
+{2}│{R}                 {5}wasn't created by otter-export. Use --as to{R}     {2}│{R}
+{2}│{R}                 {5}export under a different name instead.{R}          {2}│{R}
 {2}│{R} {4}--export-label{R}  {5}Defaults to "my-box" . Use "none" to disable.{R}   {2}│{R}
 {2}│{R} {4}--list-apps{R}     {5}List apps exported from this container,{R}         {2}│{R}
 {2}│{R}                 {5}Use -ep for custom search paths.{R}                {2}│{R}
