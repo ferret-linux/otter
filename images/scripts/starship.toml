@@ -30,9 +30,9 @@ $time\
 [ ](fg:color_bg1)\
 $line_break$character"""
 
-palette = 'gruvbox_dark'
+palette = 'otter_prompt'
 
-[palettes.gruvbox_dark]
+[palettes.otter_prompt]
 color_fg0 = '#fbf1c7'
 color_bg1 = '#3c3836'
 color_bg3 = '#665c54'
