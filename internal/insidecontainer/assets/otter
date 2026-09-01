@@ -22,7 +22,7 @@ import os
 import sys
 
 SCRIPTS_DIR = "/usr/lib/otter/scripts"
-VERSION     = "0.0.8"
+VERSION     = "0.0.9"
 
 def render_help(text):
     color_green  = "\033[32m"

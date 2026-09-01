@@ -89,7 +89,7 @@ rootful=0
 upgrade=0
 verbose=0
 # shellcheck disable=SC2034 # consumed by helpers/parse_args.sh
-version="0.0.8"
+version="0.0.9"
 
 # shellcheck disable=SC1091
 . /usr/lib/otter/scripts/initialization-scripts/helpers/parse_args.sh
