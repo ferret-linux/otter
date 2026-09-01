@@ -35,10 +35,12 @@ RUN dnf clean expire-cache && \
     dnf install -y --skip-broken $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
         bc \
         xz \
+        tar \
         mtr \
         pam \
         zip \
         zsh \
+        unar \
         bash \
         curl \
         fish \
