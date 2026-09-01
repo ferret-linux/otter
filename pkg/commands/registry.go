@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -101,7 +102,8 @@ func relativeTime(s string) string {
 }
 
 type RegistryListOptions struct {
-	All bool
+	All  bool
+	JSON bool
 }
 
 type RegistryListCommand struct {
@@ -116,6 +118,9 @@ func (c *RegistryListCommand) Execute(ctx context.Context, opts RegistryListOpti
 	props, err := registry.Fetch(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to fetch registry: %w", err)
+	}
+	if opts.JSON {
+		return registryListJSON(ctx, c.containerManager, props, opts.All)
 	}
 	registryList(ctx, c.containerManager, props, opts.All)
 	return nil
@@ -295,6 +300,78 @@ func registryList(ctx context.Context, cm containermanager.ContainerManager, pro
 		}
 	}
 	t.Render()
+}
+
+// registryListJSON prints props's entries as JSON, with a structured
+// pulled/staleness/behind_count breakdown instead of registryList's
+// single human-readable LOCAL string, so scripts can branch on state
+// without parsing prose. built_at is also left as the raw RFC3339 value
+// rather than relativeTime's phrasing, for the same reason.
+func registryListJSON(
+	ctx context.Context,
+	cm containermanager.ContainerManager,
+	props *registry.ImagesProperties,
+	all bool,
+) error {
+	type registryEntryJSON struct {
+		Name         string   `json:"name"`
+		Architecture []string `json:"architecture"`
+		Enabled      bool     `json:"enabled"`
+		BuiltAt      string   `json:"built_at"`
+		Pulled       bool     `json:"pulled"`
+		Staleness    string   `json:"staleness,omitempty"`
+		BehindCount  int      `json:"behind_count,omitempty"`
+		Image        string   `json:"image"`
+	}
+
+	out := make([]registryEntryJSON, 0, len(props.Images))
+	for _, entry := range props.Images {
+		if !all && !entry.Enabled {
+			continue
+		}
+
+		imageRef := entry.OfficialImage
+		if !entry.Enabled {
+			imageRef = entry.FallbackVendorImage
+		}
+
+		row := registryEntryJSON{
+			Name:         entry.Name,
+			Architecture: entry.Architecture,
+			Enabled:      entry.Enabled,
+			BuiltAt:      entry.BuiltAt,
+			Image:        ui.TrimImageRef(imageRef),
+		}
+
+		if entry.Enabled {
+			row.Pulled = cm.ImageExists(ctx, imageRef)
+			if !row.Pulled {
+				row.Staleness = "not_pulled"
+			} else {
+				st := registry.CheckStaleness(ctx, cm, props, imageRef)
+				switch st.State {
+				case registry.StalenessCurrent:
+					row.Staleness = "current"
+				case registry.StalenessBehind:
+					row.Staleness = "behind"
+					row.BehindCount = st.Diff
+				case registry.StalenessAhead:
+					row.Staleness = "ahead"
+				default:
+					row.Staleness = "unknown"
+				}
+			}
+		}
+
+		out = append(out, row)
+	}
+
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	if err := enc.Encode(out); err != nil {
+		return fmt.Errorf("failed to encode registry list output as JSON: %w", err)
+	}
+	return nil
 }
 
 // localStatus returns a human-readable LOCAL column value and its color for

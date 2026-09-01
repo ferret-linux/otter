@@ -53,6 +53,10 @@ func newRegistryListCommand(_ *config.Values) *cli.Command {
 				Name:    "all",
 				Aliases: []string{"a"},
 			},
+			&cli.BoolFlag{
+				Name:    "json",
+				Aliases: []string{"j"},
+			},
 		},
 		Action: registryListAction,
 	}
@@ -65,7 +69,8 @@ func registryListAction(ctx context.Context, cmd *cli.Command) error {
 	}
 
 	if err := commands.NewRegistryListCommand(containerManager).Execute(ctx, commands.RegistryListOptions{
-		All: cmd.Bool("all"),
+		All:  cmd.Bool("all"),
+		JSON: cmd.Bool("json"),
 	}); err != nil {
 		return fmt.Errorf("failed to list registry: %w", err)
 	}
