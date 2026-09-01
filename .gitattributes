@@ -1,1 +1,9 @@
 * text=auto eol=lf
+
+# Force Markdown (.md) to show up in the language bar
+*.md linguist-documentation=false
+*.md linguist-detectable=true
+
+# Force SVG (.svg) to show up in the language bar
+*.svg linguist-data=false
+*.svg linguist-detectable=true
