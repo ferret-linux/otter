@@ -212,10 +212,10 @@ symbol = " "
 command = "true"
 when = "test -f /usr/lib/otter/container.rootful"
 style = "bg:color_red fg:color_fg0"
-format = '[ 󰌾 ]($style)'
+format = '[ 󰌾 rootful]($style)'
 
 [custom.otter_initsystem]
 command = "cat /usr/lib/otter/container.initsystem"
 when = "test -f /usr/lib/otter/container.initsystem"
 style = "bg:color_purple fg:color_fg0"
-format = '[ 󰒓 $output ]($style)'
+format = '[ 󰒓 $output]($style)'
