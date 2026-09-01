@@ -114,15 +114,19 @@ ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:${PATH}
 ENV MANPATH="/home/linuxbrew/.linuxbrew/share/man:${MANPATH}"
 ENV INFOPATH="/home/linuxbrew/.linuxbrew/share/info:${INFOPATH}"
 
-# Homebrew on Linux is documented as expecting to run as a non-root
-# user permanently (not just during install) -- formulae installed
-# as root can produce permission errors on later `brew` invocations.
-# Flagging as unverified rather than solved: otter-init's default
-# user model may need to route into the linuxbrew user specifically
-# for any brew-invoking workflow, same open-question flavor as the
-# GL driver dispatch note in the Nix image.
-USER linuxbrew
-WORKDIR /home/linuxbrew
+# The image keeps root as its default user (like every other
+# Containerfile) -- otter-init, not the image's USER, is what
+# determines the live runtime user. brew itself never runs as root:
+# the installer above switched to linuxbrew via `su -`, and the
+# housekeeping below does exactly the same, since Homebrew on Linux
+# is documented to misbehave when formulae are run/owned by root.
+RUN su - linuxbrew -c ' \
+    brew doctor && \
+    brew missing && \
+    brew autoremove && \
+    brew services cleanup && \
+    brew cleanup --prune=all -s \
+    '
 
 # Install gum (static binary, amd64/arm64) into otter's helpers dir.
 # Requires curl, so this must come after curl is installed above.
@@ -132,15 +136,6 @@ RUN sh /tmp/install-gum.sh
 # Install host-spawn (static binary, amd64/arm64) for host D-Bus/session integration.
 COPY images/scripts/install-host-spawn.sh /tmp/install-host-spawn.sh
 RUN sh /tmp/install-host-spawn.sh
-
-# Housekeeping: Homebrew's own installer leaves a git checkout and
-# cache behind under HOMEBREW_REPOSITORY; brew cleanup trims
-# formula caches/old versions without removing the install itself.
-RUN brew doctor && \
-    brew missing && \
-    brew autoremove && \
-    brew services cleanup && \
-    brew cleanup --prune=all -s
 
 ######################################################################################
 
