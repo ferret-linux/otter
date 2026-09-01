@@ -176,7 +176,13 @@ func (m *pullModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m *pullModel) View() tea.View {
-	return tea.NewView(m.style.Render(m.child.View().Content))
+	// AltScreen is exited automatically when the program quits (on
+	// completion or on Ctrl-C alike), which restores the terminal exactly
+	// as it was before the box appeared — the equivalent of the old
+	// scrollWindow's explicit eraseLocked, without hand-rolled ANSI.
+	v := tea.NewView(m.style.Render(m.child.View().Content))
+	v.AltScreen = true
+	return v
 }
 
 // Pull unconditionally pulls the given image ref using the provided
