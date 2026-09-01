@@ -1,9 +1,12 @@
 * text=auto eol=lf
 
-# Force Markdown (.md) to show up in the language bar
-*.md linguist-documentation=false
-*.md linguist-detectable=true
+# Include Markdown in language statistics
+*.md -linguist-documentation
+*.md linguist-detectable
 
-# Force SVG (.svg) to show up in the language bar
-*.svg linguist-data=false
-*.svg linguist-detectable=true
+# Explicitly classify .txt files as Text and include them
+*.txt linguist-language=Text
+*.txt linguist-detectable
+
+# Include SVG in language statistics
+*.svg linguist-detectable
