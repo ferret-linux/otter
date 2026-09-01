@@ -294,28 +294,6 @@
       "build_number": 73
     },
     {
-      "name": "chimera",
-      "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
-      "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-08-31T21:38:25Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 987982453,
-          "disk_size": 987982453
-        },
-        "arm64": {
-          "compressed_size": 957977110,
-          "disk_size": 957977110
-        }
-      },
-      "build_number": 164
-    },
-    {
       "name": "oracle",
       "official_image": "ghcr.io/ferret-linux/oracle-otr:stable",
       "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 166
+    },
+    {
+      "name": "chimera",
+      "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
+      "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-01T00:00:20Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 987982456,
+          "disk_size": 987982456
+        },
+        "arm64": {
+          "compressed_size": 957977115,
+          "disk_size": 957977115
+        }
+      },
+      "build_number": 165
     }
   ]
 }
