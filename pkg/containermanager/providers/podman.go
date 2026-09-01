@@ -697,7 +697,7 @@ func (p *Podman) ContainerImageID(ctx context.Context, containerName string) (st
 	return inspects[0].Image, true
 }
 
-func (p *Podman) PullImage(ctx context.Context, imageName string, platform string, out containermanager.PullOutput) error {
+func (p *Podman) PullImage(ctx context.Context, imageName string, platform string, interactive bool) (*exec.Cmd, error) {
 	var args []string
 	if platform != "" {
 		args = []string{"pull", "--platform", platform, imageName}
@@ -705,9 +705,9 @@ func (p *Podman) PullImage(ctx context.Context, imageName string, platform strin
 		args = []string{"pull", imageName}
 	}
 
-	if out == nil {
+	if !interactive {
 		_, err := p.run(ctx, args, runOptions{})
-		return err
+		return nil, err
 	}
 
 	command := p.binary
@@ -715,11 +715,7 @@ func (p *Podman) PullImage(ctx context.Context, imageName string, platform strin
 		args = append([]string{command}, args...)
 		command = p.sudoCommand
 	}
-	cmd := exec.CommandContext(ctx, command, args...)
-	if err := containermanager.RunWithPullOutput(cmd, out); err != nil {
-		return fmt.Errorf("failed to pull image: %w", err)
-	}
-	return nil
+	return exec.CommandContext(ctx, command, args...), nil
 }
 
 func (p *Podman) RemoveImage(ctx context.Context, imageName string, force bool) error {

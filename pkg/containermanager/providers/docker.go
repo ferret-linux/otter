@@ -898,7 +898,7 @@ func (d *Docker) ContainerImageID(ctx context.Context, containerName string) (st
 	return inspects[0].Image, true
 }
 
-func (d *Docker) PullImage(ctx context.Context, imageName string, platform string, out containermanager.PullOutput) error {
+func (d *Docker) PullImage(ctx context.Context, imageName string, platform string, interactive bool) (*exec.Cmd, error) {
 	var args []string
 	if platform != "" {
 		args = []string{"pull", "--platform", platform, imageName}
@@ -906,9 +906,9 @@ func (d *Docker) PullImage(ctx context.Context, imageName string, platform strin
 		args = []string{"pull", imageName}
 	}
 
-	if out == nil {
+	if !interactive {
 		_, err := d.run(ctx, args, runOptions{})
-		return err
+		return nil, err
 	}
 
 	command := d.binary
@@ -916,11 +916,7 @@ func (d *Docker) PullImage(ctx context.Context, imageName string, platform strin
 		args = append([]string{command}, args...)
 		command = d.sudoCommand
 	}
-	cmd := exec.CommandContext(ctx, command, args...)
-	if err := containermanager.RunWithPullOutput(cmd, out); err != nil {
-		return fmt.Errorf("failed to pull image: %w", err)
-	}
-	return nil
+	return exec.CommandContext(ctx, command, args...), nil
 }
 
 func (d *Docker) generateEnterCommand(

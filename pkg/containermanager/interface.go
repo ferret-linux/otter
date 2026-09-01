@@ -2,7 +2,7 @@ package containermanager
 
 import (
 	"context"
-	"io"
+	"os/exec"
 )
 
 const (
@@ -12,29 +12,6 @@ const (
 
 //nolint:revive // ContainerManagerType is intentionally named for clarity despite the stutter
 type ContainerManagerType string
-
-// PullOutput is where PullImage streams its pull output when the caller
-// wants it rendered live. A nil PullOutput means "no live rendering" —
-// today's buffered, silent-until-error behavior.
-type PullOutput interface {
-	io.Writer
-}
-
-// PullOutputSizer is an optional extension of PullOutput. Implementations
-// that render into a resizable region (e.g. a live-resized box) implement
-// it so PullImage can give the pulling process a pseudo-terminal sized to
-// match, and keep it in sync as the region is resized. Implementations
-// that don't need this (e.g. tests, or a plain io.Writer) simply don't
-// implement it — PullImage falls back to no live sizing.
-type PullOutputSizer interface {
-	// Size returns the current size, in cells, of the region PullOutput
-	// renders into.
-	Size() (rows, cols int)
-	// OnResize registers a callback invoked with the new size every time
-	// the region is resized, for as long as the PullOutput is active.
-	// Replaces any previously registered callback.
-	OnResize(func(rows, cols int))
-}
 
 type ContainerManager interface {
 	Name() string
@@ -65,7 +42,11 @@ type ContainerManager interface {
 	Start(ctx context.Context, containerName string) error
 	Stop(ctx context.Context, containerNames []string, force bool) error
 	InspectContainer(ctx context.Context, containerName string) (*InspectResult, error)
-	PullImage(ctx context.Context, imageName string, platform string, out PullOutput) error
+	// PullImage pulls imageName. When interactive is false, the pull runs
+	// synchronously and (nil, err) is returned. When interactive is true, an
+	// unstarted *exec.Cmd (with any root/sudo prefix already applied) is
+	// returned for the caller to drive itself (e.g. via a pty).
+	PullImage(ctx context.Context, imageName string, platform string, interactive bool) (*exec.Cmd, error)
 	RemoveImage(ctx context.Context, imageName string, force bool) error
 	Commit(ctx context.Context, containerID string, imageTag string) error
 	// CopyFromContainer copies a file from the container filesystem to the host.

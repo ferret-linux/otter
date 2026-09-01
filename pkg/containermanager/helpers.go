@@ -2,7 +2,6 @@ package containermanager
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
 	"regexp"
@@ -10,8 +9,6 @@ import (
 	"slices"
 	"strings"
 	"time"
-
-	"github.com/creack/pty"
 )
 
 // bindGOOS is the OS used to decide bind-mount propagation. It is a package
@@ -207,44 +204,4 @@ func BuildCommandArgs(customCommand []string, user string, noTTY bool, unshareGr
 
 func TimestampNow() string {
 	return time.Now().UTC().Format(time.RFC3339Nano)
-}
-
-// RunWithPullOutput runs cmd with its combined stdout/stderr streamed into
-// out. If out implements PullOutputSizer, cmd is given a pseudo-terminal
-// sized to match out's current size, kept in sync for the life of cmd via
-// out.OnResize, so the pulling process renders its native live-progress
-// output (which it otherwise suppresses when it detects a non-TTY pipe)
-// scaled to fit the region out renders into. If out does not implement
-// PullOutputSizer, cmd's stdout/stderr are connected to out directly, with
-// the same non-TTY behavior as before.
-func RunWithPullOutput(cmd *exec.Cmd, out PullOutput) error {
-	sizer, ok := out.(PullOutputSizer)
-	if !ok {
-		cmd.Stdout = out
-		cmd.Stderr = out
-		//nolint:wrapcheck // callers wrap this error with their own pull-specific message
-		return cmd.Run()
-	}
-
-	rows, cols := sizer.Size()
-	ptmx, err := pty.StartWithSize(cmd, &pty.Winsize{Rows: uint16(rows), Cols: uint16(cols)}) //nolint:gosec // terminal dims fit uint16
-	if err != nil {
-		return fmt.Errorf("failed to start pseudo-terminal: %w", err)
-	}
-	defer ptmx.Close()
-
-	sizer.OnResize(func(rows, cols int) {
-		_ = pty.Setsize(ptmx, &pty.Winsize{Rows: uint16(rows), Cols: uint16(cols)}) //nolint:gosec // terminal dims fit uint16
-	})
-
-	_, copyErr := io.Copy(out, ptmx)
-	waitErr := cmd.Wait()
-
-	// A closed pty on the child's exit surfaces as a read error from
-	// io.Copy; that's expected once the child is done, not a real failure,
-	// so only cmd.Wait's exit status is treated as the actual result.
-	_ = copyErr
-
-	//nolint:wrapcheck // callers wrap this error with their own pull-specific message
-	return waitErr
 }

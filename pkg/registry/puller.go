@@ -3,67 +3,19 @@ package registry
 import (
 	"context"
 	"fmt"
-	"io"
 	"math"
 	"os"
-	"os/signal"
-	"strings"
-	"sync"
-	"syscall"
+	"os/exec"
 
+	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
-	"github.com/charmbracelet/x/vt"
+	"github.com/taigrr/bubbleterm"
 	"golang.org/x/term"
 
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/ttyutil"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
-
-// scrollWindow is an io.Writer that renders the pty bytes written to it in
-// a fixed-size, bordered region of the real terminal. Bytes are fed into a
-// vt.Emulator, which interprets cursor movement, carriage returns, and
-// other ANSI control sequences the way a real terminal would; the box is
-// then redrawn (cursor up + clear + reprint) from the emulator's current
-// screen state on every Write. This lets a pty-driven process (e.g.
-// docker/podman/nerdctl doing its own in-place, multi-line pull-progress
-// animation) render correctly inside the box, instead of its control
-// sequences being treated as opaque line content.
-//
-// scrollWindow assumes exclusive control of the terminal region it
-// draws into between Start and Close — nothing else should write to w
-// concurrently during that span.
-type scrollWindow struct {
-	w io.Writer
-
-	mu    sync.Mutex
-	emu   *vt.Emulator // virtual terminal; owns the current screen content and dimensions
-	drawn bool
-
-	style lipgloss.Style // bordered box style, sized responsively to the terminal (see scaledSize)
-
-	resizeCh   chan os.Signal // SIGWINCH notifications, live between Start and Close
-	resizeDone chan struct{}  // closed to stop the resize-watching goroutine
-
-	onResize func(rows, cols int) // optional; see OnResize
-}
-
-// Size implements PullOutputSizer. It returns the box's current content
-// area, in cells — the same dimensions a process writing into the box
-// should assume it has to work with.
-func (s *scrollWindow) Size() (rows, cols int) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	return s.emu.Height(), s.emu.Width()
-}
-
-// OnResize implements PullOutputSizer. fn is called with the box's new
-// content-area size after every resize for as long as the window is open.
-func (s *scrollWindow) OnResize(fn func(rows, cols int)) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	s.onResize = fn
-}
 
 // scaledSize returns the box dimension (in cells) to use for a terminal
 // dimension of x cells, along one axis (width or height independently).
@@ -92,8 +44,8 @@ func scaledSize(x int, k, floor float64) int {
 // k and floor below are fit so that fraction(120 cols) = 50% (width) and
 // fraction(20 rows) ≈ 70%, fraction(40 rows) ≈ 35% (height), while
 // keeping the box's absolute size non-decreasing as the terminal grows;
-// see scaledSize. Shared by newScrollWindow and resizeLocked so both use
-// the same curve.
+// see scaledSize. Shared by newPullModel and pullModel's WindowSizeMsg
+// handling so both use the same curve.
 const (
 	widthK      = 110.47
 	widthFloor  = 0.05
@@ -101,169 +53,130 @@ const (
 	heightFloor = 0.05
 )
 
-// dimensions reads the current terminal size and returns the box's
-// window-line count and total width, per scaledSize.
-func dimensions() (windowLines, boxWidth int) {
-	width, height := 80, 24
-	if ww, hh, err := term.GetSize(int(os.Stderr.Fd())); err == nil {
-		width = ww
-		height = hh
-	}
-
+// scaledDimensions returns the box's window-line count and total width for
+// a terminal of the given size, per scaledSize.
+func scaledDimensions(width, height int) (windowLines, boxWidth int) {
 	windowLines = scaledSize(height, heightK, heightFloor)
 	if windowLines < 1 {
 		windowLines = 1
 	}
-
 	boxWidth = scaledSize(width, widthK, widthFloor)
 	return windowLines, boxWidth
 }
 
-func newScrollWindow(w io.Writer) *scrollWindow {
-	windowLines, boxWidth := dimensions()
+// initialTerminalSize returns the real terminal size, for use before the
+// bubbletea program starts (and thus before any tea.WindowSizeMsg has
+// arrived to report it).
+func initialTerminalSize() (width, height int) {
+	width, height = 80, 24
+	if ww, hh, err := term.GetSize(int(os.Stderr.Fd())); err == nil {
+		width, height = ww, hh
+	}
+	return width, height
+}
+
+// pullExitedMsg reports that the pull command has exited. bubbleterm has no
+// built-in "process exited" message of its own (see pullModel.exited), so
+// pullModel synthesizes one.
+type pullExitedMsg struct{}
+
+// pullModel is a small bubbletea wrapper around a *bubbleterm.Model that
+// reproduces the pull box's previous look and responsive sizing (see
+// scaledSize/scaledDimensions) on top of bubbleterm's own pty handling.
+// Unlike the box it replaces, tea.KeyMsg is forwarded into child — that's
+// what actually makes the pty bidirectional and fixes the --root
+// password-prompt bug, rather than only ever copying pty output out.
+type pullModel struct {
+	child *bubbleterm.Model
+	style lipgloss.Style // bordered box style, sized responsively to the terminal (see scaledDimensions)
+
+	cmd     *exec.Cmd     // the pull command; ProcessState is read from it once exited
+	exited  chan struct{} // signaled once, from child.GetEmulator()'s exit callback or immediately if already exited
+	pullErr error         // the pull's result, set once pullExitedMsg is handled
+}
+
+// newPullModel creates the wrapper model and starts cmd inside it. cmd must
+// not have been started yet.
+func newPullModel(cmd *exec.Cmd) (*pullModel, error) {
+	width, height := initialTerminalSize()
+	windowLines, boxWidth := scaledDimensions(width, height)
 	style := ui.BorderStyle(boxWidth)
 	innerWidth := boxWidth - style.GetHorizontalFrameSize()
 
-	return &scrollWindow{
-		w:     w,
-		emu:   vt.NewEmulator(innerWidth, windowLines),
-		style: style,
-	}
-}
-
-// Start draws the initial empty window and begins watching for terminal
-// resizes (SIGWINCH), redrawing the box at its new size whenever the
-// terminal is resized for as long as the window stays open.
-func (s *scrollWindow) Start() {
-	fmt.Fprint(s.w, "\033[?25l")
-
-	s.mu.Lock()
-	s.redrawLocked()
-	s.mu.Unlock()
-
-	s.resizeCh = make(chan os.Signal, 1)
-	s.resizeDone = make(chan struct{})
-	signal.Notify(s.resizeCh, syscall.SIGWINCH)
-
-	go s.watchResize()
-}
-
-// watchResize redraws the box at its new size on every SIGWINCH, until
-// resizeDone is closed by Close.
-func (s *scrollWindow) watchResize() {
-	for {
-		select {
-		case <-s.resizeCh:
-			s.mu.Lock()
-			s.resizeLocked()
-			s.mu.Unlock()
-		case <-s.resizeDone:
-			return
-		}
-	}
-}
-
-// Close finalizes the pull box: any trailing partial line is discarded,
-// and the box is erased entirely, with the cursor restored to the row it
-// started on. The box is a transient progress indicator, not output
-// meant to remain on screen once the pull is done.
-func (s *scrollWindow) Close() {
-	if s.resizeCh != nil {
-		signal.Stop(s.resizeCh)
-		close(s.resizeDone)
-	}
-
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	if !s.drawn {
-		return
-	}
-
-	s.eraseLocked()
-	s.drawn = false
-	fmt.Fprint(s.w, "\033[?25h")
-}
-
-// eraseLocked clears the currently-drawn window (len(s.lines)+2 rows: the
-// content lines plus the box's top and bottom border) and leaves the
-// cursor at the row the window started on. Must be called with s.mu held
-// and s.drawn true.
-func (s *scrollWindow) eraseLocked() {
-	total := s.emu.Height() + 2
-	fmt.Fprintf(s.w, "\033[%dA", total)
-	for i := range total {
-		fmt.Fprint(s.w, "\033[2K")
-		if i < total-1 {
-			fmt.Fprint(s.w, "\n")
-		}
-	}
-	fmt.Fprintf(s.w, "\033[%dA", total-1)
-}
-
-// Write implements io.Writer. Bytes are fed directly into the virtual
-// terminal emulator, which interprets cursor movement, carriage returns,
-// and other ANSI control sequences the way a real terminal would, then
-// the window is redrawn from the emulator's current screen state.
-func (s *scrollWindow) Write(p []byte) (int, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	n, err := s.emu.Write(p)
+	child, err := bubbleterm.New(innerWidth, windowLines)
 	if err != nil {
-		return n, err
+		return nil, err
 	}
 
-	s.redrawLocked()
+	// Buffered so the callback below never blocks the process's own exit
+	// handling, and so a send that races ahead of the immediate
+	// IsProcessExited check just below isn't lost.
+	exited := make(chan struct{}, 1)
+	child.GetEmulator().SetOnExit(func(string) {
+		select {
+		case exited <- struct{}{}:
+		default:
+		}
+	})
 
-	return n, nil
+	if err := child.GetEmulator().StartCommand(cmd); err != nil {
+		child.Close()
+		return nil, err
+	}
+
+	// The command may already have exited (or the exit callback may have
+	// already fired) by the time StartCommand returns; make sure exited is
+	// signaled either way.
+	if child.GetEmulator().IsProcessExited() {
+		select {
+		case exited <- struct{}{}:
+		default:
+		}
+	}
+
+	return &pullModel{child: child, style: style, cmd: cmd, exited: exited}, nil
 }
 
-// resizeLocked re-reads the terminal size and, if the box's dimensions
-// have changed, erases the current (old-sized) box, recomputes the style
-// and inner width, resizes the line ring to match, and redraws. The
-// content currently visible is preserved across the resize (see
-// resizeLinesLocked); only lines that scroll off as a result of the new,
-// smaller size are dropped. Must be called with s.mu held.
-func (s *scrollWindow) resizeLocked() {
-	windowLines, boxWidth := dimensions()
-
-	if windowLines == s.emu.Height() && boxWidth == s.style.GetWidth() {
-		return
-	}
-
-	if s.drawn {
-		s.eraseLocked()
-		s.drawn = false
-	}
-
-	s.style = ui.BorderStyle(boxWidth)
-	innerWidth := boxWidth - s.style.GetHorizontalFrameSize()
-	s.emu.Resize(innerWidth, windowLines)
-
-	s.redrawLocked()
-
-	if s.onResize != nil {
-		s.onResize(windowLines, innerWidth)
+// waitExited returns a tea.Cmd that blocks until ch is signaled, then
+// reports the pull as finished. child.GetEmulator().Done() can't be used
+// for this: that channel closes when the emulator itself is closed (i.e.
+// when we close it), not when the underlying process exits.
+func waitExited(ch <-chan struct{}) tea.Cmd {
+	return func() tea.Msg {
+		<-ch
+		return pullExitedMsg{}
 	}
 }
 
-// redrawLocked reprints the current window contents in place: it moves
-// the cursor back to the top of the previously-drawn window (if any),
-// clears each line, and reprints the emulator's current screen state.
-// Must be called with s.mu held.
-func (s *scrollWindow) redrawLocked() {
-	if s.drawn {
-		fmt.Fprintf(s.w, "\033[%dA", s.emu.Height()+2)
+func (m *pullModel) Init() tea.Cmd {
+	return tea.Batch(m.child.Init(), waitExited(m.exited))
+}
+
+func (m *pullModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		windowLines, boxWidth := scaledDimensions(msg.Width, msg.Height)
+		m.style = ui.BorderStyle(boxWidth)
+		innerWidth := boxWidth - m.style.GetHorizontalFrameSize()
+
+		updated, cmd := m.child.Update(tea.WindowSizeMsg{Width: innerWidth, Height: windowLines})
+		m.child = updated.(*bubbleterm.Model)
+		return m, cmd
+
+	case pullExitedMsg:
+		if m.cmd.ProcessState != nil && !m.cmd.ProcessState.Success() {
+			m.pullErr = &exec.ExitError{ProcessState: m.cmd.ProcessState}
+		}
+		return m, tea.Quit
 	}
 
-	box := s.style.Render(s.emu.String())
+	updated, cmd := m.child.Update(msg)
+	m.child = updated.(*bubbleterm.Model)
+	return m, cmd
+}
 
-	for _, line := range strings.Split(box, "\n") {
-		fmt.Fprint(s.w, "\033[2K")
-		fmt.Fprintln(s.w, line)
-	}
-	s.drawn = true
+func (m *pullModel) View() tea.View {
+	return tea.NewView(m.style.Render(m.child.View().Content))
 }
 
 // Pull unconditionally pulls the given image ref using the provided
@@ -290,25 +203,7 @@ func Pull(
 	ui.DefaultLogger.Info("large images may take a while, please be patient...")
 	progress.Next("pulling '%s'...", imageRef)
 
-	var win *scrollWindow
-	var out containermanager.PullOutput
-	if ttyutil.IsInteractive() {
-		win = newScrollWindow(os.Stderr)
-		win.Start()
-		out = win
-	}
-
-	err := cm.PullImage(ctx, imageRef, platform, out)
-
-	// Close the box before anything below writes to the same stream
-	// (progress.Fail/Done, cleanupDanglingImage's logging) — Close's
-	// erase math assumes the cursor is still exactly where the box's
-	// last redraw left it, so any interleaved write here would corrupt it.
-	if win != nil {
-		win.Close()
-	}
-
-	if err != nil {
+	if err := runPull(ctx, cm, imageRef, platform); err != nil {
 		progress.Fail()
 		return fmt.Errorf("failed to pull image '%s': %w", imageRef, err)
 	}
@@ -322,6 +217,33 @@ func Pull(
 	}
 
 	return nil
+}
+
+// runPull runs the actual pull: interactively, in a bordered, resizable box
+// when attached to a real terminal, or via the provider's own silent,
+// buffered pull otherwise.
+func runPull(ctx context.Context, cm containermanager.ContainerManager, imageRef, platform string) error {
+	interactive := ttyutil.IsInteractive()
+
+	cmd, err := cm.PullImage(ctx, imageRef, platform, interactive)
+	if err != nil {
+		return err
+	}
+	if !interactive {
+		return nil
+	}
+
+	model, err := newPullModel(cmd)
+	if err != nil {
+		return err
+	}
+
+	finalModel, err := tea.NewProgram(model, tea.WithOutput(os.Stderr)).Run()
+	if err != nil {
+		return err
+	}
+
+	return finalModel.(*pullModel).pullErr
 }
 
 // cleanupDanglingImage removes oldID if no otter container references it.
