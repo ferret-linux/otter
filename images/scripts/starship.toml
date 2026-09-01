@@ -25,9 +25,7 @@ $docker_context\
 $conda\
 $pixi\
 [ ](fg:color_bg3)\
-$line_break$character"""
-
-right_format = """
+$fill\
 [](fg:color_blue)\
 ${env_var.container}\
 [](bg:color_aqua fg:color_blue)\
@@ -35,7 +33,8 @@ $os\
 ${env_var.CONTAINER_ID}\
 [](bg:color_bg1 fg:color_aqua)\
 $time\
-[ ](fg:color_bg1)"""
+[ ](fg:color_bg1)\
+$line_break$character"""
 
 palette = 'otter_prompt'
 
@@ -200,3 +199,6 @@ format = '[ $env_value]($style)'
 variable = "CONTAINER_ID"
 style = "bg:color_aqua fg:color_fg0"
 format = '[$env_value]($style)'
+
+[fill]
+symbol = " "
