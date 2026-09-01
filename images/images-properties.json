@@ -89,28 +89,6 @@
       "build_number": 166
     },
     {
-      "name": "gentoo",
-      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
-      "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-01T01:27:39Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 4959578028,
-          "disk_size": 4959578028
-        },
-        "arm64": {
-          "compressed_size": 3655263369,
-          "disk_size": 3655263369
-        }
-      },
-      "build_number": 110
-    },
-    {
       "name": "kali",
       "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
       "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 67
+    },
+    {
+      "name": "gentoo",
+      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
+      "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-01T07:50:14Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 4959682989,
+          "disk_size": 4959682989
+        },
+        "arm64": {
+          "compressed_size": 3655701639,
+          "disk_size": 3655701639
+        }
+      },
+      "build_number": 111
     }
   ]
 }
