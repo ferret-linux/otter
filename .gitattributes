@@ -1,12 +1,8 @@
 * text=auto eol=lf
 
 # Include Markdown in language statistics
-*.md -linguist-documentation
-*.md linguist-detectable
-
-# Explicitly classify .txt files as Text and include them
-*.txt linguist-language=Text
-*.txt linguist-detectable
-
-# Include SVG in language statistics
-*.svg linguist-detectable
+*.md linguist-vendored=false
+*.md linguist-generated=false
+*.md linguist-documentation=false
+*.md linguist-detectable=true
+*.md linguist-language=Markdown
