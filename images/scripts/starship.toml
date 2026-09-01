@@ -31,6 +31,11 @@ ${env_var.container}\
 [](bg:color_aqua fg:color_blue)\
 $os\
 ${env_var.CONTAINER_ID}\
+[](bg:color_red fg:color_aqua)\
+${custom.otter_rootful}\
+[](bg:color_purple fg:color_red)\
+${custom.otter_initsystem}\
+[](bg:color_aqua fg:color_purple)\
 [](bg:color_bg1 fg:color_aqua)\
 $time\
 [ ](fg:color_bg1)\
@@ -202,3 +207,15 @@ format = '[$env_value]($style)'
 
 [fill]
 symbol = " "
+
+[custom.otter_rootful]
+command = "true"
+when = "test -f /usr/lib/otter/container.rootful"
+style = "bg:color_red fg:color_fg0"
+format = '[ 󰌾 ]($style)'
+
+[custom.otter_initsystem]
+command = "cat /usr/lib/otter/container.initsystem"
+when = "test -f /usr/lib/otter/container.initsystem"
+style = "bg:color_purple fg:color_fg0"
+format = '[ 󰒓 $output ]($style)'
