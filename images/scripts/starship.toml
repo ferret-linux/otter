@@ -24,10 +24,18 @@ $python\
 $docker_context\
 $conda\
 $pixi\
-[](fg:color_bg3 bg:color_bg1)\
-$time\
-[ ](fg:color_bg1)\
+[ ](fg:color_bg3)\
 $line_break$character"""
+
+right_format = """
+[](fg:color_blue)\
+${env_var.container}\
+[](bg:color_aqua fg:color_blue)\
+$os\
+${env_var.CONTAINER_ID}\
+[](bg:color_bg1 fg:color_aqua)\
+$time\
+[ ](fg:color_bg1)"""
 
 palette = 'otter_prompt'
 
@@ -46,28 +54,28 @@ color_yellow = '#d79921'
 
 [os]
 disabled = false
-style = "bg:color_orange fg:color_fg0"
+style = "bg:color_aqua fg:color_fg0"
 
 [os.symbols]
-Kali             = ''
-Void             = ''
-Arch             = '󰣇'
-Artix            = ''
-NixOS            = ''
-Linux            = "󰌽"
-CentOS           = ''
-Debian           = '󰣚'
-Fedora           = '󰣛'
-Alpine           = ''
-Amazon           = ''
-Ubuntu           = '󰕈'
-Gentoo           = '󰣨'
-CachyOS          = '󰓓'
-openSUSE         = ''
-AlmaLinux        = ''
-RockyLinux       = ''
-OracleLinux      = '󰺡'
-RedHatEnterprise = '󱄛'
+Kali             = '  '
+Void             = '  '
+Arch             = ' 󰣇 '
+Artix            = '  '
+NixOS            = '  '
+Linux            = ' 󰌽 '
+CentOS           = '  '
+Debian           = ' 󰣚 '
+Fedora           = ' 󰣛 '
+Alpine           = '  '
+Amazon           = '  '
+Ubuntu           = ' 󰕈 '
+Gentoo           = ' 󰣨 '
+CachyOS          = ' 󰓓 '
+openSUSE         = '  '
+AlmaLinux        = '  '
+RockyLinux       = '  '
+OracleLinux      = ' 󰺡 '
+RedHatEnterprise = ' 󱄛 '
 
 [username]
 show_always = true
@@ -182,3 +190,13 @@ vimcmd_symbol = '[ 󱞦](bold fg:color_green)'
 vimcmd_replace_one_symbol = '[ 󱞦](bold fg:color_purple)'
 vimcmd_replace_symbol = '[ 󱞦](bold fg:color_purple)'
 vimcmd_visual_symbol = '[ 󱞦](bold fg:color_yellow)'
+
+[env_var.container]
+variable = "container"
+style = "bg:color_blue fg:color_fg0"
+format = '[ $env_value]($style)'
+
+[env_var.CONTAINER_ID]
+variable = "CONTAINER_ID"
+style = "bg:color_aqua fg:color_fg0"
+format = '[$env_value]($style)'
