@@ -139,18 +139,13 @@ setup_pacman()
 				;;
 			cachyos)
 				distro_deps="
+					yay
 					paru
-					wine
-					proton
 					systemd
-					wine-mono
-					protonplus
-					wine-gecko
-					protontricks
 					umu-launcher
 					vulkan-driver
-					wine-cachyos-opt
-					proton-cachyos-slr
+					cachyos-settings
+					cachyos-rate-mirrors
 				"
 				;;
 			*)
