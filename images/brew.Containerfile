@@ -102,11 +102,11 @@ RUN su - linuxbrew -c ' \
     '
 
 # Homebrew installs to /home/linuxbrew/.linuxbrew on Linux (not
-# /usr/local -- that's macOS-only). Nothing puts its bin dir on
-# $PATH by default outside of an interactive shell sourcing
-# shellenv, so otter needs this baked in at the image level the same
-# way the Nix image relies on its base's ONBUILD ENV for the profile
-# bin dir.
+# /usr/local -- that's macOS-only). Its bin directory is not added to
+# the environment automatically, so otter bakes Homebrew's paths into
+# the image environment. Commands executed through `su - linuxbrew`
+# additionally initialize Homebrew with `brew shellenv`, since `su -`
+# creates a fresh login environment.
 ENV HOMEBREW_PREFIX=/home/linuxbrew/.linuxbrew
 ENV HOMEBREW_CELLAR=/home/linuxbrew/.linuxbrew/Cellar
 ENV HOMEBREW_REPOSITORY=/home/linuxbrew/.linuxbrew/Homebrew
@@ -121,6 +121,7 @@ ENV INFOPATH="/home/linuxbrew/.linuxbrew/share/info:${INFOPATH}"
 # housekeeping below does exactly the same, since Homebrew on Linux
 # is documented to misbehave when formulae are run/owned by root.
 RUN su - linuxbrew -c ' \
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && \
     brew doctor && \
     brew missing && \
     brew autoremove && \
