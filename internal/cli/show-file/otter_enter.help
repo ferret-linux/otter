@@ -15,7 +15,7 @@
 {2}│{R} {4}--{R}          {5}              Command to execute into the container{R}         {2}│{R}
 {2}│{R} {4}--root{R}             {2}┆{R} {4}-r{R}   {5}Launch container manager with root privileges{R} {2}│{R}
 {2}│{R} {4}--no-tty{R}           {2}┆{R} {4}-T{R}   {5}Do not instantiate a tty{R}                      {2}│{R}
-{2}│{R} {4}--add-env{R}          {2}┆{R} {4}-e{R}   {5}Comma-separated list of host env vars to copy{R} {2}│{R}
+{2}│{R} {4}--add-env{R}          {2}┆{R} {4}-e{R}   {5}Copy host env var NAME or override NAME=value{R} {2}│{R}
 {2}│{R} {4}--empty-env{R}        {2}┆{R} {4}-E{R}   {5}Don't auto copy host environment variables{R}    {2}│{R}
 {2}│{R} {4}--clean-path{R}       {2}┆{R} {4}-c{R}   {5}Reset PATH inside container to FHS standard{R}   {2}│{R}
 {2}│{R} {4}--no-workdir{R}       {2}┆{R} {4}-nw{R}  {5}Always start from container's home directory{R}  {2}│{R}
