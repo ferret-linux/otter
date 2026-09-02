@@ -277,28 +277,6 @@
       "build_number": 59
     },
     {
-      "name": "fedora",
-      "official_image": "ghcr.io/ferret-linux/fedora-otr:stable",
-      "fallback_vendor_image": "quay.io/fedora/fedora:44",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-02T07:08:00Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 2053546555,
-          "disk_size": 2053546555
-        },
-        "arm64": {
-          "compressed_size": 1944698610,
-          "disk_size": 1944698610
-        }
-      },
-      "build_number": 174
-    },
-    {
       "name": "devuan-testing",
       "official_image": "ghcr.io/ferret-linux/devuan-otr:testing",
       "fallback_vendor_image": "docker.io/devuan/devuan:testing",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 170
+    },
+    {
+      "name": "fedora",
+      "official_image": "ghcr.io/ferret-linux/fedora-otr:stable",
+      "fallback_vendor_image": "quay.io/fedora/fedora:44",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-02T12:08:09Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 2053546552,
+          "disk_size": 2053546552
+        },
+        "arm64": {
+          "compressed_size": 1944698611,
+          "disk_size": 1944698611
+        }
+      },
+      "build_number": 175
     }
   ]
 }
