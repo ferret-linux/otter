@@ -89,23 +89,6 @@
       "build_number": 160
     },
     {
-      "name": "arch",
-      "official_image": "ghcr.io/ferret-linux/arch-otr:latest",
-      "fallback_vendor_image": "docker.io/library/archlinux:latest",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-02T05:26:19Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 2213628206,
-          "disk_size": 2213628206
-        }
-      },
-      "build_number": 173
-    },
-    {
       "name": "void-glibc",
       "official_image": "ghcr.io/ferret-linux/void-otr:glibc",
       "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest",
@@ -768,6 +751,23 @@
         }
       },
       "build_number": 175
+    },
+    {
+      "name": "arch",
+      "official_image": "ghcr.io/ferret-linux/arch-otr:latest",
+      "fallback_vendor_image": "docker.io/library/archlinux:latest",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-02T07:10:23Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 2213628205,
+          "disk_size": 2213628205
+        }
+      },
+      "build_number": 174
     }
   ]
 }
