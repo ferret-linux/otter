@@ -68,6 +68,7 @@ type Item struct {
 	Name       string     `toml:"name"`
 	Image      string     `toml:"image"`
 	Clone      string     `toml:"clone"`
+	Home       string     `toml:"home"`
 	StartNow   *bool      `toml:"start-now"`
 	ForcePull  *bool      `toml:"force-pull"`
 	Include    string     `toml:"include"`

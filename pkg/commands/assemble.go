@@ -191,7 +191,7 @@ func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item) e
 		AdditionalPackages:      item.Additional.Packages,
 		ContainerPreInitHook:    ac.joinHooks(item.Hooks.PreInit),
 		ContainerInitHook:       ac.joinHooks(item.Hooks.PostInit),
-		ContainerUserCustomHome: "",
+		ContainerUserCustomHome: item.Home,
 		Init:                    initSystem,
 		GPU:                     *item.Hardware.GPU,
 		NoUsernsLimit:           *item.Isolation.UsernsNoLimit || ac.cfg.DefaultUsernsNoLimit,

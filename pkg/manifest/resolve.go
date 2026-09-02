@@ -165,6 +165,9 @@ func mergeItems(base, item Item) Item {
 	if item.Clone == "" {
 		item.Clone = base.Clone
 	}
+	if item.Home == "" {
+		item.Home = base.Home
+	}
 	if item.StartNow == nil {
 		item.StartNow = base.StartNow
 	}
