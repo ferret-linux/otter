@@ -36,7 +36,7 @@ silence_nu()
 	# Nushell prints a welcome banner, an uptime report and a startup-time
 	# measurement on interactive startup; config.show_banner=false disables
 	# them. Guarded so it only applies to interactive sessions, matching
-	# otter_config.nu.
+	# nushell_integration.nu.
 	cat > "${autoload_dir}/silence-shell.nu" <<'EOF'
 if (is-terminal --stdin) {
 	$env.config.show_banner = false

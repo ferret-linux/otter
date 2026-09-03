@@ -1,4 +1,4 @@
-# The nushell analogue of fish_prompt.fish (and otter_profile.sh's PS1 for
+# The nushell analogue of fish_prompt.fish (and ps1_prompt.sh's PS1 for
 # bash/zsh): a two-line, toolbox-style prompt showing the ⬢ otter mark, the
 # user@container, the current directory and the clock, over a muted second
 # line ending in the ▶ indicator.

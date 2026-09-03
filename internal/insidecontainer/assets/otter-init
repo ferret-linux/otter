@@ -630,7 +630,8 @@ if [ "${shell_bin}" = "zsh" ]; then
 	mkdir -p /etc/zsh
 	printf 'emulate sh -c '\''source /etc/profile'\''\n' > /etc/zsh/zprofile
 	printf 'emulate sh -c '\''source /etc/profile'\''\n' > /etc/zshenv
-	printf '[ -f /etc/profile.d/otter_profile.sh ] && source /etc/profile.d/otter_profile.sh\n' >> /etc/zsh/zprofile
+	printf '[ -f /etc/profile.d/posix_integration.sh ] && source /etc/profile.d/posix_integration.sh\n' >> /etc/zsh/zprofile
+	printf '[ -f /etc/profile.d/ps1_prompt.sh ] && source /etc/profile.d/ps1_prompt.sh\n' >> /etc/zsh/zprofile
 fi
 
 # Attempt to download host-spawn during init, we don't care if it fails, so let's
@@ -737,8 +738,11 @@ patched=0
 for rcfile in ${rcfiles}; do
 	if [ -e "${rcfile}" ]; then
 		patched=1
-		if ! grep -q 'otter_profile.sh' "${rcfile}"; then
-			echo "[ -e /etc/profile.d/otter_profile.sh ] && . /etc/profile.d/otter_profile.sh" >> "${rcfile}"
+		if ! grep -q 'posix_integration.sh' "${rcfile}"; then
+			echo "[ -e /etc/profile.d/posix_integration.sh ] && . /etc/profile.d/posix_integration.sh" >> "${rcfile}"
+		fi
+		if ! grep -q 'ps1_prompt.sh' "${rcfile}"; then
+			echo "[ -e /etc/profile.d/ps1_prompt.sh ] && . /etc/profile.d/ps1_prompt.sh" >> "${rcfile}"
 		fi
 	fi
 done
@@ -751,7 +755,8 @@ if [ "${patched}" -eq 0 ] && [ ! -e /etc/profile ]; then
 		'unset f' \
 		> /etc/profile
 fi
-cp /usr/lib/otter/scripts/initialization-scripts/configs/otter_profile.sh /etc/profile.d/otter_profile.sh
+cp /usr/lib/otter/scripts/initialization-scripts/configs/posix_integration.sh /etc/profile.d/posix_integration.sh
+cp /usr/lib/otter/scripts/initialization-scripts/configs/ps1_prompt.sh /etc/profile.d/ps1_prompt.sh
 
 # Fish doesn't read /etc/fish reliably on every image -- some fish builds
 # (e.g. nixpkgs') bake $__fish_sysconfdir into the read-only package output
@@ -763,7 +768,7 @@ cp /usr/lib/otter/scripts/initialization-scripts/configs/otter_profile.sh /etc/p
 # nothing else needs to change for fish to pick these up.
 if command -v fish > /dev/null; then
 	mkdir -p /usr/local/share/fish/vendor_conf.d
-	cp /usr/lib/otter/scripts/initialization-scripts/configs/otter_config.fish /usr/local/share/fish/vendor_conf.d/otter_config.fish
+	cp /usr/lib/otter/scripts/initialization-scripts/configs/fish_integration.fish /usr/local/share/fish/vendor_conf.d/fish_integration.fish
 	mkdir -p /usr/local/share/fish/vendor_functions.d
 	cp /usr/lib/otter/scripts/initialization-scripts/configs/fish_prompt.fish /usr/local/share/fish/vendor_functions.d/fish_prompt.fish
 fi
@@ -772,7 +777,7 @@ fi
 # fish (see above), just under its own nushell/vendor/autoload/*.nu lookup.
 if command -v nu > /dev/null; then
 	mkdir -p /usr/local/share/nushell/vendor/autoload
-	cp /usr/lib/otter/scripts/initialization-scripts/configs/otter_config.nu /usr/local/share/nushell/vendor/autoload/otter_config.nu
+	cp /usr/lib/otter/scripts/initialization-scripts/configs/nushell_integration.nu /usr/local/share/nushell/vendor/autoload/nushell_integration.nu
 	cp /usr/lib/otter/scripts/initialization-scripts/configs/nushell_prompt.nu /usr/local/share/nushell/vendor/autoload/nushell_prompt.nu
 fi
 ###############################################################################
