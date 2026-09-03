@@ -49,14 +49,16 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 		Version: "0.0.9",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name:   "sudo-command",
-				Hidden: true,
-				Value:  cfg.SudoProgram,
+				Name:    "sudo-command",
+				Aliases: []string{"sc"},
+				Hidden:  true,
+				Value:   cfg.SudoProgram,
 			},
 			&cli.StringFlag{
-				Name:   "container-manager",
-				Hidden: true,
-				Value:  cfg.ContainerManagerType,
+				Name:    "container-manager",
+				Aliases: []string{"cm"},
+				Hidden:  true,
+				Value:   cfg.ContainerManagerType,
 			},
 		},
 		Before: func(ctx context.Context, _ *cli.Command) (context.Context, error) {
