@@ -8,11 +8,12 @@
 {2}│{R}{3}▸ Examples:{R}                                               {2}│{R}
 {2}│{R}  {5}otter reg ls{R}                                            {2}│{R}
 {2}│{R}  {5}otter reg ls --all{R}                                      {2}│{R}
+{2}│{R}  {5}otter registry list -j{R}                                  {2}│{R}
 {2}│{R}  {5}otter registry list --all{R}                               {2}│{R}
 {2}├──────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                                {2}│{R}
 {2}│{R} {4}--all{R}     {2}┆{R} {4}-a{R}  {5}Include disabled images in the table{R}     {2}│{R}
-{2}│{R} {4}--json{R}    {2}┆{R} {4}-j{R}  {5}Present registry output in json fromat{R}   {2}│{R}
+{2}│{R} {4}--json{R}    {2}┆{R} {4}-j{R}  {5}Present registry output in json format{R}   {2}│{R}
 {2}├──────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                                 {2}│{R}
 {2}│{R} {4}--root{R}    {2}┆{R} {4}-r{R}  {5}Use rootful containers{R}                   {2}│{R}

@@ -25,8 +25,8 @@
 {2}├───────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                        {2}│{R}
 {2}│{R}  {5}Rootful containers need '--root' for 'upgrade'.{R}  {2}│{R}
-{2}│{R}{5}  Locked containers are always skipped, with{R}       {2}│{R}
-{2}│{R}{5}  a warning. If every requested container is{R}       {2}│{R}
-{2}│{R}{5}  locked (nothing gets upgraded), the command{R}      {2}│{R}
-{2}│{R}{5}  errors. Use 'unlock' first.{R}                      {2}│{R}
+{2}│{R}  {5}Locked containers are always skipped, with{R}       {2}│{R}
+{2}│{R}  {5}a warning. If every requested container is{R}       {2}│{R}
+{2}│{R}  {5}locked (nothing gets upgraded), the command{R}      {2}│{R}
+{2}│{R}  {5}errors. Use 'unlock' first.{R}                      {2}│{R}
 {2}╰───────────────────────────────────────────────────╯{R}

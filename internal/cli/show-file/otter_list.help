@@ -8,6 +8,7 @@
 {2}│{R}{3}▸ Examples:{R}                                {2}│{R}
 {2}│{R}  {5}otter ls --root{R}                          {2}│{R}
 {2}│{R}  {5}NO_COLOR=1 otter ls{R}                      {2}│{R}
+{2}│{R}  {5}otter list --root --json{R}                 {2}│{R}
 {2}│{R}  {5}NO_COLOR=1 otter list --root{R}             {2}│{R}
 {2}├───────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                 {2}│{R}

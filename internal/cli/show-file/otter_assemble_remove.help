@@ -7,6 +7,8 @@
 {2}├───────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                                {2}│{R}
 {2}│{R}  {5}otter dmf rm --file manifest.toml{R}                        {2}│{R}
+{2}│{R}  {5}otter dmf rm -f manifest.toml my-box{R}                     {2}│{R}
+{2}│{R}  {5}otter assemble remove -f manifest.toml my-box{R}            {2}│{R}
 {2}│{R}  {5}otter assemble remove --file manifest.toml my-box{R}        {2}│{R}
 {2}├───────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                                 {2}│{R}

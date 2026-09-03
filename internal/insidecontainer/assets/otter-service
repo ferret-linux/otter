@@ -53,6 +53,12 @@ HELP_TEXT = """\
 {2}│{R}  {5}otter svc     <action> <name>{R}                            {2}│{R}
 {2}│{R}  {5}otter service <action> <name>{R}                            {2}│{R}
 {2}├───────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                                {2}│{R}
+{2}│{R}  {5}otter svc start sshd{R}                                     {2}│{R}
+{2}│{R}  {5}otter svc enable sshd{R}                                    {2}│{R}
+{2}│{R}  {5}otter service status sshd{R}                                {2}│{R}
+{2}│{R}  {5}otter service disable sshd{R}                               {2}│{R}
+{2}├───────────────────────────────────────────────────────────┤{R}
 {2}│{R}{1}● Actions ➜{R}                                                {2}│{R}
 {2}│{R}{3}▸ Service Control:{R}                                         {2}│{R}
 {2}│{R} {4}stop{R}     {2}┆{R} {4}kl{R}  {5}Stop a running service{R}                     {2}│{R}
@@ -61,13 +67,7 @@ HELP_TEXT = """\
 {2}│{R} {4}restart{R}  {2}┆{R} {4}rbt{R} {5}Stop then start the service{R}                {2}│{R}
 {2}│{R}{3}▸ On-boot Management:{R}                                      {2}│{R}
 {2}│{R} {4}enable{R}   {2}┆{R} {4}up{R}  {5}Auto-start the service on boot/init{R}        {2}│{R}
-{2}│{R} {4}disable{R}  {2}┆{R} {4}dn{R}  {5}Stop auto-starting the service on boot/init{R}{2}│{R}
-{2}├───────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Examples:{R}                                                {2}│{R}
-{2}│{R}  {5}otter svc start sshd{R}                                     {2}│{R}
-{2}│{R}  {5}otter svc enable sshd{R}                                    {2}│{R}
-{2}│{R}  {5}otter service status sshd{R}                                {2}│{R}
-{2}│{R}  {5}otter service disable sshd{R}                               {2}│{R}
+{2}│{R} {4}disable{R}  {2}┆{R} {4}dn{R}  {5}Stop auto-starting the service at boot{R}     {2}│{R}
 {2}├───────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                                  {2}│{R}
 {2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}                    {2}│{R}

@@ -6,9 +6,9 @@
 {2}│{R}  {5}otter registry pull [options] [image...]{R}                {2}│{R}
 {2}├──────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                               {2}│{R}
-{2}│{R}  {5}otter reg pull fedora{R}                                   {2}│{R}
-{2}│{R}  {5}otter reg pull --force alpine{R}                           {2}│{R}
-{2}│{R}  {5}otter registry pl --all{R}                                 {2}│{R}
+{2}│{R}  {5}otter reg pl fedora{R}                                     {2}│{R}
+{2}│{R}  {5}otter reg pl --force alpine{R}                             {2}│{R}
+{2}│{R}  {5}otter registry pull --all{R}                               {2}│{R}
 {2}│{R}  {5}otter registry pull --all --force{R}                       {2}│{R}
 {2}├──────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                                {2}│{R}

@@ -7,6 +7,7 @@
 {2}├──────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                                   {2}│{R}
 {2}│{R}  {5}otter dmf mk --file manifest.toml{R}                           {2}│{R}
+{2}│{R}  {5}otter dmf mk -f manifest.toml -R my-box{R}                     {2}│{R}
 {2}│{R}  {5}otter assemble create --file manifest.toml my-box{R}           {2}│{R}
 {2}│{R}  {5}otter assemble create -f manifest.toml --replace my-box{R}     {2}│{R}
 {2}├──────────────────────────────────────────────────────────────┤{R}

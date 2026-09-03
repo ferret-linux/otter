@@ -9,6 +9,7 @@
 {2}│{R}  {5}otter dn my-box{R}                                    {2}│{R}
 {2}│{R}  {5}otter dn --all{R}                                     {2}│{R}
 {2}│{R}  {5}otter stop --all --root{R}                            {2}│{R}
+{2}│{R}  {5}otter stop my-box --force{R}                          {2}│{R}
 {2}├─────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                           {2}│{R}
 {2}│{R} {4}--all{R}     {2}┆{R} {4}-a{R}  {5}Stop all otter containers{R}           {2}│{R}

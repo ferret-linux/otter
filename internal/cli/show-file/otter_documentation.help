@@ -2,21 +2,21 @@
 {2}│{R}{1}⦿ Browse otter's documentation in an interactive viewer{R} {2}│{R}
 {2}├────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                                {2}│{R}
-{2}│{R}{5}  otter docs          [options]{R}                         {2}│{R}
-{2}│{R}{5}  otter documentation [options]{R}                         {2}│{R}
+{2}│{R}  {5}otter docs          [options]{R}                         {2}│{R}
+{2}│{R}  {5}otter documentation [options]{R}                         {2}│{R}
 {2}├────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                             {2}│{R}
-{2}│{R}{5}  otter docs{R}                                            {2}│{R}
-{2}│{R}{5}  otter documentation{R}                                   {2}│{R}
+{2}│{R}  {5}otter docs{R}                                            {2}│{R}
+{2}│{R}  {5}otter documentation{R}                                   {2}│{R}
 {2}├────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                               {2}│{R}
 {2}│{R} {4}--help    {R}{2}┆{R} {4}-h{R}  {5}Show this help message{R}                 {2}│{R}
 {2}├───────────┴────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Notes:{R}                                                {2}│{R}
-{2}│{R}{5} Docs are bundled into the otter binary; no network{R}     {2}│{R}
-{2}│{R}{5} connection is needed to browse them.{R}                   {2}│{R}
-{2}│{R}{5} Select an entry in the tree to preview it on the right.{R}{2}│{R}
+{2}│{R} {5}Docs are bundled into the otter binary; no network{R}     {2}│{R}
+{2}│{R} {5}connection is needed to browse them.{R}                   {2}│{R}
+{2}│{R} {5}Select an entry in the tree to preview it on the right.{R}{2}│{R}
 {2}├────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                             {2}│{R}
-{2}│{R}{5} See 'otter.md' for the full command reference.{R}         {2}│{R}
+{2}│{R} {5}See 'otter.md' for the full command reference.{R}         {2}│{R}
 {2}╰────────────────────────────────────────────────────────╯{R}

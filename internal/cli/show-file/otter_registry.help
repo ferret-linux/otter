@@ -8,14 +8,13 @@
 {2}│{R}{3}▸ Examples:{R}                                                   {2}│{R}
 {2}│{R}  {5}otter reg ls --all{R}                                          {2}│{R}
 {2}│{R}  {5}otter reg pull --all --force{R}                                {2}│{R}
-{2}│{R}  {5}otter reg pull alpine,fedora{R}                                {2}│{R}
 {2}│{R}  {5}otter registry list{R}                                         {2}│{R}
 {2}│{R}  {5}otter registry remove alpine,fedora{R}                         {2}│{R}
 {2}├──────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ List / Ls:{R}                                                  {2}│{R}
 {2}│{R}  {5}examples: otter reg ls [options] or otter registry list{R}     {2}│{R}
 {2}│{R} {4}--all{R}     {2}┆{R} {4}-a{R}  {5}Include disabled images in the table{R}         {2}│{R}
-{2}│{R} {4}--json{R}    {2}┆{R} {4}-j{R}  {5}Present registry output in json fromat{R}       {2}│{R}
+{2}│{R} {4}--json{R}    {2}┆{R} {4}-j{R}  {5}Present registry output in json format{R}       {2}│{R}
 {2}├──────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Pull / Pl:{R}                                                  {2}│{R}
 {2}│{R}  {5}examples: otter reg pl [options] or otter registry pull{R}     {2}│{R}

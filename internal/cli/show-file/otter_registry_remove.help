@@ -8,6 +8,7 @@
 {2}│{R}{3}▸ Examples:{R}                                             {2}│{R}
 {2}│{R}  {5}otter reg rm fedora{R}                                   {2}│{R}
 {2}│{R}  {5}otter reg rm --force alpine{R}                           {2}│{R}
+{2}│{R}  {5}otter registry remove -f alpine{R}                       {2}│{R}
 {2}│{R}  {5}otter registry remove --all --force{R}                   {2}│{R}
 {2}├────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                              {2}│{R}
@@ -17,4 +18,7 @@
 {2}│{R}{3}▸ Extras:{R}                                               {2}│{R}
 {2}│{R} {4}--root{R}    {2}┆{R} {4}-r{R}  {5}Use rootful containers{R}                 {2}│{R}
 {2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}                 {2}│{R}
+{2}├────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Notes:{R}                                                {2}│{R}
+{2}│{R} {5}Removing an image does not affect running containers.{R}  {2}│{R}
 {2}╰────────────────────────────────────────────────────────╯{R}
