@@ -101,18 +101,18 @@ HELP_TEXT = """\
 {2}│{R}  {5}otter export --bin /usr/bin/zeditor --export-path ~/.local/bin{R} {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{1}● Options ➜{R}                                                      {2}│{R}
-{2}│{R}{3} ▸ Export Target:{R}                                                {2}│{R}
+{2}│{R}{3}▸ Export Target:{R}                                                 {2}│{R}
 {2}│{R} {4}--app{R}          {2}┆{R} {4}-a{R}   {5}Name of the application to export{R}         {2}│{R}
 {2}│{R} {4}--bin{R}          {2}┆{R} {4}-b{R}   {5}Absolute path of the binary to export{R}     {2}│{R}
-{2}│{R}{3} ▸ Configuration:{R}                                                {2}│{R}
+{2}│{R}{3}▸ Configuration:{R}                                                 {2}│{R}
 {2}│{R} {4}--as{R}           {2}┆{R} {4}-n{R}   {5}Custom name for the exported binary{R}       {2}│{R}
 {2}│{R} {4}--sudo{R}         {2}┆{R} {4}-S{R}   {5}Run the exported item as sudo{R}             {2}│{R}
 {2}│{R} {4}--export-path{R}  {2}┆{R} {4}-ep{R}  {5}Path where to export the binary{R}           {2}│{R}
 {2}│{R} {4}--export-label{R} {2}┆{R} {4}-el{R}  {5}Label to append to exported application{R}   {2}│{R}
-{2}│{R}{3} ▸ Execution:{R}                                                    {2}│{R}
+{2}│{R}{3}▸ Execution:{R}                                                     {2}│{R}
 {2}│{R} {4}--enter-flags{R}  {2}┆{R} {4}-nf{R}  {5}Flags to pass to otter-enter{R}              {2}│{R}
 {2}│{R} {4}--extra-flags{R}  {2}┆{R} {4}-ef{R}  {5}Extra flags to append to the command{R}      {2}│{R}
-{2}│{R}{3} ▸ Management:{R}                                                   {2}│{R}
+{2}│{R}{3}▸ Management:{R}                                                    {2}│{R}
 {2}│{R} {4}--delete{R}       {2}┆{R} {4}-dl{R}  {5}Delete an exported application or binary{R}  {2}│{R}
 {2}│{R} {4}--list-apps{R}           {5}List applications exported from container{R} {2}│{R}
 {2}│{R} {4}--list-binaries{R}       {5}List binaries exported from container{R}     {2}│{R}
