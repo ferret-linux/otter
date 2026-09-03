@@ -164,3 +164,8 @@ RUN sh /tmp/silence-shell.sh
 # /usr/local/bin. Official images only.
 COPY images/scripts/install-starship.sh /tmp/install-starship.sh
 RUN sh /tmp/install-starship.sh
+
+# Ship the default otter starship integration, read via $STARSHIP_CONFIG set below.
+# Users can override it any time with their own $STARSHIP_CONFIG or ~/.config/starship.toml.
+COPY images/scripts/starship.toml /usr/lib/otter/helpers/starship.toml
+ENV STARSHIP_CONFIG=/usr/lib/otter/helpers/starship.toml
