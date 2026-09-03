@@ -49,14 +49,17 @@ def render_help(text):
 
 HELP_TEXT = """\
 {2}╭─────────────────────────────────────────────────────────────────╮{R}
+{2}│{R}{1}⦿ Redirect container commands to run on your host{R}                {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                                         {2}│{R}
+{2}│{R}  {5}otter rd       <add|remove|list> [options]{R}                     {2}│{R}
 {2}│{R}  {5}otter redirect <add|remove|list> [options]{R}                     {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                                      {2}│{R}
+{2}│{R}  {5}otter rd list{R}                                                  {2}│{R}
+{2}│{R}  {5}otter rd remove rpm-up{R}                                         {2}│{R}
 {2}│{R}  {5}otter redirect add --host-cmd flatpak{R}                          {2}│{R}
 {2}│{R}  {5}otter redirect add --host-cmd "rpm-ostree upgrade" --as rpm-up{R} {2}│{R}
-{2}│{R}  {5}otter redirect remove rpm-up{R}                                   {2}│{R}
-{2}│{R}  {5}otter redirect list{R}                                            {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Commands:{R}                                                      {2}│{R}
 {2}│{R} {4}add{R}     {5}Create a wrapper that redirects to a host command{R}       {2}│{R}

@@ -82,27 +82,39 @@ def render_help(text):
 
 HELP_TEXT = """\
 {2}╭─────────────────────────────────────────────────────────────────╮{R}
+{2}│{R}{1}⦿ Export container apps and binaries to your host{R}                {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                                         {2}│{R}
+{2}│{R}  {5}otter ex     <--app|--bin> [options]{R}                           {2}│{R}
 {2}│{R}  {5}otter export <--app|--bin> [options]{R}                           {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                                      {2}│{R}
+{2}│{R}  {5}otter ex -a firefox{R}                                            {2}│{R}
+{2}│{R}  {5}otter ex -a firefox -dl{R}                                        {2}│{R}
+{2}│{R}  {5}otter ex -b /usr/bin/docker -S{R}                                 {2}│{R}
+{2}│{R}  {5}otter ex -b /usr/bin/htop -n htop-custom{R}                       {2}│{R}
+{2}│{R}  {5}otter ex -b /usr/bin/zeditor -ep ~/.local/bin{R}                  {2}│{R}
 {2}│{R}  {5}otter export --app firefox{R}                                     {2}│{R}
 {2}│{R}  {5}otter export --app firefox --delete{R}                            {2}│{R}
 {2}│{R}  {5}otter export --bin /usr/bin/docker --sudo{R}                      {2}│{R}
-{2}│{R}  {5}otter export --bin /usr/bin/zeditor --export-path ~/.local/bin{R} {2}│{R}
 {2}│{R}  {5}otter export --bin /usr/bin/htop --as htop-custom{R}              {2}│{R}
+{2}│{R}  {5}otter export --bin /usr/bin/zeditor --export-path ~/.local/bin{R} {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Options:{R}                                                       {2}│{R}
+{2}│{R}{1}● Options ➜{R}                                                      {2}│{R}
+{2}│{R}{3} ▸ Export Target:{R}                                                {2}│{R}
 {2}│{R} {4}--app{R}          {2}┆{R} {4}-a{R}   {5}Name of the application to export{R}         {2}│{R}
 {2}│{R} {4}--bin{R}          {2}┆{R} {4}-b{R}   {5}Absolute path of the binary to export{R}     {2}│{R}
+{2}│{R}{3} ▸ Configuration:{R}                                                {2}│{R}
 {2}│{R} {4}--as{R}           {2}┆{R} {4}-n{R}   {5}Custom name for the exported binary{R}       {2}│{R}
 {2}│{R} {4}--sudo{R}         {2}┆{R} {4}-S{R}   {5}Run the exported item as sudo{R}             {2}│{R}
-{2}│{R} {4}--delete{R}       {2}┆{R} {4}-del{R} {5}Delete an exported application or binary{R}  {2}│{R}
-{2}│{R} {4}--list-apps{R}           {5}List applications exported from container{R} {2}│{R}
-{2}│{R} {4}--enter-flags{R}  {2}┆{R} {4}-nf{R}  {5}Flags to pass to otter-enter{R}              {2}│{R}
 {2}│{R} {4}--export-path{R}  {2}┆{R} {4}-ep{R}  {5}Path where to export the binary{R}           {2}│{R}
-{2}│{R} {4}--extra-flags{R}  {2}┆{R} {4}-ef{R}  {5}Extra flags to append to the command{R}      {2}│{R}
 {2}│{R} {4}--export-label{R} {2}┆{R} {4}-el{R}  {5}Label to append to exported application{R}   {2}│{R}
+{2}│{R}{3} ▸ Execution:{R}                                                    {2}│{R}
+{2}│{R} {4}--enter-flags{R}  {2}┆{R} {4}-nf{R}  {5}Flags to pass to otter-enter{R}              {2}│{R}
+{2}│{R} {4}--extra-flags{R}  {2}┆{R} {4}-ef{R}  {5}Extra flags to append to the command{R}      {2}│{R}
+{2}│{R}{3} ▸ Management:{R}                                                   {2}│{R}
+{2}│{R} {4}--delete{R}       {2}┆{R} {4}-dl{R}  {5}Delete an exported application or binary{R}  {2}│{R}
+{2}│{R} {4}--list-apps{R}           {5}List applications exported from container{R} {2}│{R}
 {2}│{R} {4}--list-binaries{R}       {5}List binaries exported from container{R}     {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                                        {2}│{R}
@@ -138,7 +150,7 @@ parser.add_argument("-a", "--app",          dest="exported_app",   default="")
 parser.add_argument("-b", "--bin",          dest="exported_bin",   default="")
 parser.add_argument("-n", "--as",           dest="exported_as",    default="")
 parser.add_argument("-S", "--sudo",         action="store_true",   dest="is_sudo")
-parser.add_argument("-del", "--delete",     action="store_true",   dest="exported_delete")
+parser.add_argument("-dl", "--delete",      action="store_true",   dest="exported_delete")
 parser.add_argument("--list-apps",          action="store_true")
 parser.add_argument("--list-binaries",      action="store_true")
 parser.add_argument("-el", "--export-label", dest="exported_app_label", default="")

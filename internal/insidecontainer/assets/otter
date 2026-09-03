@@ -41,31 +41,25 @@ def render_help(text):
     return text.replace("{R}", "\033[0m")
 
 HELP_TEXT = """\
-{2}╭─────────────────────────────────────────────────╮{R}
-{2}│{R}{1}⦿ Use any Linux distribution inside your terminal{R}{2}│{R}
-{2}├─────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Usage:{R}                                         {2}│{R}
-{2}│{R}  {5}otter <command> [args]{R}                         {2}│{R}
-{2}├─────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Commands:{R}                                      {2}│{R}
-{2}│{R} {4}export{R}    {5}Export apps or binaries to the host{R}   {2}│{R}
-{2}│{R} {4}host-exec{R} {5}Run a command on the host{R}             {2}│{R}
-{2}│{R} {4}doctor{R}    {5}Diagnose the container's health{R}       {2}│{R}
-{2}│{R} {4}redirect{R}  {5}Redirect a command to run on the host{R} {2}│{R}
-{2}│{R} {4}service{R}   {5}Manage a service inside the container{R} {2}│{R}
-{2}├─────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Extras:{R}                                        {2}│{R}
-{2}│{R} {4}--help{R} {2}┆{R} {4}-h{R}  {5}Show this help message{R}             {2}│{R}
-{2}│{R} {4}--version{R} {2}┆{R} {4}-V{R}  {5}Show version information{R}        {2}│{R}
-{2}├─────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Notes:{R}                                         {2}│{R}
-{2}│{R} {5}For command help, run:{R}                          {2}│{R}
-{2}│{R}  {4}otter export --help{R}                            {2}│{R}
-{2}│{R}  {4}otter host-exec --help{R}                         {2}│{R}
-{2}│{R}  {4}otter doctor --help{R}                            {2}│{R}
-{2}│{R}  {4}otter redirect --help{R}                          {2}│{R}
-{2}│{R}  {4}otter service --help{R}                           {2}│{R}
-{2}╰─────────────────────────────────────────────────╯{R}"""
+{2}╭───────────────────────────────────────────────────────╮{R}
+{2}│{R}{1}⦿ Use any Linux distribution inside your terminal{R}      {2}│{R}
+{2}├───────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Usage:{R}                                               {2}│{R}
+{2}│{R}  {5}otter <command> [args]{R}                               {2}│{R}
+{2}├───────────────────────────────────────────────────────┤{R}
+{2}│{R}{1}● Commands ➜{R}                                           {2}│{R}
+{2}│{R}{3}▸ Host Integration:{R}                                    {2}│{R}
+{2}│{R} {4}export{R}    {2}┆{R} {4}ex{R}  {5}Export apps or binaries to the host{R}   {2}│{R}
+{2}│{R} {4}redirect{R}  {2}┆{R} {4}rd{R}  {5}Redirect a command to run on the host{R} {2}│{R}
+{2}│{R} {4}host-exec{R} {2}┆{R} {4}hex{R} {5}Run a command on the host from otter{R}  {2}│{R}
+{2}│{R}{3}▸ Health & Management:{R}                                 {2}│{R}
+{2}│{R} {4}doctor{R}    {2}┆{R} {4}dr{R}  {5}Diagnose the container's health{R}       {2}│{R}
+{2}│{R} {4}service{R}   {2}┆{R} {4}svc{R} {5}Manage a service inside the container{R} {2}│{R}
+{2}├───────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                              {2}│{R}
+{2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}                {2}│{R}
+{2}│{R} {4}--version{R} {2}┆{R} {4}-V{R}  {5}Show version information{R}              {2}│{R}
+{2}╰───────────────────────────────────────────────────────╯{R}"""
 
 if len(sys.argv) < 2 or sys.argv[1] in ("--help", "-h"):
     print(render_help(HELP_TEXT))
@@ -78,15 +72,15 @@ if sys.argv[1] in ("--version", "-V"):
 subcommand = sys.argv[1]
 remaining  = sys.argv[2:]
 
-if subcommand == "export":
+if subcommand in ("export", "ex"):
     os.execv(f"{SCRIPTS_DIR}/otter-export", ["otter-export"] + remaining)
-elif subcommand == "host-exec":
-    os.execv(f"{SCRIPTS_DIR}/otter-host-exec", ["otter-host-exec"] + remaining)
-elif subcommand == "doctor":
-    os.execv(f"{SCRIPTS_DIR}/otter-doctor", ["otter-doctor"] + remaining)
-elif subcommand == "redirect":
+elif subcommand in ("redirect", "rd"):
     os.execv(f"{SCRIPTS_DIR}/otter-redirect", ["otter-redirect"] + remaining)
-elif subcommand == "service":
+elif subcommand in ("host-exec", "hex"):
+    os.execv(f"{SCRIPTS_DIR}/otter-host-exec", ["otter-host-exec"] + remaining)
+elif subcommand in ("doctor", "dr"):
+    os.execv(f"{SCRIPTS_DIR}/otter-doctor", ["otter-doctor"] + remaining)
+elif subcommand in ("service", "svc"):
     os.execv(f"{SCRIPTS_DIR}/otter-service", ["otter-service"] + remaining)
 else:
     print(f"ERROR: unknown command '{subcommand}'\n", file=sys.stderr)

@@ -25,6 +25,7 @@ from pathlib import Path
 VERSION = "0.0.9"
 MARKERS_DIR = "/usr/lib/otter"
 ACTIONS = ("start", "stop", "restart", "status", "enable", "disable")
+ACTION_ALIASES = {"kl": "stop", "ex": "start", "st": "status", "rbt": "restart", "up": "enable", "dn": "disable"}
 
 
 def render_help(text):
@@ -45,32 +46,38 @@ def render_help(text):
 
 
 HELP_TEXT = """\
-{2}╭──────────────────────────────────────────────────────────╮{R}
-{2}│{R}{3}▸ Usage:{R}                                                  {2}│{R}
-{2}│{R}  {5}otter service <action> <name>{R}                           {2}│{R}
-{2}├──────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Actions:{R}                                                {2}│{R}
-{2}│{R} {4}start{R}    {5}Start the service now{R}                           {2}│{R}
-{2}│{R} {4}stop{R}     {5}Stop a running service{R}                          {2}│{R}
-{2}│{R} {4}restart{R}  {5}Stop then start the service{R}                     {2}│{R}
-{2}│{R} {4}status{R}   {5}Show the service's current status{R}               {2}│{R}
-{2}│{R} {4}enable{R}   {5}Auto-start the service on boot/init{R}             {2}│{R}
-{2}│{R} {4}disable{R}  {5}Stop auto-starting the service on boot/init{R}     {2}│{R}
-{2}├──────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Examples:{R}                                               {2}│{R}
-{2}│{R}  {5}otter service start sshd{R}                                {2}│{R}
-{2}│{R}  {5}otter service enable sshd{R}                               {2}│{R}
-{2}│{R}  {5}otter service status sshd{R}                               {2}│{R}
-{2}├──────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Extras:{R}                                                 {2}│{R}
-{2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}                   {2}│{R}
-{2}│{R} {4}--version{R} {2}┆{R} {4}-V{R}  {5}Show version information{R}                 {2}│{R}
-{2}├──────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Notes:{R}                                                  {2}│{R}
-{2}│{R} {5}service is a convenience tool, not a full init-system{R}    {2}│{R}
-{2}│{R} {5}implementation -- it dispatches to the real, native tool{R} {2}│{R}
-{2}│{R} {5}for whichever init system the container actually uses.{R}   {2}│{R}
-{2}╰──────────────────────────────────────────────────────────╯{R}"""
+{2}╭───────────────────────────────────────────────────────────╮{R}
+{2}│{R}{1}⦿ Manage services inside your container ( initful only ){R}   {2}│{R}
+{2}├───────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Usage:{R}                                                   {2}│{R}
+{2}│{R}  {5}otter svc     <action> <name>{R}                            {2}│{R}
+{2}│{R}  {5}otter service <action> <name>{R}                            {2}│{R}
+{2}├───────────────────────────────────────────────────────────┤{R}
+{2}│{R}{1}● Actions ➜{R}                                                {2}│{R}
+{2}│{R}{3}▸ Service Control:{R}                                         {2}│{R}
+{2}│{R} {4}stop{R}     {2}┆{R} {4}kl{R}  {5}Stop a running service{R}                     {2}│{R}
+{2}│{R} {4}start{R}    {2}┆{R} {4}ex{R}  {5}Start the service now{R}                      {2}│{R}
+{2}│{R} {4}status{R}   {2}┆{R} {4}st{R}  {5}Show the service's current status{R}          {2}│{R}
+{2}│{R} {4}restart{R}  {2}┆{R} {4}rbt{R} {5}Stop then start the service{R}                {2}│{R}
+{2}│{R}{3}▸ On-boot Management:{R}                                      {2}│{R}
+{2}│{R} {4}enable{R}   {2}┆{R} {4}up{R}  {5}Auto-start the service on boot/init{R}        {2}│{R}
+{2}│{R} {4}disable{R}  {2}┆{R} {4}dn{R}  {5}Stop auto-starting the service on boot/init{R}{2}│{R}
+{2}├───────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                                {2}│{R}
+{2}│{R}  {5}otter svc start sshd{R}                                     {2}│{R}
+{2}│{R}  {5}otter svc enable sshd{R}                                    {2}│{R}
+{2}│{R}  {5}otter service status sshd{R}                                {2}│{R}
+{2}│{R}  {5}otter service disable sshd{R}                               {2}│{R}
+{2}├───────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                                  {2}│{R}
+{2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}                    {2}│{R}
+{2}│{R} {4}--version{R} {2}┆{R} {4}-V{R}  {5}Show version information{R}                  {2}│{R}
+{2}├───────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Notes:{R}                                                   {2}│{R}
+{2}│{R} {5}service is a convenience tool, not a full init-system{R}     {2}│{R}
+{2}│{R} {5}implementation -- it dispatches to the real, native tool{R}  {2}│{R}
+{2}│{R} {5}for whichever init system the container actually uses.{R}    {2}│{R}
+{2}╰───────────────────────────────────────────────────────────╯{R}"""
 
 
 def _error(message):
@@ -162,10 +169,11 @@ if sys.argv[1] in ("--version", "-V"):
 if len(sys.argv) != 3:
     _error("usage: otter service <action> <name>")
 
-action, name = sys.argv[1], sys.argv[2]
+action = ACTION_ALIASES.get(sys.argv[1], sys.argv[1])
+name = sys.argv[2]
 
 if action not in ACTIONS:
-    _error(f"unknown action '{action}'. Must be one of: {', '.join(ACTIONS)}")
+    _error(f"unknown action '{sys.argv[1]}'. Must be one of: {', '.join(ACTIONS)}")
 
 initsystem_marker = Path(f"{MARKERS_DIR}/container.initsystem")
 if not initsystem_marker.is_file():
