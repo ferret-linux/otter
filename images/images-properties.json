@@ -509,28 +509,6 @@
       "build_number": 75
     },
     {
-      "name": "wolfi",
-      "official_image": "ghcr.io/ferret-linux/wolfi-otr:latest",
-      "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-03T00:28:44Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 959619302,
-          "disk_size": 959619302
-        },
-        "arm64": {
-          "compressed_size": 945303355,
-          "disk_size": 945303355
-        }
-      },
-      "build_number": 176
-    },
-    {
       "name": "centos",
       "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
       "fallback_vendor_image": "quay.io/centos/centos:stream10",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 75
+    },
+    {
+      "name": "wolfi",
+      "official_image": "ghcr.io/ferret-linux/wolfi-otr:latest",
+      "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-03T07:42:36Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 959628010,
+          "disk_size": 959628010
+        },
+        "arm64": {
+          "compressed_size": 945300284,
+          "disk_size": 945300284
+        }
+      },
+      "build_number": 177
     }
   ]
 }
