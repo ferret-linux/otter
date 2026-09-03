@@ -398,6 +398,10 @@ RUN missing=0; \
 COPY images/scripts/install-shell.sh /tmp/install-shell.sh
 RUN sh /tmp/install-shell.sh fish nu
 
+# Silence fish/nushell startup & welcome messages (see silence-shell.sh).
+COPY images/scripts/silence-shell.sh /tmp/silence-shell.sh
+RUN sh /tmp/silence-shell.sh
+
 # Install gum (static binary, amd64/arm64) into otter's helpers dir.
 # Requires curl, so this must come after curl is installed above.
 COPY images/scripts/install-gum.sh /tmp/install-gum.sh

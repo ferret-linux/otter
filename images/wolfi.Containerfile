@@ -37,6 +37,21 @@ COPY --from=dinit-builder /dinit-out/usr/ /usr/
 # Make dinit available as the system init
 RUN ln -sf /usr/bin/dinit /sbin/init
 
+# Provision dinit's service description tree. Wolfi builds dinit from
+# source (above) but ships no service descriptions at all (unlike
+# dinit-chimera), and otter's init-integration (setup_init_dinit in
+# setup_initsystem.sh) relies on:
+#   - /etc/dinit.d existing, to drop in otter-user-integration
+#   - a `boot` service, which dinit starts by default and whose
+#     STARTED state otter polls via `dinitctl status boot` before
+#     marking the container ready
+#   - /etc/dinit.d/boot.d, where otter (and dinitctl enable) symlink
+#     services to be brought up as part of boot
+# The `boot` service is the minimal internal grouping point from dinit's
+# own getting-started guide; boot.d starts empty by default.
+RUN mkdir -p /etc/dinit.d/boot.d \
+    && printf 'type = internal\nwaits-for.d: boot.d\n' > /etc/dinit.d/boot
+
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 RUN apk update && \
@@ -146,6 +161,10 @@ RUN sh /tmp/install-host-spawn.sh
 # manager doesn't carry them (checked via command -v inside the script).
 COPY images/scripts/install-shell.sh /tmp/install-shell.sh
 RUN sh /tmp/install-shell.sh fish nu
+
+# Silence fish/nushell startup & welcome messages (see silence-shell.sh).
+COPY images/scripts/silence-shell.sh /tmp/silence-shell.sh
+RUN sh /tmp/silence-shell.sh
 
 # Install starship (static musl binary, amd64/arm64) into
 # /usr/local/bin. Official images only.

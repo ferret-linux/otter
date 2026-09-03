@@ -156,6 +156,10 @@ RUN sh /tmp/python-fix.sh
 COPY images/scripts/install-shell.sh /tmp/install-shell.sh
 RUN sh /tmp/install-shell.sh fish nu
 
+# Silence fish/nushell startup & welcome messages (see silence-shell.sh).
+COPY images/scripts/silence-shell.sh /tmp/silence-shell.sh
+RUN sh /tmp/silence-shell.sh
+
 # Install starship (static musl binary, amd64/arm64) into
 # /usr/local/bin. Official images only.
 COPY images/scripts/install-starship.sh /tmp/install-starship.sh
