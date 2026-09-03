@@ -773,6 +773,7 @@ fi
 if command -v nu > /dev/null; then
 	mkdir -p /usr/local/share/nushell/vendor/autoload
 	cp /usr/lib/otter/scripts/initialization-scripts/configs/otter_config.nu /usr/local/share/nushell/vendor/autoload/otter_config.nu
+	cp /usr/lib/otter/scripts/initialization-scripts/configs/nushell_prompt.nu /usr/local/share/nushell/vendor/autoload/nushell_prompt.nu
 fi
 ###############################################################################
 
