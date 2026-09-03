@@ -3,6 +3,7 @@ package registry
 import (
 	"context"
 	"fmt"
+	"io"
 	"math"
 	"os"
 	"os/exec"
@@ -93,6 +94,7 @@ type pullModel struct {
 	cmd     *exec.Cmd     // the pull command; ProcessState is read from it once exited
 	exited  chan struct{} // signaled once, from child.GetEmulator()'s exit callback or immediately if already exited
 	pullErr error         // the pull's result, set once pullExitedMsg is handled
+	boxRows int           // rows the box occupies on screen (windowLines + 2 borders), used to erase it on exit
 }
 
 // newPullModel creates the wrapper model and starts cmd inside it. cmd must
@@ -134,7 +136,7 @@ func newPullModel(cmd *exec.Cmd) (*pullModel, error) {
 		}
 	}
 
-	return &pullModel{child: child, style: style, cmd: cmd, exited: exited}, nil
+	return &pullModel{child: child, style: style, cmd: cmd, exited: exited, boxRows: windowLines + 2}, nil
 }
 
 // waitExited returns a tea.Cmd that blocks until ch is signaled, then
@@ -157,6 +159,7 @@ func (m *pullModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		windowLines, boxWidth := scaledDimensions(msg.Width, msg.Height)
 		m.style = ui.BorderStyle(boxWidth)
+		m.boxRows = windowLines + 2
 		innerWidth := boxWidth - m.style.GetHorizontalFrameSize()
 
 		updated, cmd := m.child.Update(tea.WindowSizeMsg{Width: innerWidth, Height: windowLines})
@@ -176,12 +179,12 @@ func (m *pullModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m *pullModel) View() tea.View {
-	// AltScreen is exited automatically when the program quits (on
-	// completion or on Ctrl-C alike), which restores the terminal exactly
-	// as it was before the box appeared — the equivalent of the old
-	// scrollWindow's explicit eraseLocked, without hand-rolled ANSI.
+	// Render inline in the terminal (the alternate screen is a whole-terminal
+	// takeover, which isn't what a transient pull box should do). The box
+	// appears at the current cursor position over the existing terminal
+	// content and is cleared when the program quits, restoring the terminal
+	// as it was before.
 	v := tea.NewView(m.style.Render(m.child.View().Content))
-	v.AltScreen = true
 	return v
 }
 
@@ -225,6 +228,35 @@ func Pull(
 	return nil
 }
 
+// eraseInlineBox clears the rows the pull box was drawn over and restores
+// the terminal to how it was before the box appeared.
+//
+// Bubble Tea's inline renderer overwrites its own frame in the main screen
+// buffer but, unlike the alternate screen, does not erase it on quit: on
+// close it only issues erase-below from the bottom of the screen, which
+// leaves the box's rows behind. We therefore clear them ourselves. The box
+// occupies the last windowLines+2 rows of the screen (windowLines content
+// rows plus the top and bottom borders), so we move the cursor back up to
+// the box's first row and erase that whole block, then show the cursor
+// again. boxRows is the number of rows to erase (windowLines+2).
+func eraseInlineBox(w io.Writer, boxRows int) {
+	if boxRows < 1 {
+		return
+	}
+	// Hide the cursor so the block erase doesn't leave it visibly hopping.
+	// On return from Bubble Tea the cursor rests at the bottom of the screen
+	// on the box's last row; walk it up boxRows-1 rows to the box's top
+	// border, clearing each row as we go, then restore the cursor.
+	fmt.Fprint(w, "\x1b[?25l")
+	for i := 0; i < boxRows; i++ {
+		if i > 0 {
+			fmt.Fprint(w, "\x1b[1A") // up one row
+		}
+		fmt.Fprint(w, "\x1b[2K") // erase the whole line
+	}
+	fmt.Fprint(w, "\x1b[?25h") // show cursor
+}
+
 // runPull runs the actual pull: interactively, in a bordered, resizable box
 // when attached to a real terminal, or via the provider's own silent,
 // buffered pull otherwise.
@@ -248,8 +280,13 @@ func runPull(ctx context.Context, cm containermanager.ContainerManager, imageRef
 	if err != nil {
 		return err
 	}
+	pm := finalModel.(*pullModel)
 
-	return finalModel.(*pullModel).pullErr
+	// Erase the inline box Bubble Tea left in the main screen buffer (it's
+	// not on the alternate screen, so it isn't cleaned up on quit).
+	eraseInlineBox(os.Stderr, pm.boxRows)
+
+	return pm.pullErr
 }
 
 // cleanupDanglingImage removes oldID if no otter container references it.
