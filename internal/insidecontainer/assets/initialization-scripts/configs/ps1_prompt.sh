@@ -1,28 +1,44 @@
-# Official otter images ship starship + /usr/lib/otter/helpers/starship.toml
-# (with $STARSHIP_CONFIG pointing at it, see the Containerfile ENV), so on
-# those images starship becomes the default prompt. Every otter image still
-# gets the integration below as the fallback for non-official (user-built)
-# images: a toolbox-style prompt reminescent of toolbx:
-# https://github.com/containers/toolbox/blob/main/profile.d/toolbox.sh#L47
-# this will ensure greater compatibility between the two implementations
-if [ -f /usr/lib/otter/container.official ]; then
-    if command -v starship >/dev/null 2>&1; then
-        if [ "${BASH_VERSION:-}" != "" ]; then
-            eval "$(starship init bash)"
-        elif [ "${ZSH_VERSION:-}" != "" ]; then
-            eval "$(starship init zsh)"
-        fi
-    fi
+# starship becomes the default prompt on official images only when ALL of the
+# following hold:
+#   - /usr/lib/otter/container.official exists
+#   - the starship binary is on PATH
+#   - /usr/lib/otter/helpers/starship.toml exists
+#   - OTTER_DISABLE_STARSHIP_INTEGRATION is unset (presence-based: setting it to
+#     any value — even empty — opts out)
+#   - /usr/lib/otter/container.no-starship does not exist
+# There are two supported opt-out routes:
+#   - temporary, per-enter:  otter enter --add-env OTTER_DISABLE_STARSHIP_INTEGRATION=1
+#   - persistent, per-image: root shell, then  touch /usr/lib/otter/container.no-starship
+# When opted out (or on a non-official image) the toolbox-style otter prompt
+# below is used instead, and STARSHIP_CONFIG is cleared so its env doesn't
+# linger. otter-init unconditionally creates /run/.toolboxenv inside every
+# otter container, so that marker alone selects this fallback on both official
+# and non-official images.
+if [ -f /usr/lib/otter/container.official ] \
+	&& command -v starship >/dev/null 2>&1 \
+	&& [ -f /usr/lib/otter/helpers/starship.toml ] \
+	&& [ "${OTTER_DISABLE_STARSHIP_INTEGRATION+x}" != "x" ] \
+	&& [ ! -f /usr/lib/otter/container.no-starship ]; then
+	if [ "${BASH_VERSION:-}" != "" ]; then
+		eval "$(starship init bash)"
+	elif [ "${ZSH_VERSION:-}" != "" ]; then
+		eval "$(starship init zsh)"
+	fi
 elif [ -f /run/.toolboxenv ]; then
-    # shellcheck disable=SC2154 # CONTAINER_ID is injected into the container's environment externally, not assigned in this script
-    if [ "${BASH_VERSION:-}" != "" ]; then
-        PS1="\[\e[0;90m\]╭⟮\[\e[0;92m\]⬢\[\e[0;90m\]⟯─⟮\[\e[0;96m\]\u\[\e[0;90m\]@\[\e[0;95m\]${CONTAINER_ID}\[\e[0;90m\]⟯─⟮\[\e[0;92m\]\W\[\e[0;90m\]⟯─⟮\[\e[0;94m\]$(date +%H:%M)\[\e[0;90m\]⟯\[\e[0m\]\n\[\e[0;90m\]╰─\[\e[0;92m\]▶ \[\e[0m\]"
-        export PS1
-    fi
-    # shellcheck disable=SC2154 # CONTAINER_ID is injected into the container's environment externally, not assigned in this script
-    # shellcheck disable=SC3003 # $'\n' is only ever evaluated under zsh (guarded above), which supports this syntax natively
-    if [ "${ZSH_VERSION:-}" != "" ]; then
-        PS1="%F{7}╭⟮%F{10}⬢%F{7}⟯─⟮%F{14}%n%F{7}@%F{13}${CONTAINER_ID}%F{7}⟯─⟮%F{10}%1~%F{7}⟯─⟮%F{12}%D{%H:%M}%F{7}⟯%f"$'\n'"%F{7}╰─%F{10}▶ %f"
-        export PS1
-    fi
+	# Otter container shell without the starship prompt: use the toolbox-style
+	# otter prompt (reminiscent of toolbx:
+	# https://github.com/containers/toolbox/blob/main/profile.d/toolbox.sh#L47)
+	# and drop the starship config env so opting out stays clean.
+	unset STARSHIP_CONFIG
+	# shellcheck disable=SC2154 # CONTAINER_ID is injected into the container's environment externally, not assigned in this script
+	if [ "${BASH_VERSION:-}" != "" ]; then
+		PS1="\[\e[0;90m\]╭⟮\[\e[0;92m\]⬢\[\e[0;90m\]⟯─⟮\[\e[0;96m\]\u\[\e[0;90m\]@\[\e[0;95m\]${CONTAINER_ID}\[\e[0;90m\]⟯─⟮\[\e[0;92m\]\W\[\e[0;90m\]⟯─⟮\[\e[0;94m\]$(date +%H:%M)\[\e[0;90m\]⟯\[\e[0m\]\n\[\e[0;90m\]╰─\[\e[0;92m\]▶ \[\e[0m\]"
+		export PS1
+	fi
+	# shellcheck disable=SC2154 # CONTAINER_ID is injected into the container's environment externally, not assigned in this script
+	# shellcheck disable=SC3003 # $'\n' is only ever evaluated under zsh (guarded above), which supports this syntax natively
+	if [ "${ZSH_VERSION:-}" != "" ]; then
+		PS1="%F{7}╭⟮%F{10}⬢%F{7}⟯─⟮%F{14}%n%F{7}@%F{13}${CONTAINER_ID}%F{7}⟯─⟮%F{10}%1~%F{7}⟯─⟮%F{12}%D{%H:%M}%F{7}⟯%f"$'\n'"%F{7}╰─%F{10}▶ %f"
+		export PS1
+	fi
 fi
