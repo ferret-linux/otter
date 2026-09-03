@@ -18,6 +18,8 @@ import (
 	"charm.land/glamour/v2"
 	"charm.land/glamour/v2/styles"
 	"charm.land/lipgloss/v2"
+
+	"github.com/charmbracelet/x/ansi"
 )
 
 // documentationFS is the embedded contents of assets/docs (the repository's
@@ -34,8 +36,18 @@ var documentationFS embed.FS
 // bubbletea's examples/glamour, which calls out this exact adjustment.
 const glamourGutter = 2
 
-// treePaneWidth is the fixed width of the left tree pane.
-const treePaneWidth = 28
+// treePaneFraction is the fraction of the terminal width the left tree
+// pane is always given. The split is fixed (25%/75%) so both panes always
+// add up to the full terminal width — content always reaches the right
+// edge, and any tree entry too long to fit is ellipsized by the delegate
+// rather than resizing the panes. This is deliberately non-dynamic: no
+// measurement, no resizing on expand/collapse.
+const treePaneFraction = 0.25
+
+// minTreeWidth ensures the tree pane never collapses below a usable width
+// on extremely narrow terminals, where 25% of the window could otherwise
+// be a few cells wide.
+const minTreeWidth = 12
 
 //nolint:gochecknoglobals // package-level styles are the idiomatic lipgloss pattern
 var (
@@ -273,6 +285,14 @@ func (i docTreeItem) FilterValue() string { return i.entry.FilterValue() }
 // having to reconstruct the delegate.
 type docTreeDelegate struct {
 	collapsed map[string]bool
+	// rowWidth is the tree pane's interior width — the number of display
+	// cells a fully-rendered row may occupy before the border. The fixed
+	// leading pieces (connector prefix, indicator, icon, gap) never
+	// change with the entry, so any overrun comes from the name, which is
+	// ellipsized to fit. Keeping it exactly inside rowWidth means the
+	// border box always matches the width set in setSize, so the panes
+	// always sum to the full terminal width.
+	rowWidth int
 }
 
 func (d docTreeDelegate) Height() int  { return 1 }
@@ -321,12 +341,37 @@ func (d docTreeDelegate) Render(w io.Writer, m list.Model, index int, it list.It
 		iconStyle = iconStyle.Background(colorTeal)
 	}
 
-	fmt.Fprint(w,
-		treeConnectorStyle.Render(docTreePrefix(e))+
-			nameStyle.Render(indicator)+
-			iconStyle.Render(icon)+
-			nameStyle.Render(" "+e.name),
-	)
+	prefix := docTreePrefix(e)
+	// Budget is what's left for the name after the fixed leading pieces
+	// (connector prefix, expand indicator, icon, and the one-space gap
+	// before the name), all measured in display cells so the finished row
+	// is exactly comparable to d.rowWidth. Names that don't fit are
+	// ellipsized with a trailing "…" rather than pushing the row — and
+	// therefore the whole border box — wider than the pane was sized to.
+	budget := d.rowWidth - lipgloss.Width(prefix) - lipgloss.Width(indicator) - lipgloss.Width(icon) - 1
+	name := e.name
+	if budget > 0 {
+		name = ansi.Truncate(name, budget, "…")
+	} else {
+		name = ""
+	}
+
+	row := treeConnectorStyle.Render(prefix) +
+		nameStyle.Render(indicator) +
+		iconStyle.Render(icon) +
+		nameStyle.Render(" "+name)
+
+	// list.Model doesn't pad rows to its set width, so left alone the
+	// border box would shrink to the widest on-screen row and stop
+	// matching the 25% allocation setSize computed — leaving the content
+	// pane short of the terminal edge. Pad each row out to the full pane
+	// interior. The pad inherits nameStyle, so the selected row's
+	// highlight bar runs all the way to the border like a filled row.
+	if pad := d.rowWidth - lipgloss.Width(row); pad > 0 {
+		row += nameStyle.Render(strings.Repeat(" ", pad))
+	}
+
+	fmt.Fprint(w, row)
 }
 
 // visibleDocEntries returns the subset of entries that should currently be
@@ -387,6 +432,10 @@ type DocumentationModel struct {
 	help      help.Model
 
 	width, height int
+	// treeWidth is the tree pane's box width (interior plus border),
+	// computed in setSize as 25% of the terminal width. Used by the mouse
+	// handler to decide which pane a click lands on.
+	treeWidth int
 }
 
 // NewDocumentationModel builds the initial docs UI model, walking the
@@ -403,7 +452,7 @@ func NewDocumentationModel() (DocumentationModel, error) {
 	collapsed := map[string]bool{}
 	visible := visibleDocEntries(entries, collapsed)
 
-	l := list.New(docTreeItems(visible), docTreeDelegate{collapsed: collapsed}, 0, 0)
+	l := list.New(docTreeItems(visible), docTreeDelegate{collapsed: collapsed, rowWidth: minTreeWidth - docPaneFrameSize}, 0, 0)
 	l.SetShowTitle(false)
 	l.SetShowStatusBar(false)
 	l.SetShowHelp(false)
@@ -457,7 +506,7 @@ func (m DocumentationModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.MouseMsg:
 		mouse := msg.Mouse()
-		if mouse.X < treePaneWidth {
+		if mouse.X < m.treeWidth {
 			m.focus = docFocusTree
 		} else {
 			m.focus = docFocusContent
@@ -596,7 +645,22 @@ func (m DocumentationModel) loadSelected() DocumentationModel {
 func (m DocumentationModel) setSize(width, height int) DocumentationModel {
 	const helpRows = 1
 
-	contentWidth := width - treePaneWidth
+	m.treeWidth = int(float64(width) * treePaneFraction)
+	if m.treeWidth < minTreeWidth {
+		m.treeWidth = minTreeWidth
+	}
+	treeRowWidth := m.treeWidth - docPaneFrameSize
+	if treeRowWidth < 0 {
+		treeRowWidth = 0
+	}
+
+	// Rebuild the delegate with the current row width so Render keeps
+	// every row ellipsized inside the tree pane. list.Model has no getter
+	// for its delegate, so we reconstruct it carrying collapsed through
+	// (the same shared map, so live toggles still show).
+	m.tree.SetDelegate(docTreeDelegate{collapsed: m.collapsed, rowWidth: treeRowWidth})
+
+	contentWidth := width - m.treeWidth
 	if contentWidth < 0 {
 		contentWidth = 0
 	}
@@ -605,7 +669,7 @@ func (m DocumentationModel) setSize(width, height int) DocumentationModel {
 		paneHeight = 0
 	}
 
-	m.tree.SetSize(treePaneWidth-docPaneFrameSize, paneHeight-docPaneFrameSize)
+	m.tree.SetSize(treeRowWidth, paneHeight-docPaneFrameSize)
 	m.content.SetWidth(contentWidth - docPaneFrameSize)
 	m.content.SetHeight(paneHeight - docPaneFrameSize)
 

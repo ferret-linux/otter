@@ -15,6 +15,8 @@ import (
 	"charm.land/lipgloss/v2"
 
 	"github.com/ferret-linux/otter/pkg/config"
+
+	"github.com/charmbracelet/x/ansi"
 )
 
 // colorRed is used only by the settings editor (an invalid field's
@@ -243,6 +245,10 @@ func visibleSettingsEntries(entries []settingsEntry, collapsed map[string]bool) 
 // unselectedTreeStyle) so the two TUIs read as the same app.
 type settingsTreeDelegate struct {
 	collapsed map[string]bool
+	// rowWidth is the tree pane's interior width; long section/field
+	// labels are ellipsized to fit within it so the border box always
+	// matches the width set in setSize (see docTreeDelegate.rowWidth).
+	rowWidth int
 }
 
 func (d settingsTreeDelegate) Height() int  { return 1 }
@@ -266,7 +272,13 @@ func (d settingsTreeDelegate) Render(w io.Writer, m list.Model, index int, it li
 		if !d.collapsed[e.section] {
 			indicator = "▾ "
 		}
-		fmt.Fprint(w, nameStyle.Render(indicator+e.section))
+		budget := d.rowWidth - lipgloss.Width(indicator)
+		label := ansi.Truncate(e.section, budget, "…")
+		row := nameStyle.Render(indicator + label)
+		if pad := d.rowWidth - lipgloss.Width(row); pad > 0 {
+			row += nameStyle.Render(strings.Repeat(" ", pad))
+		}
+		fmt.Fprint(w, row)
 		return
 	}
 
@@ -274,7 +286,14 @@ func (d settingsTreeDelegate) Render(w io.Writer, m list.Model, index int, it li
 	if index == m.Index() {
 		nameStyle = selectedTreeStyle
 	}
-	fmt.Fprint(w, "  "+nameStyle.Render("● "+e.field))
+	const leafPrefix = "  ● "
+	budget := d.rowWidth - lipgloss.Width(leafPrefix)
+	field := ansi.Truncate(e.field, budget, "…")
+	row := leafPrefix + nameStyle.Render(field)
+	if pad := d.rowWidth - lipgloss.Width(row); pad > 0 {
+		row += nameStyle.Render(strings.Repeat(" ", pad))
+	}
+	fmt.Fprint(w, row)
 }
 
 // settingsFocusPane identifies which pane currently has input focus,
@@ -319,6 +338,9 @@ type SettingsModel struct {
 	saveErr        string
 
 	width, height int
+	// treeWidth is the tree pane's box width (interior plus border),
+	// computed in setSize as 25% of the terminal width.
+	treeWidth int
 }
 
 // NewSettingsModel loads otter.conf's current merged state and builds the
@@ -336,7 +358,7 @@ func NewSettingsModel() (SettingsModel, error) {
 	collapsed := map[string]bool{}
 	visible := visibleSettingsEntries(entries, collapsed)
 
-	l := list.New(settingsTreeItems(visible), settingsTreeDelegate{collapsed: collapsed}, 0, 0)
+	l := list.New(settingsTreeItems(visible), settingsTreeDelegate{collapsed: collapsed, rowWidth: minTreeWidth - docPaneFrameSize}, 0, 0)
 	l.SetShowTitle(false)
 	l.SetShowStatusBar(false)
 	l.SetShowHelp(false)
@@ -552,7 +574,17 @@ func (m SettingsModel) commitEdit() (tea.Model, tea.Cmd) {
 func (m SettingsModel) setSize(width, height int) SettingsModel {
 	const statusAndHelpRows = 2
 
-	contentWidth := width - treePaneWidth
+	m.treeWidth = int(float64(width) * treePaneFraction)
+	if m.treeWidth < minTreeWidth {
+		m.treeWidth = minTreeWidth
+	}
+	treeRowWidth := m.treeWidth - docPaneFrameSize
+	if treeRowWidth < 0 {
+		treeRowWidth = 0
+	}
+	m.tree.SetDelegate(settingsTreeDelegate{collapsed: m.collapsed, rowWidth: treeRowWidth})
+
+	contentWidth := width - m.treeWidth
 	if contentWidth < 0 {
 		contentWidth = 0
 	}
@@ -561,7 +593,7 @@ func (m SettingsModel) setSize(width, height int) SettingsModel {
 		paneHeight = 0
 	}
 
-	m.tree.SetSize(treePaneWidth-docPaneFrameSize, paneHeight-docPaneFrameSize)
+	m.tree.SetSize(treeRowWidth, paneHeight-docPaneFrameSize)
 
 	if m.isEditing {
 		detailWidth := contentWidth - docPaneFrameSize
@@ -600,9 +632,20 @@ func (m SettingsModel) View() tea.View {
 	}
 
 	treePane := treeBorder.Render(m.tree.View())
-	contentPane := detailBorder.Render(
-		lipgloss.NewStyle().Bold(true).Render(detailTitle) + "\n\n" + detailBody,
-	)
+
+	// The detail pane, like the tree, is rendered as a bordered box that
+	// auto-sizes to its content — so without explicitly padding it out to
+	// its allocated width the border would shrink to the description's
+	// natural width and stop short of the terminal edge. Pad the interior
+	// to the full allocated pane width (and let lipgloss word-wrap long
+	// descriptions to it) so the box always reaches 25%/75%-of-window.
+	detailWidth := m.width - m.treeWidth - docPaneFrameSize
+	if detailWidth < 0 {
+		detailWidth = 0
+	}
+	detailContent := lipgloss.NewStyle().Bold(true).Render(detailTitle) + "\n\n" +
+		lipgloss.NewStyle().Width(detailWidth).Render(detailBody)
+	contentPane := detailBorder.Render(detailContent)
 
 	body := lipgloss.JoinHorizontal(lipgloss.Top, treePane, contentPane)
 	status := m.renderStatusLine()
