@@ -11,32 +11,39 @@
 {2}│{R}  {5}otter create --image alpine:latest --additional-packages "git tmux vim"{R}            {2}│{R}
 {2}│{R}  {5}otter create --image centos:stream10 --always-pull --home ~/otter/centos10{R}         {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Options:{R}                                                                           {2}│{R}
-{2}│{R} {4}--gpu{R}                 {2}┆{R} {4}-g{R}   {5}GPU mode: mesa, nvidia, or nvidia-toolkit{R}              {2}│{R}
+{2}│{R}{1}● Options ➜{R}                                                                          {2}│{R}
+{2}│{R}{3}▸ General:{R}                                                                           {2}│{R}
 {2}│{R} {4}--home{R}                {2}┆{R} {4}-H{R}   {5}Custom HOME directory for the container{R}                {2}│{R}
 {2}│{R} {4}--init{R}                {2}┆{R} {4}-I{R}   {5}Use init system (e.g. systemd) inside the container{R}    {2}│{R}
-{2}│{R} {4}--root{R}                {2}┆{R} {4}-r{R}   {5}Launch container manager with root privileges{R}          {2}│{R}
-{2}│{R} {4}--clone{R}               {2}┆{R} {4}-C{R}   {5}Name of container to use as base for new container{R}     {2}│{R}
 {2}│{R} {4}--image{R}               {2}┆{R} {4}-i{R}   {5}Image to use for the container{R}                         {2}│{R}
+{2}│{R} {4}--clone{R}               {2}┆{R} {4}-C{R}   {5}Name of container to use as base for new container{R}     {2}│{R}
 {2}│{R} {4}--shell{R}               {2}┆{R} {4}-s{R}   {5}Shell to use inside the container{R}                      {2}│{R}
-{2}│{R} {4}--memory{R}              {2}┆{R} {4}-m{R}   {5}Memory limit for the container (e.g. 512m, 2g){R}         {2}│{R}
-{2}│{R} {4}--volume{R}              {2}┆{R} {4}-v{R}   {5}Additional volumes to add to the container{R}             {2}│{R}
 {2}│{R} {4}--hostname{R}            {2}┆{R} {4}-n{R}   {5}Hostname for the container{R}                             {2}│{R}
-{2}│{R} {4}--no-entry{R}            {2}┆{R} {4}-E{R}   {5}Do not generate a container entry on host system{R}       {2}│{R}
-{2}│{R} {4}--platform{R}            {2}┆{R} {4}-P{R}   {5}Specify the target platform, e.g. linux/arm64{R}          {2}│{R}
-{2}│{R} {4}--init-hooks{R}          {2}┆{R} {4}-ih{R}  {5}Commands to run at end of container initialization{R}     {2}│{R}
+{2}│{R}{3}▸ Resources:{R}                                                                         {2}│{R}
+{2}│{R} {4}--gpu{R}                 {2}┆{R} {4}-g{R}   {5}GPU mode: mesa, nvidia, or nvidia-toolkit{R}              {2}│{R}
+{2}│{R} {4}--memory{R}              {2}┆{R} {4}-m{R}   {5}Memory limit for the container (e.g. 512m, 2g){R}         {2}│{R}
 {2}│{R} {4}--cpu-threads{R}         {2}┆{R} {4}-t{R}   {5}Number of CPU threads the container can use{R}            {2}│{R}
-{2}│{R} {4}--unshare-ipc{R}         {2}┆{R} {4}-ui{R}  {5}Do not share IPC namespace with host{R}                   {2}│{R}
-{2}│{R} {4}--unshare-all{R}         {2}┆{R} {4}-ua{R}  {5}Activate all unshare flags{R}                             {2}│{R}
-{2}│{R} {4}--always-pull{R}         {2}┆{R} {4}-p{R}   {5}Pull image even if it exists locally{R}                   {2}│{R}
-{2}│{R} {4}--unshare-netns{R}       {2}┆{R} {4}-un{R}  {5}Do not share net namespace with host{R}                   {2}│{R}
+{2}│{R}{3}▸ Integration:{R}                                                                       {2}│{R}
+{2}│{R} {4}--volume{R}              {2}┆{R} {4}-v{R}   {5}Additional volumes to add to the container{R}             {2}│{R}
+{2}│{R} {4}--no-entry{R}            {2}┆{R} {4}-E{R}   {5}Do not generate a container entry on host system{R}       {2}│{R}
+{2}│{R}{3}▸ Initialization:{R}                                                                    {2}│{R}
+{2}│{R} {4}--init-hooks{R}          {2}┆{R} {4}-ih{R}  {5}Commands to run at end of container initialization{R}     {2}│{R}
 {2}│{R} {4}--pre-init-hooks{R}      {2}┆{R} {4}-ph{R}  {5}Commands to run at start of container initialization{R}   {2}│{R}
+{2}│{R} {4}--additional-packages{R} {2}┆{R} {4}-ap{R}  {5}Additional packages to install during container setup{R}  {2}│{R}
+{2}│{R}{3}▸ Isolation:{R}                                                                         {2}│{R}
+{2}│{R} {4}--unshare-all{R}         {2}┆{R} {4}-ua{R}  {5}Activate all unshare flags{R}                             {2}│{R}
+{2}│{R} {4}--unshare-ipc{R}         {2}┆{R} {4}-ui{R}  {5}Do not share IPC namespace with host{R}                   {2}│{R}
+{2}│{R} {4}--unshare-netns{R}       {2}┆{R} {4}-un{R}  {5}Do not share net namespace with host{R}                   {2}│{R}
 {2}│{R} {4}--unshare-groups{R}      {2}┆{R} {4}-ug{R}  {5}Do not forward user's additional groups into container{R} {2}│{R}
 {2}│{R} {4}--unshare-devsys{R}      {2}┆{R} {4}-ud{R}  {5}Do not share host devices and sysfs dirs{R}               {2}│{R}
 {2}│{R} {4}--unshare-process{R}     {2}┆{R} {4}-up{R}  {5}Do not share process namespace with host{R}               {2}│{R}
+{2}│{R}{3}▸ Image & Platform:{R}                                                                  {2}│{R}
+{2}│{R} {4}--platform{R}            {2}┆{R} {4}-P{R}   {5}Specify the target platform, e.g. linux/arm64{R}          {2}│{R}
+{2}│{R} {4}--always-pull{R}         {2}┆{R} {4}-p{R}   {5}Pull image even if it exists locally{R}                   {2}│{R}
+{2}│{R}{3}▸ Advanced:{R}                                                                          {2}│{R}
+{2}│{R} {4}--root{R}                {2}┆{R} {4}-r{R}   {5}Launch container manager with root privileges{R}          {2}│{R}
 {2}│{R} {4}--no-userns-limit{R}     {2}┆{R} {4}-ul{R}  {5}Skip the size-capped userns range for podman{R}           {2}│{R}
 {2}│{R} {4}--additional-flags{R}    {2}┆{R} {4}-a{R}   {5}Additional flags to pass to the container manager{R}      {2}│{R}
-{2}│{R} {4}--additional-packages{R} {2}┆{R} {4}-ap{R}  {5}Additional packages to install during container setup{R}  {2}│{R}
 {2}├───────────────────────┴─────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                                                            {2}│{R}
 {2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}                                              {2}│{R}

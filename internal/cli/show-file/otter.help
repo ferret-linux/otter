@@ -1,21 +1,26 @@
 {2}╭──────────────────────────────────────────────────────╮{R}
 {2}│{R}{1}⦿ Use any Linux distribution inside your terminal     {R}{2}│{R}
 {2}├──────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Commands:{R}                                           {2}│{R}
-{2}│{R} {0}list{R}           {2}┆{R} {0}ls{R}   {5}List all containers{R}            {2}│{R}
-{2}│{R} {0}stop{R}           {2}┆{R} {0}dn{R}   {5}Stop running containers{R}        {2}│{R}
-{2}│{R} {0}lock{R}           {2}┆{R} {0}lk{R}   {5}Lock an unlocked container{R}     {2}│{R}
-{2}│{R} {0}enter{R}          {2}┆{R} {0}sh{R}   {5}Enter running containers{R}       {2}│{R}
-{2}│{R} {0}pause{R}          {2}┆{R} {0}zz{R}   {5}Pause running containers{R}       {2}│{R}
-{2}│{R} {0}start{R}          {2}┆{R} {0}up{R}   {5}Start containers{R}               {2}│{R}
+{2}│{R}{1}● Commands ➜{R}                                          {2}│{R}
+{2}│{R}{3}▸ Management:{R}                                         {2}│{R}
 {2}│{R} {0}create{R}         {2}┆{R} {0}mk{R}   {5}Create new containers{R}          {2}│{R}
 {2}│{R} {0}remove{R}         {2}┆{R} {0}rm{R}   {5}Remove containers{R}              {2}│{R}
-{2}│{R} {0}unlock{R}         {2}┆{R} {0}ulk{R}  {5}Unlock a locked container{R}      {2}│{R}
-{2}│{R} {0}inspect{R}        {2}┆{R} {0}info{R} {5}Show info of a container{R}       {2}│{R}
-{2}│{R} {0}journal{R}        {2}┆{R} {0}logs{R} {5}Show logs of a container{R}       {2}│{R}
-{2}│{R} {0}restart{R}        {2}┆{R} {0}rbt{R}  {5}Restart containers{R}             {2}│{R}
 {2}│{R} {0}upgrade{R}        {2}┆{R} {0}syu{R}  {5}Update packages in containers{R}  {2}│{R}
 {2}│{R} {0}assemble{R}       {2}┆{R} {0}dmf{R}  {5}Manage containers from a spec{R}  {2}│{R}
+{2}│{R}{3}▸ Lifecycle:{R}                                          {2}│{R}
+{2}│{R} {0}stop{R}           {2}┆{R} {0}dn{R}   {5}Stop running containers{R}        {2}│{R}
+{2}│{R} {0}start{R}          {2}┆{R} {0}up{R}   {5}Start containers{R}               {2}│{R}
+{2}│{R} {0}enter{R}          {2}┆{R} {0}sh{R}   {5}Enter running containers{R}       {2}│{R}
+{2}│{R} {0}pause{R}          {2}┆{R} {0}zz{R}   {5}Pause running containers{R}       {2}│{R}
+{2}│{R} {0}restart{R}        {2}┆{R} {0}rbt{R}  {5}Restart containers{R}             {2}│{R}
+{2}│{R}{3}▸ Overview:{R}                                           {2}│{R}
+{2}│{R} {0}list{R}           {2}┆{R} {0}ls{R}   {5}List all containers{R}            {2}│{R}
+{2}│{R} {0}inspect{R}        {2}┆{R} {0}info{R} {5}Show info of a container{R}       {2}│{R}
+{2}│{R} {0}journal{R}        {2}┆{R} {0}logs{R} {5}Show logs of a container{R}       {2}│{R}
+{2}│{R}{3}▸ Locking:{R}                                            {2}│{R}
+{2}│{R} {0}lock{R}           {2}┆{R} {0}lk{R}   {5}Lock an unlocked container{R}     {2}│{R}
+{2}│{R} {0}unlock{R}         {2}┆{R} {0}ulk{R}  {5}Unlock a locked container{R}      {2}│{R}
+{2}│{R}{3}▸ Miscellaneous:{R}                                      {2}│{R}
 {2}│{R} {0}registry{R}       {2}┆{R} {0}reg{R}  {5}Browse and manage otter images{R} {2}│{R}
 {2}│{R} {0}settings{R}       {2}┆{R} {0}conf{R} {5}Set otter's config settings{R}    {2}│{R}
 {2}│{R} {0}documentation{R}  {2}┆{R} {0}docs{R} {5}Browse otter's documentation{R}   {2}│{R}
