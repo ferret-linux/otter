@@ -1,7 +1,19 @@
-# This will ensure a default prompt for a container, this will be remineshent of
-# toolbx prompt: https://github.com/containers/toolbox/blob/main/profile.d/toolbox.sh#L47
+# Official otter images ship starship + /usr/lib/otter/helpers/starship.toml
+# (with $STARSHIP_CONFIG pointing at it, see the Containerfile ENV), so on
+# those images starship becomes the default prompt. Every otter image still
+# gets the integration below as the fallback for non-official (user-built)
+# images: a toolbox-style prompt reminescent of toolbx:
+# https://github.com/containers/toolbox/blob/main/profile.d/toolbox.sh#L47
 # this will ensure greater compatibility between the two implementations
-if [ -f /run/.toolboxenv ]; then
+if [ -f /usr/lib/otter/container.official ]; then
+    if command -v starship >/dev/null 2>&1; then
+        if [ "${BASH_VERSION:-}" != "" ]; then
+            eval "$(starship init bash)"
+        elif [ "${ZSH_VERSION:-}" != "" ]; then
+            eval "$(starship init zsh)"
+        fi
+    fi
+elif [ -f /run/.toolboxenv ]; then
     # shellcheck disable=SC2154 # CONTAINER_ID is injected into the container's environment externally, not assigned in this script
     if [ "${BASH_VERSION:-}" != "" ]; then
         PS1="\[\e[0;90m\]╭⟮\[\e[0;92m\]⬢\[\e[0;90m\]⟯─⟮\[\e[0;96m\]\u\[\e[0;90m\]@\[\e[0;95m\]${CONTAINER_ID}\[\e[0;90m\]⟯─⟮\[\e[0;92m\]\W\[\e[0;90m\]⟯─⟮\[\e[0;94m\]$(date +%H:%M)\[\e[0;90m\]⟯\[\e[0m\]\n\[\e[0;90m\]╰─\[\e[0;92m\]▶ \[\e[0m\]"
