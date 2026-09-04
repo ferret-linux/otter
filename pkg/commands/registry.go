@@ -355,6 +355,7 @@ func registryListJSON(
 		Pulled       bool     `json:"pulled"`
 		Staleness    string   `json:"staleness,omitempty"`
 		BehindCount  int      `json:"behind_count,omitempty"`
+		Size         int64    `json:"size,omitempty"`
 		Image        string   `json:"image"`
 	}
 
@@ -391,6 +392,13 @@ func registryListJSON(
 					row.Staleness = "unknown"
 				}
 			}
+
+			// size follows the same rule as the table's SIZE column:
+			// the compressed (download) size when not pulled, otherwise the
+			// on-disk size. staleness above tells the consumer which one this is.
+			if bytes, ok := sizeBytes(entry, row.Pulled); ok {
+				row.Size = bytes
+			}
 		}
 
 		out = append(out, row)
@@ -413,20 +421,35 @@ func formatSizeGiB(bytes int64) string {
 	return fmt.Sprintf("%.2f GiB", float64(bytes)/float64(gib))
 }
 
+// sizeBytes returns the base byte size for a registry entry, choosing the
+// value based on pull state: the compressed (download) size when pulled is
+// false, or the on-disk size once pulled. Only the host architecture's size
+// (runtime.GOARCH) is reported, since that's the image otter would actually
+// pull. Returns (0, false) when no size data exists for the host arch (e.g.
+// a disabled entry with no official image).
+func sizeBytes(entry registry.ImageEntry, pulled bool) (int64, bool) {
+	size, ok := entry.Sizes[runtime.GOARCH]
+	if !ok {
+		return 0, false
+	}
+	if pulled {
+		return size.DiskSize, true
+	}
+	return size.CompressedSize, true
+}
+
 // sizeCell returns the SIZE cell for a registry entry: the compressed
 // (download) size when the image isn't pulled yet, or the on-disk size once
-// it is. Only the host architecture's size (runtime.GOARCH) is reported,
-// since that's the image otter would actually pull. Returns "" when no size
-// data exists for the host arch (e.g. a disabled entry with no official image).
+// it is. Returns "" when no size data exists (see sizeBytes).
 func sizeCell(entry registry.ImageEntry, pulled bool) string {
-	size, ok := entry.Sizes[runtime.GOARCH]
+	bytes, ok := sizeBytes(entry, pulled)
 	if !ok {
 		return ""
 	}
 	if pulled {
-		return fmt.Sprintf("🖫 %s", formatSizeGiB(size.DiskSize))
+		return fmt.Sprintf("🖫 %s", formatSizeGiB(bytes))
 	}
-	return fmt.Sprintf("⤓ %s", formatSizeGiB(size.CompressedSize))
+	return fmt.Sprintf("⤓ %s", formatSizeGiB(bytes))
 }
 
 // localStatus returns a human-readable LOCAL column value and its color for
