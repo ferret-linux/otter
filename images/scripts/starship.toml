@@ -35,17 +35,13 @@ ${env_var.CONTAINER_ID}\
 ${custom.otter_rootful}\
 [](bg:color_purple fg:color_red)\
 ${custom.otter_initsystem}\
-[](bg:color_aqua fg:color_purple)\
-[](bg:color_bg1 fg:color_aqua)\
-$time\
-[ ](fg:color_bg1)\
+[ ](fg:color_purple)\
 $line_break$character"""
 
 palette = 'otter_prompt'
 
 [palettes.otter_prompt]
 color_fg0    = 'black'
-color_fg0_1  = 'white'
 color_bg1    = 'bright-black'
 color_bg3    = 'bright-black'
 color_blue   = 'bright-blue'
@@ -176,12 +172,6 @@ format = '[[ $symbol( $environment) ](fg:bright-cyan bg:color_bg3)]($style)'
 [pixi]
 style = "bg:color_bg3"
 format = '[[ $symbol( $version)( $environment) ](fg:color_fg0 bg:color_bg3)]($style)'
-
-[time]
-disabled = false
-time_format = "%R"
-style = "bg:color_bg1"
-format = '[[  $time ](fg:color_fg0_1 bg:color_bg1)]($style)'
 
 [line_break]
 disabled = false
