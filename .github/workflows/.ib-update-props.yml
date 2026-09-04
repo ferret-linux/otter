@@ -42,6 +42,9 @@ jobs:
       - name: Login to GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
 
+      - name: Install skopeo
+        run: sudo apt-get update && sudo apt-get install -y skopeo
+
       - name: Collect image sizes and build entry
         run: |
           built_at=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
@@ -58,15 +61,23 @@ jobs:
           for arch in $(echo "$architecture" | jq -r '.[]'); do
             arch_image="ghcr.io/ferret-linux/${otr_name}:${otr_tag}-${arch}"
 
+            # Pull the image so podman's on-disk (uncompressed) size is available.
             podman pull "$arch_image" 2>/dev/null || continue
 
-            compressed=$(podman image inspect "$arch_image" --format '{{.Size}}' 2>/dev/null || echo 0)
-            virtual=$(podman image inspect "$arch_image" --format '{{.VirtualSize}}' 2>/dev/null || echo 0)
+            # disk_size: podman's `.Size` is the sum of the uncompressed
+            # layers stored on disk.
+            disk=$(podman image inspect "$arch_image" --format '{{.Size}}' 2>/dev/null || echo 0)
+
+            # compressed_size: podman can't see this (local storage is
+            # uncompressed), but the registry manifest's per-layer blob size
+            # is the compressed payload. skopeo surfaces it via LayersData.
+            compressed=$(skopeo inspect "docker://$arch_image" 2>/dev/null \
+              | jq '[.LayersData[].Size // 0] | add // 0' || echo 0)
 
             sizes=$(echo "$sizes" | jq \
               --arg arch "$arch" \
               --argjson compressed "$compressed" \
-              --argjson disk "$virtual" \
+              --argjson disk "$disk" \
               '. + {($arch): {"compressed_size": $compressed, "disk_size": $disk}}')
           done
 
