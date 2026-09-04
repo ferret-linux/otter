@@ -25,24 +25,22 @@ if (is-terminal --stdin) {
 		and ($env.OTTER_DISABLE_STARSHIP_INTEGRATION? == null)
 		and (not ("/usr/lib/otter/container.no-starship" | path exists))
 	) {
-		# Generate starship's nu init into the cache dir, then source it to
-		# install its PROMPT_COMMAND override. nushell's `source` needs a
-		# parse-time constant path, so the cache path must be a `const` and
-		# existence is expressed as `const ... else { null }`. The otter
-		# starship config is set on the shell (not baked into the image) so a
-		# user's own config wins the moment the otter prompt is opted out of.
+		# The documented nushell & starship integration: generate starship's
+		# nu init straight into nushell's vendor-autoload dir, which nushell
+		# sources at startup (analogous to `starship init fish | source`).
+		# No manual `source` needed. The otter starship config is set on the
+		# shell (not baked into the image) so a user's own config wins the
+		# moment the otter prompt is opted out of.
 		$env.STARSHIP_CONFIG = "/usr/lib/otter/helpers/starship.toml"
-		const starship_init = $"($nu.cache-dir)/starship/init.nu"
-		mkdir (($starship_init | path dirname) | path expand)
-		^starship init nu | save -f $starship_init
-		const src = if ($starship_init | path expand | path exists) { $starship_init } else { null }
-		source $src
-	} else if (
-		"/run/.toolboxenv" | path exists
-	) {
-		# Otter container shell without the starship prompt: use the
-		# toolbox-style otter prompt below. `STARSHIP_CONFIG` is never set
+		mkdir ($nu.data-dir | path join "vendor/autoload")
+		starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.nu")
+	} else {
+		# Anything else — non-official image or starship opted out — uses the
+		# toolbox-style otter prompt below, so a prompt is always shown. Drop
+		# any previously generated starship autoload so a prior starship
+		# session can't re-assert itself. `STARSHIP_CONFIG` is never set
 		# here, so starship (if present) uses the user's own config.
+		rm -f ($nu.data-dir | path join "vendor/autoload/starship.nu")
 		if ($env.CONTAINER_ID? | is-empty) {
 			# otter normally injects CONTAINER_ID (see podman.go), but fall back
 			# to the hostname so the prompt survives shells without it.
