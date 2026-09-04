@@ -1,0 +1,16 @@
+{
+  "name": "holt",
+  "version": "0.1.0",
+  "description": "Otter Container Manager GUI",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "electron": "^44.2.0"
+  }
+}
