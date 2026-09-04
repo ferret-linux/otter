@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"runtime"
+	"slices"
 	"strings"
 	"time"
 
@@ -252,23 +254,49 @@ func (c *RegistryRemoveCommand) removeTargets(ctx context.Context, targets []str
 	return nil
 }
 
-// registryList renders a table of available images from props.
-// If all is false, disabled images are omitted and STATUS/BUILT columns are hidden.
-// A LOCAL column is shown for enabled entries, reflecting whether the image
-// is pulled and, if so, how it compares to the latest known remote build.
-func registryList(ctx context.Context, cm containermanager.ContainerManager, props *registry.ImagesProperties, all bool) {
-	var t *ui.Table
-	if all {
-		t = ui.NewTable(os.Stdout, "NAME", "ARCH", "STATUS", "BUILT", "LOCAL", "IMAGE")
-	} else {
-		t = ui.NewTable(os.Stdout, "NAME", "ARCH", "LOCAL", "IMAGE")
-	}
-
-	for _, entry := range props.Images {
+// sortedEntries returns the properties' image entries, optionally filtered
+// to enabled-only (when all is false), ordered by name length (shortest
+// first). Ties sort alphabetically. This keeps the registry list stable
+// across runs regardless of the order properties were fetched in.
+func sortedEntries(images []registry.ImageEntry, all bool) []registry.ImageEntry {
+	entries := make([]registry.ImageEntry, 0, len(images))
+	for _, entry := range images {
 		if !all && !entry.Enabled {
 			continue
 		}
+		entries = append(entries, entry)
+	}
 
+	slices.SortFunc(entries, func(a, b registry.ImageEntry) int {
+		byLen := len(a.Name) - len(b.Name)
+		if byLen != 0 {
+			return byLen
+		}
+		return strings.Compare(a.Name, b.Name)
+	})
+	return entries
+}
+
+// registryList renders a table of available images from props.
+// ARCH and IMAGE are only shown in the --all view; the default view drops
+// them and keeps NAME, LOCAL, plus the new SIZE column.
+// Images are sorted by name length (shortest first) so output is stable
+// regardless of the order the properties file lists them in.
+// SIZE reflects whether the image is pulled: the compressed (download) size
+// when not pulled yet, otherwise the on-disk size. A LOCAL column is shown
+// for enabled entries, reflecting whether the image is pulled and, if so,
+// how it compares to the latest known remote build.
+func registryList(ctx context.Context, cm containermanager.ContainerManager, props *registry.ImagesProperties, all bool) {
+	var t *ui.Table
+	if all {
+		t = ui.NewTable(os.Stdout, "NAME", "ARCH", "STATUS", "BUILT", "LOCAL", "SIZE", "IMAGE")
+	} else {
+		t = ui.NewTable(os.Stdout, "NAME", "LOCAL", "SIZE")
+	}
+
+	entries := sortedEntries(props.Images, all)
+
+	for _, entry := range entries {
 		status := "enabled"
 		statusColor := ui.Green
 		imageRef := entry.OfficialImage
@@ -280,22 +308,28 @@ func registryList(ctx context.Context, cm containermanager.ContainerManager, pro
 		}
 
 		local, localColor := "", ui.Dim
+		pulled := false
 		if entry.Enabled {
 			local, localColor = localStatus(ctx, cm, props, imageRef)
+			pulled = local != "not pulled"
 		}
 
 		arch := strings.Join(entry.Architecture, ", ")
 		imageRef = ui.TrimImageRef(imageRef)
+		size := ""
+		if entry.Enabled {
+			size = sizeCell(entry, pulled)
+		}
 
 		if all {
 			t.AddRow(
-				[]string{entry.Name, arch, status, relativeTime(entry.BuiltAt), local, imageRef},
-				[]func(string) string{ui.Teal, ui.Dim, statusColor, ui.Dim, localColor, ui.Dim},
+				[]string{entry.Name, arch, status, relativeTime(entry.BuiltAt), local, size, imageRef},
+				[]func(string) string{ui.Teal, ui.Dim, statusColor, ui.Dim, localColor, ui.Dim, ui.Dim},
 			)
 		} else {
 			t.AddRow(
-				[]string{entry.Name, arch, local, imageRef},
-				[]func(string) string{ui.Teal, ui.Dim, localColor, ui.Dim},
+				[]string{entry.Name, local, size},
+				[]func(string) string{ui.Teal, localColor, ui.Dim},
 			)
 		}
 	}
@@ -325,11 +359,7 @@ func registryListJSON(
 	}
 
 	out := make([]registryEntryJSON, 0, len(props.Images))
-	for _, entry := range props.Images {
-		if !all && !entry.Enabled {
-			continue
-		}
-
+	for _, entry := range sortedEntries(props.Images, all) {
 		imageRef := entry.OfficialImage
 		if !entry.Enabled {
 			imageRef = entry.FallbackVendorImage
@@ -372,6 +402,31 @@ func registryListJSON(
 		return fmt.Errorf("failed to encode registry list output as JSON: %w", err)
 	}
 	return nil
+}
+
+// gib is bytes per gibibyte, used for SIZE cell formatting.
+const gib = 1024 * 1024 * 1024
+
+// formatSizeGiB renders a byte count as a value in GiB (binary, 1024-based)
+// with two decimal places.
+func formatSizeGiB(bytes int64) string {
+	return fmt.Sprintf("%.2f GiB", float64(bytes)/float64(gib))
+}
+
+// sizeCell returns the SIZE cell for a registry entry: the compressed
+// (download) size when the image isn't pulled yet, or the on-disk size once
+// it is. Only the host architecture's size (runtime.GOARCH) is reported,
+// since that's the image otter would actually pull. Returns "" when no size
+// data exists for the host arch (e.g. a disabled entry with no official image).
+func sizeCell(entry registry.ImageEntry, pulled bool) string {
+	size, ok := entry.Sizes[runtime.GOARCH]
+	if !ok {
+		return ""
+	}
+	if pulled {
+		return fmt.Sprintf("🖫 %s", formatSizeGiB(size.DiskSize))
+	}
+	return fmt.Sprintf("⤓ %s", formatSizeGiB(size.CompressedSize))
 }
 
 // localStatus returns a human-readable LOCAL column value and its color for
