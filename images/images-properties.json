@@ -411,28 +411,6 @@
       "build_number": 139
     },
     {
-      "name": "rhel",
-      "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
-      "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-04T09:17:06Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 376298699,
-          "disk_size": 1234376297
-        },
-        "arm64": {
-          "compressed_size": 370572816,
-          "disk_size": 1105676359
-        }
-      },
-      "build_number": 185
-    },
-    {
       "name": "alma",
       "official_image": "ghcr.io/ferret-linux/alma-otr:stable",
       "fallback_vendor_image": "docker.io/library/almalinux:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 187
+    },
+    {
+      "name": "rhel",
+      "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
+      "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-04T13:30:27Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 376290520,
+          "disk_size": 1234377843
+        },
+        "arm64": {
+          "compressed_size": 370555578,
+          "disk_size": 1105677894
+        }
+      },
+      "build_number": 186
     }
   ]
 }
