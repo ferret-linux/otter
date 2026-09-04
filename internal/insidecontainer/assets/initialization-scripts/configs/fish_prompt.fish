@@ -8,14 +8,17 @@
 #   - /usr/lib/otter/container.no-starship does not exist
 # Temporary per-enter opt-out:  otter enter --add-env OTTER_DISABLE_STARSHIP_INTEGRATION=1
 # Persistent per-image opt-out:  touch /usr/lib/otter/container.no-starship
+#
+# The otter starship config is set on the shell (not baked into the image)
+# so the user's own config wins the moment the otter prompt is opted out of.
 if test -f /usr/lib/otter/container.official
 	and command -q starship
 	and test -f /usr/lib/otter/helpers/starship.toml
 	and not set -q OTTER_DISABLE_STARSHIP_INTEGRATION
 	and not test -f /usr/lib/otter/container.no-starship
+	set -gx STARSHIP_CONFIG /usr/lib/otter/helpers/starship.toml
 	starship init fish | source
 else if test -f /run/.toolboxenv
-	set -e STARSHIP_CONFIG
 	function fish_prompt
 		set t (date +%H:%M)
 		set dir (basename $PWD)
