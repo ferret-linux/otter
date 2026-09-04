@@ -38,6 +38,54 @@ mirror_host_ro()
 	mount_bind "${src}" "${dest}" ro"${locked_flags:+,${locked_flags}}"
 }
 
+# setup_glibc_ldconf points the glibc dynamic linker at the mirrored NVIDIA
+# library buckets via /etc/ld.so.conf.d and refreshes the ld.so cache.
+# Arguments:
+#   None
+# Expected global variables:
+#   nvidia_libdir: root of the private NVIDIA buckets
+# Expected env variables:
+#   None
+# Outputs:
+#   None
+setup_glibc_ldconf()
+{
+	# shellcheck disable=SC2154 # assigned by setup_nvidia_gpu before this is called
+	mkdir -p /etc/ld.so.conf.d
+	printf '%s\n%s\n' "${nvidia_libdir}/lib64" "${nvidia_libdir}/lib32" \
+		> /etc/ld.so.conf.d/00-otter-nvidia.conf
+	ldconfig 2> /dev/null
+}
+
+# setup_musl_ldpath points the musl dynamic linker at the mirrored NVIDIA
+# library buckets by merging the 64-bit bucket into /etc/ld-musl-<arch>.path.
+# musl's .path file replaces (rather than appends to) its built-in default of
+# /lib:/usr/local/lib:/usr/lib, so an absent file is seeded with those dirs and
+# an existing one is preserved untouched; the bucket is only added if missing.
+# Arguments:
+#   None
+# Expected global variables:
+#   musl_arch: musl loader arch string (e.g. x86_64), from /lib/ld-musl-*.so.1
+#   nvidia_libdir: root of the private NVIDIA buckets
+# Expected env variables:
+#   None
+# Outputs:
+#   None
+setup_musl_ldpath()
+{
+	# shellcheck disable=SC2154 # assigned by setup_nvidia_gpu before this is called
+	musl_path="/etc/ld-musl-${musl_arch}.path"
+	# shellcheck disable=SC2154
+	nvidia_bucket="${nvidia_libdir}/lib64"
+
+	if [ ! -e "${musl_path}" ]; then
+		printf '/lib:/usr/local/lib:/usr/lib\n%s\n' "${nvidia_bucket}" \
+			> "${musl_path}"
+	elif ! grep -qxF "${nvidia_bucket}" "${musl_path}"; then
+		printf '%s\n' "${nvidia_bucket}" >> "${musl_path}"
+	fi
+}
+
 # setup_nvidia_gpu integrates the host's nvidia drivers into the guest.
 # Arguments:
 #   None
@@ -220,11 +268,21 @@ for nvidia_lib in ${NVIDIA_LIBS}; do
 	mirror_host_ro "${real_lib}" "${dest_file}"
 done
 
-# Point the dynamic linker at our directory and refresh the cache. ldconfig
-# tags each entry by ELF class, so one conf covering both buckets is enough.
-mkdir -p /etc/ld.so.conf.d
-printf '%s\n%s\n' "${nvidia_libdir}/lib64" "${nvidia_libdir}/lib32" \
-	> /etc/ld.so.conf.d/00-otter-nvidia.conf
-ldconfig 2> /dev/null
+# Point the dynamic linker at the NVIDIA buckets with each libc's own
+# mechanism: glibc via /etc/ld.so.conf.d (+ldconfig cache), musl via
+# /etc/ld-musl-<arch>.path (see setup_musl_ldpath).
+musl_arch=""
+for musl_loader in /lib/ld-musl-*.so.1; do
+	[ -e "${musl_loader}" ] || continue
+	musl_arch="${musl_loader#/lib/ld-musl-}"
+	musl_arch="${musl_arch%.so.1}"
+	break
+done
+
+if [ -n "${musl_arch}" ]; then
+	setup_musl_ldpath
+else
+	setup_glibc_ldconf
+fi
 
 }
