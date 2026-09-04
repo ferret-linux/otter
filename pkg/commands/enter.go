@@ -67,9 +67,6 @@ func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterRe
 
 	if !opts.NoTTY {
 		ui.DefaultLogger.Info("entering...", "container", opts.ContainerName)
-		if inspectResult.ContainerCustomHomeSource != "" {
-			ui.DefaultLogger.Warn("This container may briefly show harmless errors on entry")
-		}
 	}
 
 	err = c.containerManager.Enter(ctx, cmdOpts)
