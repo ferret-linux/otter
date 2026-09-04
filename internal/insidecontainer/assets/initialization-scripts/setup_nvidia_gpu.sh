@@ -222,6 +222,7 @@ done
 
 # Point the dynamic linker at our directory and refresh the cache. ldconfig
 # tags each entry by ELF class, so one conf covering both buckets is enough.
+mkdir -p /etc/ld.so.conf.d
 printf '%s\n%s\n' "${nvidia_libdir}/lib64" "${nvidia_libdir}/lib32" \
 	> /etc/ld.so.conf.d/00-otter-nvidia.conf
 ldconfig 2> /dev/null

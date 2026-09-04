@@ -170,7 +170,7 @@ write_resync_loop_script()
 	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	cat << EOF > /usr/local/bin/user-integration-resync
 #!/bin/sh
-setsid su - "${container_user_name}" -c '
+setsid su -s /bin/sh - "${container_user_name}" -c '
     while true; do
         /usr/local/bin/user-integration
         sleep 60
@@ -715,7 +715,7 @@ setup_init_dinit()
 	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
 	cat << EOF > /etc/dinit.d/otter-user-integration
 type = scripted
-command = /bin/sh -c "su - ${container_user_name} -c /usr/local/bin/user-integration; sleep 60"
+command = /bin/sh -c "su -s /bin/sh - ${container_user_name} -c /usr/local/bin/user-integration; sleep 60"
 restart = true
 EOF
 
