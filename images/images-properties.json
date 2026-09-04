@@ -272,28 +272,6 @@
       "build_number": 178
     },
     {
-      "name": "oracle",
-      "official_image": "ghcr.io/ferret-linux/oracle-otr:stable",
-      "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-03T21:40:39Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1883439766,
-          "disk_size": 1883439766
-        },
-        "arm64": {
-          "compressed_size": 1749456970,
-          "disk_size": 1749456970
-        }
-      },
-      "build_number": 169
-    },
-    {
       "name": "debian",
       "official_image": "ghcr.io/ferret-linux/debian-otr:stable",
       "fallback_vendor_image": "docker.io/library/debian:stable",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 179
+    },
+    {
+      "name": "oracle",
+      "official_image": "ghcr.io/ferret-linux/oracle-otr:stable",
+      "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-04T00:13:23Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1884218514,
+          "disk_size": 1884218514
+        },
+        "arm64": {
+          "compressed_size": 1750276679,
+          "disk_size": 1750276679
+        }
+      },
+      "build_number": 170
     }
   ]
 }
