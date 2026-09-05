@@ -85,7 +85,7 @@ COPY images/scripts/setup-common.sh /tmp/setup-common.sh
 RUN sh /tmp/setup-common.sh
 
 # Add otter image identifiers
-RUN touch /usr/lib/otter/container.nix.brew 2>/dev/null || mkdir -p /usr/lib/otter && touch /usr/lib/otter/container.brew
+RUN mkdir -p /usr/lib/otter && touch /usr/lib/otter/container.brew
 
 # Run the official installer as the linuxbrew user. NONINTERACTIVE=1
 # skips the confirmation prompt (otherwise the install hangs forever
