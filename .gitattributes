@@ -20,3 +20,15 @@
 *.svg linguist-documentation=false
 *.svg linguist-detectable=true
 *.svg linguist-language=SVG
+
+# Include Electron/Holt TypeScript in language statistics
+*.ts linguist-vendored=false
+*.ts linguist-generated=false
+*.ts linguist-documentation=false
+*.ts linguist-detectable=true
+*.ts linguist-language=TypeScript
+*.tsx linguist-vendored=false
+*.tsx linguist-generated=false
+*.tsx linguist-documentation=false
+*.tsx linguist-detectable=true
+*.tsx linguist-language=TypeScript
