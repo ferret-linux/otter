@@ -289,7 +289,7 @@ function NotificationPanel() {
         zIndex: 2000,
         width: 360,
         maxWidth: 'calc(100vw - 264px)',
-        maxHeight: 'min(480px, calc(100vh - 120px))',
+        height: 'min(480px, calc(100vh - 120px))',
         display: 'flex',
         flexDirection: 'column',
         borderRadius: 2,
