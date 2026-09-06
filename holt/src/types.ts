@@ -14,6 +14,10 @@ export interface RegistryEntry {
   image: string;
 }
 
+export interface ContainerInfo {
+  image: string;
+}
+
 export interface OtterApi {
   run: (command: string, args: string[]) => Promise<RunResult>;
 }

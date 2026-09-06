@@ -2,6 +2,7 @@
   "name": "holt",
   "version": "0.1.0",
   "description": "Where your containers live",
+  "private": true,
   "main": "dist-electron/main.js",
   "type": "commonjs",
   "scripts": {

@@ -16,7 +16,7 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorOutlinedIcon from '@mui/icons-material/ErrorOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import type { RegistryEntry } from '../types';
+import type { ContainerInfo, RegistryEntry } from '../types';
 import { prettyName } from '../distros';
 
 function imageBase(ref: string): string {
@@ -65,10 +65,6 @@ function stalenessChip(entry: RegistryEntry): StalenessChip {
     case 'not_pulled':
       return { label: 'Not pulled', color: 'error' };
   }
-}
-
-interface ContainerInfo {
-  image: string;
 }
 
 type BusyAction = 'pull' | 'remove';
