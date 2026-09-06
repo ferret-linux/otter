@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -6,7 +7,6 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
@@ -16,8 +16,9 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorOutlinedIcon from '@mui/icons-material/ErrorOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import type { ContainerInfo, RegistryEntry } from '../types';
+import type { DataContainer, RegistryEntry } from '../types';
 import { prettyName } from '../distros';
+import PageHeader from '../components/PageHeader';
 
 function imageBase(ref: string): string {
   return ref.split('/').pop() ?? ref;
@@ -69,7 +70,11 @@ function stalenessChip(entry: RegistryEntry): StalenessChip {
 
 type BusyAction = 'pull' | 'remove';
 
-export default function Registry() {
+interface RegistryProps {
+  search?: string;
+}
+
+export default function Registry({ search }: RegistryProps) {
   const [entries, setEntries] = useState<RegistryEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -85,10 +90,10 @@ export default function Registry() {
         window.otter.run('otter', ['list', '--json']),
       ]);
       const nonEmpty = (s: string) => s.trim().length > 0;
-      if (reg.stderr && nonEmpty(reg.stderr)) setError(reg.stderr);
-      if (containers.stderr && nonEmpty(containers.stderr)) setError(containers.stderr);
+      const warnings = [reg.stderr, containers.stderr].filter(nonEmpty).join('\n');
+      if (warnings) setError(warnings);
       setEntries(JSON.parse(reg.stdout) as RegistryEntry[]);
-      const list = JSON.parse(containers.stdout) as ContainerInfo[];
+      const list = JSON.parse(containers.stdout) as DataContainer[];
       setInUseImages(list.map((c) => imageBase(c.image)));
     } catch (err) {
       const e = err as { message?: string; stderr?: string };
@@ -107,8 +112,8 @@ export default function Registry() {
     setError(null);
     try {
       const { stderr } = await window.otter.run('otter', args);
-      if (stderr) setError(stderr);
       await load();
+      if (stderr.trim()) setError(stderr);
     } catch (err) {
       const e = err as { message?: string; stderr?: string };
       setError(e.stderr || e.message || 'Command failed');
@@ -117,32 +122,23 @@ export default function Registry() {
     }
   };
 
+  const q = (search ?? '').trim().toLowerCase();
+  const filteredEntries = q
+    ? entries.filter(
+        (entry) =>
+          entry.name.toLowerCase().includes(q) ||
+          imageBase(entry.image).toLowerCase().includes(q),
+      )
+    : entries;
+
   return (
     <Box>
-      <Stack
-        sx={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          mb: 2,
-        }}
-      >
-        <Box>
-          <Typography variant="h5" component="h1" sx={{ fontWeight: 700 }}>
-            Registry
-          </Typography>
-          <Typography color="text.secondary" variant="body2">
-            Container images available for otter
-          </Typography>
-        </Box>
-        <Tooltip title="Refresh">
-          <span>
-            <IconButton onClick={() => void load()} disabled={loading} aria-label="Refresh list">
-              {loading ? <CircularProgress size={20} /> : <RefreshIcon />}
-            </IconButton>
-          </span>
-        </Tooltip>
-      </Stack>
+      <PageHeader
+        title="Registry"
+        subtitle="Container images available for otter"
+        loading={loading}
+        onRefresh={() => void load()}
+      />
 
       {error && (
         <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
@@ -150,7 +146,7 @@ export default function Registry() {
         </Alert>
       )}
 
-      {!loading && entries.length === 0 && (
+      {!loading && !error && entries.length === 0 && (
         <Alert severity="info">No entries in the registry.</Alert>
       )}
 
@@ -161,7 +157,7 @@ export default function Registry() {
           gap: 2,
         }}
       >
-        {entries.map((entry) => {
+        {filteredEntries.map((entry) => {
           const chip = stalenessChip(entry);
           const inUse = inUseImages.includes(imageBase(entry.image));
           const pulled = entry.pulled;
@@ -169,7 +165,7 @@ export default function Registry() {
           const isBusy = busy?.name === entry.name;
 
           let syncLabel: string;
-          let syncIcon: React.ReactNode = <DownloadIcon fontSize="small" />;
+          let syncIcon: ReactNode = <DownloadIcon fontSize="small" />;
           let syncDisabled = false;
           let syncTooltip = `Pull ${prettyName(entry.name)}`;
           if (stale === 'behind' && pulled) {
@@ -305,6 +301,10 @@ export default function Registry() {
           );
         })}
       </Box>
+
+      {!loading && entries.length > 0 && q && filteredEntries.length === 0 && (
+        <Alert severity="info">No entries match &ldquo;{search?.trim()}&rdquo;.</Alert>
+      )}
     </Box>
   );
 }

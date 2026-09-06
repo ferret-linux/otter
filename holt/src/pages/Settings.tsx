@@ -67,7 +67,9 @@ export default function Settings() {
     setResultMessage('');
     setBusy(true);
     const payload: Record<string, FieldValue> = {};
-    for (const e of entries) payload[e.field] = values[e.field];
+    for (const e of entries) {
+      if (e.field !== 'rootful') payload[e.field] = values[e.field];
+    }
     try {
       const { stderr } = await window.otter.run(
         'otter',
@@ -107,6 +109,20 @@ export default function Settings() {
       e.kind === 'text' && e.numeric && typeof value === 'string' && value.length > 0 && !isInt(value);
 
     if (e.kind === 'toggle') {
+      if (e.field === 'rootful') {
+        return (
+          <Box key={e.field}>
+            <FormControlLabel
+              control={<Switch checked={false} disabled />}
+              label={e.field}
+              sx={{ opacity: 0.6 }}
+            />
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', ml: 4, mb: 2 }}>
+              Not managed here — Holt does not respect this setting; it always uses user-scoped (rootless) containers.
+            </Typography>
+          </Box>
+        );
+      }
       return (
         <Box key={e.field}>
           <FormControlLabel

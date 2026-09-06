@@ -27,7 +27,10 @@ export interface RegistryEntry {
   image: string;
 }
 
-export interface ContainerInfo {
+export interface DataContainer {
+  id: string;
+  name: string;
+  status: string;
   image: string;
 }
 
@@ -43,9 +46,13 @@ export interface SettingsEntry {
 
 export interface OtterApi {
   run: (command: string, args: string[], input?: string) => Promise<RunResult>;
+  runStream: (command: string, args: string[], input?: string) => Promise<RunResult>;
+  onRunStep: (callback: (message: string | null) => void) => () => void;
   getLog: () => Promise<LogEntry[]>;
+
   clearLog: () => Promise<void>;
   onLog: (callback: (entry: LogEntry) => void) => () => void;
+  homedir: () => Promise<string>;
 }
 
 declare global {

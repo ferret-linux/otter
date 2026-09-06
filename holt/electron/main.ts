@@ -1,4 +1,5 @@
 import { app, BrowserWindow, ipcMain, Menu } from 'electron';
+import * as os from 'os';
 import * as path from 'path';
 import { spawn } from 'child_process';
 
@@ -65,6 +66,7 @@ const appendLog = (entry: LogEntry): void => {
 };
 
 ipcMain.handle('otter:log:get', () => otterLog.slice());
+ipcMain.handle('otter:homedir', () => os.homedir());
 ipcMain.handle('otter:log:clear', () => {
   otterLog.length = 0;
 });
@@ -117,6 +119,96 @@ ipcMain.handle('otter:run', async (_event, command: string, args: string[], inpu
       finish('ok', 0, stdout, stderr);
       resolve({ stdout: entry.stdout ?? '', stderr: entry.stderr ?? '' });
     });
+    child.stdin.on('error', () => {});
+    if (input !== undefined) {
+      child.stdin.write(input);
+    }
+    child.stdin.end();
+  });
+});
+
+ipcMain.handle('otter:run-stream', async (event, command: string, args: string[], input?: string) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  return new Promise((resolve, reject) => {
+    const entry: LogEntry = {
+      id: logId++,
+      ts: Date.now(),
+      command,
+      args,
+      ...(input === undefined ? {} : { input }),
+      status: 'running',
+    };
+    broadcastLog(entry);
+
+    let settled = false;
+    const finish = (status: 'ok' | 'error', exitCode: number | undefined, stdout: string, stderr: string) => {
+      entry.status = status;
+      entry.exitCode = exitCode;
+      entry.durationMs = Date.now() - entry.ts;
+      entry.stdout = stripAnsi(stdout);
+      entry.stderr = stripAnsi(stderr);
+      appendLog(entry);
+    };
+
+    const child = spawn(command, args);
+    let stdout = '';
+    let stderr = '';
+    let lineBuffer = '';
+
+    child.stdout.on('data', (d) => {
+      const chunk = d.toString();
+      stdout += chunk;
+      lineBuffer += chunk;
+      const lines = lineBuffer.split('\n');
+      lineBuffer = lines.pop() ?? '';
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+        try {
+          const obj = JSON.parse(trimmed) as Record<string, unknown>;
+          if (typeof obj.message === 'string') {
+            win?.webContents.send('otter:run-step', obj.message);
+          }
+        } catch {
+          // not JSON — ignore
+        }
+      }
+    });
+
+    child.stderr.on('data', (d) => {
+      stderr += d.toString();
+    });
+
+    child.on('error', (err) => {
+      if (settled) return;
+      settled = true;
+      win?.webContents.send('otter:run-step', null);
+      finish('error', undefined, '', err.message);
+      reject(new Error(err.message));
+    });
+
+    child.on('close', (code, signal) => {
+      if (settled) return;
+      settled = true;
+      // flush any remaining partial line
+      if (lineBuffer.trim()) {
+        try {
+          const obj = JSON.parse(lineBuffer) as Record<string, unknown>;
+          if (typeof obj.message === 'string') {
+            win?.webContents.send('otter:run-step', obj.message);
+          }
+        } catch { /* not JSON */ }
+      }
+      win?.webContents.send('otter:run-step', null);
+      if (code !== 0 || signal) {
+        finish('error', code ?? undefined, stdout, stderr);
+        reject(new Error(entry.stderr?.trim() || `command exited with code ${String(code)}`));
+        return;
+      }
+      finish('ok', 0, stdout, stderr);
+      resolve({ stdout: entry.stdout ?? '', stderr: entry.stderr ?? '' });
+    });
+
     child.stdin.on('error', () => {});
     if (input !== undefined) {
       child.stdin.write(input);

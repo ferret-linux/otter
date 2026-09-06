@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -17,6 +17,11 @@ import HomeIcon from '@mui/icons-material/Home';
 import LayersIcon from '@mui/icons-material/Layers';
 import SettingsIcon from '@mui/icons-material/Settings';
 import TerminalOutlinedIcon from '@mui/icons-material/TerminalOutlined';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import ClearIcon from '@mui/icons-material/Clear';
+import InputAdornment from '@mui/material/InputAdornment';
+import TextField from '@mui/material/TextField';
+import IconButton from '@mui/material/IconButton';
 import { NavLink, Navigate, useLocation } from 'react-router-dom';
 
 const Home = lazy(() => import('./pages/Home'));
@@ -44,11 +49,13 @@ const StyledNavLink = styled(NavLink)(({ theme }) => ({
 
 export default function App() {
   const location = useLocation();
+  const [query, setQuery] = useState('');
+  const showTools = location.pathname === '/' || location.pathname === '/registry';
 
   const pages = [
-    { path: '/', key: 'home', element: <Home /> },
+    { path: '/', key: 'home', element: <Home search={query} /> },
     { path: '/create', key: 'create', element: <Create /> },
-    { path: '/registry', key: 'registry', element: <Registry /> },
+    { path: '/registry', key: 'registry', element: <Registry search={query} /> },
     { path: '/settings', key: 'settings', element: <Settings /> },
     { path: '/verbose', key: 'verbose', element: <Verbose /> },
   ];
@@ -118,10 +125,47 @@ export default function App() {
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <AppBar position="fixed" elevation={0} color="default">
-        <StyledToolbar sx={{ pl: 2 }}>
+        <StyledToolbar sx={{ pl: 2, pr: 2 }}>
           <Typography variant="h6" component="div" sx={{ fontWeight: 700 }}>
             Holt
           </Typography>
+          <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            {showTools && (
+              <TextField
+                size="small"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search…"
+                sx={{
+                  width: 240,
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                  },
+                }}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchOutlinedIcon fontSize="small" sx={{ color: 'text.secondary' }} />
+                      </InputAdornment>
+                    ),
+                    endAdornment: query ? (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="Clear search"
+                          size="small"
+                          edge="end"
+                          onClick={() => setQuery('')}
+                        >
+                          <ClearIcon fontSize="small" />
+                        </IconButton>
+                      </InputAdornment>
+                    ) : undefined,
+                  },
+                }}
+              />
+            )}
+          </Box>
         </StyledToolbar>
       </AppBar>
 

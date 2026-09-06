@@ -10,6 +10,7 @@ import (
 	"github.com/ferret-linux/otter/pkg/commands"
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/ui"
 )
 
 //nolint:funlen // function length is acceptable for CLI command definition
@@ -110,10 +111,13 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 				Name:    "unshare-all",
 				Aliases: []string{"ua"},
 			},
-			&cli.BoolFlag{
-				Name:    "no-entry",
-				Aliases: []string{"E"},
-			},
+		&cli.BoolFlag{
+			Name:    "no-entry",
+			Aliases: []string{"E"},
+		},
+		&cli.BoolFlag{
+			Name: "json",
+		},
 			&cli.BoolFlag{
 				Name: "disable-root-password-i-fully-understand-the-risks-and-accept-the-responsibilities",
 			},
@@ -159,7 +163,11 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 		ContainerAlwaysPull:     cmd.Bool("always-pull"),
 	}
 
-	createCmd := commands.NewCreateCommand(cfg, containerManager, nil)
+	var progress *ui.Progress
+	if cmd.Bool("json") {
+		progress = ui.NewJSONProgress()
+	}
+	createCmd := commands.NewCreateCommand(cfg, containerManager, progress)
 	if _, err := createCmd.Execute(ctx, opts); err != nil {
 		return fmt.Errorf("create command failed: %w", err)
 	}
