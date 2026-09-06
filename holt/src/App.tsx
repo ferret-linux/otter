@@ -17,7 +17,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import LayersIcon from '@mui/icons-material/Layers';
 import SettingsIcon from '@mui/icons-material/Settings';
 import TerminalOutlinedIcon from '@mui/icons-material/TerminalOutlined';
-import { NavLink, Navigate, Route, Routes } from 'react-router-dom';
+import { NavLink, Navigate, useLocation } from 'react-router-dom';
 
 const Home = lazy(() => import('./pages/Home'));
 const Create = lazy(() => import('./pages/Create'));
@@ -43,6 +43,17 @@ const StyledNavLink = styled(NavLink)(({ theme }) => ({
 }));
 
 export default function App() {
+  const location = useLocation();
+
+  const pages = [
+    { path: '/', key: 'home', element: <Home /> },
+    { path: '/create', key: 'create', element: <Create /> },
+    { path: '/registry', key: 'registry', element: <Registry /> },
+    { path: '/settings', key: 'settings', element: <Settings /> },
+    { path: '/verbose', key: 'verbose', element: <Verbose /> },
+  ];
+  const known = pages.some((p) => p.path === location.pathname);
+
   const nav = (
     <List>
       <StyledNavLink to="/" end>
@@ -149,14 +160,13 @@ export default function App() {
             </Box>
           }
         >
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/create" element={<Create />} />
-            <Route path="/registry" element={<Registry />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/verbose" element={<Verbose />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          {known
+            ? pages.map((p) => (
+                <Box key={p.key} sx={{ display: location.pathname === p.path ? 'block' : 'none' }}>
+                  {p.element}
+                </Box>
+              ))
+            : <Navigate to="/" replace />}
         </Suspense>
       </Box>
     </Box>
