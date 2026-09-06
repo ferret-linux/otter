@@ -1,10 +1,11 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 import * as path from 'path';
 import { execFile } from 'child_process';
 
 let mainWindow: BrowserWindow | null = null;
 
 function createWindow(): void {
+  Menu.setApplicationMenu(null);
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
