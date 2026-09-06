@@ -109,14 +109,13 @@ ipcMain.handle('otter:run', async (_event, command: string, args: string[], inpu
     child.on('close', (code, signal) => {
       if (settled) return;
       settled = true;
-      const cleanErr = stripAnsi(stderr);
       if (code !== 0 || signal) {
         finish('error', code ?? undefined, stdout, stderr);
-        reject(new Error(cleanErr.trim() || `command exited with code ${String(code)}`));
+        reject(new Error(entry.stderr?.trim() || `command exited with code ${String(code)}`));
         return;
       }
       finish('ok', 0, stdout, stderr);
-      resolve({ stdout: stripAnsi(stdout), stderr: cleanErr });
+      resolve({ stdout: entry.stdout ?? '', stderr: entry.stderr ?? '' });
     });
     child.stdin.on('error', () => {});
     if (input !== undefined) {
