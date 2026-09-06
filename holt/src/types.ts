@@ -8,7 +8,7 @@ export interface RegistryEntry {
   architecture: string[];
   built_at: string;
   pulled: boolean;
-  staleness: string;
+  staleness: 'not_pulled' | 'current' | 'behind' | 'ahead' | 'unknown';
   behind_count?: number;
   size?: number;
   image: string;

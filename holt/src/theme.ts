@@ -3,8 +3,8 @@ import { createTheme } from '@mui/material/styles';
 // Material Design 3 dark theme, seeded from the otter teal.
 // MUI derives the tonal palette (light/dark/contrastText and all colored
 // surfaces) automatically from primary.main; only the base surfaces are
-// pinned to the M3 dark-scheme values for the so the app feels like a
-// dark Android surface.
+// pinned to the M3 dark-scheme values so the app feels like a dark
+// Android surface.
 export const theme = createTheme({
   palette: {
     mode: 'dark',

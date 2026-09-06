@@ -1,5 +1,7 @@
+import { lazy, Suspense } from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -9,11 +11,14 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import AddCircleOutlinedIcon from '@mui/icons-material/AddCircleOutlined';
 import HomeIcon from '@mui/icons-material/Home';
 import LayersIcon from '@mui/icons-material/Layers';
 import { NavLink, Navigate, Route, Routes } from 'react-router-dom';
-import Home from './pages/Home';
-import Registry from './pages/Registry';
+
+const Home = lazy(() => import('./pages/Home'));
+const Create = lazy(() => import('./pages/Create'));
+const Registry = lazy(() => import('./pages/Registry'));
 
 const DRAWER_WIDTH = 240;
 
@@ -42,6 +47,16 @@ export default function App() {
               <HomeIcon />
             </ListItemIcon>
             <ListItemText primary="Home" />
+          </ListItemButton>
+        </ListItem>
+      </StyledNavLink>
+      <StyledNavLink to="/create">
+        <ListItem disablePadding>
+          <ListItemButton>
+            <ListItemIcon>
+              <AddCircleOutlinedIcon />
+            </ListItemIcon>
+            <ListItemText primary="Create" />
           </ListItemButton>
         </ListItem>
       </StyledNavLink>
@@ -93,11 +108,20 @@ export default function App() {
           width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
         }}
       >
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/registry" element={<Registry />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <Suspense
+          fallback={
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 12 }}>
+              <CircularProgress />
+            </Box>
+          }
+        >
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/create" element={<Create />} />
+            <Route path="/registry" element={<Registry />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
       </Box>
     </Box>
   );
