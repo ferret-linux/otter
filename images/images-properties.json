@@ -211,23 +211,6 @@
       "build_number": 195
     },
     {
-      "name": "blackarch",
-      "official_image": "ghcr.io/ferret-linux/blackarch-otr:latest",
-      "fallback_vendor_image": "docker.io/blackarchlinux/blackarch:latest",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-06T01:13:23Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1189702525,
-          "disk_size": 3463522800
-        }
-      },
-      "build_number": 194
-    },
-    {
       "name": "wolfi",
       "official_image": "ghcr.io/ferret-linux/wolfi-otr:latest",
       "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest",
@@ -768,6 +751,23 @@
         }
       },
       "build_number": 188
+    },
+    {
+      "name": "blackarch",
+      "official_image": "ghcr.io/ferret-linux/blackarch-otr:latest",
+      "fallback_vendor_image": "docker.io/blackarchlinux/blackarch:latest",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-06T04:03:49Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1189701175,
+          "disk_size": 3463524849
+        }
+      },
+      "build_number": 195
     }
   ]
 }
