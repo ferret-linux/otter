@@ -12,7 +12,6 @@ import Tooltip from '@mui/material/Tooltip';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Collapse from '@mui/material/Collapse';
-import Divider from '@mui/material/Divider';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PlayArrowOutlinedIcon from '@mui/icons-material/PlayArrowOutlined';
 import StopOutlinedIcon from '@mui/icons-material/StopOutlined';
@@ -156,9 +155,8 @@ export default function Home({ search = '' }: HomeProps) {
             />
           </Stack>
         </CardContent>
-        <Collapse in={isExpanded} unmountOnExit>
-          <Divider />
-          <Box sx={{ py: 1.5, px: 2 }}>
+        <Collapse in={isExpanded}>
+          <Box sx={{ py: 1.5, px: 2, bgcolor: 'action.hover' }}>
             <Stack sx={{ flexDirection: 'row', alignItems: 'center', gap: 1.5 }}>
               {actions.map((a) => (
                 <Tooltip key={a.action} title={a.label}>

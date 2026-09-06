@@ -23,7 +23,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import { NavLink, Navigate, useLocation } from 'react-router-dom';
-import { NotificationProvider } from './notifications';
+import { NotificationProvider, NotificationToggle } from './notifications';
 
 const Home = lazy(() => import('./pages/Home'));
 const Create = lazy(() => import('./pages/Create'));
@@ -99,6 +99,7 @@ export default function App() {
 
   const bottomNav = (
     <Box sx={{ mt: 'auto', pb: 1 }}>
+      <NotificationToggle />
       <Divider sx={{ mx: 2, mb: 1 }} />
       <StyledNavLink to="/verbose">
         <ListItem disablePadding>

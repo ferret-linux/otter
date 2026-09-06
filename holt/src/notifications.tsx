@@ -16,6 +16,10 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Badge from '@mui/material/Badge';
 import Divider from '@mui/material/Divider';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import DeleteSweepOutlinedIcon from '@mui/icons-material/DeleteSweepOutlined';
@@ -147,7 +151,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
         sx={{
           position: 'fixed',
           right: 16,
-          bottom: 76,
+          bottom: 16,
           zIndex: 2000,
           gap: 1,
           width: 340,
@@ -170,8 +174,6 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       </Stack>
 
       {panelOpen && <NotificationPanel />}
-
-      <Bell />
     </NotificationContext.Provider>
   );
 }
@@ -249,30 +251,29 @@ function Toast({
   );
 }
 
-function Bell() {
+export function NotificationToggle() {
   const { unread, panelOpen, setPanelOpen } = useNotifications();
   return (
-    <Tooltip title={unread ? `${unread} unread` : 'Notifications'}>
-      <IconButton
+    <ListItem disablePadding>
+      <ListItemButton
         aria-label="Notifications"
         onClick={() => setPanelOpen(!panelOpen)}
+        selected={panelOpen}
         sx={{
-          position: 'fixed',
-          right: 16,
-          bottom: 16,
-          zIndex: 2000,
-          bgcolor: 'background.paper',
-          boxShadow: 3,
-          border: 1,
-          borderColor: 'divider',
-          '&:hover': { bgcolor: 'action.hover' },
+          '&.Mui-selected': (theme) => ({
+            backgroundColor: theme.palette.primary.main + '22',
+            color: theme.palette.primary.main,
+          }),
         }}
       >
-        <Badge badgeContent={unread} color="primary" max={99}>
-          <NotificationsNoneOutlinedIcon />
-        </Badge>
-      </IconButton>
-    </Tooltip>
+        <ListItemIcon>
+          <Badge badgeContent={unread} color="primary" max={99}>
+            <NotificationsNoneOutlinedIcon />
+          </Badge>
+        </ListItemIcon>
+        <ListItemText primary="Notifications" />
+      </ListItemButton>
+    </ListItem>
   );
 }
 
@@ -283,11 +284,11 @@ function NotificationPanel() {
       elevation={8}
       sx={{
         position: 'fixed',
-        right: 16,
-        bottom: 76,
+        left: 248,
+        bottom: 16,
         zIndex: 2000,
         width: 360,
-        maxWidth: 'calc(100vw - 32px)',
+        maxWidth: 'calc(100vw - 264px)',
         maxHeight: 'min(480px, calc(100vh - 120px))',
         display: 'flex',
         flexDirection: 'column',
