@@ -23,6 +23,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import { NavLink, Navigate, useLocation } from 'react-router-dom';
+import { NotificationProvider } from './notifications';
 
 const Home = lazy(() => import('./pages/Home'));
 const Create = lazy(() => import('./pages/Create'));
@@ -123,7 +124,8 @@ export default function App() {
   );
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+    <NotificationProvider>
+      <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <AppBar position="fixed" elevation={0} color="default">
         <StyledToolbar sx={{ pl: 2, pr: 2 }}>
           <Typography variant="h6" component="div" sx={{ fontWeight: 700 }}>
@@ -214,5 +216,6 @@ export default function App() {
         </Suspense>
       </Box>
     </Box>
+    </NotificationProvider>
   );
 }

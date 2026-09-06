@@ -12,6 +12,7 @@ import Tooltip from '@mui/material/Tooltip';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Collapse from '@mui/material/Collapse';
+import Divider from '@mui/material/Divider';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PlayArrowOutlinedIcon from '@mui/icons-material/PlayArrowOutlined';
 import StopOutlinedIcon from '@mui/icons-material/StopOutlined';
@@ -22,6 +23,8 @@ import LayersOutlinedIcon from '@mui/icons-material/LayersOutlined';
 import { Link } from 'react-router-dom';
 import type { DataContainer } from '../types';
 import PageHeader from '../components/PageHeader';
+import { useNotifications } from '../notifications';
+import useOtterEvents from '../useOtterEvents';
 
 type Action = 'start' | 'stop' | 'restart' | 'pause';
 
@@ -44,41 +47,49 @@ function statusDotColor(status: string): 'success' | 'warning' | 'error' | 'defa
 }
 
 export default function Home({ search = '' }: HomeProps) {
+  const { notify } = useNotifications();
   const [all, setAll] = useState<DataContainer[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [failed, setFailed] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [busyAction, setBusyAction] = useState<Action | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
-    setError(null);
+    setFailed(false);
     try {
       const res = await window.otter.run('otter', ['list', '--json']);
-      if (res.stderr && res.stderr.trim()) setError(res.stderr);
+      if (res.stderr && res.stderr.trim()) {
+        notify('warning', 'otter reported', res.stderr.trim());
+      }
       setAll(JSON.parse(res.stdout) as DataContainer[]);
     } catch (err) {
       const e = err as { message?: string; stderr?: string };
-      setError(e.stderr || e.message || 'Failed to list containers');
+      setFailed(true);
+      notify('error', 'Failed to list containers', e.stderr || e.message || 'Unknown error');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [notify]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
+  useOtterEvents(() => {
+    void load();
+  });
+
   const runAction = async (action: Action, container: DataContainer) => {
     setBusyAction(action);
-    setError(null);
     try {
       const res = await window.otter.run('otter', [action, container.name]);
-      await load();
-      if (res.stderr && res.stderr.trim()) setError(res.stderr);
+      if (res.stderr && res.stderr.trim()) {
+        notify('warning', `otter reported on ${action} ${container.name}`, res.stderr.trim());
+      }
     } catch (err) {
       const e = err as { message?: string; stderr?: string };
-      setError(e.stderr || e.message || 'Command failed');
+      notify('error', `Failed to ${action} ${container.name}`, e.stderr || e.message || 'Unknown error');
     } finally {
       setBusyAction(null);
     }
@@ -108,84 +119,67 @@ export default function Home({ search = '' }: HomeProps) {
     const actions = actionsFor(c);
     const dotColor = statusDotColor(c.status);
     return (
-      <Box key={c.name} sx={{ mb: 1.5 }}>
-        <Card
-          variant="outlined"
-          sx={{ cursor: 'pointer' }}
+      <Card key={c.name} variant="outlined" sx={{ mb: 1.5 }}>
+        <CardContent
+          sx={{ py: 1.5, cursor: 'pointer' }}
           onClick={() => setExpanded(isExpanded ? null : c.name)}
         >
-          <CardContent sx={{ py: 1.5 }}>
-            <Stack sx={{ flexDirection: 'row', alignItems: 'center', gap: 1.5 }}>
-              <Box
-                sx={{
-                  width: 10,
-                  height: 10,
-                  borderRadius: '50%',
-                  flexShrink: 0,
-                  bgcolor:
-                    dotColor === 'success'
-                      ? 'success.main'
-                      : dotColor === 'warning'
-                        ? 'warning.main'
-                        : dotColor === 'error'
-                          ? 'error.main'
-                          : 'grey.500',
-                }}
-              />
-              <Typography variant="h6" component="h2" sx={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {c.name}
-              </Typography>
-              <Chip label={c.status} color={dotColor} variant="outlined" size="small" />
-              <Typography
-                variant="body2"
-                component="div"
-                color="text.secondary"
-                sx={{ fontFamily: 'monospace', ml: 'auto', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-              >
-                {c.image}
-              </Typography>
-              <ExpandMoreIcon
-                sx={{
-                  flexShrink: 0,
-                  transition: 'transform 150ms ease',
-                  transform: isExpanded ? 'rotate(180deg)' : 'none',
-                  color: 'text.secondary',
-                }}
-              />
-            </Stack>
-          </CardContent>
-        </Card>
+          <Stack sx={{ flexDirection: 'row', alignItems: 'center', gap: 1.5 }}>
+            <Box
+              sx={{
+                width: 10,
+                height: 10,
+                borderRadius: '50%',
+                flexShrink: 0,
+                bgcolor:
+                  dotColor === 'success'
+                    ? 'success.main'
+                    : dotColor === 'warning'
+                      ? 'warning.main'
+                      : dotColor === 'error'
+                        ? 'error.main'
+                        : 'grey.500',
+              }}
+            />
+            <Typography variant="h6" component="h2" sx={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {c.name}
+            </Typography>
+            <Chip label={c.status} color={dotColor} variant="outlined" size="small" />
+            <ExpandMoreIcon
+              sx={{
+                ml: 'auto',
+                flexShrink: 0,
+                transition: 'transform 150ms ease',
+                transform: isExpanded ? 'rotate(180deg)' : 'none',
+                color: 'text.secondary',
+              }}
+            />
+          </Stack>
+        </CardContent>
         <Collapse in={isExpanded} unmountOnExit>
-          <Box
-            sx={{
-              border: 1,
-              borderColor: 'divider',
-              borderTop: 0,
-              borderRadius: '0 0 8px 8px',
-            }}
-          >
-            <Box sx={{ py: 1.5, px: 2 }}>
-              <Stack sx={{ flexDirection: 'row', alignItems: 'center', gap: 1.5 }}>
-                {actions.map((a) => (
-                  <Tooltip key={a.action} title={a.label}>
-                    <span>
-                      <IconButton
-                        aria-label={a.label}
-                        disabled={a.disabled || busyAction !== null}
-                        onClick={() => {
-                          void runAction(a.action, c);
-                        }}
-                      >
-                        {busyAction === a.action ? <CircularProgress size={24} /> : a.icon}
-                      </IconButton>
-                    </span>
-                  </Tooltip>
-                ))}
-              </Stack>
-            </Box>
+          <Divider />
+          <Box sx={{ py: 1.5, px: 2 }}>
+            <Stack sx={{ flexDirection: 'row', alignItems: 'center', gap: 1.5 }}>
+              {actions.map((a) => (
+                <Tooltip key={a.action} title={a.label}>
+                  <span>
+                    <IconButton
+                      aria-label={a.label}
+                      disabled={a.disabled || busyAction !== null}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        void runAction(a.action, c);
+                      }}
+                    >
+                      {busyAction === a.action ? <CircularProgress size={24} /> : a.icon}
+                    </IconButton>
+                  </span>
+                </Tooltip>
+              ))}
+            </Stack>
           </Box>
         </Collapse>
-      </Box>
+      </Card>
     );
   };
 
@@ -198,13 +192,7 @@ export default function Home({ search = '' }: HomeProps) {
         onRefresh={() => void load()}
       />
 
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
-          {error}
-        </Alert>
-      )}
-
-      {!loading && !error && all.length === 0 && (
+      {!loading && !failed && all.length === 0 && (
         <Card variant="outlined" sx={{ textAlign: 'center', py: 6, px: 3 }}>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
             No containers yet

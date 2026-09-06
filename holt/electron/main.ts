@@ -65,8 +65,26 @@ const appendLog = (entry: LogEntry): void => {
   broadcastLog(entry);
 };
 
+// Replicate the shell's argument expansion (which a terminal applies before
+// otter ever runs): $VAR / ${VAR} from the main process env, plus a leading
+// "~" into the user's home directory. holt spawns without a shell, so this
+// restores the behaviour CLI users get for free.
+const expandEnv = (value: string): string =>
+  value.replace(/\$\{(\w+)\}|\$(\w+)/g, (match, braced: string, plain: string) => {
+    const name = braced || plain;
+    return process.env[name] !== undefined ? process.env[name] : match;
+  });
+
+const expandValue = (value: string): string => {
+  const expanded = expandEnv(value);
+  if (expanded === '~') return os.homedir();
+  if (expanded.startsWith('~/')) return `${os.homedir()}${expanded.slice(1)}`;
+  return expanded;
+};
+
+ipcMain.handle('otter:expand-env', (_event, value: string) => expandValue(value));
+
 ipcMain.handle('otter:log:get', () => otterLog.slice());
-ipcMain.handle('otter:homedir', () => os.homedir());
 ipcMain.handle('otter:log:clear', () => {
   otterLog.length = 0;
 });

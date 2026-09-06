@@ -8,7 +8,6 @@ import IconButton from '@mui/material/IconButton';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
-import Alert from '@mui/material/Alert';
 import Divider from '@mui/material/Divider';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -25,6 +24,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import type { RegistryEntry } from '../types';
 import { prettyName } from '../distros';
+import { useNotifications } from '../notifications';
 
 const UNSHARE_FLAGS = [
   { key: 'unshareIpc', flag: '--unshare-ipc', label: 'IPC namespace' },
@@ -53,19 +53,9 @@ function imageBase(ref: string): string {
   return ref.split('/').pop() ?? ref;
 }
 
-// Expand a leading "~" or "~/" into the home directory. Electron spawns
-// without a shell, so unlike the CLI (where the shell expands "~"), a literal
-// "~" would reach podman as-is and be misread as a named volume name.
-function expandHome(value: string, home: string): string {
-  if (value === '~') return home;
-  if (value.startsWith('~/')) return `${home}/${value.slice(2)}`;
-  return value;
-}
-
 export default function Create() {
+  const { notify } = useNotifications();
   const [images, setImages] = useState<RegistryEntry[]>([]);
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const [homeDir, setHomeDir] = useState('');
 
   const [name, setName] = useState('');
   const [image, setImage] = useState('');
@@ -91,43 +81,55 @@ export default function Create() {
 
   const [busy, setBusy] = useState(false);
   const [step, setStep] = useState<string | null>(null);
-  const [result, setResult] = useState<'success' | 'error' | null>(null);
-  const [resultMessage, setResultMessage] = useState('');
 
   const load = useCallback(async () => {
-    setLoadError(null);
     try {
       const { stdout, stderr } = await window.otter.run('otter', ['reg', 'list', '--json']);
-      if (stderr) setLoadError(stderr);
+      if (stderr) notify('warning', 'otter reported', stderr.trim());
       setImages(JSON.parse(stdout) as RegistryEntry[]);
     } catch (err) {
       const e = err as { message?: string; stderr?: string };
-      setLoadError(e.stderr || e.message || 'Failed to load images');
+      notify('error', 'Failed to load images', e.stderr || e.message || 'Unknown error');
     }
-  }, []);
+  }, [notify]);
 
   useEffect(() => {
     void load();
-    window.otter.homedir().then(setHomeDir).catch(() => {});
   }, [load]);
 
-  const buildArgs = (json = false): string[] => {
+  const expand = (value: string): Promise<string> =>
+    value.trim() ? window.otter.expandEnv(value.trim()) : Promise.resolve('');
+
+  const buildArgs = async (json = false): Promise<string[]> => {
+    const [cn, ci, cs, ch, cpl, cmem, ccpu, chost, cih, cph, cflags] =
+      await Promise.all([
+        expand(name),
+        expand(image),
+        expand(shell),
+        expand(home),
+        expand(platform),
+        expand(memory),
+        expand(cpuThreads),
+        expand(hostname),
+        expand(initHooks),
+        expand(preInitHooks),
+        expand(additionalFlags),
+      ]);
+    const vols = await Promise.all(volumes.map(expand));
+
     const args = ['create'];
     if (json) args.push('--json');
-    if (name.trim()) args.push(name.trim());
-    args.push('--image', image.trim());
-    args.push('--shell', shell.trim());
-    if (home.trim()) args.push('--home', expandHome(home.trim(), homeDir));
-    if (platform.trim()) args.push('--platform', platform.trim());
-    if (memory.trim()) args.push('--memory', memory.trim());
-    if (cpuThreads.trim()) args.push('--cpu-threads', cpuThreads.trim());
+    if (cn) args.push(cn);
+    args.push('--image', ci);
+    args.push('--shell', cs);
+    if (chost) args.push('--hostname', chost);
+    if (ch) args.push('--home', ch);
+    if (cpl) args.push('--platform', cpl);
+    if (cmem) args.push('--memory', cmem);
+    if (ccpu) args.push('--cpu-threads', ccpu);
     args.push('--gpu', gpu);
-    for (const volume of volumes) {
-      if (volume.trim()) {
-        const [src] = volume.split(':');
-        const expanded = src.trim().startsWith('~') ? `${expandHome(src.trim(), homeDir)}${volume.slice(src.length)}` : volume.trim();
-        args.push('--volume', expanded);
-      }
+    for (const vol of vols) {
+      if (vol) args.push('--volume', vol);
     }
     if (init) args.push('--init');
     if (alwaysPull) args.push('--always-pull');
@@ -140,34 +142,29 @@ export default function Create() {
         if (unshare[f.key]) args.push(f.flag);
       }
     }
-    if (initHooks.trim()) args.push('--init-hooks', initHooks.trim());
-    if (preInitHooks.trim()) args.push('--pre-init-hooks', preInitHooks.trim());
-    if (additionalFlags.trim()) args.push('--additional-flags', additionalFlags.trim());
+    if (cih) args.push('--init-hooks', cih);
+    if (cph) args.push('--pre-init-hooks', cph);
+    if (cflags) args.push('--additional-flags', cflags);
     return args;
   };
 
   const submit = async () => {
-    setResult(null);
-    setResultMessage('');
     setBusy(true);
     setStep(null);
     const unsubscribe = window.otter.onRunStep((message) => {
       if (message !== null) setStep(message);
     });
     try {
-      const { stderr } = await window.otter.runStream('otter', buildArgs(true));
+      const { stderr } = await window.otter.runStream('otter', await buildArgs(true));
       if (stderr) {
-        setResult('error');
-        setResultMessage(stderr);
+        notify('error', 'otter reported', stderr.trim());
       } else {
-        setResult('success');
         const displayName = name.trim() || derivedName(image.trim());
-        setResultMessage(`Container "${displayName}" created.`);
+        notify('success', 'Container created', `Container "${displayName}" created.`);
       }
     } catch (err) {
       const e = err as { message?: string; stderr?: string };
-      setResult('error');
-      setResultMessage(e.stderr || e.message || 'Failed to create container');
+      notify('error', 'Failed to create container', e.stderr || e.message || 'Unknown error');
     } finally {
       unsubscribe();
       setBusy(false);
@@ -188,23 +185,6 @@ export default function Create() {
       <Typography color="text.secondary" variant="body2" sx={{ mb: 2 }}>
         Spin up a new otter container from a registry image
       </Typography>
-
-      {loadError && (
-        <Alert severity="warning" sx={{ mb: 2 }} onClose={() => setLoadError(null)}>
-          {loadError}
-        </Alert>
-      )}
-
-      {result === 'success' && (
-        <Alert severity="success" sx={{ mb: 2 }}>
-          {resultMessage}
-        </Alert>
-      )}
-      {result === 'error' && (
-        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setResult(null)}>
-          {resultMessage}
-        </Alert>
-      )}
 
       {busy ? (
         <Card variant="outlined" sx={{ py: 8, px: 3, textAlign: 'center' }}>

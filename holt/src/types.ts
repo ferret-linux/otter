@@ -52,7 +52,7 @@ export interface OtterApi {
 
   clearLog: () => Promise<void>;
   onLog: (callback: (entry: LogEntry) => void) => () => void;
-  homedir: () => Promise<string>;
+  expandEnv: (value: string) => Promise<string>;
 }
 
 declare global {

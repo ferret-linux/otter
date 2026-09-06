@@ -13,7 +13,7 @@ const api = {
     };
   },
   getLog: () => ipcRenderer.invoke('otter:log:get'),
-  homedir: () => ipcRenderer.invoke('otter:homedir'),
+  expandEnv: (value: string) => ipcRenderer.invoke('otter:expand-env', value),
   clearLog: () => ipcRenderer.invoke('otter:log:clear'),
   onLog: (callback: (entry: unknown) => void) => {
     const listener = (_event: unknown, entry: unknown) => callback(entry);

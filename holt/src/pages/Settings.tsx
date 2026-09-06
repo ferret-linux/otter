@@ -13,29 +13,26 @@ import Select from '@mui/material/Select';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import CircularProgress from '@mui/material/CircularProgress';
-import Alert from '@mui/material/Alert';
 import type { SettingsEntry } from '../types';
+import { useNotifications } from '../notifications';
 
 const isInt = (value: string): boolean => /^-?\d+$/.test(value.trim());
 
 type FieldValue = string | boolean;
 
 export default function Settings() {
+  const { notify } = useNotifications();
   const [entries, setEntries] = useState<SettingsEntry[]>([]);
   const [values, setValues] = useState<Record<string, FieldValue>>({});
   const [initial, setInitial] = useState<Record<string, FieldValue>>({});
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [result, setResult] = useState<'success' | 'error' | null>(null);
-  const [resultMessage, setResultMessage] = useState('');
 
   const load = async () => {
     setLoading(true);
-    setError(null);
     try {
       const { stdout, stderr } = await window.otter.run('otter', ['settings', '--list-json']);
-      if (stderr) setError(stderr);
+      if (stderr) notify('warning', 'otter reported', stderr.trim());
       const list = JSON.parse(stdout) as SettingsEntry[];
       const vals: Record<string, FieldValue> = {};
       for (const e of list) vals[e.field] = e.value;
@@ -44,7 +41,7 @@ export default function Settings() {
       setInitial(vals);
     } catch (err) {
       const e = err as { message?: string; stderr?: string };
-      setError(e.stderr || e.message || 'Failed to load settings');
+      notify('error', 'Failed to load settings', e.stderr || e.message || 'Unknown error');
     } finally {
       setLoading(false);
     }
@@ -63,8 +60,6 @@ export default function Settings() {
     setValues((v) => ({ ...v, [field]: value }));
 
   const save = async () => {
-    setResult(null);
-    setResultMessage('');
     setBusy(true);
     const payload: Record<string, FieldValue> = {};
     for (const e of entries) {
@@ -77,17 +72,14 @@ export default function Settings() {
         JSON.stringify(payload),
       );
       if (stderr) {
-        setResult('error');
-        setResultMessage(stderr.trim());
+        notify('error', 'otter reported while saving', stderr.trim());
       } else {
-        setResult('success');
-        setResultMessage('Settings saved.');
+        notify('success', 'Settings saved', 'Your settings have been applied.');
         setInitial({ ...values });
       }
     } catch (err) {
       const e = err as { message?: string; stderr?: string };
-      setResult('error');
-      setResultMessage(e.stderr || e.message || 'Failed to save settings');
+      notify('error', 'Failed to save settings', e.stderr || e.message || 'Unknown error');
     } finally {
       setBusy(false);
     }
@@ -200,22 +192,6 @@ export default function Settings() {
       <Typography variant="h5" component="h1" sx={{ fontWeight: 700, mb: 2 }}>
         Settings
       </Typography>
-
-      {error && (
-        <Alert severity="warning" sx={{ mb: 2 }} onClose={() => setError(null)}>
-          {error}
-        </Alert>
-      )}
-      {result === 'success' && (
-        <Alert severity="success" sx={{ mb: 2 }}>
-          {resultMessage}
-        </Alert>
-      )}
-      {result === 'error' && (
-        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setResult(null)}>
-          {resultMessage}
-        </Alert>
-      )}
 
       <Card variant="outlined">
         <CardContent>

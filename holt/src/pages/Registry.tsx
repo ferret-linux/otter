@@ -19,6 +19,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import type { DataContainer, RegistryEntry } from '../types';
 import { prettyName } from '../distros';
 import PageHeader from '../components/PageHeader';
+import { useNotifications } from '../notifications';
+import useOtterEvents from '../useOtterEvents';
 
 function imageBase(ref: string): string {
   return ref.split('/').pop() ?? ref;
@@ -75,15 +77,16 @@ interface RegistryProps {
 }
 
 export default function Registry({ search }: RegistryProps) {
+  const { notify } = useNotifications();
   const [entries, setEntries] = useState<RegistryEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [failed, setFailed] = useState(false);
   const [busy, setBusy] = useState<{ name: string; action: BusyAction } | null>(null);
   const [inUseImages, setInUseImages] = useState<string[]>([]);
 
   const load = useCallback(async () => {
     setLoading(true);
-    setError(null);
+    setFailed(false);
     try {
       const [reg, containers] = await Promise.all([
         window.otter.run('otter', ['reg', 'list', '--json']),
@@ -91,32 +94,35 @@ export default function Registry({ search }: RegistryProps) {
       ]);
       const nonEmpty = (s: string) => s.trim().length > 0;
       const warnings = [reg.stderr, containers.stderr].filter(nonEmpty).join('\n');
-      if (warnings) setError(warnings);
+      if (warnings) notify('warning', 'otter reported', warnings.trim());
       setEntries(JSON.parse(reg.stdout) as RegistryEntry[]);
       const list = JSON.parse(containers.stdout) as DataContainer[];
       setInUseImages(list.map((c) => imageBase(c.image)));
     } catch (err) {
       const e = err as { message?: string; stderr?: string };
-      setError(e.stderr || e.message || 'Failed to load registry');
+      setFailed(true);
+      notify('error', 'Failed to load registry', e.stderr || e.message || 'Unknown error');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [notify]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
+  useOtterEvents(() => {
+    void load();
+  });
+
   const run = async (name: string, action: BusyAction, args: string[]) => {
     setBusy({ name, action });
-    setError(null);
     try {
       const { stderr } = await window.otter.run('otter', args);
-      await load();
-      if (stderr.trim()) setError(stderr);
+      if (stderr.trim()) notify('warning', `otter reported on ${action} ${name}`, stderr.trim());
     } catch (err) {
       const e = err as { message?: string; stderr?: string };
-      setError(e.stderr || e.message || 'Command failed');
+      notify('error', `Failed to ${action} ${name}`, e.stderr || e.message || 'Unknown error');
     } finally {
       setBusy(null);
     }
@@ -140,13 +146,7 @@ export default function Registry({ search }: RegistryProps) {
         onRefresh={() => void load()}
       />
 
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
-          {error}
-        </Alert>
-      )}
-
-      {!loading && !error && entries.length === 0 && (
+      {!loading && !failed && entries.length === 0 && (
         <Alert severity="info">No entries in the registry.</Alert>
       )}
 
