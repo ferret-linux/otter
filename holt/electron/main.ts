@@ -1,10 +1,10 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
-const path = require('path');
-const { execFile } = require('child_process');
+import { app, BrowserWindow, ipcMain } from 'electron';
+import * as path from 'path';
+import { execFile } from 'child_process';
 
-let mainWindow;
+let mainWindow: BrowserWindow | null = null;
 
-function createWindow() {
+function createWindow(): void {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
@@ -17,7 +17,12 @@ function createWindow() {
     },
   });
 
-  mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
+  const dev = process.argv.includes('--dev');
+  if (dev) {
+    mainWindow.loadURL('http://localhost:5173');
+  } else {
+    mainWindow.loadFile(path.join(__dirname, '..', 'dist', 'index.html'));
+  }
 }
 
 app.whenReady().then(() => {
@@ -31,9 +36,9 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
-ipcMain.handle('otter:run', async (_event, command, args) => {
+ipcMain.handle('otter:run', async (_event, command: string, args: string[]) => {
   return new Promise((resolve, reject) => {
-    execFile(command, args, { timeout: 30000 }, (error, stdout, stderr) => {
+    execFile(command, args, { timeout: 30_000 }, (error, stdout, stderr) => {
       if (error) {
         reject({ message: error.message, stderr });
       } else {
