@@ -16,12 +16,14 @@ import AddCircleOutlinedIcon from '@mui/icons-material/AddCircleOutlined';
 import HomeIcon from '@mui/icons-material/Home';
 import LayersIcon from '@mui/icons-material/Layers';
 import SettingsIcon from '@mui/icons-material/Settings';
+import TerminalOutlinedIcon from '@mui/icons-material/TerminalOutlined';
 import { NavLink, Navigate, Route, Routes } from 'react-router-dom';
 
 const Home = lazy(() => import('./pages/Home'));
 const Create = lazy(() => import('./pages/Create'));
 const Registry = lazy(() => import('./pages/Registry'));
 const Settings = lazy(() => import('./pages/Settings'));
+const Verbose = lazy(() => import('./pages/Verbose'));
 
 const DRAWER_WIDTH = 240;
 
@@ -76,9 +78,19 @@ export default function App() {
     </List>
   );
 
-  const settingsNav = (
+  const bottomNav = (
     <Box sx={{ mt: 'auto', pb: 1 }}>
       <Divider sx={{ mx: 2, mb: 1 }} />
+      <StyledNavLink to="/verbose">
+        <ListItem disablePadding>
+          <ListItemButton>
+            <ListItemIcon>
+              <TerminalOutlinedIcon />
+            </ListItemIcon>
+            <ListItemText primary="Verbose" />
+          </ListItemButton>
+        </ListItem>
+      </StyledNavLink>
       <StyledNavLink to="/settings">
         <ListItem disablePadding>
           <ListItemButton>
@@ -117,7 +129,7 @@ export default function App() {
       >
         <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100% - 64px)', overflow: 'auto' }}>
           {nav}
-          {settingsNav}
+          {bottomNav}
         </Box>
       </Drawer>
 
@@ -142,6 +154,7 @@ export default function App() {
             <Route path="/create" element={<Create />} />
             <Route path="/registry" element={<Registry />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/verbose" element={<Verbose />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
