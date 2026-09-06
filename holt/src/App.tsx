@@ -61,12 +61,9 @@ export default function App() {
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <AppBar position="fixed" elevation={0} color="default">
-        <StyledToolbar>
+        <StyledToolbar sx={{ pl: 2 }}>
           <Typography variant="h6" component="div" sx={{ fontWeight: 700 }}>
             Holt
-          </Typography>
-          <Typography variant="caption" sx={{ ml: 1, color: 'text.secondary' }}>
-            Otter Container Manager
           </Typography>
         </StyledToolbar>
       </AppBar>
@@ -80,8 +77,7 @@ export default function App() {
             width: DRAWER_WIDTH,
             boxSizing: 'border-box',
             mt: '64px',
-            borderRight: 1,
-            borderColor: 'divider',
+            borderRight: 0,
           },
         }}
       >

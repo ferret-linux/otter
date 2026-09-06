@@ -5,7 +5,6 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "skipLibCheck": true,
-    "resolveJsonModule": true,
     "rootDir": "electron",
     "outDir": "dist-electron",
     "strict": true,

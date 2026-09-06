@@ -39,12 +39,12 @@ app.on('window-all-closed', () => {
 
 ipcMain.handle('otter:run', async (_event, command: string, args: string[]) => {
   return new Promise((resolve, reject) => {
-    execFile(command, args, { timeout: 30_000 }, (error, stdout, stderr) => {
+    execFile(command, args, (error, stdout, stderr) => {
       if (error) {
-        reject({ message: error.message, stderr });
-      } else {
-        resolve({ stdout, stderr });
+        reject(new Error(stderr.trim() || error.message));
+        return;
       }
+      resolve({ stdout, stderr });
     });
   });
 });

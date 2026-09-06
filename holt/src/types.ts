@@ -6,11 +6,11 @@ export interface RunResult {
 export interface RegistryEntry {
   name: string;
   architecture: string[];
-  enabled: boolean;
   built_at: string;
   pulled: boolean;
   staleness: string;
-  size: number;
+  behind_count?: number;
+  size?: number;
   image: string;
 }
 
@@ -23,5 +23,3 @@ declare global {
     otter: OtterApi;
   }
 }
-
-export type {}
