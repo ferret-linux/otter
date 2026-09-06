@@ -3,6 +3,7 @@ package cli
 import (
 	"context"
 	"fmt"
+	"os"
 
 	tea "charm.land/bubbletea/v2"
 	"github.com/urfave/cli/v3"
@@ -15,11 +16,30 @@ func newSettingsCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "settings",
 		Aliases: []string{"conf"},
-		Action:  settingsAction,
+		Flags: []cli.Flag{
+			&cli.BoolFlag{
+				Name:   "list-json",
+				Hidden: true,
+				Usage:  "print current settings as JSON (GUI bridge)",
+			},
+			&cli.BoolFlag{
+				Name:   "apply-json",
+				Hidden: true,
+				Usage:  "apply settings from JSON on stdin (GUI bridge)",
+			},
+		},
+		Action: settingsAction,
 	}
 }
 
-func settingsAction(_ context.Context, _ *cli.Command) error {
+func settingsAction(_ context.Context, cmd *cli.Command) error {
+	switch {
+	case cmd.Bool("list-json"):
+		return commands.SettingsListJSON()
+	case cmd.Bool("apply-json"):
+		return commands.SettingsApplyJSON(os.Stdin)
+	}
+
 	m, err := commands.NewSettingsModel()
 	if err != nil {
 		return fmt.Errorf("failed to start settings editor: %w", err)

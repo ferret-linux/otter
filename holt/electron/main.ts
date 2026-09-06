@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 import * as path from 'path';
-import { execFile } from 'child_process';
+import { spawn } from 'child_process';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -37,14 +37,32 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
-ipcMain.handle('otter:run', async (_event, command: string, args: string[]) => {
+const stripAnsi = (s: string): string => s.replace(/\u001b\[[0-9;]*m/g, '');
+
+ipcMain.handle('otter:run', async (_event, command: string, args: string[], input?: string) => {
   return new Promise((resolve, reject) => {
-    execFile(command, args, (error, stdout, stderr) => {
-      if (error) {
-        reject(new Error(stderr.trim() || error.message));
+    const child = spawn(command, args);
+    let stdout = '';
+    let stderr = '';
+    child.stdout.on('data', (d) => {
+      stdout += d;
+    });
+    child.stderr.on('data', (d) => {
+      stderr += d;
+    });
+    child.on('error', (err) => reject(err));
+    child.on('close', (code, signal) => {
+      const cleanErr = stripAnsi(stderr);
+      if (code !== 0 || signal) {
+        reject(new Error(cleanErr.trim() || `command exited with code ${String(code)}`));
         return;
       }
-      resolve({ stdout, stderr });
+      resolve({ stdout: stripAnsi(stdout), stderr: cleanErr });
     });
+    child.stdin.on('error', () => {});
+    if (input !== undefined) {
+      child.stdin.write(input);
+    }
+    child.stdin.end();
   });
 });

@@ -6,6 +6,7 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Drawer from '@mui/material/Drawer';
+import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -14,11 +15,13 @@ import ListItemText from '@mui/material/ListItemText';
 import AddCircleOutlinedIcon from '@mui/icons-material/AddCircleOutlined';
 import HomeIcon from '@mui/icons-material/Home';
 import LayersIcon from '@mui/icons-material/Layers';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { NavLink, Navigate, Route, Routes } from 'react-router-dom';
 
 const Home = lazy(() => import('./pages/Home'));
 const Create = lazy(() => import('./pages/Create'));
 const Registry = lazy(() => import('./pages/Registry'));
+const Settings = lazy(() => import('./pages/Settings'));
 
 const DRAWER_WIDTH = 240;
 
@@ -73,6 +76,22 @@ export default function App() {
     </List>
   );
 
+  const settingsNav = (
+    <Box sx={{ mt: 'auto', pb: 1 }}>
+      <Divider sx={{ mx: 2, mb: 1 }} />
+      <StyledNavLink to="/settings">
+        <ListItem disablePadding>
+          <ListItemButton>
+            <ListItemIcon>
+              <SettingsIcon />
+            </ListItemIcon>
+            <ListItemText primary="Settings" />
+          </ListItemButton>
+        </ListItem>
+      </StyledNavLink>
+    </Box>
+  );
+
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <AppBar position="fixed" elevation={0} color="default">
@@ -96,7 +115,10 @@ export default function App() {
           },
         }}
       >
-        <Box sx={{ overflow: 'auto' }}>{nav}</Box>
+        <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100% - 64px)', overflow: 'auto' }}>
+          {nav}
+          {settingsNav}
+        </Box>
       </Drawer>
 
       <Box
@@ -119,6 +141,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/create" element={<Create />} />
             <Route path="/registry" element={<Registry />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>

@@ -18,8 +18,18 @@ export interface ContainerInfo {
   image: string;
 }
 
+export interface SettingsEntry {
+  section: string;
+  field: string;
+  kind: 'text' | 'toggle';
+  value: string | boolean;
+  description: string;
+  options?: string[];
+  numeric?: boolean;
+}
+
 export interface OtterApi {
-  run: (command: string, args: string[]) => Promise<RunResult>;
+  run: (command: string, args: string[], input?: string) => Promise<RunResult>;
 }
 
 declare global {
