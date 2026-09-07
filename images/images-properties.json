@@ -272,28 +272,6 @@
       "build_number": 192
     },
     {
-      "name": "opensuse-tumbleweed",
-      "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
-      "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-06T21:43:52Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 419200099,
-          "disk_size": 1270711498
-        },
-        "arm64": {
-          "compressed_size": 410151089,
-          "disk_size": 1215976715
-        }
-      },
-      "build_number": 153
-    },
-    {
       "name": "steamos",
       "official_image": "ghcr.io/ferret-linux/steamos-otr:latest",
       "fallback_vendor_image": "docker.io/cachyos/cachyos-v3:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 195
+    },
+    {
+      "name": "opensuse-tumbleweed",
+      "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
+      "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-07T05:48:15Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 419212022,
+          "disk_size": 1270711500
+        },
+        "arm64": {
+          "compressed_size": 410151827,
+          "disk_size": 1215976710
+        }
+      },
+      "build_number": 154
     }
   ]
 }
