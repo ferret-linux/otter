@@ -40,28 +40,6 @@
       "build_number": 202
     },
     {
-      "name": "chimera",
-      "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
-      "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-07T19:16:59Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 348116188,
-          "disk_size": 988247450
-        },
-        "arm64": {
-          "compressed_size": 351689724,
-          "disk_size": 958247056
-        }
-      },
-      "build_number": 198
-    },
-    {
       "name": "rocky",
       "official_image": "ghcr.io/ferret-linux/rocky-otr:stable",
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 203
+    },
+    {
+      "name": "chimera",
+      "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
+      "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-07T22:47:57Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 348118004,
+          "disk_size": 988247452
+        },
+        "arm64": {
+          "compressed_size": 351689353,
+          "disk_size": 958247057
+        }
+      },
+      "build_number": 199
     }
   ]
 }
