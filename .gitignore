@@ -1,52 +1,6 @@
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
-bin/
-
-# Test binary, built with `go test -c`
-*.test
-
-# Code coverage profiles and other test artifacts
-*.out
-coverage.*
-*.coverprofile
-profile.cov
-
-# Dependency directories (remove the comment below to include it)
-# vendor/
-
-# Go workspace file
-go.work
-go.work.sum
-
-# env file
-.env
-
-# Editor/IDE
-tags
-*.vim
-TODO.txt
-.vscode
-
 # Python bytecode cache (tools/gencompletions)
 __pycache__/
 */__pycache__/*
 
-# Code Review Files & TODO ( markdown)
-/pat*.md
-/PAT*.md
-/todo*.md
-/TODO*.md
-code*.md
-/CODE*.md
-/review*.md
-/REVIEW*.md
-/ISSUES*.md
-/issues*.md
-/prompt*.md
-/PROMPT*.md
-/audit*.md
-/AUDIT*.md
+# Editor/IDE
+.vscode

@@ -63,7 +63,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
         with:
-          go-version-file: go.mod
+          go-version-file: otter/go.mod
 
       - name: Get nerdctl version
         if: matrix.runtime == 'nerdctl'
@@ -81,9 +81,10 @@ jobs:
             | sudo tar -xz -C /usr/local/bin nerdctl
 
       - name: Build otter
+        working-directory: otter
         run: |
           go build -o ./bin/otter ./cmd/otter
           echo "$PWD/bin" >> $GITHUB_PATH
 
       - name: Run e2e
-        run: bash tests/e2e/ci/${{ matrix.distro }}.sh ${{ matrix.runtime }} ${{ matrix.mode }}
+        run: bash otter/tests/e2e/ci/${{ matrix.distro }}.sh ${{ matrix.runtime }} ${{ matrix.mode }}
