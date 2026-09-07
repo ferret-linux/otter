@@ -1,0 +1,1922 @@
+# Persian translation for bevy.
+# Copyright (C) 2024 bevy's COPYRIGHT HOLDER
+# This file is distributed under the same license as the bevy package.
+# Danial Behzadi <dani.behzi@ubuntu.com>, 2024-2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: bevy main\n"
+"Report-Msgid-Bugs-To: https://github.com/ferret-linux/bevy/issues\n"
+"POT-Creation-Date: 2026-07-31 22:53+0000\n"
+"PO-Revision-Date: 2026-08-23 18:09+0330\n"
+"Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
+"Language-Team: Persian\n"
+"Language: fa\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 3.6\n"
+"X-DL-Lang: fa\n"
+"X-DL-Module: bevy\n"
+"X-DL-Branch: main\n"
+"X-DL-Domain: po\n"
+"X-DL-State: None\n"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:2 data/dev.itznoel.Bevy.metainfo.xml.in.in:6
+msgid "@APP_NAME@"
+msgstr "چنبره"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:3
+msgid "A container-oriented terminal for GNOME"
+msgstr "پایانه‌ای بارگنج‌محور برای گنوم"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:12 src/bevy-preferences-window.ui:669 src/bevy-tab.c:1647 src/bevy-util.c:328
+msgid "Terminal"
+msgstr "پایانه"
+
+#. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+#: data/dev.itznoel.Bevy.desktop.in.in:14
+msgid "terminal;prompt;bevy;shell;command;commandline;cmd;cli;console;container;podman;toolbox;distrobox;"
+msgstr "terminal;prompt;bevy;shell;command;commandline;cmd;cli;console;container;podman;toolbox;distrobox;ترمینال;پایانه;اعلان;چنبره;پوسته;فرمان;کنسول;خط;بارگنج;پادمن;"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:23 src/dev.itznoel.Bevy.gschema.xml.in:424 src/bevy-preferences-window.ui:742
+msgid "New Window"
+msgstr "پنجرهٔ جدید"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:27 src/dev.itznoel.Bevy.gschema.xml.in:418 src/bevy-preferences-window.ui:771
+msgid "New Tab"
+msgstr "زبانهٔ جدید"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:31 src/dev.itznoel.Bevy.gschema.xml.in:436 src/bevy-preferences-window.ui:978
+msgid "Preferences"
+msgstr "ترجیحات"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:7
+msgid "Container-oriented terminal"
+msgstr "پایانهٔ بارگنج‌محور"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:9
+msgid "Bevy is a terminal for GNOME that focuses on ease-of-use in a world of containers."
+msgstr "چنبره پایانه‌ای برای گنوم است که روی سادگی استفاده در دنیای بارگنج‌ها تمرکز دارد."
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:13
+msgid "Features:"
+msgstr "ویژگی‌ها:"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:15
+msgid "Remembers current container when opening a new tab with support for podman, toolbox, distrobox, and more"
+msgstr "به خاطر سپردن بارگنج کنونی هنگام گشودن زبانه‌ای جدید با پشتیبانی از پادمن، تول‌باکس، دیستروباکس و غیره"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:16
+msgid "Configurable keyboard shortcuts"
+msgstr "میان‌برهای صفحه‌کلید قابل پیکربندی"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:17
+msgid "Modern interface which integrates the palette with the window styling"
+msgstr "میانای نوین که تخته‌رتگ را با سبک‌دهی پنجره یکپارچه می‌کند"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:18
+msgid "User-installable color palettes"
+msgstr "تخته‌رنگ‌های قابل نصب به دست کاربر"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:19
+msgid "Support for preferences profiles with container integration"
+msgstr "پشتیبانی از نماگرهای ترجیحات با یکپارچه سازی بارگنج"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:20
+msgid "Integrated color palettes with light and dark support"
+msgstr "تخته‌رنگ‌های یکپارچه شده با پشتیبانی از روشن و تیره"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:21
+msgid "Tabbed interface with tab overviews"
+msgstr "میانای زبانه‌ای با نمای کلی زبانه‌ها"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:22
+msgid "Efficient foreground process tracking denoting sudo and SSH"
+msgstr "ردیابی فرایند پیش‌زمینهٔ کارا که sudo و SSH را مشخّص می‌کند"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:23
+msgid "Support for transparent terminal backgrounds"
+msgstr "پشتیبانی از پس‌زمینه‌های پایانهٔ شفّاف"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:24
+msgid "Separate process mode for terminal-based applications"
+msgstr "حالت فرایند جداگانه برای برنامه‌های مبتنی بر پایانه"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:25
+msgid "Support for pinned tabs and saved sessions"
+msgstr "پشتیبانی از زبانه‌های سنجاق شده و نشست‌های ذخیره شده"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:26
+msgid "Terminal tabs are run within separate cgroups"
+msgstr "زبانه‌های پایانه درون cgroupهای جداگانه اجرا می‌شوند"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:27
+msgid "Terminal inspector to help when writing terminal-based applications"
+msgstr "بازرس پایانه برای کمک هنگام نوشتن برنامه‌های مبتنی بر پایانه"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:54
+msgid "A column and row size indicator is displayed when resizing the window"
+msgstr "نمایش دادن نشانگر اندازهٔ ردیف و ستون هنگام تغییر اندازهٔ پنجره"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:59
+msgid "Containers are automatically discovered and displayed"
+msgstr "بارگنج‌ها به طور خودکار کشف و نشان داده می‌شوند"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:64
+msgid "Many behaviors of the terminal may be tweaked to user preference"
+msgstr "خیلی از رفتارهای پایانه می‌توانند با ترجیحات کاربر تطبیق یابد"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:69
+msgid "You may rename a tab by providing a prefix to the title"
+msgstr "می‌توانید نام زبانه‌ها را با فراهم کردن پیشوند به عنوانش تغییر دهید"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:74
+msgid "Palettes provide an integrated dark mode"
+msgstr "تخته‌رنگ‌ها حالت تیرهٔ یکپارچه‌ای فراهم می‌کنند"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:79
+msgid "You can see an overview of your tabs at any time"
+msgstr "می‌توانید در هر زمانی نمایی کلی از زبانه‌هایتان ببینید"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:84
+msgid "Many shortcuts may be remapped to user preference"
+msgstr "خیلی از میان‌برها می‌توانند با ترجیحات کاربر نگاشت شوند"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:89
+msgid "Built-in color palettes provide both dark and light mode variants"
+msgstr "تخته‌رنگ‌های توکار هر دو حالت تیره و روشن را فراهم می‌کنند"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:94
+msgid "Profiles allow for overriding a number of features such as default container"
+msgstr "نماگرها اجازهٔ پایمالی شماری از ویژگی‌ها چون بارگنج پیش‌گزیده را می‌دهند"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:99
+msgid "The terminal will remind you when you're root on the local system"
+msgstr "پایانه root بودن روی سامانهٔ محلی را یادآوری خواهد کرد"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:104
+msgid "The terminal will remind you when you're on a remote system"
+msgstr "پایانه بودنتان روی سامانه‌ای دوردست را یادآوری خواهد کرد"
+
+#: src/main.c:142 src/main.c:149 src/main.c:161
+msgid "Error"
+msgstr "خطا"
+
+#: src/main.c:155
+#, c-format
+msgid ""
+"Error: %s already exists.\n"
+"Please remove it first.\n"
+msgstr ""
+"خطا: %s از پیش موجود است.\n"
+"لطفاً نخست برش دارید.\n"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:101
+msgid "Default Profile UUID"
+msgstr "شناسهٔ یکتای نمایهٔ پیش‌گزده"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:102
+msgid "The UUID of the default profile"
+msgstr "شناسهٔ یکتای نمایهٔ پیش‌گزده"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:107
+msgid "UUIDs of all Profiles"
+msgstr "شناسهٔ یکتای همهٔ نمایه‌ها"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:108
+msgid "A list of UUID for every profile"
+msgstr "سیاهه‌ای از شناسه‌های یکتا برای همهٔ نمایه‌ها"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:113 src/bevy-preferences-window.ui:322
+msgid "New Tab Position"
+msgstr "جایگاه زبانهٔ جدید"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:114
+msgid "Where to place new tabs"
+msgstr "مکان قرارگیری زبانه‌های جدید"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:119 src/bevy-preferences-window.ui:414
+msgid "Audible Bell"
+msgstr "زنگ صوتی"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:120
+msgid "If an audible bell should be used"
+msgstr "این که باید از زنگ صوتی استفاده شود یا نه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:125
+msgid "Visible Bell"
+msgstr "زنگ بصری"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:126
+msgid "If a visual bell should be used"
+msgstr "این که باید از زنگ بصری استفاده شود یا نه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:131
+msgid "Visual Process Leader"
+msgstr "بافتار فرایند دیداری"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:132
+msgid "Display a visual window highlight when process leader is SSH, sudo, or other specialized tooling"
+msgstr "نمایش برجسته‌سازی بصری پنجره هنگامی که بافتار فرایند SSH‏، sudo یا دیگر ابزارهای تخصّصی است"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:137
+msgid "Use System Font"
+msgstr "استفاده از قلم سامانه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:138
+msgid "If the default system monospace font should be used"
+msgstr "این که باید از قلم تک‌عرض پیش‌گزیدهٔ سامانه استفاده شود یا نه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:143
+msgid "Font Name"
+msgstr "نام قلم"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:144
+msgid "The font description to use if use-system-font is set to False"
+msgstr "شرح قلم استفاده شده در صورت تنظیم بودن use-system-font به نادرست"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:149 src/bevy-preferences-window.ui:249
+msgid "Cursor Shape"
+msgstr "شکل مکان‌نما"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:150
+msgid "The default shape of the cursor"
+msgstr "شکل پیش‌گزیدهٔ مکان‌نما"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:155
+msgid "Cursor Blink Mode"
+msgstr "حالت چشمک مکان‌نما"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:156
+msgid "The default blink mode cursor"
+msgstr "مکان‌نمای حالت چشمک پیش‌گزیده"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:161
+msgid "List of punctuation characters that are treated as word characters"
+msgstr "سیاههٔ نویسه‌های سجاوندی که به عنوان نویسه‌های واژگانی در نظر گرفته می‌شوند"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:162
+msgid "By default, when doing word-wise selection, most punctuation breaks up word boundaries. This list of exceptions will instead be treated as part of the word."
+msgstr "بیش‌تر علائم سجاوندی به صورت پیش‌گزیده هنگام گزینش واژه به واژه، مرزهای واژه را به هم می‌ریزند. این سیاههٔ استثناها آن‌ها را به عنوان بخشی از واژه در نظر می‌گیرد."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:167
+msgid "Scrollbar Policy"
+msgstr "سیاست نوار لغزش"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:168
+msgid "If scrollbars should be displayed"
+msgstr "این که نوارهای لفزش باید نشان داده شوند یا نه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:177
+msgid "Text Blink Mode"
+msgstr "حالت چشمک متن"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:178
+msgid "When text blinking is allowed"
+msgstr "هنگام مجاز بودن چشمک زدن متن"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:183
+msgid "Interface Style"
+msgstr "سبک میانا"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:184
+msgid "If light or dark interface style should be used"
+msgstr "این که باید میانای روشن یا تیره استفاده شود"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:189 src/bevy-preferences-window.ui:351
+msgid "Restore Session"
+msgstr "بازگردانی نشست"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:190
+msgid "Restore tabs from previous session when starting Bevy"
+msgstr "بازگردانی زبانه‌ها از نشست پیشین هنگام آغاز چنبره"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:195 src/bevy-preferences-window.ui:357
+msgid "Restore Window Size"
+msgstr "بازگردانی اندازهٔ پنجره"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:196
+msgid "Restore the previous window size when creating new windows"
+msgstr "بازگردانی اندازهٔ پنجرهٔ پیشین هنگام ایجاد پنجره‌های جدید"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:206
+msgid "Default Column Size"
+msgstr "اندازهٔ پیش‌گزیدهٔ ستون"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:207 src/dev.itznoel.Bevy.gschema.xml.in:214
+msgid "Default window size when restore-window-size is not true."
+msgstr "اندازهٔ پنجرهٔ پیش‌گزیده هنگام درست نبودن restore-window-size."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:213
+msgid "Default Row Size"
+msgstr "اندازهٔ پیش‌گزیدهٔ ردیف"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:219
+msgid "Toast on Copy Clipboard"
+msgstr "اعلام هنگام رونوشت در تخته‌گیره"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:220
+msgid "Show the user when text has copied to the clipboard."
+msgstr "نمایش به کاربر هنگامی که متن به ریخته‌گرها رونوشت شد."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:225
+msgid "Enable Accessibility"
+msgstr "به‌کار انداختن دسترسی پذیری"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:226
+msgid "Currently experimental feature to send accessibility information to screen readers."
+msgstr "ویژگی‌ای در حال حاضر آزمایشی برای فرستادن اطّلاعات دسترسی‌پذیری به صفحه‌خوان‌ها."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:231
+msgid "Enable zoom on scroll holding the control key"
+msgstr "به کار انداختن بزرگنمایی با لغزش هنگام نگه داشتن کلید مهار"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:232
+msgid "Enable to adjust the zoom level on scroll scroll while holding the control key."
+msgstr "به کار انداختن تنظیم سطح بزرگنمایی با لغزش هنگام نگه داشتن کلید مهار."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:237
+msgid "Disable Padding around Terminal Emulator"
+msgstr "از کار انداختن فاصله گذاری دور شبیه‌ساز پایانه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:238
+msgid "Do not pad around the terminal emulator widget. Setting to true may have significant performance impacts."
+msgstr "فاصله نگذاشتن دور ابزارک شبیه‌ساز پایانه. ممکن است تنظیم کردن به درست، تأثیر چشم‌گیری روی کارایی داشته باشد."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:243
+msgid "Prompt when active tab is closed"
+msgstr "اعلان هنگام بستن زبانهٔ فعّال"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:244
+msgid "If a tab (or window) is closed with active foreground processes, prompt the user for confirmation."
+msgstr "اعلان برای تأیید کاربر در صورت بسته شدن زبانه‌ای (یا پنجره‌ای) با فرایندهای پیش‌زمینه."
+
+#. Translators: OSC stands for "Operating System Command" and is referencing in-band escape sequences from the child process to set the title
+#: src/dev.itznoel.Bevy.gschema.xml.in:250
+msgid "Ignore OSC Title"
+msgstr "چشم‌پوشی از عنوان فرمان سیستم‌عامل"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:251
+msgid "If OSC title should be ignored in tab titles."
+msgstr "این که آیا باید از عنوان OSC در عنوان‌های زبانه چشم‌پوشی شود یا نه."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:256
+msgid "Inhibit Logout"
+msgstr "جلوگیری از خروج"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:257
+msgid "Inhibit desktop logout when a foreground process is running in a tab."
+msgstr "جلوگیری از خروج میزکار هنگامی که فرایندی پیش‌زمینه در زبانه‌ای در حال اجراست."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:266
+msgid "Label"
+msgstr "برچسب"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:267
+msgid "The label for the profile"
+msgstr "برچسب نماگر"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:272
+msgid "Login Shell"
+msgstr "پوستهٔ ورودی"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:273
+msgid "Use a login shell"
+msgstr "استفاده از پوسته‌ای ورودی"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:278 src/bevy-preferences-window.ui:482 src/bevy-profile-editor.ui:333
+msgid "Limit Scrollback"
+msgstr "محدودیت پیمایش به پیش"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:279
+msgid "Limit the number of lines to keep for scrollback"
+msgstr "محدودیت خط‌های نگه‌داشته برای لغزش به پس"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:285 src/bevy-preferences-window.ui:491 src/bevy-profile-editor.ui:342
+msgid "Scrollback Lines"
+msgstr "خط‌های لغزش به پس"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:286
+msgid "The number of lines to keep in the scrollback, zero for no scrollback"
+msgstr "تعداد خط‌ها برای نگه‌داری در لغزش به پس. صفر برای بدون لغزش به پس"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:291 src/bevy-preferences-window.ui:472 src/bevy-profile-editor.ui:323
+msgid "Scroll on Output"
+msgstr "لغزش هنگام خروجی"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:292
+msgid "Scroll to the bottom upon new output"
+msgstr "لغزش به پایین هنگام خروجی جدید"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:297 src/bevy-preferences-window.ui:466 src/bevy-profile-editor.ui:317
+msgid "Scroll on Keystroke"
+msgstr "لغزش هنگام زدن کلید"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:298
+msgid "Scroll to the bottom upon user keystroke"
+msgstr "لغزش به پایین هنگام زدن کلید به دست کاربر"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:303 src/bevy-profile-editor.ui:187
+msgid "Use Custom Command"
+msgstr "استفاده از فرمان سفارشی"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:304
+msgid "If a custom command should be used"
+msgstr "این که از فرمانی سفارشی استفاده شود یا نه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:309
+msgid "Use Proxy"
+msgstr "استفاده از پیشکار"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:310
+msgid "Apply proxy settings from the host in the container"
+msgstr "اعمال تنظیمات پیشکار از میزبان در بارگنج"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:315 src/bevy-profile-editor.ui:192
+msgid "Custom Command"
+msgstr "فرمان سفارشی"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:316
+msgid "A custom command for the shell"
+msgstr "فرمانی سفارشی برای پوسته"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:321 src/bevy-profile-editor.ui:211
+msgid "Default Container"
+msgstr "بارگنج پیش‌گزیده"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:322
+msgid "The default container to run the command in"
+msgstr "بارگنج پیش‌گزیده برای اجرای فرمان"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:327 src/bevy-profile-editor.ui:220
+msgid "Preserve Container"
+msgstr "حفظ بارگنج"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:328
+msgid "Preserve the active container when creating new tabs and windows"
+msgstr "حفظ بارگنج فعّال هنگام گشودن پنجره‌ها و زبانه‌های جدید"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:333 src/bevy-preferences-window.ui:551 src/bevy-profile-editor.ui:281
+msgid "Exit Action"
+msgstr "کنش خروج"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:334
+msgid "The action to take when the shell exits"
+msgstr "کنش انجام شده هنگام خروج از پوسته"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:339
+msgid "Preserve Directory"
+msgstr "حفظ شاخه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:340
+msgid "If the directory should be preserved for new terminals"
+msgstr "این که شاخه باید برای پایانه‌های جدید حفظ شود یا نه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:345 src/bevy-inspector.ui:102 src/bevy-preferences-window.ui:40 src/bevy-profile-editor.ui:65
+msgid "Palette"
+msgstr "تخته‌رنگ"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:346
+msgid "The color palette to use for the profile, by name"
+msgstr "تختخ‌رنگ استفاده شده برای نمایه، بر حسب نام"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:352
+msgid "Opacity"
+msgstr "شفافیت"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:353
+msgid "The opacity of the palette background"
+msgstr "کدری پس‌زمینهٔ تخته‌رنگ"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:358
+msgid "Bold is Bright"
+msgstr "توپر روشن است"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:359
+msgid "Setting bold on one of the lower 8 colors in the palette will use bright variant (upper 8 colors)"
+msgstr "تنظیم توپری روی یکیاز ۸ رنگ پایین تخته‌رنگ از دگرگونهٔ روشن (۸ رنگ بالا) استفاده می‌کند"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:365 src/bevy-preferences-window.ui:175 src/bevy-profile-editor.ui:143
+msgid "Line Spacing"
+msgstr "فاصله گذاری خط"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:366
+msgid "The terminal’s cell height scale"
+msgstr "مقیاس بلندای خانهٔ پایانه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:372 src/bevy-preferences-window.ui:189 src/bevy-profile-editor.ui:157
+msgid "Column Spacing"
+msgstr "فاصله گذاری ستون"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:373
+msgid "The terminal’s cell width scale"
+msgstr "مقیاس پهنای خانهٔ پایانه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:378
+msgid "CJK Ambiguous Width"
+msgstr "پهنای مبهم CJK"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:379
+msgid "The size to apply to ambiguous width characters"
+msgstr "اندازهٔ اعمالی به نویسه‌های با پهنای مبهم"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:384 src/dev.itznoel.Bevy.gschema.xml.in:390
+msgid "Backspace Binding"
+msgstr "ترکیب پس‌بر"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:385 src/dev.itznoel.Bevy.gschema.xml.in:391
+msgid "What to send to the PTY when a backspace is entered"
+msgstr "هنگام ورود پس‌بر چه به PTY فرستاده شود"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:396 src/bevy-preferences-window.ui:634 src/bevy-profile-editor.ui:409
+msgid "Custom Links"
+msgstr "پیوندهای سفارشی"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:397
+msgid "A list of custom hyperlinks, each defined by a regular expression matching the text, and a replacement pattern"
+msgstr "سیاهه‌ای از ابرپیوندهای سفارشی که هرکدام با عبارتی باقاعدهٔ مطابق با متن تعریف شده و الگوی جایگزینی"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:406 src/bevy-preferences-window.ui:672
+msgid "Copy to Clipboard"
+msgstr "رونوشت در تخته‌گیره"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:407
+msgid "The shortcut to copy to clipboard"
+msgstr "میان‌بر رونوشت به تخته‌گیره"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:412 src/bevy-preferences-window.ui:678
+msgid "Paste from Clipboard"
+msgstr "جایگذاری از تخته‌گیره"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:413
+msgid "The shortcut to paste from the clipboard"
+msgstr "میان‌بر جایگذاری از تخته‌گیره"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:419
+msgid "The shortcut to create a new tab in the current window"
+msgstr "میان‌بر ایجاد زبانه‌ای جدید در پنجرهٔ کنونی"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:425
+msgid "The shortcut to create a new tab in a new window"
+msgstr "میان‌بر ایجاد زبانه‌ای جدید در پنجره‌ای جدید"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:430
+msgid "Tab Overview"
+msgstr "نمای کلی زبانه‌ها"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:431
+msgid "The shortcut to show the tab overview"
+msgstr "میان‌بر نمایش نمای کلی زبانه‌ها"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:437
+msgid "The shortcut to show application preferences"
+msgstr "میان‌بر نمایش ترجیحات برنامه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:442 src/bevy-preferences-window.ui:985
+msgid "Keyboard Shortcuts"
+msgstr "میان‌برهای صفحه‌کلید"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:443
+msgid "The shortcut to show the keyboard shortcuts configuration"
+msgstr "میان‌بر نمایش پیکربندی میان‌برهای صفحه‌کلید"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:448 src/bevy-preferences-window.ui:936 src/bevy-window.c:1522 src/bevy-window.c:1530
+msgid "Zoom Out"
+msgstr "کوچک‌نمایی"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:449
+msgid "The shortcut to zoom out"
+msgstr "میان‌بر کوچک‌نمایی"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:454 src/bevy-preferences-window.ui:942 src/bevy-window.c:1539
+msgid "Reset Zoom"
+msgstr "بازنشانی بزرگ‌نمایی"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:455
+msgid "The shortcut to reset zoom"
+msgstr "میان‌بر بازنشانی بزرگنمایی"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:460 src/bevy-preferences-window.ui:930 src/bevy-window.c:1507 src/bevy-window.c:1515
+msgid "Zoom In"
+msgstr "بزرگ‌نمایی"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:461
+msgid "The shortcut to zoom in"
+msgstr "میان‌بر بزرگ‌نمایی"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:466 src/bevy-preferences-window.ui:953
+msgid "Toggle Fullscreen"
+msgstr "تغییر وضعیت تمام‌صفحه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:467
+msgid "The shortcut to toggle fullscreen"
+msgstr "میان‌بر تغییر حالت تمام‌صفحه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:472
+msgid "Reset Terminal"
+msgstr "بازنشانی پایانه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:473
+msgid "Reset the terminal state for misbehaving clients"
+msgstr "بازنشانی وضعیت پایانه برای کارخواه‌های بدرفتار"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:478
+msgid "Reset Terminal and Clear History"
+msgstr "بازنشانی پایانه و پاک‌سازی تاریخچه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:479
+msgid "Reset the terminal state and clear history for misbehaving clients"
+msgstr "بازنشانی وضعیت پایانه و پاک‌سازی تاریخچه برای کارخواه‌های بدرفتار"
+
+#. Translators: Refers to searching the terminal scrollback
+#: src/dev.itznoel.Bevy.gschema.xml.in:485 src/bevy-find-bar.ui:39 src/bevy-preferences-window.ui:721
+msgid "Search History"
+msgstr "تاریخچهٔ جست‌وجو"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:486
+msgid "Shortcut to begin searching the terminal history"
+msgstr "میان‌بر آغاز جست‌وجوی تاریخچهٔ پایانه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:491 src/bevy-preferences-window.ui:688
+msgid "Select All"
+msgstr "گزینش همه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:492
+msgid "Shortcut to select all the entire terminal scrollback"
+msgstr "میان‌بر گزینش تمامی لغزش به پس‌های پایانه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:497
+msgid "Select None"
+msgstr "گزینش هیچ‌کدام"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:498
+msgid "Shortcut to clear the terminal selection"
+msgstr "میان‌بر پاک سازی گزینش پایانه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:503
+msgid "Popup Menu"
+msgstr "فهرست بالا پریدنی"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:504
+msgid "Shortcut to show the popup menu for the terminal"
+msgstr "میان‌بر نمایش فهرست واشو برای پایانه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:509
+msgid "Primary Menu"
+msgstr "فهرست اصلی"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:510
+msgid "Shortcut to show the primary menu for the window"
+msgstr "میان‌بر نمایش فهرست اصلی برای پنجره"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:515
+msgid "Tab Menu"
+msgstr "فهرست زبانه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:516
+msgid "Shortcut to show the new tab menu"
+msgstr "میان‌بر نمایش فهرست زبانهٔ جدید"
+
+#. Translators: in this context, "Move" means to switch tabs
+#: src/dev.itznoel.Bevy.gschema.xml.in:522 src/bevy-preferences-window.ui:818
+msgid "Move to Previous Tab"
+msgstr "رفتن به زبانهٔ پیشین"
+
+#. Translators: in this context, "Move" means to switch tabs
+#: src/dev.itznoel.Bevy.gschema.xml.in:524
+msgid "Shortcut to move to the previous tab"
+msgstr "میان‌بر رفتن به زبانهٔ پیشین"
+
+#. Translators: in this context, "Move" means to switch tabs
+#: src/dev.itznoel.Bevy.gschema.xml.in:530 src/bevy-preferences-window.ui:824
+msgid "Move to Next Tab"
+msgstr "جابه‌جایی به زبانهٔ بعدی"
+
+#. Translators: in this context, "Move" means to switch tabs
+#: src/dev.itznoel.Bevy.gschema.xml.in:532
+msgid "Shortcut to move to the next tab"
+msgstr "میان‌بر رفتن به زبانهٔ بعدی"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:537 src/bevy-preferences-window.ui:834
+msgid "Move Tab Left"
+msgstr "جابه‌جایی زبانه به راست"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:538
+msgid "Shortcut to move the current tab to the left one position"
+msgstr "میان‌بر جابه‌جایی زبانهٔ کنونی یکی به راست"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:543 src/bevy-preferences-window.ui:841
+msgid "Move Tab Right"
+msgstr "جابه‌جایی زبانه به چپ"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:544
+msgid "Shortcut to move the current tab to the right one position"
+msgstr "میان‌بر جابه‌جایی زبانهٔ کنونی یکی به چپ"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:549 src/bevy-preferences-window.ui:848
+msgid "Move Tab to New Window"
+msgstr "جابه‌جایی زبانه به پنجرهٔ جدید"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:550
+msgid "Shortcut to move the current tab into a new window"
+msgstr "میان‌بر جابه‌جایی زبانهٔ کنونی به پنجره‌ای جدید"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:555 src/bevy-preferences-window.ui:793
+msgid "Close Tab"
+msgstr "بستن زبانه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:556
+msgid "Shortcut to close the current tab"
+msgstr "میان‌بر بستن زبانهٔ کنونی"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:561 src/bevy-preferences-window.ui:800
+msgid "Close Other Tabs"
+msgstr "بستن دیگر زبانه‌ها"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:562
+msgid "Shortcut to close all tabs in the window but the current one"
+msgstr "میان‌بر بستن همهٔ زبانه‌های پنجره جز زبانهٔ‌ کنونی"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:567 src/bevy-preferences-window.ui:749
+msgid "Close Window"
+msgstr "بستن پنجره"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:568
+msgid "Shortcut to close the current window"
+msgstr "میان‌بر بستن پنجرهٔ کنونی"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:573 src/bevy-preferences-window.ui:760 src/bevy-terminal.ui:244 src/bevy-window.c:1210 src/bevy-window.ui:846
+msgid "Set Title"
+msgstr "تنظیم عنوان"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:574
+msgid "The shortcut to show set title"
+msgstr "میان‌بر نمایش تنظیم عنوان"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:579
+msgid "Focus Tab 1"
+msgstr "تمرکز روی زبانهٔ ۱"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:580
+msgid "Shortcut to focus tab 1"
+msgstr "میان‌بر تمرکز روی زبانهٔ ۱"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:585
+msgid "Focus Tab 2"
+msgstr "تمرکز روی زبانهٔ ۲"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:586
+msgid "Shortcut to focus tab 2"
+msgstr "میان‌بر تمرکز روی زبانهٔ ۲"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:591
+msgid "Focus Tab 3"
+msgstr "تمرکز روی زبانهٔ ۳"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:592
+msgid "Shortcut to focus tab 3"
+msgstr "میان‌بر تمرکز روی زبانهٔ ۳"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:597
+msgid "Focus Tab 4"
+msgstr "تمرکز روی زبانهٔ ۴"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:598
+msgid "Shortcut to focus tab 4"
+msgstr "میان‌بر تمرکز روی زبانهٔ ۴"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:603
+msgid "Focus Tab 5"
+msgstr "تمرکز روی زبانهٔ ۵"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:604
+msgid "Shortcut to focus tab 5"
+msgstr "میان‌بر تمرکز روی زبانهٔ ۵"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:609
+msgid "Focus Tab 6"
+msgstr "تمرکز روی زبانهٔ ۶"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:610
+msgid "Shortcut to focus tab 6"
+msgstr "میان‌بر تمرکز روی زبانهٔ ۶"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:615
+msgid "Focus Tab 7"
+msgstr "تمرکز روی زبانهٔ ۷"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:616
+msgid "Shortcut to focus tab 7"
+msgstr "میان‌بر تمرکز روی زبانهٔ ۷"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:621
+msgid "Focus Tab 8"
+msgstr "تمرکز روی زبانهٔ ۸"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:622
+msgid "Shortcut to focus tab 8"
+msgstr "میان‌بر تمرکز روی زبانهٔ ۸"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:627
+msgid "Focus Tab 9"
+msgstr "تمرکز روی زبانهٔ ۹"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:628
+msgid "Shortcut to focus tab 9"
+msgstr "میان‌بر تمرکز روی زبانهٔ ۹"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:633
+msgid "Focus Tab 10"
+msgstr "تمرکز روی زبانهٔ ۱۰"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:634
+msgid "Shortcut to focus tab 10"
+msgstr "میان‌بر تمرکز روی زبانهٔ ۱۰"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:639
+msgid "Focus Last Tab"
+msgstr "تمرکز روی آخرین زبانه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:640
+msgid "Shortcut to focus the last tab"
+msgstr "میان‌بر تمرکز روی آخرین زبانه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:645 src/bevy-preferences-window.ui:807
+msgid "Undo Close Tab"
+msgstr "برگردان بستن زبانه"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:646
+msgid "Undo closing of last tab"
+msgstr "برگذداندن بستن آخرین زبانه"
+
+#: src/bevy-application.c:462
+msgid "--tab, --tab-with-profile, or --new-window may not be used together"
+msgstr "گزینه‌های ‪--tab‬‏، ‪--tab-with-profile‬ یا ‪--new-window‬ نباید با هم استفاده شودند"
+
+#: src/bevy-application.c:508
+#, c-format
+msgid "Cannot parse command: %s"
+msgstr "نمی‌توان فرمان را تجزیه کرد: %s"
+
+#: src/bevy-application.c:1142
+msgid "Examples:"
+msgstr "مثال‌ها:"
+
+#: src/bevy-application.c:1144
+msgid "Show the application preferences"
+msgstr "نمایش ترجیحات برنامه"
+
+#. Used for new tabs/windows/etc when specified
+#: src/bevy-application.c:1147
+msgid "Use DIR for --tab, --tab-with-profile, --new-window, or -x"
+msgstr "استفاده از DIR برای ‪--tab‬‏، ‪--tab-with-profile‬‏، ‪--new-window‬ یا ‪-x"
+
+#: src/bevy-application.c:1147
+msgid "DIR"
+msgstr "DIR"
+
+#. By default, this implies a new bevy instance unless the options
+#. * below are provided to override that.
+#.
+#: src/bevy-application.c:1152
+msgid "Command to execute in new window"
+msgstr "فرمان برای اجرا در پنجرهٔ جدید"
+
+#. These options all imply we're using a shared Bevy instance. We do not support
+#. * short command options for these to make it easier to sniff them in early args
+#. * checking from `main.c`.
+#.
+#: src/bevy-application.c:1158
+msgid "New terminal window"
+msgstr "پنجرهٔ جدید پایانه"
+
+#: src/bevy-application.c:1159
+msgid "New terminal tab in active window"
+msgstr "زبانهٔ پایانهٔ جدید در پنجرهٔ فعّال"
+
+#: src/bevy-application.c:1160
+msgid "New terminal tab in active window using the profile UUID"
+msgstr "زبانهٔ پایانهٔ جدید در پنجرهٔ فعّال با استفاده از شناسهٔ یکتای نماگر"
+
+#: src/bevy-application.c:1160
+msgid "PROFILE_UUID"
+msgstr "PROFILE_UUID"
+
+#. Standalone (single instance mode)
+#: src/bevy-application.c:1163
+msgid "Start a new instance, ignoring existing instances"
+msgstr "آغاز نمونه‌ای جدید و چشم‌پوشی از نمونه‌های موجود"
+
+#: src/bevy-application.c:1165
+msgid "Set title for new tab"
+msgstr "تنظیم عنوان برای زبانهٔ جدید"
+
+#: src/bevy-application.c:1166
+msgid "Maximize a newly created window"
+msgstr "بیشینه کردن پنجره‌ای تازه ایجاد شده"
+
+#: src/bevy-application.c:1167
+msgid "Fullscreen a newly created window"
+msgstr "تمام‌صفحه کردن پنجره‌ای تازه ایجاد شده"
+
+#. Import a custom .palette file. This works like dragging the file onto preferences
+#: src/bevy-application.c:1170
+msgid "Import a Bevy palette file"
+msgstr "درون‌ریزی پروندهٔ تخته‌رنگ چنبره"
+
+#: src/bevy-application.c:1170
+msgid "FILE"
+msgstr "FILE"
+
+#: src/bevy-application.c:1177
+msgid "Run Separate Instance"
+msgstr "اجرای نمونه‌ای جداگانه"
+
+#: src/bevy-application.c:1181
+msgid "Open Preferences"
+msgstr "گشودن ترجیحات"
+
+#: src/bevy-application.c:1185
+msgid "Run Custom Command in New Window"
+msgstr "اجرای فرمانی سفارشی در پنجرهٔ جدید"
+
+#: src/bevy-application.c:1190
+msgid "Import a custom palette"
+msgstr "درون‌ریزی تخته‌رنگی سفارشی"
+
+#: src/bevy-application.c:1193
+msgid "[-- COMMAND ARGUMENTS]"
+msgstr "[-- COMMAND ARGUMENTS]"
+
+#: src/bevy-application.c:1434
+msgid "translator-credits"
+msgstr "دانیال بهزادی <dani.behzi@ubuntu.com>"
+
+#: src/bevy-close-dialog.c:109
+msgid "_Close"
+msgstr "_بستن"
+
+#: src/bevy-close-dialog.c:109
+msgid "_Close All"
+msgstr "_بستن همه"
+
+#: src/bevy-close-dialog.c:111
+msgid "Close Window?"
+msgstr "بستن پنجره؟"
+
+#: src/bevy-close-dialog.c:112
+msgid "Some processes are still running."
+msgstr "برخی فرایندها هنوز در حال اجرایند."
+
+#: src/bevy-close-dialog.c:116
+msgid "_Cancel"
+msgstr "_لغو"
+
+#: src/bevy-close-dialog.c:142
+#, c-format
+msgid "Process %d"
+msgstr "فرایند %Id"
+
+#: src/bevy-custom-link-editor.ui:20
+msgid "Edit Custom Link"
+msgstr "ویرایش پیوند سفارشی"
+
+#: src/bevy-custom-link-editor.ui:29
+msgid "Custom Link"
+msgstr "پیوند سفارشی"
+
+#: src/bevy-custom-link-editor.ui:30
+msgid ""
+"A clickable link in the terminal that matches text patterns and opens custom URLs. Uses regex capture groups to build the final URL (e.g., $1 becomes the first matched "
+"group)."
+msgstr ""
+"پیوندی قابل کلیک در پایانه که مطابق الگوهای متنیست و نشانی‌های سفارشی را می‌گشاید. استفاده از گروه‌های عبارت باقاعده برای ساختن نشانی نهایی (برای نمونه ‪$1‬ نخستین گروه "
+"مطابق است)."
+
+#: src/bevy-custom-link-editor.ui:35
+msgid "Regex Pattern"
+msgstr "الگوی عبارت باقاعده"
+
+#: src/bevy-custom-link-editor.ui:40
+msgid "Target URL"
+msgstr "نشانی مقصد"
+
+#: src/bevy-custom-link-row.c:131
+#, c-format
+msgid "Removed custom link “%s”"
+msgstr "پیوند سفارشی «%s»  برداشته شد"
+
+#: src/bevy-custom-link-row.c:133 src/bevy-profile-editor.c:186 src/bevy-profile-row.c:106
+msgid "Undo"
+msgstr "برگردان"
+
+#: src/bevy-custom-link-row.ui:26 src/bevy-profile-row.ui:33
+msgid "View More"
+msgstr "بیش‌تر ببینید"
+
+#: src/bevy-custom-link-row.ui:36 src/bevy-profile-row.ui:53
+msgid "_Edit…"
+msgstr "_ویرایش…"
+
+#: src/bevy-custom-link-row.ui:42 src/bevy-profile-row.ui:59
+msgid "_Remove"
+msgstr "_برداشتن"
+
+#: src/bevy-find-bar.ui:69
+msgid "Search Up"
+msgstr "جست‌وجو به بالا"
+
+#: src/bevy-find-bar.ui:76
+msgid "Search Down"
+msgstr "جست‌وجو به پایین"
+
+#: src/bevy-find-bar.ui:85
+msgid "Search Options"
+msgstr "گزینه‌های جست‌وجو"
+
+#: src/bevy-find-bar.ui:96
+msgid "Match _Case"
+msgstr "تطابق _بزرگی و کوچکی"
+
+#: src/bevy-find-bar.ui:102
+msgid "Whole _Words"
+msgstr "واژه‌های _کامل"
+
+#: src/bevy-find-bar.ui:108
+msgid "Use _Regular Expressions"
+msgstr "استفاده از _عبارت‌های باقاعده"
+
+#: src/bevy-find-bar.ui:128 src/bevy-preferences-window.ui:572 src/bevy-profile-editor.ui:302
+msgid "Close"
+msgstr "بستن"
+
+#: src/bevy-find-bar.ui:129
+msgid "Close the search bar"
+msgstr "بستن نوار جست‌وجو"
+
+#: src/bevy-inspector.c:95 src/bevy-inspector.c:357
+msgid "unset"
+msgstr "ناتنظیم"
+
+#: src/bevy-inspector.c:116 src/bevy-inspector.c:274
+msgid "Row"
+msgstr "ردیف"
+
+#: src/bevy-inspector.c:116 src/bevy-inspector.c:274
+msgid "Column"
+msgstr "ستون"
+
+#. NOTE: If we are in a container that also supports VTE patches
+#. * then it will send shell-precmd via escape sequences. The reality
+#. * is that our foreground is the `toolbox enter` process (until we
+#. * have better patches in VTE) but we show "Shell" instead.
+#. *
+#. * This is fine for now, but I'd like it to be better and actually
+#. * show the proper `tcgetpgrp()` foreground.
+#.
+#: src/bevy-inspector.c:177 src/bevy-inspector.c:197 src/bevy-preferences-window.ui:508 src/bevy-profile-editor.ui:184
+msgid "Shell"
+msgstr "پوسته"
+
+#: src/bevy-inspector.c:276
+msgid "untracked"
+msgstr "ردیابی نشده"
+
+#: src/bevy-inspector.ui:4
+msgid "Inspector"
+msgstr "بازرس"
+
+#: src/bevy-inspector.ui:7
+msgid "Process"
+msgstr "فرایند"
+
+#: src/bevy-inspector.ui:13
+msgid "Foreground Process"
+msgstr "فرایند پیش‌زمینه"
+
+#: src/bevy-inspector.ui:33
+msgid "Window Title"
+msgstr "عنوان پنجره"
+
+#: src/bevy-inspector.ui:45
+msgid "Current Directory"
+msgstr "شاخهٔ کنونی"
+
+#: src/bevy-inspector.ui:53
+msgid "Current File"
+msgstr "پروندهٔ کنونی"
+
+#: src/bevy-inspector.ui:63
+msgid "Container"
+msgstr "بارگنج"
+
+#: src/bevy-inspector.ui:66
+msgid "Runtime"
+msgstr "سامانه زمان اجرا"
+
+#: src/bevy-inspector.ui:74 src/bevy-inspector.ui:228 src/bevy-profile-editor.ui:36
+msgid "Name"
+msgstr "نام"
+
+#: src/bevy-inspector.ui:86 src/bevy-preferences-window.ui:36
+msgid "Appearance"
+msgstr "ظاهر"
+
+#: src/bevy-inspector.ui:92
+msgid "Grid Size"
+msgstr "اندازهٔ شبکه"
+
+#: src/bevy-inspector.ui:105
+msgid "Colors"
+msgstr "رنگ‌ها"
+
+#: src/bevy-inspector.ui:225 src/bevy-preferences-window.ui:130
+msgid "Font"
+msgstr "قلم"
+
+#: src/bevy-inspector.ui:233
+msgid "Cell Size"
+msgstr "اندازهٔ خانه"
+
+#: src/bevy-inspector.ui:242
+msgid "Input"
+msgstr "ورودی"
+
+#: src/bevy-inspector.ui:246 src/bevy-preferences-window.ui:246
+msgid "Cursor"
+msgstr "مکان‌نما"
+
+#: src/bevy-inspector.ui:249 src/bevy-inspector.ui:262
+msgid "Position"
+msgstr "جایگاه"
+
+#: src/bevy-inspector.ui:259
+msgid "Mouse"
+msgstr "موشی"
+
+#: src/bevy-inspector.ui:270
+msgid "Hyperlink"
+msgstr "فراپیوند"
+
+#: src/bevy-menu-row.c:166 src/bevy-profile-editor.c:217 src/bevy-window.c:1761
+msgid "My Computer"
+msgstr "رایانه‌ام"
+
+#: src/bevy-palette-preview.ui:32
+msgid "The quick brown fox jumps over the lazy dog"
+msgstr "اَلا یا اَیًُهَا السّاقی، اَدِر کَاْساً وَ ناوِلها"
+
+#: src/bevy-preferences-window.c:277
+msgid "Select Font"
+msgstr "گزینش قلم"
+
+#: src/bevy-preferences-window.c:352
+msgid "Show Fewer Palettes"
+msgstr "نمایش تخته‌رنگ‌های کم‌تر"
+
+#: src/bevy-preferences-window.c:357 src/bevy-preferences-window.ui:46
+msgid "Show All Palettes"
+msgstr "نمایش همهٔ تخته‌رنگ‌ها"
+
+#: src/bevy-preferences-window.c:382
+msgid "Add Profile"
+msgstr "افزودن نمایه"
+
+#: src/bevy-preferences-window.c:484 src/bevy-profile-editor.c:270
+msgid "Add Link"
+msgstr "افزودن پیوند"
+
+#: src/bevy-preferences-window.ui:72 src/bevy-profile-editor.ui:74
+msgid "Transparency"
+msgstr "شفافیت"
+
+#: src/bevy-preferences-window.ui:73 src/bevy-profile-editor.ui:75
+msgid "Reduces the opacity of the background window"
+msgstr "کاهش کدری پنجرهٔ پس‌زمینه"
+
+#: src/bevy-preferences-window.ui:134
+msgid "Use System _Font"
+msgstr "استفاده از _قلم سامانه"
+
+#: src/bevy-preferences-window.ui:146
+msgid "Custom Font"
+msgstr "قلم سفارشی"
+
+#: src/bevy-preferences-window.ui:207
+msgid "Blinking Text"
+msgstr "متن چشمک زن"
+
+#: src/bevy-preferences-window.ui:216 src/bevy-preferences-window.ui:440 src/bevy-preferences-window.ui:529 src/bevy-profile-editor.ui:230
+#: src/bevy-profile-editor.ui:259
+msgid "Never"
+msgstr "هرگز"
+
+#: src/bevy-preferences-window.ui:222
+msgid "Focused"
+msgstr "متمرکز"
+
+#: src/bevy-preferences-window.ui:228
+msgid "Unfocused"
+msgstr "نامتمرکز"
+
+#: src/bevy-preferences-window.ui:234 src/bevy-preferences-window.ui:452 src/bevy-preferences-window.ui:541 src/bevy-profile-editor.ui:236
+#: src/bevy-profile-editor.ui:271
+msgid "Always"
+msgstr "همیشه"
+
+#: src/bevy-preferences-window.ui:258
+msgid "Block"
+msgstr "بلوک"
+
+#: src/bevy-preferences-window.ui:264
+msgid "I-Beam"
+msgstr "باریکه"
+
+#: src/bevy-preferences-window.ui:270
+msgid "Underline"
+msgstr "زیر خط"
+
+#: src/bevy-preferences-window.ui:280
+msgid "Cursor Blinking"
+msgstr "چشمک‌زدن مکان‌نما"
+
+#: src/bevy-preferences-window.ui:289 src/bevy-preferences-window.ui:446
+msgid "Follow System"
+msgstr "پیروی از سامانه"
+
+#: src/bevy-preferences-window.ui:295
+msgid "Enabled"
+msgstr "به کار افتاده"
+
+#: src/bevy-preferences-window.ui:301
+msgid "Disabled"
+msgstr "از کار افتاده"
+
+#: src/bevy-preferences-window.ui:315
+msgid "Behavior"
+msgstr "رفتار"
+
+#: src/bevy-preferences-window.ui:319
+msgid "Interface"
+msgstr "واسط"
+
+#: src/bevy-preferences-window.ui:331
+msgid "Next"
+msgstr "بعدی"
+
+#: src/bevy-preferences-window.ui:337
+msgid "Last"
+msgstr "آخر"
+
+#: src/bevy-preferences-window.ui:352
+msgid "Attempt to restore previous tabs when Bevy starts"
+msgstr "تلاش برای بازگردانی زبانه‌های پیشین هنگام آغاز چنبره"
+
+#: src/bevy-preferences-window.ui:358
+msgid "Restore the previous window size when creating a new window"
+msgstr "بازگردانی اندازهٔ پنجرهٔ پیشین هنگام ایجاد پنجره‌ای جدید"
+
+#: src/bevy-preferences-window.ui:368
+msgid "Columns"
+msgstr "ستون‌ها"
+
+#: src/bevy-preferences-window.ui:382
+msgid "Rows"
+msgstr "سطرها"
+
+#: src/bevy-preferences-window.ui:400
+msgid "Accessibility"
+msgstr "دسترسی‌پذیری"
+
+#: src/bevy-preferences-window.ui:403
+msgid "Allow Screen Readers"
+msgstr "اجازه به صفحه‌خوان‌ها"
+
+#: src/bevy-preferences-window.ui:404
+msgid "Permit screen readers such as Orca to read terminal content and typed text"
+msgstr "اجازه به صفحه‌خوان‌هایی چون اورکا برای خواندن محتوای پایانه و متن نوشته"
+
+#: src/bevy-preferences-window.ui:411
+msgid "Bell"
+msgstr "زنگوله"
+
+#: src/bevy-preferences-window.ui:415
+msgid "Emit an audible bell when requested by active tab"
+msgstr "اعمال زنگی شنیداری هنگام درخواست از سوی زبانهٔ فعّال"
+
+#: src/bevy-preferences-window.ui:420
+msgid "Visual Bell"
+msgstr "زنگ دیداری"
+
+#: src/bevy-preferences-window.ui:421
+msgid "Emit a visual bell when requested by active tab"
+msgstr "اعمال زنگی دیداری هنگام درخواست از سوی زبانهٔ فعّال"
+
+#: src/bevy-preferences-window.ui:428 src/bevy-profile-editor.ui:314
+msgid "Scrolling"
+msgstr "لغزش"
+
+#: src/bevy-preferences-window.ui:431
+msgid "Use Scrollbars"
+msgstr "استفاده از نوارهای لغزش"
+
+#: src/bevy-preferences-window.ui:467 src/bevy-profile-editor.ui:318
+msgid "Scroll to the bottom upon input keystroke"
+msgstr "لغزش به ته هنگام ورود ضربهٔ کلید"
+
+#: src/bevy-preferences-window.ui:473 src/bevy-profile-editor.ui:324
+msgid "Scroll to the bottom when new content is available"
+msgstr "لغزش به ته هنگام موجود بودن محتوای جدید"
+
+#: src/bevy-preferences-window.ui:483 src/bevy-profile-editor.ui:334
+msgid "Restrict the number of lines saved for scrollback"
+msgstr "محدود کردن شمار خط‌های ذخیره شده برای لغزش به پس"
+
+#: src/bevy-preferences-window.ui:492 src/bevy-profile-editor.ui:343
+msgid "The number of lines to keep for scrollback"
+msgstr "شمار خط‌های نگه داشته برای لغزش به پس"
+
+#: src/bevy-preferences-window.ui:511 src/bevy-profile-editor.ui:202
+msgid "Use Login Shell"
+msgstr "استفاده از پوستهٔ ورود"
+
+#: src/bevy-preferences-window.ui:520 src/bevy-profile-editor.ui:250
+msgid "Preserve Working Directory"
+msgstr "نگه داشتن شاخهٔ کاری"
+
+#: src/bevy-preferences-window.ui:535 src/bevy-profile-editor.ui:265
+msgid "Safe"
+msgstr "امن"
+
+#: src/bevy-preferences-window.ui:560 src/bevy-profile-editor.ui:290
+msgid "No Action"
+msgstr "بون کنش"
+
+#: src/bevy-preferences-window.ui:566 src/bevy-profile-editor.ui:296
+msgid "Restart"
+msgstr "آغاز دوباره"
+
+#: src/bevy-preferences-window.ui:584 src/bevy-profile-editor.ui:359
+msgid "Compatibility"
+msgstr "سازگاری"
+
+#: src/bevy-preferences-window.ui:587 src/bevy-profile-editor.ui:362
+msgid "Backspace Key"
+msgstr "کلید پس‌بر"
+
+#: src/bevy-preferences-window.ui:588 src/bevy-profile-editor.ui:363
+msgid "Sequence to send for Backspace key"
+msgstr "دنبالهٔ فرستادن برای کلید پس‌بر"
+
+#: src/bevy-preferences-window.ui:597 src/bevy-profile-editor.ui:372
+msgid "Delete Key"
+msgstr "کلید حذف"
+
+#: src/bevy-preferences-window.ui:598 src/bevy-profile-editor.ui:373
+msgid "Sequence to send for Delete key"
+msgstr "دنبالهٔ فرستادن برای کلید حذف"
+
+#: src/bevy-preferences-window.ui:607 src/bevy-profile-editor.ui:382
+msgid "Ambiguous-width Characters"
+msgstr "نویسه‌های با پهنای نامشخّص"
+
+#: src/bevy-preferences-window.ui:616 src/bevy-profile-editor.ui:391
+msgid "Narrow"
+msgstr "باریک"
+
+#: src/bevy-preferences-window.ui:622 src/bevy-profile-editor.ui:397
+msgid "Wide"
+msgstr "پهن"
+
+#: src/bevy-preferences-window.ui:655
+msgid "Set as Default Terminal"
+msgstr "تنظیم به پایانهٔ پیش‌گزیده"
+
+#: src/bevy-preferences-window.ui:665
+msgid "Shortcuts"
+msgstr "میان‌برها"
+
+#: src/bevy-preferences-window.ui:694
+msgid "Clear Selection"
+msgstr "پاک‌سازی گزینش"
+
+#: src/bevy-preferences-window.ui:704 src/bevy-shortcut-accel-dialog.ui:48 src/bevy-terminal.ui:230
+msgid "Reset"
+msgstr "بازنشانی"
+
+#: src/bevy-preferences-window.ui:710 src/bevy-terminal.ui:236
+msgid "Reset and Clear"
+msgstr "بازنشانی و پاک‌سازی"
+
+#: src/bevy-preferences-window.ui:731
+msgid "Show Context Menu"
+msgstr "نمایش فهرست بافتاری"
+
+#: src/bevy-preferences-window.ui:739
+msgid "Windows"
+msgstr "پنجره‌ها"
+
+#: src/bevy-preferences-window.ui:743
+msgid "Open a new tab in a new window"
+msgstr "گشودن زبانه‌ای جدید در پنجره‌ای جدید"
+
+#: src/bevy-preferences-window.ui:750
+msgid "Close the current window"
+msgstr "بستن پنجرهٔ کنونی"
+
+#: src/bevy-preferences-window.ui:768
+msgid "Tabs"
+msgstr "زبانه‌ها"
+
+#: src/bevy-preferences-window.ui:772
+msgid "Open a new tab in the current window"
+msgstr "گشودن زبانه‌ای جدید در پنجرهٔ کنونی"
+
+#: src/bevy-preferences-window.ui:782
+msgid "View Tab Overview"
+msgstr "دیدن نمای کلی زبانه‌ها"
+
+#: src/bevy-preferences-window.ui:783
+msgid "Show an overview of all tabs within the window"
+msgstr "نمایش نمایی کلی از همهٔ زبانه‌ها در پنجره"
+
+#: src/bevy-preferences-window.ui:794
+msgid "Close the current tab"
+msgstr "بستن زبانهٔ کنونی"
+
+#: src/bevy-preferences-window.ui:801
+msgid "Close all tabs except the active tab"
+msgstr "بستن همهٔ زبانه‌ها جز زبانهٔ فعّال"
+
+#: src/bevy-preferences-window.ui:808
+msgid "Undo closing the last tab"
+msgstr "بازگردنی بستن آخرین زبانه"
+
+#: src/bevy-preferences-window.ui:835
+msgid "Move the tab one position to the left"
+msgstr "جابه‌جایی زبانه یکی به راست"
+
+#: src/bevy-preferences-window.ui:842
+msgid "Move the tab one position to the right"
+msgstr "جابه‌جایی زبانه یکی به چپ"
+
+#: src/bevy-preferences-window.ui:849
+msgid "Detach the current tab and move it to a new window"
+msgstr "جدا کردن زبانهٔ کنونی و جابه‌جاییش به پنجره‌ای جدید"
+
+#: src/bevy-preferences-window.ui:859
+msgid "Switch to Tab 1"
+msgstr "تعویض به زبانهٔ ۱"
+
+#: src/bevy-preferences-window.ui:865
+msgid "Switch to Tab 2"
+msgstr "تعویض به زبانهٔ ۲"
+
+#: src/bevy-preferences-window.ui:871
+msgid "Switch to Tab 3"
+msgstr "تعویض به زبانهٔ ۳"
+
+#: src/bevy-preferences-window.ui:877
+msgid "Switch to Tab 4"
+msgstr "تعویض به زبانهٔ ۴"
+
+#: src/bevy-preferences-window.ui:883
+msgid "Switch to Tab 5"
+msgstr "تعویض به زبانهٔ ۵"
+
+#: src/bevy-preferences-window.ui:889
+msgid "Switch to Tab 6"
+msgstr "تعویض به زبانهٔ ۶"
+
+#: src/bevy-preferences-window.ui:895
+msgid "Switch to Tab 7"
+msgstr "تعویض به زبانهٔ ۷"
+
+#: src/bevy-preferences-window.ui:901
+msgid "Switch to Tab 8"
+msgstr "تعویض به زبانهٔ ۸"
+
+#: src/bevy-preferences-window.ui:907
+msgid "Switch to Tab 9"
+msgstr "تعویض به زبانهٔ ۹"
+
+#: src/bevy-preferences-window.ui:913
+msgid "Switch to Tab 10"
+msgstr "تعویض به زبانهٔ ۱۰"
+
+#: src/bevy-preferences-window.ui:919
+msgid "Switch to Last Tab"
+msgstr "تعویض به آخرین زبانه"
+
+#: src/bevy-preferences-window.ui:927
+msgid "Zoom"
+msgstr "بزرگنمایی"
+
+#: src/bevy-preferences-window.ui:950
+msgid "Application"
+msgstr "برنامه"
+
+#: src/bevy-preferences-window.ui:954
+msgid "Toggle in and out of fullscreen"
+msgstr "تغییر وضعیت تمام‌صفحه بودن"
+
+#: src/bevy-preferences-window.ui:964
+msgid "Show Primary Menu"
+msgstr "نمایش فهرست اصلی"
+
+#: src/bevy-preferences-window.ui:965
+msgid "Displays the primary menu for the terminal window"
+msgstr "نمایش فهرست اصلی پنجرهٔ پایانه"
+
+#: src/bevy-preferences-window.ui:971
+msgid "Show New Tab Menu"
+msgstr "نمایش فهرست زبانهٔ جدید"
+
+#: src/bevy-preferences-window.ui:972
+msgid "Displays the new tab menu for the terminal window"
+msgstr "نمایش فهرست زبانهٔ جدید پنجرهٔ پایانه"
+
+#: src/bevy-preferences-window.ui:979
+msgid "Show this preferences window"
+msgstr "نمایش این پنجرهٔ ترجیحات"
+
+#: src/bevy-preferences-window.ui:986
+msgid "Show the keyboard shortcuts configuration"
+msgstr "نمایش پیکربندی میان‌برهای صفحه‌کلید"
+
+#: src/bevy-preferences-window.ui:996 src/bevy-preferences-window.ui:1000 src/bevy-window.c:1735 src/bevy-window.c:1897
+msgid "Profiles"
+msgstr "نمایه‌ها"
+
+#: src/bevy-preferences-window.ui:1019 src/bevy-profile-editor.ui:442
+msgid "Automatic"
+msgstr "خودکار"
+
+#: src/bevy-preferences-window.ui:1025 src/bevy-profile-editor.ui:448
+msgid "Control-H"
+msgstr "مهار+H"
+
+#: src/bevy-preferences-window.ui:1031 src/bevy-profile-editor.ui:454
+msgid "ASCII DEL"
+msgstr "حذف اَسکی"
+
+#: src/bevy-preferences-window.ui:1037 src/bevy-profile-editor.ui:460
+msgid "Escape Sequence"
+msgstr "دنبالهٔ گریز"
+
+#: src/bevy-preferences-window.ui:1043 src/bevy-profile-editor.ui:466
+msgid "TTY Erase"
+msgstr "پاک کردن TTY"
+
+#: src/bevy-profile.c:729
+msgid "Untitled Profile"
+msgstr "نمایهٔ بی‌نام"
+
+#: src/bevy-profile-dialog.ui:29 src/bevy-terminal.ui:249
+msgid "Change Profile"
+msgstr "تغییر نماگر"
+
+#: src/bevy-profile-dialog.ui:42 src/bevy-profile-editor.ui:31
+msgid "Profile"
+msgstr "نمایه"
+
+#: src/bevy-profile-dialog.ui:43
+msgid "Select a profile to apply to this terminal"
+msgstr "گزینش نماگری برای اعمال به این پایانه"
+
+#: src/bevy-profile-editor.c:155 src/bevy-terminal.c:440 src/bevy-terminal.c:472
+msgid "Copied to clipboard"
+msgstr "در تخته‌گیره رونوشت شد"
+
+#: src/bevy-profile-editor.c:184 src/bevy-profile-row.c:104
+#, c-format
+msgid "Removed profile “%s”"
+msgstr "نمایهٔ برداشتهٔ «%s»"
+
+#: src/bevy-profile-editor.ui:22 src/bevy-tab.c:504 src/bevy-tab.c:561
+msgid "Edit Profile"
+msgstr "ویرایش نمایه"
+
+#: src/bevy-profile-editor.ui:41
+msgid "Identifier"
+msgstr "شناساگر"
+
+#: src/bevy-profile-editor.ui:50
+msgid "Copy"
+msgstr "رونوشت"
+
+#: src/bevy-profile-editor.ui:62
+msgid "Color"
+msgstr "رنگ"
+
+#: src/bevy-profile-editor.ui:134
+msgid "Use Bright Colors for Bold"
+msgstr "استفاده از رنگ‌های روشن برای توپر"
+
+#: src/bevy-profile-editor.ui:173
+msgid "Network"
+msgstr "شبکه"
+
+#: src/bevy-profile-editor.ui:176
+msgid "Proxy"
+msgstr "پیشکار"
+
+#: src/bevy-profile-editor.ui:177
+msgid "Applies the network proxy settings to the container environment"
+msgstr "تنظیمات پیشکار شبکه را در محیط بارگنج به کار می‌بندد"
+
+#: src/bevy-profile-editor.ui:212
+msgid "The default container to use with this profile"
+msgstr "بارگنج پیش‌گزیدهٔ این نمایه"
+
+#: src/bevy-profile-editor.ui:221
+msgid "Preserve the current container when opening new tabs and windows"
+msgstr "نگه داشتن بارگنج کنونی هنگام گشودن پنجره‌ها و زبانه‌های جدید"
+
+#: src/bevy-profile-editor.ui:427
+msgid "Remove Profile"
+msgstr "برداشتن نمایه"
+
+#: src/bevy-profile-row.ui:43
+msgid "_Make Default"
+msgstr "_تبدیل به پیش‌گزیده"
+
+#: src/bevy-profile-row.ui:49
+msgid "_Duplicate…"
+msgstr "_تکثیر…"
+
+#. Translators: <b>%s</b> is used to show the provided text in bold
+#: src/bevy-shortcut-accel-dialog.c:538
+#, c-format
+msgid "Enter new shortcut to change <b>%s</b>."
+msgstr "ورود میان‌بر جدید برای تعویض <b>%s</b>."
+
+#. do not use underline as it prevents alt+c as an accelerator
+#: src/bevy-shortcut-accel-dialog.ui:42
+msgid "Cancel"
+msgstr "لغو"
+
+#. do not use underline as it prevents alt+s as an accelerator
+#: src/bevy-shortcut-accel-dialog.ui:56
+msgid "Set"
+msgstr "تنظیم"
+
+#: src/bevy-shortcut-accel-dialog.ui:96
+msgid "Press Escape to cancel or Backspace to disable."
+msgstr "برای لغو گریز را یا برای از کار انداختن پس‌بر را بزنید."
+
+#: src/bevy-shortcut-row.c:84
+msgid "Set Shortcut"
+msgstr "تنظیم میان‌بر"
+
+#: src/bevy-shortcut-row.ui:33
+msgid "disabled"
+msgstr "از کار افتاده"
+
+#: src/bevy-tab.c:355
+msgid "A foreground process is running"
+msgstr "فرایند پیش‌زمینه‌ای دارد اجرا می‌شود"
+
+#: src/bevy-tab.c:412
+#, c-format
+msgid "Process Exited from Signal %d"
+msgstr "فرایند از علامت %Id خارج شد"
+
+#: src/bevy-tab.c:415 src/bevy-tab.c:438
+msgid "_Restart"
+msgstr "_آغاز دوباره"
+
+#. Always prepare the banner even if we don't show it because we may
+#. * display it again if the tab is removed from the parking lot and
+#. * restored into the window.
+#.
+#: src/bevy-tab.c:437
+msgid "Process Exited"
+msgstr "فرایند خارج شد"
+
+#: src/bevy-tab.c:503
+msgid "Failed to launch terminal"
+msgstr "شکست در اجرای پایانه"
+
+#: src/bevy-tab.c:559
+#, c-format
+msgid "Cannot locate container “%s”"
+msgstr "نمی‌توان بارگنج «%s» را جانمایی کرد"
+
+#: src/bevy-tab.c:583
+msgid "Failed to create pseudo terminal device"
+msgstr "شکست در ایجاد افزارهٔ شبه‌پایانه"
+
+#: src/bevy-tab.c:1650
+msgid "Exited"
+msgstr "خارج شد"
+
+#: src/bevy-tab.c:1652
+msgid "Failed"
+msgstr "شکست خورد"
+
+#: src/bevy-tab.c:2240
+msgid "Failed to open link"
+msgstr "گشودن پیوند شکست خورد"
+
+#: src/bevy-tab-notify.h:93
+msgid "Command completed"
+msgstr "دستور کامل شد"
+
+#: src/bevy-terminal.ui:169
+msgid "_Open Link"
+msgstr "_گشودن پیوند"
+
+#: src/bevy-terminal.ui:174
+msgid "_Copy Link"
+msgstr "_رونوشت از پیوند"
+
+#: src/bevy-terminal.ui:182
+msgid "Search…"
+msgstr "جست‌وجو…"
+
+#: src/bevy-terminal.ui:189
+msgid "_Copy"
+msgstr "_رونوشت"
+
+#: src/bevy-terminal.ui:190
+msgid "Copy selection from terminal to clipboard"
+msgstr "رونوشت گزینش از پایانه به تخته‌گیره"
+
+#: src/bevy-terminal.ui:194
+msgid "Copy as _HTML"
+msgstr "رونوشت به صورت _HTML"
+
+#: src/bevy-terminal.ui:195
+msgid "Copy selection from terminal to clipboard with HTML formatting"
+msgstr "رونوشت گزینش از پایانه به تخته‌گیره با قالب‌بندی HTML"
+
+#: src/bevy-terminal.ui:201
+msgid "_Paste"
+msgstr "_جایگذاری"
+
+#: src/bevy-terminal.ui:202
+msgid "Paste from clipboard into the terminal"
+msgstr "جای‌گذاری از تخته‌گیره به پایانه"
+
+#: src/bevy-terminal.ui:209
+msgid "Select _All"
+msgstr "گزینش _همه"
+
+#: src/bevy-terminal.ui:210
+msgid "Selection all text from terminal including scrollback"
+msgstr "گزینش تمام متن از پایانه شامل متن‌های لغزانده"
+
+#: src/bevy-terminal.ui:216
+msgid "Select _None"
+msgstr "گزینش هیچ‌_کدام"
+
+#: src/bevy-terminal.ui:223
+msgid "Read-Only"
+msgstr "فقط خواندنی"
+
+#: src/bevy-terminal.ui:257 src/bevy-window.ui:409 src/bevy-window.ui:791
+msgid "Leave Fullscreen"
+msgstr "خروج از تمام‌صفحه"
+
+#: src/bevy-terminal.ui:263
+msgid "_Inspect Terminal"
+msgstr "_وارسی پایانه"
+
+#: src/bevy-theme-selector.ui:21
+msgid "Follow System Style"
+msgstr "پیروی از سبک سامانه"
+
+#: src/bevy-theme-selector.ui:23
+msgid "Follow system style"
+msgstr "پیروی از سبک سامانه"
+
+#: src/bevy-theme-selector.ui:37
+msgid "Light Style"
+msgstr "سبک روشن"
+
+#: src/bevy-theme-selector.ui:39
+msgid "Light style"
+msgstr "سبک روشن"
+
+#: src/bevy-theme-selector.ui:54
+msgid "Dark Style"
+msgstr "سبک تیره"
+
+#: src/bevy-theme-selector.ui:56
+msgid "Dark style"
+msgstr "سبک تیره"
+
+#: src/bevy-title-dialog.ui:36
+msgid "Title"
+msgstr "عنوان"
+
+#: src/bevy-title-dialog.ui:42
+msgid "Include Process Title"
+msgstr "شامل عنوان فرایند"
+
+#: src/bevy-title-dialog.ui:43
+msgid "Append title from Shell application"
+msgstr "افزودن عنوان از برنامهٔ پوسته"
+
+#. translators: Builder Terminal means this is a terminal bundled with GNOME Builder
+#: src/bevy-util.c:326
+msgid "Builder Terminal"
+msgstr "پایانهٔ سازنده"
+
+#: src/bevy-util.c:330
+msgid "Bevy"
+msgstr "چنبره"
+
+#: src/bevy-window.c:1518
+msgid "Zoom in"
+msgstr "بزرگ‌نمایی"
+
+#: src/bevy-window.c:1533
+msgid "Zoom out"
+msgstr "کوچک‌نمایی"
+
+#: src/bevy-window.c:1729 src/bevy-window.c:1901
+msgid "Containers"
+msgstr "بارگنج‌ها"
+
+#: src/bevy-window.ui:424
+msgid "New Terminal"
+msgstr "پایانهٔ جدید"
+
+#: src/bevy-window.ui:437
+msgid "Show Profiles and Containers"
+msgstr "نمایش نمایه‌ها و بارگنج‌ها"
+
+#: src/bevy-window.ui:457
+msgid "Filter…"
+msgstr "پالایش…"
+
+#: src/bevy-window.ui:610
+msgid "No Matching Results"
+msgstr "بدون نتیجهٔ مطابقک"
+
+#: src/bevy-window.ui:652
+msgid "Main Menu"
+msgstr "فهرست اصلی"
+
+#: src/bevy-window.ui:660 src/bevy-window.ui:777
+msgid "Show Open Tabs"
+msgstr "نمایش زبانه‌های گشوده"
+
+#: src/bevy-window.ui:761
+msgid "New _Tab"
+msgstr "_‌زبانهٔ جدید"
+
+#: src/bevy-window.ui:768
+msgid "New _Window"
+msgstr "_پنجرهٔ جدید"
+
+#: src/bevy-window.ui:785
+msgid "Fullscreen"
+msgstr "تمام‌صفحه"
+
+#: src/bevy-window.ui:799
+msgid "_Preferences"
+msgstr "_ترجیحات"
+
+#: src/bevy-window.ui:804
+msgid "_Keyboard Shortcuts"
+msgstr "_میان‌برهای صفحه‌کلید"
+
+#: src/bevy-window.ui:808
+msgid "_About"
+msgstr "_درباره"
+
+#: src/bevy-window.ui:817
+msgid "Move _Left"
+msgstr "جابه‌جایی به _چپ"
+
+#: src/bevy-window.ui:822
+msgid "Move _Right"
+msgstr "جابه‌جایی به _راست"
+
+#: src/bevy-window.ui:827
+msgid "Move to New _Window"
+msgstr "انتقال به _پنجرهٔ جدید"
+
+#: src/bevy-window.ui:833
+msgid "_Pin Tab"
+msgstr "_سنجاق کردن زبانه"
+
+#: src/bevy-window.ui:838
+msgid "Un_pin Tab"
+msgstr "_برداشتن سنجاق زبانه"
+
+#: src/bevy-window.ui:853
+msgid "Close _Other Tabs"
+msgstr "بستن _دیگر زبانه‌ها"
+
+#: src/bevy-window.ui:858
+msgid "_Close Tab"
+msgstr "_بستن زبانه"
+
+#~ msgid "Christian Hergert"
+#~ msgstr "کریستین هرگرت"

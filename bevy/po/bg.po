@@ -1,0 +1,2062 @@
+# Bulgarian translation for bevy po-file.
+# Copyright (C) 2026 twlvnn kraftwerk <kraft_werk@tutanota.com>.
+# This file is distributed under the same license as the bevy package.
+# twlvnn kraftwerk <kraft_werk@tutanota.com>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: bevy main\n"
+"Report-Msgid-Bugs-To: https://github.com/ferret-linux/bevy/issues\n"
+"POT-Creation-Date: 2026-03-17 00:25+0000\n"
+"PO-Revision-Date: 2026-04-01 10:09+0200\n"
+"Last-Translator: twlvnn kraftwerk <kraft_werk@tutanota.com>\n"
+"Language-Team: Bulgarian <dict-notifications@fsa-bg.org>\n"
+"Language: bg\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.8\n"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:2
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:6
+msgid "@APP_NAME@"
+msgstr "@APP_NAME@"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:3
+msgid "A container-oriented terminal for GNOME"
+msgstr "Терминал за GNOME за работа с контейнери"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:12 src/bevy-preferences-window.ui:669
+#: src/bevy-tab.c:1647 src/bevy-util.c:318
+msgid "Terminal"
+msgstr "Терминал"
+
+#. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+#: data/dev.itznoel.Bevy.desktop.in.in:14
+msgid "terminal;prompt;bevy;shell;command;commandline;cmd;cli;console;container;podman;toolbox;distrobox;"
+msgstr ""
+"терминал;обвивка;команда;команден "
+"ред;конзола;контейнер;terminal;prompt;bevy;shell;command;commandline;cmd;cli;console;container;podman;toolbox;distrobox;"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:23
+#: src/dev.itznoel.Bevy.gschema.xml.in:424 src/bevy-preferences-window.ui:742
+msgid "New Window"
+msgstr "Нов прозорец"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:27
+#: src/dev.itznoel.Bevy.gschema.xml.in:418 src/bevy-preferences-window.ui:771
+msgid "New Tab"
+msgstr "Нов подпрозорец"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:31
+#: src/dev.itznoel.Bevy.gschema.xml.in:436 src/bevy-preferences-window.ui:978
+msgid "Preferences"
+msgstr "Настройки"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:7
+msgid "Container-oriented terminal"
+msgstr "Терминал за работа с контейнери"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:9
+msgid ""
+"Bevy is a terminal for GNOME that focuses on ease-of-use in a world of "
+"containers."
+msgstr ""
+"„Bevy“ е терминал за GNOME, който се фокусира върху лекотата на използване "
+"в свят пълен с контейнерите."
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:13
+msgid "Features:"
+msgstr "Функции:"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:15
+msgid ""
+"Remembers current container when opening a new tab with support for podman, "
+"toolbox, distrobox, and more"
+msgstr ""
+"Запомня текущия контейнер при отваряне на нов подпрозорец с поддръжка за "
+"podman, toolbox, distrobox и други"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:16
+msgid "Configurable keyboard shortcuts"
+msgstr "Конфигурируеми клавишни комбинации"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:17
+msgid "Modern interface which integrates the palette with the window styling"
+msgstr "Модерен интерфейс, който интегрира палитрата със стила на прозореца"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:18
+msgid "User-installable color palettes"
+msgstr "Потребителски цветови палитри"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:19
+msgid "Support for preferences profiles with container integration"
+msgstr "Профили за настройки с интеграция за контейнери"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:20
+msgid "Integrated color palettes with light and dark support"
+msgstr "Интегрирани цветови палитри с поддръжка на светли и тъмни цветове"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:21
+msgid "Tabbed interface with tab overviews"
+msgstr "Интерфейс с подпрозорци и преглед на подпрозорците"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:22
+msgid "Efficient foreground process tracking denoting sudo and SSH"
+msgstr ""
+"Ефективно проследяване на процесите на преден фон, включително през sudo и "
+"SSH"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:23
+msgid "Support for transparent terminal backgrounds"
+msgstr "Прозрачни фонове на терминала"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:24
+msgid "Separate process mode for terminal-based applications"
+msgstr "Отдѐлен режим на работа за програми за терминала"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:25
+msgid "Support for pinned tabs and saved sessions"
+msgstr "Закачване на подпрозорци и запазване на сесии"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:26
+msgid "Terminal tabs are run within separate cgroups"
+msgstr "Терминалите в подпрозорци се изпълняват в отделни cgroups"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:27
+msgid "Terminal inspector to help when writing terminal-based applications"
+msgstr "Инспектор за терминала за помощ при писането на програми за терминал"
+
+#. developer_name tag deprecated with Appstream 1.0
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:32
+msgid "Christian Hergert"
+msgstr "Christian Hergert"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:54
+msgid "A column and row size indicator is displayed when resizing the window"
+msgstr ""
+"При промяна на размера на прозореца се показва индикатор за размера на "
+"колоните и редовете"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:59
+msgid "Containers are automatically discovered and displayed"
+msgstr "Контейнерите се откриват и показват автоматично"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:64
+msgid "Many behaviors of the terminal may be tweaked to user preference"
+msgstr ""
+"Много от функциите на терминала може да се настроят според предпочитанията "
+"на потребителя"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:69
+msgid "You may rename a tab by providing a prefix to the title"
+msgstr ""
+"Може да преименувате подпрозорец, като добавите представка към заглавието"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:74
+msgid "Palettes provide an integrated dark mode"
+msgstr "Цветовите палитри предоставят интегриран тъмен режим"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:79
+msgid "You can see an overview of your tabs at any time"
+msgstr "Може да видите общ преглед на вашите подпрозорци по всяко време"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:84
+msgid "Many shortcuts may be remapped to user preference"
+msgstr ""
+"Много от клавишните комбинации може да се пренастроят според предпочитанията "
+"на потребителя"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:89
+msgid "Built-in color palettes provide both dark and light mode variants"
+msgstr ""
+"Вградените цветови палитри предлагат варианти както за тъмен, така и за "
+"светъл режим"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:94
+msgid ""
+"Profiles allow for overriding a number of features such as default container"
+msgstr ""
+"Профилите позволяват заменяне на редица функции, като например стандартния "
+"контейнер"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:99
+msgid "The terminal will remind you when you're root on the local system"
+msgstr "Терминалът ще ви напомни, когато сте администратор в локалната система"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:104
+msgid "The terminal will remind you when you're on a remote system"
+msgstr "Терминалът ще ви напомни, когато сте в отдалечена система"
+
+#: src/main.c:142 src/main.c:149 src/main.c:161
+msgid "Error"
+msgstr "Грешка"
+
+#: src/main.c:155
+#, c-format
+msgid ""
+"Error: %s already exists.\n"
+"Please remove it first.\n"
+msgstr ""
+"Грешка: %s вече съществува.\n"
+"Първо го премахнете.\n"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:101
+msgid "Default Profile UUID"
+msgstr "Идентификатор на стандартния профил"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:102
+msgid "The UUID of the default profile"
+msgstr "Идентификатор на стандартния профил"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:107
+msgid "UUIDs of all Profiles"
+msgstr "Идентификатори на всички профили"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:108
+msgid "A list of UUID for every profile"
+msgstr "Списък с идентификатора на всеки профил"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:113 src/bevy-preferences-window.ui:322
+msgid "New Tab Position"
+msgstr "Позиция на нов подпрозорец"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:114
+msgid "Where to place new tabs"
+msgstr "Къде да се поставят новите подпрозорци"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:119 src/bevy-preferences-window.ui:414
+msgid "Audible Bell"
+msgstr "Звуков сигнал"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:120
+msgid "If an audible bell should be used"
+msgstr "Дали да се използва звуков сигнал"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:125
+msgid "Visible Bell"
+msgstr "Визуален сигнал"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:126
+msgid "If a visual bell should be used"
+msgstr "Дали да се използва визуален сигнал"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:131
+msgid "Visual Process Leader"
+msgstr "Визуализиране на водача на процеси"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:132
+msgid ""
+"Display a visual window highlight when process leader is SSH, sudo, or other "
+"specialized tooling"
+msgstr ""
+"Визуално отбелязване на прозореца, когато основният процес е SSH, sudo или "
+"друг специализиран инструмент"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:137
+msgid "Use System Font"
+msgstr "Използване на системния шрифт"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:138
+msgid "If the default system monospace font should be used"
+msgstr "Дали да се използва стандартният равноширок шрифт на системата"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:143
+msgid "Font Name"
+msgstr "Име на шрифта"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:144
+msgid "The font description to use if use-system-font is set to False"
+msgstr ""
+"Описание на шрифта, който да се използва, ако настройката „use-system-font“ "
+"е изключена"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:149 src/bevy-preferences-window.ui:249
+msgid "Cursor Shape"
+msgstr "Форма на курсора"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:150
+msgid "The default shape of the cursor"
+msgstr "Стандартната форма на курсора"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:155
+msgid "Cursor Blink Mode"
+msgstr "Режим на мигане на курсора"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:156
+msgid "The default blink mode cursor"
+msgstr "Стандартен режим на мигане на курсор"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:161
+msgid "List of punctuation characters that are treated as word characters"
+msgstr "Списък с препинателни знаци, които се считат за знаци в думи"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:162
+msgid ""
+"By default, when doing word-wise selection, most punctuation breaks up word "
+"boundaries. This list of exceptions will instead be treated as part of the "
+"word."
+msgstr ""
+"При избор на думи, повечето препинателни знаци стандартно обозначават "
+"граници на думите. Този списък е за знаците, които се третират като част от "
+"думите."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:167
+msgid "Scrollbar Policy"
+msgstr "Политика на лентата за придвижване"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:168
+msgid "If scrollbars should be displayed"
+msgstr "Дали да се показват ленти за придвижване"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:177
+msgid "Text Blink Mode"
+msgstr "Режим на мигане на текста"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:178
+msgid "When text blinking is allowed"
+msgstr "Кога мигането на текста е позволено"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:183
+msgid "Interface Style"
+msgstr "Стил на интерфейса"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:184
+msgid "If light or dark interface style should be used"
+msgstr "Дали да се използва светъл или тъмен стил на интерфейса"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:189 src/bevy-preferences-window.ui:351
+msgid "Restore Session"
+msgstr "Възстановяване на сесията"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:190
+msgid "Restore tabs from previous session when starting Bevy"
+msgstr ""
+"Възстановяване на подпрозорците от предишната сесия при стартиране на "
+"„Bevy“"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:195 src/bevy-preferences-window.ui:357
+msgid "Restore Window Size"
+msgstr "Възстановяване на размера на прозореца"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:196
+msgid "Restore the previous window size when creating new windows"
+msgstr ""
+"Възстановяване на предишния размер на прозореца при създаване на нови "
+"прозорци"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:206
+msgid "Default Column Size"
+msgstr "Стандартен размер на колоните"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:207
+#: src/dev.itznoel.Bevy.gschema.xml.in:214
+msgid "Default window size when restore-window-size is not true."
+msgstr ""
+"Стандартният размер на прозореца, когато „Възстановяване на размера на "
+"прозореца“ не е зададено."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:213
+msgid "Default Row Size"
+msgstr "Стандартен размер на редовете"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:219
+msgid "Toast on Copy Clipboard"
+msgstr "Съобщение при копиране в буфера за обмен"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:220
+msgid "Show the user when text has copied to the clipboard."
+msgstr "Показва на потребителя, когато текстът е копиран в буфера за обмен."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:225
+msgid "Enable Accessibility"
+msgstr "Включване на достъпността"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:226
+msgid ""
+"Currently experimental feature to send accessibility information to screen "
+"readers."
+msgstr ""
+"В момента е експериментална функция за изпращане на информация за достъпност "
+"към екранни четци."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:231
+msgid "Enable zoom on scroll holding the control key"
+msgstr "Включване на мащабирането с клавиша Control и колелцето на мишката"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:232
+msgid ""
+"Enable to adjust the zoom level on scroll scroll while holding the control "
+"key."
+msgstr ""
+"Активиране за настройване на мащаба при превъртане на колелцето на мишката, "
+"докато държите натиснат клавиша Control."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:237
+msgid "Disable Padding around Terminal Emulator"
+msgstr "Изключване на отстъпа около емулатора на терминала"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:238
+msgid ""
+"Do not pad around the terminal emulator widget. Setting to true may have "
+"significant performance impacts."
+msgstr ""
+"Да не се прилага отстъп около графичния обект на емулатора на терминала. "
+"Включването на тази опция може да доведе до значително забавяне на "
+"производителността."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:243
+msgid "Prompt when active tab is closed"
+msgstr "Запитване при затваряне на активния подпрозорец"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:244
+msgid ""
+"If a tab (or window) is closed with active foreground processes, prompt the "
+"user for confirmation."
+msgstr ""
+"Ако подпрозорец (или прозорец) с активни процеси на преден фон се затвори, "
+"да се поиска потвърждение от потребителя."
+
+#. Translators: OSC stands for "Operating System Command" and is referencing in-band escape sequences from the child process to set the title
+#: src/dev.itznoel.Bevy.gschema.xml.in:250
+msgid "Ignore OSC Title"
+msgstr "Игнориране на заглавията от командите"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:251
+msgid "If OSC title should be ignored in tab titles."
+msgstr "Дали в подпрозорците заглавията от командите да се игнорират"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:256
+msgid "Inhibit Logout"
+msgstr "Предотвратяване на излизане"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:257
+msgid "Inhibit desktop logout when a foreground process is running in a tab."
+msgstr ""
+"Предотвратяване на излизане от работната среда, когато в подпрозорец се "
+"изпълнява процес на преден фон."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:266
+msgid "Label"
+msgstr "Етикет"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:267
+msgid "The label for the profile"
+msgstr "Етикетът за профила"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:272
+msgid "Login Shell"
+msgstr "Обвивка за вход"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:273
+msgid "Use a login shell"
+msgstr "Използване на обвивка за вход"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:278 src/bevy-preferences-window.ui:482
+#: src/bevy-profile-editor.ui:333
+msgid "Limit Scrollback"
+msgstr "Ограничаване на придвижването назад"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:279
+msgid "Limit the number of lines to keep for scrollback"
+msgstr ""
+"Ограничаване на броя на редовете, които да се запазят за придвижване назад"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:285 src/bevy-preferences-window.ui:491
+#: src/bevy-profile-editor.ui:342
+msgid "Scrollback Lines"
+msgstr "Редове за придвижване назад"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:286
+msgid "The number of lines to keep in the scrollback, zero for no scrollback"
+msgstr ""
+"Брой редове, които да се запазват за придвижване назад, 0 изключва това"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:291 src/bevy-preferences-window.ui:472
+#: src/bevy-profile-editor.ui:323
+msgid "Scroll on Output"
+msgstr "Придвижване при нов резултат"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:292
+msgid "Scroll to the bottom upon new output"
+msgstr "Придвижване към края при нов изход"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:297 src/bevy-preferences-window.ui:466
+#: src/bevy-profile-editor.ui:317
+msgid "Scroll on Keystroke"
+msgstr "Придвижване при натискане на клавиши"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:298
+msgid "Scroll to the bottom upon user keystroke"
+msgstr "Придвижване към края при натискане на клавиши от потребителя"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:303 src/bevy-profile-editor.ui:187
+msgid "Use Custom Command"
+msgstr "Използване на друга команда"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:304
+msgid "If a custom command should be used"
+msgstr "Дали да се използва друга команда"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:309
+msgid "Use Proxy"
+msgstr "Използване на мрежов посредник"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:310
+msgid "Apply proxy settings from the host in the container"
+msgstr "Прилагане на настройките на мрежовия посредник към контейнера"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:315 src/bevy-profile-editor.ui:192
+msgid "Custom Command"
+msgstr "Друга команда"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:316
+msgid "A custom command for the shell"
+msgstr "Друга команда за обвивката"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:321 src/bevy-profile-editor.ui:211
+msgid "Default Container"
+msgstr "Стандартен контейнер"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:322
+msgid "The default container to run the command in"
+msgstr "Стандартният контейнер, в който да се изпълни командата"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:327 src/bevy-profile-editor.ui:220
+msgid "Preserve Container"
+msgstr "Запазване на контейнера"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:328
+msgid "Preserve the active container when creating new tabs and windows"
+msgstr ""
+"Запазване на активния контейнер при създаване на нови подпрозорци и прозорци"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:333 src/bevy-preferences-window.ui:551
+#: src/bevy-profile-editor.ui:281
+msgid "Exit Action"
+msgstr "Действие при изход"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:334
+msgid "The action to take when the shell exits"
+msgstr "Действието, което да се предприеме при изход от обвивката"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:339
+msgid "Preserve Directory"
+msgstr "Запазване на папката"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:340
+msgid "If the directory should be preserved for new terminals"
+msgstr "Дали папката да се запази за нови терминали"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:345 src/bevy-inspector.ui:102
+#: src/bevy-preferences-window.ui:40 src/bevy-profile-editor.ui:65
+msgid "Palette"
+msgstr "Палитра"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:346
+msgid "The color palette to use for the profile, by name"
+msgstr "Цветовата палитра, която да се използва за профила, по име"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:352
+msgid "Opacity"
+msgstr "Плътност"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:353
+msgid "The opacity of the palette background"
+msgstr "Плътността на фона на палитрата"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:358
+msgid "Bold is Bright"
+msgstr "Получерното е светло"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:359
+msgid ""
+"Setting bold on one of the lower 8 colors in the palette will use bright "
+"variant (upper 8 colors)"
+msgstr ""
+"Ако изберете един от долните 8 цвята в палитрата, ще се използва ярък "
+"вариант (горните 8 цвята)."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:365 src/bevy-preferences-window.ui:175
+#: src/bevy-profile-editor.ui:143
+msgid "Line Spacing"
+msgstr "Разредка"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:366
+msgid "The terminal’s cell height scale"
+msgstr "Височина на клетките на терминала"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:372 src/bevy-preferences-window.ui:189
+#: src/bevy-profile-editor.ui:157
+msgid "Column Spacing"
+msgstr "Разстояние между колоните"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:373
+msgid "The terminal’s cell width scale"
+msgstr "Широчина на клетките на терминала"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:378
+msgid "CJK Ambiguous Width"
+msgstr "Широчина на знаците от CJK с неопределена широчина"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:379
+msgid "The size to apply to ambiguous width characters"
+msgstr "Размерът, който се прилага за знаци с неопределена широчина"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:384
+#: src/dev.itznoel.Bevy.gschema.xml.in:390
+msgid "Backspace Binding"
+msgstr "Поведение на обратното изтриване"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:385
+#: src/dev.itznoel.Bevy.gschema.xml.in:391
+msgid "What to send to the PTY when a backspace is entered"
+msgstr "Какво да се изпраща към псевдотерминала при натискане на Backspace"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:396 src/bevy-preferences-window.ui:634
+#: src/bevy-profile-editor.ui:409
+msgid "Custom Links"
+msgstr "Собствени връзки"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:397
+msgid ""
+"A list of custom hyperlinks, each defined by a regular expression matching "
+"the text, and a replacement pattern"
+msgstr ""
+"Списък със собствени хипервръзки, всяка от които е дефинирана чрез регулярен "
+"израз, съответстващ на текста, и образец за заместване"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:406 src/bevy-preferences-window.ui:672
+msgid "Copy to Clipboard"
+msgstr "Копиране в буфера за обмен"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:407
+msgid "The shortcut to copy to clipboard"
+msgstr "Клавишната комбинация за копиране в буфера за обмен"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:412 src/bevy-preferences-window.ui:678
+msgid "Paste from Clipboard"
+msgstr "Поставяне от буфера за обмен"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:413
+msgid "The shortcut to paste from the clipboard"
+msgstr "Клавишната комбинация за поставяне от буфера за обмен"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:419
+msgid "The shortcut to create a new tab in the current window"
+msgstr ""
+"Клавишната комбинация за създаване на нов подпрозорец в текущия прозорец"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:425
+msgid "The shortcut to create a new tab in a new window"
+msgstr "Клавишната комбинация за създаване на нов подпрозорец в нов прозорец"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:430
+msgid "Tab Overview"
+msgstr "Преглед на подпрозорците"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:431
+msgid "The shortcut to show the tab overview"
+msgstr "Клавишната комбинация за показване на подпрозорците"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:437
+msgid "The shortcut to show application preferences"
+msgstr "Клавишната комбинация за показване на настройките"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:442 src/bevy-preferences-window.ui:985
+msgid "Keyboard Shortcuts"
+msgstr "Клавишни комбинации"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:443
+msgid "The shortcut to show the keyboard shortcuts configuration"
+msgstr ""
+"Клавишната комбинация за показване на настройките на клавишните комбинации"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:448 src/bevy-preferences-window.ui:936
+#: src/bevy-window.c:1522 src/bevy-window.c:1530
+msgid "Zoom Out"
+msgstr "Намаляване"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:449
+msgid "The shortcut to zoom out"
+msgstr "Клавишната комбинация за намаляване"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:454 src/bevy-preferences-window.ui:942
+#: src/bevy-window.c:1539
+msgid "Reset Zoom"
+msgstr "Връщане на мащаба"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:455
+msgid "The shortcut to reset zoom"
+msgstr "Клавишната комбинация за връщане на мащаба"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:460 src/bevy-preferences-window.ui:930
+#: src/bevy-window.c:1507 src/bevy-window.c:1515
+msgid "Zoom In"
+msgstr "Увеличаване"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:461
+msgid "The shortcut to zoom in"
+msgstr "Клавишната комбинация за увеличаване"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:466 src/bevy-preferences-window.ui:953
+msgid "Toggle Fullscreen"
+msgstr "Превключване на цял екран"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:467
+msgid "The shortcut to toggle fullscreen"
+msgstr "Клавишната комбинация за превключване на цял екран"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:472
+msgid "Reset Terminal"
+msgstr "Зануляване на терминала"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:473
+msgid "Reset the terminal state for misbehaving clients"
+msgstr ""
+"Зануляване на състоянието на терминала за клиенти с неправилно поведение"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:478
+msgid "Reset Terminal and Clear History"
+msgstr "Зануляване на терминала и изчистване на историята"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:479
+msgid "Reset the terminal state and clear history for misbehaving clients"
+msgstr ""
+"Зануляване на състоянието на терминала и изчистване на историята за клиенти "
+"с неправилно поведение"
+
+#. Translators: Refers to searching the terminal scrollback
+#: src/dev.itznoel.Bevy.gschema.xml.in:485 src/bevy-find-bar.ui:39
+#: src/bevy-preferences-window.ui:721
+msgid "Search History"
+msgstr "Търсене в историята"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:486
+msgid "Shortcut to begin searching the terminal history"
+msgstr "Клавишната комбинация за търсене в историята на терминала"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:491 src/bevy-preferences-window.ui:688
+msgid "Select All"
+msgstr "Избиране на всичко"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:492
+msgid "Shortcut to select all the entire terminal scrollback"
+msgstr "Клавишната комбинация за избор на всички редове на терминала"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:497
+msgid "Select None"
+msgstr "Изчистване на избора"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:498
+msgid "Shortcut to clear the terminal selection"
+msgstr "Клавишната комбинация за изчистване на избраното в терминал"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:503
+msgid "Popup Menu"
+msgstr "Изскачащо меню"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:504
+msgid "Shortcut to show the popup menu for the terminal"
+msgstr "Клавишната комбинация за показване на изскачащото меню за терминала"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:509
+msgid "Primary Menu"
+msgstr "Основно меню"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:510
+msgid "Shortcut to show the primary menu for the window"
+msgstr "Клавишната комбинация за показване на основното меню на прозореца"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:515
+msgid "Tab Menu"
+msgstr "Меню с подпрозорци"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:516
+msgid "Shortcut to show the new tab menu"
+msgstr "Клавишната комбинация за показване на менюто с нови подпрозорци"
+
+#. Translators: in this context, "Move" means to switch tabs
+#: src/dev.itznoel.Bevy.gschema.xml.in:522 src/bevy-preferences-window.ui:818
+msgid "Move to Previous Tab"
+msgstr "Към предишния подпрозорец"
+
+#. Translators: in this context, "Move" means to switch tabs
+#: src/dev.itznoel.Bevy.gschema.xml.in:524
+msgid "Shortcut to move to the previous tab"
+msgstr "Клавишната комбинация за преместване към предишния подпрозорец"
+
+#. Translators: in this context, "Move" means to switch tabs
+#: src/dev.itznoel.Bevy.gschema.xml.in:530 src/bevy-preferences-window.ui:824
+msgid "Move to Next Tab"
+msgstr "Към следващия подпрозорец"
+
+#. Translators: in this context, "Move" means to switch tabs
+#: src/dev.itznoel.Bevy.gschema.xml.in:532
+msgid "Shortcut to move to the next tab"
+msgstr "Клавишната комбинация за преместване към следващия подпрозорец"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:537 src/bevy-preferences-window.ui:834
+msgid "Move Tab Left"
+msgstr "Преместване на подпрозореца наляво"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:538
+msgid "Shortcut to move the current tab to the left one position"
+msgstr ""
+"Клавишната комбинация за преместване на текущия подпрозорец една позиция "
+"наляво"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:543 src/bevy-preferences-window.ui:841
+msgid "Move Tab Right"
+msgstr "Преместване на подпрозореца надясно"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:544
+msgid "Shortcut to move the current tab to the right one position"
+msgstr ""
+"Клавишната комбинация за преместване на текущия подпрозорец една позиция "
+"надясно"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:549 src/bevy-preferences-window.ui:848
+msgid "Move Tab to New Window"
+msgstr "Преместване на подпрозореца в нов прозорец"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:550
+msgid "Shortcut to move the current tab into a new window"
+msgstr ""
+"Клавишната комбинация за преместване на текущия подпрозорец в нов прозорец"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:555 src/bevy-preferences-window.ui:793
+msgid "Close Tab"
+msgstr "Затваряне на подпрозореца"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:556
+msgid "Shortcut to close the current tab"
+msgstr "Клавишната комбинация за затваряне на текущия подпрозорец"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:561 src/bevy-preferences-window.ui:800
+msgid "Close Other Tabs"
+msgstr "Затваряне на другите подпрозорци"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:562
+msgid "Shortcut to close all tabs in the window but the current one"
+msgstr ""
+"Клавишната комбинация за затваряне на всички подпрозорци в прозореца, с "
+"изключение на текущия"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:567 src/bevy-preferences-window.ui:749
+msgid "Close Window"
+msgstr "Затваряне на прозорецa"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:568
+msgid "Shortcut to close the current window"
+msgstr "Клавишната комбинация за затваряне на текущия прозорец"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:573 src/bevy-preferences-window.ui:760
+#: src/bevy-terminal.ui:244 src/bevy-window.c:1210 src/bevy-window.ui:846
+msgid "Set Title"
+msgstr "Задаване на заглавие"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:574
+msgid "The shortcut to show set title"
+msgstr "Клавишната комбинация за задаване на заглавието"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:579
+msgid "Focus Tab 1"
+msgstr "Фокусиране на подпрозорец 1"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:580
+msgid "Shortcut to focus tab 1"
+msgstr "Клавишната комбинация за фокусиране на подпрозорец 1"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:585
+msgid "Focus Tab 2"
+msgstr "Фокусиране на подпрозорец 2"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:586
+msgid "Shortcut to focus tab 2"
+msgstr "Клавишната комбинация за фокусиране на подпрозорец 2"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:591
+msgid "Focus Tab 3"
+msgstr "Фокусиране на подпрозорец 3"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:592
+msgid "Shortcut to focus tab 3"
+msgstr "Клавишната комбинация за фокусиране на подпрозорец 3"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:597
+msgid "Focus Tab 4"
+msgstr "Фокусиране на подпрозорец 4"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:598
+msgid "Shortcut to focus tab 4"
+msgstr "Клавишната комбинация за фокусиране на подпрозорец 4"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:603
+msgid "Focus Tab 5"
+msgstr "Фокусиране на подпрозорец 5"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:604
+msgid "Shortcut to focus tab 5"
+msgstr "Клавишната комбинация за фокусиране на подпрозорец 5"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:609
+msgid "Focus Tab 6"
+msgstr "Фокусиране на подпрозорец 6"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:610
+msgid "Shortcut to focus tab 6"
+msgstr "Клавишната комбинация за фокусиране на подпрозорец 6"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:615
+msgid "Focus Tab 7"
+msgstr "Фокусиране на подпрозорец 7"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:616
+msgid "Shortcut to focus tab 7"
+msgstr "Клавишната комбинация за фокусиране на подпрозорец 7"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:621
+msgid "Focus Tab 8"
+msgstr "Фокусиране на подпрозорец 8"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:622
+msgid "Shortcut to focus tab 8"
+msgstr "Клавишната комбинация за фокусиране на подпрозорец 8"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:627
+msgid "Focus Tab 9"
+msgstr "Фокусиране на подпрозорец 9"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:628
+msgid "Shortcut to focus tab 9"
+msgstr "Клавишната комбинация за фокусиране на подпрозорец 9"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:633
+msgid "Focus Tab 10"
+msgstr "Фокусиране на подпрозорец 10"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:634
+msgid "Shortcut to focus tab 10"
+msgstr "Клавишната комбинация за фокусиране на подпрозорец 10"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:639
+msgid "Focus Last Tab"
+msgstr "Фокусиране на последния подпрозорец"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:640
+msgid "Shortcut to focus the last tab"
+msgstr "Клавишната комбинация за фокусиране на последния подпрозорец"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:645 src/bevy-preferences-window.ui:807
+msgid "Undo Close Tab"
+msgstr "Отменяне на затварянето на подпрозорец"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:646
+msgid "Undo closing of last tab"
+msgstr "Отменяне на затварянето на последния подпрозорец"
+
+#: src/bevy-application.c:461
+msgid "--tab, --tab-with-profile, or --new-window may not be used together"
+msgstr ""
+"опциите „--tab“, „--tab-with-profile“ и „--new-window“ са взаимно "
+"несъвместими"
+
+#: src/bevy-application.c:507
+#, c-format
+msgid "Cannot parse command: %s"
+msgstr "Командата не може да се анализира: %s"
+
+#: src/bevy-application.c:1140
+msgid "Examples:"
+msgstr "Примери:"
+
+#: src/bevy-application.c:1142
+msgid "Show the application preferences"
+msgstr "Показване на настройките"
+
+#. Used for new tabs/windows/etc when specified
+#: src/bevy-application.c:1145
+msgid "Use DIR for --tab, --tab-with-profile, --new-window, or -x"
+msgstr ""
+"Използване на ПАПКАта за опциите „--tab“, „--tab-with-profile“, „--new-"
+"window“ или „-x“"
+
+#: src/bevy-application.c:1145
+msgid "DIR"
+msgstr "ПАПКА"
+
+#. By default, this implies a new bevy instance unless the options
+#. * below are provided to override that.
+#.
+#: src/bevy-application.c:1150
+msgid "Command to execute in new window"
+msgstr "Команда за изпълняване в нов прозорец"
+
+#. These options all imply we're using a shared Bevy instance. We do not support
+#. * short command options for these to make it easier to sniff them in early args
+#. * checking from `main.c`.
+#.
+#: src/bevy-application.c:1156
+msgid "New terminal window"
+msgstr "Нов прозорец на терминал"
+
+#: src/bevy-application.c:1157
+msgid "New terminal tab in active window"
+msgstr "Нов подпрозорец на терминал в активния прозорец"
+
+#: src/bevy-application.c:1158
+msgid "New terminal tab in active window using the profile UUID"
+msgstr ""
+"Нов подпрозорец на терминал в активния прозорец с този "
+"ИДЕНТИФИКАТОР_НА_ПРОФИЛ"
+
+#: src/bevy-application.c:1158
+msgid "PROFILE_UUID"
+msgstr "ИДЕНТИФИКАТОР_НА_ПРОФИЛ"
+
+#. Standalone (single instance mode)
+#: src/bevy-application.c:1161
+msgid "Start a new instance, ignoring existing instances"
+msgstr "Стартиране на нов процес и игнориране на съществуващите"
+
+#: src/bevy-application.c:1163
+msgid "Set title for new tab"
+msgstr "Задаване на заглавие за нов подпрозорец"
+
+#: src/bevy-application.c:1164
+msgid "Maximize a newly created window"
+msgstr "Максимизиране на новосъздадения прозорец"
+
+#: src/bevy-application.c:1165
+msgid "Fullscreen a newly created window"
+msgstr "Показване на новосъздадения прозорец на цял екран"
+
+#. Import a custom .palette file. This works like dragging the file onto preferences
+#: src/bevy-application.c:1168
+msgid "Import a Bevy palette file"
+msgstr "Внасяне на файл с цветова палитра на „Bevy“"
+
+#: src/bevy-application.c:1168
+msgid "FILE"
+msgstr "ФАЙЛ"
+
+#: src/bevy-application.c:1175
+msgid "Run Separate Instance"
+msgstr "Стартиране на нов процес"
+
+#: src/bevy-application.c:1179
+msgid "Open Preferences"
+msgstr "Отваряне на настройките"
+
+#: src/bevy-application.c:1183
+msgid "Run Custom Command in New Window"
+msgstr "Изпълняване на собствена команда в нов прозорец"
+
+#: src/bevy-application.c:1188
+msgid "Import a custom palette"
+msgstr "Внасяне на собствена цветова палитра"
+
+#: src/bevy-application.c:1191
+msgid "[-- COMMAND ARGUMENTS]"
+msgstr "[-- КОМАНДА АРГУМЕНТ…]"
+
+#: src/bevy-application.c:1432
+msgid "translator-credits"
+msgstr ""
+"twlvnn kraftwerk <kraft_werk@tutanota.com>\n"
+"\n"
+"Проектът за превод на GNOME има нужда от подкрепа.\n"
+"Научете повече за нас на <a href='http://gnome.cult.bg'>http://"
+"gnome.cult.bg</a>\n"
+"Докладвайте за грешки на <a href=http://gnome.cult.bg/bugs'>http://"
+"gnome.cult.bg/bugs</a>"
+
+#: src/bevy-close-dialog.c:109
+msgid "_Close"
+msgstr "_Затваряне"
+
+#: src/bevy-close-dialog.c:109
+msgid "_Close All"
+msgstr "_Затваряне на всички"
+
+#: src/bevy-close-dialog.c:111
+msgid "Close Window?"
+msgstr "Затваряне на прозорецa?"
+
+#: src/bevy-close-dialog.c:112
+msgid "Some processes are still running."
+msgstr "Някои процеси все още се изпълняват."
+
+#: src/bevy-close-dialog.c:116
+msgid "_Cancel"
+msgstr "_Отказване"
+
+#: src/bevy-close-dialog.c:142
+#, c-format
+msgid "Process %d"
+msgstr "Процес %d"
+
+#: src/bevy-custom-link-editor.ui:20
+msgid "Edit Custom Link"
+msgstr "Редактиране на връзката"
+
+#: src/bevy-custom-link-editor.ui:29
+msgid "Custom Link"
+msgstr "Собствена връзка"
+
+#: src/bevy-custom-link-editor.ui:30
+msgid ""
+"A clickable link in the terminal that matches text patterns and opens custom "
+"URLs. Uses regex capture groups to build the final URL (e.g., $1 becomes the "
+"first matched group)."
+msgstr ""
+"Връзка, изведена в терминала, която съответства на определен шаблон и при "
+"натискане с показалеца се отваря адрес. Може да използвате захващащи групи, "
+"за да построите съответен адрес (т.е. „$1“ се замества с първата напасната "
+"група и т.н.)."
+
+#: src/bevy-custom-link-editor.ui:35
+msgid "Regex Pattern"
+msgstr "Регулярен израз"
+
+#: src/bevy-custom-link-editor.ui:40
+msgid "Target URL"
+msgstr "Целеви адрес"
+
+#: src/bevy-custom-link-row.c:131
+#, c-format
+msgid "Removed custom link “%s”"
+msgstr "Собствената връзка „%s“ е премахната"
+
+#: src/bevy-custom-link-row.c:133 src/bevy-profile-editor.c:186
+#: src/bevy-profile-row.c:106
+msgid "Undo"
+msgstr "Отмяна"
+
+#: src/bevy-custom-link-row.ui:26 src/bevy-profile-row.ui:33
+msgid "View More"
+msgstr "Вижте още"
+
+#: src/bevy-custom-link-row.ui:36 src/bevy-profile-row.ui:53
+msgid "_Edit…"
+msgstr "_Редактиране…"
+
+#: src/bevy-custom-link-row.ui:42 src/bevy-profile-row.ui:59
+msgid "_Remove"
+msgstr "_Премахване"
+
+#: src/bevy-find-bar.ui:69
+msgid "Search Up"
+msgstr "Търсене нагоре"
+
+#: src/bevy-find-bar.ui:76
+msgid "Search Down"
+msgstr "Търсене надолу"
+
+#: src/bevy-find-bar.ui:85
+msgid "Search Options"
+msgstr "Настройки на търсенето"
+
+#: src/bevy-find-bar.ui:96
+msgid "Match _Case"
+msgstr "Разлика _главни/малки"
+
+#: src/bevy-find-bar.ui:102
+msgid "Whole _Words"
+msgstr "_Цели думи"
+
+#: src/bevy-find-bar.ui:108
+msgid "Use _Regular Expressions"
+msgstr "Използване на _регулярни изрази"
+
+#: src/bevy-find-bar.ui:128 src/bevy-preferences-window.ui:572
+#: src/bevy-profile-editor.ui:302
+msgid "Close"
+msgstr "Затваряне"
+
+#: src/bevy-find-bar.ui:129
+msgid "Close the search bar"
+msgstr "Затваряне на лентата за търсене"
+
+#: src/bevy-inspector.c:95 src/bevy-inspector.c:357
+msgid "unset"
+msgstr "премахване"
+
+#: src/bevy-inspector.c:116 src/bevy-inspector.c:274
+msgid "Row"
+msgstr "Ред"
+
+#: src/bevy-inspector.c:116 src/bevy-inspector.c:274
+msgid "Column"
+msgstr "Колона"
+
+#. NOTE: If we are in a container that also supports VTE patches
+#. * then it will send shell-precmd via escape sequences. The reality
+#. * is that our foreground is the `toolbox enter` process (until we
+#. * have better patches in VTE) but we show "Shell" instead.
+#. *
+#. * This is fine for now, but I'd like it to be better and actually
+#. * show the proper `tcgetpgrp()` foreground.
+#.
+#: src/bevy-inspector.c:177 src/bevy-inspector.c:197
+#: src/bevy-preferences-window.ui:508 src/bevy-profile-editor.ui:184
+msgid "Shell"
+msgstr "Обвивка"
+
+#: src/bevy-inspector.c:276
+msgid "untracked"
+msgstr "неследен"
+
+#: src/bevy-inspector.ui:4
+msgid "Inspector"
+msgstr "Инспектор"
+
+#: src/bevy-inspector.ui:7
+msgid "Process"
+msgstr "Процес"
+
+#: src/bevy-inspector.ui:13
+msgid "Foreground Process"
+msgstr "Процес на преден фон"
+
+#: src/bevy-inspector.ui:33
+msgid "Window Title"
+msgstr "Заглавие на прозореца"
+
+#: src/bevy-inspector.ui:45
+msgid "Current Directory"
+msgstr "Текуща папка"
+
+#: src/bevy-inspector.ui:53
+msgid "Current File"
+msgstr "Текущ файл"
+
+#: src/bevy-inspector.ui:63
+msgid "Container"
+msgstr "Контейнер"
+
+#: src/bevy-inspector.ui:66
+msgid "Runtime"
+msgstr "Среда за изпълнение"
+
+#: src/bevy-inspector.ui:74 src/bevy-inspector.ui:228
+#: src/bevy-profile-editor.ui:36
+msgid "Name"
+msgstr "Име"
+
+#: src/bevy-inspector.ui:86 src/bevy-preferences-window.ui:36
+msgid "Appearance"
+msgstr "Външен вид"
+
+#: src/bevy-inspector.ui:92
+msgid "Grid Size"
+msgstr "Размер на мрежата"
+
+#: src/bevy-inspector.ui:105
+msgid "Colors"
+msgstr "Цветове"
+
+#: src/bevy-inspector.ui:225 src/bevy-preferences-window.ui:130
+msgid "Font"
+msgstr "Шрифт"
+
+#: src/bevy-inspector.ui:233
+msgid "Cell Size"
+msgstr "Размер на клетката"
+
+#: src/bevy-inspector.ui:242
+msgid "Input"
+msgstr "Вход"
+
+#: src/bevy-inspector.ui:246 src/bevy-preferences-window.ui:246
+msgid "Cursor"
+msgstr "Курсор"
+
+#: src/bevy-inspector.ui:249 src/bevy-inspector.ui:262
+msgid "Position"
+msgstr "Позиция"
+
+#: src/bevy-inspector.ui:259
+msgid "Mouse"
+msgstr "Мишка"
+
+#: src/bevy-inspector.ui:270
+msgid "Hyperlink"
+msgstr "Хипервръзка"
+
+#: src/bevy-menu-row.c:166 src/bevy-profile-editor.c:217
+#: src/bevy-window.c:1761
+msgid "My Computer"
+msgstr "Моят компютър"
+
+#: src/bevy-palette-preview.ui:32
+msgid "The quick brown fox jumps over the lazy dog"
+msgstr "Под южно дърво, цъфтящо в синьо, бягаше малко пухкаво зайче"
+
+#: src/bevy-preferences-window.c:277
+msgid "Select Font"
+msgstr "Избор на шрифт"
+
+#: src/bevy-preferences-window.c:352
+msgid "Show Fewer Palettes"
+msgstr "Показване на по-малко цветови палитри"
+
+#: src/bevy-preferences-window.c:357 src/bevy-preferences-window.ui:46
+msgid "Show All Palettes"
+msgstr "Показване на всички палитри"
+
+#: src/bevy-preferences-window.c:382
+msgid "Add Profile"
+msgstr "Добавяне на профил"
+
+#: src/bevy-preferences-window.c:484 src/bevy-profile-editor.c:270
+msgid "Add Link"
+msgstr "Добавяне на връзка"
+
+#: src/bevy-preferences-window.ui:72 src/bevy-profile-editor.ui:74
+msgid "Transparency"
+msgstr "Прозрачност"
+
+#: src/bevy-preferences-window.ui:73 src/bevy-profile-editor.ui:75
+msgid "Reduces the opacity of the background window"
+msgstr "Намалява непрозрачността на прозореца на фона"
+
+#: src/bevy-preferences-window.ui:134
+msgid "Use System _Font"
+msgstr "Използване на системния _шрифт"
+
+#: src/bevy-preferences-window.ui:146
+msgid "Custom Font"
+msgstr "Друг шрифт"
+
+#: src/bevy-preferences-window.ui:207
+msgid "Blinking Text"
+msgstr "Мигащ текст"
+
+#: src/bevy-preferences-window.ui:216 src/bevy-preferences-window.ui:440
+#: src/bevy-preferences-window.ui:529 src/bevy-profile-editor.ui:230
+#: src/bevy-profile-editor.ui:259
+msgid "Never"
+msgstr "Никога"
+
+#: src/bevy-preferences-window.ui:222
+msgid "Focused"
+msgstr "Фокусиран"
+
+#: src/bevy-preferences-window.ui:228
+msgid "Unfocused"
+msgstr "Нефокусиран"
+
+#: src/bevy-preferences-window.ui:234 src/bevy-preferences-window.ui:452
+#: src/bevy-preferences-window.ui:541 src/bevy-profile-editor.ui:236
+#: src/bevy-profile-editor.ui:271
+msgid "Always"
+msgstr "Винаги"
+
+#: src/bevy-preferences-window.ui:258
+msgid "Block"
+msgstr "Блок"
+
+#: src/bevy-preferences-window.ui:264
+msgid "I-Beam"
+msgstr "Черта"
+
+#: src/bevy-preferences-window.ui:270
+msgid "Underline"
+msgstr "Подчертаване"
+
+#: src/bevy-preferences-window.ui:280
+msgid "Cursor Blinking"
+msgstr "Мигане на курсора"
+
+#: src/bevy-preferences-window.ui:289 src/bevy-preferences-window.ui:446
+msgid "Follow System"
+msgstr "Системен"
+
+#: src/bevy-preferences-window.ui:295
+msgid "Enabled"
+msgstr "Включено"
+
+#: src/bevy-preferences-window.ui:301
+msgid "Disabled"
+msgstr "Изключено"
+
+#: src/bevy-preferences-window.ui:315
+msgid "Behavior"
+msgstr "Поведение"
+
+#: src/bevy-preferences-window.ui:319
+msgid "Interface"
+msgstr "Интерфейс"
+
+#: src/bevy-preferences-window.ui:331
+msgid "Next"
+msgstr "Следващо"
+
+#: src/bevy-preferences-window.ui:337
+msgid "Last"
+msgstr "Последно"
+
+#: src/bevy-preferences-window.ui:352
+msgid "Attempt to restore previous tabs when Bevy starts"
+msgstr ""
+"Ако е възможно, възстановяване на предишните подпрозорци при стартиране на "
+"„Bevy“"
+
+#: src/bevy-preferences-window.ui:358
+msgid "Restore the previous window size when creating a new window"
+msgstr ""
+"Възстановяване на предишния размер на прозореца при създаване на нов прозорец"
+
+#: src/bevy-preferences-window.ui:368
+msgid "Columns"
+msgstr "Колони"
+
+#: src/bevy-preferences-window.ui:382
+msgid "Rows"
+msgstr "Редове"
+
+#: src/bevy-preferences-window.ui:400
+msgid "Accessibility"
+msgstr "Достъпност"
+
+#: src/bevy-preferences-window.ui:403
+msgid "Allow Screen Readers"
+msgstr "Позволяване на екранни четци"
+
+#: src/bevy-preferences-window.ui:404
+msgid ""
+"Permit screen readers such as Orca to read terminal content and typed text"
+msgstr ""
+"Позволяване на екранни четци като Orca да четат съдържанието на терминала и "
+"въведения текст"
+
+#: src/bevy-preferences-window.ui:411
+msgid "Bell"
+msgstr "Звънец"
+
+#: src/bevy-preferences-window.ui:415
+msgid "Emit an audible bell when requested by active tab"
+msgstr "Изпълнение на звук при поискване от активния подпрозорец"
+
+#: src/bevy-preferences-window.ui:420
+msgid "Visual Bell"
+msgstr "Визуален звънец"
+
+#: src/bevy-preferences-window.ui:421
+msgid "Emit a visual bell when requested by active tab"
+msgstr "Визуален сигнал при поискване от активния подпрозорец"
+
+#: src/bevy-preferences-window.ui:428 src/bevy-profile-editor.ui:314
+msgid "Scrolling"
+msgstr "Придвижване"
+
+#: src/bevy-preferences-window.ui:431
+msgid "Use Scrollbars"
+msgstr "Използване на лентите за придвижване"
+
+#: src/bevy-preferences-window.ui:467 src/bevy-profile-editor.ui:318
+msgid "Scroll to the bottom upon input keystroke"
+msgstr "Придвижване до края при въвеждане"
+
+#: src/bevy-preferences-window.ui:473 src/bevy-profile-editor.ui:324
+msgid "Scroll to the bottom when new content is available"
+msgstr "Придвижване до края при нов изход"
+
+#: src/bevy-preferences-window.ui:483 src/bevy-profile-editor.ui:334
+msgid "Restrict the number of lines saved for scrollback"
+msgstr "Ограничаване на броя на запазените редове за придвижване назад"
+
+#: src/bevy-preferences-window.ui:492 src/bevy-profile-editor.ui:343
+msgid "The number of lines to keep for scrollback"
+msgstr "Броят на редовете, които да се запазят за придвижване назад"
+
+#: src/bevy-preferences-window.ui:511 src/bevy-profile-editor.ui:202
+msgid "Use Login Shell"
+msgstr "Използване на обвивката за вход"
+
+#: src/bevy-preferences-window.ui:520 src/bevy-profile-editor.ui:250
+msgid "Preserve Working Directory"
+msgstr "Запазване на работната папка"
+
+#: src/bevy-preferences-window.ui:535 src/bevy-profile-editor.ui:265
+msgid "Safe"
+msgstr "Безопасно"
+
+#: src/bevy-preferences-window.ui:560 src/bevy-profile-editor.ui:290
+msgid "No Action"
+msgstr "Без действие"
+
+#: src/bevy-preferences-window.ui:566 src/bevy-profile-editor.ui:296
+msgid "Restart"
+msgstr "Рестартиране"
+
+#: src/bevy-preferences-window.ui:584 src/bevy-profile-editor.ui:359
+msgid "Compatibility"
+msgstr "Съвместимост"
+
+#: src/bevy-preferences-window.ui:587 src/bevy-profile-editor.ui:362
+msgid "Backspace Key"
+msgstr "Клавиш за обратно изтриване"
+
+#: src/bevy-preferences-window.ui:588 src/bevy-profile-editor.ui:363
+msgid "Sequence to send for Backspace key"
+msgstr "Последователност за клавиша Backspace"
+
+#: src/bevy-preferences-window.ui:597 src/bevy-profile-editor.ui:372
+msgid "Delete Key"
+msgstr "Клавиш за изтриване"
+
+#: src/bevy-preferences-window.ui:598 src/bevy-profile-editor.ui:373
+msgid "Sequence to send for Delete key"
+msgstr "Последователност за клавиша Delete"
+
+#: src/bevy-preferences-window.ui:607 src/bevy-profile-editor.ui:382
+msgid "Ambiguous-width Characters"
+msgstr "Знаци с нееднозначна широчина"
+
+#: src/bevy-preferences-window.ui:616 src/bevy-profile-editor.ui:391
+msgid "Narrow"
+msgstr "Тясно"
+
+#: src/bevy-preferences-window.ui:622 src/bevy-profile-editor.ui:397
+msgid "Wide"
+msgstr "Широко"
+
+#: src/bevy-preferences-window.ui:655
+msgid "Set as Default Terminal"
+msgstr "Задаване като стандартен терминал"
+
+#: src/bevy-preferences-window.ui:665
+msgid "Shortcuts"
+msgstr "Клавишни комбинации"
+
+#: src/bevy-preferences-window.ui:694
+msgid "Clear Selection"
+msgstr "Изчистване на избора"
+
+#: src/bevy-preferences-window.ui:704 src/bevy-shortcut-accel-dialog.ui:48
+#: src/bevy-terminal.ui:230
+msgid "Reset"
+msgstr "Връщане"
+
+#: src/bevy-preferences-window.ui:710 src/bevy-terminal.ui:236
+msgid "Reset and Clear"
+msgstr "Връщане и изчистване"
+
+#: src/bevy-preferences-window.ui:731
+msgid "Show Context Menu"
+msgstr "Показване на контекстното меню"
+
+#: src/bevy-preferences-window.ui:739
+msgid "Windows"
+msgstr "Прозорци"
+
+#: src/bevy-preferences-window.ui:743
+msgid "Open a new tab in a new window"
+msgstr "Отваряне на нов подпрозорец в нов прозорец"
+
+#: src/bevy-preferences-window.ui:750
+msgid "Close the current window"
+msgstr "Затваряне на текущия прозорец"
+
+#: src/bevy-preferences-window.ui:768
+msgid "Tabs"
+msgstr "Подпрозорци"
+
+#: src/bevy-preferences-window.ui:772
+msgid "Open a new tab in the current window"
+msgstr "Отваряне на нов подпрозорец в текущия прозорец"
+
+#: src/bevy-preferences-window.ui:782
+msgid "View Tab Overview"
+msgstr "Показване на прегледа на подпрозорците"
+
+#: src/bevy-preferences-window.ui:783
+msgid "Show an overview of all tabs within the window"
+msgstr "Показване на всички раздели в прозореца"
+
+#: src/bevy-preferences-window.ui:794
+msgid "Close the current tab"
+msgstr "Затваряне на текущия подпрозорец"
+
+#: src/bevy-preferences-window.ui:801
+msgid "Close all tabs except the active tab"
+msgstr "Затваряне на всички други подпрозорци"
+
+#: src/bevy-preferences-window.ui:808
+msgid "Undo closing the last tab"
+msgstr "Отмяна на затварянето на последния подпрозорец"
+
+#: src/bevy-preferences-window.ui:835
+msgid "Move the tab one position to the left"
+msgstr "Преместване на подпрозореца с една позиция наляво"
+
+#: src/bevy-preferences-window.ui:842
+msgid "Move the tab one position to the right"
+msgstr "Преместване на подпрозореца с една позиция надясно"
+
+#: src/bevy-preferences-window.ui:849
+msgid "Detach the current tab and move it to a new window"
+msgstr "Разкачване на текущия подпрозорец и преместване в нов прозорец"
+
+#: src/bevy-preferences-window.ui:859
+msgid "Switch to Tab 1"
+msgstr "Превключване към подпрозорец 1"
+
+#: src/bevy-preferences-window.ui:865
+msgid "Switch to Tab 2"
+msgstr "Превключване към подпрозорец 2"
+
+#: src/bevy-preferences-window.ui:871
+msgid "Switch to Tab 3"
+msgstr "Превключване към подпрозорец 3"
+
+#: src/bevy-preferences-window.ui:877
+msgid "Switch to Tab 4"
+msgstr "Превключване към подпрозорец 4"
+
+#: src/bevy-preferences-window.ui:883
+msgid "Switch to Tab 5"
+msgstr "Превключване към подпрозорец 5"
+
+#: src/bevy-preferences-window.ui:889
+msgid "Switch to Tab 6"
+msgstr "Превключване към подпрозорец 6"
+
+#: src/bevy-preferences-window.ui:895
+msgid "Switch to Tab 7"
+msgstr "Превключване към подпрозорец 7"
+
+#: src/bevy-preferences-window.ui:901
+msgid "Switch to Tab 8"
+msgstr "Превключване към подпрозорец 8"
+
+#: src/bevy-preferences-window.ui:907
+msgid "Switch to Tab 9"
+msgstr "Превключване към подпрозорец 9"
+
+#: src/bevy-preferences-window.ui:913
+msgid "Switch to Tab 10"
+msgstr "Превключване към подпрозорец 10"
+
+#: src/bevy-preferences-window.ui:919
+msgid "Switch to Last Tab"
+msgstr "Превключване към последния подпрозорец"
+
+#: src/bevy-preferences-window.ui:927
+msgid "Zoom"
+msgstr "Мащаб"
+
+#: src/bevy-preferences-window.ui:950
+msgid "Application"
+msgstr "Програма"
+
+#: src/bevy-preferences-window.ui:954
+msgid "Toggle in and out of fullscreen"
+msgstr "Превключване на цял екран"
+
+#: src/bevy-preferences-window.ui:964
+msgid "Show Primary Menu"
+msgstr "Показване на основното меню"
+
+#: src/bevy-preferences-window.ui:965
+msgid "Displays the primary menu for the terminal window"
+msgstr "Показване на основното меню за прозореца на терминала"
+
+#: src/bevy-preferences-window.ui:971
+msgid "Show New Tab Menu"
+msgstr "Показване на менюто на новия подпрозорец"
+
+#: src/bevy-preferences-window.ui:972
+msgid "Displays the new tab menu for the terminal window"
+msgstr "Показване на менюто с нови подпрозорци за прозореца на терминала"
+
+#: src/bevy-preferences-window.ui:979
+msgid "Show this preferences window"
+msgstr "Показване на този прозорец за настройки"
+
+#: src/bevy-preferences-window.ui:986
+msgid "Show the keyboard shortcuts configuration"
+msgstr "Показване на настройките на клавишните комбинации"
+
+#: src/bevy-preferences-window.ui:996 src/bevy-preferences-window.ui:1000
+#: src/bevy-window.c:1735 src/bevy-window.c:1897
+msgid "Profiles"
+msgstr "Профили"
+
+#: src/bevy-preferences-window.ui:1019 src/bevy-profile-editor.ui:442
+msgid "Automatic"
+msgstr "Автоматично"
+
+#: src/bevy-preferences-window.ui:1025 src/bevy-profile-editor.ui:448
+msgid "Control-H"
+msgstr "Control-H"
+
+#: src/bevy-preferences-window.ui:1031 src/bevy-profile-editor.ui:454
+msgid "ASCII DEL"
+msgstr "ASCII DEL"
+
+#: src/bevy-preferences-window.ui:1037 src/bevy-profile-editor.ui:460
+msgid "Escape Sequence"
+msgstr "Екранираща последователност"
+
+#: src/bevy-preferences-window.ui:1043 src/bevy-profile-editor.ui:466
+msgid "TTY Erase"
+msgstr "TTY Erase"
+
+#: src/bevy-profile.c:729
+msgid "Untitled Profile"
+msgstr "Неименован профил"
+
+#: src/bevy-profile-dialog.ui:29 src/bevy-terminal.ui:249
+msgid "Change Profile"
+msgstr "Смяна на профила"
+
+#: src/bevy-profile-dialog.ui:42 src/bevy-profile-editor.ui:31
+msgid "Profile"
+msgstr "Профил"
+
+#: src/bevy-profile-dialog.ui:43
+msgid "Select a profile to apply to this terminal"
+msgstr "Изберете профил за прилагане към този терминал"
+
+#: src/bevy-profile-editor.c:155 src/bevy-terminal.c:440
+#: src/bevy-terminal.c:472
+msgid "Copied to clipboard"
+msgstr "Копирано в буфера за обмен"
+
+#: src/bevy-profile-editor.c:184 src/bevy-profile-row.c:104
+#, c-format
+msgid "Removed profile “%s”"
+msgstr "Профилът „%s“ беше премахнат"
+
+#: src/bevy-profile-editor.ui:22 src/bevy-tab.c:504 src/bevy-tab.c:561
+msgid "Edit Profile"
+msgstr "Редактиране на профила"
+
+#: src/bevy-profile-editor.ui:41
+msgid "Identifier"
+msgstr "Идентификатор"
+
+#: src/bevy-profile-editor.ui:50
+msgid "Copy"
+msgstr "Копиране"
+
+#: src/bevy-profile-editor.ui:62
+msgid "Color"
+msgstr "Цвят"
+
+#: src/bevy-profile-editor.ui:134
+msgid "Use Bright Colors for Bold"
+msgstr "Използване на ярки цветове за получерно"
+
+#: src/bevy-profile-editor.ui:173
+msgid "Network"
+msgstr "Мрежа"
+
+#: src/bevy-profile-editor.ui:176
+msgid "Proxy"
+msgstr "Посредник"
+
+#: src/bevy-profile-editor.ui:177
+msgid "Applies the network proxy settings to the container environment"
+msgstr "Прилагане настройките на мрежовия посредник към средата на контейнера"
+
+#: src/bevy-profile-editor.ui:212
+msgid "The default container to use with this profile"
+msgstr "Стандартният контейнер, който да се използва с този профил"
+
+#: src/bevy-profile-editor.ui:221
+msgid "Preserve the current container when opening new tabs and windows"
+msgstr ""
+"Запазване на текущия контейнер при отваряне на нови подпрозорци и прозорци"
+
+#: src/bevy-profile-editor.ui:427
+msgid "Remove Profile"
+msgstr "Премахване на профила"
+
+#: src/bevy-profile-row.ui:43
+msgid "_Make Default"
+msgstr "_Задаване като стандартен"
+
+#: src/bevy-profile-row.ui:49
+msgid "_Duplicate…"
+msgstr "_Дублиране…"
+
+#. Translators: <b>%s</b> is used to show the provided text in bold
+#: src/bevy-shortcut-accel-dialog.c:538
+#, c-format
+msgid "Enter new shortcut to change <b>%s</b>."
+msgstr "Въведете новата клавишна комбинация, за да промените <b>%s</b>."
+
+#. do not use underline as it prevents alt+c as an accelerator
+#: src/bevy-shortcut-accel-dialog.ui:42
+msgid "Cancel"
+msgstr "Отказване"
+
+#. do not use underline as it prevents alt+s as an accelerator
+#: src/bevy-shortcut-accel-dialog.ui:56
+msgid "Set"
+msgstr "Задаване"
+
+#: src/bevy-shortcut-accel-dialog.ui:96
+msgid "Press Escape to cancel or Backspace to disable."
+msgstr "Натиснете Escape за отмяна или Backspac за да изключване."
+
+#: src/bevy-shortcut-row.c:84
+msgid "Set Shortcut"
+msgstr "Задаване на клавишна комбинация"
+
+#: src/bevy-shortcut-row.ui:33
+msgid "disabled"
+msgstr "изключено"
+
+#: src/bevy-tab.c:355
+msgid "A foreground process is running"
+msgstr "Изпълнява се процес на преден фон"
+
+#: src/bevy-tab.c:412
+#, c-format
+msgid "Process Exited from Signal %d"
+msgstr "Процесът завърши от сигнал %d"
+
+#: src/bevy-tab.c:415 src/bevy-tab.c:438
+msgid "_Restart"
+msgstr "_Рестартиране"
+
+#. Always prepare the banner even if we don't show it because we may
+#. * display it again if the tab is removed from the parking lot and
+#. * restored into the window.
+#.
+#: src/bevy-tab.c:437
+msgid "Process Exited"
+msgstr "Процесът завърши"
+
+#: src/bevy-tab.c:503
+msgid "Failed to launch terminal"
+msgstr "Терминалът не може да се стартира"
+
+#: src/bevy-tab.c:559
+#, c-format
+msgid "Cannot locate container “%s”"
+msgstr "Контейнерът „%s“ липсва"
+
+#: src/bevy-tab.c:583
+msgid "Failed to create pseudo terminal device"
+msgstr "Псевдотерминално устройство не може да се създаде"
+
+#: src/bevy-tab.c:1650
+msgid "Exited"
+msgstr "Завърши работа"
+
+#: src/bevy-tab.c:1652
+msgid "Failed"
+msgstr "Неуспешно"
+
+#: src/bevy-tab.c:2237
+msgid "Failed to open link"
+msgstr "Връзката не може да се отвори"
+
+#: src/bevy-tab-notify.h:93
+msgid "Command completed"
+msgstr "Командата завърши"
+
+#: src/bevy-terminal.ui:169
+msgid "_Open Link"
+msgstr "_Отваряне на връзката"
+
+#: src/bevy-terminal.ui:174
+msgid "_Copy Link"
+msgstr "_Копиране на връзката"
+
+#: src/bevy-terminal.ui:182
+msgid "Search…"
+msgstr "Търсене…"
+
+#: src/bevy-terminal.ui:189
+msgid "_Copy"
+msgstr "_Копиране"
+
+#: src/bevy-terminal.ui:190
+msgid "Copy selection from terminal to clipboard"
+msgstr "Копиране на избора от терминала в буфера за обмен"
+
+#: src/bevy-terminal.ui:194
+msgid "Copy as _HTML"
+msgstr "Копиране като _HTML"
+
+#: src/bevy-terminal.ui:195
+msgid "Copy selection from terminal to clipboard with HTML formatting"
+msgstr ""
+"Копиране на избрания текст от терминала в буфера за обмен с форматиране за "
+"HTML"
+
+#: src/bevy-terminal.ui:201
+msgid "_Paste"
+msgstr "_Поставяне"
+
+#: src/bevy-terminal.ui:202
+msgid "Paste from clipboard into the terminal"
+msgstr "Поставяне от буфера за обмен в терминала"
+
+#: src/bevy-terminal.ui:209
+msgid "Select _All"
+msgstr "Избиране на _всичко"
+
+#: src/bevy-terminal.ui:210
+msgid "Selection all text from terminal including scrollback"
+msgstr ""
+"Избор на целия текст от терминала, включително изведеното, което е достъпно "
+"при придвижване назад"
+
+#: src/bevy-terminal.ui:216
+msgid "Select _None"
+msgstr "_Изчистване на избора"
+
+#: src/bevy-terminal.ui:223
+msgid "Read-Only"
+msgstr "Само за четене"
+
+#: src/bevy-terminal.ui:257 src/bevy-window.ui:409 src/bevy-window.ui:791
+msgid "Leave Fullscreen"
+msgstr "Изход от цял екран"
+
+#: src/bevy-terminal.ui:263
+msgid "_Inspect Terminal"
+msgstr "_Изследване на терминала"
+
+#: src/bevy-theme-selector.ui:21
+msgid "Follow System Style"
+msgstr "Използване на системен стил"
+
+#: src/bevy-theme-selector.ui:23
+msgid "Follow system style"
+msgstr "Използване на системен стил"
+
+#: src/bevy-theme-selector.ui:37
+msgid "Light Style"
+msgstr "Светъл стил"
+
+#: src/bevy-theme-selector.ui:39
+msgid "Light style"
+msgstr "Светъл стил"
+
+#: src/bevy-theme-selector.ui:54
+msgid "Dark Style"
+msgstr "Тъмен стил"
+
+#: src/bevy-theme-selector.ui:56
+msgid "Dark style"
+msgstr "Тъмен стил"
+
+#: src/bevy-title-dialog.ui:36
+msgid "Title"
+msgstr "Заглавие"
+
+#: src/bevy-title-dialog.ui:42
+msgid "Include Process Title"
+msgstr "Включване на заглавието на процеса"
+
+#: src/bevy-title-dialog.ui:43
+msgid "Append title from Shell application"
+msgstr "Добавяне на заглавието от програмата на обвивката"
+
+#. translators: Builder Terminal means this is a terminal bundled with GNOME Builder
+#: src/bevy-util.c:316
+msgid "Builder Terminal"
+msgstr "Терминал на „Разработчик“"
+
+#: src/bevy-util.c:320
+msgid "Bevy"
+msgstr "Bevy"
+
+#: src/bevy-window.c:1518
+msgid "Zoom in"
+msgstr "Увеличаване"
+
+#: src/bevy-window.c:1533
+msgid "Zoom out"
+msgstr "Намаляване"
+
+#: src/bevy-window.c:1729 src/bevy-window.c:1901
+msgid "Containers"
+msgstr "Контейнери"
+
+#: src/bevy-window.ui:424
+msgid "New Terminal"
+msgstr "Нов терминал"
+
+#: src/bevy-window.ui:437
+msgid "Show Profiles and Containers"
+msgstr "Показване на профилите и контейнерите"
+
+#: src/bevy-window.ui:457
+msgid "Filter…"
+msgstr "Филтриране…"
+
+#: src/bevy-window.ui:610
+msgid "No Matching Results"
+msgstr "Няма резултати"
+
+#: src/bevy-window.ui:652
+msgid "Main Menu"
+msgstr "Основно меню"
+
+#: src/bevy-window.ui:660 src/bevy-window.ui:777
+msgid "Show Open Tabs"
+msgstr "Показване на отворените подпрозорци"
+
+#: src/bevy-window.ui:761
+msgid "New _Tab"
+msgstr "Нов по_дпрозорец"
+
+#: src/bevy-window.ui:768
+msgid "New _Window"
+msgstr "Нов _прозорец"
+
+#: src/bevy-window.ui:785
+msgid "Fullscreen"
+msgstr "Цял екран"
+
+#: src/bevy-window.ui:799
+msgid "_Preferences"
+msgstr "_Настройки"
+
+#: src/bevy-window.ui:804
+msgid "_Keyboard Shortcuts"
+msgstr "_Клавишни комбинации"
+
+#: src/bevy-window.ui:808
+msgid "_About"
+msgstr "_Относно"
+
+#: src/bevy-window.ui:817
+msgid "Move _Left"
+msgstr "Преместване _наляво"
+
+#: src/bevy-window.ui:822
+msgid "Move _Right"
+msgstr "Преместване _надясно"
+
+#: src/bevy-window.ui:827
+msgid "Move to New _Window"
+msgstr "Преместване в нов _прозорец"
+
+#: src/bevy-window.ui:833
+msgid "_Pin Tab"
+msgstr "_Закачване на подпрозореца"
+
+#: src/bevy-window.ui:838
+msgid "Un_pin Tab"
+msgstr "_Откачване на подпрозореца"
+
+#: src/bevy-window.ui:853
+msgid "Close _Other Tabs"
+msgstr "Затваряне на _другите подпрозорци"
+
+#: src/bevy-window.ui:858
+msgid "_Close Tab"
+msgstr "_Затваряне на подпрозореца"

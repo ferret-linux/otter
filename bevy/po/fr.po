@@ -1,0 +1,2069 @@
+# French translation for bevy.
+# Copyright (C) 2024 bevy's COPYRIGHT HOLDER
+# This file is distributed under the same license as the bevy package.
+# Lawrence Deneiple <lawrence.dnp@gmail.com>, 2024
+# Alexandre Franke <afranke@gnome.org>, 2025
+# Guillaume Bernard <associations@guillaume-bernard.fr>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: bevy gnome-47\n"
+"Report-Msgid-Bugs-To: https://github.com/ferret-linux/bevy/issues\n"
+"POT-Creation-Date: 2026-07-31 22:53+0000\n"
+"PO-Revision-Date: 2026-08-31 17:13+0200\n"
+"Last-Translator: Guillaume Bernard <associations@guillaume-bernard.fr>\n"
+"Language-Team: French\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Gtranslator 50.0\n"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:2
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:6
+msgid "@APP_NAME@"
+msgstr "@APP_NAME@"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:3
+msgid "A container-oriented terminal for GNOME"
+msgstr "Un terminal orienté conteneur pour GNOME"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:12 src/bevy-preferences-window.ui:669
+#: src/bevy-tab.c:1647 src/bevy-util.c:328
+msgid "Terminal"
+msgstr "Terminal"
+
+#. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+#: data/dev.itznoel.Bevy.desktop.in.in:14
+msgid "terminal;prompt;bevy;shell;command;commandline;cmd;cli;console;container;podman;toolbox;distrobox;"
+msgstr ""
+"terminal;invite;bevy;shell;commande;ligne de "
+"commande;cmd;cli;console;conteneur;podman;toolbox;distrobox;"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:23
+#: src/dev.itznoel.Bevy.gschema.xml.in:424 src/bevy-preferences-window.ui:742
+msgid "New Window"
+msgstr "Nouvelle fenêtre"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:27
+#: src/dev.itznoel.Bevy.gschema.xml.in:418 src/bevy-preferences-window.ui:771
+msgid "New Tab"
+msgstr "Nouvel onglet"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:31
+#: src/dev.itznoel.Bevy.gschema.xml.in:436 src/bevy-preferences-window.ui:978
+msgid "Preferences"
+msgstr "Préférences"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:7
+msgid "Container-oriented terminal"
+msgstr "Terminal orienté conteneur"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:9
+msgid ""
+"Bevy is a terminal for GNOME that focuses on ease-of-use in a world of "
+"containers."
+msgstr ""
+"Bevy est un terminal pour GNOME qui se concentre sur la facilité "
+"d’utilisation dans un monde de conteneurs."
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:13
+msgid "Features:"
+msgstr "Fonctionnalités :"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:15
+msgid ""
+"Remembers current container when opening a new tab with support for podman, "
+"toolbox, distrobox, and more"
+msgstr ""
+"Mémorise le conteneur actuel lors de l’ouverture d’un nouvel onglet avec "
+"prise en charge de podman, toolbox, distrobox et d’autres encore"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:16
+msgid "Configurable keyboard shortcuts"
+msgstr "Raccourcis clavier configurables"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:17
+msgid "Modern interface which integrates the palette with the window styling"
+msgstr ""
+"Une interface moderne qui intègre la palette avec le thème de la fenêtre"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:18
+msgid "User-installable color palettes"
+msgstr "Palettes de couleurs installables par l’utilisateur"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:19
+msgid "Support for preferences profiles with container integration"
+msgstr ""
+"Prise en charge des profils de préférences avec intégration de conteneur"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:20
+msgid "Integrated color palettes with light and dark support"
+msgstr ""
+"Palettes de couleurs intégrées avec prise en charge des thèmes clairs et "
+"sombres"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:21
+msgid "Tabbed interface with tab overviews"
+msgstr "Interface à onglets avec aperçus d’onglets"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:22
+msgid "Efficient foreground process tracking denoting sudo and SSH"
+msgstr "Suivi efficace des processus en premier plan indiquant sudo et SSH"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:23
+msgid "Support for transparent terminal backgrounds"
+msgstr "Prise en charge des arrière-plans de terminal transparents"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:24
+msgid "Separate process mode for terminal-based applications"
+msgstr "Mode de processus séparé pour les applications basées sur le terminal"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:25
+msgid "Support for pinned tabs and saved sessions"
+msgstr "Prise en charge des onglets épinglés et des sessions enregistrées"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:26
+msgid "Terminal tabs are run within separate cgroups"
+msgstr "Les onglets de terminal sont exécutés dans des cgroups séparés"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:27
+msgid "Terminal inspector to help when writing terminal-based applications"
+msgstr ""
+"Inspecteur de terminal pour aider lors de l’écriture d’applications basées "
+"sur le terminal"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:54
+msgid "A column and row size indicator is displayed when resizing the window"
+msgstr ""
+"Un indicateur de taille de colonne et de ligne est affiché lors du "
+"redimensionnement de la fenêtre"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:59
+msgid "Containers are automatically discovered and displayed"
+msgstr "Les conteneurs sont automatiquement découverts et affichés"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:64
+msgid "Many behaviors of the terminal may be tweaked to user preference"
+msgstr ""
+"De nombreux comportements du terminal peuvent être ajustés selon les "
+"préférences de l’utilisateur"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:69
+msgid "You may rename a tab by providing a prefix to the title"
+msgstr "Vous pouvez renommer un onglet en fournissant un préfixe au titre"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:74
+msgid "Palettes provide an integrated dark mode"
+msgstr "Les palettes fournissent un thème sombre intégré"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:79
+msgid "You can see an overview of your tabs at any time"
+msgstr "Vous pouvez voir un aperçu de vos onglets à tout moment"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:84
+msgid "Many shortcuts may be remapped to user preference"
+msgstr ""
+"De nombreux raccourcis peuvent être réassignés selon les préférences de "
+"l’utilisateur"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:89
+msgid "Built-in color palettes provide both dark and light mode variants"
+msgstr ""
+"Les palettes de couleurs intégrées fournissent des variantes de thème sombre "
+"et clair"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:94
+msgid ""
+"Profiles allow for overriding a number of features such as default container"
+msgstr ""
+"Les profils permettent de remplacer un certain nombre de fonctionnalités "
+"telles que le conteneur par défaut"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:99
+msgid "The terminal will remind you when you're root on the local system"
+msgstr ""
+"Le terminal vous rappellera lorsque vous êtes root sur le système local"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:104
+msgid "The terminal will remind you when you're on a remote system"
+msgstr "Le terminal vous rappellera lorsque vous êtes sur un système distant"
+
+#: src/main.c:142 src/main.c:149 src/main.c:161
+msgid "Error"
+msgstr "Erreur"
+
+#: src/main.c:155
+#, c-format
+msgid ""
+"Error: %s already exists.\n"
+"Please remove it first.\n"
+msgstr ""
+"Erreur : %s existe déjà.\n"
+"Commencez par le supprimer.\n"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:101
+msgid "Default Profile UUID"
+msgstr "UUID du profil par défaut"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:102
+msgid "The UUID of the default profile"
+msgstr "L’UUID du profil par défaut"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:107
+msgid "UUIDs of all Profiles"
+msgstr "UUID de tous les profils"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:108
+msgid "A list of UUID for every profile"
+msgstr "Une liste d’UUID pour chaque profil"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:113 src/bevy-preferences-window.ui:322
+msgid "New Tab Position"
+msgstr "Position du nouvel onglet"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:114
+msgid "Where to place new tabs"
+msgstr "Où placer les nouveaux onglets"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:119 src/bevy-preferences-window.ui:414
+msgid "Audible Bell"
+msgstr "Signal sonore"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:120
+msgid "If an audible bell should be used"
+msgstr "Si un signal sonore doit être utilisé"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:125
+msgid "Visible Bell"
+msgstr "Signal visuel"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:126
+msgid "If a visual bell should be used"
+msgstr "Si un signal visuel doit être utilisé"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:131
+msgid "Visual Process Leader"
+msgstr "Responsable de processus visuel"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:132
+msgid ""
+"Display a visual window highlight when process leader is SSH, sudo, or other "
+"specialized tooling"
+msgstr ""
+"Afficher un surlignage de fenêtre visuel lorsque le responsable de processus "
+"est SSH, sudo ou autre outil spécialisé"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:137
+msgid "Use System Font"
+msgstr "Utiliser la police système"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:138
+msgid "If the default system monospace font should be used"
+msgstr "Indique si la police système monospace par défaut doit être utilisée"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:143
+msgid "Font Name"
+msgstr "Nom de la police"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:144
+msgid "The font description to use if use-system-font is set to False"
+msgstr ""
+"La description de la police à utiliser si « use-system-font » est défini à "
+"faux (« False »)"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:149 src/bevy-preferences-window.ui:249
+msgid "Cursor Shape"
+msgstr "Forme du curseur"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:150
+msgid "The default shape of the cursor"
+msgstr "La forme par défaut du curseur"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:155
+msgid "Cursor Blink Mode"
+msgstr "Mode de clignotement du curseur"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:156
+msgid "The default blink mode cursor"
+msgstr "Le mode de clignotement du curseur par défaut"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:161
+msgid "List of punctuation characters that are treated as word characters"
+msgstr ""
+"Liste des caractères de ponctuation considérés comme des caractères de mots"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:162
+msgid ""
+"By default, when doing word-wise selection, most punctuation breaks up word "
+"boundaries. This list of exceptions will instead be treated as part of the "
+"word."
+msgstr ""
+"Par défaut, lors d’une sélection mot à mot, la plupart des signes de "
+"ponctuation divisent les mots. Les éléments figurant dans cette liste "
+"d’exceptions seront en revanche considérés comme faisant partie du mot."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:167
+msgid "Scrollbar Policy"
+msgstr "Politique de la barre de défilement"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:168
+msgid "If scrollbars should be displayed"
+msgstr "Indique si les barres de défilement doivent être affichées"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:177
+msgid "Text Blink Mode"
+msgstr "Mode de clignotement du texte"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:178
+msgid "When text blinking is allowed"
+msgstr "Quand le clignotement du texte est autorisé"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:183
+msgid "Interface Style"
+msgstr "Thème de l’interface"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:184
+msgid "If light or dark interface style should be used"
+msgstr "Si le thème d’interface clair ou sombre doit être utilisé"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:189 src/bevy-preferences-window.ui:351
+msgid "Restore Session"
+msgstr "Restaurer la session"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:190
+msgid "Restore tabs from previous session when starting Bevy"
+msgstr ""
+"Restaurer les onglets de la session précédente lors du démarrage de Bevy"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:195 src/bevy-preferences-window.ui:357
+msgid "Restore Window Size"
+msgstr "Restaurer la taille de la fenêtre"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:196
+msgid "Restore the previous window size when creating new windows"
+msgstr ""
+"Restaurer la taille de la fenêtre précédente lors de la création de "
+"nouvelles fenêtres"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:206
+msgid "Default Column Size"
+msgstr "Taille de colonne par défaut"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:207
+#: src/dev.itznoel.Bevy.gschema.xml.in:214
+msgid "Default window size when restore-window-size is not true."
+msgstr ""
+"Taille de fenêtre par défaut lorsque « restore-window-size » n’est pas "
+"défini à vrai (« True »)."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:213
+msgid "Default Row Size"
+msgstr "Taille de ligne par défaut"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:219
+msgid "Toast on Copy Clipboard"
+msgstr "Notification lors de la copie du presse-papiers"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:220
+msgid "Show the user when text has copied to the clipboard."
+msgstr ""
+"Indiquer à l’utilisateur lorsque le texte a été copié dans le presse-papiers."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:225
+msgid "Enable Accessibility"
+msgstr "Activer l’accessibilité"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:226
+msgid ""
+"Currently experimental feature to send accessibility information to screen "
+"readers."
+msgstr ""
+"Fonctionnalité actuellement expérimentale pour envoyer des informations "
+"d’accessibilité aux lecteurs d’écran."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:231
+msgid "Enable zoom on scroll holding the control key"
+msgstr ""
+"Activer le zoom lors du défilement en maintenant la touche Ctrl enfoncée"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:232
+msgid ""
+"Enable to adjust the zoom level on scroll scroll while holding the control "
+"key."
+msgstr ""
+"Permet de régler le niveau de zoom lors du défilement en maintenant la "
+"touche Ctrl enfoncée."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:237
+msgid "Disable Padding around Terminal Emulator"
+msgstr "Désactiver le remplissage autour de l’émulateur de terminal"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:238
+msgid ""
+"Do not pad around the terminal emulator widget. Setting to true may have "
+"significant performance impacts."
+msgstr ""
+"Ne pas ajouter de remplissage autour du composant graphique de l’émulateur "
+"de terminal."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:243
+msgid "Prompt when active tab is closed"
+msgstr "Afficher lorsque l’onglet actif est fermé"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:244
+msgid ""
+"If a tab (or window) is closed with active foreground processes, prompt the "
+"user for confirmation."
+msgstr ""
+"Si l’onglet (ou la fenêtre) est fermé(e) avec des processus actifs en "
+"premier plan, affiche un message de confirmation à l’utilisateur."
+
+#. Translators: OSC stands for "Operating System Command" and is referencing in-band escape sequences from the child process to set the title
+#: src/dev.itznoel.Bevy.gschema.xml.in:250
+msgid "Ignore OSC Title"
+msgstr "Ignorer le titre défini par les commandes système"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:251
+msgid "If OSC title should be ignored in tab titles."
+msgstr ""
+"Indique si le titre défini par les commandes système doit être ignoré dans "
+"les onglets."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:256
+msgid "Inhibit Logout"
+msgstr "Inhiber la déconnexion"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:257
+msgid "Inhibit desktop logout when a foreground process is running in a tab."
+msgstr ""
+"Empêcher la déconnexion du bureau lorsqu’un processus en premier plan est en "
+"cours d’exécution dans un onglet."
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:266
+msgid "Label"
+msgstr "Libellé"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:267
+msgid "The label for the profile"
+msgstr "Le libellé du profil"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:272
+msgid "Login Shell"
+msgstr "Shell de connexion"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:273
+msgid "Use a login shell"
+msgstr "Utiliser un shell de connexion"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:278 src/bevy-preferences-window.ui:482
+#: src/bevy-profile-editor.ui:333
+msgid "Limit Scrollback"
+msgstr "Limite du défilement arrière"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:279
+msgid "Limit the number of lines to keep for scrollback"
+msgstr "Limiter le nombre de lignes à conserver pour le défilement arrière"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:285 src/bevy-preferences-window.ui:491
+#: src/bevy-profile-editor.ui:342
+msgid "Scrollback Lines"
+msgstr "Lignes de défilement arrière"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:286
+msgid "The number of lines to keep in the scrollback, zero for no scrollback"
+msgstr ""
+"Le nombre de lignes à conserver pour le défilement arrière, zéro pour "
+"désactiver le défilement arrière"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:291 src/bevy-preferences-window.ui:472
+#: src/bevy-profile-editor.ui:323
+msgid "Scroll on Output"
+msgstr "Défilement sur la sortie"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:292
+msgid "Scroll to the bottom upon new output"
+msgstr "Défiler jusqu’en bas lors d’une nouvelle sortie"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:297 src/bevy-preferences-window.ui:466
+#: src/bevy-profile-editor.ui:317
+msgid "Scroll on Keystroke"
+msgstr "Défilement sur la frappe"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:298
+msgid "Scroll to the bottom upon user keystroke"
+msgstr "Défiler jusqu’en bas lors de la frappe de l’utilisateur"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:303 src/bevy-profile-editor.ui:187
+msgid "Use Custom Command"
+msgstr "Utiliser une commande personnalisée"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:304
+msgid "If a custom command should be used"
+msgstr "Indique si une commande personnalisée doit être utilisée"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:309
+msgid "Use Proxy"
+msgstr "Utiliser un serveur mandataire"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:310
+msgid "Apply proxy settings from the host in the container"
+msgstr ""
+"Appliquer les paramètres de serveur mandataire de l’hôte dans le conteneur"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:315 src/bevy-profile-editor.ui:192
+msgid "Custom Command"
+msgstr "Commande personnalisée"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:316
+msgid "A custom command for the shell"
+msgstr "Une commande personnalisée pour le shell"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:321 src/bevy-profile-editor.ui:211
+msgid "Default Container"
+msgstr "Conteneur par défaut"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:322
+msgid "The default container to run the command in"
+msgstr "Le conteneur par défaut pour exécuter la commande"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:327 src/bevy-profile-editor.ui:220
+msgid "Preserve Container"
+msgstr "Préserver le conteneur"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:328
+msgid "Preserve the active container when creating new tabs and windows"
+msgstr ""
+"Préserver le conteneur actif lors de la création de nouveaux onglets et "
+"fenêtres"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:333 src/bevy-preferences-window.ui:551
+#: src/bevy-profile-editor.ui:281
+msgid "Exit Action"
+msgstr "Action de sortie"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:334
+msgid "The action to take when the shell exits"
+msgstr "L’action à exécuter lorsque le shell se termine"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:339
+msgid "Preserve Directory"
+msgstr "Préserver le répertoire"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:340
+msgid "If the directory should be preserved for new terminals"
+msgstr "Si le répertoire doit être préservé pour les nouveaux terminaux"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:345 src/bevy-inspector.ui:102
+#: src/bevy-preferences-window.ui:40 src/bevy-profile-editor.ui:65
+msgid "Palette"
+msgstr "Palette"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:346
+msgid "The color palette to use for the profile, by name"
+msgstr "La palette de couleurs à utiliser pour le profil, par nom"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:352
+msgid "Opacity"
+msgstr "Opacité"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:353
+msgid "The opacity of the palette background"
+msgstr "L’opacité de l’arrière-plan de la palette"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:358
+msgid "Bold is Bright"
+msgstr "Gras est vif"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:359
+msgid ""
+"Setting bold on one of the lower 8 colors in the palette will use bright "
+"variant (upper 8 colors)"
+msgstr ""
+"Le réglage en gras sur l’une des 8 couleurs inférieures de la palette "
+"utilisera la variante vive (8 couleurs supérieures)"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:365 src/bevy-preferences-window.ui:175
+#: src/bevy-profile-editor.ui:143
+msgid "Line Spacing"
+msgstr "Espacement des lignes"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:366
+msgid "The terminal’s cell height scale"
+msgstr "L’échelle de hauteur de cellule du terminal"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:372 src/bevy-preferences-window.ui:189
+#: src/bevy-profile-editor.ui:157
+msgid "Column Spacing"
+msgstr "Espacement des colonnes"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:373
+msgid "The terminal’s cell width scale"
+msgstr "L’échelle de largeur de cellule du terminal"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:378
+msgid "CJK Ambiguous Width"
+msgstr "Largeur CJK ambiguë"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:379
+msgid "The size to apply to ambiguous width characters"
+msgstr "La taille à appliquer aux caractères de largeur ambiguë"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:384
+#: src/dev.itznoel.Bevy.gschema.xml.in:390
+msgid "Backspace Binding"
+msgstr "Liaison de retour arrière"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:385
+#: src/dev.itznoel.Bevy.gschema.xml.in:391
+msgid "What to send to the PTY when a backspace is entered"
+msgstr "Ce qu’il faut envoyer au PTY lorsqu’un retour arrière est saisi"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:396 src/bevy-preferences-window.ui:634
+#: src/bevy-profile-editor.ui:409
+msgid "Custom Links"
+msgstr "Liens personnalisés"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:397
+msgid ""
+"A list of custom hyperlinks, each defined by a regular expression matching "
+"the text, and a replacement pattern"
+msgstr ""
+"Une liste d’hyperliens personnalisés, chacun défini par une expression "
+"régulière qui identifie un texte et un motif de remplacement"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:406 src/bevy-preferences-window.ui:672
+msgid "Copy to Clipboard"
+msgstr "Copier dans le presse-papiers"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:407
+msgid "The shortcut to copy to clipboard"
+msgstr "Le raccourci pour copier dans le presse-papiers"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:412 src/bevy-preferences-window.ui:678
+msgid "Paste from Clipboard"
+msgstr "Coller depuis le presse-papiers"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:413
+msgid "The shortcut to paste from the clipboard"
+msgstr "Le raccourci pour coller depuis le presse-papiers"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:419
+msgid "The shortcut to create a new tab in the current window"
+msgstr "Le raccourci pour créer un nouvel onglet dans la fenêtre actuelle"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:425
+msgid "The shortcut to create a new tab in a new window"
+msgstr "Le raccourci pour créer un nouvel onglet dans une nouvelle fenêtre"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:430
+msgid "Tab Overview"
+msgstr "Aperçu des onglets"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:431
+msgid "The shortcut to show the tab overview"
+msgstr "Le raccourci pour afficher l’aperçu des onglets"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:437
+msgid "The shortcut to show application preferences"
+msgstr "Le raccourci pour afficher les préférences de l’application"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:442 src/bevy-preferences-window.ui:985
+msgid "Keyboard Shortcuts"
+msgstr "Raccourcis clavier"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:443
+msgid "The shortcut to show the keyboard shortcuts configuration"
+msgstr "Le raccourci pour afficher la configuration des racourcis clavier"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:448 src/bevy-preferences-window.ui:936
+#: src/bevy-window.c:1522 src/bevy-window.c:1530
+msgid "Zoom Out"
+msgstr "Zoom arrière"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:449
+msgid "The shortcut to zoom out"
+msgstr "Le raccourci pour zoomer en arrière"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:454 src/bevy-preferences-window.ui:942
+#: src/bevy-window.c:1539
+msgid "Reset Zoom"
+msgstr "Réinitialiser le zoom"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:455
+msgid "The shortcut to reset zoom"
+msgstr "Le raccourci pour réinitialiser le zoom"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:460 src/bevy-preferences-window.ui:930
+#: src/bevy-window.c:1507 src/bevy-window.c:1515
+msgid "Zoom In"
+msgstr "Zoom avant"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:461
+msgid "The shortcut to zoom in"
+msgstr "Le raccourci pour zoomer en avant"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:466 src/bevy-preferences-window.ui:953
+msgid "Toggle Fullscreen"
+msgstr "Basculer le plein écran"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:467
+msgid "The shortcut to toggle fullscreen"
+msgstr "Le raccourci pour basculer le plein écran"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:472
+msgid "Reset Terminal"
+msgstr "Réinitialiser le terminal"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:473
+msgid "Reset the terminal state for misbehaving clients"
+msgstr ""
+"Réinitialiser l’état du terminal pour les clients qui se comportent mal"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:478
+msgid "Reset Terminal and Clear History"
+msgstr "Réinitialiser le terminal et effacer l’historique"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:479
+msgid "Reset the terminal state and clear history for misbehaving clients"
+msgstr ""
+"Réinitialiser l’état du terminal et effacer l’historique pour les clients "
+"qui se comportent mal"
+
+#. Translators: Refers to searching the terminal scrollback
+#: src/dev.itznoel.Bevy.gschema.xml.in:485 src/bevy-find-bar.ui:39
+#: src/bevy-preferences-window.ui:721
+msgid "Search History"
+msgstr "Rechercher dans l’historique"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:486
+msgid "Shortcut to begin searching the terminal history"
+msgstr "Raccourci pour commencer à rechercher dans l’historique du terminal"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:491 src/bevy-preferences-window.ui:688
+msgid "Select All"
+msgstr "Tout sélectionner"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:492
+msgid "Shortcut to select all the entire terminal scrollback"
+msgstr "Raccourci pour sélectionner tout le défilement arrière du terminal"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:497
+msgid "Select None"
+msgstr "Ne rien sélectionner"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:498
+msgid "Shortcut to clear the terminal selection"
+msgstr "Raccourci pour effacer la sélection du terminal"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:503
+msgid "Popup Menu"
+msgstr "Menu contextuel"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:504
+msgid "Shortcut to show the popup menu for the terminal"
+msgstr "Raccourci pour afficher le menu contextuel du terminal"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:509
+msgid "Primary Menu"
+msgstr "Menu principal"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:510
+msgid "Shortcut to show the primary menu for the window"
+msgstr "Raccourci pour afficher le menu principal de la fenêtre"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:515
+msgid "Tab Menu"
+msgstr "Menu d’onglets"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:516
+msgid "Shortcut to show the new tab menu"
+msgstr "Raccourci pour afficher le menu du nouvel onglet"
+
+#. Translators: in this context, "Move" means to switch tabs
+#: src/dev.itznoel.Bevy.gschema.xml.in:522 src/bevy-preferences-window.ui:818
+msgid "Move to Previous Tab"
+msgstr "Passer à l’onglet précédent"
+
+#. Translators: in this context, "Move" means to switch tabs
+#: src/dev.itznoel.Bevy.gschema.xml.in:524
+msgid "Shortcut to move to the previous tab"
+msgstr "Le raccourci pour passer à l’onglet précédent"
+
+#. Translators: in this context, "Move" means to switch tabs
+#: src/dev.itznoel.Bevy.gschema.xml.in:530 src/bevy-preferences-window.ui:824
+msgid "Move to Next Tab"
+msgstr "Passer à l’onglet suivant"
+
+#. Translators: in this context, "Move" means to switch tabs
+#: src/dev.itznoel.Bevy.gschema.xml.in:532
+msgid "Shortcut to move to the next tab"
+msgstr "Le raccourci pour passer à l’onglet suivant"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:537 src/bevy-preferences-window.ui:834
+msgid "Move Tab Left"
+msgstr "Déplacer l’onglet vers la gauche"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:538
+msgid "Shortcut to move the current tab to the left one position"
+msgstr ""
+"Le raccourci pour déplacer l’onglet actuel d’une position vers la gauche"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:543 src/bevy-preferences-window.ui:841
+msgid "Move Tab Right"
+msgstr "Déplacer l’onglet vers la droite"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:544
+msgid "Shortcut to move the current tab to the right one position"
+msgstr ""
+"Le raccourci pour déplacer l’onglet actuel d’une position vers la droite"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:549 src/bevy-preferences-window.ui:848
+msgid "Move Tab to New Window"
+msgstr "Déplacer l’onglet vers une nouvelle fenêtre"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:550
+msgid "Shortcut to move the current tab into a new window"
+msgstr "Le raccourci pour déplacer l’onglet actuel dans une nouvelle fenêtre"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:555 src/bevy-preferences-window.ui:793
+msgid "Close Tab"
+msgstr "Fermer l’onglet"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:556
+msgid "Shortcut to close the current tab"
+msgstr "Le raccourci pour fermer l’onglet actuel"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:561 src/bevy-preferences-window.ui:800
+msgid "Close Other Tabs"
+msgstr "Fermer les autres onglets"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:562
+msgid "Shortcut to close all tabs in the window but the current one"
+msgstr ""
+"Le raccourci pour fermer tous les onglets de la fenêtre sauf l’onglet actuel"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:567 src/bevy-preferences-window.ui:749
+msgid "Close Window"
+msgstr "Fermer la fenêtre"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:568
+msgid "Shortcut to close the current window"
+msgstr "Le raccourci pour fermer la fenêtre actuelle"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:573 src/bevy-preferences-window.ui:760
+#: src/bevy-terminal.ui:244 src/bevy-window.c:1210 src/bevy-window.ui:846
+msgid "Set Title"
+msgstr "Définir le titre"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:574
+msgid "The shortcut to show set title"
+msgstr "Le raccourci pour afficher « Définir le titre »"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:579
+msgid "Focus Tab 1"
+msgstr "Mettre le focus sur l’onglet 1"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:580
+msgid "Shortcut to focus tab 1"
+msgstr "Le raccourci pour mettre le focus sur l’onglet 1"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:585
+msgid "Focus Tab 2"
+msgstr "Mettre le focus sur l’onglet 2"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:586
+msgid "Shortcut to focus tab 2"
+msgstr "Le raccourci pour mettre le focus sur l’onglet 2"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:591
+msgid "Focus Tab 3"
+msgstr "Mettre le focus sur l’onglet 3"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:592
+msgid "Shortcut to focus tab 3"
+msgstr "Le raccourci pour mettre le focus sur l’onglet 3"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:597
+msgid "Focus Tab 4"
+msgstr "Mettre le focus sur l’onglet 4"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:598
+msgid "Shortcut to focus tab 4"
+msgstr "Le raccourci pour mettre le focus sur l’onglet 4"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:603
+msgid "Focus Tab 5"
+msgstr "Mettre le focus sur l’onglet 5"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:604
+msgid "Shortcut to focus tab 5"
+msgstr "Le raccourci pour mettre le focus sur l’onglet 5"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:609
+msgid "Focus Tab 6"
+msgstr "Mettre le focus sur l’onglet 6"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:610
+msgid "Shortcut to focus tab 6"
+msgstr "Le raccourci pour mettre le focus sur l’onglet 6"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:615
+msgid "Focus Tab 7"
+msgstr "Mettre le focus sur l’onglet 7"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:616
+msgid "Shortcut to focus tab 7"
+msgstr "Le raccourci pour mettre le focus sur l’onglet 7"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:621
+msgid "Focus Tab 8"
+msgstr "Mettre le focus sur l’onglet 8"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:622
+msgid "Shortcut to focus tab 8"
+msgstr "Le raccourci pour mettre le focus sur l’onglet 8"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:627
+msgid "Focus Tab 9"
+msgstr "Mettre le focus sur l’onglet 9"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:628
+msgid "Shortcut to focus tab 9"
+msgstr "Le raccourci pour mettre le focus sur l’onglet 9"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:633
+msgid "Focus Tab 10"
+msgstr "Mettre le focus sur l’onglet 10"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:634
+msgid "Shortcut to focus tab 10"
+msgstr "Le raccourci pour mettre le focus sur l’onglet 10"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:639
+msgid "Focus Last Tab"
+msgstr "Mettre le focus sur le dernier onglet"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:640
+msgid "Shortcut to focus the last tab"
+msgstr "Le raccourci pour mettre le focus sur le dernier onglet"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:645 src/bevy-preferences-window.ui:807
+msgid "Undo Close Tab"
+msgstr "Annuler la fermeture de l’onglet"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:646
+msgid "Undo closing of last tab"
+msgstr "Annuler la fermeture du dernier onglet"
+
+#: src/bevy-application.c:462
+msgid "--tab, --tab-with-profile, or --new-window may not be used together"
+msgstr ""
+"--tab, --tab-with-profile ou --new-window ne peuvent pas être utilisés "
+"ensemble"
+
+#: src/bevy-application.c:508
+#, c-format
+msgid "Cannot parse command: %s"
+msgstr "Impossible d’analyser la commande : %s"
+
+#: src/bevy-application.c:1142
+msgid "Examples:"
+msgstr "Exemples :"
+
+#: src/bevy-application.c:1144
+msgid "Show the application preferences"
+msgstr "Afficher les préférences de l’application"
+
+#. Used for new tabs/windows/etc when specified
+#: src/bevy-application.c:1147
+msgid "Use DIR for --tab, --tab-with-profile, --new-window, or -x"
+msgstr "Utiliser DIR pour --tab, --tab-with-profile, --new-window, ou -x"
+
+#: src/bevy-application.c:1147
+msgid "DIR"
+msgstr "DIR"
+
+#. By default, this implies a new bevy instance unless the options
+#. * below are provided to override that.
+#.
+#: src/bevy-application.c:1152
+msgid "Command to execute in new window"
+msgstr "Commande à exécuter dans une nouvelle fenêtre"
+
+#. These options all imply we're using a shared Bevy instance. We do not support
+#. * short command options for these to make it easier to sniff them in early args
+#. * checking from `main.c`.
+#.
+#: src/bevy-application.c:1158
+msgid "New terminal window"
+msgstr "Nouvelle fenêtre de terminal"
+
+#: src/bevy-application.c:1159
+msgid "New terminal tab in active window"
+msgstr "Nouvel onglet de terminal dans la fenêtre active"
+
+#: src/bevy-application.c:1160
+msgid "New terminal tab in active window using the profile UUID"
+msgstr ""
+"Nouvel onglet de terminal dans la fenêtre active à l’aide de l’UUID du profil"
+
+#: src/bevy-application.c:1160
+msgid "PROFILE_UUID"
+msgstr "UUID_DU_PROFIL"
+
+#. Standalone (single instance mode)
+#: src/bevy-application.c:1163
+msgid "Start a new instance, ignoring existing instances"
+msgstr "Démarrer une nouvelle instance en ignorant les instances existantes"
+
+#: src/bevy-application.c:1165
+msgid "Set title for new tab"
+msgstr "Définir le titre pour le nouvel onglet"
+
+#: src/bevy-application.c:1166
+msgid "Maximize a newly created window"
+msgstr "Agrandir une fenêtre nouvellement créée"
+
+#: src/bevy-application.c:1167
+msgid "Fullscreen a newly created window"
+msgstr "Passer en plein écran une fenêtre nouvellement créée"
+
+#. Import a custom .palette file. This works like dragging the file onto preferences
+#: src/bevy-application.c:1170
+msgid "Import a Bevy palette file"
+msgstr "Importer un fichier de palette pour Bevy"
+
+#: src/bevy-application.c:1170
+msgid "FILE"
+msgstr "FICHIER"
+
+#: src/bevy-application.c:1177
+msgid "Run Separate Instance"
+msgstr "Exécuter une instance séparée"
+
+#: src/bevy-application.c:1181
+msgid "Open Preferences"
+msgstr "Ouvrir les préférences"
+
+#: src/bevy-application.c:1185
+msgid "Run Custom Command in New Window"
+msgstr "Exécuter une commande personnalisée dans une nouvelle fenêtre"
+
+#: src/bevy-application.c:1190
+msgid "Import a custom palette"
+msgstr "Importer une palette personnalisée"
+
+#: src/bevy-application.c:1193
+msgid "[-- COMMAND ARGUMENTS]"
+msgstr "[-- ARGUMENTS DE COMMANDE]"
+
+#: src/bevy-application.c:1434
+msgid "translator-credits"
+msgstr ""
+"Lawrence Deneiple <lawrence.dnp@gmail.com>\n"
+"Alexandre Franke <afranke@gnome.org>\n"
+"Guillaume Bernard <associations@guillaume-bernard.fr>"
+
+#: src/bevy-close-dialog.c:109
+msgid "_Close"
+msgstr "_Fermer"
+
+#: src/bevy-close-dialog.c:109
+msgid "_Close All"
+msgstr "_Tout fermer"
+
+#: src/bevy-close-dialog.c:111
+msgid "Close Window?"
+msgstr "Fermer la fenêtre ?"
+
+#: src/bevy-close-dialog.c:112
+msgid "Some processes are still running."
+msgstr "Certains processus sont toujours en cours d’exécution."
+
+#: src/bevy-close-dialog.c:116
+msgid "_Cancel"
+msgstr "A_nnuler"
+
+#: src/bevy-close-dialog.c:142
+#, c-format
+msgid "Process %d"
+msgstr "Processus %d"
+
+#: src/bevy-custom-link-editor.ui:20
+msgid "Edit Custom Link"
+msgstr "Modifier le lien personnalisé"
+
+#: src/bevy-custom-link-editor.ui:29
+msgid "Custom Link"
+msgstr "Lien personnalisé"
+
+#: src/bevy-custom-link-editor.ui:30
+msgid ""
+"A clickable link in the terminal that matches text patterns and opens custom "
+"URLs. Uses regex capture groups to build the final URL (e.g., $1 becomes the "
+"first matched group)."
+msgstr ""
+"Un lien cliquable dans le terminal qui identifie des chaînes de texte et "
+"ouvre des URLs personnalisées. Utilise les groupes de captures des "
+"expressions régulières pour construire l’URL finale (par exemple, $1 "
+"correspond au premier groupe identifié)."
+
+#: src/bevy-custom-link-editor.ui:35
+msgid "Regex Pattern"
+msgstr "Motif d’expression régulière"
+
+#: src/bevy-custom-link-editor.ui:40
+msgid "Target URL"
+msgstr "URL cible"
+
+#: src/bevy-custom-link-row.c:131
+#, c-format
+msgid "Removed custom link “%s”"
+msgstr "Lien personnalisé « %s » supprimé"
+
+#: src/bevy-custom-link-row.c:133 src/bevy-profile-editor.c:186
+#: src/bevy-profile-row.c:106
+msgid "Undo"
+msgstr "Annuler"
+
+#: src/bevy-custom-link-row.ui:26 src/bevy-profile-row.ui:33
+msgid "View More"
+msgstr "Afficher davantage"
+
+#: src/bevy-custom-link-row.ui:36 src/bevy-profile-row.ui:53
+msgid "_Edit…"
+msgstr "_Modifier…"
+
+#: src/bevy-custom-link-row.ui:42 src/bevy-profile-row.ui:59
+msgid "_Remove"
+msgstr "_Supprimer"
+
+#: src/bevy-find-bar.ui:69
+msgid "Search Up"
+msgstr "Rechercher vers le haut"
+
+#: src/bevy-find-bar.ui:76
+msgid "Search Down"
+msgstr "Rechercher vers le bas"
+
+#: src/bevy-find-bar.ui:85
+msgid "Search Options"
+msgstr "Options de recherche"
+
+#: src/bevy-find-bar.ui:96
+msgid "Match _Case"
+msgstr "Respecter la _casse"
+
+#: src/bevy-find-bar.ui:102
+msgid "Whole _Words"
+msgstr "Mots _entiers"
+
+#: src/bevy-find-bar.ui:108
+msgid "Use _Regular Expressions"
+msgstr "Utiliser des expressions _régulières"
+
+#: src/bevy-find-bar.ui:128 src/bevy-preferences-window.ui:572
+#: src/bevy-profile-editor.ui:302
+msgid "Close"
+msgstr "Fermer"
+
+#: src/bevy-find-bar.ui:129
+msgid "Close the search bar"
+msgstr "Fermer la barre de recherche"
+
+#: src/bevy-inspector.c:95 src/bevy-inspector.c:357
+msgid "unset"
+msgstr "non défini"
+
+#: src/bevy-inspector.c:116 src/bevy-inspector.c:274
+msgid "Row"
+msgstr "Ligne"
+
+#: src/bevy-inspector.c:116 src/bevy-inspector.c:274
+msgid "Column"
+msgstr "Colonne"
+
+#. NOTE: If we are in a container that also supports VTE patches
+#. * then it will send shell-precmd via escape sequences. The reality
+#. * is that our foreground is the `toolbox enter` process (until we
+#. * have better patches in VTE) but we show "Shell" instead.
+#. *
+#. * This is fine for now, but I'd like it to be better and actually
+#. * show the proper `tcgetpgrp()` foreground.
+#.
+#: src/bevy-inspector.c:177 src/bevy-inspector.c:197
+#: src/bevy-preferences-window.ui:508 src/bevy-profile-editor.ui:184
+msgid "Shell"
+msgstr "Shell"
+
+#: src/bevy-inspector.c:276
+msgid "untracked"
+msgstr "non suivi"
+
+#: src/bevy-inspector.ui:4
+msgid "Inspector"
+msgstr "Inspecteur"
+
+#: src/bevy-inspector.ui:7
+msgid "Process"
+msgstr "Processus"
+
+#: src/bevy-inspector.ui:13
+msgid "Foreground Process"
+msgstr "Processus en premier plan"
+
+#: src/bevy-inspector.ui:33
+msgid "Window Title"
+msgstr "Titre de la fenêtre"
+
+#: src/bevy-inspector.ui:45
+msgid "Current Directory"
+msgstr "Répertoire actuel"
+
+#: src/bevy-inspector.ui:53
+msgid "Current File"
+msgstr "Fichier actuel"
+
+#: src/bevy-inspector.ui:63
+msgid "Container"
+msgstr "Conteneur"
+
+#: src/bevy-inspector.ui:66
+msgid "Runtime"
+msgstr "Temps d’exécution"
+
+#: src/bevy-inspector.ui:74 src/bevy-inspector.ui:228
+#: src/bevy-profile-editor.ui:36
+msgid "Name"
+msgstr "Nom"
+
+#: src/bevy-inspector.ui:86 src/bevy-preferences-window.ui:36
+msgid "Appearance"
+msgstr "Apparence"
+
+#: src/bevy-inspector.ui:92
+msgid "Grid Size"
+msgstr "Taille de la grille"
+
+#: src/bevy-inspector.ui:105
+msgid "Colors"
+msgstr "Couleurs"
+
+#: src/bevy-inspector.ui:225 src/bevy-preferences-window.ui:130
+msgid "Font"
+msgstr "Police"
+
+#: src/bevy-inspector.ui:233
+msgid "Cell Size"
+msgstr "Taille de la cellule"
+
+#: src/bevy-inspector.ui:242
+msgid "Input"
+msgstr "Saisie"
+
+#: src/bevy-inspector.ui:246 src/bevy-preferences-window.ui:246
+msgid "Cursor"
+msgstr "Curseur"
+
+#: src/bevy-inspector.ui:249 src/bevy-inspector.ui:262
+msgid "Position"
+msgstr "Position"
+
+#: src/bevy-inspector.ui:259
+msgid "Mouse"
+msgstr "Souris"
+
+#: src/bevy-inspector.ui:270
+msgid "Hyperlink"
+msgstr "Lien hypertexte"
+
+#: src/bevy-menu-row.c:166 src/bevy-profile-editor.c:217
+#: src/bevy-window.c:1761
+msgid "My Computer"
+msgstr "Mon ordinateur"
+
+# On souhaite ici un pangrame pour prévisualiser la palette de couleurs et la police.
+#: src/bevy-palette-preview.ui:32
+msgid "The quick brown fox jumps over the lazy dog"
+msgstr "Bâchez quelques wagons-taxis avec vos pyjamas de fakir"
+
+#: src/bevy-preferences-window.c:277
+msgid "Select Font"
+msgstr "Sélectionner la police"
+
+#: src/bevy-preferences-window.c:352
+msgid "Show Fewer Palettes"
+msgstr "Afficher moins de palettes"
+
+#: src/bevy-preferences-window.c:357 src/bevy-preferences-window.ui:46
+msgid "Show All Palettes"
+msgstr "Afficher toutes les palettes"
+
+#: src/bevy-preferences-window.c:382
+msgid "Add Profile"
+msgstr "Ajouter un profil"
+
+#: src/bevy-preferences-window.c:484 src/bevy-profile-editor.c:270
+msgid "Add Link"
+msgstr "Ajouter un lien"
+
+#: src/bevy-preferences-window.ui:72 src/bevy-profile-editor.ui:74
+msgid "Transparency"
+msgstr "Transparence"
+
+#: src/bevy-preferences-window.ui:73 src/bevy-profile-editor.ui:75
+msgid "Reduces the opacity of the background window"
+msgstr "Réduit l’opacité de la fenêtre d’arrière-plan"
+
+#: src/bevy-preferences-window.ui:134
+msgid "Use System _Font"
+msgstr "Utiliser la police du _système"
+
+#: src/bevy-preferences-window.ui:146
+msgid "Custom Font"
+msgstr "Police personnalisée"
+
+#: src/bevy-preferences-window.ui:207
+msgid "Blinking Text"
+msgstr "Texte clignotant"
+
+#: src/bevy-preferences-window.ui:216 src/bevy-preferences-window.ui:440
+#: src/bevy-preferences-window.ui:529 src/bevy-profile-editor.ui:230
+#: src/bevy-profile-editor.ui:259
+msgid "Never"
+msgstr "Jamais"
+
+#: src/bevy-preferences-window.ui:222
+msgid "Focused"
+msgstr "A le focus"
+
+#: src/bevy-preferences-window.ui:228
+msgid "Unfocused"
+msgstr "N’a pas le focus"
+
+#: src/bevy-preferences-window.ui:234 src/bevy-preferences-window.ui:452
+#: src/bevy-preferences-window.ui:541 src/bevy-profile-editor.ui:236
+#: src/bevy-profile-editor.ui:271
+msgid "Always"
+msgstr "Toujours"
+
+#: src/bevy-preferences-window.ui:258
+msgid "Block"
+msgstr "Bloc"
+
+#: src/bevy-preferences-window.ui:264
+msgid "I-Beam"
+msgstr "Barre"
+
+#: src/bevy-preferences-window.ui:270
+msgid "Underline"
+msgstr "Souligné"
+
+#: src/bevy-preferences-window.ui:280
+msgid "Cursor Blinking"
+msgstr "Clignotement du curseur"
+
+#: src/bevy-preferences-window.ui:289 src/bevy-preferences-window.ui:446
+msgid "Follow System"
+msgstr "Suivre le système"
+
+#: src/bevy-preferences-window.ui:295
+msgid "Enabled"
+msgstr "Activé"
+
+#: src/bevy-preferences-window.ui:301
+msgid "Disabled"
+msgstr "Désactivé"
+
+#: src/bevy-preferences-window.ui:315
+msgid "Behavior"
+msgstr "Comportement"
+
+#: src/bevy-preferences-window.ui:319
+msgid "Interface"
+msgstr "Interface"
+
+#: src/bevy-preferences-window.ui:331
+msgid "Next"
+msgstr "Suivant"
+
+#: src/bevy-preferences-window.ui:337
+msgid "Last"
+msgstr "Dernier"
+
+#: src/bevy-preferences-window.ui:352
+msgid "Attempt to restore previous tabs when Bevy starts"
+msgstr "Tenter de restaurer les onglets précédents lorsque Bevy démarre"
+
+#: src/bevy-preferences-window.ui:358
+msgid "Restore the previous window size when creating a new window"
+msgstr ""
+"Restaurer la taille de la fenêtre précédente lors de la création d’une "
+"nouvelle fenêtre"
+
+#: src/bevy-preferences-window.ui:368
+msgid "Columns"
+msgstr "Colonnes"
+
+#: src/bevy-preferences-window.ui:382
+msgid "Rows"
+msgstr "Lignes"
+
+#: src/bevy-preferences-window.ui:400
+msgid "Accessibility"
+msgstr "Accessibilité"
+
+#: src/bevy-preferences-window.ui:403
+msgid "Allow Screen Readers"
+msgstr "Autoriser les lecteurs d’écran"
+
+#: src/bevy-preferences-window.ui:404
+msgid ""
+"Permit screen readers such as Orca to read terminal content and typed text"
+msgstr ""
+"Permettre aux lecteurs d’écran tels qu’Orca de lire le contenu du terminal "
+"et le texte saisi"
+
+#: src/bevy-preferences-window.ui:411
+msgid "Bell"
+msgstr "Signal"
+
+#: src/bevy-preferences-window.ui:415
+msgid "Emit an audible bell when requested by active tab"
+msgstr "Émettre un signal sonore lorsqu’il est demandé par l’onglet actif"
+
+#: src/bevy-preferences-window.ui:420
+msgid "Visual Bell"
+msgstr "Signal visuel"
+
+#: src/bevy-preferences-window.ui:421
+msgid "Emit a visual bell when requested by active tab"
+msgstr "Émettre un signal visuel lorsqu’il est demandé par l’onglet actif"
+
+#: src/bevy-preferences-window.ui:428 src/bevy-profile-editor.ui:314
+msgid "Scrolling"
+msgstr "Défilement"
+
+#: src/bevy-preferences-window.ui:431
+msgid "Use Scrollbars"
+msgstr "Utiliser les barres de défilement"
+
+#: src/bevy-preferences-window.ui:467 src/bevy-profile-editor.ui:318
+msgid "Scroll to the bottom upon input keystroke"
+msgstr "Faire défiler jusqu’en bas lors de la frappe d’une touche"
+
+#: src/bevy-preferences-window.ui:473 src/bevy-profile-editor.ui:324
+msgid "Scroll to the bottom when new content is available"
+msgstr "Faire défiler jusqu’en bas lorsque du nouveau contenu est disponible"
+
+#: src/bevy-preferences-window.ui:483 src/bevy-profile-editor.ui:334
+msgid "Restrict the number of lines saved for scrollback"
+msgstr ""
+"Restreindre le nombre de lignes enregistrées pour le défilement arrière"
+
+#: src/bevy-preferences-window.ui:492 src/bevy-profile-editor.ui:343
+msgid "The number of lines to keep for scrollback"
+msgstr "Le nombre de lignes à conserver pour le défilement arrière"
+
+#: src/bevy-preferences-window.ui:511 src/bevy-profile-editor.ui:202
+msgid "Use Login Shell"
+msgstr "Utiliser le shell de connexion"
+
+#: src/bevy-preferences-window.ui:520 src/bevy-profile-editor.ui:250
+msgid "Preserve Working Directory"
+msgstr "Conserver le répertoire de travail"
+
+#: src/bevy-preferences-window.ui:535 src/bevy-profile-editor.ui:265
+msgid "Safe"
+msgstr "Sûr"
+
+#: src/bevy-preferences-window.ui:560 src/bevy-profile-editor.ui:290
+msgid "No Action"
+msgstr "Aucune action"
+
+#: src/bevy-preferences-window.ui:566 src/bevy-profile-editor.ui:296
+msgid "Restart"
+msgstr "Redémarrer"
+
+#: src/bevy-preferences-window.ui:584 src/bevy-profile-editor.ui:359
+msgid "Compatibility"
+msgstr "Compatibilité"
+
+#: src/bevy-preferences-window.ui:587 src/bevy-profile-editor.ui:362
+msgid "Backspace Key"
+msgstr "Touche retour arrière"
+
+#: src/bevy-preferences-window.ui:588 src/bevy-profile-editor.ui:363
+msgid "Sequence to send for Backspace key"
+msgstr "Séquence à envoyer pour la touche retour arrière"
+
+#: src/bevy-preferences-window.ui:597 src/bevy-profile-editor.ui:372
+msgid "Delete Key"
+msgstr "Touche de suppression"
+
+#: src/bevy-preferences-window.ui:598 src/bevy-profile-editor.ui:373
+msgid "Sequence to send for Delete key"
+msgstr "Séquence à envoyer pour la touche de suppression"
+
+#: src/bevy-preferences-window.ui:607 src/bevy-profile-editor.ui:382
+msgid "Ambiguous-width Characters"
+msgstr "Caractères de largeur ambiguë"
+
+#: src/bevy-preferences-window.ui:616 src/bevy-profile-editor.ui:391
+msgid "Narrow"
+msgstr "Étroit"
+
+#: src/bevy-preferences-window.ui:622 src/bevy-profile-editor.ui:397
+msgid "Wide"
+msgstr "Large"
+
+#: src/bevy-preferences-window.ui:655
+msgid "Set as Default Terminal"
+msgstr "Définir comme terminal par défaut"
+
+#: src/bevy-preferences-window.ui:665
+msgid "Shortcuts"
+msgstr "Raccourcis"
+
+#: src/bevy-preferences-window.ui:694
+msgid "Clear Selection"
+msgstr "Effacer la sélection"
+
+#: src/bevy-preferences-window.ui:704 src/bevy-shortcut-accel-dialog.ui:48
+#: src/bevy-terminal.ui:230
+msgid "Reset"
+msgstr "Réinitialiser"
+
+#: src/bevy-preferences-window.ui:710 src/bevy-terminal.ui:236
+msgid "Reset and Clear"
+msgstr "Réinitialiser et effacer"
+
+#: src/bevy-preferences-window.ui:731
+msgid "Show Context Menu"
+msgstr "Afficher le menu contextuel"
+
+#: src/bevy-preferences-window.ui:739
+msgid "Windows"
+msgstr "Fenêtres"
+
+#: src/bevy-preferences-window.ui:743
+msgid "Open a new tab in a new window"
+msgstr "Ouvrir un nouvel onglet dans une nouvelle fenêtre"
+
+#: src/bevy-preferences-window.ui:750
+msgid "Close the current window"
+msgstr "Fermer la fenêtre actuelle"
+
+#: src/bevy-preferences-window.ui:768
+msgid "Tabs"
+msgstr "Onglets"
+
+#: src/bevy-preferences-window.ui:772
+msgid "Open a new tab in the current window"
+msgstr "Ouvrir un nouvel onglet dans la fenêtre actuelle"
+
+#: src/bevy-preferences-window.ui:782
+msgid "View Tab Overview"
+msgstr "Afficher l’aperçu de l’onglet"
+
+#: src/bevy-preferences-window.ui:783
+msgid "Show an overview of all tabs within the window"
+msgstr "Afficher un aperçu de tous les onglets dans la fenêtre"
+
+#: src/bevy-preferences-window.ui:794
+msgid "Close the current tab"
+msgstr "Fermer l’onglet actuel"
+
+#: src/bevy-preferences-window.ui:801
+msgid "Close all tabs except the active tab"
+msgstr "Fermer tous les onglets sauf l’onglet actif"
+
+#: src/bevy-preferences-window.ui:808
+msgid "Undo closing the last tab"
+msgstr "Annuler la fermeture du dernier onglet"
+
+#: src/bevy-preferences-window.ui:835
+msgid "Move the tab one position to the left"
+msgstr "Déplacer l’onglet d’une position vers la gauche"
+
+#: src/bevy-preferences-window.ui:842
+msgid "Move the tab one position to the right"
+msgstr "Déplacer l’onglet d’une position vers la droite"
+
+#: src/bevy-preferences-window.ui:849
+msgid "Detach the current tab and move it to a new window"
+msgstr "Détacher l’onglet actuel et le déplacer dans une nouvelle fenêtre"
+
+#: src/bevy-preferences-window.ui:859
+msgid "Switch to Tab 1"
+msgstr "Passer à l’onglet 1"
+
+#: src/bevy-preferences-window.ui:865
+msgid "Switch to Tab 2"
+msgstr "Passer à l’onglet 2"
+
+#: src/bevy-preferences-window.ui:871
+msgid "Switch to Tab 3"
+msgstr "Passer à l’onglet 3"
+
+#: src/bevy-preferences-window.ui:877
+msgid "Switch to Tab 4"
+msgstr "Passer à l’onglet 4"
+
+#: src/bevy-preferences-window.ui:883
+msgid "Switch to Tab 5"
+msgstr "Passer à l’onglet 5"
+
+#: src/bevy-preferences-window.ui:889
+msgid "Switch to Tab 6"
+msgstr "Passer à l’onglet 6"
+
+#: src/bevy-preferences-window.ui:895
+msgid "Switch to Tab 7"
+msgstr "Passer à l’onglet 7"
+
+#: src/bevy-preferences-window.ui:901
+msgid "Switch to Tab 8"
+msgstr "Passer à l’onglet 8"
+
+#: src/bevy-preferences-window.ui:907
+msgid "Switch to Tab 9"
+msgstr "Passer à l’onglet 9"
+
+#: src/bevy-preferences-window.ui:913
+msgid "Switch to Tab 10"
+msgstr "Passer à l’onglet 10"
+
+#: src/bevy-preferences-window.ui:919
+msgid "Switch to Last Tab"
+msgstr "Passer au dernier onglet"
+
+#: src/bevy-preferences-window.ui:927
+msgid "Zoom"
+msgstr "Zoom"
+
+#: src/bevy-preferences-window.ui:950
+msgid "Application"
+msgstr "Application"
+
+#: src/bevy-preferences-window.ui:954
+msgid "Toggle in and out of fullscreen"
+msgstr "Basculer en plein écran"
+
+#: src/bevy-preferences-window.ui:964
+msgid "Show Primary Menu"
+msgstr "Afficher le menu principal"
+
+#: src/bevy-preferences-window.ui:965
+msgid "Displays the primary menu for the terminal window"
+msgstr "Afficher le menu principal de la fenêtre du terminal"
+
+#: src/bevy-preferences-window.ui:971
+msgid "Show New Tab Menu"
+msgstr "Afficher le menu des nouveaux onglets"
+
+#: src/bevy-preferences-window.ui:972
+msgid "Displays the new tab menu for the terminal window"
+msgstr "Afficher le menu des nouveaux onglets de la fenêtre du terminal"
+
+#: src/bevy-preferences-window.ui:979
+msgid "Show this preferences window"
+msgstr "Afficher cette fenêtre de préférences"
+
+#: src/bevy-preferences-window.ui:986
+msgid "Show the keyboard shortcuts configuration"
+msgstr "Afficher la configuration des raccourcis clavier"
+
+#: src/bevy-preferences-window.ui:996 src/bevy-preferences-window.ui:1000
+#: src/bevy-window.c:1735 src/bevy-window.c:1897
+msgid "Profiles"
+msgstr "Profils"
+
+#: src/bevy-preferences-window.ui:1019 src/bevy-profile-editor.ui:442
+msgid "Automatic"
+msgstr "Automatique"
+
+#: src/bevy-preferences-window.ui:1025 src/bevy-profile-editor.ui:448
+msgid "Control-H"
+msgstr "Ctrl-H"
+
+#: src/bevy-preferences-window.ui:1031 src/bevy-profile-editor.ui:454
+msgid "ASCII DEL"
+msgstr "ASCII DEL"
+
+#: src/bevy-preferences-window.ui:1037 src/bevy-profile-editor.ui:460
+msgid "Escape Sequence"
+msgstr "Séquence d’échappement"
+
+#: src/bevy-preferences-window.ui:1043 src/bevy-profile-editor.ui:466
+msgid "TTY Erase"
+msgstr "Effacement TTY"
+
+#: src/bevy-profile.c:729
+msgid "Untitled Profile"
+msgstr "Profil sans titre"
+
+#: src/bevy-profile-dialog.ui:29 src/bevy-terminal.ui:249
+msgid "Change Profile"
+msgstr "Changer de profil"
+
+#: src/bevy-profile-dialog.ui:42 src/bevy-profile-editor.ui:31
+msgid "Profile"
+msgstr "Profil"
+
+#: src/bevy-profile-dialog.ui:43
+msgid "Select a profile to apply to this terminal"
+msgstr "Sélectionner un profil à appliquer à ce terminal"
+
+#: src/bevy-profile-editor.c:155 src/bevy-terminal.c:440
+#: src/bevy-terminal.c:472
+msgid "Copied to clipboard"
+msgstr "Copié dans le presse-papiers"
+
+#: src/bevy-profile-editor.c:184 src/bevy-profile-row.c:104
+#, c-format
+msgid "Removed profile “%s”"
+msgstr "Profil « %s » supprimé"
+
+#: src/bevy-profile-editor.ui:22 src/bevy-tab.c:504 src/bevy-tab.c:561
+msgid "Edit Profile"
+msgstr "Modifier le profil"
+
+#: src/bevy-profile-editor.ui:41
+msgid "Identifier"
+msgstr "Identifiant"
+
+#: src/bevy-profile-editor.ui:50
+msgid "Copy"
+msgstr "Copier"
+
+#: src/bevy-profile-editor.ui:62
+msgid "Color"
+msgstr "Couleur"
+
+#: src/bevy-profile-editor.ui:134
+msgid "Use Bright Colors for Bold"
+msgstr "Utiliser des couleurs vives pour le gras"
+
+#: src/bevy-profile-editor.ui:173
+msgid "Network"
+msgstr "Réseau"
+
+#: src/bevy-profile-editor.ui:176
+msgid "Proxy"
+msgstr "Serveur mandataire"
+
+#: src/bevy-profile-editor.ui:177
+msgid "Applies the network proxy settings to the container environment"
+msgstr ""
+"Applique les paramètres du serveur mandataire à l’environnement du conteneur"
+
+#: src/bevy-profile-editor.ui:212
+msgid "The default container to use with this profile"
+msgstr "Le conteneur par défaut à utiliser avec ce profil"
+
+#: src/bevy-profile-editor.ui:221
+msgid "Preserve the current container when opening new tabs and windows"
+msgstr ""
+"Conserver le conteneur actuel lors de l’ouverture de nouveaux onglets et "
+"fenêtres"
+
+#: src/bevy-profile-editor.ui:427
+msgid "Remove Profile"
+msgstr "Supprimer le profil"
+
+#: src/bevy-profile-row.ui:43
+msgid "_Make Default"
+msgstr "_Définir par défaut"
+
+#: src/bevy-profile-row.ui:49
+msgid "_Duplicate…"
+msgstr "_Dupliquer…"
+
+#. Translators: <b>%s</b> is used to show the provided text in bold
+#: src/bevy-shortcut-accel-dialog.c:538
+#, c-format
+msgid "Enter new shortcut to change <b>%s</b>."
+msgstr "Saisissez un nouveau raccourci pour changer <b>%s</b>."
+
+#. do not use underline as it prevents alt+c as an accelerator
+#: src/bevy-shortcut-accel-dialog.ui:42
+msgid "Cancel"
+msgstr "Annuler"
+
+#. do not use underline as it prevents alt+s as an accelerator
+#: src/bevy-shortcut-accel-dialog.ui:56
+msgid "Set"
+msgstr "Définir"
+
+#: src/bevy-shortcut-accel-dialog.ui:96
+msgid "Press Escape to cancel or Backspace to disable."
+msgstr "Appuyez sur Échap pour annuler ou sur Retour arrière pour désactiver."
+
+#: src/bevy-shortcut-row.c:84
+msgid "Set Shortcut"
+msgstr "Définir le raccourci"
+
+#: src/bevy-shortcut-row.ui:33
+msgid "disabled"
+msgstr "désactivé"
+
+#: src/bevy-tab.c:355
+msgid "A foreground process is running"
+msgstr "Un processus est exécuté en premier plan"
+
+#: src/bevy-tab.c:412
+#, c-format
+msgid "Process Exited from Signal %d"
+msgstr "Processus arrêté par le signal %d"
+
+#: src/bevy-tab.c:415 src/bevy-tab.c:438
+msgid "_Restart"
+msgstr "_Redémarrer"
+
+#. Always prepare the banner even if we don't show it because we may
+#. * display it again if the tab is removed from the parking lot and
+#. * restored into the window.
+#.
+#: src/bevy-tab.c:437
+msgid "Process Exited"
+msgstr "Processus arrêté"
+
+#: src/bevy-tab.c:503
+msgid "Failed to launch terminal"
+msgstr "Échec du démarrage du terminal"
+
+#: src/bevy-tab.c:559
+#, c-format
+msgid "Cannot locate container “%s”"
+msgstr "Impossible de localiser le conteneur « %s »"
+
+#: src/bevy-tab.c:583
+msgid "Failed to create pseudo terminal device"
+msgstr "Échec de la création du périphérique de terminal pseudo"
+
+#: src/bevy-tab.c:1650
+msgid "Exited"
+msgstr "Arrêté"
+
+#: src/bevy-tab.c:1652
+msgid "Failed"
+msgstr "Échec"
+
+#: src/bevy-tab.c:2240
+msgid "Failed to open link"
+msgstr "Échec de l’ouverture du lien"
+
+#: src/bevy-tab-notify.h:93
+msgid "Command completed"
+msgstr "Commande terminée"
+
+#: src/bevy-terminal.ui:169
+msgid "_Open Link"
+msgstr "_Ouvrir le lien"
+
+#: src/bevy-terminal.ui:174
+msgid "_Copy Link"
+msgstr "Co_pier le lien"
+
+#: src/bevy-terminal.ui:182
+msgid "Search…"
+msgstr "Rechercher…"
+
+#: src/bevy-terminal.ui:189
+msgid "_Copy"
+msgstr "Co_pier"
+
+#: src/bevy-terminal.ui:190
+msgid "Copy selection from terminal to clipboard"
+msgstr "Copier la sélection du terminal dans le presse-papiers"
+
+#: src/bevy-terminal.ui:194
+msgid "Copy as _HTML"
+msgstr "Copier en tant que _HTML"
+
+#: src/bevy-terminal.ui:195
+msgid "Copy selection from terminal to clipboard with HTML formatting"
+msgstr ""
+"Copier la sélection du terminal dans le presse-papiers en conservant la mise "
+"en forme HTML"
+
+#: src/bevy-terminal.ui:201
+msgid "_Paste"
+msgstr "Co_ller"
+
+#: src/bevy-terminal.ui:202
+msgid "Paste from clipboard into the terminal"
+msgstr "Coller du presse-papiers dans le terminal"
+
+#: src/bevy-terminal.ui:209
+msgid "Select _All"
+msgstr "_Tout sélectionner"
+
+#: src/bevy-terminal.ui:210
+msgid "Selection all text from terminal including scrollback"
+msgstr ""
+"Sélectionner tout le texte du terminal, y compris le défilement arrière"
+
+#: src/bevy-terminal.ui:216
+msgid "Select _None"
+msgstr "_Ne rien sélectionner"
+
+#: src/bevy-terminal.ui:223
+msgid "Read-Only"
+msgstr "Lecture seule"
+
+#: src/bevy-terminal.ui:257 src/bevy-window.ui:409 src/bevy-window.ui:791
+msgid "Leave Fullscreen"
+msgstr "Quitter le plein écran"
+
+#: src/bevy-terminal.ui:263
+msgid "_Inspect Terminal"
+msgstr "_Inspecter le terminal"
+
+#: src/bevy-theme-selector.ui:21
+msgid "Follow System Style"
+msgstr "Suivre le thème du système"
+
+#: src/bevy-theme-selector.ui:23
+msgid "Follow system style"
+msgstr "Suivre le thème du système"
+
+#: src/bevy-theme-selector.ui:37
+msgid "Light Style"
+msgstr "Thème clair"
+
+#: src/bevy-theme-selector.ui:39
+msgid "Light style"
+msgstr "Thème clair"
+
+#: src/bevy-theme-selector.ui:54
+msgid "Dark Style"
+msgstr "Thème sombre"
+
+#: src/bevy-theme-selector.ui:56
+msgid "Dark style"
+msgstr "Thème sombre"
+
+#: src/bevy-title-dialog.ui:36
+msgid "Title"
+msgstr "Titre"
+
+#: src/bevy-title-dialog.ui:42
+msgid "Include Process Title"
+msgstr "Inclure le titre du processus"
+
+#: src/bevy-title-dialog.ui:43
+msgid "Append title from Shell application"
+msgstr "Ajouter un titre à partir de l’application Shell"
+
+#. translators: Builder Terminal means this is a terminal bundled with GNOME Builder
+#: src/bevy-util.c:326
+msgid "Builder Terminal"
+msgstr "Terminal de GNOME Builder"
+
+#: src/bevy-util.c:330
+msgid "Bevy"
+msgstr "Bevy"
+
+#: src/bevy-window.c:1518
+msgid "Zoom in"
+msgstr "Zoom avant"
+
+#: src/bevy-window.c:1533
+msgid "Zoom out"
+msgstr "Zoom arrière"
+
+#: src/bevy-window.c:1729 src/bevy-window.c:1901
+msgid "Containers"
+msgstr "Conteneurs"
+
+#: src/bevy-window.ui:424
+msgid "New Terminal"
+msgstr "Nouveau terminal"
+
+#: src/bevy-window.ui:437
+msgid "Show Profiles and Containers"
+msgstr "Afficher les profils et les conteneurs"
+
+#: src/bevy-window.ui:457
+msgid "Filter…"
+msgstr "Filtrer…"
+
+#: src/bevy-window.ui:610
+msgid "No Matching Results"
+msgstr "Aucun résultat correspondant"
+
+#: src/bevy-window.ui:652
+msgid "Main Menu"
+msgstr "Menu principal"
+
+#: src/bevy-window.ui:660 src/bevy-window.ui:777
+msgid "Show Open Tabs"
+msgstr "Afficher les onglets ouverts"
+
+#: src/bevy-window.ui:761
+msgid "New _Tab"
+msgstr "Nouvel _onglet"
+
+#: src/bevy-window.ui:768
+msgid "New _Window"
+msgstr "Nouvelle _fenêtre"
+
+#: src/bevy-window.ui:785
+msgid "Fullscreen"
+msgstr "Plein écran"
+
+#: src/bevy-window.ui:799
+msgid "_Preferences"
+msgstr "_Préférences"
+
+#: src/bevy-window.ui:804
+msgid "_Keyboard Shortcuts"
+msgstr "_Raccourcis clavier"
+
+#: src/bevy-window.ui:808
+msgid "_About"
+msgstr "À _propos"
+
+#: src/bevy-window.ui:817
+msgid "Move _Left"
+msgstr "Déplacer à _gauche"
+
+#: src/bevy-window.ui:822
+msgid "Move _Right"
+msgstr "Déplacer à _droite"
+
+#: src/bevy-window.ui:827
+msgid "Move to New _Window"
+msgstr "Déplacer dans une nouvelle _fenêtre"
+
+#: src/bevy-window.ui:833
+msgid "_Pin Tab"
+msgstr "_Épingler l’onglet"
+
+#: src/bevy-window.ui:838
+msgid "Un_pin Tab"
+msgstr "Dés_épingler l’onglet"
+
+#: src/bevy-window.ui:853
+msgid "Close _Other Tabs"
+msgstr "Fermer les _autres onglets"
+
+#: src/bevy-window.ui:858
+msgid "_Close Tab"
+msgstr "_Fermer l’onglet"
+
+#~ msgid "Unknown Container"
+#~ msgstr "Conteneur inconnu"
+
+#~ msgid "Search up to next result"
+#~ msgstr "Chercher vers le haut jusqu’au prochain résultat"
+
+#~ msgid "Search down to next result"
+#~ msgstr "Chercher vers le bas jusqu’au prochain résultat"
+
+#~ msgid "_My Computer"
+#~ msgstr "_Mon ordinateur"

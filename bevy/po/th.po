@@ -1,0 +1,1949 @@
+# Thai translation for bevy.
+# Copyright (C) 2025 bevy's COPYRIGHT HOLDER
+# This file is distributed under the same license as the bevy package.
+# Atirut Wattanamongkol <atirut.wattanamongkol@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: bevy gnome-47\n"
+"Report-Msgid-Bugs-To: https://github.com/ferret-linux/bevy/issues\n"
+"POT-Creation-Date: 2026-03-17 00:25+0000\n"
+"PO-Revision-Date: 2026-04-18 18:39+0700\n"
+"Last-Translator: Atirut Wattanamongkol <atirut.wattanamongkol@gmail.com>\n"
+"Language-Team: Thai <thai-l10n@googlegroups.com>\n"
+"Language: th\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 3.9\n"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:2 data/dev.itznoel.Bevy.metainfo.xml.in.in:6
+msgid "@APP_NAME@"
+msgstr "@APP_NAME@"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:3
+msgid "A container-oriented terminal for GNOME"
+msgstr "เทอร์มินัลแบบทำงานบนคอนเทนเนอร์ สำหรับ GNOME"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:12 src/bevy-preferences-window.ui:669 src/bevy-tab.c:1647
+#: src/bevy-util.c:318
+msgid "Terminal"
+msgstr "เทอร์มินัล"
+
+#. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+#: data/dev.itznoel.Bevy.desktop.in.in:14
+msgid "terminal;prompt;bevy;shell;command;commandline;cmd;cli;console;container;podman;toolbox;distrobox;"
+msgstr "เทอร์มินัล;พรอมต์;bevy;เชลล์;คำสั่ง;บรรทัดคำสั่ง;cmd;cli;คอนโซล;คอนเทนเนอร์;podman;toolbox;distrobox;"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:23 src/dev.itznoel.Bevy.gschema.xml.in:424
+#: src/bevy-preferences-window.ui:742
+msgid "New Window"
+msgstr "หน้าต่างใหม่"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:27 src/dev.itznoel.Bevy.gschema.xml.in:418
+#: src/bevy-preferences-window.ui:771
+msgid "New Tab"
+msgstr "แท็บใหม่"
+
+#: data/dev.itznoel.Bevy.desktop.in.in:31 src/dev.itznoel.Bevy.gschema.xml.in:436
+#: src/bevy-preferences-window.ui:978
+msgid "Preferences"
+msgstr "ค่าปรับแต่ง"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:7
+msgid "Container-oriented terminal"
+msgstr "เทอร์มินัลแบบทำงานบนคอนเทนเนอร์"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:9
+msgid "Bevy is a terminal for GNOME that focuses on ease-of-use in a world of containers."
+msgstr "Bevy เป็นโปรแกรมเทอร์มินัลสำหรับ GNOME ที่มุ่งเน้นความง่ายในการใช้งานในยุคที่มีการใช้คอนเทนเนอร์อย่างแพร่หลาย"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:13
+msgid "Features:"
+msgstr "คุณลักษณะ:"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:15
+msgid "Remembers current container when opening a new tab with support for podman, toolbox, distrobox, and more"
+msgstr "จดจำคอนเทนเนอร์ปัจจุบันเมื่อเปิดแท็บใหม่ โดยรองรับ podman, toolbox, distrobox และอื่น ๆ เพิ่มเติม"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:16
+msgid "Configurable keyboard shortcuts"
+msgstr "สามารถปรับแต่งปุ่มลัดแป้นพิมพ์ได้"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:17
+msgid "Modern interface which integrates the palette with the window styling"
+msgstr "ส่วนติดต่อทันสมัยที่ผสานพาเล็ตเข้ากับลักษณะของหน้าต่างอย่างกลมกลืน"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:18
+msgid "User-installable color palettes"
+msgstr "ผู้ใช้สามารถติดตั้งชุดสีเพิ่มได้เอง"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:19
+msgid "Support for preferences profiles with container integration"
+msgstr "รองรับโปรไฟล์ค่าปรับแต่งที่ผสานการทำงานกับคอนเทนเนอร์"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:20
+msgid "Integrated color palettes with light and dark support"
+msgstr "มีชุดสีในตัว พร้อมรองรับทั้งโหมดสว่างและโหมดมืด"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:21
+msgid "Tabbed interface with tab overviews"
+msgstr "ส่วนติดต่อแบบแท็บ พร้อมมุมมองภาพรวมของแท็บ"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:22
+msgid "Efficient foreground process tracking denoting sudo and SSH"
+msgstr "ติดตามโปรเซสเบื้องหน้าได้อย่างมีประสิทธิภาพ โดยสามารถระบุได้ว่าเป็น sudo หรือ SSH"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:23
+msgid "Support for transparent terminal backgrounds"
+msgstr "รองรับพื้นหลังของเทอร์มินัลแบบโปร่งใส"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:24
+msgid "Separate process mode for terminal-based applications"
+msgstr "มีโหมดแยกโปรเซสสำหรับแอปพลิเคชันที่ทำงานบนเทอร์มินัล"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:25
+msgid "Support for pinned tabs and saved sessions"
+msgstr "รองรับการปักหมุดแท็บและการบันทึกเซสชัน"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:26
+msgid "Terminal tabs are run within separate cgroups"
+msgstr "แท็บของเทอร์มินัลจะทำงานอยู่ภายใน cgroups ที่แยกออกจากกัน"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:27
+msgid "Terminal inspector to help when writing terminal-based applications"
+msgstr "มีเครื่องมือตรวจสอบเทอร์มินัลเพื่อช่วยในการพัฒนาแอปพลิเคชันที่ทำงานบนเทอร์มินัล"
+
+#. developer_name tag deprecated with Appstream 1.0
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:32
+msgid "Christian Hergert"
+msgstr "Christian Hergert"
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:54
+msgid "A column and row size indicator is displayed when resizing the window"
+msgstr ""
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:59
+msgid "Containers are automatically discovered and displayed"
+msgstr ""
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:64
+msgid "Many behaviors of the terminal may be tweaked to user preference"
+msgstr ""
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:69
+msgid "You may rename a tab by providing a prefix to the title"
+msgstr ""
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:74
+msgid "Palettes provide an integrated dark mode"
+msgstr ""
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:79
+msgid "You can see an overview of your tabs at any time"
+msgstr ""
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:84
+msgid "Many shortcuts may be remapped to user preference"
+msgstr ""
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:89
+msgid "Built-in color palettes provide both dark and light mode variants"
+msgstr ""
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:94
+msgid "Profiles allow for overriding a number of features such as default container"
+msgstr ""
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:99
+msgid "The terminal will remind you when you're root on the local system"
+msgstr ""
+
+#: data/dev.itznoel.Bevy.metainfo.xml.in.in:104
+msgid "The terminal will remind you when you're on a remote system"
+msgstr ""
+
+#: src/main.c:142 src/main.c:149 src/main.c:161
+msgid "Error"
+msgstr "ข้อผิดพลาด"
+
+#: src/main.c:155
+#, c-format
+msgid ""
+"Error: %s already exists.\n"
+"Please remove it first.\n"
+msgstr ""
+"ข้อผิดพลาด: %s มีอยู่แล้ว\n"
+"โปรดเอาออกก่อน\n"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:101
+msgid "Default Profile UUID"
+msgstr "UUID ของโปรไฟล์ปัจจุบัน"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:102
+msgid "The UUID of the default profile"
+msgstr "UUID สำหรับโปรไฟล์ปัจจุบัน"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:107
+msgid "UUIDs of all Profiles"
+msgstr "UUID ของทุกโปรไฟล์"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:108
+msgid "A list of UUID for every profile"
+msgstr "รายการ UUID สำหรับทุกโปรไฟล์"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:113 src/bevy-preferences-window.ui:322
+msgid "New Tab Position"
+msgstr "ตำแหน่งแท็บใหม่"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:114
+msgid "Where to place new tabs"
+msgstr "ตำแหน่งที่จะให้วางแท็บใหม่"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:119 src/bevy-preferences-window.ui:414
+msgid "Audible Bell"
+msgstr "สัญญาณเตือนแบบเสียง"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:120
+msgid "If an audible bell should be used"
+msgstr "กำหนดว่าจะใช้สัญญาณเตือนแบบเสียงหรือไม่"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:125
+msgid "Visible Bell"
+msgstr "สัญญาณเตือนแบบภาพ"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:126
+msgid "If a visual bell should be used"
+msgstr "กำหนดว่าจะใช้สัญญาณเตือนแบบภาพหรือไม่"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:131
+msgid "Visual Process Leader"
+msgstr "ตัวนำโปรเซสแบบเห็นภาพ"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:132
+msgid "Display a visual window highlight when process leader is SSH, sudo, or other specialized tooling"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:137
+msgid "Use System Font"
+msgstr "ใช้แบบอักษรระบบ"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:138
+msgid "If the default system monospace font should be used"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:143
+msgid "Font Name"
+msgstr "ชื่อแบบอักษร"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:144
+msgid "The font description to use if use-system-font is set to False"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:149 src/bevy-preferences-window.ui:249
+msgid "Cursor Shape"
+msgstr "รูปทรงเคอร์เซอร์"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:150
+msgid "The default shape of the cursor"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:155
+msgid "Cursor Blink Mode"
+msgstr "โหมดการกะพริบเคอร์เซอร์"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:156
+msgid "The default blink mode cursor"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:161
+msgid "List of punctuation characters that are treated as word characters"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:162
+msgid ""
+"By default, when doing word-wise selection, most punctuation breaks up word boundaries. This list of "
+"exceptions will instead be treated as part of the word."
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:167
+msgid "Scrollbar Policy"
+msgstr "กฎสำหรับแถบเลื่อน"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:168
+msgid "If scrollbars should be displayed"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:177
+msgid "Text Blink Mode"
+msgstr "โหมดการกะพริบข้อความ"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:178
+msgid "When text blinking is allowed"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:183
+msgid "Interface Style"
+msgstr "รูปแบบส่วนติดต่อ"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:184
+msgid "If light or dark interface style should be used"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:189 src/bevy-preferences-window.ui:351
+msgid "Restore Session"
+msgstr "คืนค่าเซสชัน"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:190
+msgid "Restore tabs from previous session when starting Bevy"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:195 src/bevy-preferences-window.ui:357
+msgid "Restore Window Size"
+msgstr "คืนค่าขนาดหน้าต่าง"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:196
+msgid "Restore the previous window size when creating new windows"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:206
+msgid "Default Column Size"
+msgstr "ขนาดคอลัมน์เริ่มต้น"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:207 src/dev.itznoel.Bevy.gschema.xml.in:214
+msgid "Default window size when restore-window-size is not true."
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:213
+msgid "Default Row Size"
+msgstr "ขนาดแถวเริ่มต้น"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:219
+msgid "Toast on Copy Clipboard"
+msgstr "แสดงโทสต์เมื่อคัดลอกลงคลิปบอร์ด"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:220
+msgid "Show the user when text has copied to the clipboard."
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:225
+msgid "Enable Accessibility"
+msgstr "เปิดใช้สิ่งอำนวยความสะดวก"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:226
+msgid "Currently experimental feature to send accessibility information to screen readers."
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:231
+msgid "Enable zoom on scroll holding the control key"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:232
+msgid "Enable to adjust the zoom level on scroll scroll while holding the control key."
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:237
+msgid "Disable Padding around Terminal Emulator"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:238
+msgid ""
+"Do not pad around the terminal emulator widget. Setting to true may have significant performance impacts."
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:243
+msgid "Prompt when active tab is closed"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:244
+msgid "If a tab (or window) is closed with active foreground processes, prompt the user for confirmation."
+msgstr ""
+
+#. Translators: OSC stands for "Operating System Command" and is referencing in-band escape sequences from the child process to set the title
+#: src/dev.itznoel.Bevy.gschema.xml.in:250
+msgid "Ignore OSC Title"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:251
+msgid "If OSC title should be ignored in tab titles."
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:256
+msgid "Inhibit Logout"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:257
+msgid "Inhibit desktop logout when a foreground process is running in a tab."
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:266
+msgid "Label"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:267
+msgid "The label for the profile"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:272
+msgid "Login Shell"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:273
+msgid "Use a login shell"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:278 src/bevy-preferences-window.ui:482 src/bevy-profile-editor.ui:333
+msgid "Limit Scrollback"
+msgstr "จำกัดการเลื่อนกลับ"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:279
+msgid "Limit the number of lines to keep for scrollback"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:285 src/bevy-preferences-window.ui:491 src/bevy-profile-editor.ui:342
+msgid "Scrollback Lines"
+msgstr "บรรทัดการเลื่อนกลับ"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:286
+msgid "The number of lines to keep in the scrollback, zero for no scrollback"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:291 src/bevy-preferences-window.ui:472 src/bevy-profile-editor.ui:323
+msgid "Scroll on Output"
+msgstr "เลื่อนเมื่อมีเอาต์พุต"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:292
+msgid "Scroll to the bottom upon new output"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:297 src/bevy-preferences-window.ui:466 src/bevy-profile-editor.ui:317
+msgid "Scroll on Keystroke"
+msgstr "เลื่อนเมื่อกดแป้นพิมพ์"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:298
+msgid "Scroll to the bottom upon user keystroke"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:303 src/bevy-profile-editor.ui:187
+msgid "Use Custom Command"
+msgstr "ใช้คำสั่งที่กำหนดเอง"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:304
+msgid "If a custom command should be used"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:309
+msgid "Use Proxy"
+msgstr "ใช้พร็อกซี"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:310
+msgid "Apply proxy settings from the host in the container"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:315 src/bevy-profile-editor.ui:192
+msgid "Custom Command"
+msgstr "คำสั่งที่กำหนดเอง"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:316
+msgid "A custom command for the shell"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:321 src/bevy-profile-editor.ui:211
+msgid "Default Container"
+msgstr "คอนเทนเนอร์เริ่มต้น"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:322
+msgid "The default container to run the command in"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:327 src/bevy-profile-editor.ui:220
+msgid "Preserve Container"
+msgstr "รักษาคอนเทนเนอร์"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:328
+msgid "Preserve the active container when creating new tabs and windows"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:333 src/bevy-preferences-window.ui:551 src/bevy-profile-editor.ui:281
+msgid "Exit Action"
+msgstr "การกระทำเมื่อออก"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:334
+msgid "The action to take when the shell exits"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:339
+msgid "Preserve Directory"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:340
+msgid "If the directory should be preserved for new terminals"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:345 src/bevy-inspector.ui:102 src/bevy-preferences-window.ui:40
+#: src/bevy-profile-editor.ui:65
+msgid "Palette"
+msgstr "ชุดสี"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:346
+msgid "The color palette to use for the profile, by name"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:352
+msgid "Opacity"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:353
+msgid "The opacity of the palette background"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:358
+msgid "Bold is Bright"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:359
+msgid "Setting bold on one of the lower 8 colors in the palette will use bright variant (upper 8 colors)"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:365 src/bevy-preferences-window.ui:175 src/bevy-profile-editor.ui:143
+msgid "Line Spacing"
+msgstr "ระยะห่างบรรทัด"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:366
+msgid "The terminal’s cell height scale"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:372 src/bevy-preferences-window.ui:189 src/bevy-profile-editor.ui:157
+#, fuzzy
+#| msgid "Line Spacing"
+msgid "Column Spacing"
+msgstr "ระยะห่างบรรทัด"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:373
+msgid "The terminal’s cell width scale"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:378
+msgid "CJK Ambiguous Width"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:379
+msgid "The size to apply to ambiguous width characters"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:384 src/dev.itznoel.Bevy.gschema.xml.in:390
+msgid "Backspace Binding"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:385 src/dev.itznoel.Bevy.gschema.xml.in:391
+msgid "What to send to the PTY when a backspace is entered"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:396 src/bevy-preferences-window.ui:634 src/bevy-profile-editor.ui:409
+msgid "Custom Links"
+msgstr "ลิงก์กำหนดเอง"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:397
+msgid ""
+"A list of custom hyperlinks, each defined by a regular expression matching the text, and a replacement pattern"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:406 src/bevy-preferences-window.ui:672
+msgid "Copy to Clipboard"
+msgstr "คัดลอกไปยังคลิปบอร์ด"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:407
+msgid "The shortcut to copy to clipboard"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:412 src/bevy-preferences-window.ui:678
+msgid "Paste from Clipboard"
+msgstr "วางจากคลิปบอร์ด"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:413
+msgid "The shortcut to paste from the clipboard"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:419
+msgid "The shortcut to create a new tab in the current window"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:425
+msgid "The shortcut to create a new tab in a new window"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:430
+msgid "Tab Overview"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:431
+msgid "The shortcut to show the tab overview"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:437
+msgid "The shortcut to show application preferences"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:442 src/bevy-preferences-window.ui:985
+#, fuzzy
+#| msgid "_Keyboard Shortcuts"
+msgid "Keyboard Shortcuts"
+msgstr "ปุ่_มลัดแป้นพิมพ์"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:443
+msgid "The shortcut to show the keyboard shortcuts configuration"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:448 src/bevy-preferences-window.ui:936 src/bevy-window.c:1522
+#: src/bevy-window.c:1530
+msgid "Zoom Out"
+msgstr "ซูมออก"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:449
+msgid "The shortcut to zoom out"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:454 src/bevy-preferences-window.ui:942 src/bevy-window.c:1539
+msgid "Reset Zoom"
+msgstr "ล้างค่าการซูม"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:455
+msgid "The shortcut to reset zoom"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:460 src/bevy-preferences-window.ui:930 src/bevy-window.c:1507
+#: src/bevy-window.c:1515
+msgid "Zoom In"
+msgstr "ซูมเข้า"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:461
+msgid "The shortcut to zoom in"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:466 src/bevy-preferences-window.ui:953
+msgid "Toggle Fullscreen"
+msgstr "เปิด/ปิดแบบเต็มจอ"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:467
+msgid "The shortcut to toggle fullscreen"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:472
+msgid "Reset Terminal"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:473
+msgid "Reset the terminal state for misbehaving clients"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:478
+msgid "Reset Terminal and Clear History"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:479
+msgid "Reset the terminal state and clear history for misbehaving clients"
+msgstr ""
+
+#. Translators: Refers to searching the terminal scrollback
+#: src/dev.itznoel.Bevy.gschema.xml.in:485 src/bevy-find-bar.ui:39 src/bevy-preferences-window.ui:721
+msgid "Search History"
+msgstr "ค้นหาในประวัติ"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:486
+msgid "Shortcut to begin searching the terminal history"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:491 src/bevy-preferences-window.ui:688
+msgid "Select All"
+msgstr "เลือกทั้งหมด"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:492
+msgid "Shortcut to select all the entire terminal scrollback"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:497
+msgid "Select None"
+msgstr "ไม่เลือกใด ๆ"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:498
+msgid "Shortcut to clear the terminal selection"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:503
+msgid "Popup Menu"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:504
+msgid "Shortcut to show the popup menu for the terminal"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:509
+msgid "Primary Menu"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:510
+msgid "Shortcut to show the primary menu for the window"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:515
+#, fuzzy
+#| msgid "Main Menu"
+msgid "Tab Menu"
+msgstr "เมนูหลัก"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:516
+msgid "Shortcut to show the new tab menu"
+msgstr ""
+
+#. Translators: in this context, "Move" means to switch tabs
+#: src/dev.itznoel.Bevy.gschema.xml.in:522 src/bevy-preferences-window.ui:818
+msgid "Move to Previous Tab"
+msgstr "ย้ายไปยังแท็บก่อนหน้า"
+
+#. Translators: in this context, "Move" means to switch tabs
+#: src/dev.itznoel.Bevy.gschema.xml.in:524
+msgid "Shortcut to move to the previous tab"
+msgstr ""
+
+#. Translators: in this context, "Move" means to switch tabs
+#: src/dev.itznoel.Bevy.gschema.xml.in:530 src/bevy-preferences-window.ui:824
+msgid "Move to Next Tab"
+msgstr "ย้ายไปยังแท็บถัดไป"
+
+#. Translators: in this context, "Move" means to switch tabs
+#: src/dev.itznoel.Bevy.gschema.xml.in:532
+msgid "Shortcut to move to the next tab"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:537 src/bevy-preferences-window.ui:834
+msgid "Move Tab Left"
+msgstr "ย้ายแท็บไปทางด้านซ้าย"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:538
+msgid "Shortcut to move the current tab to the left one position"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:543 src/bevy-preferences-window.ui:841
+msgid "Move Tab Right"
+msgstr "ย้ายแท็บไปทางด้านขวา"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:544
+msgid "Shortcut to move the current tab to the right one position"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:549 src/bevy-preferences-window.ui:848
+msgid "Move Tab to New Window"
+msgstr "ย้ายแท็บไปยังหน้าต่างใหม่"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:550
+msgid "Shortcut to move the current tab into a new window"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:555 src/bevy-preferences-window.ui:793
+msgid "Close Tab"
+msgstr "ปิดแท็บ"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:556
+msgid "Shortcut to close the current tab"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:561 src/bevy-preferences-window.ui:800
+msgid "Close Other Tabs"
+msgstr "ปิดแท็บอื่น ๆ"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:562
+msgid "Shortcut to close all tabs in the window but the current one"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:567 src/bevy-preferences-window.ui:749
+msgid "Close Window"
+msgstr "ปิดหน้าต่าง"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:568
+msgid "Shortcut to close the current window"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:573 src/bevy-preferences-window.ui:760 src/bevy-terminal.ui:244
+#: src/bevy-window.c:1210 src/bevy-window.ui:846
+msgid "Set Title"
+msgstr "ตั้งชื่อ"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:574
+msgid "The shortcut to show set title"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:579
+msgid "Focus Tab 1"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:580
+msgid "Shortcut to focus tab 1"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:585
+msgid "Focus Tab 2"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:586
+msgid "Shortcut to focus tab 2"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:591
+msgid "Focus Tab 3"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:592
+msgid "Shortcut to focus tab 3"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:597
+msgid "Focus Tab 4"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:598
+msgid "Shortcut to focus tab 4"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:603
+msgid "Focus Tab 5"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:604
+msgid "Shortcut to focus tab 5"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:609
+msgid "Focus Tab 6"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:610
+msgid "Shortcut to focus tab 6"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:615
+msgid "Focus Tab 7"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:616
+msgid "Shortcut to focus tab 7"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:621
+msgid "Focus Tab 8"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:622
+msgid "Shortcut to focus tab 8"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:627
+msgid "Focus Tab 9"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:628
+msgid "Shortcut to focus tab 9"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:633
+msgid "Focus Tab 10"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:634
+msgid "Shortcut to focus tab 10"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:639
+msgid "Focus Last Tab"
+msgstr ""
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:640
+#, fuzzy
+#| msgid "Undo closing the last tab"
+msgid "Shortcut to focus the last tab"
+msgstr "ยกเลิกการปิดแท็บล่าสุด"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:645 src/bevy-preferences-window.ui:807
+msgid "Undo Close Tab"
+msgstr "ยกเลิกการปิดแท็บ"
+
+#: src/dev.itznoel.Bevy.gschema.xml.in:646
+msgid "Undo closing of last tab"
+msgstr ""
+
+#: src/bevy-application.c:461
+msgid "--tab, --tab-with-profile, or --new-window may not be used together"
+msgstr ""
+
+#: src/bevy-application.c:507
+#, c-format
+msgid "Cannot parse command: %s"
+msgstr ""
+
+#: src/bevy-application.c:1140
+msgid "Examples:"
+msgstr ""
+
+#: src/bevy-application.c:1142
+msgid "Show the application preferences"
+msgstr ""
+
+#. Used for new tabs/windows/etc when specified
+#: src/bevy-application.c:1145
+msgid "Use DIR for --tab, --tab-with-profile, --new-window, or -x"
+msgstr ""
+
+#: src/bevy-application.c:1145
+msgid "DIR"
+msgstr ""
+
+#. By default, this implies a new bevy instance unless the options
+#. * below are provided to override that.
+#.
+#: src/bevy-application.c:1150
+msgid "Command to execute in new window"
+msgstr ""
+
+#. These options all imply we're using a shared Bevy instance. We do not support
+#. * short command options for these to make it easier to sniff them in early args
+#. * checking from `main.c`.
+#.
+#: src/bevy-application.c:1156
+msgid "New terminal window"
+msgstr ""
+
+#: src/bevy-application.c:1157
+msgid "New terminal tab in active window"
+msgstr ""
+
+#: src/bevy-application.c:1158
+msgid "New terminal tab in active window using the profile UUID"
+msgstr ""
+
+#: src/bevy-application.c:1158
+msgid "PROFILE_UUID"
+msgstr ""
+
+#. Standalone (single instance mode)
+#: src/bevy-application.c:1161
+msgid "Start a new instance, ignoring existing instances"
+msgstr ""
+
+#: src/bevy-application.c:1163
+msgid "Set title for new tab"
+msgstr ""
+
+#: src/bevy-application.c:1164
+msgid "Maximize a newly created window"
+msgstr ""
+
+#: src/bevy-application.c:1165
+msgid "Fullscreen a newly created window"
+msgstr ""
+
+#. Import a custom .palette file. This works like dragging the file onto preferences
+#: src/bevy-application.c:1168
+msgid "Import a Bevy palette file"
+msgstr ""
+
+#: src/bevy-application.c:1168
+msgid "FILE"
+msgstr ""
+
+#: src/bevy-application.c:1175
+msgid "Run Separate Instance"
+msgstr ""
+
+#: src/bevy-application.c:1179
+msgid "Open Preferences"
+msgstr ""
+
+#: src/bevy-application.c:1183
+msgid "Run Custom Command in New Window"
+msgstr ""
+
+#: src/bevy-application.c:1188
+msgid "Import a custom palette"
+msgstr ""
+
+#: src/bevy-application.c:1191
+msgid "[-- COMMAND ARGUMENTS]"
+msgstr ""
+
+#: src/bevy-application.c:1432
+msgid "translator-credits"
+msgstr ""
+"Atirut Wattanamongkol <atirut.wattanamongkol@gmail.com>\n"
+"Aefgh Threenine <aefgh39622@gmail.com>"
+
+#: src/bevy-close-dialog.c:109
+msgid "_Close"
+msgstr "_ปิด"
+
+#: src/bevy-close-dialog.c:109
+msgid "_Close All"
+msgstr "_ปิดทั้งหมด"
+
+#: src/bevy-close-dialog.c:111
+msgid "Close Window?"
+msgstr "จะปิดหน้าต่างหรือไม่?"
+
+#: src/bevy-close-dialog.c:112
+msgid "Some processes are still running."
+msgstr "มีบางโปรเซสยังทำงานอยู่"
+
+#: src/bevy-close-dialog.c:116
+msgid "_Cancel"
+msgstr "_ยกเลิก"
+
+#: src/bevy-close-dialog.c:142
+#, c-format
+msgid "Process %d"
+msgstr "โปรเซส %d"
+
+#: src/bevy-custom-link-editor.ui:20
+msgid "Edit Custom Link"
+msgstr ""
+
+#: src/bevy-custom-link-editor.ui:29
+msgid "Custom Link"
+msgstr "ลิงก์กำหนดเอง"
+
+#: src/bevy-custom-link-editor.ui:30
+msgid ""
+"A clickable link in the terminal that matches text patterns and opens custom URLs. Uses regex capture groups "
+"to build the final URL (e.g., $1 becomes the first matched group)."
+msgstr ""
+
+#: src/bevy-custom-link-editor.ui:35
+msgid "Regex Pattern"
+msgstr ""
+
+#: src/bevy-custom-link-editor.ui:40
+msgid "Target URL"
+msgstr ""
+
+#: src/bevy-custom-link-row.c:131
+#, c-format
+msgid "Removed custom link “%s”"
+msgstr "เอาลิงก์กำหนดเอง “%s” ออกแล้ว"
+
+#: src/bevy-custom-link-row.c:133 src/bevy-profile-editor.c:186 src/bevy-profile-row.c:106
+msgid "Undo"
+msgstr "เลิกทำ"
+
+#: src/bevy-custom-link-row.ui:26 src/bevy-profile-row.ui:33
+msgid "View More"
+msgstr "ดูเพิ่ม"
+
+#: src/bevy-custom-link-row.ui:36 src/bevy-profile-row.ui:53
+msgid "_Edit…"
+msgstr "แ_ก้ไข"
+
+#: src/bevy-custom-link-row.ui:42 src/bevy-profile-row.ui:59
+msgid "_Remove"
+msgstr "_ลบ"
+
+#: src/bevy-find-bar.ui:69
+msgid "Search Up"
+msgstr "ค้นหาด้านบน"
+
+#: src/bevy-find-bar.ui:76
+msgid "Search Down"
+msgstr "ค้นหาด้านล่าง"
+
+#: src/bevy-find-bar.ui:85
+msgid "Search Options"
+msgstr "ตัวเลือกการค้นหา"
+
+#: src/bevy-find-bar.ui:96
+msgid "Match _Case"
+msgstr "แ_ยกตัวพิมพ์ใหญ่-เล็ก"
+
+#: src/bevy-find-bar.ui:102
+msgid "Whole _Words"
+msgstr "_ทั้งคำ"
+
+#: src/bevy-find-bar.ui:108
+msgid "Use _Regular Expressions"
+msgstr "ใช้_นิพจน์ปรกติ"
+
+#: src/bevy-find-bar.ui:128 src/bevy-preferences-window.ui:572 src/bevy-profile-editor.ui:302
+msgid "Close"
+msgstr "ปิด"
+
+#: src/bevy-find-bar.ui:129
+msgid "Close the search bar"
+msgstr "ปิดแถบค้นหา"
+
+#: src/bevy-inspector.c:95 src/bevy-inspector.c:357
+msgid "unset"
+msgstr ""
+
+#: src/bevy-inspector.c:116 src/bevy-inspector.c:274
+msgid "Row"
+msgstr ""
+
+#: src/bevy-inspector.c:116 src/bevy-inspector.c:274
+msgid "Column"
+msgstr ""
+
+#. NOTE: If we are in a container that also supports VTE patches
+#. * then it will send shell-precmd via escape sequences. The reality
+#. * is that our foreground is the `toolbox enter` process (until we
+#. * have better patches in VTE) but we show "Shell" instead.
+#. *
+#. * This is fine for now, but I'd like it to be better and actually
+#. * show the proper `tcgetpgrp()` foreground.
+#.
+#: src/bevy-inspector.c:177 src/bevy-inspector.c:197 src/bevy-preferences-window.ui:508
+#: src/bevy-profile-editor.ui:184
+msgid "Shell"
+msgstr "เชลล์"
+
+#: src/bevy-inspector.c:276
+msgid "untracked"
+msgstr ""
+
+#: src/bevy-inspector.ui:4
+msgid "Inspector"
+msgstr ""
+
+#: src/bevy-inspector.ui:7
+msgid "Process"
+msgstr ""
+
+#: src/bevy-inspector.ui:13
+msgid "Foreground Process"
+msgstr ""
+
+#: src/bevy-inspector.ui:33
+msgid "Window Title"
+msgstr ""
+
+#: src/bevy-inspector.ui:45
+msgid "Current Directory"
+msgstr ""
+
+#: src/bevy-inspector.ui:53
+msgid "Current File"
+msgstr ""
+
+#: src/bevy-inspector.ui:63
+msgid "Container"
+msgstr ""
+
+#: src/bevy-inspector.ui:66
+msgid "Runtime"
+msgstr ""
+
+#: src/bevy-inspector.ui:74 src/bevy-inspector.ui:228 src/bevy-profile-editor.ui:36
+msgid "Name"
+msgstr "ชื่อ"
+
+#: src/bevy-inspector.ui:86 src/bevy-preferences-window.ui:36
+msgid "Appearance"
+msgstr "รูปโฉม"
+
+#: src/bevy-inspector.ui:92
+msgid "Grid Size"
+msgstr ""
+
+#: src/bevy-inspector.ui:105
+msgid "Colors"
+msgstr ""
+
+#: src/bevy-inspector.ui:225 src/bevy-preferences-window.ui:130
+msgid "Font"
+msgstr "แบบอักษร"
+
+#: src/bevy-inspector.ui:233
+msgid "Cell Size"
+msgstr ""
+
+#: src/bevy-inspector.ui:242
+msgid "Input"
+msgstr ""
+
+#: src/bevy-inspector.ui:246 src/bevy-preferences-window.ui:246
+msgid "Cursor"
+msgstr "เคอร์เซอร์"
+
+#: src/bevy-inspector.ui:249 src/bevy-inspector.ui:262
+msgid "Position"
+msgstr ""
+
+#: src/bevy-inspector.ui:259
+msgid "Mouse"
+msgstr ""
+
+#: src/bevy-inspector.ui:270
+msgid "Hyperlink"
+msgstr ""
+
+#: src/bevy-menu-row.c:166 src/bevy-profile-editor.c:217 src/bevy-window.c:1761
+msgid "My Computer"
+msgstr "คอมพิวเตอร์ของฉัน"
+
+#: src/bevy-palette-preview.ui:32
+msgid "The quick brown fox jumps over the lazy dog"
+msgstr "The quick brown fox jumps over the lazy dog"
+
+#: src/bevy-preferences-window.c:277
+msgid "Select Font"
+msgstr "เลือกแบบอักษร"
+
+#: src/bevy-preferences-window.c:352
+msgid "Show Fewer Palettes"
+msgstr "แสดงชุดสีน้อยลง"
+
+#: src/bevy-preferences-window.c:357 src/bevy-preferences-window.ui:46
+msgid "Show All Palettes"
+msgstr "แสดงทุกชุดสี"
+
+#: src/bevy-preferences-window.c:382
+msgid "Add Profile"
+msgstr "เพิ่มโปรไฟล์"
+
+#: src/bevy-preferences-window.c:484 src/bevy-profile-editor.c:270
+msgid "Add Link"
+msgstr "เพิ่มลิงก์"
+
+#: src/bevy-preferences-window.ui:72 src/bevy-profile-editor.ui:74
+msgid "Transparency"
+msgstr "ความโปร่งใส"
+
+#: src/bevy-preferences-window.ui:73 src/bevy-profile-editor.ui:75
+msgid "Reduces the opacity of the background window"
+msgstr "ลดความทึบของหน้าต่างพื้นหลัง"
+
+#: src/bevy-preferences-window.ui:134
+msgid "Use System _Font"
+msgstr "ใช้แ_บบอักษรระบบ"
+
+#: src/bevy-preferences-window.ui:146
+msgid "Custom Font"
+msgstr "แบบอักษรกำหนดเอง"
+
+#: src/bevy-preferences-window.ui:207
+msgid "Blinking Text"
+msgstr "กะพริบข้อความ"
+
+#: src/bevy-preferences-window.ui:216 src/bevy-preferences-window.ui:440
+#: src/bevy-preferences-window.ui:529 src/bevy-profile-editor.ui:230 src/bevy-profile-editor.ui:259
+msgid "Never"
+msgstr "ไม่ต้อง"
+
+#: src/bevy-preferences-window.ui:222
+msgid "Focused"
+msgstr "เมื่อโฟกัสหน้าต่าง"
+
+#: src/bevy-preferences-window.ui:228
+msgid "Unfocused"
+msgstr "เมื่อไม่โฟกัสหน้าต่าง"
+
+#: src/bevy-preferences-window.ui:234 src/bevy-preferences-window.ui:452
+#: src/bevy-preferences-window.ui:541 src/bevy-profile-editor.ui:236 src/bevy-profile-editor.ui:271
+msgid "Always"
+msgstr "ทุกเมื่อ"
+
+#: src/bevy-preferences-window.ui:258
+msgid "Block"
+msgstr "บล็อก"
+
+#: src/bevy-preferences-window.ui:264
+msgid "I-Beam"
+msgstr "ไอบีม"
+
+#: src/bevy-preferences-window.ui:270
+msgid "Underline"
+msgstr "เส้นใต้"
+
+#: src/bevy-preferences-window.ui:280
+msgid "Cursor Blinking"
+msgstr "การกะพริบเคอร์เซอร์"
+
+#: src/bevy-preferences-window.ui:289 src/bevy-preferences-window.ui:446
+msgid "Follow System"
+msgstr "ตามระบบ"
+
+#: src/bevy-preferences-window.ui:295
+msgid "Enabled"
+msgstr "เปิด"
+
+#: src/bevy-preferences-window.ui:301
+msgid "Disabled"
+msgstr "ปิด"
+
+#: src/bevy-preferences-window.ui:315
+msgid "Behavior"
+msgstr "พฤติกรรม"
+
+#: src/bevy-preferences-window.ui:319
+msgid "Interface"
+msgstr "ส่วนติดต่อ"
+
+#: src/bevy-preferences-window.ui:331
+msgid "Next"
+msgstr "แท็บต่อไป"
+
+#: src/bevy-preferences-window.ui:337
+msgid "Last"
+msgstr "สุดท้าย"
+
+#: src/bevy-preferences-window.ui:352
+msgid "Attempt to restore previous tabs when Bevy starts"
+msgstr "พยายามคืนค่าแท็บก่อนหน้าเมื่อ Bevy เริ่มทำงาน"
+
+#: src/bevy-preferences-window.ui:358
+msgid "Restore the previous window size when creating a new window"
+msgstr "คืนค่าขนาดหน้าต่างก่อนหน้าเมื่อสร้างหน้าต่างใหม่"
+
+#: src/bevy-preferences-window.ui:368
+msgid "Columns"
+msgstr "คอลัมน์"
+
+#: src/bevy-preferences-window.ui:382
+msgid "Rows"
+msgstr "แถว"
+
+#: src/bevy-preferences-window.ui:400
+msgid "Accessibility"
+msgstr "สิ่งอำนวยความสะดวก"
+
+#: src/bevy-preferences-window.ui:403
+msgid "Allow Screen Readers"
+msgstr "อนุญาตให้โปรแกรมอ่านหน้าจอ"
+
+#: src/bevy-preferences-window.ui:404
+msgid "Permit screen readers such as Orca to read terminal content and typed text"
+msgstr "อนุญาตให้โปรแกรมอ่านหน้าจอเช่น Orca อ่านเนื้อหาเทอร์มินัลและข้อความที่พิมพ์"
+
+#: src/bevy-preferences-window.ui:411
+msgid "Bell"
+msgstr "สัญญาณเตือน"
+
+#: src/bevy-preferences-window.ui:415
+msgid "Emit an audible bell when requested by active tab"
+msgstr "ส่งเสียงเตือนเมื่อได้รับการร้องขอโดยแท็บที่ใช้งานอยู่"
+
+#: src/bevy-preferences-window.ui:420
+msgid "Visual Bell"
+msgstr "สัญญาณเตือนแบบภาพ"
+
+#: src/bevy-preferences-window.ui:421
+msgid "Emit a visual bell when requested by active tab"
+msgstr "แสดงสัญญาณเตือนเมื่อได้รับการร้องขอจากแท็บที่ใช้งานอยู่"
+
+#: src/bevy-preferences-window.ui:428 src/bevy-profile-editor.ui:314
+msgid "Scrolling"
+msgstr "การเลื่อน"
+
+#: src/bevy-preferences-window.ui:431
+msgid "Use Scrollbars"
+msgstr "ใช้แถบเลื่อน"
+
+#: src/bevy-preferences-window.ui:467 src/bevy-profile-editor.ui:318
+msgid "Scroll to the bottom upon input keystroke"
+msgstr "เลื่อนไปที่ด้านล่างเมื่อกดแป้นพิมพ์"
+
+#: src/bevy-preferences-window.ui:473 src/bevy-profile-editor.ui:324
+msgid "Scroll to the bottom when new content is available"
+msgstr "เลื่อนไปด้านล่างเมื่อมีเนื้อหาใหม่"
+
+#: src/bevy-preferences-window.ui:483 src/bevy-profile-editor.ui:334
+msgid "Restrict the number of lines saved for scrollback"
+msgstr "จำกัดจำนวนบรรทัดที่บันทึกไว้สำหรับการเลื่อนกลับ"
+
+#: src/bevy-preferences-window.ui:492 src/bevy-profile-editor.ui:343
+msgid "The number of lines to keep for scrollback"
+msgstr "จำนวนบรรทัดที่เก็บไว้เพื่อเลื่อนกลับ"
+
+#: src/bevy-preferences-window.ui:511 src/bevy-profile-editor.ui:202
+msgid "Use Login Shell"
+msgstr "ใช้เชลล์แบบเข้าระบบ"
+
+#: src/bevy-preferences-window.ui:520 src/bevy-profile-editor.ui:250
+msgid "Preserve Working Directory"
+msgstr "คืนค่าไดเรกทอรีปัจจุบัน"
+
+#: src/bevy-preferences-window.ui:535 src/bevy-profile-editor.ui:265
+msgid "Safe"
+msgstr "อย่างปลอดภัย"
+
+#: src/bevy-preferences-window.ui:560 src/bevy-profile-editor.ui:290
+msgid "No Action"
+msgstr "ไม่ดำเนินการ"
+
+#: src/bevy-preferences-window.ui:566 src/bevy-profile-editor.ui:296
+msgid "Restart"
+msgstr "เริ่มใหม่"
+
+#: src/bevy-preferences-window.ui:584 src/bevy-profile-editor.ui:359
+msgid "Compatibility"
+msgstr "ความเข้ากันได้"
+
+#: src/bevy-preferences-window.ui:587 src/bevy-profile-editor.ui:362
+msgid "Backspace Key"
+msgstr "ปุ่ม Backspace"
+
+#: src/bevy-preferences-window.ui:588 src/bevy-profile-editor.ui:363
+msgid "Sequence to send for Backspace key"
+msgstr "ลำดับที่จะส่งสำหรับปุ่ม Backspace"
+
+#: src/bevy-preferences-window.ui:597 src/bevy-profile-editor.ui:372
+msgid "Delete Key"
+msgstr "ปุ่ม Delete"
+
+#: src/bevy-preferences-window.ui:598 src/bevy-profile-editor.ui:373
+msgid "Sequence to send for Delete key"
+msgstr "ลำดับที่จะส่งสำหรับปุ่ม Delete"
+
+#: src/bevy-preferences-window.ui:607 src/bevy-profile-editor.ui:382
+msgid "Ambiguous-width Characters"
+msgstr "อักขระที่มีความกว้างคลุมเครือ"
+
+#: src/bevy-preferences-window.ui:616 src/bevy-profile-editor.ui:391
+msgid "Narrow"
+msgstr "แคบ"
+
+#: src/bevy-preferences-window.ui:622 src/bevy-profile-editor.ui:397
+msgid "Wide"
+msgstr "กว้าง"
+
+#: src/bevy-preferences-window.ui:655
+msgid "Set as Default Terminal"
+msgstr "ตั้งเป็นเทอร์มินัลเริ่มต้น"
+
+#: src/bevy-preferences-window.ui:665
+msgid "Shortcuts"
+msgstr "ปุ่มลัด"
+
+#: src/bevy-preferences-window.ui:694
+msgid "Clear Selection"
+msgstr "ล้างส่วนที่เลือก"
+
+#: src/bevy-preferences-window.ui:704 src/bevy-shortcut-accel-dialog.ui:48 src/bevy-terminal.ui:230
+msgid "Reset"
+msgstr "คืนค่า"
+
+#: src/bevy-preferences-window.ui:710 src/bevy-terminal.ui:236
+msgid "Reset and Clear"
+msgstr "คืนค่าและล้างหน้าจอ"
+
+#: src/bevy-preferences-window.ui:731
+msgid "Show Context Menu"
+msgstr "แสดงเมนูคลิกขวา"
+
+#: src/bevy-preferences-window.ui:739
+msgid "Windows"
+msgstr "หน้าต่าง"
+
+#: src/bevy-preferences-window.ui:743
+msgid "Open a new tab in a new window"
+msgstr "เปิดแท็บใหม่ในหน้าต่างใหม่"
+
+#: src/bevy-preferences-window.ui:750
+msgid "Close the current window"
+msgstr "ปิดหน้าต่างปัจจุบัน"
+
+#: src/bevy-preferences-window.ui:768
+msgid "Tabs"
+msgstr "แท็บ"
+
+#: src/bevy-preferences-window.ui:772
+msgid "Open a new tab in the current window"
+msgstr "เปิดแท็บใหม่ในหน้าต่างปัจจุบัน"
+
+#: src/bevy-preferences-window.ui:782
+msgid "View Tab Overview"
+msgstr "ดูภาพรวมแท็บ"
+
+#: src/bevy-preferences-window.ui:783
+msgid "Show an overview of all tabs within the window"
+msgstr "แสดงภาพรวมของทุกแท็บภายในหน้าต่าง"
+
+#: src/bevy-preferences-window.ui:794
+msgid "Close the current tab"
+msgstr "ปิดแท็บปัจจุบัน"
+
+#: src/bevy-preferences-window.ui:801
+msgid "Close all tabs except the active tab"
+msgstr "ปิดทุกแท็บยกเว้นแท็บที่ใช้งานอยู่"
+
+#: src/bevy-preferences-window.ui:808
+msgid "Undo closing the last tab"
+msgstr "ยกเลิกการปิดแท็บล่าสุด"
+
+#: src/bevy-preferences-window.ui:835
+msgid "Move the tab one position to the left"
+msgstr "ย้ายแท็บไปทางด้านซ้ายหนึ่งตำแหน่ง"
+
+#: src/bevy-preferences-window.ui:842
+msgid "Move the tab one position to the right"
+msgstr "ย้ายแท็บไปทางด้านขวาหนึ่งตำแหน่ง"
+
+#: src/bevy-preferences-window.ui:849
+msgid "Detach the current tab and move it to a new window"
+msgstr "ถอดแท็บปัจจุบันออกแล้วย้ายแท็บไปยังหน้าต่างใหม่"
+
+#: src/bevy-preferences-window.ui:859
+msgid "Switch to Tab 1"
+msgstr "สลับไปยังแท็บที่ 1"
+
+#: src/bevy-preferences-window.ui:865
+msgid "Switch to Tab 2"
+msgstr "สลับไปยังแท็บที่ 2"
+
+#: src/bevy-preferences-window.ui:871
+msgid "Switch to Tab 3"
+msgstr "สลับไปยังแท็บที่ 3"
+
+#: src/bevy-preferences-window.ui:877
+msgid "Switch to Tab 4"
+msgstr "สลับไปยังแท็บที่ 4"
+
+#: src/bevy-preferences-window.ui:883
+msgid "Switch to Tab 5"
+msgstr "สลับไปยังแท็บที่ 5"
+
+#: src/bevy-preferences-window.ui:889
+msgid "Switch to Tab 6"
+msgstr "สลับไปยังแท็บที่ 6"
+
+#: src/bevy-preferences-window.ui:895
+msgid "Switch to Tab 7"
+msgstr "สลับไปยังแท็บที่ 7"
+
+#: src/bevy-preferences-window.ui:901
+msgid "Switch to Tab 8"
+msgstr "สลับไปยังแท็บที่ 8"
+
+#: src/bevy-preferences-window.ui:907
+msgid "Switch to Tab 9"
+msgstr "สลับไปยังแท็บที่ 9"
+
+#: src/bevy-preferences-window.ui:913
+msgid "Switch to Tab 10"
+msgstr "สลับไปยังแท็บที่ 10"
+
+#: src/bevy-preferences-window.ui:919
+#, fuzzy
+#| msgid "Switch to Tab 1"
+msgid "Switch to Last Tab"
+msgstr "สลับไปยังแท็บที่ 1"
+
+#: src/bevy-preferences-window.ui:927
+msgid "Zoom"
+msgstr "ซูม"
+
+#: src/bevy-preferences-window.ui:950
+msgid "Application"
+msgstr "แอปพลิเคชัน"
+
+#: src/bevy-preferences-window.ui:954
+msgid "Toggle in and out of fullscreen"
+msgstr "เข้าและออกจากการแสดงเต็มจอ"
+
+#: src/bevy-preferences-window.ui:964
+msgid "Show Primary Menu"
+msgstr "แสดงเมนูหลัก"
+
+#: src/bevy-preferences-window.ui:965
+msgid "Displays the primary menu for the terminal window"
+msgstr "แสดงเมนูหลักสำหรับหน้าต่างเทอร์มินัล"
+
+#: src/bevy-preferences-window.ui:971
+msgid "Show New Tab Menu"
+msgstr "แสดงเมนูแท็บใหม่"
+
+#: src/bevy-preferences-window.ui:972
+msgid "Displays the new tab menu for the terminal window"
+msgstr "แสดงเมนูแท็บใหม่สำหรับหน้าต่างเทอร์มินัล"
+
+#: src/bevy-preferences-window.ui:979
+msgid "Show this preferences window"
+msgstr "แสดงหน้าต่างค่าปรับแต่งนี้"
+
+#: src/bevy-preferences-window.ui:986
+msgid "Show the keyboard shortcuts configuration"
+msgstr ""
+
+#: src/bevy-preferences-window.ui:996 src/bevy-preferences-window.ui:1000 src/bevy-window.c:1735
+#: src/bevy-window.c:1897
+msgid "Profiles"
+msgstr "โปรไฟล์"
+
+#: src/bevy-preferences-window.ui:1019 src/bevy-profile-editor.ui:442
+msgid "Automatic"
+msgstr "อัตโนมัติ"
+
+#: src/bevy-preferences-window.ui:1025 src/bevy-profile-editor.ui:448
+msgid "Control-H"
+msgstr "Control-H"
+
+#: src/bevy-preferences-window.ui:1031 src/bevy-profile-editor.ui:454
+msgid "ASCII DEL"
+msgstr "ASCII DEL"
+
+#: src/bevy-preferences-window.ui:1037 src/bevy-profile-editor.ui:460
+msgid "Escape Sequence"
+msgstr "ลำดับหลีก"
+
+#: src/bevy-preferences-window.ui:1043 src/bevy-profile-editor.ui:466
+msgid "TTY Erase"
+msgstr "ลบแบบ TTY"
+
+#: src/bevy-profile.c:729
+msgid "Untitled Profile"
+msgstr "โปรไฟล์ที่ไม่มีชื่อ"
+
+#: src/bevy-profile-dialog.ui:29 src/bevy-terminal.ui:249
+#, fuzzy
+#| msgid "Untitled Profile"
+msgid "Change Profile"
+msgstr "โปรไฟล์ที่ไม่มีชื่อ"
+
+#: src/bevy-profile-dialog.ui:42 src/bevy-profile-editor.ui:31
+msgid "Profile"
+msgstr "โปรไฟล์"
+
+#: src/bevy-profile-dialog.ui:43
+msgid "Select a profile to apply to this terminal"
+msgstr ""
+
+#: src/bevy-profile-editor.c:155 src/bevy-terminal.c:440 src/bevy-terminal.c:472
+msgid "Copied to clipboard"
+msgstr "คัดลอกไปยังคลิปบอร์ดแล้ว"
+
+#: src/bevy-profile-editor.c:184 src/bevy-profile-row.c:104
+#, c-format
+msgid "Removed profile “%s”"
+msgstr "ลบโปรไฟล์ “%s” ออกแล้ว"
+
+#: src/bevy-profile-editor.ui:22 src/bevy-tab.c:504 src/bevy-tab.c:561
+msgid "Edit Profile"
+msgstr "แก้ไขโปรไฟล์"
+
+#: src/bevy-profile-editor.ui:41
+msgid "Identifier"
+msgstr "ตัวระบุ"
+
+#: src/bevy-profile-editor.ui:50
+msgid "Copy"
+msgstr ""
+
+#: src/bevy-profile-editor.ui:62
+msgid "Color"
+msgstr ""
+
+#: src/bevy-profile-editor.ui:134
+msgid "Use Bright Colors for Bold"
+msgstr "ใช้สีสว่างสำหรับตัวหนา"
+
+#: src/bevy-profile-editor.ui:173
+msgid "Network"
+msgstr "เครือข่าย"
+
+#: src/bevy-profile-editor.ui:176
+msgid "Proxy"
+msgstr "พร็อกซี"
+
+#: src/bevy-profile-editor.ui:177
+msgid "Applies the network proxy settings to the container environment"
+msgstr "ใช้การตั้งค่าพร็อกซีเครือข่ายกับสภาพแวดล้อมคอนเทนเนอร์"
+
+#: src/bevy-profile-editor.ui:212
+msgid "The default container to use with this profile"
+msgstr "คอนเทนเนอร์เริ่มต้นที่จะใช้กับโปรไฟล์นี้"
+
+#: src/bevy-profile-editor.ui:221
+msgid "Preserve the current container when opening new tabs and windows"
+msgstr "รักษาคอนเทนเนอร์ปัจจุบันไว้เมื่อเปิดแท็บและหน้าต่างใหม่"
+
+#: src/bevy-profile-editor.ui:427
+msgid "Remove Profile"
+msgstr "ลบโปรไฟล์"
+
+#: src/bevy-profile-row.ui:43
+msgid "_Make Default"
+msgstr "_ตั้งเป็นค่าเริ่มต้น"
+
+#: src/bevy-profile-row.ui:49
+msgid "_Duplicate…"
+msgstr "_ทำซ้ำ"
+
+#. Translators: <b>%s</b> is used to show the provided text in bold
+#: src/bevy-shortcut-accel-dialog.c:538
+#, c-format
+msgid "Enter new shortcut to change <b>%s</b>."
+msgstr "ป้อนปุ่มลัดใหม่เพื่อเปลี่ยน <b>%s</b>"
+
+#. do not use underline as it prevents alt+c as an accelerator
+#: src/bevy-shortcut-accel-dialog.ui:42
+msgid "Cancel"
+msgstr "ยกเลิก"
+
+#. do not use underline as it prevents alt+s as an accelerator
+#: src/bevy-shortcut-accel-dialog.ui:56
+msgid "Set"
+msgstr "ตั้ง"
+
+#: src/bevy-shortcut-accel-dialog.ui:96
+msgid "Press Escape to cancel or Backspace to disable."
+msgstr "กด Escape เพื่อยกเลิก หรือกด Backspace เพื่อปิดใช้"
+
+#: src/bevy-shortcut-row.c:84
+msgid "Set Shortcut"
+msgstr "ตั้งปุ่มลัด"
+
+#: src/bevy-shortcut-row.ui:33
+msgid "disabled"
+msgstr "ปิดใช้งาน"
+
+#: src/bevy-tab.c:355
+#, fuzzy
+#| msgid "Some processes are still running."
+msgid "A foreground process is running"
+msgstr "มีบางโปรเซสยังทำงานอยู่"
+
+#: src/bevy-tab.c:412
+#, c-format
+msgid "Process Exited from Signal %d"
+msgstr "โปรเซสจบการทำงานจากสัญญาณ %d"
+
+#: src/bevy-tab.c:415 src/bevy-tab.c:438
+msgid "_Restart"
+msgstr "เ_ริ่มใหม่"
+
+#. Always prepare the banner even if we don't show it because we may
+#. * display it again if the tab is removed from the parking lot and
+#. * restored into the window.
+#.
+#: src/bevy-tab.c:437
+msgid "Process Exited"
+msgstr "โปรเซสจบการทำงาน"
+
+#: src/bevy-tab.c:503
+msgid "Failed to launch terminal"
+msgstr "เรียกใช้งานเทอร์มินัลไม่สำเร็จ"
+
+#: src/bevy-tab.c:559
+#, c-format
+msgid "Cannot locate container “%s”"
+msgstr "ไม่สามารถท่องหาคอนเทนเนอร์ “%s” ได้"
+
+#: src/bevy-tab.c:583
+msgid "Failed to create pseudo terminal device"
+msgstr "สร้างอุปกรณ์เทอร์มินัลเทียมไม่สำเร็จ"
+
+#: src/bevy-tab.c:1650
+msgid "Exited"
+msgstr "จบการทำงานแล้ว"
+
+#: src/bevy-tab.c:1652
+msgid "Failed"
+msgstr "ไม่สำเร็จ"
+
+#: src/bevy-tab.c:2237
+msgid "Failed to open link"
+msgstr "เปิดลิงก์ไม่สำเร็จ"
+
+#: src/bevy-tab-notify.h:93
+msgid "Command completed"
+msgstr "คำสั่งทำงานเสร็จสมบูรณ์"
+
+#: src/bevy-terminal.ui:169
+msgid "_Open Link"
+msgstr "เ_ปิดลิงก์"
+
+#: src/bevy-terminal.ui:174
+msgid "_Copy Link"
+msgstr "_คัดลอกลิงก์"
+
+#: src/bevy-terminal.ui:182
+msgid "Search…"
+msgstr "ค้นหา…"
+
+#: src/bevy-terminal.ui:189
+msgid "_Copy"
+msgstr "_คัดลอก"
+
+#: src/bevy-terminal.ui:190
+msgid "Copy selection from terminal to clipboard"
+msgstr "คัดลอกส่วนที่เลือกจากเทอร์มินัลไปยังคลิปบอร์ด"
+
+#: src/bevy-terminal.ui:194
+msgid "Copy as _HTML"
+msgstr "คัดลอกเป็น _HTML"
+
+#: src/bevy-terminal.ui:195
+msgid "Copy selection from terminal to clipboard with HTML formatting"
+msgstr "คัดลอกส่วนที่เลือกจากเทอร์มินัลไปยังคลิปบอร์ดพร้อมการจัดรูปแบบ HTML"
+
+#: src/bevy-terminal.ui:201
+msgid "_Paste"
+msgstr "_วาง"
+
+#: src/bevy-terminal.ui:202
+msgid "Paste from clipboard into the terminal"
+msgstr "วางจากคลิปบอร์ดลงในเทอร์มินัล"
+
+#: src/bevy-terminal.ui:209
+msgid "Select _All"
+msgstr "เลือก_ทั้งหมด"
+
+#: src/bevy-terminal.ui:210
+msgid "Selection all text from terminal including scrollback"
+msgstr "เลือกข้อความทั้งหมดจากเทอร์มินัลรวมถึงการเลื่อนกลับด้วย"
+
+#: src/bevy-terminal.ui:216
+msgid "Select _None"
+msgstr "ไ_ม่เลือกเลย"
+
+#: src/bevy-terminal.ui:223
+msgid "Read-Only"
+msgstr "โหมดอ่านเท่านั้น"
+
+#: src/bevy-terminal.ui:257 src/bevy-window.ui:409 src/bevy-window.ui:791
+msgid "Leave Fullscreen"
+msgstr "ออกจากโหมดเต็มจอ"
+
+#: src/bevy-terminal.ui:263
+msgid "_Inspect Terminal"
+msgstr "_ตรวจสอบเทอร์มินัล"
+
+#: src/bevy-theme-selector.ui:21
+msgid "Follow System Style"
+msgstr "ตามแบบของระบบ"
+
+#: src/bevy-theme-selector.ui:23
+msgid "Follow system style"
+msgstr "ตามแบบของระบบ"
+
+#: src/bevy-theme-selector.ui:37
+msgid "Light Style"
+msgstr "แบบสว่าง"
+
+#: src/bevy-theme-selector.ui:39
+msgid "Light style"
+msgstr "แบบสว่าง"
+
+#: src/bevy-theme-selector.ui:54
+msgid "Dark Style"
+msgstr "แบบมืด"
+
+#: src/bevy-theme-selector.ui:56
+msgid "Dark style"
+msgstr "แบบมืด"
+
+#: src/bevy-title-dialog.ui:36
+#, fuzzy
+#| msgid "Set Title"
+msgid "Title"
+msgstr "ตั้งชื่อ"
+
+#: src/bevy-title-dialog.ui:42
+msgid "Include Process Title"
+msgstr ""
+
+#: src/bevy-title-dialog.ui:43
+msgid "Append title from Shell application"
+msgstr ""
+
+#. translators: Builder Terminal means this is a terminal bundled with GNOME Builder
+#: src/bevy-util.c:316
+msgid "Builder Terminal"
+msgstr ""
+
+#: src/bevy-util.c:320
+msgid "Bevy"
+msgstr ""
+
+#: src/bevy-window.c:1518
+msgid "Zoom in"
+msgstr "ซูมเข้า"
+
+#: src/bevy-window.c:1533
+msgid "Zoom out"
+msgstr "ซูมออก"
+
+#: src/bevy-window.c:1729 src/bevy-window.c:1901
+msgid "Containers"
+msgstr "คอนเทนเนอร์"
+
+#: src/bevy-window.ui:424
+msgid "New Terminal"
+msgstr "เทอร์มินัลใหม่"
+
+#: src/bevy-window.ui:437
+msgid "Show Profiles and Containers"
+msgstr "แสดงโปรไฟล์และคอนเทนเนอร์"
+
+#: src/bevy-window.ui:457
+msgid "Filter…"
+msgstr "กรอง…"
+
+#: src/bevy-window.ui:610
+msgid "No Matching Results"
+msgstr "ไม่มีผลลัพธ์ที่ตรงกัน"
+
+#: src/bevy-window.ui:652
+msgid "Main Menu"
+msgstr "เมนูหลัก"
+
+#: src/bevy-window.ui:660 src/bevy-window.ui:777
+msgid "Show Open Tabs"
+msgstr "แสดงแท็บที่เปิดอยู่"
+
+#: src/bevy-window.ui:761
+msgid "New _Tab"
+msgstr "แ_ท็บใหม่"
+
+#: src/bevy-window.ui:768
+msgid "New _Window"
+msgstr "ห_น้าต่างใหม่"
+
+#: src/bevy-window.ui:785
+msgid "Fullscreen"
+msgstr "เต็มจอ"
+
+#: src/bevy-window.ui:799
+msgid "_Preferences"
+msgstr "_ปรับแต่ง"
+
+#: src/bevy-window.ui:804
+msgid "_Keyboard Shortcuts"
+msgstr "ปุ่_มลัดแป้นพิมพ์"
+
+#: src/bevy-window.ui:808
+msgid "_About"
+msgstr "เ_กี่ยวกับ"
+
+#: src/bevy-window.ui:817
+msgid "Move _Left"
+msgstr "ย้ายไปทาง_ซ้าย"
+
+#: src/bevy-window.ui:822
+msgid "Move _Right"
+msgstr "ย้ายไปทาง_ขวา"
+
+#: src/bevy-window.ui:827
+msgid "Move to New _Window"
+msgstr "ย้ายไปยัง_หน้าต่างใหม่"
+
+#: src/bevy-window.ui:833
+msgid "_Pin Tab"
+msgstr "ปักหมุ_ดแท็บ"
+
+#: src/bevy-window.ui:838
+msgid "Un_pin Tab"
+msgstr "_ถอนหมุดแท็บ"
+
+#: src/bevy-window.ui:853
+msgid "Close _Other Tabs"
+msgstr "ปิดแท็บ_อื่น ๆ"
+
+#: src/bevy-window.ui:858
+msgid "_Close Tab"
+msgstr "ปิด_แท็บ"
