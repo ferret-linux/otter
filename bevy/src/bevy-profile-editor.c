@@ -49,6 +49,8 @@ struct _BevyProfileEditor
   AdwComboRow       *containers;
   AdwSwitchRow      *use_custom_commmand;
   AdwSwitchRow      *login_shell;
+  AdwSpinRow        *margin_x_row;
+  AdwSpinRow        *margin_y_row;
   AdwSpinRow        *scrollback_lines;
   AdwSwitchRow      *limit_scrollback;
   AdwSwitchRow      *scroll_on_keystroke;
@@ -328,6 +330,12 @@ bevy_profile_editor_constructed (GObject *object)
   g_object_bind_property (self->profile, "login-shell",
                           self->login_shell, "active",
                           G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
+  g_object_bind_property (self->profile, "margin-x",
+                          self->margin_x_row, "value",
+                          G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
+  g_object_bind_property (self->profile, "margin-y",
+                          self->margin_y_row, "value",
+                          G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
   g_object_bind_property (self->profile, "use-custom-command",
                           self->use_custom_commmand, "active",
                           G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
@@ -548,6 +556,8 @@ bevy_profile_editor_class_init (BevyProfileEditorClass *klass)
   gtk_widget_class_bind_template_child (widget_class, BevyProfileEditor, label);
   gtk_widget_class_bind_template_child (widget_class, BevyProfileEditor, limit_scrollback);
   gtk_widget_class_bind_template_child (widget_class, BevyProfileEditor, login_shell);
+  gtk_widget_class_bind_template_child (widget_class, BevyProfileEditor, margin_x_row);
+  gtk_widget_class_bind_template_child (widget_class, BevyProfileEditor, margin_y_row);
   gtk_widget_class_bind_template_child (widget_class, BevyProfileEditor, opacity);
   gtk_widget_class_bind_template_child (widget_class, BevyProfileEditor, opacity_adjustment);
   gtk_widget_class_bind_template_child (widget_class, BevyProfileEditor, opacity_label);

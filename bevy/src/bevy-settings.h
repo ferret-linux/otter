@@ -47,7 +47,6 @@ G_BEGIN_DECLS
 #define BEVY_SETTING_KEY_USE_SYSTEM_FONT         "use-system-font"
 #define BEVY_SETTING_KEY_VISUAL_BELL             "visual-bell"
 #define BEVY_SETTING_KEY_VISUAL_PROCESS_LEADER   "visual-process-leader"
-#define BEVY_SETTING_KEY_DISABLE_PADDING         "disable-padding"
 #define BEVY_SETTING_KEY_WORD_CHAR_EXCEPTIONS    "word-char-exceptions"
 #define BEVY_SETTING_KEY_TAB_MIDDLE_CLICK        "tab-middle-click"
 #define BEVY_SETTING_KEY_IGNORE_OSC_TITLE        "ignore-osc-title"
@@ -164,9 +163,6 @@ void                    bevy_settings_set_interface_style         (BevySettings 
 gboolean                bevy_settings_get_toast_on_copy_clipboard (BevySettings             *self);
 void                    bevy_settings_set_toast_on_copy_clipboard (BevySettings             *self,
                                                                      gboolean                    toast_on_copy_clipboard);
-gboolean                bevy_settings_get_disable_padding         (BevySettings             *self);
-void                    bevy_settings_set_disable_padding         (BevySettings             *self,
-                                                                     gboolean                    disable_padding);
 char                   *bevy_settings_dup_word_char_exceptions    (BevySettings             *self);
 gboolean                bevy_settings_get_prompt_on_close         (BevySettings             *self);
 void                    bevy_settings_set_prompt_on_close         (BevySettings             *self,

@@ -166,6 +166,32 @@
                     <signal name="output" handler="bevy_profile_editor_spin_row_show_decimal_cb" swapped="true"/>
                   </object>
                 </child>
+                <child>
+                  <object class="AdwSpinRow" id="margin_x_row">
+                    <property name="title" translatable="yes">Horizontal Margin</property>
+                    <property name="adjustment">
+                      <object class="GtkAdjustment">
+                        <property name="lower">0</property>
+                        <property name="upper">100</property>
+                        <property name="step-increment">1</property>
+                        <property name="page-increment">10</property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwSpinRow" id="margin_y_row">
+                    <property name="title" translatable="yes">Vertical Margin</property>
+                    <property name="adjustment">
+                      <object class="GtkAdjustment">
+                        <property name="lower">0</property>
+                        <property name="upper">100</property>
+                        <property name="step-increment">1</property>
+                        <property name="page-increment">10</property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
               </object>
             </child>
             <child>

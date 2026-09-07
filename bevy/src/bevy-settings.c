@@ -40,7 +40,6 @@ enum {
   PROP_CURSOR_BLINK_MODE,
   PROP_CURSOR_SHAPE,
   PROP_DEFAULT_PROFILE_UUID,
-  PROP_DISABLE_PADDING,
   PROP_ENABLE_A11Y,
   PROP_ENABLE_ZOOM_SCROLL_CTRL,
   PROP_IGNORE_OSC_TITLE,
@@ -80,8 +79,6 @@ bevy_settings_changed_cb (BevySettings *self,
 
   if (g_str_equal (key, BEVY_SETTING_KEY_DEFAULT_PROFILE_UUID))
     g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DEFAULT_PROFILE_UUID]);
-  else if (g_str_equal (key, BEVY_SETTING_KEY_DISABLE_PADDING))
-    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DISABLE_PADDING]);
   else if (g_str_equal (key, BEVY_SETTING_KEY_PROFILE_UUIDS))
     g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_PROFILE_UUIDS]);
   else if (g_str_equal (key, BEVY_SETTING_KEY_NEW_TAB_POSITION))
@@ -170,10 +167,6 @@ bevy_settings_get_property (GObject    *object,
 
     case PROP_DEFAULT_PROFILE_UUID:
       g_value_take_string (value, bevy_settings_dup_default_profile_uuid (self));
-      break;
-
-    case PROP_DISABLE_PADDING:
-      g_value_set_boolean (value, bevy_settings_get_disable_padding (self));
       break;
 
     case PROP_ENABLE_A11Y:
@@ -313,10 +306,6 @@ bevy_settings_set_property (GObject      *object,
 
     case PROP_DEFAULT_PROFILE_UUID:
       bevy_settings_set_default_profile_uuid (self, g_value_get_string (value));
-      break;
-
-    case PROP_DISABLE_PADDING:
-      bevy_settings_set_disable_padding (self, g_value_get_boolean (value));
       break;
 
     case PROP_RESTORE_SESSION:
@@ -464,13 +453,6 @@ bevy_settings_class_init (BevySettingsClass *klass)
                          (G_PARAM_READWRITE |
                           G_PARAM_EXPLICIT_NOTIFY |
                           G_PARAM_STATIC_STRINGS));
-
-  properties[PROP_DISABLE_PADDING] =
-    g_param_spec_boolean (BEVY_SETTING_KEY_DISABLE_PADDING, NULL, NULL,
-                          FALSE,
-                          (G_PARAM_READWRITE |
-                           G_PARAM_EXPLICIT_NOTIFY |
-                           G_PARAM_STATIC_STRINGS));
 
   properties[PROP_PROFILE_UUIDS] =
     g_param_spec_boxed (BEVY_SETTING_KEY_PROFILE_UUIDS, NULL, NULL,
@@ -1124,26 +1106,6 @@ bevy_settings_set_toast_on_copy_clipboard (BevySettings *self,
   g_settings_set_boolean (self->settings,
                           BEVY_SETTING_KEY_TOAST_ON_COPY_CLIPBOARD,
                           toast_on_copy_clipboard);
-}
-
-void
-bevy_settings_set_disable_padding (BevySettings *self,
-                                     gboolean        disable_padding)
-{
-  g_return_if_fail (BEVY_IS_SETTINGS (self));
-
-  g_settings_set_boolean (self->settings,
-                          BEVY_SETTING_KEY_DISABLE_PADDING,
-                          !!disable_padding);
-}
-
-gboolean
-bevy_settings_get_disable_padding (BevySettings *self)
-{
-  g_return_val_if_fail (BEVY_IS_SETTINGS (self), FALSE);
-
-  return g_settings_get_boolean (self->settings,
-                                 BEVY_SETTING_KEY_DISABLE_PADDING);
 }
 
 char *

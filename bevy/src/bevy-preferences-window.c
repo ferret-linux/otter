@@ -74,6 +74,8 @@ struct _BevyPreferencesWindow
   AdwActionRow         *font_name_row;
   AdwSwitchRow         *limit_scrollback;
   AdwSwitchRow         *login_shell;
+  AdwSpinRow           *margin_x_row;
+  AdwSpinRow           *margin_y_row;
   GtkAdjustment        *opacity_adjustment;
   AdwPreferencesGroup  *opacity_group;
   GtkLabel             *opacity_label;
@@ -569,6 +571,12 @@ bevy_preferences_window_notify_default_profile_cb (BevyPreferencesWindow *self,
                           G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
   g_object_bind_property (profile, "login-shell",
                           self->login_shell, "active",
+                          G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
+  g_object_bind_property (profile, "margin-x",
+                          self->margin_x_row, "value",
+                          G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
+  g_object_bind_property (profile, "margin-y",
+                          self->margin_y_row, "value",
                           G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
 
   g_settings_bind_with_mapping (gsettings,
@@ -1158,6 +1166,8 @@ bevy_preferences_window_class_init (BevyPreferencesWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, font_name_row);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, limit_scrollback);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, login_shell);
+  gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, margin_x_row);
+  gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, margin_y_row);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, opacity_adjustment);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, opacity_group);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, opacity_label);

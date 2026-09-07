@@ -232,12 +232,6 @@
       <description>Enable to adjust the zoom level on scroll scroll while holding the control key.</description>
     </key>
 
-    <key name="disable-padding" type="b">
-      <default>false</default>
-      <summary>Disable Padding around Terminal Emulator</summary>
-      <description>Do not pad around the terminal emulator widget. Setting to true may have significant performance impacts.</description>
-    </key>
-
     <key name="prompt-on-close" type="b">
       <default>true</default>
       <summary>Prompt when active tab is closed</summary>
@@ -371,6 +365,20 @@
       <range min="1.0" max="2.0"/>
       <summary>Column Spacing</summary>
       <description>The terminal’s cell width scale</description>
+    </key>
+
+    <key name="margin-x" type="i">
+      <default>6</default>
+      <range min="0" max="100"/>
+      <summary>Horizontal Margin</summary>
+      <description>The horizontal padding around the terminal</description>
+    </key>
+
+    <key name="margin-y" type="i">
+      <default>6</default>
+      <range min="0" max="100"/>
+      <summary>Vertical Margin</summary>
+      <description>The vertical padding around the terminal</description>
     </key>
 
     <key name="cjk-ambiguous-width" enum="@APP_SCHEMA_ID@.CjkAmbiguousWidth">

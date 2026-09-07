@@ -52,6 +52,8 @@ enum {
   PROP_LABEL,
   PROP_LIMIT_SCROLLBACK,
   PROP_LOGIN_SHELL,
+  PROP_MARGIN_X,
+  PROP_MARGIN_Y,
   PROP_OPACITY,
   PROP_PALETTE,
   PROP_PALETTE_ID,
@@ -219,6 +221,10 @@ bevy_profile_changed_cb (BevyProfile *self,
     g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_CELL_WIDTH_SCALE]);
   else if (g_str_equal (key, BEVY_PROFILE_KEY_LOGIN_SHELL))
     g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_LOGIN_SHELL]);
+  else if (g_str_equal (key, BEVY_PROFILE_KEY_MARGIN_X))
+    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_MARGIN_X]);
+  else if (g_str_equal (key, BEVY_PROFILE_KEY_MARGIN_Y))
+    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_MARGIN_Y]);
   else if (g_str_equal (key, BEVY_PROFILE_KEY_CUSTOM_COMMAND))
     g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_CUSTOM_COMMAND]);
   else if (g_str_equal (key, BEVY_PROFILE_KEY_USE_CUSTOM_COMMAND))
@@ -322,6 +328,14 @@ bevy_profile_get_property (GObject    *object,
 
     case PROP_LOGIN_SHELL:
       g_value_set_boolean (value, bevy_profile_get_login_shell (self));
+      break;
+
+    case PROP_MARGIN_X:
+      g_value_set_int (value, bevy_profile_get_margin_x (self));
+      break;
+
+    case PROP_MARGIN_Y:
+      g_value_set_int (value, bevy_profile_get_margin_y (self));
       break;
 
     case PROP_OPACITY:
@@ -429,6 +443,14 @@ bevy_profile_set_property (GObject      *object,
 
     case PROP_LOGIN_SHELL:
       bevy_profile_set_login_shell (self, g_value_get_boolean (value));
+      break;
+
+    case PROP_MARGIN_X:
+      bevy_profile_set_margin_x (self, g_value_get_int (value));
+      break;
+
+    case PROP_MARGIN_Y:
+      bevy_profile_set_margin_y (self, g_value_get_int (value));
       break;
 
     case PROP_OPACITY:
@@ -589,6 +611,20 @@ bevy_profile_class_init (BevyProfileClass *klass)
                           (G_PARAM_READWRITE |
                            G_PARAM_EXPLICIT_NOTIFY |
                            G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_MARGIN_X] =
+    g_param_spec_int ("margin-x", NULL, NULL,
+                      0, 100, 6,
+                      (G_PARAM_READWRITE |
+                       G_PARAM_EXPLICIT_NOTIFY |
+                       G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_MARGIN_Y] =
+    g_param_spec_int ("margin-y", NULL, NULL,
+                      0, 100, 6,
+                      (G_PARAM_READWRITE |
+                       G_PARAM_EXPLICIT_NOTIFY |
+                       G_PARAM_STATIC_STRINGS));
 
   properties[PROP_OPACITY] =
     g_param_spec_double ("opacity", NULL, NULL,
@@ -1108,6 +1144,40 @@ bevy_profile_set_cell_width_scale (BevyProfile *self,
   g_settings_set_double (self->settings,
                          BEVY_PROFILE_KEY_CELL_WIDTH_SCALE,
                          cell_width_scale);
+}
+
+int
+bevy_profile_get_margin_x (BevyProfile *self)
+{
+  g_return_val_if_fail (BEVY_IS_PROFILE (self), 0);
+
+  return g_settings_get_int (self->settings, BEVY_PROFILE_KEY_MARGIN_X);
+}
+
+void
+bevy_profile_set_margin_x (BevyProfile *self,
+                            int         margin_x)
+{
+  g_return_if_fail (BEVY_IS_PROFILE (self));
+
+  g_settings_set_int (self->settings, BEVY_PROFILE_KEY_MARGIN_X, margin_x);
+}
+
+int
+bevy_profile_get_margin_y (BevyProfile *self)
+{
+  g_return_val_if_fail (BEVY_IS_PROFILE (self), 0);
+
+  return g_settings_get_int (self->settings, BEVY_PROFILE_KEY_MARGIN_Y);
+}
+
+void
+bevy_profile_set_margin_y (BevyProfile *self,
+                            int         margin_y)
+{
+  g_return_if_fail (BEVY_IS_PROFILE (self));
+
+  g_settings_set_int (self->settings, BEVY_PROFILE_KEY_MARGIN_Y, margin_y);
 }
 
 gboolean

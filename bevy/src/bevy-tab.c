@@ -65,6 +65,7 @@ struct _BevyTab
   char                   **command;
   char                    *initial_title;
   GdkTexture              *cached_texture;
+  GtkCssProvider          *css_provider;
   AdwBanner               *banner;
   GtkScrolledWindow       *scrolled_window;
   BevyTerminal          *terminal;
@@ -292,6 +293,22 @@ bevy_tab_update_cell_width_scale (BevyTab *self)
     cell_width_scale = bevy_profile_get_cell_width_scale (self->profile);
 
   vte_terminal_set_cell_width_scale (VTE_TERMINAL (self->terminal), cell_width_scale);
+}
+
+static void
+bevy_tab_update_margins (BevyTab *self)
+{
+  g_autofree char *css = NULL;
+  int margin_x, margin_y;
+
+  g_assert (BEVY_IS_TAB (self));
+
+  margin_x = bevy_profile_get_margin_x (self->profile);
+  margin_y = bevy_profile_get_margin_y (self->profile);
+
+  css = g_strdup_printf (".bevy-tab-%s { padding: %dpx %dpx; }",
+                         self->uuid, margin_y, margin_x);
+  gtk_css_provider_load_from_string (self->css_provider, css);
 }
 
 static void
@@ -852,20 +869,6 @@ bevy_tab_update_scrollbar_policy (BevyTab *self)
 }
 
 static void
-bevy_tab_update_padding_cb (BevyTab      *self,
-                              GParamSpec     *pspec,
-                              BevySettings *settings)
-{
-  g_assert (BEVY_IS_TAB (self));
-  g_assert (BEVY_IS_SETTINGS (settings));
-
-  if (bevy_settings_get_disable_padding (settings))
-    gtk_widget_remove_css_class (GTK_WIDGET (self->terminal), "padded");
-  else
-    gtk_widget_add_css_class (GTK_WIDGET (self->terminal), "padded");
-}
-
-static void
 bevy_tab_update_word_char_exceptions (BevyTab      *self,
                                         GParamSpec     *pspec,
                                         BevySettings *settings)
@@ -884,6 +887,7 @@ bevy_tab_constructed (GObject *object)
 {
   BevyTab *self = (BevyTab *)object;
   BevySettings *settings;
+  g_autofree char *css_class = NULL;
 
   G_OBJECT_CLASS (bevy_tab_parent_class)->constructed (object);
 
@@ -910,12 +914,14 @@ bevy_tab_constructed (GObject *object)
                           self, "ignore-osc-title",
                           G_BINDING_SYNC_CREATE);
 
-  g_signal_connect_object (settings,
-                           "notify::disable-padding",
-                           G_CALLBACK (bevy_tab_update_padding_cb),
-                           self,
-                           G_CONNECT_SWAPPED);
-  bevy_tab_update_padding_cb (self, NULL, settings);
+  css_class = g_strdup_printf ("bevy-tab-%s", self->uuid);
+  gtk_widget_add_css_class (GTK_WIDGET (self->terminal), css_class);
+  self->css_provider = gtk_css_provider_new ();
+  if (gdk_display_get_default () != NULL)
+    gtk_style_context_add_provider_for_display (gdk_display_get_default (),
+                                                GTK_STYLE_PROVIDER (self->css_provider),
+                                                GTK_STYLE_PROVIDER_PRIORITY_USER + 1);
+  bevy_tab_update_margins (self);
 
   g_signal_connect_object (BEVY_APPLICATION_DEFAULT,
                            "notify::overlay-scrollbars",
@@ -957,6 +963,16 @@ bevy_tab_constructed (GObject *object)
                                  self,
                                  G_CONNECT_SWAPPED);
   g_signal_group_connect_object (self->profile_signals,
+                                 "notify::margin-x",
+                                 G_CALLBACK (bevy_tab_update_margins),
+                                 self,
+                                 G_CONNECT_SWAPPED);
+  g_signal_group_connect_object (self->profile_signals,
+                                 "notify::margin-y",
+                                 G_CALLBACK (bevy_tab_update_margins),
+                                 self,
+                                 G_CONNECT_SWAPPED);
+  g_signal_group_connect_object (self->profile_signals,
                                  "custom-links-changed",
                                  G_CALLBACK (bevy_tab_update_custom_links),
                                  self,
@@ -993,6 +1009,7 @@ bevy_tab_profile_signals_bind_cb (BevyTab     *self,
   bevy_tab_update_scrollback_lines (self);
   bevy_tab_update_cell_height_scale (self);
   bevy_tab_update_cell_width_scale (self);
+  bevy_tab_update_margins (self);
   bevy_tab_update_custom_links (self);
 }
 
@@ -1189,6 +1206,7 @@ bevy_tab_dispose (GObject *object)
     gtk_widget_unparent (child);
 
   g_clear_object (&self->cached_texture);
+  g_clear_object (&self->css_provider);
   g_clear_object (&self->profile);
   g_clear_object (&self->profile_signals);
   g_clear_object (&self->process);

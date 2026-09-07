@@ -41,6 +41,8 @@ G_BEGIN_DECLS
 #define BEVY_PROFILE_KEY_LABEL               "label"
 #define BEVY_PROFILE_KEY_LIMIT_SCROLLBACK    "limit-scrollback"
 #define BEVY_PROFILE_KEY_LOGIN_SHELL         "login-shell"
+#define BEVY_PROFILE_KEY_MARGIN_X            "margin-x"
+#define BEVY_PROFILE_KEY_MARGIN_Y            "margin-y"
 #define BEVY_PROFILE_KEY_OPACITY             "opacity"
 #define BEVY_PROFILE_KEY_PALETTE             "palette"
 #define BEVY_PROFILE_KEY_PRESERVE_CONTAINER  "preserve-container"
@@ -113,6 +115,12 @@ void                     bevy_profile_set_cell_height_scale    (BevyProfile     
 double                   bevy_profile_get_cell_width_scale     (BevyProfile           *self);
 void                     bevy_profile_set_cell_width_scale     (BevyProfile           *self,
                                                                   double                   cell_width_scale);
+int                      bevy_profile_get_margin_x             (BevyProfile           *self);
+void                     bevy_profile_set_margin_x             (BevyProfile           *self,
+                                                                  int                      margin_x);
+int                      bevy_profile_get_margin_y             (BevyProfile           *self);
+void                     bevy_profile_set_margin_y             (BevyProfile           *self,
+                                                                  int                      margin_y);
 BevyExitAction         bevy_profile_get_exit_action          (BevyProfile           *self);
 void                     bevy_profile_set_exit_action          (BevyProfile           *self,
                                                                   BevyExitAction         exit_action);

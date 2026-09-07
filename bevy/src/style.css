@@ -12,11 +12,6 @@ scrollbar.overlay-indicator.vertical range.vertical trough slider {
   outline-width: 0;
 }
 
-vte-terminal.padded {
-  margin: 0 0 1px 0;
-  padding: 7px 6px 3px 6px;
-}
-
 vte-terminal:drop(active) { border-radius: 0 0 11px 11px; }
 
 window.maximized vte-terminal:drop(active),
