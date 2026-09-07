@@ -34,7 +34,6 @@
 #include "bevy-shrinker.h"
 #include "bevy-tab-monitor.h"
 #include "bevy-tab-private.h"
-#include "bevy-theme-selector.h"
 #include "bevy-title-dialog.h"
 #include "bevy-profile-dialog.h"
 #include "bevy-util.h"
@@ -82,7 +81,6 @@ struct _BevyWindow
   GSignalGroup          *selected_page_signals;
   BevyWindowDressing  *dressing;
   GtkBox                *visual_bell;
-  GPropertyAction       *interface_style_action;
 
   guint                  visual_bell_source;
   guint                  focus_active_tab_source;
@@ -1547,27 +1545,6 @@ bevy_window_add_zoom_controls (BevyWindow *self)
 }
 
 static void
-bevy_window_add_theme_controls (BevyWindow *self)
-{
-  g_autoptr(GPropertyAction) interface_style = NULL;
-  BevySettings *settings;
-  GtkPopover *popover;
-  GtkWidget *selector;
-
-  g_assert (BEVY_IS_WINDOW (self));
-
-  settings = bevy_application_get_settings (BEVY_APPLICATION_DEFAULT);
-  self->interface_style_action = g_property_action_new ("interface-style", settings, "interface-style");
-  g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (self->interface_style_action));
-
-  popover = gtk_menu_button_get_popover (self->primary_menu_button);
-  selector = g_object_new (BEVY_TYPE_THEME_SELECTOR,
-                           "action-name", "win.interface-style",
-                           NULL);
-  gtk_popover_menu_add_child (GTK_POPOVER_MENU (popover), selector, "interface-style");
-}
-
-static void
 bevy_window_update_menu_visibility (BevyWindow *self)
 {
   g_autoptr(GListModel) containers = NULL;
@@ -1641,7 +1618,6 @@ bevy_window_constructed (GObject *object)
 
   gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.unfullscreen", FALSE);
 
-  bevy_window_add_theme_controls (self);
   bevy_window_add_zoom_controls (self);
 
   containers = bevy_application_list_containers (BEVY_APPLICATION_DEFAULT);
@@ -1945,8 +1921,6 @@ bevy_window_dispose (GObject *object)
 
   self->disposed = TRUE;
 
-  g_action_map_remove_action (G_ACTION_MAP (self), "interface-style");
-
   gtk_widget_dispose_template (GTK_WIDGET (self), BEVY_TYPE_WINDOW);
 
   g_signal_group_set_target (self->active_tab_signals, NULL);
@@ -1955,7 +1929,6 @@ bevy_window_dispose (GObject *object)
   g_signal_group_set_target (self->selected_page_signals, NULL);
   g_clear_handle_id (&self->focus_active_tab_source, g_source_remove);
   g_clear_object (&self->parking_lot);
-  g_clear_object (&self->interface_style_action);
 
   G_OBJECT_CLASS (bevy_window_parent_class)->dispose (object);
 }

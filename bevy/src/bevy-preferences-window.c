@@ -36,6 +36,7 @@
 #include "bevy-profile-editor.h"
 #include "bevy-profile-row.h"
 #include "bevy-shortcut-row.h"
+#include "bevy-theme-selector.h"
 #include "bevy-util.h"
 
 
@@ -137,6 +138,7 @@ struct _BevyPreferencesWindow
   AdwSwitchRow         *use_system_font;
   AdwSwitchRow         *visual_bell;
   GtkListBox           *custom_links_list_box;
+  BevyThemeSelector    *theme_selector;
 };
 
 G_DEFINE_FINAL_TYPE (BevyPreferencesWindow, bevy_preferences_window, ADW_TYPE_PREFERENCES_WINDOW)
@@ -1213,6 +1215,7 @@ bevy_preferences_window_class_init (BevyPreferencesWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, shortcut_zoom_one);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, shortcut_zoom_out);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, show_more_palettes);
+  gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, theme_selector);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, tab_position);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, tab_positions);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, text_blink_mode);
@@ -1245,6 +1248,7 @@ bevy_preferences_window_class_init (BevyPreferencesWindowClass *klass)
   g_type_ensure (BEVY_TYPE_PROFILE_EDITOR);
   g_type_ensure (BEVY_TYPE_PROFILE_ROW);
   g_type_ensure (BEVY_TYPE_SHORTCUT_ROW);
+  g_type_ensure (BEVY_TYPE_THEME_SELECTOR);
 }
 
 static void

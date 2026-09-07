@@ -36,35 +36,6 @@
         <property name="title" translatable="yes">Appearance</property>
         <property name="icon-name">font-select-symbolic</property>
         <child>
-          <object class="AdwPreferencesGroup">
-            <property name="title" translatable="yes">Palette</property>
-            <child type="header-suffix">
-              <object class="GtkButton">
-                <child>
-                  <object class="AdwButtonContent" id="show_more_palettes">
-                    <property name="icon-name">down-small-symbolic</property>
-                    <property name="label" translatable="yes">Show All Palettes</property>
-                  </object>
-                </child>
-                <signal name="clicked" handler="bevy_preferences_window_show_all_cb" swapped="true"/>
-                <style>
-                  <class name="flat"/>
-                </style>
-              </object>
-            </child>
-            <child>
-              <object class="GtkFlowBox" id="palette_previews">
-                <property name="hexpand">true</property>
-                <property name="column-spacing">9</property>
-                <property name="row-spacing">9</property>
-                <property name="max-children-per-line">3</property>
-                <property name="selection-mode">none</property>
-                <property name="homogeneous">true</property>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child>
           <object class="AdwPreferencesGroup" id="opacity_group">
             <property name="visible">false</property>
             <child>
@@ -304,6 +275,53 @@
                     </child>
                   </object>
                 </property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="AdwPreferencesPage">
+        <property name="name">theme</property>
+        <property name="title" translatable="yes">Theme</property>
+        <property name="icon-name">preferences-color-symbolic</property>
+        <child>
+          <object class="AdwPreferencesGroup">
+            <property name="title" translatable="yes">Interface</property>
+            <child>
+              <object class="BevyThemeSelector" id="theme_selector">
+                <property name="action-name">app.interface-style</property>
+                <property name="hexpand">true</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="AdwPreferencesGroup">
+            <property name="title" translatable="yes">Palette</property>
+            <child type="header-suffix">
+              <object class="GtkButton">
+                <child>
+                  <object class="AdwButtonContent" id="show_more_palettes">
+                    <property name="icon-name">down-small-symbolic</property>
+                    <property name="label" translatable="yes">Show All Palettes</property>
+                  </object>
+                </child>
+                <signal name="clicked" handler="bevy_preferences_window_show_all_cb" swapped="true"/>
+                <style>
+                  <class name="flat"/>
+                </style>
+              </object>
+            </child>
+            <child>
+              <object class="GtkFlowBox" id="palette_previews">
+                <property name="hexpand">true</property>
+                <property name="column-spacing">9</property>
+                <property name="row-spacing">9</property>
+                <property name="max-children-per-line">3</property>
+                <property name="selection-mode">none</property>
+                <property name="homogeneous">true</property>
               </object>
             </child>
           </object>

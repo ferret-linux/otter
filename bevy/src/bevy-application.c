@@ -54,6 +54,7 @@ struct _BevyApplication
   GHashTable          *exited;
   GVariant            *session;
   GFileMonitor        *xdg_terminals_list_monitor;
+  GPropertyAction     *interface_style_action;
   guint                has_restored_session : 1;
   guint                overlay_scrollbars : 1;
   guint                client_is_fallback : 1;
@@ -959,6 +960,9 @@ bevy_application_startup (GApplication *application)
                                    G_N_ELEMENTS (action_entries),
                                    self);
 
+  self->interface_style_action = g_property_action_new ("interface-style", self->settings, "interface-style");
+  g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (self->interface_style_action));
+
   if (self->xdg_terminals_list_monitor != NULL)
     {
       g_signal_connect_object (self->xdg_terminals_list_monitor,
@@ -1036,6 +1040,7 @@ bevy_application_finalize (GObject *object)
   g_clear_object (&self->shortcuts);
   g_clear_object (&self->settings);
   g_clear_object (&self->client);
+  g_clear_object (&self->interface_style_action);
 
   g_clear_pointer (&self->next_title_prefix, g_free);
   g_clear_pointer (&self->exited, g_hash_table_unref);
