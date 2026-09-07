@@ -128,28 +128,6 @@
       "build_number": 192
     },
     {
-      "name": "debian-unstable",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:unstable",
-      "fallback_vendor_image": "docker.io/library/debian:unstable",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-06T21:44:48Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 754623550,
-          "disk_size": 2020518777
-        },
-        "arm64": {
-          "compressed_size": 743036559,
-          "disk_size": 2009779113
-        }
-      },
-      "build_number": 191
-    },
-    {
       "name": "fedora",
       "official_image": "ghcr.io/ferret-linux/fedora-otr:stable",
       "fallback_vendor_image": "quay.io/fedora/fedora:44",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 198
+    },
+    {
+      "name": "debian-unstable",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:unstable",
+      "fallback_vendor_image": "docker.io/library/debian:unstable",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-07T05:51:50Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 754624646,
+          "disk_size": 2020518775
+        },
+        "arm64": {
+          "compressed_size": 742949220,
+          "disk_size": 2009779113
+        }
+      },
+      "build_number": 192
     }
   ]
 }
