@@ -17,14 +17,10 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorOutlinedIcon from '@mui/icons-material/ErrorOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import type { DataContainer, RegistryEntry } from '../types';
-import { prettyName } from '../distros';
+import { imageBase, prettyName } from '../distros';
 import PageHeader from '../components/PageHeader';
 import { useNotifications } from '../notifications';
 import useOtterEvents from '../useOtterEvents';
-
-function imageBase(ref: string): string {
-  return ref.split('/').pop() ?? ref;
-}
 
 function formatBytes(bytes: number): string {
   if (bytes <= 0) return '—';
@@ -111,9 +107,7 @@ export default function Registry({ search }: RegistryProps) {
     void load();
   }, [load]);
 
-  useOtterEvents(() => {
-    void load();
-  });
+  useOtterEvents(load);
 
   const run = async (name: string, action: BusyAction, args: string[]) => {
     setBusy({ name, action });

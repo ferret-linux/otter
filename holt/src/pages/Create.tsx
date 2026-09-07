@@ -23,7 +23,7 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import type { RegistryEntry } from '../types';
-import { prettyName } from '../distros';
+import { imageBase, prettyName } from '../distros';
 import { useNotifications } from '../notifications';
 
 const UNSHARE_FLAGS = [
@@ -47,10 +47,6 @@ function derivedName(image: string): string {
     return base.replaceAll(':', '-');
   }
   return `my-${image.toLowerCase()}`;
-}
-
-function imageBase(ref: string): string {
-  return ref.split('/').pop() ?? ref;
 }
 
 export default function Create() {
@@ -100,7 +96,7 @@ export default function Create() {
   const expand = (value: string): Promise<string> =>
     value.trim() ? window.otter.expandEnv(value.trim()) : Promise.resolve('');
 
-  const buildArgs = async (json = false): Promise<string[]> => {
+  const buildArgs = async (): Promise<string[]> => {
     const [cn, ci, cs, ch, cpl, cmem, ccpu, chost, cih, cph, cflags] =
       await Promise.all([
         expand(name),
@@ -117,8 +113,7 @@ export default function Create() {
       ]);
     const vols = await Promise.all(volumes.map(expand));
 
-    const args = ['create'];
-    if (json) args.push('--json');
+    const args = ['create', '--json'];
     if (cn) args.push(cn);
     args.push('--image', ci);
     args.push('--shell', cs);
@@ -155,7 +150,7 @@ export default function Create() {
       if (message !== null) setStep(message);
     });
     try {
-      const { stderr } = await window.otter.runStream('otter', await buildArgs(true));
+      const { stderr } = await window.otter.runStream('otter', await buildArgs());
       if (stderr) {
         notify('error', 'otter reported', stderr.trim());
       } else {

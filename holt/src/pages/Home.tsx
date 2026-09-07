@@ -75,9 +75,7 @@ export default function Home({ search = '' }: HomeProps) {
     void load();
   }, [load]);
 
-  useOtterEvents(() => {
-    void load();
-  });
+  useOtterEvents(load);
 
   const runAction = async (action: Action, container: DataContainer) => {
     setBusyAction(action);

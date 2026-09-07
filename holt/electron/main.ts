@@ -89,7 +89,17 @@ ipcMain.handle('otter:log:clear', () => {
   otterLog.length = 0;
 });
 
-ipcMain.handle('otter:run', async (_event, command: string, args: string[], input?: string) => {
+interface RunOptions {
+  event?: Electron.IpcMainInvokeEvent;
+  command: string;
+  args: string[];
+  input?: string;
+  onStdoutLine?: (line: string) => void;
+}
+
+const runCommand = (options: RunOptions): Promise<{ stdout: string; stderr: string }> => {
+  const { event, command, args, input, onStdoutLine } = options;
+  const win = event ? BrowserWindow.fromWebContents(event.sender) : undefined;
   return new Promise((resolve, reject) => {
     const entry: LogEntry = {
       id: logId++,
@@ -101,62 +111,9 @@ ipcMain.handle('otter:run', async (_event, command: string, args: string[], inpu
     };
     broadcastLog(entry);
 
-    let settled = false;
-    const finish = (status: 'ok' | 'error', exitCode: number | undefined, stdout: string, stderr: string) => {
-      entry.status = status;
-      entry.exitCode = exitCode;
-      entry.durationMs = Date.now() - entry.ts;
-      entry.stdout = stripAnsi(stdout);
-      entry.stderr = stripAnsi(stderr);
-      appendLog(entry);
+    const sendStep = (message: string | null): void => {
+      if (onStdoutLine) win?.webContents.send('otter:run-step', message);
     };
-
-    const child = spawn(command, args);
-    let stdout = '';
-    let stderr = '';
-    child.stdout.on('data', (d) => {
-      stdout += d;
-    });
-    child.stderr.on('data', (d) => {
-      stderr += d;
-    });
-    child.on('error', (err) => {
-      if (settled) return;
-      settled = true;
-      finish('error', undefined, '', err.message);
-      reject(new Error(err.message));
-    });
-    child.on('close', (code, signal) => {
-      if (settled) return;
-      settled = true;
-      if (code !== 0 || signal) {
-        finish('error', code ?? undefined, stdout, stderr);
-        reject(new Error(entry.stderr?.trim() || `command exited with code ${String(code)}`));
-        return;
-      }
-      finish('ok', 0, stdout, stderr);
-      resolve({ stdout: entry.stdout ?? '', stderr: entry.stderr ?? '' });
-    });
-    child.stdin.on('error', () => {});
-    if (input !== undefined) {
-      child.stdin.write(input);
-    }
-    child.stdin.end();
-  });
-});
-
-ipcMain.handle('otter:run-stream', async (event, command: string, args: string[], input?: string) => {
-  const win = BrowserWindow.fromWebContents(event.sender);
-  return new Promise((resolve, reject) => {
-    const entry: LogEntry = {
-      id: logId++,
-      ts: Date.now(),
-      command,
-      args,
-      ...(input === undefined ? {} : { input }),
-      status: 'running',
-    };
-    broadcastLog(entry);
 
     let settled = false;
     const finish = (status: 'ok' | 'error', exitCode: number | undefined, stdout: string, stderr: string) => {
@@ -176,20 +133,13 @@ ipcMain.handle('otter:run-stream', async (event, command: string, args: string[]
     child.stdout.on('data', (d) => {
       const chunk = d.toString();
       stdout += chunk;
+      if (!onStdoutLine) return;
       lineBuffer += chunk;
       const lines = lineBuffer.split('\n');
       lineBuffer = lines.pop() ?? '';
       for (const line of lines) {
         const trimmed = line.trim();
-        if (!trimmed) continue;
-        try {
-          const obj = JSON.parse(trimmed) as Record<string, unknown>;
-          if (typeof obj.message === 'string') {
-            win?.webContents.send('otter:run-step', obj.message);
-          }
-        } catch {
-          // not JSON — ignore
-        }
+        if (trimmed) onStdoutLine(trimmed);
       }
     });
 
@@ -200,7 +150,7 @@ ipcMain.handle('otter:run-stream', async (event, command: string, args: string[]
     child.on('error', (err) => {
       if (settled) return;
       settled = true;
-      win?.webContents.send('otter:run-step', null);
+      sendStep(null);
       finish('error', undefined, '', err.message);
       reject(new Error(err.message));
     });
@@ -208,16 +158,10 @@ ipcMain.handle('otter:run-stream', async (event, command: string, args: string[]
     child.on('close', (code, signal) => {
       if (settled) return;
       settled = true;
-      // flush any remaining partial line
-      if (lineBuffer.trim()) {
-        try {
-          const obj = JSON.parse(lineBuffer) as Record<string, unknown>;
-          if (typeof obj.message === 'string') {
-            win?.webContents.send('otter:run-step', obj.message);
-          }
-        } catch { /* not JSON */ }
+      if (onStdoutLine) {
+        if (lineBuffer.trim()) onStdoutLine(lineBuffer.trim());
+        sendStep(null);
       }
-      win?.webContents.send('otter:run-step', null);
       if (code !== 0 || signal) {
         finish('error', code ?? undefined, stdout, stderr);
         reject(new Error(entry.stderr?.trim() || `command exited with code ${String(code)}`));
@@ -233,4 +177,27 @@ ipcMain.handle('otter:run-stream', async (event, command: string, args: string[]
     }
     child.stdin.end();
   });
-});
+};
+
+ipcMain.handle('otter:run', (_event, command: string, args: string[], input?: string) =>
+  runCommand({ command, args, input }),
+);
+
+ipcMain.handle('otter:run-stream', (event, command: string, args: string[], input?: string) =>
+  runCommand({
+    event,
+    command,
+    args,
+    input,
+    onStdoutLine: (line) => {
+      try {
+        const obj = JSON.parse(line) as Record<string, unknown>;
+        if (typeof obj.message === 'string') {
+          BrowserWindow.fromWebContents(event.sender)?.webContents.send('otter:run-step', obj.message);
+        }
+      } catch {
+        // not JSON — ignore
+      }
+    },
+  }),
+);

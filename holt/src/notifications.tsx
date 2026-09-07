@@ -113,7 +113,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   const notify = useCallback((kind: NotifKind, title: string, message?: string) => {
     const n: OtterNotif = { id: notifId++, kind, title, message, ts: Date.now(), read: false };
     setNotifs((prev) => [n, ...prev]);
-    setToasts((prev) => [...prev, n]);
+    setToasts((prev) => [...prev.slice(-(MAX_TOASTS - 1)), n]);
   }, []);
 
   const markRead = useCallback((id: number) => {
@@ -141,8 +141,6 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     [notify, markRead, remove, clearAll, notifs, unread, panelOpen],
   );
 
-  const visibleToasts = toasts.slice(-MAX_TOASTS);
-
   return (
     <NotificationContext.Provider value={value}>
       {children}
@@ -159,7 +157,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
           pointerEvents: 'none',
         }}
       >
-        {visibleToasts.map((n) => (
+        {toasts.map((n) => (
           <Box key={n.id} sx={{ pointerEvents: 'auto' }}>
             <Toast
               notif={n}

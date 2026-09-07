@@ -45,3 +45,7 @@ export function prettyName(name: string): string {
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ');
 }
+
+export function imageBase(ref: string): string {
+  return ref.split('/').pop() ?? ref;
+}
