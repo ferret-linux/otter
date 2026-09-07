@@ -216,28 +216,6 @@
       "build_number": 201
     },
     {
-      "name": "ubuntu-lts",
-      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts",
-      "fallback_vendor_image": "docker.io/library/ubuntu:26.04",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-07T05:47:11Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 563229855,
-          "disk_size": 1584841271
-        },
-        "arm64": {
-          "compressed_size": 559694447,
-          "disk_size": 1604606490
-        }
-      },
-      "build_number": 195
-    },
-    {
       "name": "opensuse-tumbleweed",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 200
+    },
+    {
+      "name": "ubuntu-lts",
+      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts",
+      "fallback_vendor_image": "docker.io/library/ubuntu:26.04",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-07T11:18:57Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 563229143,
+          "disk_size": 1584841270
+        },
+        "arm64": {
+          "compressed_size": 559694201,
+          "disk_size": 1604606490
+        }
+      },
+      "build_number": 196
     }
   ]
 }
