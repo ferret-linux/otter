@@ -72,7 +72,6 @@ const char              *bevy_palette_get_name               (BevyPalette  *self
 const BevyPaletteFace *bevy_palette_get_face               (BevyPalette  *self,
                                                                 gboolean        dark);
 gboolean                 bevy_palette_use_system_accent      (BevyPalette  *self);
-gboolean                 bevy_palette_is_primary             (BevyPalette  *self);
 gboolean                 bevy_palette_has_dark               (BevyPalette  *self);
 gboolean                 bevy_palette_has_light              (BevyPalette  *self);
 char                    *bevy_get_user_palettes_dir          (void);

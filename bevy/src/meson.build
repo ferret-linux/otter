@@ -17,6 +17,7 @@ bevy_sources = [
   'bevy-palette.c',
   'bevy-palette-preview.c',
   'bevy-palette-preview-color.c',
+  'bevy-palette-search.c',
   'bevy-parking-lot.c',
   'bevy-preferences-list-item.c',
   'bevy-preferences-window.c',

@@ -26,11 +26,9 @@
     <file preprocess="xml-stripblanks">icons/scalable/actions/container-jhbuild-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/container-podman-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/container-toolbox-symbolic.svg</file>
-    <file preprocess="xml-stripblanks">icons/scalable/actions/down-small-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/event-log-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/process-remote-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/process-superuser-symbolic.svg</file>
-    <file preprocess="xml-stripblanks">icons/scalable/actions/up-small-symbolic.svg</file>
 
     <!-- CSS -->
     <file>style.css</file>

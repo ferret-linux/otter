@@ -44,7 +44,6 @@ struct _BevyPalette
   GObject parent_instance;
   const BevyPaletteData *palette;
   BevyPaletteData *allocated;
-  guint is_primary : 1;
   guint has_dark : 1;
   guint has_light : 1;
   guint use_system_accent : 1;
@@ -506,7 +505,6 @@ bevy_palette_new_from_file (const char  *path,
   self = g_object_new (BEVY_TYPE_PALETTE, NULL);
   self->allocated = g_memdup2 (&data, sizeof data);
   self->palette = self->allocated;
-  self->is_primary = g_key_file_get_boolean (key_file, "Palette", "Primary", NULL);
   self->use_system_accent = g_key_file_get_boolean (key_file, "Palette", "UseSystemAccent", NULL);
   self->has_dark = has_dark;
   self->has_light = has_light;
@@ -563,8 +561,6 @@ bevy_palette_new_from_resource (const char  *path,
   self = g_object_new (BEVY_TYPE_PALETTE, NULL);
   self->allocated = g_memdup2 (&data, sizeof data);
   self->palette = self->allocated;
-  self->is_primary = g_key_file_get_boolean (key_file, "Palette", "Primary", NULL);
-  self->use_system_accent = g_key_file_get_boolean (key_file, "Palette", "UseSystemAccent", NULL);
   self->has_dark = has_dark;
   self->has_light = has_light;
 
@@ -575,14 +571,6 @@ gboolean
 bevy_palette_use_system_accent (BevyPalette *self)
 {
   return self->use_system_accent;
-}
-
-gboolean
-bevy_palette_is_primary (BevyPalette *self)
-{
-  g_return_val_if_fail (BEVY_IS_PALETTE (self), FALSE);
-
-  return self->is_primary;
 }
 
 gboolean

@@ -326,17 +326,13 @@
         <child>
           <object class="AdwPreferencesGroup">
             <property name="title" translatable="yes">Palette</property>
-            <child type="header-suffix">
-              <object class="GtkButton">
-                <child>
-                  <object class="AdwButtonContent" id="show_more_palettes">
-                    <property name="icon-name">down-small-symbolic</property>
-                    <property name="label" translatable="yes">Show All Palettes</property>
-                  </object>
-                </child>
-                <signal name="clicked" handler="bevy_preferences_window_show_all_cb" swapped="true"/>
+            <child>
+              <object class="GtkSearchEntry" id="palette_search">
+                <property name="placeholder-text" translatable="yes">Search palettes…</property>
+                <signal name="search-changed" handler="bevy_preferences_window_search_palettes_cb" swapped="true"/>
+                <property name="hexpand">true</property>
                 <style>
-                  <class name="flat"/>
+                  <class name="palette-search"/>
                 </style>
               </object>
             </child>

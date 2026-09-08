@@ -31,6 +31,7 @@
 #include "bevy-custom-link-editor.h"
 #include "bevy-custom-link-row.h"
 #include "bevy-palette-preview.h"
+#include "bevy-palette-search.h"
 #include "bevy-preferences-list-item.h"
 #include "bevy-preferences-window.h"
 #include "bevy-profile-editor.h"
@@ -50,10 +51,11 @@ struct _BevyPreferencesWindow
 {
   AdwPreferencesWindow  parent_instance;
 
-  char                 *default_palette_id;
+  char                 *palette_search_text;
   GtkCustomFilter      *filter;
   GtkFilterListModel   *filter_palettes;
-  guint                 filter_show_more : 1;
+  GtkCustomSorter      *palette_sorter;
+  GtkSortListModel     *sorted_palettes;
 
   AdwSwitchRow         *audible_bell;
   AdwComboRow          *backspace_binding;
@@ -80,6 +82,7 @@ struct _BevyPreferencesWindow
   AdwPreferencesGroup  *opacity_group;
   GtkLabel             *opacity_label;
   GtkFlowBox           *palette_previews;
+  GtkSearchEntry       *palette_search;
   AdwComboRow          *preserve_directory;
   GListModel           *preserve_directories;
   GtkListBox           *profiles_list_box;
@@ -132,7 +135,6 @@ struct _BevyPreferencesWindow
   BevyShortcutRow    *shortcut_zoom_in;
   BevyShortcutRow    *shortcut_zoom_one;
   BevyShortcutRow    *shortcut_zoom_out;
-  AdwButtonContent     *show_more_palettes;
   AdwComboRow          *tab_position;
   GListModel           *tab_positions;
   AdwComboRow          *text_blink_mode;
@@ -145,14 +147,7 @@ struct _BevyPreferencesWindow
 
 G_DEFINE_FINAL_TYPE (BevyPreferencesWindow, bevy_preferences_window, ADW_TYPE_PREFERENCES_WINDOW)
 
-enum {
-  PROP_0,
-  PROP_DEFAULT_PALETTE_ID,
-  N_PROPS
-};
-
 static BevyPreferencesWindow *instance;
-static GParamSpec *properties[N_PROPS];
 
 static gboolean
 bevy_preferences_window_spin_row_show_decimal_cb (BevyPreferencesWindow *self,
@@ -174,14 +169,7 @@ bevy_preferences_window_spin_row_show_decimal_cb (BevyPreferencesWindow *self,
 static void
 invalidate_filter (BevyPreferencesWindow *self)
 {
-  g_autoptr(BevyProfile) default_profile = NULL;
-  g_autofree char *default_palette_id = NULL;
-
   g_assert (BEVY_IS_PREFERENCES_WINDOW (self));
-
-  default_profile = bevy_application_dup_default_profile (BEVY_APPLICATION_DEFAULT);
-  default_palette_id = bevy_profile_dup_palette_id (default_profile);
-  g_set_str (&self->default_palette_id, default_palette_id);
 
   gtk_filter_changed (GTK_FILTER (self->filter), GTK_FILTER_CHANGE_DIFFERENT);
 }
@@ -195,15 +183,6 @@ do_filter_palettes (gpointer item,
   AdwStyleManager *style_manager;
   gboolean dark;
 
-  if (bevy_palette_is_primary (palette))
-    return TRUE;
-
-  if (g_strcmp0 (self->default_palette_id, bevy_palette_get_id (palette)) == 0)
-    return TRUE;
-
-  if (!self->filter_show_more)
-    return FALSE;
-
   style_manager = adw_style_manager_get_default ();
   dark = adw_style_manager_get_dark (style_manager);
 
@@ -213,7 +192,36 @@ do_filter_palettes (gpointer item,
   if (!dark && !bevy_palette_has_light (palette))
     return FALSE;
 
+  if (!bevy_str_empty0 (self->palette_search_text))
+    return bevy_palette_search_score (self->palette_search_text,
+                                      bevy_palette_get_name (palette)) > 0;
+
   return TRUE;
+}
+
+static gint
+compare_palettes_score (gconstpointer a,
+                        gconstpointer b,
+                        gpointer      user_data)
+{
+  BevyPreferencesWindow *self = user_data;
+  BevyPalette *palette_a = (BevyPalette *)a;
+  BevyPalette *palette_b = (BevyPalette *)b;
+  const char *name_a = bevy_palette_get_name (palette_a);
+  const char *name_b = bevy_palette_get_name (palette_b);
+  int score_a;
+  int score_b;
+
+  if (bevy_str_empty0 (self->palette_search_text))
+    return 0;
+
+  score_a = bevy_palette_search_score (self->palette_search_text, name_a);
+  score_b = bevy_palette_search_score (self->palette_search_text, name_b);
+
+  if (score_a != score_b)
+    return score_a > score_b ? -1 : 1;
+
+  return g_strcmp0 (name_a, name_b);
 }
 
 static gboolean
@@ -342,29 +350,18 @@ bevy_preferences_window_profile_row_activated_cb (BevyPreferencesWindow *self,
   bevy_preferences_window_edit_profile (self, profile);
 }
 
-static gboolean
-bevy_preferences_window_show_all_cb (BevyPreferencesWindow *self,
-                                       GtkButton               *button)
+static void
+bevy_preferences_window_search_palettes_cb (BevyPreferencesWindow *self,
+                                             GtkSearchEntry          *entry)
 {
   g_assert (BEVY_IS_PREFERENCES_WINDOW (self));
-  g_assert (GTK_IS_BUTTON (button));
+  g_assert (GTK_IS_SEARCH_ENTRY (entry));
 
-  self->filter_show_more = !self->filter_show_more;
-
-  if (self->filter_show_more)
-    {
-      adw_button_content_set_label (self->show_more_palettes, _("Show Fewer Palettes"));
-      adw_button_content_set_icon_name (self->show_more_palettes, "up-small-symbolic");
-    }
-  else
-    {
-      adw_button_content_set_label (self->show_more_palettes, _("Show All Palettes"));
-      adw_button_content_set_icon_name (self->show_more_palettes, "down-small-symbolic");
-    }
+  g_free (self->palette_search_text);
+  self->palette_search_text = g_ascii_strdown (gtk_editable_get_text (GTK_EDITABLE (entry)), -1);
 
   gtk_filter_changed (GTK_FILTER (self->filter), GTK_FILTER_CHANGE_DIFFERENT);
-
-  return TRUE;
+  gtk_sorter_changed (GTK_SORTER (self->palette_sorter), GTK_SORTER_CHANGE_DIFFERENT);
 }
 
 static GtkWidget *
@@ -818,6 +815,9 @@ bevy_preferences_window_constructed (GObject *object)
   self->filter = gtk_custom_filter_new (do_filter_palettes, self, NULL);
   self->filter_palettes = gtk_filter_list_model_new (g_object_ref (bevy_palette_get_all ()),
                                                      g_object_ref (GTK_FILTER (self->filter)));
+  self->palette_sorter = gtk_custom_sorter_new (compare_palettes_score, self, NULL);
+  self->sorted_palettes = gtk_sort_list_model_new (G_LIST_MODEL (self->filter_palettes),
+                                                   GTK_SORTER (self->palette_sorter));
   g_signal_connect_object (style_manager,
                            "notify::dark",
                            G_CALLBACK (invalidate_filter),
@@ -825,7 +825,7 @@ bevy_preferences_window_constructed (GObject *object)
                            G_CONNECT_SWAPPED);
 
   gtk_flow_box_bind_model (self->palette_previews,
-                           G_LIST_MODEL (self->filter_palettes),
+                           G_LIST_MODEL (self->sorted_palettes),
                            create_palette_preview,
                            g_object_ref (style_manager),
                            g_object_unref);
@@ -1072,53 +1072,13 @@ bevy_preferences_window_dispose (GObject *object)
 
   gtk_widget_dispose_template (GTK_WIDGET (self), BEVY_TYPE_PREFERENCES_WINDOW);
 
-  g_clear_pointer (&self->default_palette_id, g_free);
+  g_clear_pointer (&self->palette_search_text, g_free);
   g_clear_object (&self->filter);
   g_clear_object (&self->filter_palettes);
+  g_clear_object (&self->palette_sorter);
+  g_clear_object (&self->sorted_palettes);
 
   G_OBJECT_CLASS (bevy_preferences_window_parent_class)->dispose (object);
-}
-
-static void
-bevy_preferences_window_get_property (GObject    *object,
-                                        guint       prop_id,
-                                        GValue     *value,
-                                        GParamSpec *pspec)
-{
-  BevyPreferencesWindow *self = BEVY_PREFERENCES_WINDOW (object);
-
-  switch (prop_id)
-    {
-    case PROP_DEFAULT_PALETTE_ID:
-      g_value_set_string (value, self->default_palette_id);
-      break;
-
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-    }
-}
-
-static void
-bevy_preferences_window_set_property (GObject      *object,
-                                        guint         prop_id,
-                                        const GValue *value,
-                                        GParamSpec   *pspec)
-{
-  BevyPreferencesWindow *self = BEVY_PREFERENCES_WINDOW (object);
-
-  switch (prop_id)
-    {
-    case PROP_DEFAULT_PALETTE_ID:
-      if (g_set_str (&self->default_palette_id, g_value_get_string (value)))
-        {
-          gtk_filter_changed (GTK_FILTER (self->filter), GTK_FILTER_CHANGE_DIFFERENT);
-          g_object_notify_by_pspec (G_OBJECT (self), pspec);
-        }
-      break;
-
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-    }
 }
 
 static void
@@ -1130,19 +1090,8 @@ bevy_preferences_window_class_init (BevyPreferencesWindowClass *klass)
 
   object_class->constructed = bevy_preferences_window_constructed;
   object_class->dispose = bevy_preferences_window_dispose;
-  object_class->get_property = bevy_preferences_window_get_property;
-  object_class->set_property = bevy_preferences_window_set_property;
 
   window_class->close_request = bevy_preferences_window_close_request;
-
-  properties[PROP_DEFAULT_PALETTE_ID] =
-    g_param_spec_string ("default-palette-id", NULL, NULL,
-                         NULL,
-                         (G_PARAM_READWRITE |
-                          G_PARAM_EXPLICIT_NOTIFY |
-                          G_PARAM_STATIC_STRINGS));
-
-  g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/dev/itznoel/Bevy/bevy-preferences-window.ui");
 
@@ -1172,6 +1121,7 @@ bevy_preferences_window_class_init (BevyPreferencesWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, opacity_group);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, opacity_label);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, palette_previews);
+  gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, palette_search);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, preserve_directories);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, preserve_directory);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, profiles_list_box);
@@ -1224,9 +1174,8 @@ bevy_preferences_window_class_init (BevyPreferencesWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, shortcut_zoom_in);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, shortcut_zoom_one);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, shortcut_zoom_out);
-  gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, show_more_palettes);
-  gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, theme_selector);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, tab_position);
+  gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, theme_selector);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, tab_positions);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, text_blink_mode);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, text_blink_modes);
@@ -1234,7 +1183,7 @@ bevy_preferences_window_class_init (BevyPreferencesWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, visual_bell);
 
   gtk_widget_class_bind_template_callback (widget_class, bevy_preferences_window_profile_row_activated_cb);
-  gtk_widget_class_bind_template_callback (widget_class, bevy_preferences_window_show_all_cb);
+  gtk_widget_class_bind_template_callback (widget_class, bevy_preferences_window_search_palettes_cb);
   gtk_widget_class_bind_template_callback (widget_class, bevy_preferences_window_spin_row_show_decimal_cb);
 
   gtk_widget_class_install_action (widget_class,
