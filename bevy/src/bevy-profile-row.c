@@ -17,12 +17,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include "config.h"
 
 #include <glib/gi18n.h>
 
 #include "bevy-application.h"
-#include "bevy-preferences-window.h"
 #include "bevy-profile-editor.h"
 #include "bevy-profile-row.h"
 

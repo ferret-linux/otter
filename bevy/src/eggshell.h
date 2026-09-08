@@ -25,7 +25,6 @@
 #ifndef __EGG_USER_SHELL_H__
 #define __EGG_USER_SHELL_H__
 
-#include <stdlib.h>
 #include <glib.h>
 
 G_BEGIN_DECLS

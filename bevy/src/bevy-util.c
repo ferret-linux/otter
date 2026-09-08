@@ -24,8 +24,6 @@
 # define _GNU_SOURCE
 #endif
 
-#include <errno.h>
-#include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <termios.h>

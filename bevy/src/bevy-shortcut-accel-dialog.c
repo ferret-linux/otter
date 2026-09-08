@@ -20,7 +20,6 @@
  *          Christian Hergert <chergert@redhat.com>
  */
 
-#include "config.h"
 
 #include <glib/gi18n.h>
 

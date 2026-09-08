@@ -18,9 +18,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include "config.h"
 
-#include <errno.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #ifdef __linux__

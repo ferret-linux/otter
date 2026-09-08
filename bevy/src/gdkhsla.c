@@ -15,11 +15,9 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "config.h"
 
 #include "gdkhslaprivate.h"
 
-#include <math.h>
 
 void
 _gdk_hsla_init_from_rgba (GdkHSLA       *hsla,

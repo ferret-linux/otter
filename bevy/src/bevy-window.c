@@ -32,7 +32,6 @@
 #include "bevy-preferences-window.h"
 #include "bevy-settings.h"
 #include "bevy-shrinker.h"
-#include "bevy-tab-monitor.h"
 #include "bevy-tab-private.h"
 #include "bevy-title-dialog.h"
 #include "bevy-profile-dialog.h"

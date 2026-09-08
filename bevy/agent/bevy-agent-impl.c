@@ -19,7 +19,6 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include "config.h"
 
 #include <pwd.h>
 #include <sys/types.h>
@@ -29,7 +28,6 @@
 #include "bevy-agent-impl.h"
 #include "bevy-agent-util.h"
 #include "bevy-run-context.h"
-#include "bevy-session-container.h"
 
 struct _BevyAgentImpl
 {

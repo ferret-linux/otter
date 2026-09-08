@@ -21,7 +21,6 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include "config.h"
 
 #define PCRE2_CODE_UNIT_WIDTH 0
 #include <pcre2.h>

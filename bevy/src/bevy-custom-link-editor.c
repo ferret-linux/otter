@@ -17,9 +17,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include "config.h"
 
-#include <math.h>
 
 #include <glib/gi18n.h>
 

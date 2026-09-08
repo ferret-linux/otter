@@ -2416,8 +2416,8 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 static void
 draw_progress (cairo_t         *cr,
                GtkStyleContext *style_context,
-               int              width,
-               int              height,
+               double           width,
+               double           height,
                double           progress)
 {
   GdkRGBA rgba;

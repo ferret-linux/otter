@@ -19,7 +19,6 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include "config.h"
 
 #include "bevy-application.h"
 #include "bevy-profile-dialog.h"

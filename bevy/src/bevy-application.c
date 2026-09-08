@@ -26,7 +26,6 @@
 #include <sys/utsname.h>
 #include <sys/wait.h>
 
-#include "bevy-action-group.h"
 #include "bevy-application.h"
 #include "bevy-build-ident.h"
 #include "bevy-client.h"

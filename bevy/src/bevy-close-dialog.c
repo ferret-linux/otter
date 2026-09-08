@@ -24,8 +24,6 @@
 
 #include "bevy-tab.h"
 #include "bevy-close-dialog.h"
-#include "bevy-util.h"
-#include "bevy-window.h"
 
 typedef struct
 {

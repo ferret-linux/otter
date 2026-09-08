@@ -19,7 +19,6 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include "config.h"
 
 #include "bevy-agent-compat.h"
 #include "bevy-agent-util.h"

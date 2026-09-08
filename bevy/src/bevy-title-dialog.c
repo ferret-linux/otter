@@ -19,7 +19,6 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include "config.h"
 
 #include "bevy-title-dialog.h"
 #include "bevy-tab.h"

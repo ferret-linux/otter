@@ -34,9 +34,6 @@
 
 #include "eggshell.h"
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <unistd.h>
 #ifndef G_OS_WIN32
 #include <pwd.h>

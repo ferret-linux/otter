@@ -19,9 +19,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include "config.h"
 
-#include "bevy-enums.h"
 #include "bevy-tab-monitor.h"
 
 #define DELAY_INTERACTIVE_MSEC 100

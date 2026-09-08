@@ -18,7 +18,6 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include "config.h"
 
 #include <fcntl.h>
 #include <stdio.h>
@@ -26,7 +25,6 @@
 #include <json-glib/json-glib.h>
 
 #include "bevy-agent-compat.h"
-#include "bevy-agent-util.h"
 #include "bevy-podman-container.h"
 #include "bevy-podman-provider-private.h"
 #include "bevy-run-context.h"

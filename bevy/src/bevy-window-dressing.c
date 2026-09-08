@@ -19,11 +19,8 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include "config.h"
 
-#include <math.h>
 
-#include "gdkhslaprivate.h"
 
 #include "bevy-application.h"
 #include "bevy-window-dressing.h"
