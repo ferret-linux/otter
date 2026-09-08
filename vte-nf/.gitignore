@@ -1,0 +1,6 @@
+/build/
+
+/subprojects/.wraplock
+/subprojects/fast_float/
+/subprojects/fmt/
+/subprojects/simdutf/
