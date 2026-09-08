@@ -648,28 +648,6 @@
       "build_number": 207
     },
     {
-      "name": "alma",
-      "official_image": "ghcr.io/ferret-linux/alma-otr:stable",
-      "fallback_vendor_image": "docker.io/library/almalinux:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-08T11:54:53Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 564978845,
-          "disk_size": 1717438095
-        },
-        "arm64": {
-          "compressed_size": 550885396,
-          "disk_size": 1583226470
-        }
-      },
-      "build_number": 205
-    },
-    {
       "name": "kali-edge",
       "official_image": "ghcr.io/ferret-linux/kali-otr:edge",
       "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest",
@@ -765,6 +743,28 @@
         "amd64": {
           "compressed_size": 790057676,
           "disk_size": 2292824659
+        }
+      },
+      "build_number": 206
+    },
+    {
+      "name": "alma",
+      "official_image": "ghcr.io/ferret-linux/alma-otr:stable",
+      "fallback_vendor_image": "docker.io/library/almalinux:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-08T15:13:12Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 564976601,
+          "disk_size": 1717438099
+        },
+        "arm64": {
+          "compressed_size": 550885057,
+          "disk_size": 1583228008
         }
       },
       "build_number": 206
