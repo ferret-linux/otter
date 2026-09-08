@@ -310,7 +310,7 @@
     <child>
       <object class="AdwPreferencesPage">
         <property name="name">theme</property>
-        <property name="title" translatable="yes">Theme</property>
+        <property name="title" translatable="yes">Theming</property>
         <property name="icon-name">preferences-color-symbolic</property>
         <child>
           <object class="AdwPreferencesGroup">
