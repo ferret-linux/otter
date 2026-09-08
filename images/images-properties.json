@@ -45,28 +45,6 @@
       "build_number": 88
     },
     {
-      "name": "opensuse-tumbleweed",
-      "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
-      "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-07T22:36:41Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 419199660,
-          "disk_size": 1270711495
-        },
-        "arm64": {
-          "compressed_size": 410151575,
-          "disk_size": 1215976712
-        }
-      },
-      "build_number": 158
-    },
-    {
       "name": "kali-edge",
       "official_image": "ghcr.io/ferret-linux/kali-otr:edge",
       "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 142
+    },
+    {
+      "name": "opensuse-tumbleweed",
+      "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
+      "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-08T06:07:08Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 419202480,
+          "disk_size": 1270711495
+        },
+        "arm64": {
+          "compressed_size": 410150936,
+          "disk_size": 1215976709
+        }
+      },
+      "build_number": 159
     }
   ]
 }
