@@ -499,28 +499,6 @@
       "build_number": 204
     },
     {
-      "name": "chimera",
-      "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
-      "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-08T11:52:19Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 348116484,
-          "disk_size": 988247452
-        },
-        "arm64": {
-          "compressed_size": 351689400,
-          "disk_size": 958247054
-        }
-      },
-      "build_number": 201
-    },
-    {
       "name": "alpine-edge",
       "official_image": "ghcr.io/ferret-linux/alpine-otr:edge",
       "fallback_vendor_image": "docker.io/library/alpine:edge",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 159
+    },
+    {
+      "name": "chimera",
+      "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
+      "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-08T15:25:04Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 348114913,
+          "disk_size": 988247456
+        },
+        "arm64": {
+          "compressed_size": 351688824,
+          "disk_size": 958247056
+        }
+      },
+      "build_number": 202
     }
   ]
 }
