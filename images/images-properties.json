@@ -316,28 +316,6 @@
       "build_number": 200
     },
     {
-      "name": "fedora",
-      "official_image": "ghcr.io/ferret-linux/fedora-otr:stable",
-      "fallback_vendor_image": "quay.io/fedora/fedora:44",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-08T06:19:24Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 681409590,
-          "disk_size": 2062337115
-        },
-        "arm64": {
-          "compressed_size": 663364259,
-          "disk_size": 1952868445
-        }
-      },
-      "build_number": 203
-    },
-    {
       "name": "kali-edge",
       "official_image": "ghcr.io/ferret-linux/kali-otr:edge",
       "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 100
+    },
+    {
+      "name": "fedora",
+      "official_image": "ghcr.io/ferret-linux/fedora-otr:stable",
+      "fallback_vendor_image": "quay.io/fedora/fedora:44",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-08T11:47:34Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 677785815,
+          "disk_size": 2053339222
+        },
+        "arm64": {
+          "compressed_size": 660064932,
+          "disk_size": 1944539230
+        }
+      },
+      "build_number": 204
     }
   ]
 }
