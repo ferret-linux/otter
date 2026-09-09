@@ -1,15 +1,14 @@
-BUILD_DIR         ?= _build
-BUILD_DIR_RELEASE ?= _build-release
-PREFIX            ?= /usr/local
-BUILDTYPE         ?= debug
-MESON_OPTS        ?=
+BUILDTYPE  ?= debug
+BUILD_DIR  ?= _build-$(BUILDTYPE)
+PREFIX     ?= /usr/local
+MESON_OPTS ?=
 
 # pkg-config module:min-version pairs (version may be empty for "any")
 PC_DEPS := gio-unix-2.0:2.80 gtk4:4.14 libadwaita-1:1.6 json-glib-1.0:1.6 vte-2.91-gtk4:0.79 libportal-gtk4:
 
 TOOLS := meson ninja cc
 
-.PHONY: check-deps setup configure build build-release install install-release uninstall uninstall-release clean
+.PHONY: check-deps setup configure build install uninstall clean
 
 all: build
 
@@ -50,7 +49,16 @@ check-deps:
 	echo; \
 	echo "All dependencies satisfied."
 
-setup: | check-deps
+# BUILDTYPE selects both the meson buildtype and the build directory
+# (BUILD_DIR defaults to _build-$(BUILDTYPE)), so debug and release stay
+# in separate directories and can be switched between without reconfiguring:
+#   make build                  # debug, in _build-debug/
+#   make build BUILDTYPE=release  # release, in _build-release/
+#
+# check-deps is intentionally not a prerequisite of any target below; it
+# only runs when invoked explicitly with 'make check-deps'.
+
+setup:
 	@if [ -f "$(BUILD_DIR)/build.ninja" ]; then \
 		echo "Build directory already configured at $(BUILD_DIR)."; \
 		echo "Run 'make configure' to change options."; \
@@ -59,7 +67,7 @@ setup: | check-deps
 		meson setup "$(BUILD_DIR)" --prefix=$(PREFIX) --buildtype=$(BUILDTYPE) $(MESON_OPTS); \
 	fi
 
-configure: | check-deps
+configure:
 	@if [ ! -f "$(BUILD_DIR)/build.ninja" ]; then \
 		$(MAKE) --no-print-directory setup; \
 	fi
@@ -71,39 +79,20 @@ configure: | check-deps
 		meson configure "$(BUILD_DIR)"; \
 	fi
 
-build: | check-deps
+build:
 	@if [ ! -f "$(BUILD_DIR)/build.ninja" ]; then \
 		$(MAKE) --no-print-directory setup; \
 	fi
 	@echo "Compiling with meson compile ..."
 	meson compile -C "$(BUILD_DIR)"
 
-build-release: | check-deps
-	@if [ ! -f "$(BUILD_DIR_RELEASE)/build.ninja" ]; then \
-		echo "Configuring release build with meson setup ..."; \
-		meson setup "$(BUILD_DIR_RELEASE)" --prefix=$(PREFIX) --buildtype=release $(MESON_OPTS); \
-	else \
-		echo "Reconfiguring release build ..."; \
-		meson configure "$(BUILD_DIR_RELEASE)" --buildtype=release $(MESON_OPTS); \
-	fi
-	@echo "Compiling release build with meson compile ..."
-	meson compile -C "$(BUILD_DIR_RELEASE)"
-
-install: | check-deps
+install:
 	@if [ ! -f "$(BUILD_DIR)/build.ninja" ]; then \
 		echo "Run 'make build' first."; \
 		exit 1; \
 	fi
 	@echo "Installing with meson install ..."
 	sudo meson install -C "$(BUILD_DIR)"
-
-install-release: | check-deps
-	@if [ ! -f "$(BUILD_DIR_RELEASE)/build.ninja" ]; then \
-		echo "Run 'make build-release' first."; \
-		exit 1; \
-	fi
-	@echo "Installing release build with meson install ..."
-	sudo meson install -C "$(BUILD_DIR_RELEASE)"
 
 uninstall:
 	@if [ ! -f "$(BUILD_DIR)/build.ninja" ]; then \
@@ -113,14 +102,6 @@ uninstall:
 	@echo "Uninstalling with ninja uninstall ..."
 	sudo ninja -C "$(BUILD_DIR)" uninstall
 
-uninstall-release:
-	@if [ ! -f "$(BUILD_DIR_RELEASE)/build.ninja" ]; then \
-		echo "Release build dir not configured; nothing to uninstall."; \
-		exit 1; \
-	fi
-	@echo "Uninstalling release build with ninja uninstall ..."
-	sudo ninja -C "$(BUILD_DIR_RELEASE)" uninstall
-
 clean:
-	@rm -rf "$(BUILD_DIR)"
-	@echo "Removed $(BUILD_DIR)"
+	@rm -rf _build-*
+	@echo "Removed all _build-* directories"
