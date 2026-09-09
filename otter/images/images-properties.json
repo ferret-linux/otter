@@ -106,28 +106,6 @@
       "build_number": 122
     },
     {
-      "name": "opensuse-leap",
-      "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
-      "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-09T12:22:16Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 593468302,
-          "disk_size": 1754487959
-        },
-        "arm64": {
-          "compressed_size": 577892772,
-          "disk_size": 1733095112
-        }
-      },
-      "build_number": 163
-    },
-    {
       "name": "rocky",
       "official_image": "ghcr.io/ferret-linux/rocky-otr:stable",
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 120
+    },
+    {
+      "name": "opensuse-leap",
+      "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
+      "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-09T16:17:15Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 593469171,
+          "disk_size": 1754487960
+        },
+        "arm64": {
+          "compressed_size": 577892867,
+          "disk_size": 1733095111
+        }
+      },
+      "build_number": 164
     }
   ]
 }
