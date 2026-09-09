@@ -4,8 +4,9 @@ PREFIX            ?= /usr/local
 BUILDTYPE         ?= debug
 MESON_OPTS        ?=
 
-# pkg-config module:min-version pairs (version may be empty for "any")
-PC_DEPS := gio-unix-2.0:2.80 gtk4:4.14 libadwaita-1:1.6 json-glib-1.0:1.6 vte-2.91-gtk4:0.79 libportal-gtk4:
+# pkg-config module:min-version pairs (version may be empty for "any").
+# vte is deliberately absent: it comes from the local vte-nf subproject only.
+PC_DEPS := gio-unix-2.0:2.80 gtk4:4.14 libadwaita-1:1.6 json-glib-1.0:1.6 libportal-gtk4:
 
 TOOLS := meson ninja cc
 

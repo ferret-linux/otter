@@ -1,3 +1,6 @@
 vte/
 fast_float/
 fast_float.wrap
+fmt.wrap
+simdutf.wrap
+.wraplock
