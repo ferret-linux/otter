@@ -81,33 +81,12 @@ configure_file(
     install_dir: get_option('datadir') / 'glib-2.0' / 'schemas',
 )
 
-# VTE comes exclusively from the local vte-nf subproject (subprojects/vte,
-# a symlink to the sibling otter/vte-nf tree). No system or upstream VTE is
-# ever used. Only the gtk4 library is built; everything legacy or
-# unrelated (gtk3, gir, docs, vapi, glade, app, sixel, icu, terminfo, dbg,
-# systemd scopes) is disabled; a11y, bidi and gnutls stay on.
-vte_local = subproject('vte',
-                       version: vte_req,
-                       default_options: ['gtk3=false',
-                                         'gtk4=true',
-                                         'gir=false',
-                                         'docs=false',
-                                         'vapi=false',
-                                         'glade=false',
-                                         'app=false',
-                                         'sixel=false',
-                                         'icu=false',
-                                         'terminfo=false',
-                                         'dbg=false',
-                                         '_systemd=false'])
-vte_dep = vte_local.get_variable('libvte_gtk4_dep')
-
 bevy_deps = [
   dependency('gio-unix-2.0', version: glib_req),
   dependency('gtk4', version: gtk_req),
   dependency('libadwaita-1', version: adwaita_req),
   dependency('json-glib-1.0', version: json_glib_req),
-  vte_dep,
+  dependency('vte-2.91-gtk4', version: vte_req),
   cc.find_library('m', required: false),
 ]
 
