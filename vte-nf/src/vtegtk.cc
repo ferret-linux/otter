@@ -1010,6 +1010,11 @@ try
                 case PROP_ENABLE_SHAPING:
                         g_value_set_boolean (value, vte_terminal_get_enable_shaping (terminal));
                         break;
+#if VTE_GTK == 4
+                case PROP_FORCE_NERD_FONT:
+                        g_value_set_boolean (value, vte_terminal_get_force_nerd_font (terminal));
+                        break;
+#endif
                 case PROP_ENABLE_SIXEL:
                         g_value_set_boolean (value, vte_terminal_get_enable_sixel (terminal));
                         break;
@@ -1173,6 +1178,11 @@ try
                 case PROP_ENABLE_SHAPING:
                         vte_terminal_set_enable_shaping (terminal, g_value_get_boolean (value));
                         break;
+#if VTE_GTK == 4
+                case PROP_FORCE_NERD_FONT:
+                        vte_terminal_set_force_nerd_font (terminal, g_value_get_boolean (value));
+                        break;
+#endif
                 case PROP_ENABLE_SIXEL:
                         vte_terminal_set_enable_sixel (terminal, g_value_get_boolean (value));
                         break;
@@ -2337,6 +2347,23 @@ vte_terminal_class_init(VteTerminalClass *klass)
                 g_param_spec_boolean ("enable-shaping", NULL, NULL,
                                       TRUE,
                                       (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY));
+
+        #if VTE_GTK == 4
+        /**
+         * VteTerminal:force-nerd-font:
+         *
+         * When %TRUE, the bundled Nerd Font Symbols font is registered
+         * process-wide so Pango's normal fallback uses it for symbol/PUA
+         * codepoints missing from the primary font; letters and normal text
+         * stay in the terminal's font.
+         *
+         * Since: 0.85
+         */
+        pspecs[PROP_FORCE_NERD_FONT] =
+                g_param_spec_boolean ("force-nerd-font", NULL, NULL,
+                                      TRUE,
+                                      (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY));
+#endif
 
         /**
          * VteTerminal:enable-sixel:
@@ -6182,6 +6209,60 @@ catch (...)
 {
         vte::log_exception();
 }
+
+#if VTE_GTK == 4
+/**
+ * vte_terminal_get_force_nerd_font:
+ * @terminal: a #VteTerminal
+ *
+ * Checks whether the bundled Nerd Font Symbols font is registered and used
+ * as a fallback for symbol/PUA codepoints.
+ *
+ * Returns: %TRUE if the Nerd Font is forced, %FALSE if not
+ *
+ * Since: 0.85
+ */
+gboolean
+vte_terminal_get_force_nerd_font(VteTerminal *terminal) noexcept
+try
+{
+        g_return_val_if_fail(VTE_IS_TERMINAL(terminal), false);
+        return IMPL(terminal)->m_force_nerd_font;
+}
+catch (...)
+{
+        vte::log_exception();
+        return false;
+}
+
+/**
+ * vte_terminal_set_force_nerd_font:
+ * @terminal: a #VteTerminal
+ * @force_nerd_font: %TRUE to register the bundled Symbols font and use it as a fallback
+ *
+ * When enabled, the bundled Nerd Font Symbols font is registered process-wide
+ * and Pango's normal fallback uses it for symbol/PUA codepoints. Letters and
+ * normal text stay in the terminal's font. When disabled, the bundled font is
+ * not registered and the terminal behaves like stock VTE (tofu for uncovered
+ * codepoints).
+ *
+ * Since: 0.85
+ */
+void
+vte_terminal_set_force_nerd_font(VteTerminal *terminal,
+                                 gboolean force_nerd_font) noexcept
+try
+{
+        g_return_if_fail(VTE_IS_TERMINAL(terminal));
+
+        if (IMPL(terminal)->set_force_nerd_font(force_nerd_font != FALSE))
+                g_object_notify_by_pspec(G_OBJECT(terminal), pspecs[PROP_FORCE_NERD_FONT]);
+}
+catch (...)
+{
+        vte::log_exception();
+}
+#endif /* VTE_GTK == 4 */
 
 /**
  * vte_terminal_get_encoding:

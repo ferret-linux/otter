@@ -52,6 +52,7 @@ enum {
   PROP_RESTORE_WINDOW_SIZE,
   PROP_DEFAULT_COLUMNS,
   PROP_DEFAULT_ROWS,
+  PROP_FORCE_NERD_FONT,
   PROP_SCROLLBAR_POLICY,
   PROP_TAB_MIDDLE_CLICK,
   PROP_TEXT_BLINK_MODE,
@@ -129,6 +130,8 @@ bevy_settings_changed_cb (BevySettings *self,
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_USE_SYSTEM_FONT]);
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FONT_DESC]);
     }
+  else if (g_str_equal (key, BEVY_SETTING_KEY_FORCE_NERD_FONT))
+    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FORCE_NERD_FONT]);
   else if (g_str_equal (key, BEVY_SETTING_KEY_WORD_CHAR_EXCEPTIONS))
     g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_WORD_CHAR_EXCEPTIONS]);
 }
@@ -237,6 +240,10 @@ bevy_settings_get_property (GObject    *object,
       g_value_set_boolean (value, bevy_settings_get_use_system_font (self));
       break;
 
+    case PROP_FORCE_NERD_FONT:
+      g_value_set_boolean (value, bevy_settings_get_force_nerd_font (self));
+      break;
+
     case PROP_VISUAL_BELL:
       g_value_set_boolean (value, bevy_settings_get_visual_bell (self));
       break;
@@ -342,6 +349,10 @@ bevy_settings_set_property (GObject      *object,
 
     case PROP_USE_SYSTEM_FONT:
       bevy_settings_set_use_system_font (self, g_value_get_boolean (value));
+      break;
+
+    case PROP_FORCE_NERD_FONT:
+      bevy_settings_set_force_nerd_font (self, g_value_get_boolean (value));
       break;
 
     case PROP_VISUAL_BELL:
@@ -522,6 +533,13 @@ bevy_settings_class_init (BevySettingsClass *klass)
   properties[PROP_USE_SYSTEM_FONT] =
     g_param_spec_boolean (BEVY_SETTING_KEY_USE_SYSTEM_FONT, NULL, NULL,
                           FALSE,
+                          (G_PARAM_READWRITE |
+                           G_PARAM_EXPLICIT_NOTIFY |
+                           G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_FORCE_NERD_FONT] =
+    g_param_spec_boolean (BEVY_SETTING_KEY_FORCE_NERD_FONT, NULL, NULL,
+                          TRUE,
                           (G_PARAM_READWRITE |
                            G_PARAM_EXPLICIT_NOTIFY |
                            G_PARAM_STATIC_STRINGS));
@@ -864,6 +882,23 @@ bevy_settings_set_use_system_font (BevySettings *self,
   g_return_if_fail (BEVY_IS_SETTINGS (self));
 
   g_settings_set_boolean (self->settings, BEVY_SETTING_KEY_USE_SYSTEM_FONT, use_system_font);
+}
+
+gboolean
+bevy_settings_get_force_nerd_font (BevySettings *self)
+{
+  g_return_val_if_fail (BEVY_IS_SETTINGS (self), FALSE);
+
+  return g_settings_get_boolean (self->settings, BEVY_SETTING_KEY_FORCE_NERD_FONT);
+}
+
+void
+bevy_settings_set_force_nerd_font (BevySettings *self,
+                                     gboolean        force_nerd_font)
+{
+  g_return_if_fail (BEVY_IS_SETTINGS (self));
+
+  g_settings_set_boolean (self->settings, BEVY_SETTING_KEY_FORCE_NERD_FONT, force_nerd_font);
 }
 
 PangoFontDescription *

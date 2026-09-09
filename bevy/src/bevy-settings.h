@@ -41,6 +41,7 @@ G_BEGIN_DECLS
 #define BEVY_SETTING_KEY_RESTORE_WINDOW_SIZE     "restore-window-size"
 #define BEVY_SETTING_KEY_DEFAULT_COLUMNS         "default-columns"
 #define BEVY_SETTING_KEY_DEFAULT_ROWS            "default-rows"
+#define BEVY_SETTING_KEY_FORCE_NERD_FONT         "force-nerd-font"
 #define BEVY_SETTING_KEY_SCROLLBAR_POLICY        "scrollbar-policy"
 #define BEVY_SETTING_KEY_TEXT_BLINK_MODE         "text-blink-mode"
 #define BEVY_SETTING_KEY_TOAST_ON_COPY_CLIPBOARD "toast-on-copy-clipboard"
@@ -127,6 +128,9 @@ void                    bevy_settings_set_font_name               (BevySettings 
 gboolean                bevy_settings_get_use_system_font         (BevySettings             *self);
 void                    bevy_settings_set_use_system_font         (BevySettings             *self,
                                                                      gboolean                    use_system_font);
+gboolean                bevy_settings_get_force_nerd_font         (BevySettings             *self);
+void                    bevy_settings_set_force_nerd_font         (BevySettings             *self,
+                                                                     gboolean                    force_nerd_font);
 gboolean                bevy_settings_get_restore_session         (BevySettings             *self);
 void                    bevy_settings_set_restore_session         (BevySettings             *self,
                                                                      gboolean                    restore_session);

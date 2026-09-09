@@ -2,7 +2,7 @@ BUILD_DIR         ?= _build
 BUILD_DIR_RELEASE ?= _build-release
 PREFIX            ?= /usr/local
 BUILDTYPE         ?= debug
-MESON_OPTS        ?=
+MESON_OPTS        ?= -Dvte:default_library=static -Dvte:gnutls=true
 
 # pkg-config module:min-version pairs (version may be empty for "any").
 # vte is deliberately absent: it comes from the local vte-nf subproject only.

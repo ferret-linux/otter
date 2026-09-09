@@ -138,6 +138,12 @@
       <description>If the default system monospace font should be used</description>
     </key>
 
+    <key name="force-nerd-font" type="b">
+      <default>true</default>
+      <summary>Force use the bundled Nerd Font Symbols font</summary>
+      <description>When a glyph is missing from the primary font, render it with the bundled Nerd Font Symbols font instead of the system fallback</description>
+    </key>
+
     <key name="font-name" type="s">
       <default>'Monospace 10'</default>
       <summary>Font Name</summary>

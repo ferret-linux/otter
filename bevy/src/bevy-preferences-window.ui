@@ -137,6 +137,12 @@
                 </child>
               </object>
             </child>
+            <child>
+              <object class="AdwSwitchRow" id="force_nerd_font">
+                <property name="title" translatable="yes">Force Nerd Fonts</property>
+                <property name="subtitle" translatable="yes">Use the bundled Nerd Font Symbols font for glyphs missing from the primary font</property>
+              </object>
+            </child>
           </object>
         </child>
         <child>

@@ -505,21 +505,21 @@ if get_option('gtk4')
 
   libvte_gtk4_sources = libvte_common_sources + libvte_gtk4_public_headers + libvte_gtk4_enum_sources + libvte_gtk4_resources_sources + graphene_glue_sources + libvte_gtk4_drawing_sources + minifont_coverage_gtk4_sources
   libvte_gtk4_cppflags = libvte_common_cppflags + gtk4_version_cppflags + ['-DVTE_GTK=4',] + release_args
-  libvte_gtk4_deps = libvte_common_deps + [gtk4_dep,]
+  libvte_gtk4_deps = libvte_common_deps + [gtk4_dep, fontconfig_dep, pango_gtk4_dep]
   libvte_gtk4_public_deps = libvte_common_public_deps + [gtk4_dep,]
 
   if get_option('a11y')
     libvte_gtk4_sources += a11y_gtk4_sources
   endif
 
-  libvte_gtk4 = shared_library(
+  libvte_gtk4 = library(
     vte_gtk4_api_name,
     sources: libvte_gtk4_sources,
     version: libvte_gtk4_soversion,
     include_directories: incs,
     dependencies: libvte_gtk4_deps,
     cpp_args: libvte_gtk4_cppflags,
-    install: true,
+    install: get_option('default_library') != 'static',
   )
 
   libvte_gtk4_dep = declare_dependency(
@@ -1156,6 +1156,18 @@ vte_sh = configure_file(
   install: true,
   install_dir: vte_sysconfdir / 'profile.d',
 )
+
+# Bundled Nerd Font Symbols (per-process fallback for icon/glyph codepoints)
+if get_option('gtk4')
+  install_data(
+    sources: 'nerd-symbols/SymbolsNerdFontMono-Regular.ttf',
+    install_dir: vte_pkgdatadir / 'fonts',
+  )
+  install_data(
+    sources: 'nerd-symbols/LICENSE',
+    install_dir: vte_pkgdatadir / 'fonts',
+  )
+endif
 
 # Systemd integration
 

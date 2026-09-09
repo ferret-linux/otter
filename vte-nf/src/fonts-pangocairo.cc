@@ -24,6 +24,10 @@
 #include "debug.hh"
 #include "vtedefines.hh"
 
+#if VTE_GTK == 4
+#include <fontconfig/fontconfig.h>
+#endif
+
 /* Have a space between letters to make sure ligatures aren't used when caching the glyphs: bug 793391. */
 #define VTE_DRAW_SINGLE_WIDE_CHARACTERS	\
 					"  ! \" # $ % & ' ( ) * + , - . / " \
@@ -68,6 +72,30 @@ FontInfo::find_unistr_info(vteunistr c)
 	uinfo = new UnistrInfo{};
 	g_hash_table_insert(m_other_unistr_info, GINT_TO_POINTER (c), uinfo);
 	return uinfo;
+}
+
+void
+FontInfo::invalidate()
+{
+#if VTE_DEBUG
+	// Reset coverage counters so the debug output reflects re-resolved glyphs
+	memset(m_coverage_count, 0, sizeof(m_coverage_count));
+#endif
+
+	for (auto& uinfo : m_ascii_unistr_info) {
+		uinfo.~UnistrInfo(); // frees glyph string / font refs if set
+		new (&uinfo) UnistrInfo;
+	}
+
+	if (m_other_unistr_info != nullptr)
+		g_hash_table_remove_all(m_other_unistr_info);
+
+	/* cache_ascii() walks the layout's current text; point it back at the
+	 * ASCII sample string, like measure_font() does, instead of whatever
+	 * single character was last shaped. */
+	pango_layout_set_text(m_layout.get(), VTE_DRAW_SINGLE_WIDE_CHARACTERS, -1);
+
+	cache_ascii();
 }
 
 void
@@ -217,6 +245,136 @@ FontInfo::measure_font()
 	cache_ascii();
 }
 
+/* ------------------------------------------------------------------
+ * Bundled Nerd Font Symbols fallback (GTK4)
+ *
+ * The vendored Nerd Font Symbols TTF is registered only into the current
+ * process's fontconfig, so the host font setup is never modified.
+ * ------------------------------------------------------------------ */
+#if VTE_GTK == 4
+
+static bool s_force_nerd_font_enabled = true;
+
+static char*
+vte_nerd_font_ttf_path()
+{
+	static char const* const ttf_name = "SymbolsNerdFontMono-Regular.ttf";
+
+	/* Environment override: directory containing the TTF. */
+	if (g_getenv("VTE_NERD_FONT_DIR") != nullptr) {
+		char* candidate = g_build_filename(g_getenv("VTE_NERD_FONT_DIR"), ttf_name, nullptr);
+		if (g_file_test(candidate, G_FILE_TEST_IS_REGULAR))
+			return candidate;
+		g_free(candidate);
+	}
+
+	/* Portable/bundled layouts: resolve relative to the running executable,
+	 * trying <exe_dir>/{share/vte-2.91/fonts, fonts, ../share/vte-2.91/fonts}. */
+	char const* exe_guesses[] = {
+		"share" G_DIR_SEPARATOR_S "vte-2.91" G_DIR_SEPARATOR_S "fonts",
+		"fonts",
+		".." G_DIR_SEPARATOR_S "share" G_DIR_SEPARATOR_S "vte-2.91" G_DIR_SEPARATOR_S "fonts",
+	};
+	GError* error = nullptr;
+	gchar* exe = g_file_read_link("/proc/self/exe", &error);
+	if (exe != nullptr) {
+		char* exe_dir = g_path_get_dirname(exe);
+		for (auto const* guess : exe_guesses) {
+			char* candidate = g_build_filename(exe_dir, guess, ttf_name, nullptr);
+			if (g_file_test(candidate, G_FILE_TEST_IS_REGULAR)) {
+				g_free(exe_dir);
+				g_free(exe);
+				return candidate;
+			}
+			g_free(candidate);
+		}
+		g_free(exe_dir);
+		g_free(exe);
+	} else {
+		g_clear_error(&error);
+	}
+
+	/* Absolute install-prefix default. */
+	char* candidate = g_build_filename(VTE_NERD_FONTS_DIR, ttf_name, nullptr);
+	if (g_file_test(candidate, G_FILE_TEST_IS_REGULAR))
+		return candidate;
+	g_free(candidate);
+
+	/* 4. Dev tree (source layout). */
+	candidate = g_build_filename(VTE_NERD_FONTS_DEV_DIR, ttf_name, nullptr);
+	if (g_file_test(candidate, G_FILE_TEST_IS_REGULAR))
+		return candidate;
+	g_free(candidate);
+
+	return nullptr;
+}
+
+void
+set_force_nerd_font_enabled(bool enabled)
+{
+	s_force_nerd_font_enabled = enabled;
+}
+
+bool
+force_nerd_font_enabled()
+{
+	return s_force_nerd_font_enabled;
+}
+
+void
+ensure_nerd_font_registered()
+{
+	static bool registered = false;
+	if (registered)
+		return;
+
+	char* path = vte_nerd_font_ttf_path();
+	if (path != nullptr) {
+		FcConfigAppFontAddFile(FcConfigGetCurrent(),
+				       reinterpret_cast<const FcChar8*>(path));
+		/* Make the font immediately visible to the process-wide Pango font
+		 * map. FcConfigAppFontAddFile alone persists in the fontconfig config
+		 * (so it survives Pango fontmap cache rebuilds) but an already
+		 * initialized fontmap does NOT resolve the family from it;
+		 * pango_font_map_add_font_file injects it into the fontmap directly. */
+		GError* error = nullptr;
+		if (!pango_font_map_add_font_file(pango_cairo_font_map_get_default(),
+						   path,
+						   &error)) {
+			_vte_debug_print(vte::debug::category::PANGOCAIRO,
+					 "vtepangocairo: failed to add bundled nerd font to Pango font map: {}",
+					 error ? error->message : "unknown error");
+			g_clear_error(&error);
+		}
+		g_free(path);
+	} else {
+		_vte_debug_print(vte::debug::category::PANGOCAIRO,
+				 "vtepangocairo: bundled Nerd Font Symbols font not found; "
+				 "force-nerd-font will have no effect");
+	}
+
+	registered = true;
+}
+
+void
+invalidate_font_info_caches()
+{
+	if (s_font_info_for_context == nullptr)
+		return;
+
+	g_hash_table_foreach(s_font_info_for_context,
+			     [](gpointer,
+				gpointer value,
+				gpointer)
+			     {
+				auto* info = reinterpret_cast<FontInfo*>(value);
+				info->invalidate();
+			     },
+			     nullptr);
+}
+
+#endif /* VTE_GTK == 4 */
+
 FontInfo::FontInfo(vte::glib::RefPtr<PangoContext> context)
 {
 	_vte_debug_print(vte::debug::category::PANGOCAIRO,
@@ -228,6 +386,15 @@ FontInfo::FontInfo(vte::glib::RefPtr<PangoContext> context)
 	auto tabs = pango_tab_array_new_with_positions(1, FALSE, PANGO_TAB_LEFT, 1);
 	pango_layout_set_tabs(m_layout.get(), tabs);
 	pango_tab_array_free(tabs);
+
+#if VTE_GTK == 4
+	/* Register the bundled Nerd Font Symbols font process-wide so Pango's
+	 * normal fallback can resolve symbol/PUA codepoints through it, aligned
+	 * to the primary font's metrics. Skipped when force-nerd-font is
+	 * disabled, so the terminal behaves like stock VTE (see set_force_nerd_font). */
+	if (force_nerd_font_enabled())
+		ensure_nerd_font_registered();
+#endif /* VTE_GTK == 4 */
 
         // FIXME!!!
 	m_string = g_string_sized_new(VTE_UTF8_BPC+1);
@@ -563,12 +730,11 @@ FontInfo::get_unistr_info(vteunistr c)
         if (line != nullptr && line->runs != nullptr)
         {
                 PangoGlyphItem *glyph_item = (PangoGlyphItem *)line->runs->data;
-                PangoGlyphString *glyph_string = glyph_item->glyphs;
 
                 uinfo->set_coverage(UnistrInfo::Coverage::USE_PANGO_GLYPH_STRING);
 
-		ufi->using_pango_glyph_string.font = glyph_item->item->analysis.font ? g_object_ref (glyph_item->item->analysis.font) : nullptr;
-                ufi->using_pango_glyph_string.glyph_string = pango_glyph_string_copy (glyph_string);
+                ufi->using_pango_glyph_string.font = glyph_item->item->analysis.font ? g_object_ref (glyph_item->item->analysis.font) : nullptr;
+                ufi->using_pango_glyph_string.glyph_string = pango_glyph_string_copy (glyph_item->glyphs);
         }
 #endif
 

@@ -140,6 +140,7 @@ struct _BevyPreferencesWindow
   AdwComboRow          *text_blink_mode;
   GListModel           *text_blink_modes;
   AdwSwitchRow         *use_system_font;
+  AdwSwitchRow         *force_nerd_font;
   AdwSwitchRow         *visual_bell;
   GtkListBox           *custom_links_list_box;
   BevyThemeSelector    *theme_selector;
@@ -910,6 +911,9 @@ bevy_preferences_window_constructed (GObject *object)
   g_object_bind_property (settings, "use-system-font",
                           self->use_system_font, "active",
                           G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
+  g_object_bind_property (settings, "force-nerd-font",
+                          self->force_nerd_font, "active",
+                          G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
 
   g_object_bind_property (settings, "default-columns",
                           self->default_columns, "value",
@@ -1180,6 +1184,7 @@ bevy_preferences_window_class_init (BevyPreferencesWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, text_blink_mode);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, text_blink_modes);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, use_system_font);
+  gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, force_nerd_font);
   gtk_widget_class_bind_template_child (widget_class, BevyPreferencesWindow, visual_bell);
 
   gtk_widget_class_bind_template_callback (widget_class, bevy_preferences_window_profile_row_activated_cb);

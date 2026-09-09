@@ -117,6 +117,9 @@ class DrawingContext;
 
 class FontInfo {
         friend class DrawingContext;
+#if VTE_GTK == 4
+        friend void invalidate_font_info_caches();
+#endif
 
         int const font_cache_timeout = 30; // seconds
 
@@ -249,6 +252,7 @@ private:
         UnistrInfo* find_unistr_info(vteunistr c);
         void cache_ascii();
         void measure_font();
+        void invalidate();
         guint m_destroy_timeout{0}; /* only used when ref_count == 0 */
 
 	/* reusable layout set with font and everything set */
@@ -293,6 +297,14 @@ public:
                                            cairo_font_options_t const* font_options);
 
 }; // class FontInfo
+
+#if VTE_GTK == 4
+/* Process-wide because the FontInfo glyph cache is shared across widgets. */
+void set_force_nerd_font_enabled(bool enabled);
+bool force_nerd_font_enabled();
+void invalidate_font_info_caches();
+void ensure_nerd_font_registered();
+#endif
 
 } // namespace view
 } // namespace vte

@@ -843,6 +843,9 @@ public:
         vte::base::RingView m_ringview;
         bool m_enable_bidi{true};
         bool m_enable_shaping{true};
+#if VTE_GTK == 4
+        bool m_force_nerd_font{true};
+#endif
 
         /* FrameClock driven updates */
         gpointer m_scheduler;
@@ -1674,6 +1677,9 @@ public:
         bool set_enable_a11y(bool setting);
         bool set_enable_bidi(bool setting);
         bool set_enable_shaping(bool setting);
+#if VTE_GTK == 4
+        bool set_force_nerd_font(bool setting);
+#endif
         bool set_encoding(char const* codeset,
                           GError** error);
         bool set_font_desc(vte::Freeable<PangoFontDescription> desc);

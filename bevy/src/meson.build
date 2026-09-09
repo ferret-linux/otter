@@ -84,8 +84,8 @@ configure_file(
 # VTE comes exclusively from the local vte-nf subproject (subprojects/vte,
 # a symlink to the sibling otter/vte-nf tree). No system or upstream VTE is
 # ever used. Only the gtk4 library is built; everything legacy or
-# unrelated (gtk3, gir, docs, vapi, glade, app, sixel, icu, gnutls,
-# terminfo, dbg, systemd scopes) is disabled; a11y and bidi stay on.
+# unrelated (gtk3, gir, docs, vapi, glade, app, sixel, icu, terminfo, dbg,
+# systemd scopes) is disabled; a11y, bidi and gnutls stay on.
 vte_local = subproject('vte',
                        version: vte_req,
                        default_options: ['gtk3=false',
@@ -97,7 +97,6 @@ vte_local = subproject('vte',
                                          'app=false',
                                          'sixel=false',
                                          'icu=false',
-                                         'gnutls=false',
                                          'terminfo=false',
                                          'dbg=false',
                                          '_systemd=false'])

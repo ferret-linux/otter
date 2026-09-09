@@ -42,6 +42,7 @@ gtk3_min_req_version      = '3.24'
 gtk3_max_allowed_version  = '3.24'
 
 gtk4_req_version          = '4.14.0'
+pango_gtk4_req_version    = '1.56.0'
 gtk4_min_req_version      = '4.14'
 gtk4_max_allowed_version  = '4.14'
 
@@ -204,6 +205,8 @@ config_h = configuration_data()
 
 config_h.set_quoted('GETTEXT_PACKAGE', vte_gettext_domain)
 config_h.set_quoted('VERSION', vte_version)
+config_h.set_quoted('VTE_NERD_FONTS_DIR', vte_prefix / vte_pkgdatadir / 'fonts')
+config_h.set_quoted('VTE_NERD_FONTS_DEV_DIR', meson.current_source_dir() / 'src' / 'nerd-symbols')
 config_h.set('VERSION_MAJOR', vte_major_version)
 config_h.set('VERSION_MINOR', vte_minor_version)
 config_h.set('VERSION_MICRO', vte_micro_version)
@@ -722,8 +725,12 @@ endif
 
 if get_option('gtk4')
   gtk4_dep = dependency('gtk4', version: '>=' + gtk4_req_version)
+  pango_gtk4_dep = dependency('pango', version: '>=' + pango_gtk4_req_version)
+  fontconfig_dep = dependency('fontconfig')
 else
   gtk4_dep = dependency('', required: false)
+  pango_gtk4_dep = dependency('', required: false)
+  fontconfig_dep = dependency('', required: false)
 endif
 
 if get_option('icu')

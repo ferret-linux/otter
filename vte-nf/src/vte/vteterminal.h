@@ -424,6 +424,14 @@ void vte_terminal_set_enable_shaping(VteTerminal *terminal,
 _VTE_PUBLIC
 gboolean vte_terminal_get_enable_shaping(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
 
+#if _VTE_GTK == 4
+_VTE_PUBLIC
+void vte_terminal_set_force_nerd_font(VteTerminal *terminal,
+                                      gboolean force_nerd_font) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+_VTE_PUBLIC
+gboolean vte_terminal_get_force_nerd_font(VteTerminal *terminal) _VTE_CXX_NOEXCEPT _VTE_GNUC_NONNULL(1);
+#endif /* _VTE_GTK == 4 */
+
 /* Manipulate the autohide setting. */
 _VTE_PUBLIC
 void vte_terminal_set_mouse_autohide(VteTerminal *terminal,

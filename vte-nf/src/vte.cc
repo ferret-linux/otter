@@ -50,6 +50,7 @@
 #include "caps.hh"
 #include "widget.hh"
 #include "cairo-glue.hh"
+#include "fonts-pangocairo.hh"
 #include "scheduler.h"
 
 #if VTE_GTK == 4
@@ -10453,6 +10454,31 @@ Terminal::set_enable_shaping(bool setting)
                 m_ringview.pause();
 
         return true;
+}
+
+bool
+Terminal::set_force_nerd_font(bool setting)
+{
+#if VTE_GTK == 4
+        if (setting == m_force_nerd_font)
+                return false;
+
+        m_force_nerd_font = setting;
+        view::set_force_nerd_font_enabled(setting);
+
+        /* Register the bundled Symbols font process-wide when the toggle is
+         * turned ON so Pango's fallback can find it. */
+        if (setting)
+                view::ensure_nerd_font_registered();
+
+        /* Drop the per-glyph font cache so already-shaped glyphs re-resolve
+         * under the new setting immediately. */
+        view::invalidate_font_info_caches();
+
+        return true;
+#else
+        return false;
+#endif
 }
 
 bool
