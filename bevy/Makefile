@@ -3,6 +3,10 @@ BUILD_DIR  ?= _build-$(BUILDTYPE)
 PREFIX     ?= /usr/local
 MESON_OPTS ?=
 
+# The development flavor (devel app-id/icon/schema) is the default; only
+# release builds use the stable flavor.
+DEVELOPMENT ?= $(if $(filter release,$(BUILDTYPE)),false,true)
+
 # pkg-config module:min-version pairs (version may be empty for "any")
 PC_DEPS := gio-unix-2.0:2.80 gtk4:4.14 libadwaita-1:1.6 json-glib-1.0:1.6 vte-2.91-gtk4:0.79 libportal-gtk4:
 
@@ -64,7 +68,7 @@ setup:
 		echo "Run 'make configure' to change options."; \
 	else \
 		echo "Configuring with meson setup ..."; \
-		meson setup "$(BUILD_DIR)" --prefix=$(PREFIX) --buildtype=$(BUILDTYPE) $(MESON_OPTS); \
+		meson setup "$(BUILD_DIR)" --prefix=$(PREFIX) --buildtype=$(BUILDTYPE) -Ddevelopment=$(DEVELOPMENT) $(MESON_OPTS); \
 	fi
 
 configure:
