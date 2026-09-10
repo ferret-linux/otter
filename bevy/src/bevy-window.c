@@ -2538,6 +2538,22 @@ bevy_window_get_active_profile (BevyWindow *self)
 }
 
 /**
+ * bevy_window_get_dressing:
+ * @self: a #BevyWindow
+ *
+ * Gets the #BevyWindowDressing used to theme the window.
+ *
+ * Returns: (transfer none): a #BevyWindowDressing
+ */
+BevyWindowDressing *
+bevy_window_get_dressing (BevyWindow *self)
+{
+  g_return_val_if_fail (BEVY_IS_WINDOW (self), NULL);
+
+  return self->dressing;
+}
+
+/**
  * bevy_window_list_pages:
  * @self: a #BevyWindow
  *

@@ -26,6 +26,7 @@
 #include "bevy-profile.h"
 #include "bevy-settings.h"
 #include "bevy-shortcuts.h"
+#include "bevy-window.h"
 
 G_BEGIN_DECLS
 
@@ -49,6 +50,7 @@ void                bevy_application_add_profile                (BevyApplication
 void                bevy_application_remove_profile             (BevyApplication    *self,
                                                                    BevyProfile        *profile);
 BevyProfile      *bevy_application_dup_default_profile        (BevyApplication    *self);
+BevyWindow       *bevy_application_get_active_window         (BevyApplication    *self);
 void                bevy_application_set_default_profile        (BevyApplication    *self,
                                                                    BevyProfile        *profile);
 BevyProfile      *bevy_application_dup_profile                (BevyApplication    *self,

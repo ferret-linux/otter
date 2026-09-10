@@ -21,8 +21,10 @@
 
 #include <glib/gi18n.h>
 
+#include "bevy-application.h"
 #include "bevy-inspector.h"
 #include "bevy-palette-preview-color.h"
+#include "bevy-window-dressing.h"
 
 /* This will not transition to AdwDialog until there is a way for
  * toplevel windows _with_ transient-for set to maintain window
@@ -37,6 +39,9 @@ struct _BevyInspector
   GSignalGroup              *terminal_signals;
   GBindingGroup             *terminal_bindings;
   GtkEventController        *motion;
+
+  BevyWindowDressing        *dressing;
+  GBindingGroup             *window_bindings;
 
   AdwActionRow              *cell_size;
   AdwActionRow              *command;
@@ -373,9 +378,48 @@ bevy_inspector_dup_tab (BevyInspector *self)
 }
 
 static void
+bevy_inspector_update_dressing_source (BevyInspector *self)
+{
+  BevyApplication *app = BEVY_APPLICATION_DEFAULT;
+  g_autoptr(BevyTerminal) terminal = NULL;
+  g_autoptr(BevyProfile) profile = NULL;
+  GtkWidget *window;
+
+  g_assert (BEVY_IS_INSPECTOR (self));
+
+  g_binding_group_set_source (self->window_bindings, NULL);
+
+  if ((terminal = g_signal_group_dup_target (self->terminal_signals)) &&
+      (window = gtk_widget_get_ancestor (GTK_WIDGET (terminal), BEVY_TYPE_WINDOW)))
+    {
+      g_binding_group_set_source (self->window_bindings,
+                                  G_OBJECT (bevy_window_get_dressing (BEVY_WINDOW (window))));
+    }
+  else if ((window = GTK_WIDGET (bevy_application_get_active_window (app))) != NULL)
+    {
+      g_binding_group_set_source (self->window_bindings,
+                                  G_OBJECT (bevy_window_get_dressing (BEVY_WINDOW (window))));
+    }
+  else if ((profile = bevy_application_dup_default_profile (app)) != NULL)
+    {
+      g_binding_group_set_source (self->window_bindings, G_OBJECT (profile));
+    }
+}
+
+static void
 bevy_inspector_constructed (GObject *object)
 {
+  BevyInspector *self = (BevyInspector *)object;
+
   G_OBJECT_CLASS (bevy_inspector_parent_class)->constructed (object);
+
+  self->dressing = bevy_window_dressing_new_for_root (GTK_WIDGET (self), FALSE);
+  self->window_bindings = g_binding_group_new ();
+  g_binding_group_bind (self->window_bindings, "palette",
+                        self->dressing, "palette",
+                        G_BINDING_SYNC_CREATE);
+
+  bevy_inspector_update_dressing_source (self);
 }
 
 static void
@@ -392,6 +436,9 @@ bevy_inspector_dispose (GObject *object)
     }
 
   gtk_widget_dispose_template (GTK_WIDGET (self), BEVY_TYPE_INSPECTOR);
+
+  g_clear_object (&self->window_bindings);
+  g_clear_object (&self->dressing);
 
   g_clear_object (&self->terminal_bindings);
   g_clear_object (&self->terminal_signals);

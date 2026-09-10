@@ -48,7 +48,9 @@ BevyTab     *bevy_window_add_tab_for_command (BevyWindow       *self,
 GListModel    *bevy_window_list_pages          (BevyWindow       *self);
 void           bevy_window_append_tab          (BevyWindow       *self,
                                                   BevyTab          *tab);
-BevyProfile *bevy_window_get_active_profile  (BevyWindow       *self);
+BevyProfile *bevy_window_get_active_profile     (BevyWindow       *self);
+struct _BevyWindowDressing;
+struct _BevyWindowDressing *bevy_window_get_dressing (BevyWindow *self);
 BevyTab     *bevy_window_get_active_tab      (BevyWindow       *self);
 void           bevy_window_set_active_tab      (BevyWindow       *self,
                                                   BevyTab          *active_tab);

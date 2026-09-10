@@ -30,14 +30,16 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (BevyWindowDressing, bevy_window_dressing, BEVY, WINDOW_DRESSING, GObject)
 
-BevyWindowDressing *bevy_window_dressing_new         (BevyWindow         *window);
-BevyWindow         *bevy_window_dressing_dup_window  (BevyWindowDressing *self);
-BevyPalette        *bevy_window_dressing_get_palette (BevyWindowDressing *self);
-void                  bevy_window_dressing_set_palette (BevyWindowDressing *self,
-                                                          BevyPalette        *palette);
-double                bevy_window_dressing_get_opacity (BevyWindowDressing *self);
-void                  bevy_window_dressing_set_opacity (BevyWindowDressing *self,
-                                                          double                opacity);
+BevyWindowDressing *bevy_window_dressing_new           (BevyWindow         *window);
+BevyWindowDressing *bevy_window_dressing_new_for_root  (GtkWidget         *root,
+                                                        gboolean            main_contents);
+GtkWidget          *bevy_window_dressing_dup_window    (BevyWindowDressing *self);
+BevyPalette        *bevy_window_dressing_get_palette   (BevyWindowDressing *self);
+void                bevy_window_dressing_set_palette   (BevyWindowDressing *self,
+                                                        BevyPalette        *palette);
+double              bevy_window_dressing_get_opacity   (BevyWindowDressing *self);
+void                bevy_window_dressing_set_opacity   (BevyWindowDressing *self,
+                                                        double              opacity);
 
 G_END_DECLS
 

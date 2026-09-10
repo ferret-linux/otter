@@ -353,8 +353,8 @@ bevy_application_activate (GApplication *app)
     }
 }
 
-static BevyWindow *
-get_current_window (BevyApplication *self)
+BevyWindow *
+bevy_application_get_active_window (BevyApplication *self)
 {
   GtkWindow *active_window;
 
@@ -512,7 +512,7 @@ bevy_application_command_line (GApplication            *app,
 
       if (new_tab)
         {
-          BevyWindow *window = get_current_window (self);
+          BevyWindow *window = bevy_application_get_active_window (self);
           BevyTab *tab;
 
           if (window == NULL)
@@ -529,7 +529,7 @@ bevy_application_command_line (GApplication            *app,
       else if (new_tab_with_profile)
         {
           g_autoptr(BevyProfile) profile = bevy_application_dup_profile (self, new_tab_with_profile);
-          BevyWindow *window = get_current_window (self);
+          BevyWindow *window = bevy_application_get_active_window (self);
           BevyTab *tab;
 
           if (window == NULL || new_window)
@@ -580,7 +580,7 @@ bevy_application_command_line (GApplication            *app,
   else if (g_variant_dict_contains (dict, "tab"))
     {
       g_autoptr(BevyProfile) profile = bevy_application_dup_default_profile (self);
-      BevyWindow *window = get_current_window (self);
+      BevyWindow *window = bevy_application_get_active_window (self);
       BevyTab *tab = bevy_tab_new (profile);
       BevyTerminal *terminal = bevy_tab_get_terminal (tab);
 
@@ -601,7 +601,7 @@ bevy_application_command_line (GApplication            *app,
   else if (new_tab_with_profile)
     {
       g_autoptr(BevyProfile) profile = bevy_application_dup_profile (self, new_tab_with_profile);
-      BevyWindow *window = get_current_window (self);
+      BevyWindow *window = bevy_application_get_active_window (self);
       BevyTab *tab = bevy_tab_new (profile);
       BevyTerminal *terminal = bevy_tab_get_terminal (tab);
 
@@ -622,7 +622,7 @@ bevy_application_command_line (GApplication            *app,
   else if (g_variant_dict_contains (dict, "new-window"))
     {
       g_autoptr(BevyProfile) profile = bevy_application_dup_default_profile (self);
-      BevyWindow *window = get_current_window (self);
+      BevyWindow *window = bevy_application_get_active_window (self);
       BevyTerminal *terminal;
       BevyTab *tab;
 
@@ -1485,7 +1485,7 @@ bevy_application_new_tab_action (GSimpleAction *action,
   g_assert (!action || G_IS_SIMPLE_ACTION (action));
   g_assert (BEVY_IS_APPLICATION (self));
 
-  window = get_current_window (self);
+  window = bevy_application_get_active_window (self);
 
   if (window == NULL)
     window = bevy_window_new_empty ();

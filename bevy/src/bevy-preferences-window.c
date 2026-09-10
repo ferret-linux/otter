@@ -39,6 +39,7 @@
 #include "bevy-shortcut-row.h"
 #include "bevy-theme-selector.h"
 #include "bevy-util.h"
+#include "bevy-window-dressing.h"
 
 
 /* This will not transition to AdwDialog until there is a way for
@@ -56,6 +57,9 @@ struct _BevyPreferencesWindow
   GtkFilterListModel   *filter_palettes;
   GtkCustomSorter      *palette_sorter;
   GtkSortListModel     *sorted_palettes;
+
+  BevyWindowDressing   *dressing;
+  GBindingGroup        *window_bindings;
 
   AdwSwitchRow         *audible_bell;
   AdwComboRow          *backspace_binding;
@@ -799,6 +803,54 @@ bevy_preferences_window_close_request (GtkWindow *window)
 }
 
 static void
+bevy_preferences_window_refresh_dressing_source (BevyPreferencesWindow *self)
+{
+  BevyApplication *app = BEVY_APPLICATION_DEFAULT;
+  g_autoptr(BevyProfile) profile = NULL;
+  BevyWindow *window;
+
+  g_assert (BEVY_IS_PREFERENCES_WINDOW (self));
+
+  g_binding_group_set_source (self->window_bindings, NULL);
+
+  if ((window = bevy_application_get_active_window (app)))
+    g_binding_group_set_source (self->window_bindings,
+                                G_OBJECT (bevy_window_get_dressing (window)));
+  else if ((profile = bevy_application_dup_default_profile (app)) != NULL)
+    g_binding_group_set_source (self->window_bindings, G_OBJECT (profile));
+}
+
+static void
+bevy_preferences_window_active_changed_cb (BevyPreferencesWindow *self,
+                                           GParamSpec            *pspec,
+                                           GObject               *window)
+{
+  if (gtk_window_is_active (GTK_WINDOW (window)))
+    bevy_preferences_window_refresh_dressing_source (self);
+}
+
+static void
+bevy_preferences_window_connect_window (BevyPreferencesWindow *self,
+                                        BevyWindow            *window)
+{
+  g_signal_connect_object (window, "notify::is-active",
+                           G_CALLBACK (bevy_preferences_window_active_changed_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+}
+
+static void
+bevy_preferences_window_windows_changed_cb (GtkApplication          *application,
+                                            GtkWindow               *window,
+                                            BevyPreferencesWindow   *self)
+{
+  if (BEVY_IS_WINDOW (window))
+    bevy_preferences_window_connect_window (self, BEVY_WINDOW (window));
+
+  bevy_preferences_window_refresh_dressing_source (self);
+}
+
+static void
 bevy_preferences_window_constructed (GObject *object)
 {
   BevyPreferencesWindow *self = (BevyPreferencesWindow *)object;
@@ -811,6 +863,31 @@ bevy_preferences_window_constructed (GObject *object)
   g_autoptr(BevyAddButtonListModel) profiles_list_model = NULL;
 
   G_OBJECT_CLASS (bevy_preferences_window_parent_class)->constructed (object);
+
+  self->dressing = bevy_window_dressing_new_for_root (GTK_WIDGET (self), FALSE);
+  self->window_bindings = g_binding_group_new ();
+  g_binding_group_bind (self->window_bindings, "palette",
+                        self->dressing, "palette",
+                        G_BINDING_SYNC_CREATE);
+
+  for (const GList *iter = gtk_application_get_windows (GTK_APPLICATION (app));
+       iter != NULL;
+       iter = iter->next)
+    {
+      if (BEVY_IS_WINDOW (iter->data))
+        bevy_preferences_window_connect_window (self, BEVY_WINDOW (iter->data));
+    }
+
+  g_signal_connect_object (app, "window-added",
+                           G_CALLBACK (bevy_preferences_window_windows_changed_cb),
+                           self,
+                           0);
+  g_signal_connect_object (app, "window-removed",
+                           G_CALLBACK (bevy_preferences_window_windows_changed_cb),
+                           self,
+                           0);
+
+  bevy_preferences_window_refresh_dressing_source (self);
 
   self->filter = gtk_custom_filter_new (do_filter_palettes, self, NULL);
   self->filter_palettes = gtk_filter_list_model_new (g_object_ref (bevy_palette_get_all ()),
@@ -1071,6 +1148,9 @@ bevy_preferences_window_dispose (GObject *object)
   BevyPreferencesWindow *self = (BevyPreferencesWindow *)object;
 
   gtk_widget_dispose_template (GTK_WIDGET (self), BEVY_TYPE_PREFERENCES_WINDOW);
+
+  g_clear_object (&self->window_bindings);
+  g_clear_object (&self->dressing);
 
   g_clear_pointer (&self->palette_search_text, g_free);
   g_clear_object (&self->filter);

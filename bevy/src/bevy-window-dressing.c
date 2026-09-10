@@ -34,6 +34,7 @@ struct _BevyWindowDressing
   char           *css_class;
   double          opacity;
   guint           queued_update;
+  guint           main_contents : 1;
 };
 
 enum {
@@ -41,6 +42,7 @@ enum {
   PROP_OPACITY,
   PROP_PALETTE,
   PROP_WINDOW,
+  PROP_MAIN_CONTENTS,
   N_PROPS
 };
 
@@ -48,6 +50,154 @@ G_DEFINE_FINAL_TYPE (BevyWindowDressing, bevy_window_dressing, G_TYPE_OBJECT)
 
 static GParamSpec *properties[N_PROPS];
 static guint last_sequence;
+
+static void
+bevy_window_dressing_append_surface_rules (BevyWindowDressing *self,
+                                            GString             *string,
+                                            const BevyPaletteFace *face,
+                                            gboolean             dark,
+                                            double               window_alpha)
+{
+  g_autofree char *bg = NULL;
+  g_autofree char *fg = NULL;
+  g_autofree char *titlebar_bg = NULL;
+  g_autofree char *titlebar_fg = NULL;
+  g_autofree char *accent_mix_str = NULL;
+  g_autofree char *view_bg = NULL;
+  g_autofree char *card_bg = NULL;
+  g_autofree char *card_shade = NULL;
+  g_autofree char *dialog_bg = NULL;
+  g_autofree char *popover_shade = NULL;
+  g_autofree char *sidebar_bg = NULL;
+  g_autofree char *sidebar_backdrop = NULL;
+  g_autofree char *sidebar_border = NULL;
+  g_autofree char *sidebar_shade = NULL;
+  g_autofree char *headerbar_backdrop = NULL;
+  g_autofree char *headerbar_border = NULL;
+  g_autofree char *headerbar_shade = NULL;
+  g_autofree char *headerbar_darker = NULL;
+  g_autofree char *backdrop_fg = NULL;
+  g_autofree char *backdrop_bg = NULL;
+  char window_alpha_str[G_ASCII_DTOSTR_BUF_SIZE];
+  char popover_alpha_str[G_ASCII_DTOSTR_BUF_SIZE];
+  double popover_alpha;
+  GdkRGBA accent_mix;
+
+  g_assert (BEVY_IS_WINDOW_DRESSING (self));
+
+  bg = gdk_rgba_to_string (&face->background);
+  fg = gdk_rgba_to_string (&face->foreground);
+  titlebar_bg = gdk_rgba_to_string (&face->titlebar_background);
+  titlebar_fg = gdk_rgba_to_string (&face->titlebar_foreground);
+
+  window_alpha = CLAMP (window_alpha, 0, 1);
+  popover_alpha = MAX (window_alpha, 0.85);
+
+  g_ascii_dtostr (window_alpha_str, sizeof window_alpha_str, window_alpha);
+  g_ascii_dtostr (popover_alpha_str, sizeof popover_alpha_str, popover_alpha);
+
+  view_bg = g_strdup_printf ("mix(%s,%s,.04)", bg, fg);
+  card_bg = g_strdup_printf ("mix(%s,%s,.08)", bg, fg);
+  card_shade = g_strdup_printf ("mix(%s,%s,.15)", bg, fg);
+  dialog_bg = g_strdup_printf ("mix(%s,%s,.06)", bg, fg);
+  popover_shade = g_strdup_printf ("mix(%s,%s,.15)", bg, fg);
+  sidebar_bg = g_strdup_printf ("mix(%s,%s,.04)", bg, fg);
+  sidebar_backdrop = g_strdup_printf ("mix(%s,%s,.98)", bg, fg);
+  sidebar_border = g_strdup_printf ("mix(%s,%s,.15)", bg, fg);
+  sidebar_shade = g_strdup_printf ("mix(%s,%s,.1)", bg, fg);
+  headerbar_backdrop = g_strdup_printf ("mix(%s,%s,.985)", titlebar_bg, titlebar_fg);
+  headerbar_border = g_strdup_printf ("mix(%s,%s,.15)", titlebar_bg, titlebar_fg);
+  headerbar_shade = g_strdup_printf ("mix(%s,%s,.1)", titlebar_bg, titlebar_fg);
+  headerbar_darker = g_strdup_printf ("mix(%s,%s,.25)", titlebar_bg, titlebar_fg);
+  backdrop_fg = g_strdup_printf ("mix(%s,%s,.025)", fg, bg);
+  backdrop_bg = g_strdup_printf ("mix(%s,%s,.985)", fg, bg);
+
+  g_string_append_printf (string,
+                          "window.%s { color: %s; background-color: alpha(%s, %s); }\n",
+                          self->css_class, fg, bg, window_alpha_str);
+  g_string_append_printf (string,
+                          "window.%s.fullscreen { background-color: %s; }\n",
+                          self->css_class, bg);
+
+  if (!self->main_contents)
+    g_string_append_printf (string,
+                            "window.%s:backdrop { color: %s; background-color: %s; }\n",
+                            self->css_class, backdrop_fg, backdrop_bg);
+
+  g_string_append_printf (string,
+                          "window.%s popover > contents { color: %s; background-color: alpha(%s, %s); }\n"
+                          "window.%s popover > arrow { background-color: alpha(%s, %s); }\n",
+                          self->css_class, titlebar_fg, titlebar_bg, popover_alpha_str,
+                          self->css_class, titlebar_bg, popover_alpha_str);
+
+  /* Override the libadwaita CSS custom properties that all its widgets are
+   * built from. These cascade down the widget tree, so dialogs, toasts and
+   * other surfaces presented within the window are themed uniformly too.
+   */
+  g_string_append_printf (string,
+                          "window.%s {\n"
+                          "  --window-bg-color: %s;\n"
+                          "  --window-fg-color: %s;\n"
+                          "  --view-bg-color: %s;\n"
+                          "  --view-fg-color: %s;\n"
+                          "  --headerbar-bg-color: %s;\n"
+                          "  --headerbar-fg-color: %s;\n"
+                          "  --headerbar-backdrop-color: %s;\n"
+                          "  --headerbar-border-color: %s;\n"
+                          "  --headerbar-shade-color: %s;\n"
+                          "  --headerbar-darker-shade-color: %s;\n"
+                          "  --card-bg-color: %s;\n"
+                          "  --card-fg-color: %s;\n"
+                          "  --card-shade-color: %s;\n"
+                          "  --dialog-bg-color: %s;\n"
+                          "  --dialog-fg-color: %s;\n"
+                          "  --popover-bg-color: %s;\n"
+                          "  --popover-fg-color: %s;\n"
+                          "  --popover-shade-color: %s;\n"
+                          "  --sidebar-bg-color: %s;\n"
+                          "  --sidebar-fg-color: %s;\n"
+                          "  --sidebar-backdrop-color: %s;\n"
+                          "  --sidebar-border-color: %s;\n"
+                          "  --sidebar-shade-color: %s;\n"
+                          "}\n",
+                          self->css_class,
+                          bg,
+                          fg,
+                          view_bg,
+                          fg,
+                          titlebar_bg,
+                          titlebar_fg,
+                          headerbar_backdrop,
+                          headerbar_border,
+                          headerbar_shade,
+                          headerbar_darker,
+                          card_bg,
+                          fg,
+                          card_shade,
+                          dialog_bg,
+                          fg,
+                          titlebar_bg,
+                          titlebar_fg,
+                          popover_shade,
+                          sidebar_bg,
+                          fg,
+                          sidebar_backdrop,
+                          sidebar_border,
+                          sidebar_shade);
+
+  if (!bevy_palette_use_system_accent (self->palette))
+    {
+      accent_mix = face->indexed[4];
+      accent_mix_str = gdk_rgba_to_string (&accent_mix);
+
+      g_string_append_printf (string,
+                              "window.%s { --accent-fg-color: %s; --accent-bg-color: mix(%s,%s,.15); }\n",
+                              self->css_class,
+                              dark ? titlebar_fg : titlebar_bg,
+                              accent_mix_str,
+                              bg);
+    }
+}
 
 static void
 bevy_window_dressing_update (BevyWindowDressing *self)
@@ -74,13 +224,9 @@ bevy_window_dressing_update (BevyWindowDressing *self)
       g_autofree char *rm_bg = NULL;
       g_autofree char *bell_fg = NULL;
       g_autofree char *bell_bg = NULL;
-      g_autofree char *accent_mix_str = NULL;
       g_autofree char *revealer_bg = NULL;
-      char window_alpha_str[G_ASCII_DTOSTR_BUF_SIZE];
       char popover_alpha_str[G_ASCII_DTOSTR_BUF_SIZE];
       gboolean visual_process_leader;
-      GdkRGBA accent_mix;
-      double window_alpha;
       double popover_alpha;
 
       /* Force clear any background applied to terminals from distro,
@@ -101,97 +247,73 @@ bevy_window_dressing_update (BevyWindowDressing *self)
       bell_fg = gdk_rgba_to_string (&face->scarves[BEVY_PALETTE_SCARF_VISUAL_BELL].foreground);
       bell_bg = gdk_rgba_to_string (&face->scarves[BEVY_PALETTE_SCARF_VISUAL_BELL].background);
 
-      window_alpha = self->opacity;
-      popover_alpha = MAX (window_alpha, 0.85);
+      bevy_window_dressing_append_surface_rules (self, string, face, dark, self->opacity);
 
-      g_ascii_dtostr (popover_alpha_str, sizeof popover_alpha_str, popover_alpha);
-      g_ascii_dtostr (window_alpha_str, sizeof window_alpha_str, window_alpha);
-
-      revealer_bg = g_strdup_printf ("alpha(mix(%s,%s,.05),%s)", titlebar_bg, titlebar_fg, popover_alpha_str);
-
-      g_string_append_printf (string,
-                              "window.%s { color: %s; background-color: alpha(%s, %s); }\n",
-                              self->css_class, fg, bg, window_alpha_str);
-      g_string_append_printf (string,
-                              "window.%s.fullscreen { background-color: %s; }\n",
-                              self->css_class, bg);
-      g_string_append_printf (string,
-                              "window.%s .window-contents popover > contents { color: %s; background-color: alpha(%s, %s); }\n",
-                              self->css_class, titlebar_fg, titlebar_bg, popover_alpha_str);
-      g_string_append_printf (string,
-                              "window.%s .window-contents popover > arrow { background-color: alpha(%s, %s); }\n",
-                              self->css_class, titlebar_bg, popover_alpha_str);
-      g_string_append_printf (string,
-                              "window.%s .window-contents vte-terminal > revealer.size label { color: %s; background-color: %s; }\n",
-                              self->css_class, titlebar_fg, revealer_bg);
-      /* It would be super if we could make these match the color of the
-       * actual tab contents rather than the active tab profile.
-       */
-      g_string_append_printf (string,
-                              "window.%s .window-contents toolbarview.overview overlay.card { background-color: %s; color: %s; }\n",
-                              self->css_class, bg, fg);
-      g_string_append_printf (string,
-                              "window.%s .window-contents toolbarview.overview tabthumbnail .icon-title-box { color: %s; }\n",
-                              self->css_class, fg);
-      g_string_append_printf (string,
-                              "window.%s .window-contents toolbarview.overview { background-color: %s; color: %s; }\n",
-                              self->css_class, titlebar_bg, titlebar_fg);
-      g_string_append_printf (string,
-                              "window.%s .window-contents revealer.raised.top-bar { background-color: %s; color: %s; }\n",
-                              self->css_class, titlebar_bg, titlebar_fg);
-      g_string_append_printf (string,
-                              "window.%s .window-contents box.visual-bell headerbar { background-color: transparent; }\n"
-                              "window.%s .window-contents box.visual-bell { animation: visual-bell-%s-%s 0.3s ease-out; }\n"
-                              "@keyframes visual-bell-%s-%s { 50%% { background-color: %s; color: %s; } }\n",
-                              self->css_class,
-                              self->css_class, self->css_class, dark ? "dark" : "light",
-                              self->css_class, dark ? "dark" : "light", bell_bg, bell_fg);
-      g_string_append_printf (string,
-                              "window.%s .window-contents banner > revealer > widget { background-color: %s; color: %s; }\n",
-                              self->css_class, bell_bg, bell_fg);
-
-      g_string_append_printf (string,
-                              "window.%s taboverview.window-contents tabthumbnail .tab-close-button image { background-color: alpha(%s,.15); color: %s; }\n"
-                              "window.%s taboverview.window-contents tabthumbnail .tab-close-button:hover image { background-color: alpha(%s,.25); }\n"
-                              "window.%s taboverview.window-contents tabthumbnail .tab-close-button:active image { background-color: alpha(%s,.55); }\n",
-                              self->css_class, fg, fg,
-                              self->css_class, fg,
-                              self->css_class, fg);
-
-      visual_process_leader = bevy_settings_get_visual_process_leader (settings);
-
-      g_string_append_printf (string,
-                              "window.%s .window-contents > revealer windowhandle { color: %s; background-color: %s; }\n",
-                              self->css_class, titlebar_fg, titlebar_bg);
-      g_string_append_printf (string,
-                              "window.%s:backdrop .window-contents revealer > windowhandle { color: mix(%s,%s,.025); background-color: mix(%s,%s,.99); }\n",
-                              self->css_class, fg, bg, fg, bg);
-
-      if (visual_process_leader)
+      if (self->main_contents)
         {
-          g_string_append_printf (string,
-                                  "window.%s.remote .window-contents headerbar { background-color: %s; color: %s; }\n"
-                                  "window.%s.remote .window-contents toolbarview > revealer > windowhandle { background-color: %s; color: %s; }\n",
-                                  self->css_class, rm_bg, rm_fg,
-                                  self->css_class, rm_bg, rm_fg);
-          g_string_append_printf (string,
-                                  "window.%s.superuser .window-contents headerbar { background-color: %s; color: %s; }\n"
-                                  "window.%s.superuser .window-contents toolbarview > revealer > windowhandle { background-color: %s; color: %s; }\n",
-                                  self->css_class, su_bg, su_fg,
-                                  self->css_class, su_bg, su_fg);
-        }
-
-      if (!bevy_palette_use_system_accent (self->palette))
-        {
-          accent_mix = face->indexed[4];
-          accent_mix_str = gdk_rgba_to_string (&accent_mix);
+          popover_alpha = MAX (self->opacity, 0.85);
+          g_ascii_dtostr (popover_alpha_str, sizeof popover_alpha_str, popover_alpha);
+          revealer_bg = g_strdup_printf ("alpha(mix(%s,%s,.05),%s)", titlebar_bg, titlebar_fg, popover_alpha_str);
 
           g_string_append_printf (string,
-                                  "window.%s { --accent-fg-color: %s; --accent-bg-color: mix(%s,%s,.15); }\n",
+                                  "window.%s .window-contents vte-terminal > revealer.size label { color: %s; background-color: %s; }\n",
+                                  self->css_class, titlebar_fg, revealer_bg);
+          /* It would be super if we could make these match the color of the
+           * actual tab contents rather than the active tab profile.
+           */
+          g_string_append_printf (string,
+                                  "window.%s .window-contents toolbarview.overview overlay.card { background-color: %s; color: %s; }\n",
+                                  self->css_class, bg, fg);
+          g_string_append_printf (string,
+                                  "window.%s .window-contents toolbarview.overview tabthumbnail .icon-title-box { color: %s; }\n",
+                                  self->css_class, fg);
+          g_string_append_printf (string,
+                                  "window.%s .window-contents toolbarview.overview { background-color: %s; color: %s; }\n",
+                                  self->css_class, titlebar_bg, titlebar_fg);
+          g_string_append_printf (string,
+                                  "window.%s .window-contents revealer.raised.top-bar { background-color: %s; color: %s; }\n",
+                                  self->css_class, titlebar_bg, titlebar_fg);
+          g_string_append_printf (string,
+                                  "window.%s .window-contents box.visual-bell headerbar { background-color: transparent; }\n"
+                                  "window.%s .window-contents box.visual-bell { animation: visual-bell-%s-%s 0.3s ease-out; }\n"
+                                  "@keyframes visual-bell-%s-%s { 50%% { background-color: %s; color: %s; } }\n",
                                   self->css_class,
-                                  dark ? titlebar_fg : titlebar_bg,
-                                  accent_mix_str,
-                                  bg);
+                                  self->css_class, self->css_class, dark ? "dark" : "light",
+                                  self->css_class, dark ? "dark" : "light", bell_bg, bell_fg);
+          g_string_append_printf (string,
+                                  "window.%s .window-contents banner > revealer > widget { background-color: %s; color: %s; }\n",
+                                  self->css_class, bell_bg, bell_fg);
+
+          g_string_append_printf (string,
+                                  "window.%s taboverview.window-contents tabthumbnail .tab-close-button image { background-color: alpha(%s,.15); color: %s; }\n"
+                                  "window.%s taboverview.window-contents tabthumbnail .tab-close-button:hover image { background-color: alpha(%s,.25); }\n"
+                                  "window.%s taboverview.window-contents tabthumbnail .tab-close-button:active image { background-color: alpha(%s,.55); }\n",
+                                  self->css_class, fg, fg,
+                                  self->css_class, fg,
+                                  self->css_class, fg);
+
+          visual_process_leader = bevy_settings_get_visual_process_leader (settings);
+
+          g_string_append_printf (string,
+                                  "window.%s .window-contents > revealer windowhandle { color: %s; background-color: %s; }\n",
+                                  self->css_class, titlebar_fg, titlebar_bg);
+          g_string_append_printf (string,
+                                  "window.%s:backdrop .window-contents revealer > windowhandle { color: mix(%s,%s,.025); background-color: mix(%s,%s,.99); }\n",
+                                  self->css_class, fg, bg, fg, bg);
+
+          if (visual_process_leader)
+            {
+              g_string_append_printf (string,
+                                      "window.%s.remote .window-contents headerbar { background-color: %s; color: %s; }\n"
+                                      "window.%s.remote .window-contents toolbarview > revealer > windowhandle { background-color: %s; color: %s; }\n",
+                                      self->css_class, rm_bg, rm_fg,
+                                      self->css_class, rm_bg, rm_fg);
+              g_string_append_printf (string,
+                                      "window.%s.superuser .window-contents headerbar { background-color: %s; color: %s; }\n"
+                                      "window.%s.superuser .window-contents toolbarview > revealer > windowhandle { background-color: %s; color: %s; }\n",
+                                      self->css_class, su_bg, su_fg,
+                                      self->css_class, su_bg, su_fg);
+            }
         }
     }
 
@@ -223,14 +345,14 @@ bevy_window_dressing_queue_update (BevyWindowDressing *self)
 
 static void
 bevy_window_dressing_set_window (BevyWindowDressing *self,
-                                   BevyWindow         *window)
+                                 GtkWidget          *root)
 {
   g_assert (BEVY_IS_WINDOW_DRESSING (self));
-  g_assert (BEVY_IS_WINDOW (window));
+  g_assert (GTK_IS_WIDGET (root));
 
-  g_weak_ref_set (&self->window_wr, window);
+  g_weak_ref_set (&self->window_wr, root);
 
-  gtk_widget_add_css_class (GTK_WIDGET (window), self->css_class);
+  gtk_widget_add_css_class (root, self->css_class);
 }
 
 static void
@@ -324,6 +446,10 @@ bevy_window_dressing_get_property (GObject    *object,
       g_value_take_object (value, bevy_window_dressing_dup_window (self));
       break;
 
+    case PROP_MAIN_CONTENTS:
+      g_value_set_boolean (value, self->main_contents);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -349,6 +475,10 @@ bevy_window_dressing_set_property (GObject      *object,
 
     case PROP_WINDOW:
       bevy_window_dressing_set_window (self, g_value_get_object (value));
+      break;
+
+    case PROP_MAIN_CONTENTS:
+      self->main_contents = g_value_get_boolean (value);
       break;
 
     default:
@@ -383,10 +513,17 @@ bevy_window_dressing_class_init (BevyWindowDressingClass *klass)
 
   properties[PROP_WINDOW] =
     g_param_spec_object ("window", NULL, NULL,
-                         BEVY_TYPE_WINDOW,
+                         GTK_TYPE_WIDGET,
                          (G_PARAM_READWRITE |
                           G_PARAM_CONSTRUCT_ONLY |
                           G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_MAIN_CONTENTS] =
+    g_param_spec_boolean ("main-contents", NULL, NULL,
+                          TRUE,
+                          (G_PARAM_READWRITE |
+                           G_PARAM_CONSTRUCT_ONLY |
+                           G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -397,16 +534,17 @@ bevy_window_dressing_init (BevyWindowDressing *self)
   self->css_provider = gtk_css_provider_new ();
   self->css_class = g_strdup_printf ("window-dressing-%u", ++last_sequence);
   self->opacity = 1.0;
+  self->main_contents = TRUE;
 
   g_weak_ref_init (&self->window_wr, NULL);
 }
 
-BevyWindow *
+GtkWidget *
 bevy_window_dressing_dup_window (BevyWindowDressing *self)
 {
   g_return_val_if_fail (BEVY_IS_WINDOW_DRESSING (self), NULL);
 
-  return BEVY_WINDOW (g_weak_ref_get (&self->window_wr));
+  return g_weak_ref_get (&self->window_wr);
 }
 
 BevyWindowDressing *
@@ -416,6 +554,18 @@ bevy_window_dressing_new (BevyWindow *window)
 
   return g_object_new (BEVY_TYPE_WINDOW_DRESSING,
                        "window", window,
+                       NULL);
+}
+
+BevyWindowDressing *
+bevy_window_dressing_new_for_root (GtkWidget *root,
+                                   gboolean   main_contents)
+{
+  g_return_val_if_fail (GTK_IS_WIDGET (root), NULL);
+
+  return g_object_new (BEVY_TYPE_WINDOW_DRESSING,
+                       "window", root,
+                       "main-contents", main_contents,
                        NULL);
 }
 
