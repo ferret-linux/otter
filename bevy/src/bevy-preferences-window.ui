@@ -37,7 +37,6 @@
         <property name="icon-name">font-select-symbolic</property>
         <child>
           <object class="AdwPreferencesGroup" id="opacity_group">
-            <property name="visible">false</property>
             <child>
               <object class="AdwActionRow">
                 <property name="title" translatable="yes">Transparency</property>

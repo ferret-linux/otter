@@ -516,13 +516,6 @@ bevy_preferences_window_notify_default_profile_cb (BevyPreferencesWindow *self,
                            self,
                            G_CONNECT_SWAPPED);
 
-  /* If the user changed things in gsettings, show the toggle. This
-   * also helps on installations where the distributor may have changed
-   * the default value for the opacity gsetting.
-   */
-  gtk_widget_set_visible (GTK_WIDGET (self->opacity_group),
-                          bevy_profile_get_opacity (profile) < 1.);
-
   invalidate_filter (self);
 
   for (GtkWidget *child = gtk_widget_get_first_child (GTK_WIDGET (self->palette_previews));
