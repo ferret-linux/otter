@@ -343,28 +343,6 @@
       "build_number": 219
     },
     {
-      "name": "centos",
-      "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
-      "fallback_vendor_image": "quay.io/centos/centos:stream10",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-11T17:39:21Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 564601806,
-          "disk_size": 1749883126
-        },
-        "arm64": {
-          "compressed_size": 547086329,
-          "disk_size": 1585526421
-        }
-      },
-      "build_number": 215
-    },
-    {
       "name": "artix",
       "official_image": "ghcr.io/ferret-linux/artix-otr:openrc",
       "fallback_vendor_image": "docker.io/artixlinux/artixlinux:base-openrc",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 219
+    },
+    {
+      "name": "centos",
+      "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
+      "fallback_vendor_image": "quay.io/centos/centos:stream10",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-11T20:32:21Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 564603466,
+          "disk_size": 1749884662
+        },
+        "arm64": {
+          "compressed_size": 547068990,
+          "disk_size": 1585526416
+        }
+      },
+      "build_number": 216
     }
   ]
 }
