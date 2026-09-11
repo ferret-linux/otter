@@ -118,10 +118,10 @@ jobs:
             jq --slurpfile entry /tmp/entry.json \
               --arg official_image "$official_image" \
               '.images = ((.images // []) | map(select(.official_image != $official_image)) + $entry)' \
-              otter/images/images-properties.json > /tmp/images-properties.json.tmp
-            mv /tmp/images-properties.json.tmp otter/images/images-properties.json
+              images/images-properties.json > /tmp/images-properties.json.tmp
+            mv /tmp/images-properties.json.tmp images/images-properties.json
 
-            git add otter/images/images-properties.json
+            git add images/images-properties.json
             if git diff --cached --quiet; then
               echo "No changes to commit"
               success=1

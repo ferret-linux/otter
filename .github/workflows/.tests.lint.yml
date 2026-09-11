@@ -42,5 +42,5 @@ jobs:
             otter/internal/insidecontainer/assets/otter-init \
             otter/internal/insidecontainer/assets/otter-export \
             otter/internal/insidecontainer/assets/otter-host-exec \
-            otter/images/scripts/setup-common.sh \
-            otter/images/scripts/pkg-validator.sh
+            images/scripts/setup-common.sh \
+            images/scripts/pkg-validator.sh

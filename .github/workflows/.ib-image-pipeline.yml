@@ -45,7 +45,7 @@ jobs:
           official_image="ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}"
           current=$(jq -r --arg official_image "$official_image" \
             '((.images // []) | map(select(.official_image == $official_image)) | .[0].build_number) // 0' \
-            otter/images/images-properties.json)
+            images/images-properties.json)
           echo "build_number=$((current + 1))" >> $GITHUB_OUTPUT
 
   image-amd64:

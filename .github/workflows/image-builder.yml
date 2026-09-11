@@ -64,7 +64,7 @@ jobs:
       - name: Filter enabled images
         id: filter
         run: |
-          matrix=$(jq -c '[.[] | select(.enabled == true)]' otter/images/images.json)
+          matrix=$(jq -c '[.[] | select(.enabled == true)]' images/images.json)
           echo "matrix=$matrix" >> $GITHUB_OUTPUT
 
   image-pipeline:
