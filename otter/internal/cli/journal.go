@@ -20,23 +20,28 @@ func newJournalCommand(_ *config.Values) *cli.Command {
 			&cli.BoolFlag{
 				Name:    "follow",
 				Aliases: []string{"f"},
+				Usage:   "Stream logs live",
 			},
 			&cli.StringFlag{
 				Name:    "since",
 				Aliases: []string{"s"},
+				Usage:   "Show logs since duration",
 			},
 			&cli.StringFlag{
 				Name:    "until",
 				Aliases: []string{"u"},
+				Usage:   "Show logs until duration",
 			},
 			&cli.BoolFlag{
 				Name:    "timestamps",
 				Aliases: []string{"t"},
+				Usage:   "Show timestamps on each line",
 			},
 			&cli.IntFlag{
 				Name:    "tail",
 				Aliases: []string{"n"},
 				Value:   -1,
+				Usage:   "Show last N lines",
 			},
 		},
 		Action: journalAction,

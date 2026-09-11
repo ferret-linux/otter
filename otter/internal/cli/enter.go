@@ -20,26 +20,32 @@ func newEnterCommand(_ *config.Values) *cli.Command {
 			&cli.BoolFlag{
 				Name:    "clean-path",
 				Aliases: []string{"c"},
+				Usage:   "Reset PATH inside container to FHS standard",
 			},
 			&cli.StringFlag{
 				Name:    "additional-flags",
 				Aliases: []string{"a"},
+				Usage:   "Additional flags to pass to container manager",
 			},
 			&cli.BoolFlag{
 				Name:    "no-tty",
 				Aliases: []string{"T"},
+				Usage:   "Do not instantiate a tty",
 			},
 			&cli.BoolFlag{
 				Name:    "no-workdir",
 				Aliases: []string{"nw"},
+				Usage:   "Always start from container's home directory",
 			},
 			&cli.StringSliceFlag{
 				Name:    "add-env",
 				Aliases: []string{"e"},
+				Usage:   "Copy host env var NAME or override NAME=value",
 			},
 			&cli.BoolFlag{
 				Name:    "empty-env",
 				Aliases: []string{"E"},
+				Usage:   "Don't auto copy host environment variables",
 			},
 		},
 		Action: enterAction,

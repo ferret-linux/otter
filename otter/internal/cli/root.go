@@ -45,8 +45,9 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 		fmt.Fprintf(root.Writer, "  → build time : %s\n", buildTime)
 	}
 	return &cli.Command{
-		Name:    "otter",
-		Version: "0.0.9",
+		Name:                  "otter",
+		Version:               "0.0.9",
+		EnableShellCompletion: true,
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "sudo-command",
@@ -96,6 +97,12 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		withRoot,
 		withContainerManager,
 	}
+	containerNameOpts := []func(*config.Values, *cli.Command) *cli.Command{
+		withUsageErrorHandler,
+		withRoot,
+		withContainerManager,
+		withContainerNameCompletion,
+	}
 	noRootOpts := []func(*config.Values, *cli.Command) *cli.Command{
 		withUsageErrorHandler,
 		withContainerManager,
@@ -112,21 +119,21 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		{newAssembleCommand, noRootOpts},
 		{newCreateCommand, stdOpts},
 		{newDocumentationCommand, documentationOpts},
-		{newEnterCommand, stdOpts},
-		{newGenerateEntryCommand, stdOpts},
-		{newInspectCommand, stdOpts},
-		{newJournalCommand, stdOpts},
+		{newEnterCommand, containerNameOpts},
+		{newGenerateEntryCommand, containerNameOpts},
+		{newInspectCommand, containerNameOpts},
+		{newJournalCommand, containerNameOpts},
 		{newListCommand, stdOpts},
-		{newLockCommand, stdOpts},
-		{newPauseCommand, stdOpts},
+		{newLockCommand, containerNameOpts},
+		{newPauseCommand, containerNameOpts},
 		{newRegistryCommand, nil},
-		{newRmCommand, stdOpts},
-		{newRestartCommand, stdOpts},
+		{newRmCommand, containerNameOpts},
+		{newRestartCommand, containerNameOpts},
 		{newSettingsCommand, documentationOpts},
-		{newStartCommand, stdOpts},
-		{newStopCommand, stdOpts},
-		{newUnlockCommand, stdOpts},
-		{newUpgradeCommand, stdOpts},
+		{newStartCommand, containerNameOpts},
+		{newStopCommand, containerNameOpts},
+		{newUnlockCommand, containerNameOpts},
+		{newUpgradeCommand, containerNameOpts},
 	}
 
 	commands := make([]*cli.Command, len(specs))
@@ -214,6 +221,7 @@ func withRoot(cfg *config.Values, cmd *cli.Command) *cli.Command {
 	cmd.Flags = append(cmd.Flags, &cli.BoolFlag{
 		Name:    "root",
 		Aliases: []string{"r"},
+		Usage:   "Launch container manager with root privileges",
 	})
 
 	prev := cmd.Before
@@ -264,6 +272,46 @@ func withContainerManager(_ *config.Values, cmd *cli.Command) *cli.Command {
 			return nil, err
 		}
 		return context.WithValue(ctx, containerManagerKey, cm), nil
+	}
+	return cmd
+}
+
+func withContainerNameCompletion(_ *config.Values, cmd *cli.Command) *cli.Command {
+	cmd.ShellComplete = func(ctx context.Context, c *cli.Command) {
+		args := c.Args().Slice()
+		token := ""
+		if len(args) > 0 {
+			token = args[len(args)-1]
+		}
+		if strings.HasPrefix(token, "-") {
+			cli.DefaultCompleteWithFlags(ctx, c)
+			return
+		}
+
+		containerManager, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
+		if !ok {
+			return
+		}
+		result, err := commands.NewListCommand(containerManager).Execute(ctx, commands.ListOptions{})
+		if err != nil {
+			return
+		}
+
+		commaIdx := strings.LastIndex(token, ",")
+		prefix := token
+		if commaIdx >= 0 {
+			prefix = token[commaIdx+1:]
+		}
+		for _, container := range result.Containers {
+			if prefix != "" && !strings.HasPrefix(container.Name, prefix) {
+				continue
+			}
+			candidate := container.Name
+			if commaIdx >= 0 {
+				candidate = token[:commaIdx+1] + container.Name
+			}
+			fmt.Fprintln(c.Root().Writer, candidate)
+		}
 	}
 	return cmd
 }

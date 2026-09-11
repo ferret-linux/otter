@@ -19,6 +19,7 @@ func newLockCommand(_ *config.Values) *cli.Command {
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
+				Usage:   "Lock all otter containers",
 			},
 		},
 		Action: lockAction,

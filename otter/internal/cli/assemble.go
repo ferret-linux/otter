@@ -14,7 +14,11 @@ import (
 )
 
 func newAssembleCommand(cfg *config.Values) *cli.Command {
-	fileFlag := &cli.StringFlag{Name: "file", Aliases: []string{"f"}}
+	fileFlag := &cli.StringFlag{
+		Name:    "file",
+		Aliases: []string{"f"},
+		Usage:   "Path to the manifest file (required)",
+	}
 	return &cli.Command{
 		Name:    "assemble",
 		Aliases: []string{"dmf"},
@@ -27,6 +31,7 @@ func newAssembleCommand(cfg *config.Values) *cli.Command {
 					&cli.BoolFlag{
 						Name:    "replace",
 						Aliases: []string{"R"},
+						Usage:   "Delete and recreate boxes that already exist",
 					},
 				},
 				Action: func(ctx context.Context, cmd *cli.Command) error {

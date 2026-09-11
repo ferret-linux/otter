@@ -19,6 +19,7 @@ func newPauseCommand(_ *config.Values) *cli.Command {
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
+				Usage:   "Pause all active containers",
 			},
 		},
 		Action: pauseAction,

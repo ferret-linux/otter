@@ -19,10 +19,12 @@ func newUpgradeCommand(cfg *config.Values) *cli.Command {
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
+				Usage:   "Perform for all otters",
 			},
 			&cli.BoolFlag{
 				Name:    "running",
 				Aliases: []string{"R"},
+				Usage:   "Only upgrade running containers",
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {

@@ -52,10 +52,12 @@ func newRegistryListCommand(_ *config.Values) *cli.Command {
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
+				Usage:   "Include disabled images in the table",
 			},
 			&cli.BoolFlag{
 				Name:    "json",
 				Aliases: []string{"j"},
+				Usage:   "Present registry output in json format",
 			},
 		},
 		Action: registryListAction,
@@ -85,10 +87,12 @@ func newRegistryPullCommand(_ *config.Values) *cli.Command {
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
+				Usage:   "Pull all enabled images not yet present",
 			},
 			&cli.BoolFlag{
 				Name:    "force",
 				Aliases: []string{"f"},
+				Usage:   "Pull even if already present and current",
 			},
 		},
 		Action: registryPullAction,
@@ -124,10 +128,12 @@ func newRegistryRemoveCommand(_ *config.Values) *cli.Command {
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
+				Usage:   "Remove all locally present otter images",
 			},
 			&cli.BoolFlag{
 				Name:    "force",
 				Aliases: []string{"f"},
+				Usage:   "Remove even if image is in use",
 			},
 		},
 		Action: registryRemoveAction,

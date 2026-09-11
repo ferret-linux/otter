@@ -19,6 +19,7 @@ func newUnlockCommand(_ *config.Values) *cli.Command {
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
+				Usage:   "Unlock all otter containers",
 			},
 		},
 		Action: unlockAction,

@@ -22,15 +22,18 @@ func newGenerateEntryCommand(_ *config.Values) *cli.Command {
 			&cli.BoolFlag{
 				Name:    "delete",
 				Aliases: []string{"d"},
+				Usage:   "Delete the entry",
 			},
 			&cli.StringFlag{
 				Name:    "icon",
 				Aliases: []string{"i"},
 				Value:   "auto",
+				Usage:   "Specify a custom icon path",
 			},
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
+				Usage:   "Perform for all otters",
 			},
 		},
 		Action: generateEntryAction,

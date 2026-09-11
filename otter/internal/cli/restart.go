@@ -19,10 +19,12 @@ func newRestartCommand(_ *config.Values) *cli.Command {
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
+				Usage:   "Restart all otter containers",
 			},
 			&cli.BoolFlag{
 				Name:    "force",
 				Aliases: []string{"f"},
+				Usage:   "Force restart containers",
 			},
 		},
 		Action: restartAction,

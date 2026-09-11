@@ -19,6 +19,12 @@ version:
 build:
 	$(GO_BUILD_ENV) go build -ldflags "$(LDFLAGS)" -o ./bin/otter ./cmd/otter
 
+.PHONY: completions
+completions: build
+	./bin/otter completion bash > completions/otter.bash
+	./bin/otter completion fish > completions/otter.fish
+	./bin/otter completion zsh > completions/otter.zsh
+
 .PHONY: test
 test: vet
 	$(GO_BUILD_ENV) go test -v ./...
@@ -31,17 +37,29 @@ vet:
 fmt:
 	$(GO_BUILD_ENV) go fmt ./...
 
-PREFIX ?= /usr/local
+PREFIX ?= $(HOME)/.local
 BINDIR ?= $(PREFIX)/bin
+BASHCOMPLETION_DIR ?= $(PREFIX)/share/bash-completion/completions
+FISHCOMPLETION_DIR ?= $(HOME)/.config/fish/completions
+ZSHCOMPLETION_DIR ?= $(PREFIX)/share/zsh/site-functions
 
 .PHONY: install
 install: build
 	install -d $(DESTDIR)$(BINDIR)
 	install -m 0755 ./bin/otter $(DESTDIR)$(BINDIR)/otter
+	install -d $(DESTDIR)$(BASHCOMPLETION_DIR)
+	install -m 0644 ./completions/otter.bash $(DESTDIR)$(BASHCOMPLETION_DIR)/otter
+	install -d $(DESTDIR)$(FISHCOMPLETION_DIR)
+	install -m 0644 ./completions/otter.fish $(DESTDIR)$(FISHCOMPLETION_DIR)/otter.fish
+	install -d $(DESTDIR)$(ZSHCOMPLETION_DIR)
+	install -m 0644 ./completions/otter.zsh $(DESTDIR)$(ZSHCOMPLETION_DIR)/_otter
 
 .PHONY: uninstall
 uninstall:
 	rm -f $(DESTDIR)$(BINDIR)/otter
+	rm -f $(DESTDIR)$(BASHCOMPLETION_DIR)/otter
+	rm -f $(DESTDIR)$(FISHCOMPLETION_DIR)/otter.fish
+	rm -f $(DESTDIR)$(ZSHCOMPLETION_DIR)/_otter
 
 .PHONY: clean
 clean:

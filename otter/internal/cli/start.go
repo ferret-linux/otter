@@ -19,6 +19,7 @@ func newStartCommand(_ *config.Values) *cli.Command {
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
+				Usage:   "Start all otter containers",
 			},
 		},
 		Action: startAction,

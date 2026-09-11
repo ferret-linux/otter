@@ -20,6 +20,7 @@ func newListCommand(_ *config.Values) *cli.Command {
 			&cli.BoolFlag{
 				Name:    "json",
 				Aliases: []string{"j"},
+				Usage:   "Show list as json struct",
 			},
 		},
 		Action: listAction,
