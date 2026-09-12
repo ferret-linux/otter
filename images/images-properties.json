@@ -89,28 +89,6 @@
       "build_number": 223
     },
     {
-      "name": "alpine-edge",
-      "official_image": "ghcr.io/ferret-linux/alpine-otr:edge",
-      "fallback_vendor_image": "docker.io/library/alpine:edge",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-12T16:41:30Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 335023948,
-          "disk_size": 943246713
-        },
-        "arm64": {
-          "compressed_size": 340869960,
-          "disk_size": 979128345
-        }
-      },
-      "build_number": 226
-    },
-    {
       "name": "artix",
       "official_image": "ghcr.io/ferret-linux/artix-otr:openrc",
       "fallback_vendor_image": "docker.io/artixlinux/artixlinux:base-openrc",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 223
+    },
+    {
+      "name": "alpine-edge",
+      "official_image": "ghcr.io/ferret-linux/alpine-otr:edge",
+      "fallback_vendor_image": "docker.io/library/alpine:edge",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-12T20:45:59Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 335022785,
+          "disk_size": 943246713
+        },
+        "arm64": {
+          "compressed_size": 340869460,
+          "disk_size": 979128342
+        }
+      },
+      "build_number": 227
     }
   ]
 }
