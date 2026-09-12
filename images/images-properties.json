@@ -560,28 +560,6 @@
       "build_number": 221
     },
     {
-      "name": "amazonlinux",
-      "official_image": "ghcr.io/ferret-linux/amazon-otr:latest",
-      "fallback_vendor_image": "docker.io/library/amazonlinux:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-11T20:36:08Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 583279882,
-          "disk_size": 1796772159
-        },
-        "arm64": {
-          "compressed_size": 579745169,
-          "disk_size": 1978037660
-        }
-      },
-      "build_number": 107
-    },
-    {
       "name": "oracle",
       "official_image": "ghcr.io/ferret-linux/oracle-otr:stable",
       "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 160
+    },
+    {
+      "name": "amazonlinux",
+      "official_image": "ghcr.io/ferret-linux/amazon-otr:latest",
+      "fallback_vendor_image": "docker.io/library/amazonlinux:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-12T00:40:51Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 583276437,
+          "disk_size": 1796772154
+        },
+        "arm64": {
+          "compressed_size": 579744599,
+          "disk_size": 1978037661
+        }
+      },
+      "build_number": 108
     }
   ]
 }
