@@ -45,28 +45,6 @@
       "build_number": 189
     },
     {
-      "name": "void-musl",
-      "official_image": "ghcr.io/ferret-linux/void-otr:musl",
-      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-14T20:19:11Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 382861182,
-          "disk_size": 1091324063
-        },
-        "arm64": {
-          "compressed_size": 376374643,
-          "disk_size": 1065409211
-        }
-      },
-      "build_number": 218
-    },
-    {
       "name": "steamos",
       "official_image": "ghcr.io/ferret-linux/steamos-otr:latest",
       "fallback_vendor_image": "docker.io/cachyos/cachyos-v3:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 234
+    },
+    {
+      "name": "void-musl",
+      "official_image": "ghcr.io/ferret-linux/void-otr:musl",
+      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-14T23:15:29Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 382871719,
+          "disk_size": 1091331229
+        },
+        "arm64": {
+          "compressed_size": 376341573,
+          "disk_size": 1065376959
+        }
+      },
+      "build_number": 219
     }
   ]
 }
