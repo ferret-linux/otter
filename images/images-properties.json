@@ -45,28 +45,6 @@
       "build_number": 242
     },
     {
-      "name": "debian-unstable",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:unstable",
-      "fallback_vendor_image": "docker.io/library/debian:unstable",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-16T16:30:21Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 759867267,
-          "disk_size": 2030577015
-        },
-        "arm64": {
-          "compressed_size": 748484965,
-          "disk_size": 2020300205
-        }
-      },
-      "build_number": 239
-    },
-    {
       "name": "slackware",
       "official_image": "ghcr.io/ferret-linux/slackware-otr:stable",
       "fallback_vendor_image": "docker.io/aclemons/slackware:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 149
+    },
+    {
+      "name": "debian-unstable",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:unstable",
+      "fallback_vendor_image": "docker.io/library/debian:unstable",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-16T20:42:53Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 759871961,
+          "disk_size": 2030577016
+        },
+        "arm64": {
+          "compressed_size": 748485091,
+          "disk_size": 2020300203
+        }
+      },
+      "build_number": 240
     }
   ]
 }
