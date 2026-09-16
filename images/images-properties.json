@@ -443,23 +443,6 @@
       "build_number": 245
     },
     {
-      "name": "blackarch",
-      "official_image": "ghcr.io/ferret-linux/blackarch-otr:latest",
-      "fallback_vendor_image": "docker.io/blackarchlinux/blackarch:latest",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-16T07:45:18Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1209224162,
-          "disk_size": 3531200501
-        }
-      },
-      "build_number": 245
-    },
-    {
       "name": "opensuse-leap",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest",
@@ -768,6 +751,23 @@
         }
       },
       "build_number": 245
+    },
+    {
+      "name": "blackarch",
+      "official_image": "ghcr.io/ferret-linux/blackarch-otr:latest",
+      "fallback_vendor_image": "docker.io/blackarchlinux/blackarch:latest",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-16T12:19:34Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1209213392,
+          "disk_size": 3531207670
+        }
+      },
+      "build_number": 246
     }
   ]
 }
