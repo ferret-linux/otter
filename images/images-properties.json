@@ -216,28 +216,6 @@
       "build_number": 242
     },
     {
-      "name": "homebrew",
-      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
-      "fallback_vendor_image": "docker.io/library/debian:stable-slim",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-15T23:22:35Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 823591971,
-          "disk_size": 2010062769
-        },
-        "arm64": {
-          "compressed_size": 803702516,
-          "disk_size": 1953556482
-        }
-      },
-      "build_number": 136
-    },
-    {
       "name": "kali-edge",
       "official_image": "ghcr.io/ferret-linux/kali-otr:edge",
       "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 179
+    },
+    {
+      "name": "homebrew",
+      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
+      "fallback_vendor_image": "docker.io/library/debian:stable-slim",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-16T07:24:38Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 823722761,
+          "disk_size": 2010198963
+        },
+        "arm64": {
+          "compressed_size": 803901505,
+          "disk_size": 1953783810
+        }
+      },
+      "build_number": 137
     }
   ]
 }
