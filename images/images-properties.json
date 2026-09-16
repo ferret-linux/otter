@@ -111,28 +111,6 @@
       "build_number": 240
     },
     {
-      "name": "fedora",
-      "official_image": "ghcr.io/ferret-linux/fedora-otr:stable",
-      "fallback_vendor_image": "quay.io/fedora/fedora:44",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-16T07:40:41Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 680125154,
-          "disk_size": 2060103256
-        },
-        "arm64": {
-          "compressed_size": 661845875,
-          "disk_size": 1948470878
-        }
-      },
-      "build_number": 243
-    },
-    {
       "name": "rocky",
       "official_image": "ghcr.io/ferret-linux/rocky-otr:stable",
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 153
+    },
+    {
+      "name": "fedora",
+      "official_image": "ghcr.io/ferret-linux/fedora-otr:stable",
+      "fallback_vendor_image": "quay.io/fedora/fedora:44",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-16T12:35:25Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 680130605,
+          "disk_size": 2060101718
+        },
+        "arm64": {
+          "compressed_size": 661847500,
+          "disk_size": 1948470879
+        }
+      },
+      "build_number": 244
     }
   ]
 }
