@@ -189,28 +189,6 @@
       "build_number": 242
     },
     {
-      "name": "rhel",
-      "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
-      "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-17T08:13:54Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 377115961,
-          "disk_size": 1236046963
-        },
-        "arm64": {
-          "compressed_size": 371303741,
-          "disk_size": 1107378760
-        }
-      },
-      "build_number": 250
-    },
-    {
       "name": "kali-edge",
       "official_image": "ghcr.io/ferret-linux/kali-otr:edge",
       "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 134
+    },
+    {
+      "name": "rhel",
+      "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
+      "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-17T12:55:55Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 377116476,
+          "disk_size": 1236046966
+        },
+        "arm64": {
+          "compressed_size": 371303712,
+          "disk_size": 1107378761
+        }
+      },
+      "build_number": 251
     }
   ]
 }
