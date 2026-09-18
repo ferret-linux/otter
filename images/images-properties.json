@@ -250,23 +250,6 @@
       "build_number": 256
     },
     {
-      "name": "devuan-testing",
-      "official_image": "ghcr.io/ferret-linux/devuan-otr:testing",
-      "fallback_vendor_image": "docker.io/devuan/devuan:testing",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-18T13:23:31Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 712914311,
-          "disk_size": 1910946497
-        }
-      },
-      "build_number": 256
-    },
-    {
       "name": "rocky",
       "official_image": "ghcr.io/ferret-linux/rocky-otr:stable",
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init",
@@ -768,6 +751,23 @@
         }
       },
       "build_number": 250
+    },
+    {
+      "name": "devuan-testing",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:testing",
+      "fallback_vendor_image": "docker.io/devuan/devuan:testing",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-18T17:30:12Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 714176027,
+          "disk_size": 1914632901
+        }
+      },
+      "build_number": 257
     }
   ]
 }
