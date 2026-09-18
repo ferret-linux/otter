@@ -360,23 +360,6 @@
       "build_number": 138
     },
     {
-      "name": "devuan",
-      "official_image": "ghcr.io/ferret-linux/devuan-otr:stable",
-      "fallback_vendor_image": "docker.io/devuan/devuan:stable",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-18T08:43:47Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 595832789,
-          "disk_size": 1556638405
-        }
-      },
-      "build_number": 250
-    },
-    {
       "name": "opensuse-leap",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest",
@@ -765,6 +748,23 @@
         "amd64": {
           "compressed_size": 718632664,
           "disk_size": 1919300804
+        }
+      },
+      "build_number": 251
+    },
+    {
+      "name": "devuan",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:stable",
+      "fallback_vendor_image": "docker.io/devuan/devuan:stable",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-18T13:18:16Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 595835167,
+          "disk_size": 1556638407
         }
       },
       "build_number": 251
