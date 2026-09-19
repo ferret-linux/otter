@@ -1,28 +1,6 @@
 {
   "images": [
     {
-      "name": "gentoo",
-      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
-      "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-19T01:27:24Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1705223079,
-          "disk_size": 4397723854
-        },
-        "arm64": {
-          "compressed_size": 1321856424,
-          "disk_size": 3792142587
-        }
-      },
-      "build_number": 194
-    },
-    {
       "name": "rhel",
       "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
       "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 154
+    },
+    {
+      "name": "gentoo",
+      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
+      "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-19T09:51:05Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1706063682,
+          "disk_size": 4399551183
+        },
+        "arm64": {
+          "compressed_size": 1329236571,
+          "disk_size": 3800120573
+        }
+      },
+      "build_number": 195
     }
   ]
 }
