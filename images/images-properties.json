@@ -1,28 +1,6 @@
 {
   "images": [
     {
-      "name": "gentoo",
-      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
-      "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-19T13:52:30Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1706464955,
-          "disk_size": 4400923856
-        },
-        "arm64": {
-          "compressed_size": 1327820744,
-          "disk_size": 3801103099
-        }
-      },
-      "build_number": 196
-    },
-    {
       "name": "devuan",
       "official_image": "ghcr.io/ferret-linux/devuan-otr:stable",
       "fallback_vendor_image": "docker.io/devuan/devuan:stable",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 172
+    },
+    {
+      "name": "gentoo",
+      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
+      "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-19T18:31:13Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1706962761,
+          "disk_size": 4402132170
+        },
+        "arm64": {
+          "compressed_size": 1327800011,
+          "disk_size": 3801326331
+        }
+      },
+      "build_number": 197
     }
   ]
 }
