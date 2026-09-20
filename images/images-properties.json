@@ -89,23 +89,6 @@
       "build_number": 176
     },
     {
-      "name": "slackware",
-      "official_image": "ghcr.io/ferret-linux/slackware-otr:stable",
-      "fallback_vendor_image": "docker.io/aclemons/slackware:latest",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-20T10:17:15Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1339195063,
-          "disk_size": 4328055886
-        }
-      },
-      "build_number": 160
-    },
-    {
       "name": "opensuse-tumbleweed",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
@@ -768,6 +751,23 @@
         }
       },
       "build_number": 265
+    },
+    {
+      "name": "slackware",
+      "official_image": "ghcr.io/ferret-linux/slackware-otr:stable",
+      "fallback_vendor_image": "docker.io/aclemons/slackware:latest",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-20T14:55:37Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1339196317,
+          "disk_size": 4328055885
+        }
+      },
+      "build_number": 161
     }
   ]
 }
