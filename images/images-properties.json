@@ -45,28 +45,6 @@
       "build_number": 263
     },
     {
-      "name": "centos",
-      "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
-      "fallback_vendor_image": "quay.io/centos/centos:stream10",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-20T09:58:56Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 568692652,
-          "disk_size": 1759499004
-        },
-        "arm64": {
-          "compressed_size": 550371253,
-          "disk_size": 1595365525
-        }
-      },
-      "build_number": 259
-    },
-    {
       "name": "chimera",
       "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
       "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 168
+    },
+    {
+      "name": "centos",
+      "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
+      "fallback_vendor_image": "quay.io/centos/centos:stream10",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-20T14:50:49Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 568694563,
+          "disk_size": 1759499006
+        },
+        "arm64": {
+          "compressed_size": 550371032,
+          "disk_size": 1595365522
+        }
+      },
+      "build_number": 260
     }
   ]
 }
