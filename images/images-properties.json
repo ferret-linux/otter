@@ -1,28 +1,6 @@
 {
   "images": [
     {
-      "name": "fedora-rawhide",
-      "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide",
-      "fallback_vendor_image": "quay.io/fedora/fedora:rawhide",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-21T11:07:01Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 700738603,
-          "disk_size": 2115063914
-        },
-        "arm64": {
-          "compressed_size": 683335614,
-          "disk_size": 2001354868
-        }
-      },
-      "build_number": 208
-    },
-    {
       "name": "opensuse-tumbleweed",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 179
+    },
+    {
+      "name": "fedora-rawhide",
+      "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide",
+      "fallback_vendor_image": "quay.io/fedora/fedora:rawhide",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-21T17:45:13Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 700739871,
+          "disk_size": 2115063913
+        },
+        "arm64": {
+          "compressed_size": 683336460,
+          "disk_size": 2001354865
+        }
+      },
+      "build_number": 209
     }
   ]
 }
