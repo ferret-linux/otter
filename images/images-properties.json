@@ -40,28 +40,6 @@
       "build_number": 269
     },
     {
-      "name": "amazonlinux",
-      "official_image": "ghcr.io/ferret-linux/amazon-otr:latest",
-      "fallback_vendor_image": "docker.io/library/amazonlinux:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-22T15:28:11Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 583323889,
-          "disk_size": 1796815672
-        },
-        "arm64": {
-          "compressed_size": 580283995,
-          "disk_size": 1978149787
-        }
-      },
-      "build_number": 160
-    },
-    {
       "name": "devuan",
       "official_image": "ghcr.io/ferret-linux/devuan-otr:stable",
       "fallback_vendor_image": "docker.io/devuan/devuan:stable",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 273
+    },
+    {
+      "name": "amazonlinux",
+      "official_image": "ghcr.io/ferret-linux/amazon-otr:latest",
+      "fallback_vendor_image": "docker.io/library/amazonlinux:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-22T19:35:45Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 583326239,
+          "disk_size": 1796815672
+        },
+        "arm64": {
+          "compressed_size": 580284340,
+          "disk_size": 1978149790
+        }
+      },
+      "build_number": 161
     }
   ]
 }
