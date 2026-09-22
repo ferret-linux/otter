@@ -106,28 +106,6 @@
       "build_number": 90
     },
     {
-      "name": "rocky",
-      "official_image": "ghcr.io/ferret-linux/rocky-otr:stable",
-      "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-22T06:37:20Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 636977862,
-          "disk_size": 1911707282
-        },
-        "arm64": {
-          "compressed_size": 615909054,
-          "disk_size": 1786123240
-        }
-      },
-      "build_number": 271
-    },
-    {
       "name": "debian-testing",
       "official_image": "ghcr.io/ferret-linux/debian-otr:testing",
       "fallback_vendor_image": "docker.io/library/debian:testing",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 262
+    },
+    {
+      "name": "rocky",
+      "official_image": "ghcr.io/ferret-linux/rocky-otr:stable",
+      "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-22T11:59:02Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 636974233,
+          "disk_size": 1911707284
+        },
+        "arm64": {
+          "compressed_size": 615907958,
+          "disk_size": 1786126316
+        }
+      },
+      "build_number": 272
     }
   ]
 }
