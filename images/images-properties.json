@@ -316,28 +316,6 @@
       "build_number": 281
     },
     {
-      "name": "nixos-unstable",
-      "official_image": "ghcr.io/ferret-linux/nixos-otr:unstable",
-      "fallback_vendor_image": "ghcr.io/nixos/nix:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-23T16:31:54Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1521608167,
-          "disk_size": 4396220993
-        },
-        "arm64": {
-          "compressed_size": 1511825283,
-          "disk_size": 4537664855
-        }
-      },
-      "build_number": 189
-    },
-    {
       "name": "opensuse-leap",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 275
+    },
+    {
+      "name": "nixos-unstable",
+      "official_image": "ghcr.io/ferret-linux/nixos-otr:unstable",
+      "fallback_vendor_image": "ghcr.io/nixos/nix:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-23T20:19:26Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1521438272,
+          "disk_size": 4396104760
+        },
+        "arm64": {
+          "compressed_size": 1511817795,
+          "disk_size": 4537636185
+        }
+      },
+      "build_number": 190
     }
   ]
 }
