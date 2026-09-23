@@ -128,28 +128,6 @@
       "build_number": 279
     },
     {
-      "name": "homebrew",
-      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
-      "fallback_vendor_image": "docker.io/library/debian:stable-slim",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-22T23:40:20Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 809875124,
-          "disk_size": 1974048180
-        },
-        "arm64": {
-          "compressed_size": 790311114,
-          "disk_size": 1905789442
-        }
-      },
-      "build_number": 171
-    },
-    {
       "name": "steamos",
       "official_image": "ghcr.io/ferret-linux/steamos-otr:latest",
       "fallback_vendor_image": "docker.io/cachyos/cachyos-v3:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 272
+    },
+    {
+      "name": "homebrew",
+      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
+      "fallback_vendor_image": "docker.io/library/debian:stable-slim",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-23T07:46:04Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 809893705,
+          "disk_size": 1974084020
+        },
+        "arm64": {
+          "compressed_size": 790446152,
+          "disk_size": 1905884165
+        }
+      },
+      "build_number": 172
     }
   ]
 }
