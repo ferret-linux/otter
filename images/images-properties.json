@@ -184,28 +184,6 @@
       "build_number": 218
     },
     {
-      "name": "oracle",
-      "official_image": "ghcr.io/ferret-linux/oracle-otr:stable",
-      "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-23T12:42:24Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 624890984,
-          "disk_size": 1877676474
-        },
-        "arm64": {
-          "compressed_size": 610596623,
-          "disk_size": 1742124407
-        }
-      },
-      "build_number": 267
-    },
-    {
       "name": "opensuse-leap",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 262
+    },
+    {
+      "name": "oracle",
+      "official_image": "ghcr.io/ferret-linux/oracle-otr:stable",
+      "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-23T16:31:02Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 624894091,
+          "disk_size": 1877678525
+        },
+        "arm64": {
+          "compressed_size": 610596072,
+          "disk_size": 1742124408
+        }
+      },
+      "build_number": 268
     }
   ]
 }
