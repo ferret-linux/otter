@@ -18,28 +18,6 @@
       "build_number": 179
     },
     {
-      "name": "alpine-edge",
-      "official_image": "ghcr.io/ferret-linux/alpine-otr:edge",
-      "fallback_vendor_image": "docker.io/library/alpine:edge",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-25T00:21:27Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 335692519,
-          "disk_size": 944734075
-        },
-        "arm64": {
-          "compressed_size": 341208618,
-          "disk_size": 980599832
-        }
-      },
-      "build_number": 288
-    },
-    {
       "name": "rhel",
       "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
       "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 223
+    },
+    {
+      "name": "alpine-edge",
+      "official_image": "ghcr.io/ferret-linux/alpine-otr:edge",
+      "fallback_vendor_image": "docker.io/library/alpine:edge",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-25T09:02:04Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 335694399,
+          "disk_size": 944734073
+        },
+        "arm64": {
+          "compressed_size": 341208878,
+          "disk_size": 980599834
+        }
+      },
+      "build_number": 289
     }
   ]
 }
