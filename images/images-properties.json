@@ -128,28 +128,6 @@
       "build_number": 304
     },
     {
-      "name": "guix",
-      "official_image": "ghcr.io/ferret-linux/guix-otr:latest",
-      "fallback_vendor_image": "docker.io/library/debian:stable-slim",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-28T12:21:42Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1072227324,
-          "disk_size": 3381093515
-        },
-        "arm64": {
-          "compressed_size": 1070549808,
-          "disk_size": 3535153700
-        }
-      },
-      "build_number": 121
-    },
-    {
       "name": "fedora-rawhide",
       "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide",
       "fallback_vendor_image": "quay.io/fedora/fedora:rawhide",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 300
+    },
+    {
+      "name": "guix",
+      "official_image": "ghcr.io/ferret-linux/guix-otr:latest",
+      "fallback_vendor_image": "docker.io/library/debian:stable-slim",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-28T19:12:58Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1072233218,
+          "disk_size": 3381093512
+        },
+        "arm64": {
+          "compressed_size": 1070548975,
+          "disk_size": 3535153694
+        }
+      },
+      "build_number": 122
     }
   ]
 }
