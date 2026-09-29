@@ -62,28 +62,6 @@
       "build_number": 304
     },
     {
-      "name": "ubuntu-lts",
-      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts",
-      "fallback_vendor_image": "docker.io/library/ubuntu:26.04",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-29T00:26:11Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 561592173,
-          "disk_size": 1582626870
-        },
-        "arm64": {
-          "compressed_size": 556391329,
-          "disk_size": 1593128987
-        }
-      },
-      "build_number": 303
-    },
-    {
       "name": "fedora-rawhide",
       "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide",
       "fallback_vendor_image": "quay.io/fedora/fedora:rawhide",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 303
+    },
+    {
+      "name": "ubuntu-lts",
+      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts",
+      "fallback_vendor_image": "docker.io/library/ubuntu:26.04",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-29T07:17:38Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 561593485,
+          "disk_size": 1582626871
+        },
+        "arm64": {
+          "compressed_size": 556391260,
+          "disk_size": 1593128989
+        }
+      },
+      "build_number": 304
     }
   ]
 }
