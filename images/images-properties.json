@@ -1,28 +1,6 @@
 {
   "images": [
     {
-      "name": "fedora",
-      "official_image": "ghcr.io/ferret-linux/fedora-otr:stable",
-      "fallback_vendor_image": "quay.io/fedora/fedora:44",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-29T00:13:15Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 683010220,
-          "disk_size": 2067767382
-        },
-        "arm64": {
-          "compressed_size": 664061082,
-          "disk_size": 1955291229
-        }
-      },
-      "build_number": 307
-    },
-    {
       "name": "artix",
       "official_image": "ghcr.io/ferret-linux/artix-otr:openrc",
       "fallback_vendor_image": "docker.io/artixlinux/artixlinux:base-openrc",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 303
+    },
+    {
+      "name": "fedora",
+      "official_image": "ghcr.io/ferret-linux/fedora-otr:stable",
+      "fallback_vendor_image": "quay.io/fedora/fedora:44",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-29T07:16:47Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 682998882,
+          "disk_size": 2067764819
+        },
+        "arm64": {
+          "compressed_size": 664060639,
+          "disk_size": 1955291230
+        }
+      },
+      "build_number": 308
     }
   ]
 }
