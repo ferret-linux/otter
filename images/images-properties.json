@@ -123,23 +123,6 @@
       "build_number": 302
     },
     {
-      "name": "devuan-unstable",
-      "official_image": "ghcr.io/ferret-linux/devuan-otr:unstable",
-      "fallback_vendor_image": "docker.io/devuan/devuan:unstable",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-09-29T00:17:41Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 655349225,
-          "disk_size": 1771443912
-        }
-      },
-      "build_number": 304
-    },
-    {
       "name": "chimera",
       "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
       "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest",
@@ -768,6 +751,23 @@
         }
       },
       "build_number": 309
+    },
+    {
+      "name": "devuan-unstable",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:unstable",
+      "fallback_vendor_image": "docker.io/devuan/devuan:unstable",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-09-29T07:09:06Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 655348118,
+          "disk_size": 1771443908
+        }
+      },
+      "build_number": 305
     }
   ]
 }
