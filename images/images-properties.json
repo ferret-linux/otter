@@ -128,28 +128,6 @@
       "build_number": 155
     },
     {
-      "name": "fedora-rawhide",
-      "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide",
-      "fallback_vendor_image": "quay.io/fedora/fedora:rawhide",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-05T06:45:40Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 661629108,
-          "disk_size": 2008480367
-        },
-        "arm64": {
-          "compressed_size": 650567977,
-          "disk_size": 1904951922
-        }
-      },
-      "build_number": 277
-    },
-    {
       "name": "chimera",
       "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
       "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 341
+    },
+    {
+      "name": "fedora-rawhide",
+      "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide",
+      "fallback_vendor_image": "quay.io/fedora/fedora:rawhide",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-05T13:24:13Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 661626750,
+          "disk_size": 2008489580
+        },
+        "arm64": {
+          "compressed_size": 650603187,
+          "disk_size": 1905014385
+        }
+      },
+      "build_number": 278
     }
   ]
 }
