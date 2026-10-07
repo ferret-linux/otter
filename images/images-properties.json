@@ -177,28 +177,6 @@
       "build_number": 347
     },
     {
-      "name": "homebrew",
-      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
-      "fallback_vendor_image": "docker.io/library/debian:stable-slim",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-06T20:56:11Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 812943669,
-          "disk_size": 1980980141
-        },
-        "arm64": {
-          "compressed_size": 793139730,
-          "disk_size": 1911728128
-        }
-      },
-      "build_number": 239
-    },
-    {
       "name": "opensuse-leap",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest",
@@ -765,6 +743,28 @@
         "amd64": {
           "compressed_size": 3563318980,
           "disk_size": 8986035584
+        }
+      },
+      "build_number": 240
+    },
+    {
+      "name": "homebrew",
+      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
+      "fallback_vendor_image": "docker.io/library/debian:stable-slim",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-07T00:35:43Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 812985997,
+          "disk_size": 1981028274
+        },
+        "arm64": {
+          "compressed_size": 792732194,
+          "disk_size": 1911337982
         }
       },
       "build_number": 240
