@@ -1,28 +1,6 @@
 {
   "images": [
     {
-      "name": "ubuntu",
-      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:stable",
-      "fallback_vendor_image": "docker.io/library/ubuntu:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-07T15:48:50Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 557908851,
-          "disk_size": 1573411387
-        },
-        "arm64": {
-          "compressed_size": 553561339,
-          "disk_size": 1584712223
-        }
-      },
-      "build_number": 347
-    },
-    {
       "name": "gentoo",
       "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
       "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 244
+    },
+    {
+      "name": "ubuntu",
+      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:stable",
+      "fallback_vendor_image": "docker.io/library/ubuntu:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-07T19:12:04Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 557906838,
+          "disk_size": 1573411386
+        },
+        "arm64": {
+          "compressed_size": 553560838,
+          "disk_size": 1584712226
+        }
+      },
+      "build_number": 348
     }
   ]
 }
