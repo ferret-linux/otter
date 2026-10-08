@@ -1,23 +1,6 @@
 {
   "images": [
     {
-      "name": "slackware-current",
-      "official_image": "ghcr.io/ferret-linux/slackware-otr:current",
-      "fallback_vendor_image": "docker.io/aclemons/slackware:current",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-08T01:53:11Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1513455855,
-          "disk_size": 5698030699
-        }
-      },
-      "build_number": 245
-    },
-    {
       "name": "kali",
       "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
       "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest",
@@ -768,6 +751,23 @@
         }
       },
       "build_number": 264
+    },
+    {
+      "name": "slackware-current",
+      "official_image": "ghcr.io/ferret-linux/slackware-otr:current",
+      "fallback_vendor_image": "docker.io/aclemons/slackware:current",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-08T10:07:32Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1513468172,
+          "disk_size": 5698030704
+        }
+      },
+      "build_number": 246
     }
   ]
 }
