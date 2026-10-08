@@ -360,23 +360,6 @@
       "build_number": 245
     },
     {
-      "name": "slackware-current",
-      "official_image": "ghcr.io/ferret-linux/slackware-otr:current",
-      "fallback_vendor_image": "docker.io/aclemons/slackware:current",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-07T22:25:09Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1513484510,
-          "disk_size": 5698015853
-        }
-      },
-      "build_number": 244
-    },
-    {
       "name": "gentoo",
       "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
       "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
@@ -768,6 +751,23 @@
         }
       },
       "build_number": 353
+    },
+    {
+      "name": "slackware-current",
+      "official_image": "ghcr.io/ferret-linux/slackware-otr:current",
+      "fallback_vendor_image": "docker.io/aclemons/slackware:current",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-08T01:53:11Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1513455855,
+          "disk_size": 5698030699
+        }
+      },
+      "build_number": 245
     }
   ]
 }
