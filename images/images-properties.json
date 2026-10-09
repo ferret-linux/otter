@@ -294,28 +294,6 @@
       "build_number": 171
     },
     {
-      "name": "nixos-unstable",
-      "official_image": "ghcr.io/ferret-linux/nixos-otr:unstable",
-      "fallback_vendor_image": "ghcr.io/nixos/nix:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-09T15:39:30Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1551519819,
-          "disk_size": 4462822965
-        },
-        "arm64": {
-          "compressed_size": 1524303108,
-          "disk_size": 4581135194
-        }
-      },
-      "build_number": 267
-    },
-    {
       "name": "slackware",
       "official_image": "ghcr.io/ferret-linux/slackware-otr:stable",
       "fallback_vendor_image": "docker.io/aclemons/slackware:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 362
+    },
+    {
+      "name": "nixos-unstable",
+      "official_image": "ghcr.io/ferret-linux/nixos-otr:unstable",
+      "fallback_vendor_image": "ghcr.io/nixos/nix:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-09T19:18:52Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1551685225,
+          "disk_size": 4462970935
+        },
+        "arm64": {
+          "compressed_size": 1524327753,
+          "disk_size": 4581173593
+        }
+      },
+      "build_number": 268
     }
   ]
 }
