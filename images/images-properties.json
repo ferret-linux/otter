@@ -172,28 +172,6 @@
       "build_number": 268
     },
     {
-      "name": "void-musl",
-      "official_image": "ghcr.io/ferret-linux/void-otr:musl",
-      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-09T19:22:01Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 385529647,
-          "disk_size": 1104548508
-        },
-        "arm64": {
-          "compressed_size": 378201951,
-          "disk_size": 1077268159
-        }
-      },
-      "build_number": 340
-    },
-    {
       "name": "opensuse-tumbleweed",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 362
+    },
+    {
+      "name": "void-musl",
+      "official_image": "ghcr.io/ferret-linux/void-otr:musl",
+      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-09T22:35:06Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 385526895,
+          "disk_size": 1104547997
+        },
+        "arm64": {
+          "compressed_size": 378201162,
+          "disk_size": 1077267643
+        }
+      },
+      "build_number": 341
     }
   ]
 }
