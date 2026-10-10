@@ -238,23 +238,6 @@
       "build_number": 343
     },
     {
-      "name": "blackarch",
-      "official_image": "ghcr.io/ferret-linux/blackarch-otr:latest",
-      "fallback_vendor_image": "docker.io/blackarchlinux/blackarch:latest",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-10T10:56:11Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1192809433,
-          "disk_size": 3500781043
-        }
-      },
-      "build_number": 364
-    },
-    {
       "name": "artix",
       "official_image": "ghcr.io/ferret-linux/artix-otr:openrc",
       "fallback_vendor_image": "docker.io/artixlinux/artixlinux:base-openrc",
@@ -768,6 +751,23 @@
         }
       },
       "build_number": 361
+    },
+    {
+      "name": "blackarch",
+      "official_image": "ghcr.io/ferret-linux/blackarch-otr:latest",
+      "fallback_vendor_image": "docker.io/blackarchlinux/blackarch:latest",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-10T15:04:02Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1192887714,
+          "disk_size": 3500962294
+        }
+      },
+      "build_number": 365
     }
   ]
 }
