@@ -350,28 +350,6 @@
       "build_number": 359
     },
     {
-      "name": "rhel",
-      "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
-      "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-11T23:17:03Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 378073771,
-          "disk_size": 1238936177
-        },
-        "arm64": {
-          "compressed_size": 372008661,
-          "disk_size": 1109251146
-        }
-      },
-      "build_number": 373
-    },
-    {
       "name": "opensuse-leap",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 353
+    },
+    {
+      "name": "rhel",
+      "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
+      "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-12T06:43:03Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 378642507,
+          "disk_size": 1240090225
+        },
+        "arm64": {
+          "compressed_size": 371994107,
+          "disk_size": 1109251140
+        }
+      },
+      "build_number": 374
     }
   ]
 }
