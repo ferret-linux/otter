@@ -1,28 +1,6 @@
 {
   "images": [
     {
-      "name": "gentoo",
-      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
-      "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-13T02:57:49Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1658674891,
-          "disk_size": 4294311124
-        },
-        "arm64": {
-          "compressed_size": 1398767652,
-          "disk_size": 3922952441
-        }
-      },
-      "build_number": 312
-    },
-    {
       "name": "alpine",
       "official_image": "ghcr.io/ferret-linux/alpine-otr:latest",
       "fallback_vendor_image": "docker.io/library/alpine:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 271
+    },
+    {
+      "name": "gentoo",
+      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
+      "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-13T08:55:57Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1658729888,
+          "disk_size": 4294430927
+        },
+        "arm64": {
+          "compressed_size": 1398776033,
+          "disk_size": 3923079420
+        }
+      },
+      "build_number": 313
     }
   ]
 }
