@@ -1,28 +1,6 @@
 {
   "images": [
     {
-      "name": "gentoo",
-      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
-      "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-13T00:27:38Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1668220100,
-          "disk_size": 4303846099
-        },
-        "arm64": {
-          "compressed_size": 1398738001,
-          "disk_size": 3922943225
-        }
-      },
-      "build_number": 311
-    },
-    {
       "name": "opensuse-tumbleweed",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 271
+    },
+    {
+      "name": "gentoo",
+      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
+      "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-13T02:57:49Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1658674891,
+          "disk_size": 4294311124
+        },
+        "arm64": {
+          "compressed_size": 1398767652,
+          "disk_size": 3922952441
+        }
+      },
+      "build_number": 312
     }
   ]
 }
