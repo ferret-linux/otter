@@ -1,28 +1,6 @@
 {
   "images": [
     {
-      "name": "rocky",
-      "official_image": "ghcr.io/ferret-linux/rocky-otr:stable",
-      "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-13T23:57:08Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 643608145,
-          "disk_size": 1926734996
-        },
-        "arm64": {
-          "compressed_size": 621804021,
-          "disk_size": 1800850410
-        }
-      },
-      "build_number": 378
-    },
-    {
       "name": "centos",
       "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
       "fallback_vendor_image": "quay.io/centos/centos:stream10",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 253
+    },
+    {
+      "name": "rocky",
+      "official_image": "ghcr.io/ferret-linux/rocky-otr:stable",
+      "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-14T07:31:57Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 643606720,
+          "disk_size": 1926733460
+        },
+        "arm64": {
+          "compressed_size": 621804044,
+          "disk_size": 1800850410
+        }
+      },
+      "build_number": 379
     }
   ]
 }
