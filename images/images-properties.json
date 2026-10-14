@@ -45,28 +45,6 @@
       "build_number": 380
     },
     {
-      "name": "void-musl",
-      "official_image": "ghcr.io/ferret-linux/void-otr:musl",
-      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-14T16:23:58Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 385649339,
-          "disk_size": 1104876189
-        },
-        "arm64": {
-          "compressed_size": 378230454,
-          "disk_size": 1077894844
-        }
-      },
-      "build_number": 365
-    },
-    {
       "name": "nixos-unstable",
       "official_image": "ghcr.io/ferret-linux/nixos-otr:unstable",
       "fallback_vendor_image": "ghcr.io/nixos/nix:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 379
+    },
+    {
+      "name": "void-musl",
+      "official_image": "ghcr.io/ferret-linux/void-otr:musl",
+      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-14T20:55:20Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 385654534,
+          "disk_size": 1104899741
+        },
+        "arm64": {
+          "compressed_size": 378362226,
+          "disk_size": 1077980345
+        }
+      },
+      "build_number": 366
     }
   ]
 }
