@@ -1,23 +1,6 @@
 {
   "images": [
     {
-      "name": "devuan-unstable",
-      "official_image": "ghcr.io/ferret-linux/devuan-otr:unstable",
-      "fallback_vendor_image": "docker.io/devuan/devuan:unstable",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-15T00:01:49Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 627135767,
-          "disk_size": 1704347848
-        }
-      },
-      "build_number": 384
-    },
-    {
       "name": "wolfi",
       "official_image": "ghcr.io/ferret-linux/wolfi-otr:latest",
       "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest",
@@ -768,6 +751,23 @@
         }
       },
       "build_number": 389
+    },
+    {
+      "name": "devuan-unstable",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:unstable",
+      "fallback_vendor_image": "docker.io/devuan/devuan:unstable",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-15T08:12:06Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 627131493,
+          "disk_size": 1704347845
+        }
+      },
+      "build_number": 385
     }
   ]
 }
