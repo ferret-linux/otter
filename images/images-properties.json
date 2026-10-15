@@ -155,28 +155,6 @@
       "build_number": 380
     },
     {
-      "name": "void-glibc",
-      "official_image": "ghcr.io/ferret-linux/void-otr:glibc",
-      "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-15T00:41:17Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 405455053,
-          "disk_size": 1162829497
-        },
-        "arm64": {
-          "compressed_size": 396512576,
-          "disk_size": 1141872840
-        }
-      },
-      "build_number": 365
-    },
-    {
       "name": "steamos",
       "official_image": "ghcr.io/ferret-linux/steamos-otr:latest",
       "fallback_vendor_image": "docker.io/cachyos/cachyos-v3:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 381
+    },
+    {
+      "name": "void-glibc",
+      "official_image": "ghcr.io/ferret-linux/void-otr:glibc",
+      "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-15T08:12:44Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 405469112,
+          "disk_size": 1162858682
+        },
+        "arm64": {
+          "compressed_size": 396569871,
+          "disk_size": 1141873867
+        }
+      },
+      "build_number": 366
     }
   ]
 }
