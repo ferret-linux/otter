@@ -111,28 +111,6 @@
       "build_number": 386
     },
     {
-      "name": "void-musl",
-      "official_image": "ghcr.io/ferret-linux/void-otr:musl",
-      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-15T17:33:32Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 385736606,
-          "disk_size": 1104928923
-        },
-        "arm64": {
-          "compressed_size": 378337552,
-          "disk_size": 1077980859
-        }
-      },
-      "build_number": 370
-    },
-    {
       "name": "wolfi",
       "official_image": "ghcr.io/ferret-linux/wolfi-otr:latest",
       "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 389
+    },
+    {
+      "name": "void-musl",
+      "official_image": "ghcr.io/ferret-linux/void-otr:musl",
+      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-15T21:07:55Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 385739689,
+          "disk_size": 1104928926
+        },
+        "arm64": {
+          "compressed_size": 378337666,
+          "disk_size": 1077980862
+        }
+      },
+      "build_number": 371
     }
   ]
 }
