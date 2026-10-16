@@ -62,23 +62,6 @@
       "build_number": 286
     },
     {
-      "name": "devuan-unstable",
-      "official_image": "ghcr.io/ferret-linux/devuan-otr:unstable",
-      "fallback_vendor_image": "docker.io/devuan/devuan:unstable",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-16T08:36:22Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 627139427,
-          "disk_size": 1704334532
-        }
-      },
-      "build_number": 390
-    },
-    {
       "name": "rocky",
       "official_image": "ghcr.io/ferret-linux/rocky-otr:stable",
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init",
@@ -768,6 +751,23 @@
         }
       },
       "build_number": 278
+    },
+    {
+      "name": "devuan-unstable",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:unstable",
+      "fallback_vendor_image": "docker.io/devuan/devuan:unstable",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-16T13:46:39Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 627137847,
+          "disk_size": 1704334534
+        }
+      },
+      "build_number": 391
     }
   ]
 }
