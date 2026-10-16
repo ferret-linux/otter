@@ -1,28 +1,6 @@
 {
   "images": [
     {
-      "name": "fedora-rawhide",
-      "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide",
-      "fallback_vendor_image": "quay.io/fedora/fedora:rawhide",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-16T00:18:02Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 703701578,
-          "disk_size": 2123625574
-        },
-        "arm64": {
-          "compressed_size": 685581787,
-          "disk_size": 2008666736
-        }
-      },
-      "build_number": 329
-    },
-    {
       "name": "kali-edge",
       "official_image": "ghcr.io/ferret-linux/kali-otr:edge",
       "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 394
+    },
+    {
+      "name": "fedora-rawhide",
+      "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide",
+      "fallback_vendor_image": "quay.io/fedora/fedora:rawhide",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-16T08:39:29Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 703714447,
+          "disk_size": 2123620970
+        },
+        "arm64": {
+          "compressed_size": 685622509,
+          "disk_size": 2008678001
+        }
+      },
+      "build_number": 330
     }
   ]
 }
