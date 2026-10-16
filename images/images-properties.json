@@ -1,23 +1,6 @@
 {
   "images": [
     {
-      "name": "devuan-testing",
-      "official_image": "ghcr.io/ferret-linux/devuan-otr:testing",
-      "fallback_vendor_image": "docker.io/devuan/devuan:testing",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-15T21:04:22Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 623024663,
-          "disk_size": 1687144640
-        }
-      },
-      "build_number": 392
-    },
-    {
       "name": "slackware-current",
       "official_image": "ghcr.io/ferret-linux/slackware-otr:current",
       "fallback_vendor_image": "docker.io/aclemons/slackware:current",
@@ -768,6 +751,23 @@
         }
       },
       "build_number": 203
+    },
+    {
+      "name": "devuan-testing",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:testing",
+      "fallback_vendor_image": "docker.io/devuan/devuan:testing",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-16T00:40:00Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 623025732,
+          "disk_size": 1687144643
+        }
+      },
+      "build_number": 393
     }
   ]
 }
