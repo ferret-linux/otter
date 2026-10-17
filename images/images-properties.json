@@ -45,28 +45,6 @@
       "build_number": 290
     },
     {
-      "name": "fedora-rawhide",
-      "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide",
-      "fallback_vendor_image": "quay.io/fedora/fedora:rawhide",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-17T01:00:37Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 703746617,
-          "disk_size": 2123880036
-        },
-        "arm64": {
-          "compressed_size": 685801221,
-          "disk_size": 2008926320
-        }
-      },
-      "build_number": 334
-    },
-    {
       "name": "opensuse-leap",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 392
+    },
+    {
+      "name": "fedora-rawhide",
+      "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide",
+      "fallback_vendor_image": "quay.io/fedora/fedora:rawhide",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-17T08:58:04Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 703750085,
+          "disk_size": 2123900523
+        },
+        "arm64": {
+          "compressed_size": 685861206,
+          "disk_size": 2008917619
+        }
+      },
+      "build_number": 335
     }
   ]
 }
