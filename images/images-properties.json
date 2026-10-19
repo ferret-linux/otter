@@ -245,23 +245,6 @@
       "build_number": 390
     },
     {
-      "name": "steamos",
-      "official_image": "ghcr.io/ferret-linux/steamos-otr:latest",
-      "fallback_vendor_image": "docker.io/cachyos/cachyos-v3:latest",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-19T18:26:16Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 3578033260,
-          "disk_size": 9033593726
-        }
-      },
-      "build_number": 303
-    },
-    {
       "name": "opensuse-leap",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest",
@@ -768,6 +751,23 @@
         }
       },
       "build_number": 295
+    },
+    {
+      "name": "steamos",
+      "official_image": "ghcr.io/ferret-linux/steamos-otr:latest",
+      "fallback_vendor_image": "docker.io/cachyos/cachyos-v3:latest",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-19T21:12:44Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 3548058650,
+          "disk_size": 8959334781
+        }
+      },
+      "build_number": 304
     }
   ]
 }
