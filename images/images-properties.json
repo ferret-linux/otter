@@ -23,28 +23,6 @@
       "build_number": 409
     },
     {
-      "name": "opensuse-leap",
-      "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
-      "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-20T19:52:05Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 540262701,
-          "disk_size": 1612628638
-        },
-        "arm64": {
-          "compressed_size": 541805871,
-          "disk_size": 1620736712
-        }
-      },
-      "build_number": 368
-    },
-    {
       "name": "ubuntu-lts",
       "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts",
       "fallback_vendor_image": "docker.io/library/ubuntu:26.04",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 415
+    },
+    {
+      "name": "opensuse-leap",
+      "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
+      "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-21T00:01:18Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 540262393,
+          "disk_size": 1612628636
+        },
+        "arm64": {
+          "compressed_size": 541775989,
+          "disk_size": 1620736707
+        }
+      },
+      "build_number": 369
     }
   ]
 }
