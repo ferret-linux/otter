@@ -111,23 +111,6 @@
       "build_number": 411
     },
     {
-      "name": "devuan",
-      "official_image": "ghcr.io/ferret-linux/devuan-otr:stable",
-      "fallback_vendor_image": "docker.io/devuan/devuan:stable",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-22T13:23:40Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 597866774,
-          "disk_size": 1561992903
-        }
-      },
-      "build_number": 421
-    },
-    {
       "name": "steamos",
       "official_image": "ghcr.io/ferret-linux/steamos-otr:latest",
       "fallback_vendor_image": "docker.io/cachyos/cachyos-v3:latest",
@@ -768,6 +751,23 @@
         }
       },
       "build_number": 360
+    },
+    {
+      "name": "devuan",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:stable",
+      "fallback_vendor_image": "docker.io/devuan/devuan:stable",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-22T17:49:40Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 597865255,
+          "disk_size": 1561992899
+        }
+      },
+      "build_number": 422
     }
   ]
 }
