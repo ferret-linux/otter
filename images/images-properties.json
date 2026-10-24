@@ -45,28 +45,6 @@
       "build_number": 424
     },
     {
-      "name": "alpine-edge",
-      "official_image": "ghcr.io/ferret-linux/alpine-otr:edge",
-      "fallback_vendor_image": "docker.io/library/alpine:edge",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-24T17:18:05Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 337671044,
-          "disk_size": 949571963
-        },
-        "arm64": {
-          "compressed_size": 342466857,
-          "disk_size": 983564313
-        }
-      },
-      "build_number": 434
-    },
-    {
       "name": "nixos",
       "official_image": "ghcr.io/ferret-linux/nixos-otr:stable",
       "fallback_vendor_image": "ghcr.io/nixos/nix:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 433
+    },
+    {
+      "name": "alpine-edge",
+      "official_image": "ghcr.io/ferret-linux/alpine-otr:edge",
+      "fallback_vendor_image": "docker.io/library/alpine:edge",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-24T21:31:40Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 337670326,
+          "disk_size": 949571961
+        },
+        "arm64": {
+          "compressed_size": 342467025,
+          "disk_size": 983564312
+        }
+      },
+      "build_number": 435
     }
   ]
 }
