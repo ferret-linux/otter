@@ -323,28 +323,6 @@
       "build_number": 428
     },
     {
-      "name": "opensuse-tumbleweed",
-      "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
-      "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-23T21:18:57Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 422260004,
-          "disk_size": 1280507596
-        },
-        "arm64": {
-          "compressed_size": 416510776,
-          "disk_size": 1234809610
-        }
-      },
-      "build_number": 366
-    },
-    {
       "name": "alma",
       "official_image": "ghcr.io/ferret-linux/alma-otr:stable",
       "fallback_vendor_image": "docker.io/library/almalinux:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 423
+    },
+    {
+      "name": "opensuse-tumbleweed",
+      "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
+      "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-24T01:09:39Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 422238039,
+          "disk_size": 1280507587
+        },
+        "arm64": {
+          "compressed_size": 416510973,
+          "disk_size": 1234809609
+        }
+      },
+      "build_number": 367
     }
   ]
 }
