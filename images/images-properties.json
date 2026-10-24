@@ -84,28 +84,6 @@
       "build_number": 326
     },
     {
-      "name": "ubuntu-lts",
-      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts",
-      "fallback_vendor_image": "docker.io/library/ubuntu:26.04",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-24T17:49:42Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 556241448,
-          "disk_size": 1568222777
-        },
-        "arm64": {
-          "compressed_size": 551735450,
-          "disk_size": 1579648543
-        }
-      },
-      "build_number": 430
-    },
-    {
       "name": "slackware-current",
       "official_image": "ghcr.io/ferret-linux/slackware-otr:current",
       "fallback_vendor_image": "docker.io/aclemons/slackware:current",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 438
+    },
+    {
+      "name": "ubuntu-lts",
+      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts",
+      "fallback_vendor_image": "docker.io/library/ubuntu:26.04",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-24T21:32:25Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 556239251,
+          "disk_size": 1568222779
+        },
+        "arm64": {
+          "compressed_size": 551734768,
+          "disk_size": 1579648541
+        }
+      },
+      "build_number": 431
     }
   ]
 }
