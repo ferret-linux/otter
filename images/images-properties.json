@@ -67,28 +67,6 @@
       "build_number": 429
     },
     {
-      "name": "homebrew",
-      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
-      "fallback_vendor_image": "docker.io/library/debian:stable-slim",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-24T17:14:48Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 815703648,
-          "disk_size": 1985682864
-        },
-        "arm64": {
-          "compressed_size": 795407525,
-          "disk_size": 1915809793
-        }
-      },
-      "build_number": 328
-    },
-    {
       "name": "alpine-edge",
       "official_image": "ghcr.io/ferret-linux/alpine-otr:edge",
       "fallback_vendor_image": "docker.io/library/alpine:edge",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 344
+    },
+    {
+      "name": "homebrew",
+      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
+      "fallback_vendor_image": "docker.io/library/debian:stable-slim",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-24T21:30:04Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 814865268,
+          "disk_size": 1984822193
+        },
+        "arm64": {
+          "compressed_size": 795161886,
+          "disk_size": 1915723266
+        }
+      },
+      "build_number": 329
     }
   ]
 }
