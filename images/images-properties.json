@@ -89,23 +89,6 @@
       "build_number": 432
     },
     {
-      "name": "devuan-unstable",
-      "official_image": "ghcr.io/ferret-linux/devuan-otr:unstable",
-      "fallback_vendor_image": "docker.io/devuan/devuan:unstable",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-25T01:23:14Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 627652664,
-          "disk_size": 1705269448
-        }
-      },
-      "build_number": 434
-    },
-    {
       "name": "opensuse-tumbleweed",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
@@ -765,6 +748,23 @@
         "amd64": {
           "compressed_size": 597904419,
           "disk_size": 1562067140
+        }
+      },
+      "build_number": 435
+    },
+    {
+      "name": "devuan-unstable",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:unstable",
+      "fallback_vendor_image": "docker.io/devuan/devuan:unstable",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-25T04:12:22Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 628901020,
+          "disk_size": 1708965568
         }
       },
       "build_number": 435
