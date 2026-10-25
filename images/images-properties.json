@@ -604,28 +604,6 @@
       "build_number": 432
     },
     {
-      "name": "alpine-edge",
-      "official_image": "ghcr.io/ferret-linux/alpine-otr:edge",
-      "fallback_vendor_image": "docker.io/library/alpine:edge",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-25T10:08:53Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 337672177,
-          "disk_size": 949571964
-        },
-        "arm64": {
-          "compressed_size": 342467382,
-          "disk_size": 983564311
-        }
-      },
-      "build_number": 438
-    },
-    {
       "name": "slackware-current",
       "official_image": "ghcr.io/ferret-linux/slackware-otr:current",
       "fallback_vendor_image": "docker.io/aclemons/slackware:current",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 442
+    },
+    {
+      "name": "alpine-edge",
+      "official_image": "ghcr.io/ferret-linux/alpine-otr:edge",
+      "fallback_vendor_image": "docker.io/library/alpine:edge",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-25T14:06:12Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 337671478,
+          "disk_size": 949571962
+        },
+        "arm64": {
+          "compressed_size": 342467338,
+          "disk_size": 983564312
+        }
+      },
+      "build_number": 439
     }
   ]
 }
