@@ -67,28 +67,6 @@
       "build_number": 437
     },
     {
-      "name": "chimera",
-      "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
-      "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-25T18:14:38Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 352113528,
-          "disk_size": 998087066
-        },
-        "arm64": {
-          "compressed_size": 356096864,
-          "disk_size": 967705232
-        }
-      },
-      "build_number": 438
-    },
-    {
       "name": "artix",
       "official_image": "ghcr.io/ferret-linux/artix-otr:openrc",
       "fallback_vendor_image": "docker.io/artixlinux/artixlinux:base-openrc",
@@ -765,6 +743,28 @@
         "amd64": {
           "compressed_size": 597900415,
           "disk_size": 1562067141
+        }
+      },
+      "build_number": 439
+    },
+    {
+      "name": "chimera",
+      "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
+      "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-25T22:13:29Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 352115162,
+          "disk_size": 998087072
+        },
+        "arm64": {
+          "compressed_size": 356096796,
+          "disk_size": 967705230
         }
       },
       "build_number": 439
