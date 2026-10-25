@@ -228,28 +228,6 @@
       "build_number": 436
     },
     {
-      "name": "alpine",
-      "official_image": "ghcr.io/ferret-linux/alpine-otr:latest",
-      "fallback_vendor_image": "docker.io/library/alpine:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-25T18:24:31Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 335408805,
-          "disk_size": 945473915
-        },
-        "arm64": {
-          "compressed_size": 338694593,
-          "disk_size": 977337367
-        }
-      },
-      "build_number": 436
-    },
-    {
       "name": "steamos",
       "official_image": "ghcr.io/ferret-linux/steamos-otr:latest",
       "fallback_vendor_image": "docker.io/cachyos/cachyos-v3:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 335
+    },
+    {
+      "name": "alpine",
+      "official_image": "ghcr.io/ferret-linux/alpine-otr:latest",
+      "fallback_vendor_image": "docker.io/library/alpine:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-25T22:12:20Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 335409451,
+          "disk_size": 945473911
+        },
+        "arm64": {
+          "compressed_size": 338694697,
+          "disk_size": 977337366
+        }
+      },
+      "build_number": 437
     }
   ]
 }
