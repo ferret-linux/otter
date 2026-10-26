@@ -216,28 +216,6 @@
       "build_number": 439
     },
     {
-      "name": "alpine-edge",
-      "official_image": "ghcr.io/ferret-linux/alpine-otr:edge",
-      "fallback_vendor_image": "docker.io/library/alpine:edge",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-26T17:54:06Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 337667049,
-          "disk_size": 949571958
-        },
-        "arm64": {
-          "compressed_size": 342467019,
-          "disk_size": 983564314
-        }
-      },
-      "build_number": 444
-    },
-    {
       "name": "opensuse-tumbleweed",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 316
+    },
+    {
+      "name": "alpine-edge",
+      "official_image": "ghcr.io/ferret-linux/alpine-otr:edge",
+      "fallback_vendor_image": "docker.io/library/alpine:edge",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-26T21:18:25Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 337662379,
+          "disk_size": 949612408
+        },
+        "arm64": {
+          "compressed_size": 342496487,
+          "disk_size": 983585304
+        }
+      },
+      "build_number": 445
     }
   ]
 }
