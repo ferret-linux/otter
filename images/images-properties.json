@@ -133,23 +133,6 @@
       "build_number": 422
     },
     {
-      "name": "artix",
-      "official_image": "ghcr.io/ferret-linux/artix-otr:openrc",
-      "fallback_vendor_image": "docker.io/artixlinux/artixlinux:base-openrc",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-26T12:01:09Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 762563365,
-          "disk_size": 2254842611
-        }
-      },
-      "build_number": 314
-    },
-    {
       "name": "rhel",
       "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
       "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest",
@@ -768,6 +751,23 @@
         }
       },
       "build_number": 442
+    },
+    {
+      "name": "artix",
+      "official_image": "ghcr.io/ferret-linux/artix-otr:openrc",
+      "fallback_vendor_image": "docker.io/artixlinux/artixlinux:base-openrc",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-26T17:46:27Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 763760182,
+          "disk_size": 2257984240
+        }
+      },
+      "build_number": 315
     }
   ]
 }
