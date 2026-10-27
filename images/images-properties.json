@@ -1,28 +1,6 @@
 {
   "images": [
     {
-      "name": "chimera",
-      "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
-      "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-27T12:11:20Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 352113092,
-          "disk_size": 998087071
-        },
-        "arm64": {
-          "compressed_size": 356096976,
-          "disk_size": 967705233
-        }
-      },
-      "build_number": 446
-    },
-    {
       "name": "opensuse-leap",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 343
+    },
+    {
+      "name": "chimera",
+      "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
+      "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-27T17:21:31Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 352111851,
+          "disk_size": 998087069
+        },
+        "arm64": {
+          "compressed_size": 356096924,
+          "disk_size": 967705233
+        }
+      },
+      "build_number": 447
     }
   ]
 }
