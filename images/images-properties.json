@@ -255,28 +255,6 @@
       "build_number": 458
     },
     {
-      "name": "kali",
-      "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
-      "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-30T15:27:58Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 650912564,
-          "disk_size": 1766595946
-        },
-        "arm64": {
-          "compressed_size": 627805256,
-          "disk_size": 1729367945
-        }
-      },
-      "build_number": 448
-    },
-    {
       "name": "steamos",
       "official_image": "ghcr.io/ferret-linux/steamos-otr:latest",
       "fallback_vendor_image": "docker.io/cachyos/cachyos-v3:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 466
+    },
+    {
+      "name": "kali",
+      "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
+      "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-30T18:47:57Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 650912234,
+          "disk_size": 1766595945
+        },
+        "arm64": {
+          "compressed_size": 627805123,
+          "disk_size": 1729367947
+        }
+      },
+      "build_number": 449
     }
   ]
 }
