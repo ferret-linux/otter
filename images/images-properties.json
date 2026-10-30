@@ -111,28 +111,6 @@
       "build_number": 455
     },
     {
-      "name": "kali-edge",
-      "official_image": "ghcr.io/ferret-linux/kali-otr:edge",
-      "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-30T01:57:46Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 650898868,
-          "disk_size": 1766573061
-        },
-        "arm64": {
-          "compressed_size": 627789552,
-          "disk_size": 1729348590
-        }
-      },
-      "build_number": 443
-    },
-    {
       "name": "steamos",
       "official_image": "ghcr.io/ferret-linux/steamos-otr:latest",
       "fallback_vendor_image": "docker.io/cachyos/cachyos-v3:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 439
+    },
+    {
+      "name": "kali-edge",
+      "official_image": "ghcr.io/ferret-linux/kali-otr:edge",
+      "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-30T10:29:42Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 650902111,
+          "disk_size": 1766573059
+        },
+        "arm64": {
+          "compressed_size": 627790368,
+          "disk_size": 1729348588
+        }
+      },
+      "build_number": 444
     }
   ]
 }
