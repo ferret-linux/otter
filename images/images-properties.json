@@ -150,23 +150,6 @@
       "build_number": 470
     },
     {
-      "name": "artix",
-      "official_image": "ghcr.io/ferret-linux/artix-otr:openrc",
-      "fallback_vendor_image": "docker.io/artixlinux/artixlinux:base-openrc",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-31T15:07:39Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 759210792,
-          "disk_size": 2246719219
-        }
-      },
-      "build_number": 339
-    },
-    {
       "name": "opensuse-tumbleweed",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
@@ -768,6 +751,23 @@
         }
       },
       "build_number": 363
+    },
+    {
+      "name": "artix",
+      "official_image": "ghcr.io/ferret-linux/artix-otr:openrc",
+      "fallback_vendor_image": "docker.io/artixlinux/artixlinux:base-openrc",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-31T18:40:33Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 763850099,
+          "disk_size": 2257786097
+        }
+      },
+      "build_number": 340
     }
   ]
 }
