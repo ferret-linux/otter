@@ -111,23 +111,6 @@
       "build_number": 460
     },
     {
-      "name": "steamos",
-      "official_image": "ghcr.io/ferret-linux/steamos-otr:latest",
-      "fallback_vendor_image": "docker.io/cachyos/cachyos-v3:latest",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-30T22:12:34Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 3598543533,
-          "disk_size": 9088672118
-        }
-      },
-      "build_number": 359
-    },
-    {
       "name": "nixos",
       "official_image": "ghcr.io/ferret-linux/nixos-otr:stable",
       "fallback_vendor_image": "ghcr.io/nixos/nix:latest",
@@ -768,6 +751,23 @@
         }
       },
       "build_number": 448
+    },
+    {
+      "name": "steamos",
+      "official_image": "ghcr.io/ferret-linux/steamos-otr:latest",
+      "fallback_vendor_image": "docker.io/cachyos/cachyos-v3:latest",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-31T02:05:27Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 3598538068,
+          "disk_size": 9088672637
+        }
+      },
+      "build_number": 360
     }
   ]
 }
