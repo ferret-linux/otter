@@ -62,28 +62,6 @@
       "build_number": 467
     },
     {
-      "name": "alpine-edge",
-      "official_image": "ghcr.io/ferret-linux/alpine-otr:edge",
-      "fallback_vendor_image": "docker.io/library/alpine:edge",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-10-31T18:15:10Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 338169727,
-          "disk_size": 950201208
-        },
-        "arm64": {
-          "compressed_size": 342990364,
-          "disk_size": 984256537
-        }
-      },
-      "build_number": 469
-    },
-    {
       "name": "opensuse-leap",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 464
+    },
+    {
+      "name": "alpine-edge",
+      "official_image": "ghcr.io/ferret-linux/alpine-otr:edge",
+      "fallback_vendor_image": "docker.io/library/alpine:edge",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-10-31T22:16:05Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 338171814,
+          "disk_size": 950201209
+        },
+        "arm64": {
+          "compressed_size": 342990497,
+          "disk_size": 984256536
+        }
+      },
+      "build_number": 470
     }
   ]
 }
