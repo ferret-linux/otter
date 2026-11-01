@@ -194,28 +194,6 @@
       "build_number": 365
     },
     {
-      "name": "guix",
-      "official_image": "ghcr.io/ferret-linux/guix-otr:latest",
-      "fallback_vendor_image": "docker.io/library/debian:stable-slim",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-01T02:30:43Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1072840361,
-          "disk_size": 3382909585
-        },
-        "arm64": {
-          "compressed_size": 1070957536,
-          "disk_size": 3536812072
-        }
-      },
-      "build_number": 282
-    },
-    {
       "name": "kali",
       "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
       "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 474
+    },
+    {
+      "name": "guix",
+      "official_image": "ghcr.io/ferret-linux/guix-otr:latest",
+      "fallback_vendor_image": "docker.io/library/debian:stable-slim",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-01T05:33:57Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1072842008,
+          "disk_size": 3382910097
+        },
+        "arm64": {
+          "compressed_size": 1070957349,
+          "disk_size": 3536811561
+        }
+      },
+      "build_number": 283
     }
   ]
 }
