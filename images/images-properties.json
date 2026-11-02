@@ -128,28 +128,6 @@
       "build_number": 465
     },
     {
-      "name": "alpine-edge",
-      "official_image": "ghcr.io/ferret-linux/alpine-otr:edge",
-      "fallback_vendor_image": "docker.io/library/alpine:edge",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-02T07:06:39Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 338169216,
-          "disk_size": 950196090
-        },
-        "arm64": {
-          "compressed_size": 343014893,
-          "disk_size": 984256025
-        }
-      },
-      "build_number": 477
-    },
-    {
       "name": "kali",
       "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
       "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 480
+    },
+    {
+      "name": "alpine-edge",
+      "official_image": "ghcr.io/ferret-linux/alpine-otr:edge",
+      "fallback_vendor_image": "docker.io/library/alpine:edge",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-02T14:05:25Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 338171053,
+          "disk_size": 950200186
+        },
+        "arm64": {
+          "compressed_size": 343016185,
+          "disk_size": 984256026
+        }
+      },
+      "build_number": 478
     }
   ]
 }
