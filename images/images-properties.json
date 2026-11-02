@@ -118,28 +118,6 @@
       "build_number": 474
     },
     {
-      "name": "debian-unstable",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:unstable",
-      "fallback_vendor_image": "docker.io/library/debian:unstable",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-02T20:48:26Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 661192755,
-          "disk_size": 1793794934
-        },
-        "arm64": {
-          "compressed_size": 641370886,
-          "disk_size": 1760182697
-        }
-      },
-      "build_number": 472
-    },
-    {
       "name": "opensuse-tumbleweed",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 374
+    },
+    {
+      "name": "debian-unstable",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:unstable",
+      "fallback_vendor_image": "docker.io/library/debian:unstable",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-02T23:36:00Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 661191640,
+          "disk_size": 1793794935
+        },
+        "arm64": {
+          "compressed_size": 641371337,
+          "disk_size": 1760182694
+        }
+      },
+      "build_number": 473
     }
   ]
 }
