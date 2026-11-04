@@ -167,28 +167,6 @@
       "build_number": 483
     },
     {
-      "name": "debian-unstable",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:unstable",
-      "fallback_vendor_image": "docker.io/library/debian:unstable",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-04T15:14:24Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 661328302,
-          "disk_size": 1794010997
-        },
-        "arm64": {
-          "compressed_size": 641304839,
-          "disk_size": 1760346026
-        }
-      },
-      "build_number": 481
-    },
-    {
       "name": "devuan-testing",
       "official_image": "ghcr.io/ferret-linux/devuan-otr:testing",
       "fallback_vendor_image": "docker.io/devuan/devuan:testing",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 471
+    },
+    {
+      "name": "debian-unstable",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:unstable",
+      "fallback_vendor_image": "docker.io/library/debian:unstable",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-04T19:08:05Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 661327518,
+          "disk_size": 1794011001
+        },
+        "arm64": {
+          "compressed_size": 641304825,
+          "disk_size": 1760346025
+        }
+      },
+      "build_number": 482
     }
   ]
 }
