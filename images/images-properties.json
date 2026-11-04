@@ -216,28 +216,6 @@
       "build_number": 479
     },
     {
-      "name": "debian-testing",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:testing",
-      "fallback_vendor_image": "docker.io/library/debian:testing",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-03T21:53:56Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 646265396,
-          "disk_size": 1755678579
-        },
-        "arm64": {
-          "compressed_size": 623617730,
-          "disk_size": 1706776486
-        }
-      },
-      "build_number": 482
-    },
-    {
       "name": "arch",
       "official_image": "ghcr.io/ferret-linux/arch-otr:latest",
       "fallback_vendor_image": "docker.io/library/archlinux:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 370
+    },
+    {
+      "name": "debian-testing",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:testing",
+      "fallback_vendor_image": "docker.io/library/debian:testing",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-04T01:23:44Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 646258336,
+          "disk_size": 1755678580
+        },
+        "arm64": {
+          "compressed_size": 623617441,
+          "disk_size": 1706776486
+        }
+      },
+      "build_number": 483
     }
   ]
 }
