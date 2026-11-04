@@ -111,28 +111,6 @@
       "build_number": 380
     },
     {
-      "name": "centos",
-      "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
-      "fallback_vendor_image": "quay.io/centos/centos:stream10",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-04T01:21:40Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 577842680,
-          "disk_size": 1781721355
-        },
-        "arm64": {
-          "compressed_size": 557902434,
-          "disk_size": 1617140866
-        }
-      },
-      "build_number": 481
-    },
-    {
       "name": "kali",
       "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
       "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 484
+    },
+    {
+      "name": "centos",
+      "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
+      "fallback_vendor_image": "quay.io/centos/centos:stream10",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-04T09:03:53Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 568207823,
+          "disk_size": 1758950136
+        },
+        "arm64": {
+          "compressed_size": 550080005,
+          "disk_size": 1594285702
+        }
+      },
+      "build_number": 482
     }
   ]
 }
