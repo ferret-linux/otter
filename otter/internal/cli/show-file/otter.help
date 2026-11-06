@@ -24,10 +24,10 @@
 {2}│{R} {0}lock{R}           {2}┆{R} {0}lk{R}   {5}Lock an unlocked container{R}     {2}│{R}
 {2}│{R} {0}unlock{R}         {2}┆{R} {0}ulk{R}  {5}Unlock a locked container{R}      {2}│{R}
 {2}│{R}{3}▸ Miscellaneous:{R}                                      {2}│{R}
+{2}│{R} {0}exports{R}        {2}┆{R} {0}exp{R}  {5}Manage host export index{R}       {2}│{R}
 {2}│{R} {0}registry{R}       {2}┆{R} {0}reg{R}  {5}Browse and manage otter images{R} {2}│{R}
 {2}│{R} {0}settings{R}       {2}┆{R} {0}conf{R} {5}Set otter's config settings{R}    {2}│{R}
 {2}│{R} {0}documentation{R}  {2}┆{R} {0}docs{R} {5}Browse otter's documentation{R}   {2}│{R}
-{2}│{R}{0}exports{R}        {2}┆{R} {0}exp{R}  {5}Manage host export index{R}        {2}│{R}
 {2}│{R} {0}generate-entry{R} {2}┆{R} {0}pin{R}  {5}Create clickable desktop entry{R} {2}│{R}
 {2}├────────────────┴─────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                             {2}│{R}

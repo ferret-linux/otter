@@ -1,16 +1,21 @@
-{2}╭──────────────────────────────────────────────────────────────╮{R}
-{2}│{R}{1}⦿ Remove stale records and orphaned export files{R}              {2}│{R}
-{2}│{R}{3}▸ Usage:{R}                                                      {2}│{R}
-{2}│{R}  {5}otter exports prune [options]{R}                               {2}│{R}
-{2}│{R}{3}▸ Examples:{R}                                                   {2}│{R}
-{2}│{R}  {5}otter exports prune{R}                                         {2}│{R}
-{2}│{R}  {5}otter exports prune --root{R}                                  {2}│{R}
-{2}│{R}{3}▸ Options:{R}                                                    {2}│{R}
-{2}│{R} {4}--scan-path{R} {2}┆{R} {5}Additional file or directory to scan{R}           {2}│{R}
-{2}│{R} {4}--root{R}      {2}┆{R} {4}-r{R} {5}Include rootful owners{R}                      {2}│{R}
-{2}│{R}{3}▸ Extras:{R}                                                     {2}│{R}
-{2}│{R} {4}--help{R}      {2}┆{R} {4}-h{R} {5}Show this help message{R}                      {2}│{R}
-{2}│{R}{3}▸ Notes:{R}                                                      {2}│{R}
-{2}│{R} {5}Destructive and global, but scoped to the target user.{R}       {2}│{R}
-{2}│{R} {5}Legacy marker-only exports and non-otter files are safe.{R}     {2}│{R}
-{2}╰──────────────────────────────────────────────────────────────╯{R}
+{2}╭──────────────────────────────────────────────────────────╮{R}
+{2}│{R}{1}⦿ Remove stale records and orphaned export files          {R}{2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Usage:{R}                                                  {2}│{R}
+{2}│{R}  {5}otter exports prune [options]{R}                           {2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                               {2}│{R}
+{2}│{R}  {5}otter exports prune{R}                                     {2}│{R}
+{2}│{R}  {5}otter exports prune --root{R}                              {2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Options:{R}                                                {2}│{R}
+{2}│{R} {4}--scan-path{R} {2}┆{R}     {5}Additional file or directory to scan{R}   {2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                                 {2}│{R}
+{2}│{R} {4}--root{R}      {2}┆{R} {4}-r{R}  {5}Include rootful owners{R}                 {2}│{R}
+{2}│{R} {4}--help{R}      {2}┆{R} {4}-h{R}  {5}Show this help message{R}                 {2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Notes:{R}                                                  {2}│{R}
+{2}│{R} {5}Destructive and global, but scoped to the target user.{R}   {2}│{R}
+{2}│{R} {5}Legacy marker-only exports and non-otter files are safe.{R} {2}│{R}
+{2}╰──────────────────────────────────────────────────────────╯{R}

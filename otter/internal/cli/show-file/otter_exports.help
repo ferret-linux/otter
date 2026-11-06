@@ -1,27 +1,30 @@
-{2}╭──────────────────────────────────────────────────────────────╮{R}
-{2}│{R}{1}⦿ Manage the host-side otter export index{R}                     {2}│{R}
-{2}│{R}{3}▸ Usage:{R}                                                      {2}│{R}
-{2}│{R}  {5}otter exp      <list|rebuild|prune|delete> [options]{R}        {2}│{R}
-{2}│{R}  {5}otter exports  <list|rebuild|prune|delete> [options]{R}        {2}│{R}
-{2}│{R}{3}▸ Examples:{R}                                                   {2}│{R}
-{2}│{R}  {5}otter exports list{R}                                          {2}│{R}
-{2}│{R}  {5}otter exports rebuild{R}                                       {2}│{R}
-{2}│{R}  {5}otter exports prune --root{R}                                  {2}│{R}
-{2}│{R}  {5}otter exports delete ~/.local/bin/htop-box{R}                  {2}│{R}
-{2}│{R}{3}▸ List / Ls:{R}                                                  {2}│{R}
-{2}│{R}  {5}Show every recorded export across all owners.{R}               {2}│{R}
-{2}│{R}{3}▸ Rebuild:{R}                                                    {2}│{R}
-{2}│{R}  {5}Reconstruct the index from ownership markers.{R}               {2}│{R}
-{2}│{R} {4}--scan-path{R} {2}┆{R} {5}Additional file or directory to scan{R}           {2}│{R}
-{2}│{R}{3}▸ Prune:{R}                                                      {2}│{R}
-{2}│{R}  {5}Remove stale records, orphan files, and artifacts.{R}          {2}│{R}
-{2}│{R} {4}--scan-path{R} {2}┆{R} {5}Additional file or directory to scan{R}           {2}│{R}
-{2}│{R} {4}--root{R}      {2}┆{R} {4}-r{R} {5}Include rootful owners{R}                      {2}│{R}
-{2}│{R}{3}▸ Delete / Rm:{R}                                                {2}│{R}
-{2}│{R}  {5}Delete one export by its absolute host path.{R}                {2}│{R}
-{2}│{R}{3}▸ Extras:{R}                                                     {2}│{R}
-{2}│{R} {4}--help{R}      {2}┆{R} {4}-h{R} {5}Show this help message{R}                      {2}│{R}
-{2}│{R}{3}▸ Notes:{R}                                                      {2}│{R}
-{2}│{R} {5}The index lives under ~/.local/share/otter/exports/index/{R}    {2}│{R}
-{2}│{R} {5}Ownership is absolute: only the owning tuple is touched.{R}     {2}│{R}
-{2}╰──────────────────────────────────────────────────────────────╯{R}
+{2}╭──────────────────────────────────────────────────────────╮{R}
+{2}│{R}{1}⦿ Manage the host-side otter export index                 {R}{2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Usage:{R}                                                  {2}│{R}
+{2}│{R}  {5}otter exp     <list|rebuild|prune|delete> [options]{R}     {2}│{R}
+{2}│{R}  {5}otter exports <list|rebuild|prune|delete> [options]{R}     {2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                               {2}│{R}
+{2}│{R}  {5}otter exports list{R}                                      {2}│{R}
+{2}│{R}  {5}otter exports rebuild{R}                                   {2}│{R}
+{2}│{R}  {5}otter exports prune --root{R}                              {2}│{R}
+{2}│{R}  {5}otter exports delete ~/.local/bin/htop-box{R}              {2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Commands:{R}                                               {2}│{R}
+{2}│{R} {4}list{R}        {2}┆{R} {4}ls{R}  {5}Show all recorded exports{R}              {2}│{R}
+{2}│{R} {4}rebuild{R}     {2}┆{R}     {5}Rebuild index from ownership markers{R}   {2}│{R}
+{2}│{R} {4}prune{R}       {2}┆{R}     {5}Drop stale records, orphans, artifacts{R} {2}│{R}
+{2}│{R} {4}delete{R}      {2}┆{R} {4}rm{R}  {5}Delete one export by absolute path{R}     {2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Options:{R}                                                {2}│{R}
+{2}│{R} {4}--scan-path{R} {2}┆{R}     {5}Extra path to scan (rebuild, prune){R}    {2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                                 {2}│{R}
+{2}│{R} {4}--root{R}      {2}┆{R} {4}-r{R}  {5}Include rootful owners (prune){R}         {2}│{R}
+{2}│{R} {4}--help{R}      {2}┆{R} {4}-h{R}  {5}Show this help message{R}                 {2}│{R}
+{2}├──────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Notes:{R}                                                  {2}│{R}
+{2}│{R} {5}Index lives in ~/.local/share/otter/exports/index/{R}       {2}│{R}
+{2}│{R} {5}Ownership is absolute: only the owning tuple is touched.{R} {2}│{R}
+{2}╰──────────────────────────────────────────────────────────╯{R}
