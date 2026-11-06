@@ -40,28 +40,6 @@
       "build_number": 386
     },
     {
-      "name": "gentoo",
-      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
-      "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-05T21:22:17Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1707468202,
-          "disk_size": 4382700242
-        },
-        "arm64": {
-          "compressed_size": 1325965792,
-          "disk_size": 3778936063
-        }
-      },
-      "build_number": 426
-    },
-    {
       "name": "centos",
       "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
       "fallback_vendor_image": "quay.io/centos/centos:stream10",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 401
+    },
+    {
+      "name": "gentoo",
+      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
+      "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-06T00:07:08Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1706846638,
+          "disk_size": 4381177038
+        },
+        "arm64": {
+          "compressed_size": 1325874868,
+          "disk_size": 3777411836
+        }
+      },
+      "build_number": 427
     }
   ]
 }
