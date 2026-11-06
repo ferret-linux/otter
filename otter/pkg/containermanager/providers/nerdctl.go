@@ -210,6 +210,8 @@ func (n *Nerdctl) makeCreateCommand(
 	options = append(options, "--label", fmt.Sprintf("otter.rootful=%d", containermanager.Btoi(n.root)))
 	options = append(options, "--env", fmt.Sprintf("SHELL=%s", shellFilepath))
 	options = append(options, "--env", fmt.Sprintf("HOME=%s", effectiveHome))
+	options = append(options, "--env", fmt.Sprintf("OTTER_HOST_HOME=%s", hostHome))
+	options = append(options, "--env", fmt.Sprintf("OTTER_HOST_PATH=%s", os.Getenv("PATH")))
 	options = append(options, "--env", "container=nerdctl")
 	options = append(
 		options,
@@ -295,15 +297,14 @@ func (n *Nerdctl) makeCreateCommand(
 	}
 
 	// If we have a custom home to use,
-	//	1- export OTTER_HOST_HOME pointing to the default (non-custom) host home
-	//	2- export OTTER_CUSTOM_HOME pointing to the real host source of the custom
+	//	1- export OTTER_CUSTOM_HOME pointing to the real host source of the custom
 	//	   home, so that `otter rm --rm-home` can find the correct host path later
-	//	3- mount the custom home's host directory at effectiveHome (the canonical
+	//	2- mount the custom home's host directory at effectiveHome (the canonical
 	//	   in-container path)
-	// HOME itself was already set to effectiveHome above, so it does not need
-	// to be set again here.
+	// HOME itself was already set to effectiveHome above, and OTTER_HOST_HOME
+	// always points at the real (non-custom) host home, so neither needs to be
+	// set again here.
 	if customHome != "" {
-		options = append(options, "--env", fmt.Sprintf("OTTER_HOST_HOME=%s", hostHome))
 		options = append(options, "--env", fmt.Sprintf("OTTER_CUSTOM_HOME=%s", customHome))
 		options = append(
 			options,
@@ -790,6 +791,11 @@ func (n *Nerdctl) generateEnterCommand(
 
 	cmd = append(cmd, fmt.Sprintf("--env=CONTAINER_ID=%s", containerName))
 	cmd = append(cmd, fmt.Sprintf("--env=OTTER_PATH=%s", executablePath))
+	hostEnv := userenv.LoadTargetUserEnvironment(ctx)
+	if hostEnv != nil && hostEnv.Home != "" {
+		cmd = append(cmd, fmt.Sprintf("--env=OTTER_HOST_HOME=%s", hostEnv.Home))
+	}
+	cmd = append(cmd, fmt.Sprintf("--env=OTTER_HOST_PATH=%s", os.Getenv("PATH")))
 
 	if !emptyEnv {
 		for _, env := range containermanager.FilterEnvVars() {

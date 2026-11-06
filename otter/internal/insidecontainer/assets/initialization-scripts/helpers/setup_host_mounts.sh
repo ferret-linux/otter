@@ -7,7 +7,7 @@
 #   HOST_MOUNTS_RO: list of read-only host mountpoints
 #   HOST_MOUNTS: list of read-write host mountpoints
 #   container_user_name: the container's primary user
-#   OTTER_HOST_HOME: set when a custom home is in use (optional)
+#   OTTER_CUSTOM_HOME: set when a custom home is in use (optional)
 # Expected env variables:
 #   None
 # Outputs:
@@ -87,10 +87,10 @@ printf "otter: Setting up read-write mounts...\n"
 # On some ostree systems, home is in /var/home, but most of the software expects
 # it to be in /home. In the hosts systems this is fixed by using a symlink.
 # Do something similar here with a bind mount. Skip this entirely when a custom
-# home is in use (OTTER_HOST_HOME set), since a custom home should stay isolated
+# home is in use (OTTER_CUSTOM_HOME set), since a custom home should stay isolated
 # from the real host home.
 # shellcheck disable=SC2154 # assigned by parse_args.sh (sourced+called by otter-init) before sourcing this file
-if [ -z "${OTTER_HOST_HOME-}" ] && [ -e "/var/home/${container_user_name}" ]; then
+if [ -z "${OTTER_CUSTOM_HOME-}" ] && [ -e "/var/home/${container_user_name}" ]; then
 	if ! mount_bind "/run/host/var/home/${container_user_name}" "/home/${container_user_name}"; then
 		printf "Warning: Cannot bind mount %s to /run/host%s\n" "/var/home" "/home"
 	fi

@@ -38,6 +38,10 @@ func newRmCommand(_ *config.Values) *cli.Command {
 				Aliases: []string{"B"},
 				Usage:   "Remove container even if it is locked",
 			},
+			&cli.BoolFlag{
+				Name:  "prune",
+				Usage: "Also remove exports, backups, and temp files for the selected containers",
+			},
 		},
 
 		Action: rmAction,
@@ -59,6 +63,7 @@ func rmAction(ctx context.Context, cmd *cli.Command) error {
 		BypassLock:     cmd.Bool("bypass-lock"),
 		All:            cmd.Bool("all"),
 		RemoveHome:     cmd.Bool("rm-home"),
+		Prune:          cmd.Bool("prune"),
 		Root:           cmd.Bool("root"),
 		ContainerNames: names,
 	}

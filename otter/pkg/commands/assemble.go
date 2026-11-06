@@ -332,7 +332,7 @@ func (ac *AssembleCommand) exportApps(ctx context.Context, enterCmd *EnterComman
 		_, err := enterCmd.Execute(ctx, EnterOptions{
 			ContainerName: item.Name,
 			NoTTY:         true,
-			CustomCommand: []string{"otter-export", "--app", app},
+			CustomCommand: []string{"otter-export", "--app", app, "--skip-ask"},
 		})
 		if err != nil {
 			return fmt.Errorf("failed to export app '%s' for item '%s': %w", app, item.Name, err)

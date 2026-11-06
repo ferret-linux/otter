@@ -131,10 +131,14 @@ func (c *GenerateEntryCommand) Execute(
 
 	if opts.Delete {
 		for _, containerName := range containerNames {
-			entryPath := c.getEntryFilePath(filepath.Join(desktopEntryBaseDir, "applications"), containerName, opts.Root)
+			entryPath := c.getEntryFilePath(
+				filepath.Join(desktopEntryBaseDir, "applications"),
+				c.managerName(),
+				containerName,
+				opts.Root,
+			)
 			if _, err := os.Stat(entryPath); os.IsNotExist(err) {
 				ui.DefaultLogger.Info("no desktop entry found", "container", containerName)
-				continue
 			}
 			if err := c.deleteEntry(containerName, desktopEntryBaseDir, opts.Root); err != nil {
 				return fmt.Errorf("failed to delete desktop entry for container %s: %w", containerName, err)
@@ -168,12 +172,16 @@ func (c *GenerateEntryCommand) Execute(
 
 func (c *GenerateEntryCommand) deleteEntry(containerName string, desktopEntryBaseDir string, root bool) error {
 	desktopEntryAppsDir := filepath.Join(desktopEntryBaseDir, "applications")
-	entryFilePath := c.getEntryFilePath(desktopEntryAppsDir, containerName, root)
-	if _, err := os.Stat(entryFilePath); os.IsNotExist(err) {
-		return nil
-	}
-	if err := os.Remove(entryFilePath); err != nil {
+	entryFilePath := c.getEntryFilePath(desktopEntryAppsDir, c.managerName(), containerName, root)
+	if err := os.Remove(entryFilePath); err != nil && !os.IsNotExist(err) {
 		return fmt.Errorf("failed to delete desktop entry for container %s: %w", containerName, err)
+	}
+	// Remove the pre-ownership filename as well. Old exports are unmanaged
+	// from the export index's point of view, but their pinned entry is still
+	// ours to clean up.
+	legacyPath := c.getLegacyEntryFilePath(desktopEntryAppsDir, containerName, root)
+	if err := os.Remove(legacyPath); err != nil && !os.IsNotExist(err) {
+		return fmt.Errorf("failed to delete legacy desktop entry for container %s: %w", containerName, err)
 	}
 	return nil
 }
@@ -191,10 +199,15 @@ func (c *GenerateEntryCommand) createEntry(
 		return fmt.Errorf("failed to ensure desktop entry directories exist: %w", err)
 	}
 
-	entryFilePath := c.getEntryFilePath(desktopEntryAppsDir, containerName, root)
+	entryFilePath := c.getEntryFilePath(desktopEntryAppsDir, c.managerName(), containerName, root)
 	data := c.composeDesktopEntryData(containerName, c.getIconPath(ctx, containerName, icon, desktopEntryIconsDir), otterPath, root)
 	if err := c.writeDesktopEntryFile(entryFilePath, data); err != nil {
 		return fmt.Errorf("failed to write desktop entry file for container %s: %w", containerName, err)
+	}
+
+	legacyPath := c.getLegacyEntryFilePath(desktopEntryAppsDir, containerName, root)
+	if err := os.Remove(legacyPath); err != nil && !os.IsNotExist(err) {
+		ui.DefaultLogger.Warn("failed to remove legacy desktop entry", "path", legacyPath, "err", err)
 	}
 
 	return nil
@@ -225,11 +238,12 @@ func (c *GenerateEntryCommand) composeDesktopEntryData(
 	}
 
 	return map[string]string{
-		"entry_name":     getEntryName(containerName, root),
-		"container_name": containerName,
-		"otter_path":     otterPath,
-		"icon":           icon,
-		"extra_flags":    extraFlags,
+		"entry_name":        getEntryName(containerName, root),
+		"container_name":    containerName,
+		"container_manager": c.managerName(),
+		"otter_path":        otterPath,
+		"icon":              icon,
+		"extra_flags":       extraFlags,
 	}
 }
 
@@ -275,11 +289,26 @@ func (c *GenerateEntryCommand) writeDesktopEntryFile(
 	return nil
 }
 
-func (c *GenerateEntryCommand) getEntryFilePath(desktopEntryDir, containerName string, root bool) string {
+func (c *GenerateEntryCommand) getEntryFilePath(desktopEntryDir, manager, containerName string, root bool) string {
+	filename := manager + "-" + containerName + ".desktop"
+	if root {
+		filename = "rootful-" + filename
+	}
+	return filepath.Join(desktopEntryDir, filename)
+}
+
+func (c *GenerateEntryCommand) getLegacyEntryFilePath(desktopEntryDir, containerName string, root bool) string {
 	if root {
 		return filepath.Join(desktopEntryDir, "rootful-"+containerName+".desktop")
 	}
 	return filepath.Join(desktopEntryDir, containerName+".desktop")
+}
+
+func (c *GenerateEntryCommand) managerName() string {
+	if name := c.containerManager.Name(); name != "" {
+		return name
+	}
+	return "unknown"
 }
 
 // getIconPath returns the local icon path for the desktop entry.

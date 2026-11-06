@@ -275,8 +275,8 @@ else:
     else:
         fail("init-system", f"{initsystem} unhealthy: {status_detail}")
 
-# 12. Custom home correctness (only when OTTER_HOST_HOME set)
-custom_home = os.environ.get("OTTER_HOST_HOME")
+# 12. Custom home correctness (only when OTTER_CUSTOM_HOME set)
+custom_home = os.environ.get("OTTER_CUSTOM_HOME")
 if custom_home:
     home_path = Path(custom_home)
     if not home_path.is_dir():

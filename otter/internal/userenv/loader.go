@@ -67,12 +67,61 @@ func LoadUserEnvironment(ctx context.Context) *UserEnvironment {
 	env.GroupID = strconv.Itoa(os.Getgid())
 
 	// DESKTOP ENTRY DIR
-	if xdgDataHome := os.Getenv("XDG_DATA_HOME"); xdgDataHome != "" {
-		env.DesktopEntryBaseDir = xdgDataHome
-	} else {
-		env.DesktopEntryBaseDir = filepath.Join(env.Home, ".local", "share")
+	//
+	// otter always uses the canonical ~/.local/share base for its own
+	// integration files (desktop entries, export index, icons). Honouring
+	// XDG_DATA_HOME here would split otter's bookkeeping across two roots
+	// depending on how the command was invoked.
+	env.DesktopEntryBaseDir = filepath.Join(env.Home, ".local", "share")
+
+	return env
+}
+
+// LoadTargetUserEnvironment loads the environment of the user on whose behalf
+// otter is acting. When otter runs through sudo (effective uid 0 with SUDO_UID
+// set), that is the invoking user, not root. Export scanning, rebuilding, and
+// pruning must always touch the target user's files.
+func LoadTargetUserEnvironment(ctx context.Context) *UserEnvironment {
+	if os.Geteuid() == 0 {
+		if uid := os.Getenv("SUDO_UID"); uid != "" {
+			if env := loadPasswdEnvironment(ctx, uid); env != nil {
+				return env
+			}
+		}
 	}
 
+	return LoadUserEnvironment(ctx)
+}
+
+// loadPasswdEnvironment resolves a user directly from a passwd entry by UID.
+// It returns nil when the UID cannot be resolved, so callers can fall back to
+// the normal user environment lookup.
+func loadPasswdEnvironment(ctx context.Context, uid string) *UserEnvironment {
+	output, err := exec.CommandContext(ctx, "getent", "passwd", uid).Output()
+	if err != nil {
+		return nil
+	}
+
+	fields := strings.Split(strings.TrimSpace(string(output)), ":")
+	if len(fields) < 7 {
+		return nil
+	}
+
+	env := &UserEnvironment{
+		User:    fields[0],
+		UserID:  fields[2],
+		GroupID: fields[3],
+		Home:    fields[5],
+		Shell:   fields[6],
+	}
+	if env.User == "" || env.Home == "" {
+		return nil
+	}
+	if env.Shell == "" {
+		env.Shell = "/bin/sh"
+	}
+
+	env.DesktopEntryBaseDir = filepath.Join(env.Home, ".local", "share")
 	return env
 }
 

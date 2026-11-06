@@ -27,15 +27,25 @@
 #   USER
 #   OTTER_PATH
 #   OTTER_HOST_HOME
+#   OTTER_HOST_PATH (or HOST_PATH)
+#   container (only read by otter-init; the persistent marker is authoritative)
 
 import argparse
+import contextlib
+import fcntl
+import hashlib
+import json
 import os
 import re
+import shlex
 import shutil
 import subprocess
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from pwd import getpwnam
+
+VERSION = "0.0.9"
 
 # Ensure env variables are correctly set
 if not os.environ.get("USER"):
@@ -44,6 +54,142 @@ if not os.environ.get("HOME"):
     os.environ["HOME"] = getpwnam(os.environ["USER"]).pw_dir
 if not os.environ.get("SHELL"):
     os.environ["SHELL"] = getpwnam(os.environ["USER"]).pw_shell
+
+MANAGER_MARKER = "/usr/lib/otter/container.manager"
+ROOTFUL_MARKER = "/usr/lib/otter/container.rootful"
+
+OWNER_PREFIX = {
+    "binary-marker": "# otter_binary",
+}
+
+
+def render_help(text):
+    color_green = "\033[32m"   # {0} green  — command names
+    color_teal = "\033[96m"    # {1} teal   — tagline/messages
+    color_cyan = "\033[36m"    # {2} cyan   — box borders
+    color_yellow = "\033[33m"  # {3} yellow — headers (▸ Section:)
+    color_blue = "\033[34m"    # {4} blue   — flags/extras
+    color_dim = "\033[37m"     # {5} dim    — descriptions/info text
+    # {R} resets color
+    slots = [color_green, color_teal, color_cyan, color_yellow, color_blue, color_dim]
+    if os.environ.get("NO_COLOR") is not None or os.environ.get("TERM") == "dumb":
+        for i in range(len(slots)):
+            text = text.replace(f"{{{i}}}", "")
+        return text.replace("{R}", "")
+    for i, code in enumerate(slots):
+        text = text.replace(f"{{{i}}}", code)
+    return text.replace("{R}", "\033[0m")
+
+
+HELP_TEXT = """\
+{2}╭─────────────────────────────────────────────────────────────────╮{R}
+{2}│{R}{1}⦿ Export container apps and binaries to your host{R}                {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Usage:{R}                                                         {2}│{R}
+{2}│{R}  {5}otter ex     <--app|--bin> [options]{R}                           {2}│{R}
+{2}│{R}  {5}otter export <--app|--bin> [options]{R}                           {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                                      {2}│{R}
+{2}│{R}  {5}otter ex -a firefox{R}                                            {2}│{R}
+{2}│{R}  {5}otter ex -a code --skip-ask{R}                                    {2}│{R}
+{2}│{R}  {5}otter ex -a firefox --refresh{R}                                   {2}│{R}
+{2}│{R}  {5}otter ex -b /usr/bin/docker -S{R}                                 {2}│{R}
+{2}│{R}  {5}otter ex -b /usr/bin/htop -n htop-custom{R}                       {2}│{R}
+{2}│{R}  {5}otter ex -b /usr/bin/htop --refresh{R}                            {2}│{R}
+{2}│{R}  {5}otter ex -b /usr/bin/zeditor -ep ~/.local/bin{R}                  {2}│{R}
+{2}│{R}  {5}otter export --app firefox --delete{R}                            {2}│{R}
+{2}│{R}  {5}otter export --bin /usr/bin/htop --as htop-custom{R}              {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{1}● Options ➜{R}                                                      {2}│{R}
+{2}│{R}{3}▸ Export Target:{R}                                                 {2}│{R}
+{2}│{R} {4}--app{R}          {2}┆{R} {4}-a{R}   {5}Name of the application to export{R}         {2}│{R}
+{2}│{R} {4}--bin{R}          {2}┆{R} {4}-b{R}   {5}Absolute path of the binary to export{R}     {2}│{R}
+{2}│{R}{3}▸ Configuration:{R}                                                 {2}│{R}
+{2}│{R} {4}--as{R}           {2}┆{R} {4}-n{R}   {5}Custom name for the exported binary{R}       {2}│{R}
+{2}│{R} {4}--sudo{R}         {2}┆{R} {4}-S{R}   {5}Run the exported item as sudo{R}             {2}│{R}
+{2}│{R} {4}--export-path{R}  {2}┆{R} {4}-ep{R}  {5}Path where to export the binary{R}           {2}│{R}
+{2}│{R} {4}--export-label{R} {2}┆{R} {4}-el{R}  {5}Label to append to exported application{R}   {2}│{R}
+{2}│{R} {4}--skip-ask{R}     {2}┆{R}       {5}Pick the top-ranked app without prompting{R} {2}│{R}
+{2}│{R}{3}▸ Execution:{R}                                                     {2}│{R}
+{2}│{R} {4}--enter-flags{R}  {2}┆{R} {4}-nf{R}  {5}Flags to pass to otter-enter{R}              {2}│{R}
+{2}│{R} {4}--extra-flags{R}  {2}┆{R} {4}-ef{R}  {5}Extra flags to append to the command{R}      {2}│{R}
+{2}│{R}{3}▸ Management:{R}                                                    {2}│{R}
+{2}│{R} {4}--delete{R}        {2}┆{R} {4}-dl{R}  {5}Delete an exported application or binary{R} {2}│{R}
+{2}│{R} {4}--refresh{R}       {2}┆{R}       {5}Regenerate an existing export in place{R}    {2}│{R}
+{2}│{R} {4}--list-apps{R}     {2}┆{R} {4}-la{R}  {5}List apps exported from container{R}        {2}│{R}
+{2}│{R} {4}--list-binaries{R} {2}┆{R} {4}-lb{R}  {5}List binaries exported from container{R}    {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                                        {2}│{R}
+{2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}                          {2}│{R}
+{2}│{R} {4}--version{R} {2}┆{R} {4}-V{R}  {5}Show version information{R}                        {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Notes:{R}                                                         {2}│{R}
+{2}│{R} {4}ownership{R}       {5}Exports belong to this container, its runtime{R}   {2}│{R}
+{2}│{R}                 {5}and its rootful/rootless mode. A different{R}      {2}│{R}
+{2}│{R}                 {5}owner can never overwrite or delete them.{R}        {2}│{R}
+{2}│{R} {4}--bin{R}           {5}Refuses to overwrite a file otter does not own.{R}  {2}│{R}
+{2}│{R}                 {5}Use --as to export under a different name.{R}       {2}│{R}
+{2}│{R} {4}--refresh{R}       {5}Reuses the existing source and regenerates{R}      {2}│{R}
+{2}│{R}                 {5}the wrapper/desktop file, cleaning old icons.{R}    {2}│{R}
+{2}│{R} {4}--skip-ask{R}      {5}Required for non-interactive exports that{R}       {2}│{R}
+{2}│{R}                 {5}match more than one desktop file.{R}                {2}│{R}
+{2}│{R} {4}--export-path{R}   {5}Defaults relative to the real host home{R}         {2}│{R}
+{2}│{R}                 {5}(OTTER_HOST_HOME), never the container home.{R}     {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ See also:{R}                                                      {2}│{R}
+{2}│{R} {4}--app{R}  {5}You can also provide a path to the desktop file directly.{R}{2}│{R}
+{2}│{R}        {5}Useful when export fails — desktop files are usually at{R}  {2}│{R}
+{2}│{R}        {5}'/usr/share/applications' inside the container.{R}          {2}│{R}
+{2}╰─────────────────────────────────────────────────────────────────╯{R}"""
+
+
+def _parser_error(message):
+    print(f"ERROR: {message}\n", file=sys.stderr)
+    print(render_help(HELP_TEXT))
+    sys.exit(1)
+
+
+parser = argparse.ArgumentParser(add_help=False)
+parser.error = _parser_error
+parser.add_argument("-h", "--help", action="store_true")
+parser.add_argument("-V", "--version", action="store_true")
+parser.add_argument("-a", "--app", dest="exported_app", default="")
+parser.add_argument("-b", "--bin", dest="exported_bin", default="")
+parser.add_argument("-n", "--as", dest="exported_as", default="")
+parser.add_argument("-S", "--sudo", action="store_true", dest="is_sudo")
+parser.add_argument("-dl", "--delete", action="store_true", dest="exported_delete")
+parser.add_argument("-R", "--refresh", action="store_true", dest="exported_refresh")
+parser.add_argument("-la", "--list-apps", action="store_true")
+parser.add_argument("-lb", "--list-binaries", action="store_true")
+parser.add_argument("--skip-ask", action="store_true", dest="skip_ask")
+parser.add_argument("-el", "--export-label", dest="exported_app_label", default="")
+parser.add_argument("-ep", "--export-path", dest="dest_path", default="")
+parser.add_argument("-ef", "--extra-flags", dest="extra_flags", default="")
+parser.add_argument("-nf", "--enter-flags", dest="enter_flags", default="")
+
+args = parser.parse_args()
+
+if args.help:
+    print(render_help(HELP_TEXT))
+    sys.exit(0)
+if args.version:
+    print(f"otter: {VERSION}")
+    sys.exit(0)
+
+exported_app = args.exported_app
+exported_bin = args.exported_bin
+exported_as = args.exported_as
+is_sudo = args.is_sudo
+exported_delete = args.exported_delete
+exported_refresh = args.exported_refresh
+skip_ask = args.skip_ask
+exported_app_label = args.exported_app_label
+extra_flags = args.extra_flags
+enter_flags = args.enter_flags
+
+otter_path = os.environ.get("OTTER_PATH", "otter")
+host_home = os.environ.get("OTTER_HOST_HOME") or os.environ.get("HOME", "")
+host_path = os.environ.get("OTTER_HOST_PATH") or os.environ.get("HOST_PATH") or ""
 
 # Defaults
 container_name = os.environ.get("CONTAINER_ID", "")
@@ -56,137 +202,1267 @@ if not container_name:
     except OSError:
         pass
 
-export_action = ""
-host_home = os.environ.get("OTTER_HOST_HOME") or os.environ.get("HOME", "")
-dest_path = os.environ.get("OTTER_EXPORT_PATH") or f"{host_home}/.local/bin"
-rootful = ""
+rootful = Path(ROOTFUL_MARKER).is_file()
 sudo_prefix = ""
-VERSION = "0.0.9"
 
-def render_help(text):
-    color_green  = "\033[32m"  # {0} green  — command names
-    color_teal   = "\033[96m"  # {1} teal   — tagline/messages
-    color_cyan   = "\033[36m"  # {2} cyan   — box borders
-    color_yellow = "\033[33m"  # {3} yellow — headers (▸ Section:)
-    color_blue   = "\033[34m"  # {4} blue   — flags/extras
-    color_dim    = "\033[37m"  # {5} dim    — descriptions/info text
-    # {R} resets color
-    slots = [color_green, color_teal, color_cyan, color_yellow, color_blue, color_dim]
-    if os.environ.get("NO_COLOR") is not None or os.environ.get("TERM") == "dumb":
-        for i in range(len(slots)):
-            text = text.replace(f"{{{i}}}", "")
-        return text.replace("{R}", "")
-    for i, code in enumerate(slots):
-        text = text.replace(f"{{{i}}}", code)
-    return text.replace("{R}", "\033[0m")
 
-HELP_TEXT = """\
-{2}╭─────────────────────────────────────────────────────────────────╮{R}
-{2}│{R}{1}⦿ Export container apps and binaries to your host{R}                {2}│{R}
-{2}├─────────────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Usage:{R}                                                         {2}│{R}
-{2}│{R}  {5}otter ex     <--app|--bin> [options]{R}                           {2}│{R}
-{2}│{R}  {5}otter export <--app|--bin> [options]{R}                           {2}│{R}
-{2}├─────────────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Examples:{R}                                                      {2}│{R}
-{2}│{R}  {5}otter ex -a firefox{R}                                            {2}│{R}
-{2}│{R}  {5}otter ex -a firefox -dl{R}                                        {2}│{R}
-{2}│{R}  {5}otter ex -b /usr/bin/docker -S{R}                                 {2}│{R}
-{2}│{R}  {5}otter ex -b /usr/bin/htop -n htop-custom{R}                       {2}│{R}
-{2}│{R}  {5}otter ex -b /usr/bin/zeditor -ep ~/.local/bin{R}                  {2}│{R}
-{2}│{R}  {5}otter export --app firefox{R}                                     {2}│{R}
-{2}│{R}  {5}otter export --app firefox --delete{R}                            {2}│{R}
-{2}│{R}  {5}otter export --bin /usr/bin/docker --sudo{R}                      {2}│{R}
-{2}│{R}  {5}otter export --bin /usr/bin/htop --as htop-custom{R}              {2}│{R}
-{2}│{R}  {5}otter export --bin /usr/bin/zeditor --export-path ~/.local/bin{R} {2}│{R}
-{2}├─────────────────────────────────────────────────────────────────┤{R}
-{2}│{R}{1}● Options ➜{R}                                                      {2}│{R}
-{2}│{R}{3}▸ Export Target:{R}                                                 {2}│{R}
-{2}│{R} {4}--app{R}          {2}┆{R} {4}-a{R}   {5}Name of the application to export{R}         {2}│{R}
-{2}│{R} {4}--bin{R}          {2}┆{R} {4}-b{R}   {5}Absolute path of the binary to export{R}     {2}│{R}
-{2}│{R}{3}▸ Configuration:{R}                                                 {2}│{R}
-{2}│{R} {4}--as{R}           {2}┆{R} {4}-n{R}   {5}Custom name for the exported binary{R}       {2}│{R}
-{2}│{R} {4}--sudo{R}         {2}┆{R} {4}-S{R}   {5}Run the exported item as sudo{R}             {2}│{R}
-{2}│{R} {4}--export-path{R}  {2}┆{R} {4}-ep{R}  {5}Path where to export the binary{R}           {2}│{R}
-{2}│{R} {4}--export-label{R} {2}┆{R} {4}-el{R}  {5}Label to append to exported application{R}   {2}│{R}
-{2}│{R}{3}▸ Execution:{R}                                                     {2}│{R}
-{2}│{R} {4}--enter-flags{R}  {2}┆{R} {4}-nf{R}  {5}Flags to pass to otter-enter{R}              {2}│{R}
-{2}│{R} {4}--extra-flags{R}  {2}┆{R} {4}-ef{R}  {5}Extra flags to append to the command{R}      {2}│{R}
-{2}│{R}{3}▸ Management:{R}                                                    {2}│{R}
-{2}│{R} {4}--delete{R}        {2}┆{R} {4}-dl{R}  {5}Delete an exported application or binary{R} {2}│{R}
-{2}│{R} {4}--list-apps{R}     {2}┆{R} {4}-la{R}  {5}List apps exported from container{R}        {2}│{R}
-{2}│{R} {4}--list-binaries{R} {2}┆{R} {4}-lb{R}  {5}List binaries exported from container{R}    {2}│{R}
-{2}├─────────────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Extras:{R}                                                        {2}│{R}
-{2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}                          {2}│{R}
-{2}│{R} {4}--version{R} {2}┆{R} {4}-V{R}  {5}Show version information{R}                        {2}│{R}
-{2}├─────────────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Notes:{R}                                                         {2}│{R}
-{2}│{R} {4}--bin{R}           {5}Refuses to overwrite an existing file that{R}      {2}│{R}
-{2}│{R}                 {5}wasn't created by otter-export. Use --as to{R}     {2}│{R}
-{2}│{R}                 {5}export under a different name instead.{R}          {2}│{R}
-{2}│{R} {4}--export-label{R}  {5}Defaults to "my-box" . Use "none" to disable.{R}   {2}│{R}
-{2}│{R} {4}--list-apps{R}     {5}List apps exported from this container,{R}         {2}│{R}
-{2}│{R}                 {5}Use -ep for custom search paths.{R}                {2}│{R}
-{2}│{R} {4}--list-binaries{R} {5}List binaries exported from container,{R}          {2}│{R}
-{2}│{R}                 {5}Use -ep for custom search paths.{R}                {2}│{R}
-{2}├─────────────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ See also:{R}                                                      {2}│{R}
-{2}│{R} {4}--app{R}  {5}You can also provide a path to the desktop file directly.{R}{2}│{R}
-{2}│{R}        {5}Useful when export fails — desktop files are usually at{R}  {2}│{R}
-{2}│{R}        {5}'/usr/share/applications' inside the container.{R}          {2}│{R}
-{2}╰─────────────────────────────────────────────────────────────────╯{R}"""
+def read_manager():
+    try:
+        value = Path(MANAGER_MARKER).read_text().strip()
+    except OSError:
+        return ""
+    return value
 
-def _parser_error(message):
-    print(f"ERROR: {message}\n", file=sys.stderr)
-    print(render_help(HELP_TEXT))
+
+manager = read_manager()
+if manager and manager not in ("podman", "docker", "nerdctl"):
+    print(f"Error: unsupported container manager {manager!r} in {MANAGER_MARKER}.", file=sys.stderr)
     sys.exit(1)
 
-parser = argparse.ArgumentParser(add_help=False)
-parser.error = _parser_error
-parser.add_argument("-h", "--help",         action="store_true")
-parser.add_argument("-V", "--version",      action="store_true")
-parser.add_argument("-a", "--app",          dest="exported_app",   default="")
-parser.add_argument("-b", "--bin",          dest="exported_bin",   default="")
-parser.add_argument("-n", "--as",           dest="exported_as",    default="")
-parser.add_argument("-S", "--sudo",         action="store_true",   dest="is_sudo")
-parser.add_argument("-dl", "--delete",      action="store_true",   dest="exported_delete")
-parser.add_argument("-la", "--list-apps",         action="store_true")
-parser.add_argument("-lb", "--list-binaries",     action="store_true")
-parser.add_argument("-el", "--export-label", dest="exported_app_label", default="")
-parser.add_argument("-ep", "--export-path",  dest="dest_path",     default=dest_path)
-parser.add_argument("-ef", "--extra-flags",  dest="extra_flags",   default="")
-parser.add_argument("-nf", "--enter-flags",  dest="enter_flags",   default="")
 
-args = parser.parse_args()
+def owner_tuple():
+    return {
+        "container": container_name,
+        "manager": manager,
+        "rootful": bool(rootful),
+    }
 
-if args.help:
-    print(render_help(HELP_TEXT))
-    sys.exit(0)
-if args.version:
-    print(f"otter: {VERSION}")
-    sys.exit(0)
 
-exported_app     = args.exported_app
-exported_bin     = args.exported_bin
-exported_as      = args.exported_as
-is_sudo          = args.is_sudo
-exported_delete  = args.exported_delete
-exported_app_label = args.exported_app_label
-dest_path        = args.dest_path
-extra_flags      = args.extra_flags
-enter_flags      = args.enter_flags
+def owner_label(owner=None):
+    owner = owner or owner_tuple()
+    mode = "rootful" if owner.get("rootful") else "rootless"
+    return f"{owner.get('container', '')} ({owner.get('manager', '')}, {mode})"
 
-# dest_path is the export destination as a *host* path — it's what
-# generate_script() embeds for otter-host-exec (which runs on the real
-# host, where /run/host doesn't exist) and what we show the user in
-# messages. Any actual filesystem I/O from inside the container must go
-# through the /run/host mirror instead: on a custom-home container the
-# real host home is bind-mounted only at /run/host<path>, not at its own
-# literal path, so writing to the bare dest_path silently lands in the
-# container's own ephemeral filesystem instead of the real host directory.
+
+def expand_host_path(path):
+    if path.startswith("~"):
+        path = host_home + path[1:]
+    if not os.path.isabs(path):
+        raise ValueError(f"export path must be absolute: {path}")
+    return os.path.normpath(path)
+
+
+dest_path = expand_host_path(args.dest_path or f"{host_home}/.local/bin")
 dest_path_container = f"/run/host{dest_path}"
+apps_dir_host = f"{host_home}/.local/share/applications"
+apps_dir_container = f"/run/host{apps_dir_host}"
+icons_dir_host = f"{host_home}/.local/share/otter/icons/apps"
+icons_dir_container = f"/run/host{icons_dir_host}"
+index_root_host = f"{host_home}/.local/share/otter/exports/index"
+index_root_container = f"/run/host{index_root_host}"
+lock_host = f"{host_home}/.local/share/otter/exports/.lock"
+lock_container = f"/run/host{lock_host}"
 
+
+def now_rfc3339():
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def sanitize_stem(value):
+    stem = re.sub(r"[^A-Za-z0-9._+-]", "-", value).strip("-.")
+    return stem or "app"
+
+
+def validate_as_name(name):
+    if not name:
+        raise ValueError("--as cannot be empty")
+    if "/" in name or "\x00" in name or "\n" in name or "\r" in name:
+        raise ValueError("--as cannot contain '/', NUL, or newlines")
+    if name in (".", ".."):
+        raise ValueError("--as cannot be '.' or '..'")
+
+
+def ensure_parent(path, mode=0o755):
+    parent = os.path.dirname(path)
+    if parent:
+        os.makedirs(parent, mode=mode, exist_ok=True)
+
+
+def read_text(path):
+    try:
+        return Path(path).read_text(errors="replace")
+    except OSError:
+        return ""
+
+
+def parse_binary_markers(text):
+    if "# otter_binary" not in text:
+        return None
+    markers = {}
+    patterns = {
+        "container": r"^# otter-container:\s*(.*)$",
+        "manager": r"^# otter-manager:\s*(.*)$",
+        "rootful": r"^# otter-rootful:\s*(.*)$",
+        "source": r"^# otter-source:\s*(.*)$",
+    }
+    for key, pattern in patterns.items():
+        m = re.search(pattern, text, re.MULTILINE)
+        if not m:
+            return None
+        markers[key] = m.group(1).strip()
+    if not markers["container"] or not markers["manager"]:
+        return None
+    if markers["rootful"].lower() not in ("true", "false"):
+        return None
+    markers["rootful"] = markers["rootful"].lower() == "true"
+    return markers
+
+
+def parse_desktop_metadata(text):
+    values = {}
+    for line in text.splitlines():
+        if "=" not in line or line.lstrip().startswith("#"):
+            continue
+        key, value = line.split("=", 1)
+        if key.startswith("X-Otter-"):
+            values[key] = value.strip()
+    if values.get("X-Otter-Export") != "app":
+        return None
+    required = [
+        "X-Otter-Container",
+        "X-Otter-Manager",
+        "X-Otter-Rootful",
+        "X-Otter-Source",
+        "X-Otter-Requested",
+    ]
+    for key in required:
+        if key not in values:
+            return None
+    if values["X-Otter-Rootful"].lower() not in ("true", "false"):
+        return None
+    return {
+        "container": values["X-Otter-Container"],
+        "manager": values["X-Otter-Manager"],
+        "rootful": values["X-Otter-Rootful"].lower() == "true",
+        "source": values["X-Otter-Source"],
+        "requested": values["X-Otter-Requested"],
+        "original_name": values.get("X-Otter-Original-Name", ""),
+        "icon": values.get("X-Otter-Icon", ""),
+        "raw": values,
+    }
+
+
+def read_owner_metadata(path):
+    if os.path.islink(path) or not os.path.isfile(path):
+        return None, None
+    text = read_text(path)
+    binary = parse_binary_markers(text)
+    if binary:
+        return "binary", binary
+    desktop = parse_desktop_metadata(text)
+    if desktop:
+        return "app", desktop
+    return None, None
+
+
+def same_owner(a, b):
+    return (
+        a.get("container") == b.get("container")
+        and a.get("manager") == b.get("manager")
+        and bool(a.get("rootful")) == bool(b.get("rootful"))
+    )
+
+
+def owner_dir(root, owner=None):
+    owner = owner or owner_tuple()
+    mode = "rootful" if owner.get("rootful") else "rootless"
+    return os.path.join(root, owner.get("manager", ""), mode, owner.get("container", ""))
+
+
+def record_path(owner, export_path):
+    digest = hashlib.sha256(export_path.encode()).hexdigest()[:16]
+    return os.path.join(owner_dir(index_root_container, owner), digest + ".json")
+
+
+def record_dir(owner=None):
+    return owner_dir(index_root_container, owner)
+
+
+def load_records(owner=None):
+    owner = owner or owner_tuple()
+    directory = record_dir(owner)
+    records = []
+    try:
+        names = sorted(os.listdir(directory))
+    except OSError:
+        return records
+    for name in names:
+        if not name.endswith(".json"):
+            continue
+        try:
+            with open(os.path.join(directory, name), "r", encoding="utf-8") as fh:
+                record = json.load(fh)
+        except (OSError, json.JSONDecodeError):
+            continue
+        if record.get("path") and same_owner(record.get("owner", {}), owner):
+            records.append(record)
+    return records
+
+
+def load_all_records():
+    records = []
+    try:
+        owners = os.listdir(index_root_container)
+    except OSError:
+        return records
+    for owner_manager in owners:
+        manager_dir = os.path.join(index_root_container, owner_manager)
+        try:
+            modes = os.listdir(manager_dir)
+        except OSError:
+            continue
+        for mode in modes:
+            mode_dir = os.path.join(manager_dir, mode)
+            try:
+                containers = os.listdir(mode_dir)
+            except OSError:
+                continue
+            for container in containers:
+                directory = os.path.join(mode_dir, container)
+                try:
+                    names = os.listdir(directory)
+                except OSError:
+                    continue
+                for name in names:
+                    if not name.endswith(".json"):
+                        continue
+                    try:
+                        with open(os.path.join(directory, name), "r", encoding="utf-8") as fh:
+                            record = json.load(fh)
+                    except (OSError, json.JSONDecodeError):
+                        continue
+                    if record.get("path"):
+                        records.append(record)
+    return records
+
+
+def record_for_path(owner, export_path):
+    for record in load_records(owner):
+        if record.get("path") == export_path:
+            return record
+    return None
+
+
+def records_for(owner, kind, requested="", source=""):
+    matches = []
+    for record in load_records(owner):
+        if record.get("kind") != kind:
+            continue
+        if requested and record.get("requested") != requested:
+            continue
+        if source and record.get("source") != source:
+            continue
+        matches.append(record)
+    return matches
+
+
+def atomic_write(path, data, mode):
+    if isinstance(data, str):
+        data = data.encode()
+    ensure_parent(path)
+    tmp = f"{path}.otter.tmp.{os.getpid()}.{os.urandom(4).hex()}"
+    fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    try:
+        with os.fdopen(fd, "wb") as fh:
+            fh.write(data)
+            fh.flush()
+            os.fsync(fh.fileno())
+        os.chmod(tmp, mode)
+        os.replace(tmp, path)
+    except BaseException:
+        with contextlib.suppress(OSError):
+            os.unlink(tmp)
+        raise
+
+
+def staged_replace(path, data, mode):
+    """Write path atomically, returning a backup path for rollback if one was made."""
+    backup = None
+    if os.path.lexists(path):
+        backup = f"{path}.otter.bak.{datetime.now().timestamp():.0f}.{os.getpid()}"
+        os.replace(path, backup)
+    try:
+        atomic_write(path, data, mode)
+    except BaseException:
+        if backup:
+            os.replace(backup, path)
+        raise
+    return backup
+
+
+def rollback(path, backup):
+    if backup:
+        os.replace(backup, path)
+    else:
+        with contextlib.suppress(OSError):
+            os.unlink(path)
+
+
+def commit_backup(backup):
+    if backup:
+        with contextlib.suppress(OSError):
+            os.unlink(backup)
+
+
+def cleanup_artifacts(path):
+    directory = os.path.dirname(path)
+    base = os.path.basename(path)
+    try:
+        names = os.listdir(directory)
+    except OSError:
+        return
+    for name in names:
+        if name.startswith(base + ".otter.tmp.") or name.startswith(base + ".otter.bak."):
+            with contextlib.suppress(OSError):
+                os.unlink(os.path.join(directory, name))
+
+
+@contextlib.contextmanager
+def global_lock():
+    ensure_parent(lock_container)
+    fd = os.open(lock_container, os.O_CREAT | os.O_RDWR, 0o600)
+    try:
+        os.chmod(lock_container, 0o600)
+        fcntl.flock(fd, fcntl.LOCK_EX)
+        yield
+    finally:
+        fcntl.flock(fd, fcntl.LOCK_UN)
+        os.close(fd)
+
+
+def write_record(record):
+    owner = record.get("owner", owner_tuple())
+    path = record_path(owner, record["path"])
+    atomic_write(path, json.dumps(record, indent=2, sort_keys=True) + "\n", 0o644)
+
+
+def remove_record(owner, export_path):
+    with contextlib.suppress(OSError):
+        os.unlink(record_path(owner, export_path))
+
+
+def build_record(kind, export_path, source, icon="", requested="", original_name=""):
+    timestamp = now_rfc3339()
+    return {
+        "version": 1,
+        "kind": kind,
+        "owner": owner_tuple(),
+        "path": export_path,
+        "icon": icon,
+        "source": source,
+        "requested": requested,
+        "original_name": original_name,
+        "created_at": timestamp,
+        "updated_at": timestamp,
+    }
+
+
+def prompt_choice(items, describe):
+    if len(items) == 1:
+        return items[0]
+    if not sys.stdin.isatty():
+        print("Error: multiple matches found and stdin is not a terminal.", file=sys.stderr)
+        for index, item in enumerate(items, 1):
+            print(f"  {index}. {describe(item)}", file=sys.stderr)
+        print("Error: rerun with --as (or pass an exact path) to disambiguate.", file=sys.stderr)
+        return None
+    print("Multiple matches found:", file=sys.stderr)
+    for index, item in enumerate(items, 1):
+        print(f"  {index}. {describe(item)}", file=sys.stderr)
+    try:
+        answer = input(f"Select [1-{len(items)}] (default 1): ").strip()
+    except EOFError:
+        return None
+    if not answer:
+        return items[0]
+    try:
+        selected = int(answer)
+    except ValueError:
+        return None
+    if selected < 1 or selected > len(items):
+        return None
+    return items[selected - 1]
+
+
+def scan_binaries(owner=None):
+    owner = owner or owner_tuple()
+    found = {}
+    for record in load_records(owner):
+        record_path_value = record.get("path", "")
+        if record.get("kind") == "binary" and os.path.isfile(f"/run/host{record_path_value}"):
+            found[record_path_value] = record
+    try:
+        names = sorted(os.listdir(dest_path_container))
+    except OSError:
+        names = []
+    for name in names:
+        path = os.path.join(dest_path_container, name)
+        if os.path.isdir(path):
+            continue
+        kind, metadata = read_owner_metadata(path)
+        if kind != "binary" or not same_owner(metadata, owner):
+            continue
+        host_path_value = os.path.join(dest_path, name)
+        found.setdefault(
+            host_path_value,
+            build_record("binary", host_path_value, metadata.get("source", "")),
+        )
+    return list(found.values())
+
+
+def scan_apps(owner=None):
+    owner = owner or owner_tuple()
+    found = {}
+    for record in load_records(owner):
+        record_path_value = record.get("path", "")
+        if record.get("kind") == "app" and os.path.isfile(f"/run/host{record_path_value}"):
+            found[record_path_value] = record
+    try:
+        names = sorted(os.listdir(apps_dir_container))
+    except OSError:
+        names = []
+    for name in names:
+        if not name.endswith(".desktop"):
+            continue
+        path = os.path.join(apps_dir_container, name)
+        kind, metadata = read_owner_metadata(path)
+        if kind != "app" or not same_owner(metadata, owner):
+            continue
+        host_path_value = os.path.join(apps_dir_host, name)
+        record = build_record(
+            "app",
+            host_path_value,
+            metadata.get("source", ""),
+            metadata.get("icon", ""),
+            metadata.get("requested", ""),
+            metadata.get("original_name", ""),
+        )
+        found.setdefault(host_path_value, record)
+    return list(found.values())
+
+
+def resolve_binary_delete(owner):
+    candidates = []
+    if exported_as:
+        validate_as_name(exported_as)
+        candidates = [os.path.join(dest_path, exported_as)]
+    else:
+        for record in scan_binaries(owner):
+            if exported_bin and record.get("source") != exported_bin:
+                continue
+            candidates.append(record["path"])
+        candidates = sorted(set(candidates))
+
+    if not candidates:
+        return None, "not exported"
+    if len(candidates) > 1:
+        chosen = prompt_choice(candidates, lambda p: f"{os.path.basename(p)} ({p})")
+        if chosen is None:
+            return None, "ambiguous"
+        return chosen, ""
+
+    path = candidates[0]
+    kind, metadata = read_owner_metadata(f"/run/host{path}")
+    if kind != "binary":
+        return None, "not an otter-managed export"
+    if not same_owner(metadata, owner):
+        return None, f"owned by {owner_label(metadata)}"
+    if exported_bin and metadata.get("source") != exported_bin:
+        return None, f"exported from {metadata.get('source')}"
+    return path, ""
+
+
+def resolve_app_record(owner):
+    records = []
+    if exported_app and os.path.isabs(exported_app) and os.path.isfile(exported_app):
+        for record in scan_apps(owner):
+            if record.get("path") == exported_app or record.get("source") == exported_app:
+                records.append(record)
+    else:
+        for record in scan_apps(owner):
+            requested = record.get("requested", "")
+            original = record.get("original_name", "")
+            if exported_app in (requested, original):
+                records.append(record)
+            elif Path(record.get("path", "")).stem.startswith(exported_app + "-"):
+                records.append(record)
+        records = list({record["path"]: record for record in records}.values())
+
+    if not records:
+        return None, "not exported"
+    if len(records) > 1:
+        chosen = prompt_choice(records, lambda r: f"{r.get('requested') or r.get('original_name')} ({r['path']})")
+        if chosen is None:
+            return None, "ambiguous"
+        return chosen, ""
+    return records[0], ""
+
+
+def run_host_desktop_database_update():
+    with contextlib.suppress(OSError, subprocess.SubprocessError):
+        subprocess.run(
+            ["/usr/lib/otter/scripts/otter-host-exec", "--yes", "update-desktop-database", apps_dir_host],
+            capture_output=True,
+            timeout=15,
+        )
+
+
+def container_command_prefix():
+    root_part = " --root" if rootful else ""
+    enter_part = f" {enter_flags}" if enter_flags else ""
+    return (
+        f"{shlex.quote(otter_path)} --container-manager {shlex.quote(manager)} "
+        f"enter{root_part} -n {shlex.quote(container_name)}{enter_part} --no-tty -- "
+    )
+
+
+def build_run_command(sudo):
+    source = shlex.quote(exported_bin)
+    extra = f" {extra_flags}" if extra_flags else ""
+    if sudo == "doas" or sudo == "su-exec root":
+        return f"{sudo} sh -l -c \"{source}{extra} $@\""
+    prefix = f"{sudo} " if sudo else ""
+    return f"{prefix}{source}{extra} \"$@\""
+
+
+def generate_script(dest_host, source, sudo):
+    marker_rootful = "true" if rootful else "false"
+    root_flag = " --root" if rootful else ""
+    enter_part = f" {enter_flags}" if enter_flags else ""
+    run = build_run_command(sudo)
+    local_run = run
+    cross = shlex.quote(os.path.join(dest_host))
+    rootful_check = f"[ -f {ROOTFUL_MARKER} ]" if rootful else f"[ ! -f {ROOTFUL_MARKER} ]"
+    return f"""#!/bin/sh
+# otter_binary
+# otter-container: {container_name}
+# otter-manager: {manager}
+# otter-rootful: {marker_rootful}
+# otter-source: {source}
+
+_otter_manager="$(cat {MANAGER_MARKER} 2>/dev/null || :)"
+if [ -z "$_otter_manager" ]; then
+	_otter_manager="${{container:-}}"
+fi
+
+if [ -z "${{CONTAINER_ID:-}}" ]; then
+	exec {shlex.quote(otter_path)} --container-manager {shlex.quote(manager)} enter{root_flag} -n {shlex.quote(container_name)}{enter_part} -- {run}
+elif [ "${{CONTAINER_ID}}" = {shlex.quote(container_name)} ] && [ "$_otter_manager" = {shlex.quote(manager)} ] && {rootful_check}; then
+	exec {local_run}
+else
+	exec otter-host-exec {cross} "$@"
+fi
+"""
+
+
+def check_destination_conflict(dest_container, source, owner):
+    if not os.path.lexists(dest_container):
+        return None
+    if os.path.islink(dest_container):
+        return "destination is a symbolic link; refusing to overwrite it"
+    if not os.path.isfile(dest_container):
+        return "destination exists and is not a regular file"
+    kind, metadata = read_owner_metadata(dest_container)
+    if kind != "binary":
+        text = read_text(dest_container)
+        if "# name:" in text:
+            return "destination is a legacy otter export; use --as to export under a new name"
+        return "destination exists and was not created by otter; use --as to export under a new name"
+    if not same_owner(metadata, owner):
+        return f"destination is owned by {owner_label(metadata)}"
+    if metadata.get("source") != source:
+        return f"destination is already exported from {metadata.get('source')}"
+    return None
+
+
+def check_app_destination_conflict(desktop_container, icon_container, source, owner):
+    if os.path.islink(desktop_container):
+        return "destination is a symbolic link; refusing to overwrite it"
+    if os.path.lexists(desktop_container):
+        if not os.path.isfile(desktop_container):
+            return "destination exists and is not a regular file"
+        kind, metadata = read_owner_metadata(desktop_container)
+        if kind != "app":
+            return "destination exists and was not created by otter"
+        if not same_owner(metadata, owner):
+            return f"destination is owned by {owner_label(metadata)}"
+        if metadata.get("source") != source:
+            return f"destination is already exported from {metadata.get('source')}"
+    if os.path.islink(icon_container):
+        return "icon destination is a symbolic link; refusing to overwrite it"
+    if os.path.lexists(icon_container) and not os.path.isfile(icon_container):
+        return "icon destination exists and is not a regular file"
+    return None
+
+
+def warn_path_collisions(dest_host, source, owner):
+    name = os.path.basename(dest_host)
+    seen = set()
+
+    def warn(existing_path):
+        if existing_path in seen or existing_path == dest_host:
+            return
+        seen.add(existing_path)
+        if not os.path.lexists(f"/run/host{existing_path}"):
+            return
+        kind, metadata = read_owner_metadata(f"/run/host{existing_path}")
+        if kind == "binary":
+            if same_owner(metadata, owner) and metadata.get("source") == source:
+                print(f"Warning: the same export also exists at {existing_path}", file=sys.stderr)
+            elif same_owner(metadata, owner):
+                print(
+                    f"Warning: '{name}' is also exported from {metadata.get('source')} at {existing_path}",
+                    file=sys.stderr,
+                )
+            else:
+                print(
+                    f"Warning: '{name}' is also exported by {owner_label(metadata)} at {existing_path}",
+                    file=sys.stderr,
+                )
+        else:
+            print(f"Warning: another '{name}' exists in PATH at {existing_path}", file=sys.stderr)
+
+    for directory in [entry for entry in host_path.split(":") if entry]:
+        candidate = os.path.join(directory, name)
+        if os.path.isabs(candidate):
+            warn(candidate)
+
+    for record in load_all_records():
+        record_path_value = record.get("path", "")
+        if os.path.basename(record_path_value) == name:
+            warn(record_path_value)
+
+
+def export_binary(source, dest_name, dest_dir=None):
+    if "\n" in source or "\r" in source or "\x00" in source:
+        print("Error: binary path contains invalid characters.", file=sys.stderr)
+        return 1
+    if not os.path.isfile(source):
+        print(f"Error: cannot find {source}.", file=sys.stderr)
+        return 127
+    validate_as_name(dest_name)
+    owner = owner_tuple()
+    target_dir = dest_dir or dest_path
+    dest_host = os.path.join(target_dir, dest_name)
+    dest_container = f"/run/host{dest_host}"
+
+    with global_lock():
+        collision = check_destination_conflict(dest_container, source, owner)
+        if collision:
+            print(f"Error: {collision}.", file=sys.stderr)
+            return 1
+
+        warn_path_collisions(dest_host, source, owner)
+
+        old_record = record_for_path(owner, dest_host)
+        created_at = old_record.get("created_at") if old_record else now_rfc3339()
+        record = build_record("binary", dest_host, source)
+        record["created_at"] = created_at
+
+        backup = None
+        try:
+            backup = staged_replace(dest_container, generate_script(dest_host, source, sudo_prefix), 0o755)
+            write_record(record)
+        except BaseException as exc:
+            rollback(dest_container, backup)
+            print(f"Error: failed to write export: {exc}", file=sys.stderr)
+            return 1
+        commit_backup(backup)
+        cleanup_artifacts(dest_container)
+
+    print(f"{source} from {container_name} exported successfully in {target_dir}.\nOK!")
+    return 0
+
+
+def delete_binary():
+    owner = owner_tuple()
+    path_host, reason = resolve_binary_delete(owner)
+    if not path_host:
+        print(f"Error: {exported_bin or exported_as} is not exported ({reason}).", file=sys.stderr)
+        return 1
+    path_container = f"/run/host{path_host}"
+    with global_lock():
+        # Re-check ownership under the lock: another export could have replaced
+        # the file between resolution and deletion.
+        kind, metadata = read_owner_metadata(path_container)
+        if kind != "binary":
+            print(f"Error: {path_host} is no longer an otter-managed export.", file=sys.stderr)
+            return 1
+        if not same_owner(metadata, owner):
+            print(f"Error: {path_host} is owned by {owner_label(metadata)}.", file=sys.stderr)
+            return 1
+        if exported_bin and metadata.get("source") != exported_bin:
+            print(f"Error: {path_host} is exported from {metadata.get('source')}.", file=sys.stderr)
+            return 1
+        try:
+            os.unlink(path_container)
+        except OSError as exc:
+            print(f"Error: cannot remove {path_host}: {exc}", file=sys.stderr)
+            return 1
+        remove_record(owner, path_host)
+        cleanup_artifacts(path_container)
+    print(f"{exported_bin or exported_as} from {container_name} removed successfully from {os.path.dirname(path_host)}.\nOK!")
+    return 0
+
+
+def refresh_binary():
+    owner = owner_tuple()
+    path_host, reason = resolve_binary_delete(owner)
+    if not path_host:
+        print(f"Error: {exported_bin or exported_as} is not exported ({reason}).", file=sys.stderr)
+        return 1
+    kind, metadata = read_owner_metadata(f"/run/host{path_host}")
+    if kind != "binary":
+        print("Error: existing export is no longer an otter-managed binary.", file=sys.stderr)
+        return 1
+    source = metadata.get("source", "")
+    if exported_bin and exported_bin != source:
+        print(f"Error: {path_host} is exported from {source}, not {exported_bin}.", file=sys.stderr)
+        return 1
+    if not os.path.isfile(source):
+        print(f"Error: source {source} no longer exists; keeping the existing export.", file=sys.stderr)
+        return 1
+    # Reuse the exact destination directory and name, not the binary basename.
+    return export_binary(source, os.path.basename(path_host), os.path.dirname(path_host))
+
+
+def list_binaries():
+    owner = owner_tuple()
+    records = scan_binaries(owner)
+    if not records:
+        print("No binaries exported from this container.")
+        return 0
+    for record in sorted(records, key=lambda r: r.get("path", "")):
+        name = os.path.basename(record.get("path", ""))
+        print(f"{name:<30} | {record.get('path', ''):<40}")
+    return 0
+
+
+def desktop_quote(value):
+    escaped = value.replace("\\", "\\\\").replace('"', '\\"').replace("`", "\\`").replace("$", "\\$")
+    return f'"{escaped}"'
+
+
+def parse_desktop_sections(content):
+    sections = []
+    current = None
+    preamble = []
+    for line in content.splitlines():
+        if line.startswith("[") and line.endswith("]"):
+            if current is None and preamble:
+                sections.append(("", preamble))
+                preamble = []
+            current = line[1:-1]
+            sections.append((current, []))
+        elif current is None:
+            preamble.append(line)
+        else:
+            sections[-1][1].append(line)
+    if current is None and preamble:
+        sections.append(("", preamble))
+    return sections
+
+
+def field_value(lines, key):
+    for line in lines:
+        if line.startswith(key + "="):
+            return line.split("=", 1)[1]
+    return ""
+
+
+def insert_extra_flags(value):
+    if not extra_flags:
+        return value
+    match = re.search(r"\s+%[a-zA-Z]", value)
+    if match:
+        return value[: match.start()] + f" {extra_flags}" + value[match.start():]
+    return value + f" {extra_flags}"
+
+
+def rewrite_desktop(content, source, icon_host, requested):
+    prefix = container_command_prefix()
+    sections = parse_desktop_sections(content)
+    if not any(name == "Desktop Entry" for name, _ in sections):
+        raise ValueError("desktop file has no [Desktop Entry] section")
+
+    desktop_entry = next(lines for name, lines in sections if name == "Desktop Entry")
+    original_name = field_value(desktop_entry, "Name") or Path(source).stem
+
+    # Never duplicate an existing action. Take both the Actions= list and the
+    # actual sections into account, then fall back to OtterRemove[2..] until an
+    # unused id is found.
+    taken_actions = {
+        action for action in field_value(desktop_entry, "Actions").split(";") if action
+    }
+    taken_actions.update(
+        name[len("Desktop Action "):]
+        for name, _ in sections
+        if name.startswith("Desktop Action ")
+    )
+    action_id = "Remove"
+    if action_id in taken_actions:
+        action_id = "OtterRemove"
+        suffix = 2
+        while action_id in taken_actions:
+            action_id = f"OtterRemove{suffix}"
+            suffix += 1
+
+    rewritten = []
+    for name, lines in sections:
+        rewritten.append((name, []))
+        is_entry = name == "Desktop Entry"
+        seen_actions = False
+        seen_startup = False
+        seen_terminal = False
+        seen_icon = False
+        for line in lines:
+            if is_entry and line.startswith("Name=") and not line.startswith("Name["):
+                rewritten[-1][1].append(line + exported_app_label)
+                continue
+            if is_entry and line.startswith("TryExec="):
+                continue
+            if is_entry and line.startswith("DBusActivatable=true"):
+                continue
+            if is_entry and line.startswith("X-Otter-"):
+                continue
+            if line.startswith("Exec="):
+                value = line.split("=", 1)[1]
+                if is_entry:
+                    value = insert_extra_flags(value)
+                rewritten[-1][1].append("Exec=" + prefix + value)
+                continue
+            if is_entry and line.startswith("Icon="):
+                seen_icon = True
+                rewritten[-1][1].append("Icon=" + icon_host)
+                continue
+            if is_entry and line.startswith("Actions="):
+                seen_actions = True
+                actions = [a for a in line.split("=", 1)[1].split(";") if a]
+                if action_id not in actions:
+                    actions.append(action_id)
+                rewritten[-1][1].append("Actions=" + ";".join(actions) + ";")
+                continue
+            if is_entry and line.startswith("StartupWMClass="):
+                seen_startup = True
+                rewritten[-1][1].append("StartupWMClass=" + Path(source).stem)
+                continue
+            if is_entry and line.startswith("Terminal="):
+                seen_terminal = True
+                rewritten[-1][1].append("Terminal=true" if rootful else line)
+                continue
+            rewritten[-1][1].append(line)
+
+        if is_entry:
+            if not seen_actions:
+                rewritten[-1][1].append(f"Actions={action_id};")
+            if not seen_startup:
+                rewritten[-1][1].append("StartupWMClass=" + Path(source).stem)
+            if not seen_terminal and rootful:
+                rewritten[-1][1].append("Terminal=true")
+            if not seen_icon:
+                rewritten[-1][1].append("Icon=" + icon_host)
+            rewritten[-1][1].extend(
+                [
+                    "X-Otter-Export=app",
+                    f"X-Otter-Container={container_name}",
+                    f"X-Otter-Manager={manager}",
+                    f"X-Otter-Rootful={'true' if rootful else 'false'}",
+                    f"X-Otter-Source={source}",
+                    f"X-Otter-Requested={requested}",
+                    f"X-Otter-Original-Name={original_name}",
+                    f"X-Otter-Icon={icon_host}",
+                ]
+            )
+
+    result = []
+    for name, lines in rewritten:
+        if name:
+            result.append(f"[{name}]")
+        result.extend(lines)
+        result.append("")
+    result.append(f"[Desktop Action {action_id}]")
+    result.append(f"Name=Remove {requested}")
+    result.append(f"Exec={desktop_quote(otter_path)} exports delete {desktop_quote(host_desktop_path)}")
+    result.append("")
+
+    return "\n".join(result), original_name, action_id
+
+
+def desktop_data_dirs():
+    dirs = []
+    xdg_data_dirs = os.environ.get("XDG_DATA_DIRS", "")
+    if xdg_data_dirs:
+        for directory in xdg_data_dirs.split(":"):
+            candidate = os.path.join(directory, "applications")
+            if os.path.isdir(candidate):
+                dirs.append(candidate)
+    else:
+        for directory in ("/usr/share/applications", "/usr/local/share/applications",
+                          "/var/lib/flatpak/exports/share/applications"):
+            if os.path.isdir(directory):
+                dirs.append(directory)
+    xdg_data_home = os.environ.get("XDG_DATA_HOME", "")
+    if xdg_data_home:
+        candidate = os.path.join(xdg_data_home, "applications")
+        if os.path.isdir(candidate):
+            dirs.append(candidate)
+    else:
+        candidate = os.path.join(os.environ.get("HOME", ""), ".local/share/applications")
+        if os.path.isdir(candidate):
+            dirs.append(candidate)
+    return dirs
+
+
+def rank_desktop_candidate(path, requested):
+    text = read_text(path)
+    desktop_entry = next(
+        (lines for section, lines in parse_desktop_sections(text) if section == "Desktop Entry"),
+        [],
+    )
+    name = field_value(desktop_entry, "Name")
+    exec_value = field_value(desktop_entry, "Exec")
+    try:
+        exec_parts = shlex.split(exec_value) if exec_value else []
+        exec_bin = os.path.basename(exec_parts[0]) if exec_parts else ""
+    except ValueError:
+        exec_bin = ""
+    lowered = requested.lower()
+    exact_name = name.lower() == lowered
+    exact_exec = exec_bin.lower() == lowered
+    substring = lowered in name.lower() or lowered in exec_value.lower()
+    regular = not os.path.islink(path)
+    icon = field_value(desktop_entry, "Icon")
+    icon_ok = bool(find_icon(icon)) if icon else False
+    return (
+        0 if exact_name else 1 if exact_exec else 2 if substring else 3,
+        0 if regular else 1,
+        0 if icon_ok else 1,
+        path,
+    )
+
+
+def find_desktop_candidates(requested):
+    if os.path.isabs(requested) and os.path.isfile(requested):
+        return [requested]
+    candidates = []
+    for directory in desktop_data_dirs():
+        try:
+            names = sorted(os.listdir(directory))
+        except OSError:
+            continue
+        for name in names:
+            if not name.endswith(".desktop"):
+                continue
+            path = os.path.join(directory, name)
+            text = read_text(path)
+            if "X-Otter-Export=app" in text:
+                continue
+            if re.search(rf"Exec=.*\b{re.escape(requested)}\b", text) or re.search(
+                rf"Name=.*{re.escape(requested)}.*", text, re.IGNORECASE
+            ):
+                candidates.append(path)
+    return sorted(set(candidates), key=lambda p: rank_desktop_candidate(p, requested))
+
+
+def find_icon(icon_name):
+    if not icon_name:
+        return ""
+    if icon_name.startswith("/"):
+        if os.path.isfile(icon_name):
+            return icon_name
+        icon_name = os.path.basename(icon_name)
+    if icon_name.lower().endswith((".png", ".svg", ".xpm")):
+        icon_name = os.path.splitext(icon_name)[0]
+    bases = []
+    xdg_data_dirs = os.environ.get("XDG_DATA_DIRS", "")
+    if xdg_data_dirs:
+        for directory in xdg_data_dirs.split(":"):
+            bases.extend([os.path.join(directory, "icons"), os.path.join(directory, "pixmaps")])
+    else:
+        bases.extend(["/usr/share/icons", "/usr/share/pixmaps"])
+    bases.append("/var/lib/flatpak/exports/share/icons")
+    xdg_data_home = os.environ.get("XDG_DATA_HOME", "")
+    if xdg_data_home:
+        bases.append(os.path.join(xdg_data_home, "icons"))
+    else:
+        bases.append(os.path.join(os.environ.get("HOME", ""), ".local/share/icons"))
+
+    svg_hits = []
+    png_hits = []
+    for base in bases:
+        if not os.path.isdir(base):
+            continue
+        for root, _, files in os.walk(base):
+            if "symbolic" in root:
+                continue
+            if icon_name + ".svg" in files:
+                svg_hits.append(os.path.join(root, icon_name + ".svg"))
+            if icon_name + ".png" in files:
+                png_hits.append(os.path.join(root, icon_name + ".png"))
+    if svg_hits:
+        return sorted(svg_hits)[0]
+    if png_hits:
+        def png_key(path):
+            match = re.search(r"(\d+)x(\d+)", path)
+            dimension = int(match.group(1)) if match else 0
+            try:
+                size = os.path.getsize(path)
+            except OSError:
+                size = 0
+            return (dimension, size, path)
+        return sorted(png_hits, key=png_key, reverse=True)[0]
+    return ""
+
+
+def choose_desktop_file(requested):
+    candidates = find_desktop_candidates(requested)
+    if not candidates:
+        print("Error: cannot find any desktop files.", file=sys.stderr)
+        print("Error: trying to export a non-installed application.", file=sys.stderr)
+        return ""
+    if len(candidates) == 1:
+        return candidates[0]
+    if skip_ask:
+        return candidates[0]
+    if not sys.stdin.isatty():
+        print("Error: multiple matching desktop files found and stdin is not a terminal.", file=sys.stderr)
+        for index, path in enumerate(candidates, 1):
+            print(f"  {index}. {path}", file=sys.stderr)
+        print("Error: pass --skip-ask to pick the top-ranked match.", file=sys.stderr)
+        return ""
+    print("Multiple matching desktop files found:", file=sys.stderr)
+    for index, path in enumerate(candidates, 1):
+        print(f"  {index}. {path}", file=sys.stderr)
+    try:
+        answer = input(f"Select [1-{len(candidates)}] (default 1): ").strip()
+    except EOFError:
+        return ""
+    if not answer:
+        return candidates[0]
+    try:
+        selected = int(answer)
+    except ValueError:
+        return ""
+    if selected < 1 or selected > len(candidates):
+        return ""
+    return candidates[selected - 1]
+
+
+def export_application(source):
+    global host_desktop_path
+    if not os.path.isfile(source):
+        print(f"Error: cannot find desktop file {source}.", file=sys.stderr)
+        return 127
+    text = read_text(source)
+    if not text:
+        print(f"Error: cannot read desktop file {source}.", file=sys.stderr)
+        return 1
+
+    requested = exported_app if not os.path.isabs(exported_app) else Path(exported_app).stem
+    sections = parse_desktop_sections(text)
+    desktop_entry = next((lines for name, lines in sections if name == "Desktop Entry"), [])
+    original_name = field_value(desktop_entry, "Name") or Path(source).stem
+    icon_name = field_value(desktop_entry, "Icon").strip()
+    icon_source = find_icon(icon_name)
+    if not icon_source:
+        print(f"Error: cannot resolve an icon for {requested}; refusing to write a partial export.", file=sys.stderr)
+        return 1
+
+    owner = owner_tuple()
+    owner_prefix = f"rootful-{manager}-{container_name}" if rootful else f"{manager}-{container_name}"
+    stem = sanitize_stem(Path(source).stem)
+    digest = hashlib.sha256(source.encode()).hexdigest()[:8]
+    desktop_name = f"{owner_prefix}-{stem}-{digest}.desktop"
+    icon_ext = Path(icon_source).suffix.lstrip(".") or "png"
+    icon_name_host = f"{owner_prefix}-{stem}-{digest}.{icon_ext}"
+    host_desktop_path = os.path.join(apps_dir_host, desktop_name)
+    host_icon_path = os.path.join(icons_dir_host, icon_name_host)
+    desktop_container = f"/run/host{host_desktop_path}"
+    icon_container = f"/run/host{host_icon_path}"
+
+    conflict = check_app_destination_conflict(desktop_container, icon_container, source, owner)
+    if conflict:
+        print(f"Error: {conflict}.", file=sys.stderr)
+        return 1
+
+    try:
+        content, original_name, _ = rewrite_desktop(text, source, host_icon_path, requested)
+    except ValueError as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        return 1
+
+    record = build_record(
+        "app",
+        host_desktop_path,
+        source,
+        host_icon_path,
+        requested,
+        original_name,
+    )
+
+    with global_lock():
+        # Re-check under the lock so a concurrent export cannot slip between
+        # the preflight check and the staged replace.
+        conflict = check_app_destination_conflict(desktop_container, icon_container, source, owner)
+        if conflict:
+            print(f"Error: {conflict}.", file=sys.stderr)
+            return 1
+
+        # Replace any previous export for this owner + requested app.
+        previous = []
+        stale_icons = set()
+        records = load_records(owner)
+        for existing in records:
+            old_icon = existing.get("icon", "")
+            if existing.get("path") == host_desktop_path:
+                # The record is being replaced in place; its old icon may
+                # still need cleaning if the icon format changed.
+                if old_icon and old_icon != host_icon_path:
+                    stale_icons.add(old_icon)
+                continue
+            if existing.get("kind") != "app":
+                continue
+            if existing.get("requested") != requested and existing.get("source") != source:
+                continue
+            previous.append(existing)
+            if old_icon:
+                stale_icons.add(old_icon)
+
+        previous_paths = {old.get("path", "") for old in previous}
+        other_icons = {
+            existing.get("icon", "")
+            for existing in records
+            if existing.get("path") not in previous_paths
+            and existing.get("path") != host_desktop_path
+        }
+
+        desktop_backup = None
+        icon_backup = None
+        icon_existed = os.path.lexists(icon_container)
+        try:
+            ensure_parent(desktop_container)
+            ensure_parent(icon_container)
+            desktop_backup = staged_replace(desktop_container, content, 0o644)
+            with open(icon_source, "rb") as fh:
+                icon_bytes = fh.read()
+            icon_backup = staged_replace(icon_container, icon_bytes, 0o644)
+            write_record(record)
+        except BaseException as exc:
+            rollback(desktop_container, desktop_backup)
+            rollback(icon_container, icon_backup)
+            if not icon_existed:
+                with contextlib.suppress(OSError):
+                    os.unlink(icon_container)
+            print(f"Error: failed to write application export: {exc}", file=sys.stderr)
+            return 1
+        commit_backup(desktop_backup)
+        commit_backup(icon_backup)
+        cleanup_artifacts(desktop_container)
+        cleanup_artifacts(icon_container)
+
+        for old in previous:
+            old_path = old.get("path", "")
+            if old_path and old_path != host_desktop_path:
+                with contextlib.suppress(OSError):
+                    os.unlink(f"/run/host{old_path}")
+            remove_record(owner, old_path)
+
+        for old_icon in stale_icons:
+            if (
+                old_icon.startswith(icons_dir_host)
+                and old_icon != host_icon_path
+                and old_icon not in other_icons
+            ):
+                with contextlib.suppress(OSError):
+                    os.unlink(f"/run/host{old_icon}")
+
+    run_host_desktop_database_update()
+    print(f"Application {requested} successfully exported.\nOK!")
+    print(f"{requested} will appear in your applications list in a few seconds.")
+    return 0
+
+
+def delete_application():
+    owner = owner_tuple()
+    record, reason = resolve_app_record(owner)
+    if not record:
+        print(f"Error: application is not exported ({reason}).", file=sys.stderr)
+        return 1
+    path_host = record["path"]
+    path_container = f"/run/host{path_host}"
+    icon_host = record.get("icon", "")
+    with global_lock():
+        kind, metadata = read_owner_metadata(path_container)
+        if kind is None and os.path.lexists(path_container):
+            print(
+                f"Error: {path_host} is no longer an otter-managed export; run 'otter exports rebuild'.",
+                file=sys.stderr,
+            )
+            return 1
+        if kind is not None:
+            if kind != "app" or not same_owner(metadata, owner):
+                print(f"Error: {path_host} is owned by {owner_label(metadata)}.", file=sys.stderr)
+                return 1
+            if metadata.get("source") != record.get("source"):
+                print(
+                    f"Error: the export index entry for {path_host} is stale; run 'otter exports rebuild' first.",
+                    file=sys.stderr,
+                )
+                return 1
+            if not icon_host:
+                icon_host = metadata.get("icon", "")
+        with contextlib.suppress(OSError):
+            os.unlink(path_container)
+        if icon_host.startswith(icons_dir_host):
+            with contextlib.suppress(OSError):
+                os.unlink(f"/run/host{icon_host}")
+        remove_record(owner, path_host)
+        cleanup_artifacts(path_container)
+        if icon_host:
+            cleanup_artifacts(f"/run/host{icon_host}")
+    run_host_desktop_database_update()
+    print(f"Application {exported_app} successfully un-exported.\nOK!")
+    print(f"{exported_app} will disappear from your applications list in a few seconds.")
+    return 0
+
+
+def refresh_application():
+    owner = owner_tuple()
+    record, reason = resolve_app_record(owner)
+    if not record:
+        print(f"Error: application is not exported ({reason}).", file=sys.stderr)
+        return 1
+    kind, metadata = read_owner_metadata(f"/run/host{record.get('path', '')}")
+    if kind != "app" or not same_owner(metadata, owner):
+        print(
+            "Error: the export index entry is stale; run 'otter exports rebuild' first.",
+            file=sys.stderr,
+        )
+        return 1
+    source = record.get("source", "")
+    if not os.path.isfile(source):
+        print(f"Error: source {source} no longer exists; keeping the existing export.", file=sys.stderr)
+        return 1
+    global exported_app
+    if not exported_app:
+        exported_app = record.get("requested") or record.get("original_name") or Path(source).stem
+    return export_application(source)
+
+
+def list_applications():
+    owner = owner_tuple()
+    records = scan_apps(owner)
+    if not records:
+        print("No applications exported from this container.")
+        return 0
+    for record in sorted(records, key=lambda r: r.get("path", "")):
+        name = record.get("original_name") or record.get("requested") or Path(record.get("path", "")).stem
+        print(f"{name:<30} | {record.get('path', ''):<40}")
+    return 0
+
+
+# Main dispatch
+export_action = ""
 if args.list_apps:
     export_action = "list-apps"
 elif args.list_binaries:
@@ -195,9 +1471,6 @@ elif exported_app:
     export_action = "app"
 elif exported_bin:
     export_action = "bin"
-
-# Ensure we can write stuff there
-Path(dest_path_container).mkdir(parents=True, exist_ok=True)
 
 # Check we're running inside a container and not on the host
 if (
@@ -208,20 +1481,28 @@ if (
     print(f"You must run  {os.path.basename(sys.argv[0])} inside a container!", file=sys.stderr)
     sys.exit(126)
 
-# Check if we're in a rootful or rootless container
-if Path("/usr/lib/otter/container.rootful").is_file():
-    rootful = "--root"
-
 # We're working with HOME, so we must run as USER, not as root
 if os.getuid() == 0:
     print(f"You must not run  {os.path.basename(sys.argv[0])} as root!", file=sys.stderr)
     sys.exit(1)
 
-# Ensure we're not receiving more than one action at a time
 if exported_app and exported_bin:
     print("Error: Invalid arguments, choose only one action below.", file=sys.stderr)
     print("Error: You can only export one thing at time.", file=sys.stderr)
     sys.exit(2)
+
+if exported_refresh and not (exported_app or exported_bin):
+    print("Error: --refresh requires --app or --bin.", file=sys.stderr)
+    sys.exit(2)
+
+if not container_name or not manager:
+    print(f"Error: export ownership is incomplete for this container ({owner_label()}).", file=sys.stderr)
+    print("Error: run 'otter upgrade <container>' to write the container manager marker.", file=sys.stderr)
+    sys.exit(1)
+
+if not host_home:
+    print("Error: cannot determine the host home directory.", file=sys.stderr)
+    sys.exit(1)
 
 # Filter enter_flags and remove redundant options
 if enter_flags:
@@ -233,14 +1514,11 @@ if enter_flags:
             print(f"Warning: {parts[j]} argument will be set automatically and should be removed.", file=sys.stderr)
         elif parts[j] in ("--name", "-n"):
             print(f"Warning: {parts[j]} argument will be set automatically and should be removed.", file=sys.stderr)
-            j += 1  # skip the value too
+            j += 1
         else:
             filtered.append(parts[j])
         j += 1
     enter_flags = " ".join(filtered)
-
-# Command to execute
-container_command_suffix = f"'{exported_bin}' {extra_flags} \"$@\""
 
 # Check if exported application/binary should be run with sudo privileges
 if is_sudo:
@@ -249,24 +1527,11 @@ if is_sudo:
     if result.returncode != 0:
         sudo_prefix = "sudo"
 
-    # Edge case for systems with doas
     if shutil.which("doas"):
         sudo_prefix = "doas"
-        container_command_suffix = f"sh -l -c \"'{exported_bin}' {extra_flags} $@\""
 
-    # Edge case for systems without sudo
     if shutil.which("su-exec"):
         sudo_prefix = "su-exec root"
-        container_command_suffix = f"sh -l -c \"'{exported_bin}' {extra_flags} $@\""
-
-# Prefix to add to an existing command to work through the container
-otter_path = os.environ.get("OTTER_PATH", "otter")
-_rootful_part = f" {rootful}" if rootful else ""
-_enter_flags_part = f" {enter_flags}" if enter_flags else ""
-_sudo_part = f" {sudo_prefix}" if sudo_prefix else ""
-container_command_prefix = (
-    f"{otter_path} enter{_rootful_part} -n {container_name}{_enter_flags_part} --no-tty --{_sudo_part} "
-)
 
 if not exported_app_label:
     if rootful:
@@ -278,323 +1543,43 @@ elif exported_app_label == "none":
 else:
     exported_app_label = f" {exported_app_label}"
 
+# host_desktop_path is assigned by export_application and used by
+# rewrite_desktop; initialise it so the helper can always reference it.
+host_desktop_path = ""
 
-def generate_script():
-    name_prefix = f"rootful-{container_name}" if rootful else container_name
-    return f"""#!/bin/sh
-# otter_binary
-# name: {name_prefix}
-if [ -z "${{CONTAINER_ID}}" ]; then
-\texec "{otter_path}" enter {rootful} -n {container_name} {enter_flags} -- {sudo_prefix} {container_command_suffix}
-elif [ -n "${{CONTAINER_ID}}" ] && [ "${{CONTAINER_ID}}" != "{container_name}" ]; then
-\texec otter-host-exec '{dest_path}/{os.path.basename(exported_bin)}' "$@"
-else
-\texec {sudo_prefix} '{exported_bin}' "$@"
-fi
-"""
-
-
-def export_binary():
-    if not Path(exported_bin).is_file():
-        print(f"Error: cannot find {exported_bin}.", file=sys.stderr)
-        return 127
-
-    bin_suffix = f"rootful-{container_name}" if rootful else container_name
-    dest_name = exported_as if exported_as else f"{os.path.basename(exported_bin)}-{bin_suffix}"
-    dest_file = Path(dest_path_container) / dest_name
-
-    Path(dest_path_container).mkdir(parents=True, exist_ok=True)
-
-    if exported_delete:
-        if "otter_binary" not in dest_file.read_text():
-            print(f"Error: {exported_bin} is not exported.", file=sys.stderr)
-            return 1
-        try:
-            dest_file.unlink()
-        except OSError:
-            return 1
-        print(f"{exported_bin} from {container_name} removed successfully from {dest_path}.\nOK!")
-        return 0
-
-    if dest_file.exists() and "otter_binary" not in dest_file.read_text():
-        print(f"Error: '{dest_name}' already exists at {dest_file} and was not created by otter-export; refusing to overwrite.", file=sys.stderr)
-        print(f"Error: use --as to export under a different name.", file=sys.stderr)
-        return 1
-
-    try:
-        dest_file.touch()
-    except OSError:
-        print(f"Error: cannot create destination file {dest_file}.", file=sys.stderr)
-        return 1
-
-    dest_file.write_text(generate_script())
-    dest_file.chmod(0o755)
-    print(f"{exported_bin} from {container_name} exported successfully in {dest_path}.\nOK!")
-    return 0
-
-
-def export_application():
-    canon_dirs = []
-
-    if Path(exported_app).exists():
-        desktop_files = [exported_app]
-    else:
-        xdg_data_dirs = os.environ.get("XDG_DATA_DIRS", "")
-        if xdg_data_dirs:
-            for xdg_dir in xdg_data_dirs.split(":"):
-                p = Path(xdg_dir) / "applications"
-                if p.is_dir():
-                    canon_dirs.append(str(p))
-        else:
-            for d in ["/usr/share/applications", "/usr/local/share/applications",
-                      "/var/lib/flatpak/exports/share/applications"]:
-                if Path(d).is_dir():
-                    canon_dirs.append(d)
-
-        xdg_data_home = os.environ.get("XDG_DATA_HOME", "")
-        if xdg_data_home:
-            p = Path(xdg_data_home) / "applications"
-            if p.is_dir():
-                canon_dirs.append(str(p))
-        else:
-            p = Path(os.environ.get("HOME", "")) / ".local/share/applications"
-            if p.is_dir():
-                canon_dirs.append(str(p))
-
-        if not canon_dirs:
-            print("Error: cannot find any desktop files.", file=sys.stderr)
-            print("Error: trying to export a non-installed application.", file=sys.stderr)
-            return 127
-
-        # find files matching exported_app in Exec= or Name=, excluding already-exported ones
-        find_cmd = ["find"] + canon_dirs + ["-type", "f", "-print", "-o", "-type", "l", "-print"]
-        result = subprocess.run(find_cmd, capture_output=True, text=True)
-        candidates = [f for f in result.stdout.splitlines() if f]
-
-        otter_path_pat = os.environ.get("OTTER_PATH", "otter")
-        matched = []
-        for f in candidates:
-            try:
-                content = Path(f).read_text(errors="replace")
-                if (re.search(rf"Exec=.*{re.escape(exported_app)}.*", content) or
-                        re.search(rf"Name=.*{re.escape(exported_app)}.*", content)):
-                    if not re.search(rf"Exec=.*{re.escape(otter_path_pat)}.*enter.*", content):
-                        matched.append(f)
-            except OSError:
-                pass
-
-        desktop_files = matched
-
-    if not desktop_files:
-        print("Error: cannot find any desktop files.", file=sys.stderr)
-        print("Error: trying to export a non-installed application.", file=sys.stderr)
-        return 127
-
-    # Find the single best icon from the first desktop file
-    icon_name = ""
-    for df in desktop_files:
-        try:
-            content = Path(df).read_text(errors="replace")
-            m = re.search(r"^Icon=(.+)$", content, re.MULTILINE)
-            if m:
-                icon_name = m.group(1).strip()
-            break
-        except OSError:
-            pass
-
-    icon_file = ""
-    if icon_name:
-        if icon_name.startswith("/") and Path(icon_name).exists():
-            icon_file = icon_name
-        else:
-            search_dirs = [
-                ("/usr/share/icons/hicolor", f"{icon_name}.svg"),
-                ("/var/lib/flatpak/exports/share/icons", f"{icon_name}.svg"),
-                ("/usr/share/pixmaps", f"{icon_name}.svg"),
-            ]
-            for sdir, pattern in search_dirs:
-                if not icon_file:
-                    r = subprocess.run(
-                        ["find", sdir, "-type", "f", "-name", pattern],
-                        capture_output=True, text=True
-                    )
-                    hits = [f for f in r.stdout.splitlines() if "symbolic" not in f]
-                    if hits:
-                        icon_file = hits[0]
-
-            if not icon_file:
-                png_dirs = [
-                    "/usr/share/icons/hicolor",
-                    "/var/lib/flatpak/exports/share/icons",
-                    "/usr/share/pixmaps",
-                ]
-                for sdir in png_dirs:
-                    if not icon_file:
-                        r = subprocess.run(
-                            ["find", sdir, "-type", "f", "-name", f"{icon_name}.png"],
-                            capture_output=True, text=True
-                        )
-                        hits = sorted(
-                            [f for f in r.stdout.splitlines() if "symbolic" not in f],
-                            key=lambda p: [int(x) if x.isdigit() else x for x in re.split(r'(\d+)', p)],
-                            reverse=True
-                        )
-                        if hits:
-                            icon_file = hits[0]
-
-    icon_dest_dir = f"/run/host{host_home}/.local/share/otter/icons/apps"
-    icon_ext = Path(icon_file).suffix.lstrip(".") if icon_file else ""
-    icon_prefix = f"rootful-{container_name}" if rootful else container_name
-    icon_dest_file = f"{icon_dest_dir}/{icon_prefix}-{icon_name}.{icon_ext}"
-    icon_host_path = f"{host_home}/.local/share/otter/icons/apps/{icon_prefix}-{icon_name}.{icon_ext}"
-
-    Path(f"/run/host{host_home}/.local/share/applications").mkdir(parents=True, exist_ok=True)
-
-    for df in desktop_files:
-        desktop_prefix = f"rootful-{container_name}" if rootful else container_name
-        desktop_home_file = f"{desktop_prefix}-{os.path.basename(df)}"
-        dest_desktop = Path(f"/run/host{host_home}/.local/share/applications/{desktop_home_file}")
-
-        if exported_delete:
-            dest_desktop.unlink(missing_ok=True)
-            Path(icon_dest_file).unlink(missing_ok=True)
-            continue
-
-        try:
-            content = Path(df).read_text(errors="replace")
-        except OSError:
-            continue
-
-        # Add command_prefix, extra flags, remove TryExec/DBusActivatable, append label to Name
-        content = re.sub(
-            r"^Exec=(.*)$",
-            lambda m: f"Exec={container_command_prefix}{m.group(1)}",
-            content, flags=re.MULTILINE
-        )
-        if extra_flags:
-            content = re.sub(r"(%.*)", rf"{extra_flags} \1", content)
-        content = re.sub(r"^TryExec=.*\n?", "", content, flags=re.MULTILINE)
-        content = re.sub(r"^DBusActivatable=true\n?", "", content, flags=re.MULTILINE)
-        content = re.sub(r"^(.*Name.*)$", rf"\1{exported_app_label}", content, flags=re.MULTILINE)
-
-        # For rootful containers, ensure Terminal=true under [Desktop Entry]
-        if rootful:
-            content = re.sub(r"^Terminal=.*$", "Terminal=true", content, flags=re.MULTILINE)
-            if not re.search(r"^Terminal=", content, re.MULTILINE):
-                content = re.sub(r"^(\[Desktop Entry\])", r"\1\nTerminal=true", content, flags=re.MULTILINE)
-
-        desktop_original_stem = Path(df).stem
-        content = re.sub(r"^StartupWMClass=.*\n?", "", content, flags=re.MULTILINE)
-        content += f"StartupWMClass={desktop_original_stem}\n"
-
-        # Merge Remove into existing Actions= line, or add one if absent
-        if re.search(r"^Actions=", content, re.MULTILINE):
-            content = re.sub(r"^(Actions=.*)$", r"\1Remove;", content, flags=re.MULTILINE)
-        else:
-            content += "\nActions=Remove;\n"
-        content += (
-            f"\n[Desktop Action Remove]\n"
-            f"Name=Remove {exported_app}\n"
-            f"Exec=sh -c 'rm -f {host_home}/.local/share/applications/{desktop_home_file} "
-            f"{icon_host_path} && update-desktop-database {host_home}/.local/share/applications'\n"
-        )
-
-        # Copy icon and rewrite Icon=
-        if icon_file:
-            Path(icon_dest_dir).mkdir(parents=True, exist_ok=True)
-            shutil.copy2(str(Path(icon_file).resolve()), icon_dest_file)
-            content = re.sub(r"^Icon=.*$", f"Icon={icon_host_path}", content, flags=re.MULTILINE)
-
-        dest_desktop.write_text(content)
-
-    # Update desktop database
-    subprocess.run(
-        ["/usr/lib/otter/scripts/otter-host-exec", "--yes", "update-desktop-database",
-         f"{host_home}/.local/share/applications"],
-        capture_output=True
-    )
-
-    if exported_delete:
-        print(f"Application {exported_app} successfully un-exported.\nOK!")
-        print(f"{exported_app} will disappear from your applications list in a few seconds.")
-    else:
-        print(f"Application {exported_app} successfully exported.\nOK!")
-        print(f"{exported_app} will appear in your applications list in a few seconds.")
-
-    return 0
-
-
-def list_exported_applications():
-    apps_dir = f"/run/host{host_home}/.local/share/applications"
-    result = subprocess.run(
-        ["find", apps_dir, "-type", "f", "-print", "-o", "-type", "l", "-print"],
-        capture_output=True, text=True
-    )
-    otter_path_pat = os.environ.get("OTTER_PATH", "otter")
-    container_id = os.environ.get("CONTAINER_ID", "")
-
-    for f in result.stdout.splitlines():
-        if not f:
-            continue
-        try:
-            content = Path(f).read_text(errors="replace")
-        except OSError:
-            continue
-        if not re.search(rf"Exec=.*{re.escape(otter_path_pat)}.*enter.*", content):
-            continue
-        if not re.search(rf"/(rootful-)?{re.escape(container_id)}-[^/]+\.desktop$", f):
-            continue
-        m = re.search(r"^Name=(.*)$", content, re.MULTILINE)
-        name = re.sub(r"\(.*\)", "", m.group(1)).strip() if m else ""
-        print(f"{name:<20} | {f:<30}")
-
-
-def list_exported_binaries():
-    result = subprocess.run(
-        ["find", dest_path_container, "-type", "f", "-print"],
-        capture_output=True, text=True
-    )
-    container_id = os.environ.get("CONTAINER_ID", "")
-    bin_list_suffix = (
-        f"rootful-{container_id}"
-        if Path("/usr/lib/otter/container.rootful").is_file()
-        else container_id
-    )
-
-    for f in result.stdout.splitlines():
-        if not f:
-            continue
-        try:
-            content = Path(f).read_text(errors="replace")
-        except OSError:
-            continue
-        if "# otter_binary" not in content:
-            continue
-        if f"# name: {bin_list_suffix}" not in content:
-            continue
-        # Get original binary name — match shell: grep -B1 "fi" | grep exec | cut -d' ' -f2
-        name = ""
-        lines = content.splitlines()
-        for idx, line in enumerate(lines):
-            if line.strip() == "fi" and idx > 0:
-                prev = lines[idx - 1]
-                if "exec" in prev:
-                    parts = prev.split()
-                    if len(parts) > 1:
-                        name = parts[1]
-                    break
-        print(f"{name:<20} | {f:<30}")
-
-
-# Main dispatch
 if export_action == "app":
-    sys.exit(export_application())
+    if exported_delete:
+        sys.exit(delete_application())
+    if exported_refresh:
+        sys.exit(refresh_application())
+    desktop_file = choose_desktop_file(exported_app)
+    if not desktop_file:
+        sys.exit(1)
+    sys.exit(export_application(desktop_file))
 elif export_action == "bin":
-    sys.exit(export_binary())
+    if exported_delete:
+        sys.exit(delete_binary())
+    if exported_refresh:
+        sys.exit(refresh_binary())
+    bin_suffix = f"rootful-{container_name}" if rootful else container_name
+    if exported_as:
+        dest_name = exported_as
+    else:
+        basename = os.path.basename(exported_bin)
+        if not basename:
+            print(f"Error: cannot determine a name for {exported_bin}.", file=sys.stderr)
+            sys.exit(1)
+        dest_name = f"{basename}-{bin_suffix}"
+    try:
+        validate_as_name(dest_name)
+    except ValueError as exc:
+        print(f"Error: {exc}.", file=sys.stderr)
+        sys.exit(1)
+    sys.exit(export_binary(exported_bin, dest_name))
 elif export_action == "list-apps":
-    list_exported_applications()
+    sys.exit(list_applications())
 elif export_action == "list-binaries":
-    list_exported_binaries()
+    sys.exit(list_binaries())
 else:
     print("Invalid arguments, choose an action below.", file=sys.stderr)
     print(render_help(HELP_TEXT))

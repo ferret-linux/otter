@@ -120,6 +120,7 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		{newCreateCommand, stdOpts},
 		{newDocumentationCommand, documentationOpts},
 		{newEnterCommand, containerNameOpts},
+		{newExportsCommand, nil},
 		{newGenerateEntryCommand, containerNameOpts},
 		{newInspectCommand, containerNameOpts},
 		{newJournalCommand, containerNameOpts},

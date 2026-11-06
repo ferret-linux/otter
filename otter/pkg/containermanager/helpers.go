@@ -104,6 +104,17 @@ func FilterEnvVars() []string {
 		"_", // Variables starting with underscore
 	}
 
+	// Exact keys that must never leak in from the host and override the
+	// values otter sets itself. "container" is the runtime identity marker
+	// otter providers set at creation time; the OTTER_* entries are export
+	// identity/path markers with the same rule.
+	excludedExact := []string{
+		"container",
+		"OTTER_HOST_HOME",
+		"OTTER_HOST_PATH",
+		"OTTER_CUSTOM_HOME",
+	}
+
 	for _, env := range os.Environ() {
 		// Must contain '='
 		if !strings.Contains(env, "=") {
@@ -132,7 +143,7 @@ func FilterEnvVars() []string {
 			}
 		}
 
-		if excluded || xdgDirsPattern.MatchString(key) {
+		if excluded || slices.Contains(excludedExact, key) || xdgDirsPattern.MatchString(key) {
 			continue
 		}
 

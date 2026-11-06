@@ -151,6 +151,23 @@ rm -f /usr/lib/otter/container.ready
 if [ "${upgrade}" -ne 0 ]; then
 	trap 'if [ $? -eq 0 ]; then touch /usr/lib/otter/container.ready; fi' EXIT
 fi
+# Persist the container manager identity. Providers set the standard
+# `container` env when creating the container, so otter-init only has to write
+# it down once; in-container export then reads the persistent marker rather
+# than trusting whatever environment it happens to inherit.
+case "${container:-}" in
+	podman | docker | nerdctl)
+		printf '%s\n' "${container}" > /usr/lib/otter/container.manager
+		;;
+esac
+
+# On upgrade, preserve the existing rootful/rootless marker instead of
+# rewriting it from the default (rootless) flag value. The marker is the
+# source of truth for the container's ownership tuple.
+if [ "${upgrade}" -ne 0 ] && [ -f /usr/lib/otter/container.rootful ]; then
+	rootful=1
+fi
+
 # Add container type markers
 if [ "${rootful}" -eq 1 ]; then
 	touch /usr/lib/otter/container.rootful
@@ -833,7 +850,7 @@ fi
 setup_user
 
 ###############################################################################
-if [ -n "${OTTER_HOST_HOME-}" ] && [ -d "/etc/skel" ]; then
+if [ -n "${OTTER_CUSTOM_HOME-}" ] && [ -d "/etc/skel" ]; then
 	printf "otter: Setting up skel...\n"
 
 	# If we do not have profile files in the home, we should copy the
@@ -865,7 +882,7 @@ fi
 # A fresh custom home has none of the standard XDG user directories
 # (Documents, Downloads, etc.) that a real host home would already have.
 # Seed them here, custom-home only, matching the skel-seeding logic above.
-if [ -n "${OTTER_HOST_HOME-}" ] && command -v xdg-user-dirs-update > /dev/null 2>&1; then
+if [ -n "${OTTER_CUSTOM_HOME-}" ] && command -v xdg-user-dirs-update > /dev/null 2>&1; then
 	printf "otter: Setting up XDG user dirs...\n"
 
 	# A recursive chown (rather than a hardcoded English directory-name list) is
