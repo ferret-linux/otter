@@ -20,10 +20,8 @@ and gets out of your way so you can focus on building.
 
 ### > quick start
 
-> 🚧 coming oct 2027
-
 ```sh
-otter create myenv --distro fedora
+otter create myenv --image fedora
 otter enter myenv
 otter remove myenv
 ```
