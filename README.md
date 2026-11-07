@@ -37,6 +37,7 @@ See the [Otter README](otter/README.md) for a fuller overview and quick start.
 - [Otter CLI: installation, usage, configuration, and built-in docs](otter/README.md)
 - [Curated images: catalogs, Containerfiles, and build workflow](images/README.md)
 - [Testing: Go checks, end-to-end scripts, and CI matrix](otter/tests/README.md)
+- [Holt desktop app: development setup and scripts](holt/README.md)
 
 The CLI documentation is embedded in the binary and can be opened with
 `otter docs`. Its Markdown source is in
