@@ -333,28 +333,6 @@
       "build_number": 499
     },
     {
-      "name": "centos",
-      "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
-      "fallback_vendor_image": "quay.io/centos/centos:stream10",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-07T02:37:27Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 566102864,
-          "disk_size": 1754001138
-        },
-        "arm64": {
-          "compressed_size": 548111711,
-          "disk_size": 1589209732
-        }
-      },
-      "build_number": 496
-    },
-    {
       "name": "opensuse-tumbleweed",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 495
+    },
+    {
+      "name": "centos",
+      "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
+      "fallback_vendor_image": "quay.io/centos/centos:stream10",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-07T11:17:52Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 566103333,
+          "disk_size": 1754004214
+        },
+        "arm64": {
+          "compressed_size": 548095335,
+          "disk_size": 1589211265
+        }
+      },
+      "build_number": 497
     }
   ]
 }
