@@ -642,12 +642,32 @@ def scan_apps(owner=None):
 
 
 def resolve_binary_delete(owner):
+    scanned = scan_binaries(owner)
     candidates = []
     if exported_as:
         validate_as_name(exported_as)
-        candidates = [os.path.join(dest_path, exported_as)]
+        # --as selects an export by name, not by directory. The export may
+        # live in a custom --export-path, so match every indexed/scanned
+        # export for this owner whose basename is the requested name.
+        candidates = sorted(
+            {
+                record["path"]
+                for record in scanned
+                if os.path.basename(record["path"]) == exported_as
+                and (not exported_bin or record.get("source") == exported_bin)
+            }
+        )
+        direct = os.path.join(dest_path, exported_as)
+        if os.path.lexists(f"/run/host{direct}") and direct not in candidates:
+            if not exported_bin:
+                candidates.append(direct)
+            else:
+                kind, metadata = read_owner_metadata(f"/run/host{direct}")
+                if kind == "binary" and metadata.get("source") == exported_bin:
+                    candidates.append(direct)
+        candidates = sorted(set(candidates))
     else:
-        for record in scan_binaries(owner):
+        for record in scanned:
             if exported_bin and record.get("source") != exported_bin:
                 continue
             candidates.append(record["path"])
