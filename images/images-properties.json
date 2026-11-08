@@ -553,28 +553,6 @@
       "build_number": 500
     },
     {
-      "name": "oracle",
-      "official_image": "ghcr.io/ferret-linux/oracle-otr:stable",
-      "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-08T05:39:35Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 624663339,
-          "disk_size": 1877178812
-        },
-        "arm64": {
-          "compressed_size": 609940058,
-          "disk_size": 1739239286
-        }
-      },
-      "build_number": 495
-    },
-    {
       "name": "steamos",
       "official_image": "ghcr.io/ferret-linux/steamos-otr:latest",
       "fallback_vendor_image": "docker.io/cachyos/cachyos-v3:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 490
+    },
+    {
+      "name": "oracle",
+      "official_image": "ghcr.io/ferret-linux/oracle-otr:stable",
+      "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-08T12:02:34Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 624667917,
+          "disk_size": 1877178810
+        },
+        "arm64": {
+          "compressed_size": 609956181,
+          "disk_size": 1739239285
+        }
+      },
+      "build_number": 496
     }
   ]
 }
