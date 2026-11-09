@@ -45,28 +45,6 @@
       "build_number": 506
     },
     {
-      "name": "opensuse-leap",
-      "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
-      "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-09T14:16:37Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 540288565,
-          "disk_size": 1613163165
-        },
-        "arm64": {
-          "compressed_size": 542408500,
-          "disk_size": 1623334090
-        }
-      },
-      "build_number": 466
-    },
-    {
       "name": "artix",
       "official_image": "ghcr.io/ferret-linux/artix-otr:openrc",
       "fallback_vendor_image": "docker.io/artixlinux/artixlinux:base-openrc",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 513
+    },
+    {
+      "name": "opensuse-leap",
+      "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
+      "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-09T21:10:14Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 540363400,
+          "disk_size": 1613163161
+        },
+        "arm64": {
+          "compressed_size": 542443977,
+          "disk_size": 1623334088
+        }
+      },
+      "build_number": 467
     }
   ]
 }
