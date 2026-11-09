@@ -470,28 +470,6 @@
       "build_number": 443
     },
     {
-      "name": "ubuntu-lts",
-      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts",
-      "fallback_vendor_image": "docker.io/library/ubuntu:26.04",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-08T23:21:44Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 559573061,
-          "disk_size": 1575914043
-        },
-        "arm64": {
-          "compressed_size": 554531575,
-          "disk_size": 1587445790
-        }
-      },
-      "build_number": 507
-    },
-    {
       "name": "steamos",
       "official_image": "ghcr.io/ferret-linux/steamos-otr:latest",
       "fallback_vendor_image": "docker.io/cachyos/cachyos-v3:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 509
+    },
+    {
+      "name": "ubuntu-lts",
+      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts",
+      "fallback_vendor_image": "docker.io/library/ubuntu:26.04",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-09T07:32:52Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 559572690,
+          "disk_size": 1575914041
+        },
+        "arm64": {
+          "compressed_size": 554531865,
+          "disk_size": 1587445787
+        }
+      },
+      "build_number": 508
     }
   ]
 }
