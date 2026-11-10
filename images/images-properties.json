@@ -45,28 +45,6 @@
       "build_number": 421
     },
     {
-      "name": "centos",
-      "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
-      "fallback_vendor_image": "quay.io/centos/centos:stream10",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-09T21:08:46Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 566898084,
-          "disk_size": 1755911926
-        },
-        "arm64": {
-          "compressed_size": 548896408,
-          "disk_size": 1590354052
-        }
-      },
-      "build_number": 509
-    },
-    {
       "name": "nixos",
       "official_image": "ghcr.io/ferret-linux/nixos-otr:stable",
       "fallback_vendor_image": "ghcr.io/nixos/nix:latest",
@@ -765,6 +743,28 @@
         "arm64": {
           "compressed_size": 640218326,
           "disk_size": 1751330727
+        }
+      },
+      "build_number": 510
+    },
+    {
+      "name": "centos",
+      "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
+      "fallback_vendor_image": "quay.io/centos/centos:stream10",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-10T00:08:37Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 566903125,
+          "disk_size": 1755911929
+        },
+        "arm64": {
+          "compressed_size": 548896962,
+          "disk_size": 1590357125
         }
       },
       "build_number": 510
