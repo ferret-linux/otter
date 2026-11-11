@@ -62,28 +62,6 @@
       "build_number": 524
     },
     {
-      "name": "guix",
-      "official_image": "ghcr.io/ferret-linux/guix-otr:latest",
-      "fallback_vendor_image": "docker.io/library/debian:stable-slim",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-11T19:02:54Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1074996355,
-          "disk_size": 3393506447
-        },
-        "arm64": {
-          "compressed_size": 1073344448,
-          "disk_size": 3547771427
-        }
-      },
-      "build_number": 335
-    },
-    {
       "name": "artix",
       "official_image": "ghcr.io/ferret-linux/artix-otr:openrc",
       "fallback_vendor_image": "docker.io/artixlinux/artixlinux:base-openrc",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 506
+    },
+    {
+      "name": "guix",
+      "official_image": "ghcr.io/ferret-linux/guix-otr:latest",
+      "fallback_vendor_image": "docker.io/library/debian:stable-slim",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-11T23:04:41Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1074992248,
+          "disk_size": 3393506443
+        },
+        "arm64": {
+          "compressed_size": 1073344872,
+          "disk_size": 3547771434
+        }
+      },
+      "build_number": 336
     }
   ]
 }
