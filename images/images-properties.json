@@ -238,23 +238,6 @@
       "build_number": 499
     },
     {
-      "name": "artix",
-      "official_image": "ghcr.io/ferret-linux/artix-otr:openrc",
-      "fallback_vendor_image": "docker.io/artixlinux/artixlinux:base-openrc",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-11T01:22:00Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 787295144,
-          "disk_size": 2318701809
-        }
-      },
-      "build_number": 392
-    },
-    {
       "name": "kali-edge",
       "official_image": "ghcr.io/ferret-linux/kali-otr:edge",
       "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest",
@@ -768,6 +751,23 @@
         }
       },
       "build_number": 505
+    },
+    {
+      "name": "artix",
+      "official_image": "ghcr.io/ferret-linux/artix-otr:openrc",
+      "fallback_vendor_image": "docker.io/artixlinux/artixlinux:base-openrc",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-11T09:10:26Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 754337825,
+          "disk_size": 2224920308
+        }
+      },
+      "build_number": 393
     }
   ]
 }
