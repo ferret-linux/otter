@@ -233,23 +233,6 @@
       "build_number": 520
     },
     {
-      "name": "devuan-unstable",
-      "official_image": "ghcr.io/ferret-linux/devuan-otr:unstable",
-      "fallback_vendor_image": "docker.io/devuan/devuan:unstable",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-12T02:35:39Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 631037535,
-          "disk_size": 1717192391
-        }
-      },
-      "build_number": 522
-    },
-    {
       "name": "kali",
       "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
       "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest",
@@ -768,6 +751,23 @@
         }
       },
       "build_number": 398
+    },
+    {
+      "name": "devuan-unstable",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:unstable",
+      "fallback_vendor_image": "docker.io/devuan/devuan:unstable",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-12T10:30:33Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 631329175,
+          "disk_size": 1717851843
+        }
+      },
+      "build_number": 523
     }
   ]
 }
