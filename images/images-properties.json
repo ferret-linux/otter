@@ -343,28 +343,6 @@
       "build_number": 525
     },
     {
-      "name": "ubuntu",
-      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:stable",
-      "fallback_vendor_image": "docker.io/library/ubuntu:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-13T20:48:00Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 568453898,
-          "disk_size": 1603413562
-        },
-        "arm64": {
-          "compressed_size": 562474260,
-          "disk_size": 1625851938
-        }
-      },
-      "build_number": 530
-    },
-    {
       "name": "alma",
       "official_image": "ghcr.io/ferret-linux/alma-otr:stable",
       "fallback_vendor_image": "docker.io/library/almalinux:latest",
@@ -765,6 +743,28 @@
         "amd64": {
           "compressed_size": 638644084,
           "disk_size": 1735302850
+        }
+      },
+      "build_number": 531
+    },
+    {
+      "name": "ubuntu",
+      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:stable",
+      "fallback_vendor_image": "docker.io/library/ubuntu:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-13T23:13:45Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 568454203,
+          "disk_size": 1603413564
+        },
+        "arm64": {
+          "compressed_size": 562474863,
+          "disk_size": 1625851934
         }
       },
       "build_number": 531
