@@ -189,28 +189,6 @@
       "build_number": 527
     },
     {
-      "name": "opensuse-tumbleweed",
-      "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
-      "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-13T20:43:41Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 426898277,
-          "disk_size": 1297951436
-        },
-        "arm64": {
-          "compressed_size": 421079019,
-          "disk_size": 1253414152
-        }
-      },
-      "build_number": 468
-    },
-    {
       "name": "opensuse-leap",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
       "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 345
+    },
+    {
+      "name": "opensuse-tumbleweed",
+      "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
+      "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-13T23:13:37Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 426909169,
+          "disk_size": 1297951434
+        },
+        "arm64": {
+          "compressed_size": 421076661,
+          "disk_size": 1253414155
+        }
+      },
+      "build_number": 469
     }
   ]
 }
