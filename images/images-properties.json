@@ -111,28 +111,6 @@
       "build_number": 527
     },
     {
-      "name": "opensuse-leap",
-      "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
-      "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-12T23:04:22Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 542821776,
-          "disk_size": 1624909979
-        },
-        "arm64": {
-          "compressed_size": 544947170,
-          "disk_size": 1635502279
-        }
-      },
-      "build_number": 483
-    },
-    {
       "name": "centos",
       "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
       "fallback_vendor_image": "quay.io/centos/centos:stream10",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 525
+    },
+    {
+      "name": "opensuse-leap",
+      "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
+      "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-13T02:30:06Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 542897016,
+          "disk_size": 1624909981
+        },
+        "arm64": {
+          "compressed_size": 544953064,
+          "disk_size": 1635502282
+        }
+      },
+      "build_number": 484
     }
   ]
 }
