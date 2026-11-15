@@ -150,28 +150,6 @@
       "build_number": 475
     },
     {
-      "name": "kali",
-      "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
-      "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-15T02:58:21Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 651028244,
-          "disk_size": 1770269028
-        },
-        "arm64": {
-          "compressed_size": 630906029,
-          "disk_size": 1734266761
-        }
-      },
-      "build_number": 524
-    },
-    {
       "name": "blackarch",
       "official_image": "ghcr.io/ferret-linux/blackarch-otr:latest",
       "fallback_vendor_image": "docker.io/blackarchlinux/blackarch:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 434
+    },
+    {
+      "name": "kali",
+      "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
+      "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-15T05:56:24Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 644991991,
+          "disk_size": 1754621805
+        },
+        "arm64": {
+          "compressed_size": 625101803,
+          "disk_size": 1718650763
+        }
+      },
+      "build_number": 525
     }
   ]
 }
