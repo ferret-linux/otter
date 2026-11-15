@@ -101,28 +101,6 @@
       "build_number": 353
     },
     {
-      "name": "alpine",
-      "official_image": "ghcr.io/ferret-linux/alpine-otr:latest",
-      "fallback_vendor_image": "docker.io/library/alpine:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-15T12:31:53Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 338046379,
-          "disk_size": 957442939
-        },
-        "arm64": {
-          "compressed_size": 341258559,
-          "disk_size": 989691929
-        }
-      },
-      "build_number": 537
-    },
-    {
       "name": "void-musl",
       "official_image": "ghcr.io/ferret-linux/void-otr:musl",
       "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 539
+    },
+    {
+      "name": "alpine",
+      "official_image": "ghcr.io/ferret-linux/alpine-otr:latest",
+      "fallback_vendor_image": "docker.io/library/alpine:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-15T16:48:56Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 338046531,
+          "disk_size": 957442938
+        },
+        "arm64": {
+          "compressed_size": 341258990,
+          "disk_size": 989691927
+        }
+      },
+      "build_number": 538
     }
   ]
 }
