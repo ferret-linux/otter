@@ -89,28 +89,6 @@
       "build_number": 545
     },
     {
-      "name": "amazonlinux",
-      "official_image": "ghcr.io/ferret-linux/amazon-otr:latest",
-      "fallback_vendor_image": "docker.io/library/amazonlinux:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-16T20:54:29Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 597049180,
-          "disk_size": 1835692860
-        },
-        "arm64": {
-          "compressed_size": 592824691,
-          "disk_size": 2021561755
-        }
-      },
-      "build_number": 431
-    },
-    {
       "name": "kali-edge",
       "official_image": "ghcr.io/ferret-linux/kali-otr:edge",
       "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest",
@@ -768,6 +746,28 @@
         }
       },
       "build_number": 549
+    },
+    {
+      "name": "amazonlinux",
+      "official_image": "ghcr.io/ferret-linux/amazon-otr:latest",
+      "fallback_vendor_image": "docker.io/library/amazonlinux:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-17T00:07:08Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 597052205,
+          "disk_size": 1835692858
+        },
+        "arm64": {
+          "compressed_size": 592824581,
+          "disk_size": 2021561749
+        }
+      },
+      "build_number": 432
     }
   ]
 }
