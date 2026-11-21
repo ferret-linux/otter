@@ -4,9 +4,8 @@
 #    https://github.com/ferret-linux/otter
 # Copyright (C) 2026 otter contributors
 
-# No hardcoded base -- IMAGE is supplied by the build pipeline, same
-# convention as nix.Containerfile and brew.Containerfile. Expected
-# value: debian:stable-slim (floating stable pointer, not pinned).
+# No hardcoded base -- IMAGE is supplied by the build pipeline.
+# Expected value: debian:stable-slim (floating stable pointer, not pinned).
 ARG IMAGE
 FROM ${IMAGE}
 
@@ -154,13 +153,12 @@ ENV PATH="/root/.config/guix/current/bin:/root/.guix-profile/bin:/root/.guix-pro
 # at image-build time, which is slow and non-deterministic across
 # rebuilds. The freshly-installed guix-install.sh binary is used as-
 # is; users who want a newer Guix can `guix pull` themselves at
-# runtime once guix-daemon is up, same spirit as the Nix image
-# leaving `nix flake update` to the user rather than baking it in.
+# runtime once guix-daemon is up.
 
-# Housekeeping: same GC posture as the Nix image -- collect garbage
-# from the install process itself so the image doesn't ship build
-# artifacts nobody asked for, without needing guix-daemon running
-# yet (guix gc operates on the store directly).
+# Housekeeping: collect garbage from the install process itself so
+# the image doesn't ship build artifacts nobody asked for, without
+# needing guix-daemon running yet (guix gc operates on the store
+# directly).
 RUN guix gc -d 2>/dev/null || true
 
 RUN rm -rf /var/log/* /var/tmp/*

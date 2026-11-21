@@ -63,6 +63,9 @@ setup_xbps()
 		# shellcheck disable=SC2154 # exported by otter-init
 		if [ "${OTTER_IMAGE_VARIANT:-generic}" = "nonfree" ]; then
 			xbps-install -Sy void-repo-nonfree
+			nonfree_deps="gst-plugins-ugly"
+		else
+			nonfree_deps=""
 		fi
 
 		deps="
@@ -132,7 +135,7 @@ setup_xbps()
 			mit-krb5-client
 			gst-plugins-base
 			gst-plugins-good
-			gst-plugins-ugly
+			${nonfree_deps}
 			mesa-vulkan-intel
 			xdg-desktop-portal
 			mesa-vulkan-radeon

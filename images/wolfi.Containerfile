@@ -5,21 +5,6 @@
 # Copyright (C) 2026 otter contributors
 
 ARG IMAGE
-
-# Build stage: compile dinit from source, since Wolfi does not package
-# any init system (by design - see chainguard's own Wolfi FAQ).
-# Built against the same base image to keep glibc ABI consistent with
-# the final image the binaries will run in.
-FROM ${IMAGE} AS dinit-builder
-RUN apk update && apk add --no-cache build-base git curl m4
-RUN DINIT_TAGS_JSON=$(curl -fsSL https://api.github.com/repos/davmac314/dinit/tags); \
-    DINIT_TAG=$(printf '%s' "${DINIT_TAGS_JSON}" | grep -m1 '"name"' | cut -d'"' -f4); \
-    if [ -z "${DINIT_TAG}" ]; then DINIT_TAG="v0.23.0"; fi; \
-    echo "Building dinit ${DINIT_TAG}"; \
-    git clone --branch "${DINIT_TAG}" --depth 1 https://github.com/davmac314/dinit /usr/src/dinit
-WORKDIR /usr/src/dinit
-RUN make mconfig && make -j$(nproc) && make DESTDIR=/dinit-out install
-
 FROM ${IMAGE}
 
 ARG OTTER_BUILD_NUMBER
@@ -32,26 +17,11 @@ RUN sh /tmp/setup-common.sh
 # Add otter image identifiers
 RUN touch /usr/lib/otter/container.wolfi
 
-# Install dinit, built in the dinit-builder stage above (not packaged by Wolfi)
-COPY --from=dinit-builder /dinit-out/usr/ /usr/
-
-# Make dinit available as the system init
-RUN ln -sf /usr/bin/dinit /sbin/init
-
-# Provision dinit's service description tree. Wolfi builds dinit from
-# source (above) but ships no service descriptions at all (unlike
-# dinit-chimera), and otter's init-integration (setup_init_dinit in
-# setup_initsystem.sh) relies on:
-#   - /etc/dinit.d existing, to drop in otter-user-integration
-#   - a `boot` service, which dinit starts by default and whose
-#     STARTED state otter polls via `dinitctl status boot` before
-#     marking the container ready
-#   - /etc/dinit.d/boot.d, where otter (and dinitctl enable) symlink
-#     services to be brought up as part of boot
-# The `boot` service is the minimal internal grouping point from dinit's
-# own getting-started guide; boot.d starts empty by default.
-RUN mkdir -p /etc/dinit.d/boot.d \
-    && printf 'type = internal\nwaits-for.d: boot.d\n' > /etc/dinit.d/boot
+# Install OpenRC from Wolfi's own repositories and wire up /sbin/init.
+# Otter's init integration detects OpenRC via /usr/sbin/openrc and execs
+# /usr/sbin/openrc-init when it is PID 1.
+RUN apk add --no-cache openrc \
+    && ln -sf /usr/sbin/openrc-init /sbin/init
 
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh

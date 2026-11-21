@@ -9,6 +9,7 @@ FROM ${IMAGE}
 
 ARG OTTER_BUILD_NUMBER
 LABEL otter.image_build=${OTTER_BUILD_NUMBER}
+ARG TAG
 
 # Pre-create otter dirs
 COPY images/scripts/setup-common.sh /tmp/setup-common.sh
@@ -23,9 +24,14 @@ RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 
-# Upgrade the system, install the requested packages, and perform
-# Apt cleanup in the same layer.
-RUN apt-get update && \
+# The base image already carries all Kali components; they are never
+# stripped here. Nonfree-only packages are added for nonfree tags.
+RUN set -eux; \
+    case "${TAG:-}" in \
+        *-nonfree) extra_packages="unrar intel-media-va-driver-non-free" ;; \
+        *) extra_packages="" ;; \
+    esac; \
+    apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr apt -- \
         bc \
@@ -46,7 +52,6 @@ RUN apt-get update && \
         gnupg \
         gpgsm \
         rsync \
-        unrar \
         unzip \
         xauth \
         dialog \
@@ -133,7 +138,7 @@ RUN apt-get update && \
         gstreamer1.0-plugins-base \
         gstreamer1.0-plugins-good \
         gstreamer1.0-plugins-ugly \
-        intel-media-va-driver-non-free) && \
+        ${extra_packages}) && \
     apt-get update && \
     apt-get upgrade -y && \
     apt-get autoremove -y && \

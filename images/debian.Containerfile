@@ -9,6 +9,7 @@ FROM ${IMAGE}
 
 ARG OTTER_BUILD_NUMBER
 LABEL otter.image_build=${OTTER_BUILD_NUMBER}
+ARG TAG
 
 # Pre-create otter dirs
 COPY images/scripts/setup-common.sh /tmp/setup-common.sh
@@ -20,14 +21,24 @@ RUN touch /usr/lib/otter/container.debian
 # Re-enable locale and docs
 RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
 
-# Enable non-free and contrib repos
-RUN sed -i 's/Components: main/Components: main contrib non-free non-free-firmware/' /etc/apt/sources.list.d/debian.sources
+# Nonfree builds add contrib/non-free/non-free-firmware; free builds leave
+# the base image's component list untouched.
+RUN case "${TAG:-}" in \
+        *-nonfree) \
+            sed -i 's/Components: main/Components: main contrib non-free non-free-firmware/' /etc/apt/sources.list.d/debian.sources; \
+            ;; \
+    esac
 
 # Upgrade all packages, install the complete package set, perform
 # Apt cleanup, and remove Apt/filesystem caches before this layer
 # is committed.
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
-RUN apt-get update && \
+RUN set -eux; \
+    case "${TAG:-}" in \
+        *-nonfree) extra_packages="unrar intel-media-va-driver-non-free" ;; \
+        *) extra_packages="" ;; \
+    esac; \
+    apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr apt -- \
         bc \
@@ -47,7 +58,6 @@ RUN apt-get update && \
         bzip2 \
         gnupg \
         gpgsm \
-        unrar \
         rsync \
         unzip \
         xauth \
@@ -117,7 +127,7 @@ RUN apt-get update && \
         gstreamer1.0-plugins-base \
         gstreamer1.0-plugins-good \
         gstreamer1.0-plugins-ugly \
-        intel-media-va-driver-non-free) && \
+        ${extra_packages}) && \
     apt-get update && \
     apt-get upgrade -y && \
     apt-get autoremove -y && \

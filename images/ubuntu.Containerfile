@@ -9,6 +9,7 @@ FROM ${IMAGE}
 
 ARG OTTER_BUILD_NUMBER
 LABEL otter.image_build=${OTTER_BUILD_NUMBER}
+ARG TAG
 
 # Pre-create otter dirs
 COPY images/scripts/setup-common.sh /tmp/setup-common.sh
@@ -20,15 +21,24 @@ RUN touch /usr/lib/otter/container.ubuntu
 # Re-enable locale and docs
 RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
 
-# Accept microsoft fonts eula
-RUN echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections
+# Accept the Microsoft fonts EULA for nonfree builds only.
+RUN case "${TAG:-}" in \
+        *-nonfree) \
+            echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections; \
+            ;; \
+    esac
 
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 
 # Upgrade the system, install the requested packages, and clean
 # APT metadata/cache in the same layer.
-RUN apt-get update && \
+RUN set -eux; \
+    case "${TAG:-}" in \
+        *-nonfree) extra_packages="ubuntu-restricted-extras ubuntu-restricted-addons gstreamer1.0-plugins-ugly" ;; \
+        *) extra_packages="" ;; \
+    esac; \
+    apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr apt -- \
         bc \
@@ -105,11 +115,9 @@ RUN apt-get update && \
         mesa-vulkan-drivers \
         gstreamer1.0-pipewire \
         gstreamer1.0-plugins-bad \
-        ubuntu-restricted-extras \
-        ubuntu-restricted-addons \
         gstreamer1.0-plugins-base \
         gstreamer1.0-plugins-good \
-        gstreamer1.0-plugins-ugly) && \
+        ${extra_packages}) && \
     apt-get update && \
     apt-get upgrade -y && \
     apt-get autoremove -y && \

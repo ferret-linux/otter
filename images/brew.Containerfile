@@ -4,12 +4,10 @@
 #    https://github.com/ferret-linux/otter
 # Copyright (C) 2026 otter contributors
 
-# No hardcoded base -- IMAGE is supplied by the build pipeline, same
-# convention as nix.Containerfile. Expected value: debian:stable-slim
-# (Debian's floating stable pointer, not a pinned point release --
-# rides forward automatically the same way nixpkgs-unstable does for
-# the Nix image). Homebrew's own official homebrew/brew image is
-# Ubuntu-based, but Debian slim satisfies the same actual
+# No hardcoded base -- IMAGE is supplied by the build pipeline.
+# Expected value: debian:stable-slim (Debian's floating stable pointer,
+# not a pinned point release). Homebrew's own official homebrew/brew
+# image is Ubuntu-based, but Debian slim satisfies the same actual
 # requirement (glibc, bash, a real $HOME) with a smaller, more
 # predictable base -- see project notes for the full rationale.
 ARG IMAGE
