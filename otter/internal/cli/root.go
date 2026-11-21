@@ -16,6 +16,7 @@ import (
 	"github.com/ferret-linux/otter/pkg/config"
 	"github.com/ferret-linux/otter/pkg/containermanager"
 	"github.com/ferret-linux/otter/pkg/containermanager/providers"
+	"github.com/ferret-linux/otter/pkg/registry"
 	"github.com/ferret-linux/otter/pkg/rootcheck"
 	"github.com/ferret-linux/otter/pkg/ui"
 )
@@ -72,6 +73,10 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 		Commands: subcommands(cfg),
 		ExitErrHandler: func(_ context.Context, _ *cli.Command, err error) {
 			if err == nil {
+				return
+			}
+			if errors.Is(err, registry.ErrUnreliableUnavailable) {
+				ui.DefaultLogger.Error(registry.ErrUnreliableUnavailable.Error())
 				return
 			}
 			ui.DefaultLogger.Error(err)

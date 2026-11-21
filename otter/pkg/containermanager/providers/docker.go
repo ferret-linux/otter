@@ -175,6 +175,10 @@ func (d *Docker) makeCreateCommand(
 	gpu := opts.GPU
 	memory := opts.Memory
 	cpuThreads := opts.CPUThreads
+	imageVariant := opts.ImageVariant
+	if imageVariant == "" {
+		imageVariant = "generic"
+	}
 	unshareDevsys := opts.UnshareDevsys
 	unshareGroups := opts.UnshareGroups
 	unshareIPC := opts.UnshareIPC
@@ -278,6 +282,7 @@ func (d *Docker) makeCreateCommand(
 	)
 	options = append(options, "--env", fmt.Sprintf("CONTAINER_ID=%s", containerName))
 	options = append(options, "--env", fmt.Sprintf("OTTER_HOST_UID=%s", containerUserUID))
+	options = append(options, "--env", fmt.Sprintf("OTTER_IMAGE_VARIANT=%s", imageVariant))
 	options = append(options, "--volume", "/tmp:/tmp"+containermanager.BindPropagation())
 	options = append(options, "--volume", fmt.Sprintf("%s:%s", otterExportPath, "/usr/lib/otter/scripts/otter-export:ro"))
 	options = append(

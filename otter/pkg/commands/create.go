@@ -132,10 +132,11 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 		return nil, fmt.Errorf("cpu-threads validation failed: %w", err)
 	}
 
-	containerImage, imageProps, err := c.makeContainerImage(ctx, &opts)
+	imageResolution, err := c.makeContainerImage(ctx, &opts)
 	if err != nil {
 		return nil, fmt.Errorf("failed to resolve container image: %w", err)
 	}
+	containerImage := imageResolution.Image
 	containerName := c.makeContainerName(&opts, containerImage)
 	opts.ContainerName = containerName
 	containerHostname, err := c.makeContainerHostname(&opts)
@@ -161,6 +162,11 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 			return nil, fmt.Errorf("failed to clone container %s: %w", opts.ContainerClone, err)
 		}
 		containerImage = cloneImage
+		// A clone deliberately overrides any inherited variant identity.
+		imageResolution.Variant = registry.VariantGeneric
+		imageResolution.Family = ""
+		imageResolution.Ours = false
+		imageResolution.Props = nil
 	}
 
 	switch {
@@ -173,8 +179,8 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 		if err := registry.Pull(ctx, c.containerManager, containerImage, opts.ContainerPlatform, c.progress); err != nil {
 			return nil, fmt.Errorf("failed to pull image '%s': %w", containerImage, err)
 		}
-	case imageProps != nil:
-		if err := c.checkImageStaleness(ctx, imageProps, containerImage, opts); err != nil {
+	case imageResolution.Props != nil:
+		if err := c.checkImageStaleness(ctx, imageResolution.Props, containerImage, opts); err != nil {
 			return nil, err
 		}
 	}
@@ -212,6 +218,7 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 			NoUsernsLimit:             opts.NoUsernsLimit,
 			Memory:                    opts.Memory,
 			CPUThreads:                opts.CPUThreads,
+			ImageVariant:              imageResolution.Variant,
 			ScriptsDir:                c.cfg.ScriptsDir,
 		},
 	)
@@ -373,31 +380,32 @@ func (c *CreateCommand) makeContainerShell(opts *CreateOptions) string {
 	}
 }
 
-// Determine right containerImage to use
-//
-// If no clone option and no container image, let's choose a default image to use.
-func (c *CreateCommand) makeContainerImage(ctx context.Context, opts *CreateOptions) (string, *registry.ImagesProperties, error) {
-	containerImage := opts.ContainerImage
-	if opts.ContainerClone == "" && containerImage == "" {
-		containerImage = c.cfg.DefaultContainerImage
-	}
-	if containerImage != "" && opts.ContainerClone == "" {
-		if strings.ContainsAny(containerImage, "/:") {
-			return containerImage, nil, nil
-		}
-		props, err := registry.Fetch(ctx)
-		if err != nil {
-			return "", nil, fmt.Errorf("failed to fetch registry properties: %w", err)
-		}
-		resolved, err := registry.Resolve(props, containerImage)
-		if err != nil {
-			return "", nil, fmt.Errorf("failed to resolve image '%s': %w", containerImage, err)
-		}
-		containerImage = resolved
-		return containerImage, props, nil
+// makeContainerImage resolves the effective image before deciding whether it
+// is ours or generic. The default image goes through the same path as an
+// explicit --image, so a full non-ours ref is correctly treated as generic.
+func (c *CreateCommand) makeContainerImage(ctx context.Context, opts *CreateOptions) (*registry.ResolveResult, error) {
+	effective := opts.ContainerImage
+	if opts.ContainerClone == "" && effective == "" {
+		effective = c.cfg.DefaultContainerImage
 	}
 
-	return containerImage, nil, nil
+	if opts.ContainerClone != "" || effective == "" {
+		return &registry.ResolveResult{
+			Image:    effective,
+			Variant:  registry.VariantGeneric,
+			Reliable: true,
+		}, nil
+	}
+
+	props, err := registry.Fetch(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch registry properties: %w", err)
+	}
+	res, err := registry.ResolveEntry(props, effective)
+	if err != nil {
+		return nil, fmt.Errorf("failed to resolve image '%s': %w", effective, err)
+	}
+	return &res, nil
 }
 
 // checkImageStaleness compares the locally present image against the latest

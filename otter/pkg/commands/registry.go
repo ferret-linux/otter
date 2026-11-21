@@ -268,6 +268,9 @@ func sortedEntries(images []registry.ImageEntry, all bool) []registry.ImageEntry
 	}
 
 	slices.SortFunc(entries, func(a, b registry.ImageEntry) int {
+		if byFamily := strings.Compare(familyLabel(a), familyLabel(b)); byFamily != 0 {
+			return byFamily
+		}
 		byLen := len(a.Name) - len(b.Name)
 		if byLen != 0 {
 			return byLen
@@ -275,6 +278,13 @@ func sortedEntries(images []registry.ImageEntry, all bool) []registry.ImageEntry
 		return strings.Compare(a.Name, b.Name)
 	})
 	return entries
+}
+
+func familyLabel(entry registry.ImageEntry) string {
+	if entry.Family == "" {
+		return "-"
+	}
+	return entry.Family
 }
 
 // registryList renders a table of available images from props.
@@ -289,14 +299,21 @@ func sortedEntries(images []registry.ImageEntry, all bool) []registry.ImageEntry
 func registryList(ctx context.Context, cm containermanager.ContainerManager, props *registry.ImagesProperties, all bool) {
 	var t *ui.Table
 	if all {
-		t = ui.NewTable(os.Stdout, "NAME", "ARCH", "STATUS", "BUILT", "LOCAL", "SIZE", "IMAGE")
+		t = ui.NewTable(os.Stdout, "FAMILY", "NAME", "ARCH", "STATUS", "BUILT", "LOCAL", "SIZE", "IMAGE")
 	} else {
-		t = ui.NewTable(os.Stdout, "NAME", "LOCAL", "SIZE")
+		t = ui.NewTable(os.Stdout, "FAMILY", "NAME", "LOCAL", "SIZE")
 	}
 
 	entries := sortedEntries(props.Images, all)
+	lastFamily := ""
 
 	for _, entry := range entries {
+		family := familyLabel(entry)
+		if lastFamily != "" && family != lastFamily {
+			t.AddSeparator()
+		}
+		lastFamily = family
+
 		status := "enabled"
 		statusColor := ui.Green
 		imageRef := entry.OfficialImage
@@ -323,13 +340,13 @@ func registryList(ctx context.Context, cm containermanager.ContainerManager, pro
 
 		if all {
 			t.AddRow(
-				[]string{entry.Name, arch, status, relativeTime(entry.BuiltAt), local, size, imageRef},
-				[]func(string) string{ui.Teal, ui.Dim, statusColor, ui.Dim, localColor, ui.Dim, ui.Dim},
+				[]string{family, entry.Name, arch, status, relativeTime(entry.BuiltAt), local, size, imageRef},
+				[]func(string) string{ui.Dim, ui.Teal, ui.Dim, statusColor, ui.Dim, localColor, ui.Dim, ui.Dim},
 			)
 		} else {
 			t.AddRow(
-				[]string{entry.Name, local, size},
-				[]func(string) string{ui.Teal, localColor, ui.Dim},
+				[]string{family, entry.Name, local, size},
+				[]func(string) string{ui.Dim, ui.Teal, localColor, ui.Dim},
 			)
 		}
 	}
@@ -348,15 +365,18 @@ func registryListJSON(
 	all bool,
 ) error {
 	type registryEntryJSON struct {
-		Name         string   `json:"name"`
-		Architecture []string `json:"architecture"`
-		Enabled      bool     `json:"enabled"`
-		BuiltAt      string   `json:"built_at"`
-		Pulled       bool     `json:"pulled"`
-		Staleness    string   `json:"staleness,omitempty"`
-		BehindCount  int      `json:"behind_count,omitempty"`
-		Size         int64    `json:"size,omitempty"`
-		Image        string   `json:"image"`
+		Name               string   `json:"name"`
+		Family             string   `json:"family"`
+		ImageVariant       string   `json:"image_variant"`
+		IsReliableFallback bool     `json:"is_reliable_fallback"`
+		Architecture       []string `json:"architecture"`
+		Enabled            bool     `json:"enabled"`
+		BuiltAt            string   `json:"built_at"`
+		Pulled             bool     `json:"pulled"`
+		Staleness          string   `json:"staleness,omitempty"`
+		BehindCount        int      `json:"behind_count,omitempty"`
+		Size               int64    `json:"size,omitempty"`
+		Image              string   `json:"image"`
 	}
 
 	out := make([]registryEntryJSON, 0, len(props.Images))
@@ -367,11 +387,14 @@ func registryListJSON(
 		}
 
 		row := registryEntryJSON{
-			Name:         entry.Name,
-			Architecture: entry.Architecture,
-			Enabled:      entry.Enabled,
-			BuiltAt:      entry.BuiltAt,
-			Image:        ui.TrimImageRef(imageRef),
+			Name:               entry.Name,
+			Family:             familyLabel(entry),
+			ImageVariant:       entry.ImageVariant,
+			IsReliableFallback: entry.IsReliableFallback,
+			Architecture:       entry.Architecture,
+			Enabled:            entry.Enabled,
+			BuiltAt:            entry.BuiltAt,
+			Image:              ui.TrimImageRef(imageRef),
 		}
 
 		if entry.Enabled {

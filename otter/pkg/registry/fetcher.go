@@ -21,6 +21,9 @@ type ImageEntry struct {
 	Name                string               `json:"name"`
 	OfficialImage       string               `json:"official_image"`
 	FallbackVendorImage string               `json:"fallback_vendor_image"`
+	Family              string               `json:"family"`
+	ImageVariant        string               `json:"image_variant"`
+	IsReliableFallback  bool                 `json:"is_reliable_fallback"`
 	Architecture        []string             `json:"architecture"`
 	Enabled             bool                 `json:"enabled"`
 	BuiltAt             string               `json:"built_at"`
