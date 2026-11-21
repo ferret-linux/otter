@@ -12,8 +12,9 @@ ARG IMAGE
 # the final image the binaries will run in.
 FROM ${IMAGE} AS dinit-builder
 RUN apk update && apk add --no-cache build-base git curl m4
-RUN DINIT_TAG=$(curl -fsSL https://api.github.com/repos/davmac314/dinit/releases/latest | grep '"tag_name"' | head -1 | cut -d'"' -f4); \
-    if [ -z "${DINIT_TAG}" ]; then DINIT_TAG="v0.22.1"; fi; \
+RUN DINIT_TAGS_JSON=$(curl -fsSL https://api.github.com/repos/davmac314/dinit/tags); \
+    DINIT_TAG=$(printf '%s' "${DINIT_TAGS_JSON}" | grep -m1 '"name"' | cut -d'"' -f4); \
+    if [ -z "${DINIT_TAG}" ]; then DINIT_TAG="v0.23.0"; fi; \
     echo "Building dinit ${DINIT_TAG}"; \
     git clone --branch "${DINIT_TAG}" --depth 1 https://github.com/davmac314/dinit /usr/src/dinit
 WORKDIR /usr/src/dinit
@@ -59,6 +60,8 @@ RUN apk update && \
     apk add wolfi-base && \
     apk update && \
     apk upgrade -Ua && \
+    PYTHON_PKG="$(apk search python 2>/dev/null | grep -E '^python-3\.[0-9]+-[0-9]' | cut -d- -f1,2 | sort -Vu | tail -n1)"; \
+    test -n "${PYTHON_PKG}" || { echo "ERROR: no python-3.X package found in Wolfi repos" >&2; exit 1; }; \
     apk add --force-overwrite $(sh /tmp/pkg-validator.sh --pkgmgr apk -- \
         bc \
         xz \
@@ -95,7 +98,7 @@ RUN apk update && \
         findmnt \
         iputils \
         ncurses \
-        python3 \
+        ${PYTHON_PKG} \
         tcpdump \
         wayland \
         xwayland \
@@ -143,8 +146,8 @@ RUN apk update && \
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
     && echo "UTC" > /etc/timezone
 
-# Ensure a python3 binary is resolvable (Wolfi ships versioned
-# python3.X only, no unversioned symlink)
+# Safety net: ensure a python3 binary is resolvable. Wolfi's versioned
+# python-3.X packages normally provide /usr/bin/python3 already.
 COPY images/scripts/python-fix.sh /tmp/python-fix.sh
 RUN sh /tmp/python-fix.sh
 

@@ -24,9 +24,28 @@ RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf 2>/dev/null || true
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 
 # Enable RPM Fusion Free and Nonfree repositories.
-RUN dnf install -y \
-        https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
-        https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
+# Rawhide has no published mirrors.rpmfusion.org/*-release-<ver>.noarch.rpm,
+# so bootstrap the official release RPMs from RPM Fusion's own Rawhide
+# repos instead. Keys are imported first so the bootstrap stays GPG-verified;
+# no hardcoded release version, and $(uname -m) covers both CI arches.
+RUN set -eux; \
+    if grep -q '^RELEASE_TYPE=development' /etc/os-release; then \
+        curl -fsSLo /tmp/rpmfusion-free.key \
+            https://raw.githubusercontent.com/rpmfusion/rpmfusion-free-release/master/RPM-GPG-KEY-rpmfusion-free-fedora-2020; \
+        curl -fsSLo /tmp/rpmfusion-nonfree.key \
+            https://raw.githubusercontent.com/rpmfusion/rpmfusion-nonfree-release/master/RPM-GPG-KEY-rpmfusion-nonfree-fedora-2020; \
+        rpm --import /tmp/rpmfusion-free.key /tmp/rpmfusion-nonfree.key; \
+        arch="$(uname -m)"; \
+        dnf \
+            --repofrompath=rfboot-free,https://download1.rpmfusion.org/free/fedora/development/rawhide/Everything/${arch}/os \
+            --repofrompath=rfboot-nonfree,https://download1.rpmfusion.org/nonfree/fedora/development/rawhide/Everything/${arch}/os \
+            install -y rpmfusion-free-release rpmfusion-nonfree-release; \
+        rm -f /tmp/rpmfusion-free.key /tmp/rpmfusion-nonfree.key; \
+    else \
+        dnf install -y \
+            https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
+            https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm; \
+    fi; \
     dnf upgrade -y && \
     dnf autoremove -y && \
     dnf clean all && \
