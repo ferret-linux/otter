@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -16,11 +16,21 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorOutlinedIcon from '@mui/icons-material/ErrorOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { normalizeRegistryEntries } from '../types';
 import type { DataContainer, RegistryEntry } from '../types';
 import { imageBase, prettyName } from '../distros';
 import PageHeader from '../components/PageHeader';
 import { useNotifications } from '../notifications';
 import useOtterEvents from '../useOtterEvents';
+
+const FAMILY_LABELS: Record<string, string> = {
+  amazonlinux: 'Amazon Linux',
+  opensuse: 'openSUSE',
+};
+
+function familyTitle(family: string): string {
+  return FAMILY_LABELS[family] ?? prettyName(family);
+}
 
 function formatBytes(bytes: number): string {
   if (bytes <= 0) return '—';
@@ -91,7 +101,7 @@ export default function Registry({ search }: RegistryProps) {
       const nonEmpty = (s: string) => s.trim().length > 0;
       const warnings = [reg.stderr, containers.stderr].filter(nonEmpty).join('\n');
       if (warnings) notify('warning', 'otter reported', warnings.trim());
-      setEntries(JSON.parse(reg.stdout) as RegistryEntry[]);
+      setEntries(normalizeRegistryEntries(JSON.parse(reg.stdout)));
       const list = JSON.parse(containers.stdout) as DataContainer[];
       setInUseImages(list.map((c) => imageBase(c.image)));
     } catch (err) {
@@ -131,6 +141,19 @@ export default function Registry({ search }: RegistryProps) {
       )
     : entries;
 
+  const groupedEntries = useMemo(() => {
+    const groups = new Map<string, RegistryEntry[]>();
+    for (const entry of filteredEntries) {
+      const family = entry.family.trim() || 'other';
+      const group = groups.get(family);
+      if (group) group.push(entry);
+      else groups.set(family, [entry]);
+    }
+    return [...groups.entries()].sort(([a], [b]) =>
+      familyTitle(a).localeCompare(familyTitle(b)),
+    );
+  }, [filteredEntries]);
+
   return (
     <Box>
       <PageHeader
@@ -151,149 +174,160 @@ export default function Registry({ search }: RegistryProps) {
           gap: 2,
         }}
       >
-        {filteredEntries.map((entry) => {
-          const chip = stalenessChip(entry);
-          const inUse = inUseImages.includes(imageBase(entry.image));
-          const pulled = entry.pulled;
-          const stale = entry.staleness;
-          const isBusy = busy?.name === entry.name;
-
-          let syncLabel: string;
-          let syncIcon: ReactNode = <DownloadIcon fontSize="small" />;
-          let syncDisabled = false;
-          let syncTooltip = `Pull ${prettyName(entry.name)}`;
-          if (stale === 'behind' && pulled) {
-            syncLabel = 'Refresh';
-            syncIcon = <RefreshIcon fontSize="small" />;
-            syncTooltip = 'Update to the latest build';
-          } else if (stale === 'current') {
-            syncLabel = 'Up to date';
-            syncDisabled = true;
-            syncTooltip = 'Image is already up to date';
-          } else if (stale === 'ahead') {
-            syncLabel = 'Ahead';
-            syncDisabled = true;
-            syncTooltip = 'Pulled image is ahead of the registry';
-          } else {
-            syncLabel = 'Pull';
-          }
-
-          let statusLabel = chip.label;
-          let statusColor = chip.color;
-          if (isBusy) {
-            if (busy?.action === 'pull') {
-              statusLabel = stale === 'behind' && pulled ? 'Refreshing' : 'Pulling';
-              statusColor = 'info';
-            } else {
-              statusLabel = 'Removing';
-              statusColor = 'error';
-            }
-          }
-
-          const removeDisabled = isBusy || !pulled || inUse;
-          const removeTooltip = inUse
-            ? 'Image is in use by a container'
-            : !pulled
-              ? 'Image is not pulled'
-              : `Remove ${prettyName(entry.name)}`;
-
-          return (
-            <Card
-              key={entry.name}
-              variant="outlined"
-              sx={{ display: 'flex', alignItems: 'stretch', minHeight: 168 }}
+        {groupedEntries.map(([family, familyEntries]) => (
+          <Box key={family} sx={{ display: 'contents' }}>
+            <Typography
+              variant="subtitle2"
+              component="h3"
+              sx={{ gridColumn: '1 / -1', mt: 1, color: 'text.secondary' }}
             >
-              <CardContent sx={{ flexGrow: 1, minWidth: 0 }}>
-                <Stack direction="row" sx={{ alignItems: 'center', gap: 1 }}>
-                  {isBusy ? (
-                    <CircularProgress size={20} />
-                  ) : chip.color === 'success' ? (
-                    <CheckCircleIcon sx={{ color: 'success.main', fontSize: 20 }} />
-                  ) : chip.color === 'error' ? (
-                    <ErrorOutlinedIcon sx={{ color: 'error.main', fontSize: 20 }} />
-                  ) : null}
-                  <Typography variant="h6" component="h2" sx={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {prettyName(entry.name)}
-                  </Typography>
-                  <Chip label={statusLabel} color={statusColor} variant="outlined" size="small" />
-                  {inUse && (
-                    <Tooltip title="In use by a container">
-                      <Chip
-                        icon={<LockOutlinedIcon />}
-                        label="In use"
-                        size="small"
-                        variant="outlined"
-                        sx={{ ml: 'auto' }}
-                      />
-                    </Tooltip>
-                  )}
-                </Stack>
+              {familyTitle(family)}
+            </Typography>
+            {familyEntries.map((entry) => {
+              const chip = stalenessChip(entry);
+              const inUse = inUseImages.includes(imageBase(entry.image));
+              const pulled = entry.pulled;
+              const stale = entry.staleness;
+              const isBusy = busy?.name === entry.name;
 
-                <Typography
-                  variant="body2"
-                  component="div"
-                  color="text.secondary"
-                  sx={{ fontFamily: 'monospace', mt: 0.5 }}
+              let syncLabel: string;
+              let syncIcon: ReactNode = <DownloadIcon fontSize="small" />;
+              let syncDisabled = false;
+              let syncTooltip = `Pull ${prettyName(entry.name)}`;
+              if (stale === 'behind' && pulled) {
+                syncLabel = 'Refresh';
+                syncIcon = <RefreshIcon fontSize="small" />;
+                syncTooltip = 'Update to the latest build';
+              } else if (stale === 'current') {
+                syncLabel = 'Up to date';
+                syncDisabled = true;
+                syncTooltip = 'Image is already up to date';
+              } else if (stale === 'ahead') {
+                syncLabel = 'Ahead';
+                syncDisabled = true;
+                syncTooltip = 'Pulled image is ahead of the registry';
+              } else {
+                syncLabel = 'Pull';
+              }
+
+              let statusLabel = chip.label;
+              let statusColor = chip.color;
+              if (isBusy) {
+                if (busy?.action === 'pull') {
+                  statusLabel = stale === 'behind' && pulled ? 'Refreshing' : 'Pulling';
+                  statusColor = 'info';
+                } else {
+                  statusLabel = 'Removing';
+                  statusColor = 'error';
+                }
+              }
+
+              const removeDisabled = isBusy || !pulled || inUse;
+              const removeTooltip = inUse
+                ? 'Image is in use by a container'
+                : !pulled
+                  ? 'Image is not pulled'
+                  : `Remove ${prettyName(entry.name)}`;
+
+              return (
+                <Card
+                  key={entry.name}
+                  variant="outlined"
+                  sx={{ display: 'flex', alignItems: 'stretch', minHeight: 168 }}
                 >
-                  {entry.image}
-                </Typography>
+                  <CardContent sx={{ flexGrow: 1, minWidth: 0 }}>
+                    <Stack direction="row" sx={{ alignItems: 'center', gap: 1 }}>
+                      {isBusy ? (
+                        <CircularProgress size={20} />
+                      ) : chip.color === 'success' ? (
+                        <CheckCircleIcon sx={{ color: 'success.main', fontSize: 20 }} />
+                      ) : chip.color === 'error' ? (
+                        <ErrorOutlinedIcon sx={{ color: 'error.main', fontSize: 20 }} />
+                      ) : null}
+                      <Typography variant="h6" component="h2" sx={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {prettyName(entry.name)}
+                      </Typography>
+                      <Chip label={statusLabel} color={statusColor} variant="outlined" size="small" />
+                      {inUse && (
+                        <Tooltip title="In use by a container">
+                          <Chip
+                            icon={<LockOutlinedIcon />}
+                            label="In use"
+                            size="small"
+                            variant="outlined"
+                            sx={{ ml: 'auto' }}
+                          />
+                        </Tooltip>
+                      )}
+                    </Stack>
 
-                <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: 'wrap', mt: 1 }}>
-                  {entry.architecture.map((arch) => (
-                    <Chip key={arch} label={arch} size="small" variant="outlined" />
-                  ))}
-                </Stack>
-
-                <Stack direction="row" spacing={3} sx={{ mt: 1.5, color: 'text.secondary' }}>
-                  <span>{formatBytes(entry.size ?? 0)}</span>
-                  <span>Built {relativeTime(entry.built_at)}</span>
-                </Stack>
-              </CardContent>
-
-              <Stack
-                sx={{
-                  justifyContent: 'center',
-                  px: 1.5,
-                  borderLeft: 1,
-                  borderColor: 'divider',
-                  gap: 1,
-                }}
-              >
-                <Tooltip title={syncTooltip}>
-                  <span>
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      fullWidth
-                      startIcon={syncIcon}
-                      disabled={syncDisabled || isBusy}
-                      onClick={() => void run(entry.name, 'pull', ['reg', 'pull', entry.name])}
-                      sx={{ justifyContent: 'flex-start' }}
+                    <Typography
+                      variant="body2"
+                      component="div"
+                      color="text.secondary"
+                      sx={{ fontFamily: 'monospace', mt: 0.5 }}
                     >
-                      {syncLabel}
-                    </Button>
-                  </span>
-                </Tooltip>
-                <Tooltip title={removeTooltip}>
-                  <span>
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      color="error"
-                      fullWidth
-                      startIcon={<DeleteOutlinedIcon fontSize="small" />}
-                      disabled={removeDisabled}
-                      onClick={() => void run(entry.name, 'remove', ['reg', 'remove', entry.name])}
-                      sx={{ justifyContent: 'flex-start' }}
-                    >
-                      Remove
-                    </Button>
-                  </span>
-                </Tooltip>
-              </Stack>
-            </Card>
-          );
-        })}
+                      {entry.image}
+                    </Typography>
+
+                    <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: 'wrap', mt: 1 }}>
+                      {entry.architecture.map((arch) => (
+                        <Chip key={arch} label={arch} size="small" variant="outlined" />
+                      ))}
+                    </Stack>
+
+                    <Stack direction="row" spacing={3} sx={{ mt: 1.5, color: 'text.secondary' }}>
+                      <span>{formatBytes(entry.size ?? 0)}</span>
+                      <span>Built {relativeTime(entry.built_at)}</span>
+                    </Stack>
+                  </CardContent>
+
+                  <Stack
+                    sx={{
+                      justifyContent: 'center',
+                      px: 1.5,
+                      borderLeft: 1,
+                      borderColor: 'divider',
+                      gap: 1,
+                    }}
+                  >
+                    <Tooltip title={syncTooltip}>
+                      <span>
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          fullWidth
+                          startIcon={syncIcon}
+                          disabled={syncDisabled || isBusy}
+                          onClick={() => void run(entry.name, 'pull', ['reg', 'pull', entry.name])}
+                          sx={{ justifyContent: 'flex-start' }}
+                        >
+                          {syncLabel}
+                        </Button>
+                      </span>
+                    </Tooltip>
+                    <Tooltip title={removeTooltip}>
+                      <span>
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          color="error"
+                          fullWidth
+                          startIcon={<DeleteOutlinedIcon fontSize="small" />}
+                          disabled={removeDisabled}
+                          onClick={() => void run(entry.name, 'remove', ['reg', 'remove', entry.name])}
+                          sx={{ justifyContent: 'flex-start' }}
+                        >
+                          Remove
+                        </Button>
+                      </span>
+                    </Tooltip>
+                  </Stack>
+                </Card>
+              );
+            })}
+          </Box>
+        ))}
       </Box>
 
       {!loading && entries.length > 0 && q && filteredEntries.length === 0 && (
