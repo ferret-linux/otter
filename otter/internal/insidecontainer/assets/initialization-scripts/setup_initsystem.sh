@@ -635,26 +635,19 @@ EOF
 	fi
 }
 
-# setup_init_dinit handles dinit (Chimera Linux, and Wolfi's from-source
-# build - dinit is not distro-specific, so detection is by binary
-# existence, same as the other three non-systemd inits). On both, the real
-# binary lives at /usr/bin/dinit (Chimera: cports' own Packaging.md states
-# "/usr/sbin, /bin and /sbin are symbolic links to the primary /usr/bin
-# path and should never be present in packages", i.e. full usr-merge by
-# policy; Wolfi: its Containerfile builds vanilla dinit from source and
-# does "ln -sf /usr/bin/dinit /sbin/init" directly) - /usr/sbin and /sbin
-# are still checked for defensiveness, matching the systemd/openrc/runit
-# precedent, since dinit itself is not tied to either distro's layout.
+# setup_init_dinit handles dinit (currently only Chimera Linux). Detection
+# is by binary existence, same as the other non-systemd inits. Chimera's
+# cports Packaging.md states "/usr/sbin, /bin and /sbin are symbolic links
+# to the primary /usr/bin path and should never be present in packages",
+# i.e. full usr-merge by policy; /usr/sbin and /sbin are still checked for
+# defensiveness, matching the systemd/openrc/runit precedent.
 # User-session integration is a "scripted" (run-once) dinit service,
 # enabled the same static pre-boot way as OpenRC/sysvinit/runit: a symlink
 # into /etc/dinit.d/boot.d (Chimera's own service docs, verbatim: "What
 # this does is simply create a symlink in /etc/dinit.d/boot.d" - this is
 # the documented, generic dinit enablement mechanism, not Chimera-specific
 # tooling). The boot.d directory's existence is only checked, never
-# created - on Chimera dinit-chimera already provides it; a from-scratch
-# dinit setup (e.g. today's Wolfi image) has no "boot" service at all yet,
-# which is a separate, already-flagged gap to be fixed in the Containerfile
-# itself, not papered over here.
+# created - on Chimera dinit-chimera already provides it.
 # Readiness is polled via "dinitctl status boot", empirically verified
 # against a real dinit build (cloned and built davmac314/dinit from source
 # in a sandbox, ran it against a live service tree matching this design):
