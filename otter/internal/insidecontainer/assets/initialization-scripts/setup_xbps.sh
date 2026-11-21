@@ -29,7 +29,7 @@ EOF
 #   upgrade: if we need to upgrade or not
 #   container_additional_packages: additional packages to install during this phase
 # Expected env variables:
-#   None
+#   OTTER_IMAGE_VARIANT: internal variant identity (generic/free/nonfree)
 # Outputs:
 #   None
 setup_xbps()
@@ -55,8 +55,16 @@ setup_xbps()
 		esac
 		if ! xbps-install -Sy "${shell_pkg}"; then
 			shell_bin="bash"
+			shell_pkg="bash"
 		fi
-		xbps-install -Sy void-repo-nonfree
+
+		# Additive only: nonfree enables Void's nonfree repository on top of
+		# the vendor's own components. Never remove existing repositories.
+		# shellcheck disable=SC2154 # exported by otter-init
+		if [ "${OTTER_IMAGE_VARIANT:-generic}" = "nonfree" ]; then
+			xbps-install -Sy void-repo-nonfree
+		fi
+
 		deps="
 			bc
 			xz

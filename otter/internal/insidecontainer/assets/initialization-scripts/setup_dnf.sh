@@ -5,7 +5,7 @@
 #   upgrade: if we need to upgrade or not
 #   container_additional_packages: additional packages to install during this phase
 # Expected env variables:
-#   None
+#   OTTER_IMAGE_VARIANT: internal variant identity (generic/free/nonfree/negativo17)
 # Outputs:
 #   None
 setup_dnf()
@@ -41,22 +41,19 @@ setup_dnf()
 		if [ "${manager}" = "dnf" ]; then
 			flags="--allowerasing"
 		fi
+
+		# Variants are additive: generic/free only use the vendor's own
+		# repositories. nonfree and negativo17 add multimedia repositories.
 		distro_id="$(get_distro_id)"
 		case "${distro_id}" in
 			fedora | alma | centos | ol | rocky)
-				if [ "${distro_id}" = "fedora" ]; then
-					${manager} install -y \
-						dnf5-plugins \
-						"https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" \
-						"https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm" 2> /dev/null || :
-					${manager} config-manager setopt fedora-cisco-openh264.enabled=1 2> /dev/null || :
-				else
-					${manager} install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm" 2> /dev/null || :
-					${manager} install -y \
-						"https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm" \
-						"https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm" 2> /dev/null || :
-				fi
-				distro_deps="
+				base_deps="
+					gstreamer1-plugins-base
+					gstreamer1-plugins-good
+					gstreamer1-plugins-bad-free
+					xorg-x11-server-Xwayland
+				"
+				nonfree_deps="
 					ffmpeg
 					fdk-aac
 					libaacs
@@ -66,19 +63,23 @@ setup_dnf()
 					pipewire-codec-aptx
 					libavcodec-freeworld
 					xpra-codecs-freeworld
-					gstreamer1-plugins-base
-					gstreamer1-plugins-good
 					gstreamer1-plugins-ugly
-					xorg-x11-server-Xwayland
 					mesa-va-drivers-freeworld
 					mesa-vulkan-drivers-freeworld
 					gstreamer1-plugins-bad-freeworld
+				"
+				negativo17_deps="
+					ffmpeg
+					mesa-libva
+					libvdpau-va-gl
+					gstreamer1-plugins-ugly
+					xorg-x11-server-Xwayland
 				"
 				;;
 			rhel)
 			# RHEL doesnt support adding non-free packages unless you have active subscription
 			# the UBI images have small repos by default so we are not gonna add all the packages
-				distro_deps="
+				base_deps="
 					lame
 					opus
 					x264
@@ -86,10 +87,12 @@ setup_dnf()
 					gstreamer1
 					wireplumber
 				"
+				nonfree_deps=""
+				negativo17_deps=""
 				;;
 			amzn)
 				${manager} install -y spal-release
-				distro_deps="
+				base_deps="
 					libXi
 					libva
 					libX11
@@ -125,6 +128,8 @@ setup_dnf()
 					xorg-x11-server-Xwayland
 					gstreamer1-plugins-bad-free
 				"
+				nonfree_deps=""
+				negativo17_deps=""
 				;;
 			*)
 				printf "Error: unsupported dnf-based distro '%s'.\n" "${distro_id}"
@@ -132,6 +137,40 @@ setup_dnf()
 				exit 127
 				;;
 		esac
+
+		variant="${OTTER_IMAGE_VARIANT:-generic}"
+		case "${variant}" in
+			nonfree)
+				if [ "${distro_id}" = "fedora" ]; then
+					${manager} install -y \
+						dnf5-plugins \
+						"https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" \
+						"https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm" 2> /dev/null || :
+					${manager} config-manager setopt fedora-cisco-openh264.enabled=1 2> /dev/null || :
+				else
+					${manager} install -y "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm" 2> /dev/null || :
+					${manager} install -y \
+						"https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm" \
+						"https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm" 2> /dev/null || :
+				fi
+				distro_deps="${base_deps}
+					${nonfree_deps}"
+				;;
+			negativo17)
+				if [ "${distro_id}" = "fedora" ]; then
+					${manager} config-manager --add-repo https://negativo17.org/repos/fedora-negativo17.repo 2> /dev/null || :
+				else
+					${manager} install -y "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm" 2> /dev/null || :
+					${manager} config-manager --add-repo https://negativo17.org/repos/epel-negativo17.repo 2> /dev/null || :
+				fi
+				distro_deps="${base_deps}
+					${negativo17_deps}"
+				;;
+			*)
+				distro_deps="${base_deps}"
+				;;
+		esac
+
 		deps="${distro_deps}
 			bc
 			xz
@@ -203,7 +242,7 @@ setup_dnf()
 		# shellcheck disable=SC2086,2046,2248
 		${manager} install ${flags} -y $(${manager} list -q ${deps} |
 			grep -v "Packages" |
-			grep "$(uname -m)" |
+			grep -E "($(uname -m)|noarch)" |
 			cut -d' ' -f1)
 	fi
 
