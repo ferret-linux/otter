@@ -1,0 +1,90 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the otter project:
+#    https://github.com/ferret-linux/otter
+# Copyright (C) 2026 otter contributors
+
+name: ib-regenerate-props (internal)
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: write
+    concurrency:
+      group: otter-props-write-${{ github.ref }}
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Regenerate properties from catalog
+        run: |
+          set -euo pipefail
+
+          jq --slurpfile catalog images/images.json \
+            --slurpfile current images/images-properties.json \
+            '($current[0].images // []) as $old
+             | {
+                 images: [
+                   $catalog[0][] as $c
+                   | ("ghcr.io/ferret-linux/" + $c.name + ":" + $c.tag) as $official
+                   | (($old | map(select(.official_image == $official)) | .[0]) // {}) as $prev
+                   | {
+                       name: $c.display_name,
+                       official_image: $official,
+                       family: $c.family,
+                       image_variant: $c.image_variant,
+                       is_reliable_fallback: $c.is_reliable_fallback,
+                       enabled: $c.enabled,
+                       architecture: $c.arches,
+                       built_at: ($prev.built_at // ""),
+                       sizes: ($prev.sizes // {}),
+                       build_number: ($prev.build_number // 0)
+                     }
+                     + (if $c.is_reliable_fallback then {fallback_vendor_image: $c.image} else {} end)
+                 ]
+               }' > /tmp/images-properties.json.tmp
+
+          mv /tmp/images-properties.json.tmp images/images-properties.json
+
+          jq -e '
+            (.images | length) > 0
+            and ([.images[] | has("family")] | all)
+            and ([.images[] | has("image_variant")] | all)
+            and ([.images[] | has("is_reliable_fallback")] | all)
+            and ([.images[] | select(.is_reliable_fallback == false) | has("fallback_vendor_image")] | all | not)
+          ' images/images-properties.json > /dev/null
+
+      - name: Commit regenerated properties
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          success=0
+          for i in 1 2 3 4 5; do
+            git fetch origin "${{ github.ref_name }}"
+            git checkout -B "${{ github.ref_name }}" "origin/${{ github.ref_name }}"
+
+            git add images/images-properties.json
+            if git diff --cached --quiet; then
+              echo "No changes to commit"
+              success=1
+              break
+            fi
+
+            git commit -m "chore: regenerate images-properties.json from catalog [skip ci]"
+            if git push origin "HEAD:${{ github.ref_name }}"; then
+              success=1
+              break
+            fi
+            echo "Attempt $i/5 failed to push, retrying in 10s..."
+            sleep 10
+          done
+          [ "$success" -eq 1 ] || exit 1
