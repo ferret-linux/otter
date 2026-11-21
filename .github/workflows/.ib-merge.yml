@@ -80,7 +80,7 @@ jobs:
       - name: Verify manifest architectures
         run: |
           expected=$(echo '${{ inputs.arches }}' | jq -r 'unique | sort | join(",")')
-          actual=$(podman manifest inspect docker://ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} \
+          actual=$(podman manifest inspect ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} \
             | jq -r '[.manifests[].platform.architecture] | unique | sort | join(",")')
           echo "expected=$expected actual=$actual"
           [ "$expected" = "$actual" ] || {
