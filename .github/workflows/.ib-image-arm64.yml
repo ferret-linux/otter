@@ -51,10 +51,13 @@ jobs:
       - name: Login to GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
 
+      - name: Install skopeo
+        run: sudo apt-get update && sudo apt-get install -y skopeo
+
       - name: Capture Old Digest
         id: old-digest
         run: |
-          digest=$(podman manifest inspect docker://ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64 2>/dev/null | jq -r '.manifests[0].digest // empty')
+          digest=$(skopeo inspect --format '{{.Digest}}' docker://ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64 2>/dev/null || true)
           echo "digest=$digest" >> $GITHUB_OUTPUT
 
       - name: Pull Base Image
