@@ -27,7 +27,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          jq --slurpfile catalog images/images.json \
+          jq -n --slurpfile catalog images/images.json \
             --slurpfile current images/images-properties.json \
             '($current[0].images // []) as $old
              | {
@@ -49,9 +49,7 @@ jobs:
                      }
                      + (if $c.is_reliable_fallback then {fallback_vendor_image: $c.image} else {} end)
                  ]
-               }' > /tmp/images-properties.json.tmp
-
-          mv /tmp/images-properties.json.tmp images/images-properties.json
+               }' > /tmp/images-properties.generated.json
 
           jq -e '
             (.images | length) > 0
@@ -59,7 +57,7 @@ jobs:
             and ([.images[] | has("image_variant")] | all)
             and ([.images[] | has("is_reliable_fallback")] | all)
             and ([.images[] | select(.is_reliable_fallback == false) | has("fallback_vendor_image")] | all | not)
-          ' images/images-properties.json > /dev/null
+          ' /tmp/images-properties.generated.json > /dev/null
 
       - name: Commit regenerated properties
         run: |
@@ -71,6 +69,7 @@ jobs:
           for i in 1 2 3 4 5; do
             git fetch origin "${{ github.ref_name }}"
             git checkout -B "${{ github.ref_name }}" "origin/${{ github.ref_name }}"
+            cp /tmp/images-properties.generated.json images/images-properties.json
 
             git add images/images-properties.json
             if git diff --cached --quiet; then

@@ -26,6 +26,7 @@ on:
 jobs:
   merge:
     runs-on: ubuntu-26.04
+    timeout-minutes: 30
     permissions:
       contents: read
       packages: write
@@ -72,6 +73,17 @@ jobs:
             sleep 15
           done
           [ "$success" -eq 1 ] || exit 1
+
+      - name: Verify manifest architectures
+        run: |
+          expected=$(echo '${{ inputs.arches }}' | jq -r 'unique | sort | join(",")')
+          actual=$(podman manifest inspect docker://ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} \
+            | jq -r '[.manifests[].platform.architecture] | unique | sort | join(",")')
+          echo "expected=$expected actual=$actual"
+          [ "$expected" = "$actual" ] || {
+            echo "manifest architectures do not match requested arches"
+            exit 1
+          }
 
       - name: Sign
         run: |
