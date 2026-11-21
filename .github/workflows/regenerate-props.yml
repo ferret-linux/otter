@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the otter project:
+#    https://github.com/ferret-linux/otter
+# Copyright (C) 2026 otter contributors
+
+name: 2.Regenerate Properties (RP)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  regenerate-props:
+    uses: ./.github/workflows/.ib-regenerate-props.yml
+    permissions:
+      contents: write
