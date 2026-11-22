@@ -491,31 +491,6 @@
       "fallback_vendor_image": "quay.io/fedora/fedora:latest"
     },
     {
-      "name": "alma-negativo17",
-      "official_image": "ghcr.io/ferret-linux/alma-otr:negativo17",
-      "family": "alma",
-      "image_variant": "negativo17",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T18:33:37Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 577414428,
-          "disk_size": 1784975455
-        },
-        "arm64": {
-          "compressed_size": 542137213,
-          "disk_size": 1717963379
-        }
-      },
-      "build_number": 5,
-      "fallback_vendor_image": "docker.io/library/almalinux:latest"
-    },
-    {
       "name": "rhel",
       "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
       "family": "rhel",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 5,
       "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest"
+    },
+    {
+      "name": "alma-negativo17",
+      "official_image": "ghcr.io/ferret-linux/alma-otr:negativo17",
+      "family": "alma",
+      "image_variant": "negativo17",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T21:57:20Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 577412983,
+          "disk_size": 1784975457
+        },
+        "arm64": {
+          "compressed_size": 542132540,
+          "disk_size": 1717964915
+        }
+      },
+      "build_number": 6,
+      "fallback_vendor_image": "docker.io/library/almalinux:latest"
     }
   ]
 }
