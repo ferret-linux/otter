@@ -38,6 +38,30 @@ show_help()
 EOF
 }
 
+# require_value validates the argument following a value-taking flag.
+# Arguments:
+#   $1: flag name (used in error messages)
+#   $2: number of remaining positional parameters
+#   $3: the value (may be empty)
+#   $4: 1 to also reject an empty value, 0 to allow one
+# Outputs:
+#   Prints an error and exits 1 when the value is absent or, when $4 is
+#   1, empty. Optional flags can legitimately receive an empty value
+#   (the host always passes --pre-init-hooks/--additional-packages).
+require_value()
+{
+	if [ "$2" -lt 2 ]; then
+		printf >&2 "Error: Missing value for '%s'\n\n" "$1"
+		show_help
+		exit 1
+	fi
+	if [ "$4" -eq 1 ] && [ -z "$3" ]; then
+		printf >&2 "Error: Empty value for '%s'\n\n" "$1"
+		show_help
+		exit 1
+	fi
+}
+
 # parse_args parses otter-init's CLI flags, setting the corresponding
 # global variables as a side effect. Calls show_help/exits directly for
 # --help, --version, and invalid flags.
@@ -81,68 +105,52 @@ parse_args()
 				rootful=1
 				;;
 			-n | --name)
-				if [ -n "$2" ]; then
-					# shellcheck disable=SC2034 # consumed by otter-init and helpers/setup_user.sh, helpers/setup_host_mounts.sh after sourcing this file
-					container_user_name="$2"
-					shift
-					shift
-				fi
+				require_value "$1" "$#" "$2" 1
+				# shellcheck disable=SC2034 # consumed by otter-init and helpers/setup_user.sh, helpers/setup_host_mounts.sh after sourcing this file
+				container_user_name="$2"
+				shift 2
 				;;
 			-i | --init)
-				if [ -n "$2" ]; then
-					# shellcheck disable=SC2034 # consumed by otter-init after sourcing this file
-					init="$2"
-					shift
-					shift
-				fi
+				require_value "$1" "$#" "$2" 1
+				# shellcheck disable=SC2034 # consumed by otter-init after sourcing this file
+				init="$2"
+				shift 2
 				;;
 			-d | --home)
-				if [ -n "$2" ]; then
-					# shellcheck disable=SC2034 # consumed by otter-init and helpers/setup_user.sh after sourcing this file
-					container_user_home="$2"
-					shift
-					shift
-				fi
+				require_value "$1" "$#" "$2" 1
+				# shellcheck disable=SC2034 # consumed by otter-init and helpers/setup_user.sh after sourcing this file
+				container_user_home="$2"
+				shift 2
 				;;
 			-u | --user)
-				if [ -n "$2" ]; then
-					# shellcheck disable=SC2034 # consumed by otter-init and helpers/setup_user.sh after sourcing this file
-					container_user_uid="$2"
-					shift
-					shift
-				fi
+				require_value "$1" "$#" "$2" 1
+				# shellcheck disable=SC2034 # consumed by otter-init and helpers/setup_user.sh after sourcing this file
+				container_user_uid="$2"
+				shift 2
 				;;
 			-g | --group)
-				if [ -n "$2" ]; then
-					# shellcheck disable=SC2034 # consumed by otter-init and helpers/setup_user.sh after sourcing this file
-					container_user_gid="$2"
-					shift
-					shift
-				fi
+				require_value "$1" "$#" "$2" 1
+				# shellcheck disable=SC2034 # consumed by otter-init and helpers/setup_user.sh after sourcing this file
+				container_user_gid="$2"
+				shift 2
 				;;
 			--pre-init-hooks)
-				if [ -n "$2" ]; then
-					# shellcheck disable=SC2034 # consumed by otter-init after sourcing this file
-					pre_init_hook="$2"
-				fi
-				shift
-				shift
+				require_value "$1" "$#" "$2" 0
+				# shellcheck disable=SC2034 # consumed by otter-init after sourcing this file
+				pre_init_hook="$2"
+				shift 2
 				;;
 			--additional-packages)
-				if [ -n "$2" ]; then
-					# shellcheck disable=SC2034 # consumed by otter-init after sourcing this file
-					container_additional_packages="$2"
-				fi
-				shift
-				shift
+				require_value "$1" "$#" "$2" 0
+				# shellcheck disable=SC2034 # consumed by otter-init after sourcing this file
+				container_additional_packages="$2"
+				shift 2
 				;;
 			--nvidia)
-				if [ -n "$2" ]; then
-					# shellcheck disable=SC2034 # consumed by otter-init after sourcing this file
-					nvidia="$2"
-					shift
-					shift
-				fi
+				require_value "$1" "$#" "$2" 1
+				# shellcheck disable=SC2034 # consumed by otter-init after sourcing this file
+				nvidia="$2"
+				shift 2
 				;;
 			--)
 				shift
