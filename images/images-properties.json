@@ -865,31 +865,6 @@
       "fallback_vendor_image": "docker.io/library/amazonlinux:latest"
     },
     {
-      "name": "oracle-nonfree",
-      "official_image": "ghcr.io/ferret-linux/oracle-otr:nonfree",
-      "family": "oracle",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T18:34:59Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 621996644,
-          "disk_size": 1908281176
-        },
-        "arm64": {
-          "compressed_size": 568265094,
-          "disk_size": 1750989656
-        }
-      },
-      "build_number": 4,
-      "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10"
-    },
-    {
       "name": "rhel",
       "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
       "family": "rhel",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 558,
       "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest"
+    },
+    {
+      "name": "oracle-nonfree",
+      "official_image": "ghcr.io/ferret-linux/oracle-otr:nonfree",
+      "family": "oracle",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T21:45:21Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 621992706,
+          "disk_size": 1908281172
+        },
+        "arm64": {
+          "compressed_size": 568265667,
+          "disk_size": 1750989655
+        }
+      },
+      "build_number": 5,
+      "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10"
     }
   ]
 }
