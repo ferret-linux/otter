@@ -443,22 +443,6 @@
       "fallback_vendor_image": "docker.io/library/almalinux:latest"
     },
     {
-      "name": "alma-nonfree",
-      "official_image": "ghcr.io/ferret-linux/alma-otr:nonfree",
-      "family": "alma",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "",
-      "sizes": {},
-      "build_number": 0,
-      "fallback_vendor_image": "docker.io/library/almalinux:latest"
-    },
-    {
       "name": "alma-negativo17",
       "official_image": "ghcr.io/ferret-linux/alma-otr:negativo17",
       "family": "alma",
@@ -1306,6 +1290,31 @@
       },
       "build_number": 579,
       "fallback_vendor_image": "docker.io/blackarchlinux/blackarch:latest"
+    },
+    {
+      "name": "alma-nonfree",
+      "official_image": "ghcr.io/ferret-linux/alma-otr:nonfree",
+      "family": "alma",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T05:25:37Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 575889919,
+          "disk_size": 1771268661
+        },
+        "arm64": {
+          "compressed_size": 523878863,
+          "disk_size": 1617236549
+        }
+      },
+      "build_number": 1,
+      "fallback_vendor_image": "docker.io/library/almalinux:latest"
     }
   ]
 }
