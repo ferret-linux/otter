@@ -416,31 +416,6 @@
       "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest"
     },
     {
-      "name": "void-musl-nonfree",
-      "official_image": "ghcr.io/ferret-linux/void-otr:musl-nonfree",
-      "family": "void",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T05:36:19Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 394383892,
-          "disk_size": 1128591558
-        },
-        "arm64": {
-          "compressed_size": 377814253,
-          "disk_size": 1101216453
-        }
-      },
-      "build_number": 2,
-      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest"
-    },
-    {
       "name": "rocky-nonfree",
       "official_image": "ghcr.io/ferret-linux/rocky-otr:nonfree",
       "family": "rocky",
@@ -1387,6 +1362,31 @@
         }
       },
       "build_number": 469
+    },
+    {
+      "name": "void-musl-nonfree",
+      "official_image": "ghcr.io/ferret-linux/void-otr:musl-nonfree",
+      "family": "void",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T06:27:54Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 394381517,
+          "disk_size": 1128591555
+        },
+        "arm64": {
+          "compressed_size": 377811858,
+          "disk_size": 1101216453
+        }
+      },
+      "build_number": 3,
+      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest"
     }
   ]
 }
