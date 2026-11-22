@@ -59,7 +59,10 @@ func SettingsListJSON() error {
 
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "  ")
-	return enc.Encode(fields)
+	if err := enc.Encode(fields); err != nil {
+		return fmt.Errorf("encode settings JSON: %w", err)
+	}
+	return nil
 }
 
 // SettingsApplyJSON accepts a flat map of field name to value on r and
@@ -68,6 +71,8 @@ func SettingsListJSON() error {
 // must match one of the options, numeric fields must parse as an int.
 // Field names are unique across sections, so the flat map needs no section
 // prefix. Returned errors reject the whole payload without writing.
+//
+//nolint:gocognit // settings apply: explicit field-by-field validation
 func SettingsApplyJSON(r io.Reader) error {
 	var updates map[string]any
 	if err := json.NewDecoder(r).Decode(&updates); err != nil {

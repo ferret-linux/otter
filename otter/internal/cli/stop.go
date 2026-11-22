@@ -1,4 +1,4 @@
-//nolint:goconst // CLI flag strings are intentionally repeated per-command; they may diverge independently
+//nolint:goconst,dupl // CLI flag strings and mirrored restart/stop commands are intentionally kept separate
 package cli
 
 import (

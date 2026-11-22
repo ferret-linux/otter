@@ -56,20 +56,20 @@ const (
 
 // scaledDimensions returns the box's window-line count and total width for
 // a terminal of the given size, per scaledSize.
-func scaledDimensions(width, height int) (windowLines, boxWidth int) {
-	windowLines = scaledSize(height, heightK, heightFloor)
+func scaledDimensions(width, height int) (int, int) {
+	windowLines := scaledSize(height, heightK, heightFloor)
 	if windowLines < 1 {
 		windowLines = 1
 	}
-	boxWidth = scaledSize(width, widthK, widthFloor)
+	boxWidth := scaledSize(width, widthK, widthFloor)
 	return windowLines, boxWidth
 }
 
 // initialTerminalSize returns the real terminal size, for use before the
 // bubbletea program starts (and thus before any tea.WindowSizeMsg has
 // arrived to report it).
-func initialTerminalSize() (width, height int) {
-	width, height = 80, 24
+func initialTerminalSize() (int, int) {
+	width, height := 80, 24
 	if ww, hh, err := term.GetSize(int(os.Stderr.Fd())); err == nil {
 		width, height = ww, hh
 	}
@@ -107,7 +107,7 @@ func newPullModel(cmd *exec.Cmd) (*pullModel, error) {
 
 	child, err := bubbleterm.New(innerWidth, windowLines)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("create terminal emulator: %w", err)
 	}
 
 	// Buffered so the callback below never blocks the process's own exit
@@ -122,8 +122,8 @@ func newPullModel(cmd *exec.Cmd) (*pullModel, error) {
 	})
 
 	if err := child.GetEmulator().StartCommand(cmd); err != nil {
-		child.Close()
-		return nil, err
+		_ = child.Close()
+		return nil, fmt.Errorf("start pull command: %w", err)
 	}
 
 	// The command may already have exited (or the exit callback may have
@@ -163,7 +163,9 @@ func (m *pullModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		innerWidth := boxWidth - m.style.GetHorizontalFrameSize()
 
 		updated, cmd := m.child.Update(tea.WindowSizeMsg{Width: innerWidth, Height: windowLines})
-		m.child = updated.(*bubbleterm.Model)
+		if child, ok := updated.(*bubbleterm.Model); ok {
+			m.child = child
+		}
 		return m, cmd
 
 	case pullExitedMsg:
@@ -174,7 +176,9 @@ func (m *pullModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	updated, cmd := m.child.Update(msg)
-	m.child = updated.(*bubbleterm.Model)
+	if child, ok := updated.(*bubbleterm.Model); ok {
+		m.child = child
+	}
 	return m, cmd
 }
 
@@ -248,7 +252,7 @@ func eraseInlineBox(w io.Writer, boxRows int) {
 	// on the box's last row; walk it up boxRows-1 rows to the box's top
 	// border, clearing each row as we go, then restore the cursor.
 	fmt.Fprint(w, "\x1b[?25l")
-	for i := 0; i < boxRows; i++ {
+	for i := range boxRows {
 		if i > 0 {
 			fmt.Fprint(w, "\x1b[1A") // up one row
 		}
@@ -265,7 +269,7 @@ func runPull(ctx context.Context, cm containermanager.ContainerManager, imageRef
 
 	cmd, err := cm.PullImage(ctx, imageRef, platform, interactive)
 	if err != nil {
-		return err
+		return fmt.Errorf("pull image %s: %w", imageRef, err)
 	}
 	if !interactive {
 		return nil
@@ -278,9 +282,12 @@ func runPull(ctx context.Context, cm containermanager.ContainerManager, imageRef
 
 	finalModel, err := tea.NewProgram(model, tea.WithOutput(os.Stderr)).Run()
 	if err != nil {
-		return err
+		return fmt.Errorf("run pull UI: %w", err)
 	}
-	pm := finalModel.(*pullModel)
+	pm, ok := finalModel.(*pullModel)
+	if !ok {
+		return fmt.Errorf("unexpected pull UI model type %T", finalModel)
+	}
 
 	// Erase the inline box Bubble Tea left in the main screen buffer (it's
 	// not on the alternate screen, so it isn't cleaned up on quit).

@@ -93,9 +93,9 @@ func newExportPaths(ctx context.Context) (*exportPaths, error) {
 }
 
 func (p *exportPaths) ownerDir(owner ExportOwner) string {
-	mode := "rootless"
+	mode := valueRootless
 	if owner.Rootful {
-		mode = "rootful"
+		mode = keyRootful
 	}
 	return filepath.Join(p.indexRoot, owner.Manager, mode, owner.Container)
 }
@@ -123,9 +123,9 @@ func sameExportOwner(a, b ExportOwner) bool {
 }
 
 func (o ExportOwner) label() string {
-	mode := "rootless"
+	mode := valueRootless
 	if o.Rootful {
-		mode = "rootful"
+		mode = keyRootful
 	}
 	return fmt.Sprintf("%s (%s, %s)", o.Container, o.Manager, mode)
 }
@@ -138,7 +138,7 @@ func nowExportTimestamp() string {
 // host user. A single flock covers the whole operation so a concurrent export
 // cannot observe a half-written file or a record that points at one.
 func (p *exportPaths) withExportLock(fn func() error) error {
-	if err := os.MkdirAll(filepath.Dir(p.lockPath), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(p.lockPath), 0o750); err != nil {
 		return fmt.Errorf("failed to create export index directory: %w", err)
 	}
 	file, err := os.OpenFile(p.lockPath, os.O_CREATE|os.O_RDWR, 0o600)
@@ -158,12 +158,12 @@ func (p *exportPaths) withExportLock(fn func() error) error {
 }
 
 func writeFileAtomic(path string, data []byte, mode os.FileMode) error {
-	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
-		return err
+	if err := os.MkdirAll(filepath.Dir(path), 0o750); err != nil {
+		return fmt.Errorf("create export directory: %w", err)
 	}
 	tmp, err := os.CreateTemp(filepath.Dir(path), ".otter.tmp.*")
 	if err != nil {
-		return err
+		return fmt.Errorf("create temporary export file: %w", err)
 	}
 	tmpPath := tmp.Name()
 	defer func() {
@@ -172,25 +172,28 @@ func writeFileAtomic(path string, data []byte, mode os.FileMode) error {
 
 	if _, err := tmp.Write(data); err != nil {
 		_ = tmp.Close()
-		return err
+		return fmt.Errorf("write temporary export file: %w", err)
 	}
 	if err := tmp.Sync(); err != nil {
 		_ = tmp.Close()
-		return err
+		return fmt.Errorf("sync temporary export file: %w", err)
 	}
 	if err := tmp.Close(); err != nil {
-		return err
+		return fmt.Errorf("close temporary export file: %w", err)
 	}
 	if err := os.Chmod(tmpPath, mode); err != nil {
-		return err
+		return fmt.Errorf("set export file permissions: %w", err)
 	}
-	return os.Rename(tmpPath, path)
+	if err := os.Rename(tmpPath, path); err != nil {
+		return fmt.Errorf("replace export file: %w", err)
+	}
+	return nil
 }
 
 func (p *exportPaths) writeRecord(record ExportRecord) error {
 	data, err := json.MarshalIndent(record, "", "  ")
 	if err != nil {
-		return err
+		return fmt.Errorf("encode export record: %w", err)
 	}
 	data = append(data, '\n')
 	return writeFileAtomic(p.recordFile(record.Owner, record.Path), data, 0o644)
@@ -199,7 +202,7 @@ func (p *exportPaths) writeRecord(record ExportRecord) error {
 func (p *exportPaths) removeRecord(owner ExportOwner, exportPath string) error {
 	err := os.Remove(p.recordFile(owner, exportPath))
 	if err != nil && !os.IsNotExist(err) {
-		return err
+		return fmt.Errorf("remove export record: %w", err)
 	}
 	return nil
 }
@@ -240,6 +243,7 @@ func (p *exportPaths) loadOwnerRecords(owner ExportOwner) []ExportRecord {
 	return owned
 }
 
+//nolint:gocognit // record aggregation: explicit source loops keep ownership rules visible
 func (p *exportPaths) loadAllRecords() []ExportRecord {
 	managers, err := os.ReadDir(p.indexRoot)
 	if err != nil {
@@ -273,8 +277,8 @@ func (p *exportPaths) loadAllRecords() []ExportRecord {
 					// ignoring it prevents cross-owner deletes.
 					if record.Owner.Manager != manager.Name() ||
 						record.Owner.Container != container.Name() ||
-						(record.Owner.Rootful && mode.Name() != "rootful") ||
-						(!record.Owner.Rootful && mode.Name() != "rootless") {
+						(record.Owner.Rootful && mode.Name() != keyRootful) ||
+						(!record.Owner.Rootful && mode.Name() != valueRootless) {
 						continue
 					}
 					existing, ok := byPath[record.Path]
@@ -299,7 +303,7 @@ func (p *exportPaths) loadAllRecords() []ExportRecord {
 func readExportMetadata(path string) (*exportMetadata, error) {
 	info, err := os.Lstat(path)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("inspect export metadata: %w", err)
 	}
 	if !info.Mode().IsRegular() {
 		return nil, errExportNotManaged
@@ -307,26 +311,26 @@ func readExportMetadata(path string) (*exportMetadata, error) {
 
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("read export metadata: %w", err)
 	}
 	text := string(data)
 
 	if strings.Contains(text, exportBinaryMarker) {
 		values := parseMarkerLines(text, map[string]string{
-			"container": "# otter-container:",
-			"manager":   "# otter-manager:",
-			"rootful":   "# otter-rootful:",
-			"source":    "# otter-source:",
+			keyContainer: "# otter-container:",
+			keyManager:   "# otter-manager:",
+			keyRootful:   "# otter-rootful:",
+			keySource:    "# otter-source:",
 		})
 		return metadataFromValues(values)
 	}
 
 	if strings.Contains(text, exportDesktopMarker) {
 		values := parseKeyValueLines(text, map[string]string{
-			"container":     "X-Otter-Container=",
-			"manager":       "X-Otter-Manager=",
-			"rootful":       "X-Otter-Rootful=",
-			"source":        "X-Otter-Source=",
+			keyContainer:    "X-Otter-Container=",
+			keyManager:      "X-Otter-Manager=",
+			keyRootful:      "X-Otter-Rootful=",
+			keySource:       "X-Otter-Source=",
 			"requested":     "X-Otter-Requested=",
 			"original_name": "X-Otter-Original-Name=",
 			"icon":          "X-Otter-Icon=",
@@ -371,18 +375,18 @@ func parseKeyValueLines(text string, keys map[string]string) map[string]string {
 }
 
 func metadataFromValues(values map[string]string) (*exportMetadata, error) {
-	for _, key := range []string{"container", "manager", "rootful", "source"} {
+	for _, key := range []string{keyContainer, keyManager, keyRootful, keySource} {
 		if values[key] == "" {
 			return nil, errExportNotManaged
 		}
 	}
-	rootful := strings.EqualFold(values["rootful"], "true")
-	if !rootful && !strings.EqualFold(values["rootful"], "false") {
+	rootful := strings.EqualFold(values[keyRootful], "true")
+	if !rootful && !strings.EqualFold(values[keyRootful], "false") {
 		return nil, errExportNotManaged
 	}
 	owner := ExportOwner{
-		Container: values["container"],
-		Manager:   values["manager"],
+		Container: values[keyContainer],
+		Manager:   values[keyManager],
 		Rootful:   rootful,
 	}
 	if !owner.valid() {
@@ -396,7 +400,7 @@ func metadataFromValues(values map[string]string) (*exportMetadata, error) {
 		Kind:         kind,
 		Owner:        owner,
 		Icon:         values["icon"],
-		Source:       values["source"],
+		Source:       values[keySource],
 		Requested:    values["requested"],
 		OriginalName: values["original_name"],
 	}, nil
@@ -460,17 +464,16 @@ func (p *exportPaths) deleteRecordArtifacts(record ExportRecord) {
 
 // cleanupOtterArtifacts removes the temp and backup siblings a staged export
 // may have left behind after a crash.
-func cleanupOtterArtifacts(path string) int {
+func cleanupOtterArtifacts(path string) {
 	if path == "" {
-		return 0
+		return
 	}
 	dir := filepath.Dir(path)
 	base := filepath.Base(path)
 	entries, err := os.ReadDir(dir)
 	if err != nil {
-		return 0
+		return
 	}
-	removed := 0
 	for _, entry := range entries {
 		if entry.IsDir() {
 			continue
@@ -481,11 +484,8 @@ func cleanupOtterArtifacts(path string) int {
 			!strings.HasPrefix(name, ".otter.tmp.") {
 			continue
 		}
-		if removeFileIfExists(filepath.Join(dir, name)) {
-			removed++
-		}
+		_ = removeFileIfExists(filepath.Join(dir, name))
 	}
-	return removed
 }
 
 func cleanupTempArtifacts(root string, includeRootful bool) int {
@@ -548,9 +548,9 @@ func (c *ExportsListCommand) Execute(ctx context.Context, _ ExportsListOptions) 
 		if name == "" {
 			name = strings.TrimSuffix(filepath.Base(record.Path), filepath.Ext(record.Path))
 		}
-		mode := "rootless"
+		mode := valueRootless
 		if record.Owner.Rootful {
-			mode = "rootful"
+			mode = keyRootful
 		}
 		table.AddRow(
 			[]string{name, record.Kind, record.Owner.Container, record.Owner.Manager, mode, record.Path},
@@ -580,6 +580,7 @@ func NewExportsRebuildCommand() *ExportsRebuildCommand {
 	return &ExportsRebuildCommand{}
 }
 
+//nolint:gocognit // rebuild flow: explicit validation and scan steps
 func (c *ExportsRebuildCommand) Execute(ctx context.Context, opts ExportsRebuildOptions) (*ExportsRebuildResult, error) {
 	paths, err := newExportPaths(ctx)
 	if err != nil {
@@ -652,6 +653,7 @@ func (c *ExportsRebuildCommand) Execute(ctx context.Context, opts ExportsRebuild
 	return result, nil
 }
 
+//nolint:gocognit // candidate collection: explicit source checks
 func collectExportCandidates(roots []string) ([]string, error) {
 	seen := make(map[string]struct{})
 	var candidates []string
@@ -721,6 +723,7 @@ func NewExportsPruneCommand() *ExportsPruneCommand {
 	return &ExportsPruneCommand{}
 }
 
+//nolint:gocognit // prune flow: explicit confirmation and scan steps
 func (c *ExportsPruneCommand) Execute(ctx context.Context, opts ExportsPruneOptions) (*ExportsPruneResult, error) {
 	paths, err := newExportPaths(ctx)
 	if err != nil {
@@ -868,6 +871,7 @@ func NewExportsDeleteCommand() *ExportsDeleteCommand {
 	return &ExportsDeleteCommand{}
 }
 
+//nolint:gocognit // delete flow: explicit validation and cleanup steps
 func (c *ExportsDeleteCommand) Execute(ctx context.Context, opts ExportsDeleteOptions) error {
 	if strings.TrimSpace(opts.Path) == "" {
 		return errors.New("export path is required")
@@ -890,8 +894,8 @@ func (c *ExportsDeleteCommand) Execute(ctx context.Context, opts ExportsDeleteOp
 		var record *ExportRecord
 		for _, candidate := range paths.loadAllRecords() {
 			if candidate.Path == exportPath {
-				copy := candidate
-				record = &copy
+				recordCopy := candidate
+				record = &recordCopy
 				break
 			}
 		}
@@ -935,6 +939,8 @@ func (c *ExportsDeleteCommand) Execute(ctx context.Context, opts ExportsDeleteOp
 // CleanupContainerExports removes every export belonging to one owner. It is
 // used by `otter remove` and by scoped pruning; callers outside the host
 // export commands get the same lock and the same absolute ownership rule.
+//
+//nolint:gocognit // cleanup flow: explicit per-container checks
 func CleanupContainerExports(ctx context.Context, manager, container string, rootful, prune bool) error {
 	owner := ExportOwner{Container: container, Manager: manager, Rootful: rootful}
 	if !owner.valid() {

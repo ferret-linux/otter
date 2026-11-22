@@ -157,7 +157,7 @@ func resolveOne(items []Item, index map[string]int, name string, processing, res
 
 // mergeItems merges base into item, with item's own non-zero values taking priority.
 //
-//nolint:gocognit // exhaustive flat field-by-field merge; inherent to the operation, not genuine complexity
+//nolint:gocognit,funlen // exhaustive flat field-by-field merge; inherent to the operation, not genuine complexity
 func mergeItems(base, item Item) Item {
 	if item.Image == "" {
 		item.Image = base.Image

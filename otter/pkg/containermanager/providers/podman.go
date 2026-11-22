@@ -994,6 +994,7 @@ func (p *Podman) InspectContainer(ctx context.Context, containerName string) (*c
 	return &config, nil
 }
 
+//nolint:gocognit // provider enter command construction: explicit option branches
 func (p *Podman) generateEnterCommand(
 	ctx context.Context,
 	containerName string,

@@ -188,7 +188,7 @@ func stripSRPrefix(name string) string {
 func docChildrenOf(dir string) ([]fs.DirEntry, error) {
 	children, err := fs.ReadDir(documentationFS, dir)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("read documentation directory %s: %w", dir, err)
 	}
 	sort.Slice(children, func(i, j int) bool {
 		return children[i].Name() < children[j].Name()
@@ -485,6 +485,7 @@ func NewDocumentationModel() (DocumentationModel, error) {
 
 func (m DocumentationModel) Init() tea.Cmd { return nil }
 
+//nolint:gocognit // event dispatcher: explicit branches keep focus and message handling readable
 func (m DocumentationModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyPressMsg:
@@ -512,6 +513,7 @@ func (m DocumentationModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.focus = docFocusContent
 		}
 
+		//nolint:nestif // mouse handling is one cohesive focus branch; splitting it would obscure the state flow
 		if m.focus == docFocusTree {
 			switch e := msg.(type) {
 			case tea.MouseClickMsg:
@@ -526,6 +528,7 @@ func (m DocumentationModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return m, nil
 				}
 			case tea.MouseWheelMsg:
+				//nolint:exhaustive // only vertical wheel movement changes the tree selection
 				switch e.Button {
 				case tea.MouseWheelUp:
 					if idx := m.tree.Index() - 1; idx >= 0 {

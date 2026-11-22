@@ -14,11 +14,11 @@ import (
 
 func newListCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
-		Name:    "list",
+		Name:    commandNameList,
 		Aliases: []string{"ls"},
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
-				Name:    "json",
+				Name:    flagNameJSON,
 				Aliases: []string{"j"},
 				Usage:   "Show list as json struct",
 			},
@@ -38,7 +38,7 @@ func listAction(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("failed to execute list command: %w", err)
 	}
 
-	if cmd.Bool("json") {
+	if cmd.Bool(flagNameJSON) {
 		if err := commands.PrintListJSON(result); err != nil {
 			return fmt.Errorf("failed to print list as JSON: %w", err)
 		}

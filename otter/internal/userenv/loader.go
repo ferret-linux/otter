@@ -97,6 +97,11 @@ func LoadTargetUserEnvironment(ctx context.Context) *UserEnvironment {
 // It returns nil when the UID cannot be resolved, so callers can fall back to
 // the normal user environment lookup.
 func loadPasswdEnvironment(ctx context.Context, uid string) *UserEnvironment {
+	if _, err := strconv.ParseUint(uid, 10, 32); err != nil {
+		return nil
+	}
+
+	//nolint:gosec // uid is validated as a uint32 immediately above
 	output, err := exec.CommandContext(ctx, "getent", "passwd", uid).Output()
 	if err != nil {
 		return nil

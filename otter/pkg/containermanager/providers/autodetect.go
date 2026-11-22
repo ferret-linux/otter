@@ -20,9 +20,9 @@ func NewByType(managerType string, root bool, sudoCommand string) (containermana
 	switch managerType {
 	case "podman":
 		return NewPodman(root, sudoCommand), nil
-	case "docker":
+	case dockerBinary:
 		return NewDocker(root, sudoCommand), nil
-	case "nerdctl":
+	case nerdctlBinary:
 		return NewNerdctl(root, sudoCommand), nil
 	default:
 		return nil, fmt.Errorf("unsupported container manager %q", managerType)
@@ -35,10 +35,10 @@ func NewAutoDetect(root bool, sudoCommand string) (containermanager.ContainerMan
 	if _, err := exec.LookPath("podman"); err == nil {
 		return NewPodman(root, sudoCommand), nil
 	}
-	if _, err := exec.LookPath("nerdctl"); err == nil {
+	if _, err := exec.LookPath(nerdctlBinary); err == nil {
 		return NewNerdctl(root, sudoCommand), nil
 	}
-	if _, err := exec.LookPath("docker"); err == nil {
+	if _, err := exec.LookPath(dockerBinary); err == nil {
 		return NewDocker(root, sudoCommand), nil
 	}
 	return nil, ErrNoContainerManager

@@ -107,88 +107,88 @@ type settingsEntry struct {
 // exactly (see pkg/config/types.go).
 func buildSettingsEntries() []settingsEntry {
 	return []settingsEntry{
-		{isSection: true, section: "container"},
+		{isSection: true, section: keyContainer},
 		{
-			section: "container", field: "hostname", kind: settingsKindText,
+			section: keyContainer, field: "hostname", kind: settingsKindText,
 			description: "Default hostname for newly created containers, if --hostname isn't passed.",
 			getText:     func(c *config.FileConfig) string { return c.Container.Hostname },
 			setText:     func(c *config.FileConfig, v string) { c.Container.Hostname = v },
 		},
 		{
-			section: "container", field: "name", kind: settingsKindText,
+			section: keyContainer, field: "name", kind: settingsKindText,
 			description: "Default container name used when neither a name nor --image is given to otter create.",
 			getText:     func(c *config.FileConfig) string { return c.Container.Name },
 			setText:     func(c *config.FileConfig, v string) { c.Container.Name = v },
 		},
 
-		{isSection: true, section: "images"},
+		{isSection: true, section: keyImages},
 		{
-			section: "images", field: "default", kind: settingsKindText,
+			section: keyImages, field: "default", kind: settingsKindText,
 			description: "Image used by otter create when --image isn't passed. Accepts a short registry name (see otter registry list) or a full image reference.",
 			getText:     func(c *config.FileConfig) string { return c.Images.Default },
 			setText:     func(c *config.FileConfig, v string) { c.Images.Default = v },
 		},
 		{
-			section: "images", field: "staleness-warn-threshold", kind: settingsKindText, numeric: true,
+			section: keyImages, field: "staleness-warn-threshold", kind: settingsKindText, numeric: true,
 			description: "Build-count difference behind upstream at which otter warns about a stale local image. 0 disables warning.",
 			getText:     func(c *config.FileConfig) string { return strconv.Itoa(c.Images.StalenessWarnThreshold) },
 			setText:     func(c *config.FileConfig, v string) { c.Images.StalenessWarnThreshold, _ = strconv.Atoi(v) },
 		},
 		{
-			section: "images", field: "staleness-autopull-threshold", kind: settingsKindText, numeric: true,
+			section: keyImages, field: "staleness-autopull-threshold", kind: settingsKindText, numeric: true,
 			description: "Build-count difference behind upstream at which otter auto-pulls instead of just warning. 0 disables auto-pull.",
 			getText:     func(c *config.FileConfig) string { return strconv.Itoa(c.Images.StalenessAutopullThreshold) },
 			setText:     func(c *config.FileConfig, v string) { c.Images.StalenessAutopullThreshold, _ = strconv.Atoi(v) },
 		},
 
-		{isSection: true, section: "settings"},
+		{isSection: true, section: keySettings},
 		{
-			section: "settings", field: "shell", kind: settingsKindText, options: []string{"bash", "zsh", "fish", "nu"},
+			section: keySettings, field: "shell", kind: settingsKindText, options: []string{defaultShellBash, defaultShellZsh, defaultShellFish, defaultShellNu},
 			description: "Default shell inside new containers: bash, zsh, fish, or nu.",
 			getText:     func(c *config.FileConfig) string { return c.Settings.Shell },
 			setText:     func(c *config.FileConfig, v string) { c.Settings.Shell = v },
 		},
 		{
-			section: "settings", field: "init-system", kind: settingsKindToggle,
+			section: keySettings, field: "init-system", kind: settingsKindToggle,
 			description: "Enable an init system (systemd) by default, as if --init were always passed.",
 			getBool:     func(c *config.FileConfig) bool { return c.Settings.InitSystem },
 			setBool:     func(c *config.FileConfig, v bool) { c.Settings.InitSystem = v },
 		},
 		{
-			section: "settings", field: "rootful", kind: settingsKindToggle,
+			section: keySettings, field: keyRootful, kind: settingsKindToggle,
 			description: "Run containers as root by default, as if --root were always passed.",
 			getBool:     func(c *config.FileConfig) bool { return c.Settings.Rootful },
 			setBool:     func(c *config.FileConfig, v bool) { c.Settings.Rootful = v },
 		},
 		{
-			section: "settings", field: "userns-nolimit", kind: settingsKindToggle,
+			section: keySettings, field: "userns-nolimit", kind: settingsKindToggle,
 			description: "Disable the rootless uid/gid range limit for user namespaces by default.",
 			getBool:     func(c *config.FileConfig) bool { return c.Settings.UsernsNoLimit },
 			setBool:     func(c *config.FileConfig, v bool) { c.Settings.UsernsNoLimit = v },
 		},
 		{
-			section: "settings", field: "scripts-dir", kind: settingsKindText,
+			section: keySettings, field: "scripts-dir", kind: settingsKindText,
 			description: "Host directory where otter's provisioned helper scripts (otter-init, otter-export, otter-host-exec) are stored.",
 			getText:     func(c *config.FileConfig) string { return c.Settings.ScriptsDir },
 			setText:     func(c *config.FileConfig, v string) { c.Settings.ScriptsDir = v },
 		},
 
-		{isSection: true, section: "preferences"},
+		{isSection: true, section: keyPreferences},
 		{
-			section: "preferences", field: "container-manager", kind: settingsKindText,
+			section: keyPreferences, field: "container-manager", kind: settingsKindText,
 			options:     []string{"autodetect", "podman", "docker", "nerdctl"},
 			description: "Which container manager to use: autodetect, podman, docker, or nerdctl.",
 			getText:     func(c *config.FileConfig) string { return c.Preferences.ContainerManager },
 			setText:     func(c *config.FileConfig, v string) { c.Preferences.ContainerManager = v },
 		},
 		{
-			section: "preferences", field: "sudo-program", kind: settingsKindText,
+			section: keyPreferences, field: "sudo-program", kind: settingsKindText,
 			description: "Privilege-escalation program used for --root operations. autodetect tries sudo, sudo-rs, doas, run0, then pkexec, in that order.",
 			getText:     func(c *config.FileConfig) string { return c.Preferences.SudoProgram },
 			setText:     func(c *config.FileConfig, v string) { c.Preferences.SudoProgram = v },
 		},
 		{
-			section: "preferences", field: "no-entry", kind: settingsKindToggle,
+			section: keyPreferences, field: "no-entry", kind: settingsKindToggle,
 			description: "Skip desktop entry generation by default, as if --no-entry were always passed to otter create.",
 			getBool:     func(c *config.FileConfig) bool { return c.Preferences.NoEntry },
 			setBool:     func(c *config.FileConfig, v bool) { c.Preferences.NoEntry = v },
@@ -622,7 +622,7 @@ func (m SettingsModel) View() tea.View {
 	var detailTitle, detailBody string
 	switch {
 	case !hasSel:
-		detailTitle = "settings"
+		detailTitle = keySettings
 	case sel.entry.isSection:
 		detailTitle = sel.entry.section
 		detailBody = "(section — press enter to expand or collapse)"

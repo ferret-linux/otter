@@ -1,4 +1,3 @@
-//nolint:goconst // CLI flag strings are intentionally repeated per-command; they may diverge independently
 package cli
 
 import (
@@ -30,7 +29,7 @@ func newExportsCommand(cfg *config.Values) *cli.Command {
 
 func newExportsListCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
-		Name:    "list",
+		Name:    commandNameList,
 		Aliases: []string{"ls"},
 		Usage:   "List every recorded export",
 		Action: func(ctx context.Context, _ *cli.Command) error {

@@ -18,7 +18,7 @@ func newInspectCommand(_ *config.Values) *cli.Command {
 		Aliases: []string{"info"},
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
-				Name:    "json",
+				Name:    flagNameJSON,
 				Aliases: []string{"j"},
 				Usage:   "Show inspect as json struct",
 			},
@@ -37,7 +37,7 @@ func inspectAction(ctx context.Context, cmd *cli.Command) error {
 	if err := inspectCmd.Execute(ctx, commands.InspectOptions{
 		ContainerName: firstName(cmd.Args().Slice()),
 		Manager:       cm.Name(),
-		JSON:          cmd.Bool("json"),
+		JSON:          cmd.Bool(flagNameJSON),
 	}); err != nil {
 		return fmt.Errorf("failed to inspect container: %w", err)
 	}

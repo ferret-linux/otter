@@ -45,7 +45,7 @@ func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterRe
 		return nil, fmt.Errorf("container '%s' not found", opts.ContainerName)
 	}
 	if inspectResult.ContainerStatus != containermanager.RunningStatus {
-		ui.DefaultLogger.Info("starting...", "container", opts.ContainerName)
+		ui.DefaultLogger.Info("starting...", keyContainer, opts.ContainerName)
 		if err := c.containerManager.Start(ctx, opts.ContainerName); err != nil {
 			return nil, fmt.Errorf("failed to start container '%s': %w", opts.ContainerName, err)
 		}
@@ -66,7 +66,7 @@ func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterRe
 	}
 
 	if !opts.NoTTY {
-		ui.DefaultLogger.Info("entering...", "container", opts.ContainerName)
+		ui.DefaultLogger.Info("entering...", keyContainer, opts.ContainerName)
 	}
 
 	err = c.containerManager.Enter(ctx, cmdOpts)
@@ -76,7 +76,7 @@ func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterRe
 
 	if !opts.NoTTY {
 		fmt.Println() //nolint:forbidigo // blank line separator after interactive session output
-		ui.DefaultLogger.Info("container still running — use 'otter stop' to stop it", "container", opts.ContainerName)
+		ui.DefaultLogger.Info("container still running — use 'otter stop' to stop it", keyContainer, opts.ContainerName)
 	}
 
 	return &EnterResult{}, nil

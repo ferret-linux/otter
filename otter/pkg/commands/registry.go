@@ -411,6 +411,8 @@ func registryListJSON(
 					row.BehindCount = st.Diff
 				case registry.StalenessAhead:
 					row.Staleness = "ahead"
+				case registry.StalenessNotOtterImage, registry.StalenessUnknown:
+					row.Staleness = "unknown"
 				default:
 					row.Staleness = "unknown"
 				}

@@ -30,9 +30,9 @@ type Docker struct {
 var _ containermanager.ContainerManager = &Docker{}
 
 func NewDocker(root bool, sudoCommand string) *Docker {
-	binary, err := exec.LookPath("docker")
+	binary, err := exec.LookPath(dockerBinary)
 	if err != nil {
-		binary = "docker"
+		binary = dockerBinary
 	}
 	return &Docker{
 		binary:      binary,
@@ -48,7 +48,7 @@ func (d *Docker) CloneAsRoot() containermanager.ContainerManager {
 }
 
 func (d *Docker) Name() string {
-	return "docker"
+	return dockerBinary
 }
 
 // dockerContainer represents the JSON output from `docker ps --format '{{json .}}'`.
@@ -925,6 +925,7 @@ func (d *Docker) PullImage(ctx context.Context, imageName string, platform strin
 	return exec.CommandContext(ctx, command, args...), nil
 }
 
+//nolint:gocognit // provider enter command construction: explicit option branches
 func (d *Docker) generateEnterCommand(
 	ctx context.Context,
 	containerName string,

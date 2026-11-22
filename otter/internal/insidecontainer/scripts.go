@@ -1,4 +1,4 @@
-package insidecontainer
+package insidecontainer //nolint:cyclop // package average reflects explicit provisioning helpers, not a single complex function
 
 import (
 	"crypto/sha256"
@@ -39,6 +39,8 @@ var initScriptsFS embed.FS
 
 // ProvisionScripts ensures that all necessary scripts are created in the given host directory.
 // It returns the path to the directory where the scripts are stored, and whether any scripts were updated.
+//
+//nolint:gocognit // provisioning flow: sequential steps with explicit error handling
 func ProvisionScripts(scriptsDir string) (string, bool, error) {
 	if scriptsDir == "" {
 		return "", false, errors.New("scripts directory could not be determined: set 'scripts-dir' in otter.conf or ensure HOME is set")
@@ -90,7 +92,7 @@ func ProvisionScripts(scriptsDir string) (string, bool, error) {
 
 		relPath, err := filepath.Rel(initScriptsSrcDir, path)
 		if err != nil {
-			return err
+			return fmt.Errorf("resolve script path %s: %w", path, err)
 		}
 		destPath := filepath.Join(initScriptsDestDir, relPath)
 

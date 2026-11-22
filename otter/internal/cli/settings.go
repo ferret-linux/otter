@@ -35,9 +35,15 @@ func newSettingsCommand(_ *config.Values) *cli.Command {
 func settingsAction(_ context.Context, cmd *cli.Command) error {
 	switch {
 	case cmd.Bool("list-json"):
-		return commands.SettingsListJSON()
+		if err := commands.SettingsListJSON(); err != nil {
+			return fmt.Errorf("list settings: %w", err)
+		}
+		return nil
 	case cmd.Bool("apply-json"):
-		return commands.SettingsApplyJSON(os.Stdin)
+		if err := commands.SettingsApplyJSON(os.Stdin); err != nil {
+			return fmt.Errorf("apply settings: %w", err)
+		}
+		return nil
 	}
 
 	m, err := commands.NewSettingsModel()

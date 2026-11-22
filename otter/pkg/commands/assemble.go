@@ -171,6 +171,7 @@ func (ac *AssembleCommand) replaceItem(ctx context.Context, item manifest.Item) 
 	return ac.createItem(ctx, item)
 }
 
+//nolint:gocognit // manifest item assembly: explicit per-field branches are clearer than helpers
 func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item) error {
 	ac.progress.Next("creating %s...", item.Name)
 	rootful := *item.Settings.Rootful || ac.cfg.DefaultRootful

@@ -29,9 +29,9 @@ type Nerdctl struct {
 var _ containermanager.ContainerManager = &Nerdctl{}
 
 func NewNerdctl(root bool, sudoCommand string) *Nerdctl {
-	binary, err := exec.LookPath("nerdctl")
+	binary, err := exec.LookPath(nerdctlBinary)
 	if err != nil {
-		binary = "nerdctl"
+		binary = nerdctlBinary
 	}
 	return &Nerdctl{
 		binary:      binary,
@@ -47,7 +47,7 @@ func (n *Nerdctl) CloneAsRoot() containermanager.ContainerManager {
 }
 
 func (n *Nerdctl) Name() string {
-	return "nerdctl"
+	return nerdctlBinary
 }
 
 func (n *Nerdctl) ListContainers(ctx context.Context) ([]containermanager.Container, error) {
@@ -740,6 +740,7 @@ func (n *Nerdctl) run(ctx context.Context, args []string, opts runOptions) (stri
 	return stdout.String(), nil
 }
 
+//nolint:gocognit // provider enter command construction: explicit option branches
 func (n *Nerdctl) generateEnterCommand(
 	ctx context.Context,
 	containerName string,

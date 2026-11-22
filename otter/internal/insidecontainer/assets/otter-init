@@ -169,6 +169,8 @@ case "${container:-}" in
 	podman | docker | nerdctl)
 		printf '%s\n' "${container}" > /usr/lib/otter/container.manager
 		;;
+	*)
+		;;
 esac
 
 # On upgrade, preserve the existing rootful/rootless marker instead of

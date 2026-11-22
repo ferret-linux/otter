@@ -8,6 +8,8 @@ import (
 // ErrUnreliableUnavailable is returned when an official image is currently
 // disabled and its registry entry has no reliable vendor fallback. It is
 // handled once at the CLI boundary so the user sees a single clear message.
+//
+//nolint:revive,staticcheck // exact user-facing message is part of the CLI contract
 var ErrUnreliableUnavailable = errors.New("image is currently unavailable and has no reliable fallback; please wait for the distro to return.")
 
 // ErrUnknownImage is retained for callers that still use Resolve with a short
@@ -50,53 +52,51 @@ func ResolveEntry(props *ImagesProperties, name string) (ResolveResult, error) {
 	if name == "" {
 		return generic, nil
 	}
-
 	if strings.ContainsAny(name, "/:") {
-		if props != nil {
-			for _, entry := range props.Images {
-				if entry.OfficialImage == name {
-					image, err := imageForEntry(entry)
-					if err != nil {
-						return ResolveResult{}, err
-					}
-					return ResolveResult{
-						Image:    image,
-						Variant:  normalizeVariant(entry.ImageVariant),
-						Family:   entry.Family,
-						Reliable: true,
-						Ours:     true,
-						Props:    props,
-					}, nil
-				}
-			}
-		}
-		generic.Image = name
-		return generic, nil
+		return resolveFullRef(props, name, generic)
 	}
+	return resolveShortName(props, name, generic)
+}
 
+func resolveFullRef(props *ImagesProperties, name string, generic ResolveResult) (ResolveResult, error) {
 	if props != nil {
 		for _, entry := range props.Images {
-			if entry.Name != strings.ToLower(name) {
-				continue
+			if entry.OfficialImage == name {
+				return entryResult(entry, true, props)
 			}
-			image, err := imageForEntry(entry)
-			if err != nil {
-				return ResolveResult{}, err
-			}
-			return ResolveResult{
-				Image:    image,
-				Variant:  normalizeVariant(entry.ImageVariant),
-				Family:   entry.Family,
-				Reliable: entry.Enabled || entry.IsReliableFallback,
-				Ours:     true,
-				Props:    props,
-			}, nil
 		}
 	}
+	generic.Image = name
+	return generic, nil
+}
 
+func resolveShortName(props *ImagesProperties, name string, generic ResolveResult) (ResolveResult, error) {
+	if props != nil {
+		wanted := strings.ToLower(name)
+		for _, entry := range props.Images {
+			if entry.Name == wanted {
+				return entryResult(entry, entry.Enabled || entry.IsReliableFallback, props)
+			}
+		}
+	}
 	// Unknown short names are valid generic image references too.
 	generic.Image = name
 	return generic, nil
+}
+
+func entryResult(entry ImageEntry, reliable bool, props *ImagesProperties) (ResolveResult, error) {
+	image, err := imageForEntry(entry)
+	if err != nil {
+		return ResolveResult{}, err
+	}
+	return ResolveResult{
+		Image:    image,
+		Variant:  normalizeVariant(entry.ImageVariant),
+		Family:   entry.Family,
+		Reliable: reliable,
+		Ours:     true,
+		Props:    props,
+	}, nil
 }
 
 // imageForEntry applies the enabled/fallback rule without any warning or

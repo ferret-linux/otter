@@ -134,15 +134,15 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 				Aliases: []string{"ua"},
 				Usage:   "Activate all unshare flags",
 			},
-		&cli.BoolFlag{
-			Name:    "no-entry",
-			Aliases: []string{"E"},
-			Usage:   "Do not generate a container entry on host system",
-		},
-		&cli.BoolFlag{
-			Name:  "json",
-			Usage: "Output progress as JSON",
-		},
+			&cli.BoolFlag{
+				Name:    "no-entry",
+				Aliases: []string{"E"},
+				Usage:   "Do not generate a container entry on host system",
+			},
+			&cli.BoolFlag{
+				Name:  flagNameJSON,
+				Usage: "Output progress as JSON",
+			},
 			&cli.BoolFlag{
 				Name:  "disable-root-password-i-fully-understand-the-risks-and-accept-the-responsibilities",
 				Usage: "Disable the root password inside the container",
@@ -190,7 +190,7 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 	}
 
 	var progress *ui.Progress
-	if cmd.Bool("json") {
+	if cmd.Bool(flagNameJSON) {
 		progress = ui.NewJSONProgress()
 	}
 	createCmd := commands.NewCreateCommand(cfg, containerManager, progress)

@@ -46,7 +46,7 @@ func newRegistryCommand(cfg *config.Values) *cli.Command {
 
 func newRegistryListCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
-		Name:    "list",
+		Name:    commandNameList,
 		Aliases: []string{"ls"},
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
@@ -55,7 +55,7 @@ func newRegistryListCommand(_ *config.Values) *cli.Command {
 				Usage:   "Include disabled images in the table",
 			},
 			&cli.BoolFlag{
-				Name:    "json",
+				Name:    flagNameJSON,
 				Aliases: []string{"j"},
 				Usage:   "Present registry output in json format",
 			},
@@ -72,7 +72,7 @@ func registryListAction(ctx context.Context, cmd *cli.Command) error {
 
 	if err := commands.NewRegistryListCommand(containerManager).Execute(ctx, commands.RegistryListOptions{
 		All:  cmd.Bool("all"),
-		JSON: cmd.Bool("json"),
+		JSON: cmd.Bool(flagNameJSON),
 	}); err != nil {
 		return fmt.Errorf("failed to list registry: %w", err)
 	}

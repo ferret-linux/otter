@@ -41,6 +41,7 @@ func NewRmCommand(cm containermanager.ContainerManager) *RmCommand {
 	}
 }
 
+//nolint:gocognit,funlen // remove flow: explicit per-resource cleanup
 func (c *RmCommand) Execute(ctx context.Context, options RmOptions) (*RmResult, error) {
 	if !options.All && len(options.ContainerNames) == 0 {
 		return nil, errors.New("please specify a container name or use --all")
@@ -224,7 +225,7 @@ func (c *RmCommand) cleanup(ctx context.Context, containerName string, root, pru
 		root,
 		prune,
 	); err != nil {
-		ui.DefaultLogger.Warn("failed to clean exports", "container", containerName, "err", err)
+		ui.DefaultLogger.Warn("failed to clean exports", keyContainer, containerName, "err", err)
 	}
 
 	err := c.generateEntryCmd.Execute(
@@ -236,7 +237,7 @@ func (c *RmCommand) cleanup(ctx context.Context, containerName string, root, pru
 		},
 	)
 	if err != nil {
-		ui.DefaultLogger.Warn("failed to remove desktop entry", "container", containerName, "err", err)
+		ui.DefaultLogger.Warn("failed to remove desktop entry", keyContainer, containerName, "err", err)
 	}
 }
 
