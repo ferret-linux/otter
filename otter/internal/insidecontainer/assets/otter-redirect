@@ -20,14 +20,19 @@
 
 import argparse
 import os
+import re
 import shlex
 import shutil
 import sys
+import tempfile
 from pathlib import Path
 
 VERSION = "0.0.9"
 REDIRECT_DIR = "/usr/local/bin"
 MARKER_LINE = "# otter_redirect"
+# A redirect name is a command name, never a path: no separators, no
+# leading dot/dash, and no whitespace or shell metacharacters.
+REDIRECT_NAME_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._+-]*")
 
 
 def render_help(text):
@@ -87,6 +92,11 @@ def _error(message):
     sys.exit(1)
 
 
+def valid_redirect_name(name):
+    """Check that a redirect name is a plain command name, not a path."""
+    return REDIRECT_NAME_RE.fullmatch(name) is not None
+
+
 def redirect_path(name):
     return Path(REDIRECT_DIR) / name
 
@@ -115,17 +125,35 @@ def add_redirect(host_cmd, as_name):
     else:
         _error("--as is required when --host-cmd is more than one word.")
 
+    if not valid_redirect_name(name):
+        _error(f"Invalid redirect name '{name}': use a plain command name without path separators.")
+
     if shutil.which(name):
         print(f"Error: '{name}' already resolves to a real binary; refusing to overwrite.", file=sys.stderr)
         print(f"Error: remove it first with 'otter redirect remove {name}' if you want to redefine it.", file=sys.stderr)
         return 1
 
     dest_file = redirect_path(name)
+    tmp_path = None
 
+    # Write into a temp file in the same directory and rename it into
+    # place, so a failed write cannot leave a truncated wrapper behind.
     try:
-        dest_file.write_text(generate_wrapper(args_list, host_cmd))
-        dest_file.chmod(0o755)
+        with tempfile.NamedTemporaryFile(
+            mode="w", dir=REDIRECT_DIR, prefix=f".{name}.", suffix=".tmp", delete=False
+        ) as tmp:
+            tmp_path = tmp.name
+            tmp.write(generate_wrapper(args_list, host_cmd))
+            tmp.flush()
+            os.fsync(tmp.fileno())
+        os.chmod(tmp_path, 0o755)
+        os.replace(tmp_path, dest_file)
     except OSError as exc:
+        if tmp_path is not None:
+            try:
+                os.unlink(tmp_path)
+            except OSError:
+                pass
         print(f"Error: cannot create {dest_file}: {exc}", file=sys.stderr)
         return 1
 
@@ -134,6 +162,10 @@ def add_redirect(host_cmd, as_name):
 
 
 def remove_redirect(name):
+    if not valid_redirect_name(name):
+        print(f"Error: '{name}' is not a valid redirect name.", file=sys.stderr)
+        return 1
+
     dest_file = redirect_path(name)
 
     if not dest_file.is_file():
