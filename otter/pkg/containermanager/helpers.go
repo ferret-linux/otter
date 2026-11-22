@@ -114,6 +114,14 @@ func FilterEnvVars() []string {
 		"OTTER_HOST_PATH",
 		"OTTER_CUSTOM_HOME",
 		"OTTER_IMAGE_VARIANT",
+		// Host loader/runtime vars would reinterpret binaries inside the
+		// container or make non-interactive shells source host files.
+		"LD_PRELOAD",
+		"LD_LIBRARY_PATH",
+		"BASH_ENV",
+		"ENV",
+		"PYTHONPATH",
+		"NODE_OPTIONS",
 	}
 
 	for _, env := range os.Environ() {
