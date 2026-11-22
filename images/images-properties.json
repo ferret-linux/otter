@@ -126,26 +126,6 @@
       "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10"
     },
     {
-      "name": "arch",
-      "official_image": "ghcr.io/ferret-linux/arch-otr:latest",
-      "family": "arch",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64"
-      ],
-      "built_at": "2026-11-22T06:22:40Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 843877007,
-          "disk_size": 2461128286
-        }
-      },
-      "build_number": 577,
-      "fallback_vendor_image": "docker.io/library/archlinux:latest"
-    },
-    {
       "name": "ubuntu-nonfree",
       "official_image": "ghcr.io/ferret-linux/ubuntu-otr:latest-nonfree",
       "family": "ubuntu",
@@ -1387,6 +1367,26 @@
       },
       "build_number": 459,
       "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest"
+    },
+    {
+      "name": "arch",
+      "official_image": "ghcr.io/ferret-linux/arch-otr:latest",
+      "family": "arch",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64"
+      ],
+      "built_at": "2026-11-22T14:23:22Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 844313667,
+          "disk_size": 2462084186
+        }
+      },
+      "build_number": 578,
+      "fallback_vendor_image": "docker.io/library/archlinux:latest"
     }
   ]
 }
