@@ -243,7 +243,6 @@ func (p *Podman) makeCreateCommand(
 	// Also mount in the container the otter-export and otter-host-exec
 	// utilities.
 
-	options = append(options, "--label", "manager=otter")
 	options = append(options, "--label", "otter.managed_container=1")
 	options = append(options, "--label", fmt.Sprintf("otter.unshare_groups=%d", containermanager.Btoi(unshareGroups)))
 	options = append(options, "--label", fmt.Sprintf("otter.unshare_ipc=%d", containermanager.Btoi(unshareIPC)))
