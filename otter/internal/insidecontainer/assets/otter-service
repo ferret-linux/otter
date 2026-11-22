@@ -191,4 +191,7 @@ if initsystem == "generic":
     )
     sys.exit(1)
 
+if initsystem not in COMMANDS:
+    _error(f"unknown init system '{initsystem}'")
+
 dispatch(initsystem, action, name)
