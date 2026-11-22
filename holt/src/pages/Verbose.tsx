@@ -30,11 +30,7 @@ export default function Verbose() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    window.otter
-      .getLog()
-      .then((log) => setEntries(log))
-      .catch(() => {})
-      .finally(() => setLoaded(true));
+    let active = true;
     const unsubscribe = window.otter.onLog((entry) => {
       setEntries((prev) => {
         const idx = prev.findIndex((e) => e.id === entry.id);
@@ -44,7 +40,24 @@ export default function Verbose() {
         return next;
       });
     });
-    return unsubscribe;
+    window.otter
+      .getLog()
+      .then((log) => {
+        if (!active) return;
+        setEntries((prev) => {
+          const byId = new Map(log.map((entry) => [entry.id, entry]));
+          for (const entry of prev) byId.set(entry.id, entry);
+          return Array.from(byId.values()).sort((a, b) => a.id - b.id);
+        });
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (active) setLoaded(true);
+      });
+    return () => {
+      active = false;
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
