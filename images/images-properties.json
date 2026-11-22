@@ -1184,31 +1184,6 @@
       "fallback_vendor_image": "docker.io/blackarchlinux/blackarch:latest"
     },
     {
-      "name": "debian",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:stable",
-      "family": "debian",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T06:36:54Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 615926481,
-          "disk_size": 1610001736
-        },
-        "arm64": {
-          "compressed_size": 592097261,
-          "disk_size": 1607695703
-        }
-      },
-      "build_number": 582,
-      "fallback_vendor_image": "docker.io/library/debian:stable"
-    },
-    {
       "name": "steamos",
       "official_image": "ghcr.io/ferret-linux/steamos-otr:latest",
       "family": "steamos",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 5,
       "fallback_vendor_image": "docker.io/devuan/devuan:testing"
+    },
+    {
+      "name": "debian",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:stable",
+      "family": "debian",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T12:59:59Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 615925082,
+          "disk_size": 1610001736
+        },
+        "arm64": {
+          "compressed_size": 592098728,
+          "disk_size": 1607695702
+        }
+      },
+      "build_number": 583,
+      "fallback_vendor_image": "docker.io/library/debian:stable"
     }
   ]
 }
