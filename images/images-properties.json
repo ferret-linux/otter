@@ -929,6 +929,31 @@
       },
       "build_number": 1,
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
+    },
+    {
+      "name": "debian-nonfree",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:stable-nonfree",
+      "family": "debian",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T04:23:35Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 627655729,
+          "disk_size": 1652728730
+        },
+        "arm64": {
+          "compressed_size": 592287262,
+          "disk_size": 1608123304
+        }
+      },
+      "build_number": 1,
+      "fallback_vendor_image": "docker.io/library/debian:stable"
     }
   ]
 }
