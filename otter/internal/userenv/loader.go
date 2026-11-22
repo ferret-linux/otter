@@ -78,19 +78,32 @@ func LoadUserEnvironment(ctx context.Context) *UserEnvironment {
 }
 
 // LoadTargetUserEnvironment loads the environment of the user on whose behalf
-// otter is acting. When otter runs through sudo (effective uid 0 with SUDO_UID
-// set), that is the invoking user, not root. Export scanning, rebuilding, and
-// pruning must always touch the target user's files.
+// otter is acting. When otter runs through an escalator (effective uid 0 with
+// SUDO_UID/PKEXEC_UID, or DOAS_USER, set), that is the invoking user, not root.
+// Export scanning, config writes, rebuilding, and pruning must always touch
+// the target user's files.
 func LoadTargetUserEnvironment(ctx context.Context) *UserEnvironment {
 	if os.Geteuid() == 0 {
-		if uid := os.Getenv("SUDO_UID"); uid != "" {
+		if env := escalatorTargetEnvironment(ctx); env != nil {
+			return env
+		}
+	}
+
+	return LoadUserEnvironment(ctx)
+}
+
+func escalatorTargetEnvironment(ctx context.Context) *UserEnvironment {
+	for _, uidVar := range []string{"SUDO_UID", "PKEXEC_UID"} {
+		if uid := os.Getenv(uidVar); uid != "" {
 			if env := loadPasswdEnvironment(ctx, uid); env != nil {
 				return env
 			}
 		}
 	}
-
-	return LoadUserEnvironment(ctx)
+	if name := os.Getenv("DOAS_USER"); name != "" {
+		return loadPasswdEnvironmentByName(ctx, name)
+	}
+	return nil
 }
 
 // loadPasswdEnvironment resolves a user directly from a passwd entry by UID.
@@ -102,11 +115,31 @@ func loadPasswdEnvironment(ctx context.Context, uid string) *UserEnvironment {
 	}
 
 	//nolint:gosec // uid is validated as a uint32 immediately above
-	output, err := exec.CommandContext(ctx, "getent", "passwd", uid).Output()
+	output, err := exec.CommandContext(ctx, "getent", "passwd", "--", uid).Output()
 	if err != nil {
 		return nil
 	}
 
+	return passwdEnvironment(output)
+}
+
+// loadPasswdEnvironmentByName resolves a user from a passwd entry by name,
+// used for escalators such as doas that export DOAS_USER instead of a uid.
+func loadPasswdEnvironmentByName(ctx context.Context, name string) *UserEnvironment {
+	if name == "" || strings.ContainsAny(name, ":/\n") {
+		return nil
+	}
+
+	//nolint:gosec // name is validated above and passed as a discrete argument
+	output, err := exec.CommandContext(ctx, "getent", "passwd", "--", name).Output()
+	if err != nil {
+		return nil
+	}
+
+	return passwdEnvironment(output)
+}
+
+func passwdEnvironment(output []byte) *UserEnvironment {
 	fields := strings.Split(strings.TrimSpace(string(output)), ":")
 	if len(fields) < 7 {
 		return nil

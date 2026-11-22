@@ -1,11 +1,14 @@
 package config
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/BurntSushi/toml"
+
+	"github.com/ferret-linux/otter/internal/userenv"
 )
 
 // LoadFileConfig loads and merges otter.conf from all four layered
@@ -43,10 +46,15 @@ func LoadValues() (*Values, error) {
 // XDG_CONFIG_HOME (or ~/.config if that's unset). This is the only
 // location SaveFileConfig is ever allowed to write to, and the last
 // (highest-priority) entry getConfigFilePaths returns.
+//
+// HOME is resolved for the user otter is acting on behalf of, so an
+// escalated invocation edits the invoking user's config rather than
+// root's. XDG_CONFIG_HOME, when set, is honoured as-is.
 func userConfigPath() string {
 	xdgConfigHome := os.Getenv("XDG_CONFIG_HOME")
 	if xdgConfigHome == "" {
-		xdgConfigHome = filepath.Join(os.Getenv("HOME"), ".config")
+		home := userenv.LoadTargetUserEnvironment(context.Background()).Home
+		xdgConfigHome = filepath.Join(home, ".config")
 	}
 	return filepath.Join(xdgConfigHome, "otter", "otter.conf")
 }
