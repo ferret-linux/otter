@@ -15,7 +15,7 @@ fi
 if echo "$@" | grep -q 'exec'; then
 	# we do this procedure only for our containers
 	# we will leave regular containers alone.
-	if [ "$(${PODMAN_COMMAND} inspect --type container --format '{{ index .Config.Labels "manager" }}' "${id}")" = "otter" ]; then
+	if [ "$(${PODMAN_COMMAND} inspect --type container --format '{{ index .Config.Labels "otter.managed_container" }}' "${id}")" = "1" ]; then
 
 		# Ensure that our otter containers will use different vscode-servers
 		# by symlinking to different paths

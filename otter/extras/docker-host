@@ -15,7 +15,7 @@ fi
 if echo "$@" | grep -q 'exec'; then
 	# we do this procedure only for otter containers
 	# we will leave regular containers alone.
-	if [ "$(${DOCKER_COMMAND} inspect --type container --format '{{ index .Config.Labels "manager" }}' "${id}")" = "otter" ]; then
+	if [ "$(${DOCKER_COMMAND} inspect --type container --format '{{ index .Config.Labels "otter.managed_container" }}' "${id}")" = "1" ]; then
 
 		# Ensure that otter containers will use different vscode-servers
 		# by symlinking to different paths
