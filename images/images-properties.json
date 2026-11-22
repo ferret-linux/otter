@@ -641,30 +641,6 @@
       "fallback_vendor_image": "docker.io/devuan/devuan:unstable"
     },
     {
-      "name": "homebrew",
-      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
-      "family": "homebrew",
-      "image_variant": "free",
-      "is_reliable_fallback": false,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T13:59:50Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 834274231,
-          "disk_size": 2029449652
-        },
-        "arm64": {
-          "compressed_size": 793968770,
-          "disk_size": 1971294655
-        }
-      },
-      "build_number": 470
-    },
-    {
       "name": "rocky-negativo17",
       "official_image": "ghcr.io/ferret-linux/rocky-otr:negativo17",
       "family": "rocky",
@@ -1387,6 +1363,30 @@
       },
       "build_number": 574,
       "fallback_vendor_image": "docker.io/library/alpine:latest"
+    },
+    {
+      "name": "homebrew",
+      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
+      "family": "homebrew",
+      "image_variant": "free",
+      "is_reliable_fallback": false,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T17:43:11Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 834585593,
+          "disk_size": 2029804465
+        },
+        "arm64": {
+          "compressed_size": 794114819,
+          "disk_size": 1971444670
+        }
+      },
+      "build_number": 471
     }
   ]
 }
