@@ -641,31 +641,6 @@
       "fallback_vendor_image": "docker.io/library/debian:unstable"
     },
     {
-      "name": "opensuse-tumbleweed",
-      "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
-      "family": "opensuse",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T18:33:04Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 425586905,
-          "disk_size": 1294277324
-        },
-        "arm64": {
-          "compressed_size": 393273612,
-          "disk_size": 1245912285
-        }
-      },
-      "build_number": 512,
-      "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest"
-    },
-    {
       "name": "fedora-negativo17",
       "official_image": "ghcr.io/ferret-linux/fedora-otr:negativo17",
       "family": "fedora",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 5,
       "fallback_vendor_image": "docker.io/library/almalinux:latest"
+    },
+    {
+      "name": "opensuse-tumbleweed",
+      "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
+      "family": "opensuse",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T21:51:30Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 425748004,
+          "disk_size": 1294484173
+        },
+        "arm64": {
+          "compressed_size": 393245443,
+          "disk_size": 1245912284
+        }
+      },
+      "build_number": 513,
+      "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest"
     }
   ]
 }
