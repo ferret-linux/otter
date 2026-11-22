@@ -626,7 +626,13 @@ func (d *Docker) Enter(
 	commandArgs := containermanager.BuildCommandArgs(options.CustomCommand, user, options.Background, config.UnshareGroups)
 
 	inspectResult, err := d.InspectContainer(ctx, options.ContainerName)
-	if err != nil || inspectResult.ContainerStatus != containermanager.RunningStatus {
+	if err != nil {
+		if errors.Is(err, containermanager.ErrContainerNotFound) {
+			return fmt.Errorf("container '%s' not found", options.ContainerName)
+		}
+		return fmt.Errorf("failed to inspect container '%s': %w", options.ContainerName, err)
+	}
+	if inspectResult.ContainerStatus != containermanager.RunningStatus {
 		return fmt.Errorf("container '%s' is not running, use 'otter start' first", options.ContainerName)
 	}
 
@@ -681,7 +687,10 @@ func (d *Docker) Stop(ctx context.Context, containerNames []string, force bool) 
 	for _, name := range containerNames {
 		inspectResult, err := d.InspectContainer(ctx, name)
 		if err != nil {
-			return fmt.Errorf("container '%s' not found", name)
+			if errors.Is(err, containermanager.ErrContainerNotFound) {
+				return fmt.Errorf("container '%s' not found", name)
+			}
+			return fmt.Errorf("failed to inspect container '%s': %w", name, err)
 		}
 		if inspectResult.ContainerStatus == containermanager.PausedStatus {
 			if err := d.Unpause(ctx, name); err != nil {
@@ -776,7 +785,7 @@ func (d *Docker) InspectContainer(ctx context.Context, containerName string) (*c
 	args := []string{"inspect", "--type", "container", containerName}
 	output, err := d.run(ctx, args, runOptions{})
 	if err != nil {
-		return nil, err
+		return nil, inspectError(containerName, err)
 	}
 
 	var inspects []inspectOutput
@@ -785,7 +794,7 @@ func (d *Docker) InspectContainer(ctx context.Context, containerName string) (*c
 	}
 
 	if len(inspects) == 0 {
-		return nil, errors.New("container not found")
+		return nil, fmt.Errorf("container %q: %w", containerName, containermanager.ErrContainerNotFound)
 	}
 
 	inspect := inspects[0]
@@ -948,7 +957,10 @@ func (d *Docker) generateEnterCommand(
 
 	containerConfig, err := d.InspectContainer(ctx, containerName)
 	if err != nil {
-		return nil, nil, fmt.Errorf("container '%s' not found — are you sure it was created?", containerName)
+		if errors.Is(err, containermanager.ErrContainerNotFound) {
+			return nil, nil, fmt.Errorf("container '%s' not found — are you sure it was created?", containerName)
+		}
+		return nil, nil, fmt.Errorf("failed to inspect container '%s': %w", containerName, err)
 	}
 	// User selection
 	if containerConfig.UnshareGroups {
@@ -1066,7 +1078,10 @@ func (d *Docker) Unpause(ctx context.Context, containerName string) error {
 func (d *Docker) Start(ctx context.Context, containerName string) error {
 	inspectResult, err := d.InspectContainer(ctx, containerName)
 	if err != nil {
-		return fmt.Errorf("container '%s' not found", containerName)
+		if errors.Is(err, containermanager.ErrContainerNotFound) {
+			return fmt.Errorf("container '%s' not found", containerName)
+		}
+		return fmt.Errorf("failed to inspect container '%s': %w", containerName, err)
 	}
 	if inspectResult.ContainerStatus == containermanager.RunningStatus {
 		ui.DefaultLogger.Info("container is already running", "container", containerName)

@@ -548,7 +548,10 @@ func (n *Nerdctl) Stop(ctx context.Context, containerNames []string, force bool)
 	for _, name := range containerNames {
 		inspectResult, err := n.InspectContainer(ctx, name)
 		if err != nil {
-			return fmt.Errorf("container '%s' not found", name)
+			if errors.Is(err, containermanager.ErrContainerNotFound) {
+				return fmt.Errorf("container '%s' not found", name)
+			}
+			return fmt.Errorf("failed to inspect container '%s': %w", name, err)
 		}
 		if inspectResult.ContainerStatus == containermanager.PausedStatus {
 			if err := n.Unpause(ctx, name); err != nil {
@@ -603,7 +606,7 @@ func (n *Nerdctl) InspectContainer(ctx context.Context, containerName string) (*
 	args := []string{"container", "inspect", "--format", "json", containerName}
 	output, err := n.run(ctx, args, runOptions{})
 	if err != nil {
-		return nil, err
+		return nil, inspectError(containerName, err)
 	}
 
 	var inspect inspectOutput
@@ -613,7 +616,7 @@ func (n *Nerdctl) InspectContainer(ctx context.Context, containerName string) (*
 	}
 
 	if inspect.ID == "" {
-		return nil, errors.New("container not found")
+		return nil, fmt.Errorf("container %q: %w", containerName, containermanager.ErrContainerNotFound)
 	}
 	config.ContainerID = inspect.ID
 	config.ContainerStatus = inspect.State.Status
@@ -689,7 +692,13 @@ func (n *Nerdctl) Enter(
 	commandArgs := containermanager.BuildCommandArgs(options.CustomCommand, user, options.Background, config.UnshareGroups)
 
 	inspectResult, err := n.InspectContainer(ctx, options.ContainerName)
-	if err != nil || inspectResult.ContainerStatus != containermanager.RunningStatus {
+	if err != nil {
+		if errors.Is(err, containermanager.ErrContainerNotFound) {
+			return fmt.Errorf("container '%s' not found", options.ContainerName)
+		}
+		return fmt.Errorf("failed to inspect container '%s': %w", options.ContainerName, err)
+	}
+	if inspectResult.ContainerStatus != containermanager.RunningStatus {
 		return fmt.Errorf("container '%s' is not running, use 'otter start' first", options.ContainerName)
 	}
 
@@ -764,7 +773,10 @@ func (n *Nerdctl) generateEnterCommand(
 
 	containerConfig, err := n.InspectContainer(ctx, containerName)
 	if err != nil {
-		return nil, nil, fmt.Errorf("container '%s' not found — are you sure it was created?", containerName)
+		if errors.Is(err, containermanager.ErrContainerNotFound) {
+			return nil, nil, fmt.Errorf("container '%s' not found — are you sure it was created?", containerName)
+		}
+		return nil, nil, fmt.Errorf("failed to inspect container '%s': %w", containerName, err)
 	}
 
 	if containerConfig.UnshareGroups {
@@ -873,7 +885,10 @@ func (n *Nerdctl) Unpause(ctx context.Context, containerName string) error {
 func (n *Nerdctl) Start(ctx context.Context, containerName string) error {
 	inspectResult, err := n.InspectContainer(ctx, containerName)
 	if err != nil {
-		return fmt.Errorf("container '%s' not found", containerName)
+		if errors.Is(err, containermanager.ErrContainerNotFound) {
+			return fmt.Errorf("container '%s' not found", containerName)
+		}
+		return fmt.Errorf("failed to inspect container '%s': %w", containerName, err)
 	}
 	if inspectResult.ContainerStatus == containermanager.RunningStatus {
 		ui.DefaultLogger.Info("container is already running", "container", containerName)

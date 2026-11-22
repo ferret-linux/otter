@@ -1,6 +1,14 @@
 package containermanager
 
-import "strings"
+import (
+	"errors"
+	"strings"
+)
+
+// ErrContainerNotFound reports that the runtime has no container with the
+// requested name. It is distinct from runtime/daemon errors returned while
+// inspecting a container.
+var ErrContainerNotFound = errors.New("container not found")
 
 type Container struct {
 	ID     string
