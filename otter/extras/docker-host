@@ -1,6 +1,6 @@
 #!/bin/sh
 
-id="$(echo "$@" | grep -Eo ' [a-zA-Z0-9]{64} ' | tr -d ' ')"
+id="$(echo "$@" | grep -Eo '(^| )[a-zA-Z0-9]{64}( |$)' | tr -d ' ')"
 DOCKER_COMMAND="$(command -v docker 2> /dev/null)"
 ENV_COMMAND="printenv"
 
