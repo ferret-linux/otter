@@ -15,6 +15,32 @@
       "matchManagers": ["gomod"],
       "groupName": "Go modules",
       "automerge": true
+    },
+    {
+      "description": "Group all npm updates, including Electron",
+      "matchManagers": ["npm"],
+      "groupName": "npm dependencies",
+      "automerge": true
+    },
+    {
+      "description": "Group all Containerfile base image updates",
+      "matchManagers": ["dockerfile"],
+      "groupName": "Container images",
+      "automerge": true
+    }
+  ],
+  "regexManagers": [
+    {
+      "description": "Keep the host-spawn version constant in sync across scripts and embedded assets",
+      "fileMatch": [
+        "(^|/)(install-host-spawn\\.sh|otter-(doctor|host-exec))$"
+      ],
+      "matchStrings": [
+        "HOST_SPAWN_VERSION\\s*=\\s*[\"'](?<currentValue>v\\d+\\.\\d+\\.\\d+)[\"']"
+      ],
+      "depNameTemplate": "1player/host-spawn",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
     }
   ]
 }
