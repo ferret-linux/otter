@@ -451,31 +451,6 @@
       "fallback_vendor_image": "docker.io/devuan/devuan:stable"
     },
     {
-      "name": "fedora-rawhide-nonfree",
-      "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide-nonfree",
-      "family": "fedora",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T14:19:39Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 727019608,
-          "disk_size": 2171132662
-        },
-        "arm64": {
-          "compressed_size": 670185020,
-          "disk_size": 2063374597
-        }
-      },
-      "build_number": 3,
-      "fallback_vendor_image": "quay.io/fedora/fedora:rawhide"
-    },
-    {
       "name": "wolfi",
       "official_image": "ghcr.io/ferret-linux/wolfi-otr:latest",
       "family": "wolfi",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 573,
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
+    },
+    {
+      "name": "fedora-rawhide-nonfree",
+      "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide-nonfree",
+      "family": "fedora",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T18:31:00Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 727020439,
+          "disk_size": 2171132658
+        },
+        "arm64": {
+          "compressed_size": 670183683,
+          "disk_size": 2063374596
+        }
+      },
+      "build_number": 4,
+      "fallback_vendor_image": "quay.io/fedora/fedora:rawhide"
     }
   ]
 }
