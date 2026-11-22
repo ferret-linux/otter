@@ -97,15 +97,33 @@ interface RunOptions {
   onStdoutLine?: (line: string) => void;
 }
 
+const ROOTLESS_COMMANDS = new Set([
+  'create', 'enter', 'sh', 'list', 'ls', 'start', 'stop', 'restart', 'pause',
+  'remove', 'rm', 'upgrade', 'lock', 'unlock', 'inspect', 'journal', 'generate-entry',
+]);
+const ROOTLESS_REG_SUBCOMMANDS = new Set(['list', 'ls', 'pull', 'remove', 'rm']);
+
+const enforceRootlessArgs = (command: string, args: string[]): string[] => {
+  if (command !== 'otter' || args.length === 0) return args;
+  if (args.includes('--root') || args.some((arg) => arg.startsWith('--root='))) return args;
+  const [sub, maybeRegSub] = args;
+  const needsRootless =
+    ROOTLESS_COMMANDS.has(sub) ||
+    (sub === 'reg' && maybeRegSub !== undefined && ROOTLESS_REG_SUBCOMMANDS.has(maybeRegSub));
+  if (!needsRootless) return args;
+  return [sub, '--root=false', ...args.slice(1)];
+};
+
 const runCommand = (options: RunOptions): Promise<{ stdout: string; stderr: string }> => {
   const { event, command, args, input, onStdoutLine } = options;
+  const effectiveArgs = enforceRootlessArgs(command, args);
   const win = event ? BrowserWindow.fromWebContents(event.sender) : undefined;
   return new Promise((resolve, reject) => {
     const entry: LogEntry = {
       id: logId++,
       ts: Date.now(),
       command,
-      args,
+      args: effectiveArgs,
       ...(input === undefined ? {} : { input }),
       status: 'running',
     };
@@ -125,7 +143,7 @@ const runCommand = (options: RunOptions): Promise<{ stdout: string; stderr: stri
       appendLog(entry);
     };
 
-    const child = spawn(command, args);
+    const child = spawn(command, effectiveArgs);
     let stdout = '';
     let stderr = '';
     let lineBuffer = '';
