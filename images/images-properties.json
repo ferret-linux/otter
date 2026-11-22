@@ -51,22 +51,6 @@
       "fallback_vendor_image": "docker.io/library/ubuntu:latest"
     },
     {
-      "name": "ubuntu-lts-nonfree",
-      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts-nonfree",
-      "family": "ubuntu",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "",
-      "sizes": {},
-      "build_number": 0,
-      "fallback_vendor_image": "docker.io/library/ubuntu:26.04"
-    },
-    {
       "name": "homebrew",
       "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
       "family": "homebrew",
@@ -1360,6 +1344,31 @@
       },
       "build_number": 1,
       "fallback_vendor_image": "quay.io/fedora/fedora:latest"
+    },
+    {
+      "name": "ubuntu-lts-nonfree",
+      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts-nonfree",
+      "family": "ubuntu",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T05:32:48Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 568444325,
+          "disk_size": 1603418674
+        },
+        "arm64": {
+          "compressed_size": 547295027,
+          "disk_size": 1625866821
+        }
+      },
+      "build_number": 1,
+      "fallback_vendor_image": "docker.io/library/ubuntu:26.04"
     }
   ]
 }
