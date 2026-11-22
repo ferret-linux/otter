@@ -501,31 +501,6 @@
       "fallback_vendor_image": "docker.io/cachyos/cachyos-v3:latest"
     },
     {
-      "name": "alpine-edge",
-      "official_image": "ghcr.io/ferret-linux/alpine-otr:edge",
-      "family": "alpine",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T13:55:49Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 342104693,
-          "disk_size": 962879867
-        },
-        "arm64": {
-          "compressed_size": 339048499,
-          "disk_size": 997810576
-        }
-      },
-      "build_number": 577,
-      "fallback_vendor_image": "docker.io/library/alpine:edge"
-    },
-    {
       "name": "rocky-nonfree",
       "official_image": "ghcr.io/ferret-linux/rocky-otr:nonfree",
       "family": "rocky",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 4,
       "fallback_vendor_image": "docker.io/library/almalinux:latest"
+    },
+    {
+      "name": "alpine-edge",
+      "official_image": "ghcr.io/ferret-linux/alpine-otr:edge",
+      "family": "alpine",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T17:44:51Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 342097015,
+          "disk_size": 962879868
+        },
+        "arm64": {
+          "compressed_size": 339043924,
+          "disk_size": 997810575
+        }
+      },
+      "build_number": 578,
+      "fallback_vendor_image": "docker.io/library/alpine:edge"
     }
   ]
 }
