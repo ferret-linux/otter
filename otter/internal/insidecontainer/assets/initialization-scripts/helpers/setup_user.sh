@@ -79,7 +79,7 @@ if ! grep -q "^$(printf '%s' "${container_user_name}" | tr '\\' '.'):" /etc/pass
 			"${container_user_name}" "${container_user_uid}" \
 			"${container_user_gid}" "${container_user_name}" \
 			"${container_user_home}" "${SHELL:-"/bin/bash"}" >> /etc/passwd
-		printf "%s::1::::::" "${container_user_name}" >> /etc/shadow
+		printf "%s::1::::::\n" "${container_user_name}" >> /etc/shadow
 
 		# Also add user to any additional groups when useradd failed
 		for group in ${additional_groups}; do
