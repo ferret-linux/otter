@@ -150,10 +150,10 @@ if not host_command:
     host_command = os.environ.get("SHELL", "/bin/sh")
 
 # sudo command detection
-sudo_command = []
+sudo_command = ["sh", "-c"]
 if os.getresuid()[0] != 0:
     if shutil.which("sudo"):
-        sudo_command = ["sudo"]
+        sudo_command = ["sudo", "sh", "-c"]
     else:
         sudo_command = ["su", "-l", "-c"]
 
@@ -202,8 +202,8 @@ if not host_spawn_ok:
             print("Error: Cannot download host-spawn", file=sys.stderr)
             sys.exit(1)
         if tmp_path.exists():
-            subprocess.run(sudo_command + ["sh", "-c", "mv /tmp/host-spawn /usr/bin/"], check=True)
-            subprocess.run(sudo_command + ["sh", "-c", "chmod +x /usr/bin/host-spawn"], check=True)
+            subprocess.run(sudo_command + ["mv /tmp/host-spawn /usr/bin/"], check=True)
+            subprocess.run(sudo_command + ["chmod +x /usr/bin/host-spawn"], check=True)
     elif response in ("n", "N", "No", "no", "NO"):
         print("Installation aborted, please install host-spawn.")
         sys.exit(0)
