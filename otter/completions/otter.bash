@@ -12,17 +12,6 @@ __otter_init_completion() {
   fi
 }
 
-__otter_build_completion_request() {
-  local -a words_before_cursor=("${COMP_WORDS[@]:0:${COMP_CWORD}}")
-  local current_word="${COMP_WORDS[COMP_CWORD]}"
-
-  if [[ "${current_word}" == "-"* ]]; then
-    printf '%s %s --generate-shell-completion' "${words_before_cursor[*]}" "${current_word}"
-  else
-    printf '%s --generate-shell-completion' "${words_before_cursor[*]}"
-  fi
-}
-
 # Keep Bash 3 compatibility: associative arrays require Bash 4+, so
 # descriptions are looked up via parallel indexed arrays.
 __otter_find_description_for() {
@@ -45,15 +34,19 @@ __otter_bash_autocomplete() {
   if [[ "${words[0]}" != "source" ]]; then
     local cur opts
     local cword="${COMP_CWORD}"
-    local request_comp
 
     COMPREPLY=()
     cur="${words[$cword]}"
 
     __otter_init_completion -n "=:" || return
 
-    request_comp="$(__otter_build_completion_request)"
-    opts=$(eval "${request_comp}" 2>/dev/null)
+    # Build the completion request as an argv array. Flattening into a
+    # string and eval-ing it re-parses quoted words as shell syntax, so a
+    # container name like "x; touch /tmp/pwned" would execute on TAB.
+    local -a request=("${words[@]:0:${cword}}")
+    [[ "${cur}" == -* ]] && request+=("${cur}")
+    request+=("--generate-shell-completion")
+    opts=$("${request[@]}" 2>/dev/null)
 
     # Completion output lines use "token:description" format.
     # Keep token/description in parallel arrays for Bash 3 compatibility.
