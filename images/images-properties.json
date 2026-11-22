@@ -51,31 +51,6 @@
       "fallback_vendor_image": "docker.io/library/amazonlinux:latest"
     },
     {
-      "name": "debian-testing-nonfree",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:testing-nonfree",
-      "family": "debian",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T06:09:10Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 669176721,
-          "disk_size": 1815026090
-        },
-        "arm64": {
-          "compressed_size": 630841060,
-          "disk_size": 1781936057
-        }
-      },
-      "build_number": 3,
-      "fallback_vendor_image": "docker.io/library/debian:testing"
-    },
-    {
       "name": "fedora-rawhide-nonfree",
       "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide-nonfree",
       "family": "fedora",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 572,
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
+    },
+    {
+      "name": "debian-testing-nonfree",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:testing-nonfree",
+      "family": "debian",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T13:52:49Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 669185090,
+          "disk_size": 1815029671
+        },
+        "arm64": {
+          "compressed_size": 630852070,
+          "disk_size": 1781939641
+        }
+      },
+      "build_number": 4,
+      "fallback_vendor_image": "docker.io/library/debian:testing"
     }
   ]
 }
