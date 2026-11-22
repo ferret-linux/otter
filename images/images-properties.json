@@ -294,26 +294,6 @@
       "build_number": 555
     },
     {
-      "name": "devuan-unstable",
-      "official_image": "ghcr.io/ferret-linux/devuan-otr:unstable",
-      "family": "devuan",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64"
-      ],
-      "built_at": "2026-11-22T00:27:07Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 633251153,
-          "disk_size": 1720101280
-        }
-      },
-      "build_number": 572,
-      "fallback_vendor_image": "docker.io/devuan/devuan:unstable"
-    },
-    {
       "name": "blackarch",
       "official_image": "ghcr.io/ferret-linux/blackarch-otr:latest",
       "family": "blackarch",
@@ -1022,6 +1002,26 @@
       },
       "build_number": 573,
       "fallback_vendor_image": "docker.io/devuan/devuan:stable"
+    },
+    {
+      "name": "devuan-unstable",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:unstable",
+      "family": "devuan",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64"
+      ],
+      "built_at": "2026-11-22T04:47:27Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 633249053,
+          "disk_size": 1720101279
+        }
+      },
+      "build_number": 573,
+      "fallback_vendor_image": "docker.io/devuan/devuan:unstable"
     }
   ]
 }
