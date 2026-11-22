@@ -575,13 +575,15 @@ func (c *ExportsRebuildCommand) Execute(ctx context.Context, opts ExportsRebuild
 		return nil, err
 	}
 
-	candidates, err := collectExportCandidates(append([]string{paths.binDir, paths.appsDir}, opts.ScanPaths...))
-	if err != nil {
-		return nil, err
-	}
-
 	result := &ExportsRebuildResult{}
 	err = paths.withExportLock(func() error {
+		// Scan while holding the lock so records cannot change between the
+		// candidate scan and the index updates below.
+		candidates, err := collectExportCandidates(append([]string{paths.binDir, paths.appsDir}, opts.ScanPaths...))
+		if err != nil {
+			return err
+		}
+
 		existing := make(map[string]ExportRecord)
 		for _, record := range paths.loadAllRecords() {
 			existing[record.Path] = record
