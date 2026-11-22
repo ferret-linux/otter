@@ -393,26 +393,6 @@
       "fallback_vendor_image": "docker.io/cachyos/cachyos-v3:latest"
     },
     {
-      "name": "blackarch",
-      "official_image": "ghcr.io/ferret-linux/blackarch-otr:latest",
-      "family": "blackarch",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64"
-      ],
-      "built_at": "2026-11-22T00:48:49Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1372392750,
-          "disk_size": 4014312439
-        }
-      },
-      "build_number": 578,
-      "fallback_vendor_image": "docker.io/blackarchlinux/blackarch:latest"
-    },
-    {
       "name": "gentoo",
       "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
       "family": "gentoo",
@@ -1306,6 +1286,26 @@
       },
       "build_number": 457,
       "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest"
+    },
+    {
+      "name": "blackarch",
+      "official_image": "ghcr.io/ferret-linux/blackarch-otr:latest",
+      "family": "blackarch",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64"
+      ],
+      "built_at": "2026-11-22T05:23:37Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1372389996,
+          "disk_size": 4014323187
+        }
+      },
+      "build_number": 579,
+      "fallback_vendor_image": "docker.io/blackarchlinux/blackarch:latest"
     }
   ]
 }
