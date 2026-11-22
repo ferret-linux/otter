@@ -316,7 +316,7 @@ func readExportMetadata(path string) (*exportMetadata, error) {
 	text := string(data)
 
 	if strings.Contains(text, exportBinaryMarker) {
-		values := parseMarkerLines(text, map[string]string{
+		values := parsePrefixedLines(text, map[string]string{
 			containerValue: "# otter-container:",
 			managerValue:   "# otter-manager:",
 			rootfulValue:   "# otter-rootful:",
@@ -326,7 +326,7 @@ func readExportMetadata(path string) (*exportMetadata, error) {
 	}
 
 	if strings.Contains(text, exportDesktopMarker) {
-		values := parseKeyValueLines(text, map[string]string{
+		values := parsePrefixedLines(text, map[string]string{
 			containerValue:  "X-Otter-Container=",
 			managerValue:    "X-Otter-Manager=",
 			rootfulValue:    "X-Otter-Rootful=",
@@ -346,21 +346,9 @@ func readExportMetadata(path string) (*exportMetadata, error) {
 	return nil, errExportNotManaged
 }
 
-func parseMarkerLines(text string, keys map[string]string) map[string]string {
-	values := make(map[string]string, len(keys))
-	scanner := bufio.NewScanner(strings.NewReader(text))
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		for key, prefix := range keys {
-			if strings.HasPrefix(line, prefix) {
-				values[key] = strings.TrimSpace(strings.TrimPrefix(line, prefix))
-			}
-		}
-	}
-	return values
-}
-
-func parseKeyValueLines(text string, keys map[string]string) map[string]string {
+// parsePrefixedLines extracts values from lines starting with one of the
+// supplied prefixes. Both wrapper markers and desktop-file keys use it.
+func parsePrefixedLines(text string, keys map[string]string) map[string]string {
 	values := make(map[string]string, len(keys))
 	scanner := bufio.NewScanner(strings.NewReader(text))
 	for scanner.Scan() {
