@@ -61,31 +61,23 @@ jobs:
           echo "digest=$digest" >> $GITHUB_OUTPUT
 
       - name: Pull Base Image
-        run: |
-          success=0
-          for i in 1 2 3; do
-            podman pull ${{ inputs.image }} && success=1 && break
-            echo "Attempt $i/3 failed, retrying in 15s..."
-            sleep 15
-          done
-          [ "$success" -eq 1 ] || exit 1
+        uses: ./.github/actions/retry
+        with:
+          command: podman pull ${{ inputs.image }}
 
       - name: Build
-        run: |
-          success=0
-          for i in 1 2 3; do
+        uses: ./.github/actions/retry
+        with:
+          command: |
             podman build \
               --build-arg IMAGE=${{ inputs.image }} \
               --build-arg OTTER_BUILD_NUMBER=${{ inputs.build_number }} \
               --build-arg TAG=${{ inputs.tag }} \
               --file images/${{ inputs.containerfile }} \
               --tag ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64 \
-              . && success=1 && break
-            echo "Attempt $i/3 failed, pruning and retrying in 30s..."
-            podman system prune -af
-            sleep 30
-          done
-          [ "$success" -eq 1 ] || exit 1
+              .
+          delay-seconds: "30"
+          before-retry: podman system prune -af
 
       - name: Install Cosign
         uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
@@ -94,42 +86,30 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | cosign login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Push
-        run: |
-          success=0
-          for i in 1 2 3; do
+        uses: ./.github/actions/retry
+        with:
+          command: |
             podman push \
               --retry 3 \
               --compression-format=zstd:chunked \
               --compression-level=20 \
-              ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64 && success=1 && break
-            echo "Attempt $i/3 failed, retrying in 15s..."
-            sleep 15
-          done
-          [ "$success" -eq 1 ] || exit 1
+              ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64
 
       - name: Sign
-        run: |
-          success=0
-          for i in 1 2 3 4 5; do
-            cosign sign --yes \
-              ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64 && success=1 && break
-            echo "Attempt $i/5 failed, retrying in 45s..."
-            sleep 45
-          done
-          [ "$success" -eq 1 ] || exit 1
+        uses: ./.github/actions/retry
+        with:
+          command: cosign sign --yes ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64
+          attempts: "5"
+          delay-seconds: "45"
 
       - name: Verify arch-specific signature
-        run: |
-          success=0
-          for i in 1 2 3; do
+        uses: ./.github/actions/retry
+        with:
+          command: |
             cosign verify \
               --certificate-identity-regexp="https://github.com/ferret-linux/otter/.*" \
               --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
-              ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64 && success=1 && break
-            echo "Attempt $i/3 failed, retrying in 15s..."
-            sleep 15
-          done
-          [ "$success" -eq 1 ] || exit 1
+              ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64
 
       - name: Run arch-specific image
         run: podman run --rm ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64 echo ok

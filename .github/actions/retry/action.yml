@@ -1,0 +1,51 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# This file is part of the otter project:
+#    https://github.com/ferret-linux/otter
+# Copyright (C) 2026 otter contributors
+
+name: retry
+description: Run a shell command up to a fixed number of times with a delay between attempts
+
+inputs:
+  command:
+    description: Shell command to run (passed to bash -c)
+    required: true
+  attempts:
+    description: Maximum number of attempts
+    required: false
+    default: "3"
+  delay-seconds:
+    description: Seconds to wait between attempts
+    required: false
+    default: "15"
+  before-retry:
+    description: Optional shell command to run before each retry (passed to bash -c)
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Run with retry
+      shell: bash
+      env:
+        RETRY_COMMAND: ${{ inputs.command }}
+        RETRY_ATTEMPTS: ${{ inputs.attempts }}
+        RETRY_DELAY: ${{ inputs.delay-seconds }}
+        RETRY_BEFORE: ${{ inputs.before-retry }}
+      run: |
+        set -euo pipefail
+        success=0
+        for (( i = 1; i <= RETRY_ATTEMPTS; i++ )); do
+          if bash -c "$RETRY_COMMAND"; then
+            success=1
+            break
+          fi
+          echo "Attempt $i/$RETRY_ATTEMPTS failed, retrying in ${RETRY_DELAY}s..."
+          if [ -n "$RETRY_BEFORE" ]; then
+            bash -c "$RETRY_BEFORE"
+          fi
+          sleep "$RETRY_DELAY"
+        done
+        [ "$success" -eq 1 ] || exit 1
