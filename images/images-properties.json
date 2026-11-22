@@ -666,31 +666,6 @@
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
     },
     {
-      "name": "rocky-negativo17",
-      "official_image": "ghcr.io/ferret-linux/rocky-otr:negativo17",
-      "family": "rocky",
-      "image_variant": "negativo17",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T04:21:46Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 580461177,
-          "disk_size": 1802827851
-        },
-        "arm64": {
-          "compressed_size": 542983350,
-          "disk_size": 1729103448
-        }
-      },
-      "build_number": 1,
-      "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
-    },
-    {
       "name": "centos",
       "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
       "family": "centos",
@@ -1288,6 +1263,31 @@
       },
       "build_number": 568,
       "fallback_vendor_image": "quay.io/fedora/fedora:latest"
+    },
+    {
+      "name": "rocky-negativo17",
+      "official_image": "ghcr.io/ferret-linux/rocky-otr:negativo17",
+      "family": "rocky",
+      "image_variant": "negativo17",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T05:10:05Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 580461250,
+          "disk_size": 1802829387
+        },
+        "arm64": {
+          "compressed_size": 542981450,
+          "disk_size": 1729103449
+        }
+      },
+      "build_number": 2,
+      "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
     }
   ]
 }
