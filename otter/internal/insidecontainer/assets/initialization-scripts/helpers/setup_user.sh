@@ -16,10 +16,15 @@
 #   None
 setup_user()
 {
+	# Escape a string so it is treated literally inside a grep basic regex.
+	_otter_grep_escape()
+	{
+		printf '%s' "$1" | sed 's/[][\\.*^$]/\\&/g'
+	}
 ###############################################################################
 # If not existing, ensure we have a group for our user.
 # shellcheck disable=SC2154 # assigned by parse_args.sh (sourced+called by otter-init) before sourcing this file
-if ! grep -q "^${container_user_name}:" /etc/group; then
+if ! grep -q "^$(_otter_grep_escape "${container_user_name}"):" /etc/group; then
 	printf "otter: Setting up user groups...\n"
 
 	# shellcheck disable=SC2154 # assigned by parse_args.sh (sourced+called by otter-init) before sourcing this file
@@ -60,7 +65,7 @@ fi
 # In case of AD or LDAP usernames, it is possible we will have a backslash in the name.
 # In that case grep would fail, so we replace the backslash with a point to make the regex work.
 # shellcheck disable=SC1003,SC2154 # SC2154: container_user_uid assigned by parse_args.sh (sourced+called by otter-init) before sourcing this file
-if ! grep -q "^$(printf '%s' "${container_user_name}" | tr '\\' '.'):" /etc/passwd &&
+if ! grep -q "^$(_otter_grep_escape "${container_user_name}" | sed 's/\\\\/./g'):" /etc/passwd &&
 	! getent passwd "${container_user_uid}"; then
 	printf "otter: Adding user...\n"
 	# shellcheck disable=SC2154 # assigned by parse_args.sh (sourced+called by otter-init) before sourcing this file
@@ -83,7 +88,7 @@ if ! grep -q "^$(printf '%s' "${container_user_name}" | tr '\\' '.'):" /etc/pass
 
 		# Also add user to any additional groups when useradd failed
 		for group in ${additional_groups}; do
-			if ! grep -q "^${group}.*${container_user_name}" /etc/group; then
+			if ! grep -q "^${group}.*$(_otter_grep_escape "${container_user_name}")" /etc/group; then
 				group_line="$(grep "^${group}.*" /etc/group)"
 				if grep -q "^${group}.*:$" /etc/group; then
 					sed -i "s|${group_line}|${group_line}${container_user_name}|g" /etc/group
@@ -159,7 +164,7 @@ elif [ ! -e /etc/passwd.done ]; then
 		if ! usermod --append --groups "${additional_groups}" "${current_user_name}"; then
 			printf "Warning: usermod --groups failed, trying manual modification\n"
 			for group in ${additional_groups}; do
-				if grep -q "^${group}:" /etc/group && ! grep -q "^${group}.*${current_user_name}.*" /etc/group; then
+				if grep -q "^${group}:" /etc/group && ! grep -q "^${group}.*$(_otter_grep_escape "${current_user_name}").*" /etc/group; then
 					group_line="$(grep "^${group}:" /etc/group)"
 					if grep -q "^${group}:.*:$" /etc/group; then
 						sed -i "s|${group_line}|${group_line}${current_user_name}|g" /etc/group
@@ -244,8 +249,8 @@ fi
 # likely because we're in a rootless setup, so privilege escalation is not a concern.
 if [ "${rootful}" -eq 1 ] &&
 	{
-		[ "$(grep "${container_user_name}" /etc/shadow | cut -d':' -f2)" = '!!' ] ||
-			[ "$(grep "${container_user_name}" /etc/shadow | cut -d':' -f2)" = "" ]
+		[ "$(grep -F "${container_user_name}" /etc/shadow | cut -d':' -f2)" = '!!' ] ||
+			[ "$(grep -F "${container_user_name}" /etc/shadow | cut -d':' -f2)" = "" ]
 	}; then
 
 	# force setup of user's password on first shell
