@@ -695,31 +695,6 @@
       "fallback_vendor_image": "docker.io/library/alpine:latest"
     },
     {
-      "name": "debian",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:stable",
-      "family": "debian",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T03:23:59Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 615929962,
-          "disk_size": 1610001738
-        },
-        "arm64": {
-          "compressed_size": 592097275,
-          "disk_size": 1607695696
-        }
-      },
-      "build_number": 579,
-      "fallback_vendor_image": "docker.io/library/debian:stable"
-    },
-    {
       "name": "rhel",
       "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
       "family": "rhel",
@@ -963,6 +938,31 @@
       },
       "build_number": 573,
       "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest"
+    },
+    {
+      "name": "debian",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:stable",
+      "family": "debian",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T04:32:49Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 615930125,
+          "disk_size": 1610001735
+        },
+        "arm64": {
+          "compressed_size": 592099164,
+          "disk_size": 1607695698
+        }
+      },
+      "build_number": 580,
+      "fallback_vendor_image": "docker.io/library/debian:stable"
     }
   ]
 }
