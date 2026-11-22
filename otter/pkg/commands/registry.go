@@ -231,9 +231,10 @@ func (c *RegistryRemoveCommand) Execute(ctx context.Context, opts RegistryRemove
 }
 
 // removeTargets attempts to remove every ref in targets, continuing past
-// individual failures so every target is attempted before reporting. If
-// anything was skipped-as-missing or failed, a non-nil error is returned
-// after all targets have been tried.
+// individual failures so every target is attempted before reporting.
+// Images that are not present locally are skipped with a warning; only
+// actual removal failures produce a non-nil error after all targets
+// have been tried.
 func (c *RegistryRemoveCommand) removeTargets(ctx context.Context, targets []string, force bool) error {
 	var failed []string
 	for _, ref := range targets {
