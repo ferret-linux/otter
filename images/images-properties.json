@@ -733,6 +733,31 @@
       },
       "build_number": 552,
       "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest"
+    },
+    {
+      "name": "kali-nonfree",
+      "official_image": "ghcr.io/ferret-linux/kali-otr:rolling-nonfree",
+      "family": "kali",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T01:11:25Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 645702683,
+          "disk_size": 1756169557
+        },
+        "arm64": {
+          "compressed_size": 608302226,
+          "disk_size": 1719805780
+        }
+      },
+      "build_number": 1,
+      "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest"
     }
   ]
 }
