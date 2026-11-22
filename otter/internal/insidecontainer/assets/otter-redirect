@@ -63,7 +63,7 @@ HELP_TEXT = """\
 {2}│{R}{3}▸ Examples:{R}                                                      {2}│{R}
 {2}│{R}  {5}otter rd list{R}                                                  {2}│{R}
 {2}│{R}  {5}otter rd remove rpm-up{R}                                         {2}│{R}
-{2}│{R}  {5}otter redirect add --host-cmd flatpak{R}                          {2}│{R}
+{2}│{R}  {5}otter redirect add --host-cmd flatpak --as host-flatpak{R}        {2}│{R}
 {2}│{R}  {5}otter redirect add --host-cmd "rpm-ostree upgrade" --as rpm-up{R} {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Commands:{R}                                                      {2}│{R}
