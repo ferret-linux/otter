@@ -121,10 +121,11 @@ func (c *RegistryListCommand) Execute(ctx context.Context, opts RegistryListOpti
 	if err != nil {
 		return fmt.Errorf("failed to fetch registry: %w", err)
 	}
+	index := registry.IndexByOfficialImage(props)
 	if opts.JSON {
-		return registryListJSON(ctx, c.containerManager, props, opts.All)
+		return registryListJSON(ctx, c.containerManager, props, index, opts.All)
 	}
-	registryList(ctx, c.containerManager, props, opts.All)
+	registryList(ctx, c.containerManager, props, index, opts.All)
 	return nil
 }
 
@@ -151,7 +152,8 @@ func (c *RegistryPullCommand) Execute(ctx context.Context, opts RegistryPullOpti
 	if err != nil {
 		return fmt.Errorf("failed to fetch registry: %w", err)
 	}
-	targets, err := resolvePullTargets(ctx, c.containerManager, props, opts.Names, opts.All, opts.Force)
+	index := registry.IndexByOfficialImage(props)
+	targets, err := resolvePullTargets(ctx, c.containerManager, props, index, opts.Names, opts.All, opts.Force)
 	if err != nil {
 		return fmt.Errorf("failed to resolve pull targets: %w", err)
 	}
@@ -339,7 +341,13 @@ func familyDisplayName(entry registry.ImageEntry) string {
 // when not pulled yet, otherwise the on-disk size. A LOCAL column is shown
 // for enabled entries, reflecting whether the image is pulled and, if so,
 // how it compares to the latest known remote build.
-func registryList(ctx context.Context, cm containermanager.ContainerManager, props *registry.ImagesProperties, all bool) {
+func registryList(
+	ctx context.Context,
+	cm containermanager.ContainerManager,
+	props *registry.ImagesProperties,
+	index map[string]*registry.ImageEntry,
+	all bool,
+) {
 	var t *ui.Table
 	if all {
 		t = ui.NewTable(os.Stdout, "FAMILY", "NAME", "ARCH", "STATUS", "BUILT", "LOCAL", "SIZE", "IMAGE")
@@ -378,7 +386,7 @@ func registryList(ctx context.Context, cm containermanager.ContainerManager, pro
 		local, localColor := "", ui.Dim
 		pulled := false
 		if entry.Enabled {
-			local, localColor = localStatus(ctx, cm, props, imageRef)
+			local, localColor = localStatus(ctx, cm, index[imageRef], imageRef)
 			pulled = local != "not pulled"
 		}
 
@@ -413,6 +421,7 @@ func registryListJSON(
 	ctx context.Context,
 	cm containermanager.ContainerManager,
 	props *registry.ImagesProperties,
+	index map[string]*registry.ImageEntry,
 	all bool,
 ) error {
 	type registryEntryJSON struct {
@@ -449,11 +458,12 @@ func registryListJSON(
 		}
 
 		if entry.Enabled {
-			row.Pulled = cm.ImageExists(ctx, imageRef)
-			if !row.Pulled {
+			info, pulled := cm.InspectImage(ctx, imageRef)
+			row.Pulled = pulled
+			if !pulled {
 				row.Staleness = "not_pulled"
 			} else {
-				st := registry.CheckStaleness(ctx, cm, props, imageRef)
+				st := registry.StalenessFromInfo(index[imageRef], info)
 				switch st.State {
 				case registry.StalenessCurrent:
 					row.Staleness = "current"
@@ -533,14 +543,15 @@ func sizeCell(entry registry.ImageEntry, pulled bool) string {
 func localStatus(
 	ctx context.Context,
 	cm containermanager.ContainerManager,
-	props *registry.ImagesProperties,
+	entry *registry.ImageEntry,
 	imageRef string,
 ) (string, func(string) string) {
-	if !cm.ImageExists(ctx, imageRef) {
+	info, ok := cm.InspectImage(ctx, imageRef)
+	if !ok {
 		return "not pulled", ui.Dim
 	}
 
-	st := registry.CheckStaleness(ctx, cm, props, imageRef)
+	st := registry.StalenessFromInfo(entry, info)
 	switch st.State {
 	case registry.StalenessCurrent:
 		return "up to date", ui.Green
@@ -596,6 +607,7 @@ func resolvePullTargets(
 	ctx context.Context,
 	cm containermanager.ContainerManager,
 	props *registry.ImagesProperties,
+	index map[string]*registry.ImageEntry,
 	names []string,
 	all bool,
 	force bool,
@@ -607,11 +619,14 @@ func resolvePullTargets(
 
 	refs := make([]string, 0, len(candidates))
 	for _, ref := range candidates {
-		if !force && cm.ImageExists(ctx, ref) {
-			st := registry.CheckStaleness(ctx, cm, props, ref)
-			if st.State != registry.StalenessBehind && st.State != registry.StalenessUnknown {
-				ui.DefaultLogger.Info("skipping, already up to date", "image", ref)
-				continue
+		if !force {
+			info, ok := cm.InspectImage(ctx, ref)
+			if ok {
+				st := registry.StalenessFromInfo(index[ref], info)
+				if st.State != registry.StalenessBehind && st.State != registry.StalenessUnknown {
+					ui.DefaultLogger.Info("skipping, already up to date", "image", ref)
+					continue
+				}
 			}
 		}
 		refs = append(refs, ref)
