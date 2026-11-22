@@ -370,31 +370,6 @@
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
     },
     {
-      "name": "oracle",
-      "official_image": "ghcr.io/ferret-linux/oracle-otr:stable",
-      "family": "oracle",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T04:17:53Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 621993041,
-          "disk_size": 1908274103
-        },
-        "arm64": {
-          "compressed_size": 604811134,
-          "disk_size": 1750968689
-        }
-      },
-      "build_number": 562,
-      "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10"
-    },
-    {
       "name": "opensuse-leap",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
       "family": "opensuse",
@@ -1369,6 +1344,31 @@
       },
       "build_number": 457,
       "fallback_vendor_image": "quay.io/fedora/fedora:rawhide"
+    },
+    {
+      "name": "oracle",
+      "official_image": "ghcr.io/ferret-linux/oracle-otr:stable",
+      "family": "oracle",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T05:33:51Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 512719437,
+          "disk_size": 1559606115
+        },
+        "arm64": {
+          "compressed_size": 499967808,
+          "disk_size": 1582505314
+        }
+      },
+      "build_number": 563,
+      "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10"
     }
   ]
 }
