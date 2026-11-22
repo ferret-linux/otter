@@ -289,28 +289,6 @@
       "build_number": 570
     },
     {
-      "name": "fedora",
-      "official_image": "ghcr.io/ferret-linux/fedora-otr:stable",
-      "fallback_vendor_image": "quay.io/fedora/fedora:44",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-21T21:15:01Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 687258414,
-          "disk_size": 2084068368
-        },
-        "arm64": {
-          "compressed_size": 667975556,
-          "disk_size": 1971203095
-        }
-      },
-      "build_number": 566
-    },
-    {
       "name": "kali",
       "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
       "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest",
@@ -988,6 +966,31 @@
       },
       "build_number": 1,
       "fallback_vendor_image": "docker.io/library/ubuntu:latest"
+    },
+    {
+      "name": "fedora",
+      "official_image": "ghcr.io/ferret-linux/fedora-otr:stable",
+      "family": "fedora",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T04:36:32Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 587369777,
+          "disk_size": 1742441618
+        },
+        "arm64": {
+          "compressed_size": 545004189,
+          "disk_size": 1681468579
+        }
+      },
+      "build_number": 567,
+      "fallback_vendor_image": "quay.io/fedora/fedora:latest"
     }
   ]
 }
