@@ -600,26 +600,6 @@
       "fallback_vendor_image": "docker.io/library/debian:unstable"
     },
     {
-      "name": "devuan-testing-nonfree",
-      "official_image": "ghcr.io/ferret-linux/devuan-otr:testing-nonfree",
-      "family": "devuan",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64"
-      ],
-      "built_at": "2026-11-22T05:36:13Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 641405038,
-          "disk_size": 1746780125
-        }
-      },
-      "build_number": 3,
-      "fallback_vendor_image": "docker.io/devuan/devuan:testing"
-    },
-    {
       "name": "kali-edge-nonfree",
       "official_image": "ghcr.io/ferret-linux/kali-otr:edge-nonfree",
       "family": "kali",
@@ -1387,6 +1367,26 @@
       },
       "build_number": 571,
       "fallback_vendor_image": "quay.io/centos/centos:stream10"
+    },
+    {
+      "name": "devuan-testing-nonfree",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:testing-nonfree",
+      "family": "devuan",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64"
+      ],
+      "built_at": "2026-11-22T06:24:40Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 641409477,
+          "disk_size": 1746780126
+        }
+      },
+      "build_number": 4,
+      "fallback_vendor_image": "docker.io/devuan/devuan:testing"
     }
   ]
 }
