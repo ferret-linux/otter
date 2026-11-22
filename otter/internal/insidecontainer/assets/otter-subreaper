@@ -83,9 +83,10 @@ def main():
             break  # no children left to wait on
         if reaped_pid == child_pid:
             child_status = status
-            break
-        # a reparented orphan exited - already reaped by waitpid() above,
-        # nothing further to do; keep waiting for our own child
+        # Record the direct child's status but keep reaping: as a subreaper
+        # we may still have adopted orphans that have not exited yet.
+        # waitpid() above already consumed each zombie; exit the loop only
+        # on ChildProcessError (no children left).
 
     if child_status is None:
         sys.exit("otter-subreaper: lost track of child before it exited")
