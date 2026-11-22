@@ -26,26 +26,6 @@
       "fallback_vendor_image": "docker.io/gentoo/stage3:latest"
     },
     {
-      "name": "slackware",
-      "official_image": "ghcr.io/ferret-linux/slackware-otr:stable",
-      "family": "slackware",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64"
-      ],
-      "built_at": "2026-11-22T06:56:18Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1345082078,
-          "disk_size": 4347180626
-        }
-      },
-      "build_number": 464,
-      "fallback_vendor_image": "docker.io/aclemons/slackware:latest"
-    },
-    {
       "name": "devuan-testing-nonfree",
       "official_image": "ghcr.io/ferret-linux/devuan-otr:testing-nonfree",
       "family": "devuan",
@@ -1387,6 +1367,26 @@
       },
       "build_number": 4,
       "fallback_vendor_image": "quay.io/centos/centos:stream10"
+    },
+    {
+      "name": "slackware",
+      "official_image": "ghcr.io/ferret-linux/slackware-otr:stable",
+      "family": "slackware",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64"
+      ],
+      "built_at": "2026-11-22T14:31:29Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1345086907,
+          "disk_size": 4347180623
+        }
+      },
+      "build_number": 465,
+      "fallback_vendor_image": "docker.io/aclemons/slackware:latest"
     }
   ]
 }
