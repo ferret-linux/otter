@@ -121,31 +121,6 @@
       "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest"
     },
     {
-      "name": "oracle",
-      "official_image": "ghcr.io/ferret-linux/oracle-otr:stable",
-      "family": "oracle",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T05:33:51Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 512719437,
-          "disk_size": 1559606115
-        },
-        "arm64": {
-          "compressed_size": 499967808,
-          "disk_size": 1582505314
-        }
-      },
-      "build_number": 563,
-      "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10"
-    },
-    {
       "name": "alma",
       "official_image": "ghcr.io/ferret-linux/alma-otr:stable",
       "family": "alma",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 571,
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
+    },
+    {
+      "name": "oracle",
+      "official_image": "ghcr.io/ferret-linux/oracle-otr:stable",
+      "family": "oracle",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T06:34:00Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 512719319,
+          "disk_size": 1559608161
+        },
+        "arm64": {
+          "compressed_size": 499966959,
+          "disk_size": 1582505316
+        }
+      },
+      "build_number": 564,
+      "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10"
     }
   ]
 }
