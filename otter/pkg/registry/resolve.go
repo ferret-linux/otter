@@ -12,11 +12,6 @@ import (
 //nolint:revive,staticcheck // exact user-facing message is part of the CLI contract
 var ErrUnreliableUnavailable = errors.New("image is currently unavailable and has no reliable fallback; please wait for the distro to return.")
 
-// ErrUnknownImage is retained for callers that still use Resolve with a short
-// name that is not present in the registry. Create no longer treats an unknown
-// name as fatal; it resolves it as a generic image instead.
-var ErrUnknownImage = errors.New("unknown image")
-
 // canonical variants. "generic" is runtime-only and never appears in props.
 const (
 	VariantGeneric  = "generic"
