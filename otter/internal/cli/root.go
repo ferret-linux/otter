@@ -8,7 +8,6 @@ import (
 	"runtime"
 	"strings"
 
-	"charm.land/log/v2"
 	"github.com/charmbracelet/colorprofile"
 	"github.com/urfave/cli/v3"
 
@@ -82,16 +81,6 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 			ui.DefaultLogger.Error(err)
 		},
 	}
-}
-
-func printMissingContainerManager(l *log.Logger) {
-	l.Error("Missing dependency: we need a container manager.")
-	l.Info("Please install one of podman, nerdctl, or docker.\nRun `otter documentation` for more details.")
-}
-
-func printInvalidContainerManager(l *log.Logger, containerManagerType string) {
-	l.Error("Invalid input", "value", containerManagerType)
-	l.Warn("The available choices are: 'autodetect', 'podman', 'nerdctl', 'docker'")
 }
 
 func subcommands(cfg *config.Values) []*cli.Command {
@@ -211,9 +200,9 @@ func runContainerCommand(
 
 func withUsageErrorHandler(_ *config.Values, cmd *cli.Command) *cli.Command {
 	cmd.OnUsageError = func(_ context.Context, _ *cli.Command, err error, _ bool) error {
-		ui.DefaultLogger.Error(err)
-		os.Exit(1)
-		return nil
+		// The root ExitErrHandler reports it; returning the error lets main
+		// exit 1 without an os.Exit call (and its unreachable return).
+		return err
 	}
 	return cmd
 }
@@ -349,16 +338,13 @@ func buildContainerManager(
 		cm, err := providers.NewAutoDetect(root, sudoCommand)
 		if err != nil {
 			if errors.Is(err, providers.ErrNoContainerManager) {
-				printMissingContainerManager(ui.DefaultLogger)
-				os.Exit(1)
+				return nil, errors.New("missing dependency: we need a container manager; install one of podman, nerdctl, or docker (run `otter documentation` for details)")
 			}
 			return nil, fmt.Errorf("failed to auto-detect container manager: %w", err)
 		}
 		return cm, nil
 	default:
-		printInvalidContainerManager(ui.DefaultLogger, containerManagerType)
-		os.Exit(1)
-		return nil, fmt.Errorf("invalid input %s", containerManagerType)
+		return nil, fmt.Errorf("invalid input value=%s; available choices: 'autodetect', 'podman', 'nerdctl', 'docker'", containerManagerType)
 	}
 }
 
