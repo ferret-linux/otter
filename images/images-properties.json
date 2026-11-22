@@ -886,31 +886,6 @@
       "fallback_vendor_image": "docker.io/library/ubuntu:latest"
     },
     {
-      "name": "void-musl",
-      "official_image": "ghcr.io/ferret-linux/void-otr:musl",
-      "family": "void",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T05:34:07Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 394375975,
-          "disk_size": 1128578687
-        },
-        "arm64": {
-          "compressed_size": 377805528,
-          "disk_size": 1101204093
-        }
-      },
-      "build_number": 554,
-      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest"
-    },
-    {
       "name": "alma",
       "official_image": "ghcr.io/ferret-linux/alma-otr:stable",
       "family": "alma",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 469,
       "fallback_vendor_image": "docker.io/cachyos/cachyos-v3:latest"
+    },
+    {
+      "name": "void-musl",
+      "official_image": "ghcr.io/ferret-linux/void-otr:musl",
+      "family": "void",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T06:03:51Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 394374091,
+          "disk_size": 1128578687
+        },
+        "arm64": {
+          "compressed_size": 377804631,
+          "disk_size": 1101204095
+        }
+      },
+      "build_number": 555,
+      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest"
     }
   ]
 }
