@@ -1110,18 +1110,6 @@ func (d *Docker) Start(ctx context.Context, containerName string) error {
 
 	progress.Next("starting container...")
 
-	userEnv := userenv.LoadUserEnvironment(ctx)
-
-	cacheDir := os.Getenv("XDG_CACHE_HOME")
-	if cacheDir == "" {
-		cacheDir = filepath.Join(userEnv.Home, ".cache")
-	}
-	cacheDir = filepath.Join(cacheDir, "otter")
-
-	if err := os.MkdirAll(cacheDir, 0755); err != nil { //nolint:gosec // we need this writable by everybody
-		return fmt.Errorf("failed to create cache directory: %w", err)
-	}
-
 	if err := d.waitForSetup(ctx, containerName, logTimestamp, progress); err != nil {
 		return err
 	}
