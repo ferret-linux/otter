@@ -76,26 +76,6 @@
       "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest"
     },
     {
-      "name": "blackarch",
-      "official_image": "ghcr.io/ferret-linux/blackarch-otr:latest",
-      "family": "blackarch",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64"
-      ],
-      "built_at": "2026-11-22T05:23:37Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1372389996,
-          "disk_size": 4014323187
-        }
-      },
-      "build_number": 579,
-      "fallback_vendor_image": "docker.io/blackarchlinux/blackarch:latest"
-    },
-    {
       "name": "kali-edge",
       "official_image": "ghcr.io/ferret-linux/kali-otr:edge",
       "family": "kali",
@@ -1387,6 +1367,26 @@
       },
       "build_number": 564,
       "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10"
+    },
+    {
+      "name": "blackarch",
+      "official_image": "ghcr.io/ferret-linux/blackarch-otr:latest",
+      "family": "blackarch",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64"
+      ],
+      "built_at": "2026-11-22T06:35:47Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1372396569,
+          "disk_size": 4014333425
+        }
+      },
+      "build_number": 580,
+      "fallback_vendor_image": "docker.io/blackarchlinux/blackarch:latest"
     }
   ]
 }
