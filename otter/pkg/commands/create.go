@@ -132,12 +132,11 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 		return nil, fmt.Errorf("cpu-threads validation failed: %w", err)
 	}
 
-	imageResolution, err := c.makeContainerImage(ctx, &opts)
-	if err != nil {
-		return nil, fmt.Errorf("failed to resolve container image: %w", err)
+	effectiveImage := opts.ContainerImage
+	if opts.ContainerClone == "" && effectiveImage == "" {
+		effectiveImage = c.cfg.DefaultContainerImage
 	}
-	containerImage := imageResolution.Image
-	containerName := c.makeContainerName(&opts, containerImage)
+	containerName := c.makeContainerName(&opts, effectiveImage)
 	opts.ContainerName = containerName
 
 	if c.containerManager.Exists(ctx, containerName) {
@@ -156,6 +155,12 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 	containerHostnameExplicit := opts.ContainerHostname != "" || c.cfg.DefaultHostname != ""
 
 	containerUserCustomHome := c.makeContainerUserCustomHome(&opts, containerName)
+
+	imageResolution, err := c.makeContainerImage(ctx, &opts)
+	if err != nil {
+		return nil, fmt.Errorf("failed to resolve container image: %w", err)
+	}
+	containerImage := imageResolution.Image
 
 	// Prepare the clone early so validation failures cannot leave a commit
 	// tag behind, but do not commit until every other check has passed.
@@ -442,10 +447,24 @@ func (c *CreateCommand) makeContainerImage(ctx context.Context, opts *CreateOpti
 
 	props, err := registry.Fetch(ctx)
 	if err != nil {
+		if strings.ContainsAny(effective, "/:") || c.containerManager.ImageExists(ctx, effective) {
+			return &registry.ResolveResult{
+				Image:    effective,
+				Variant:  registry.VariantGeneric,
+				Reliable: true,
+			}, nil
+		}
 		return nil, fmt.Errorf("failed to fetch registry properties: %w", err)
 	}
 	res, err := registry.ResolveEntry(props, effective)
 	if err != nil {
+		if strings.ContainsAny(effective, "/:") || c.containerManager.ImageExists(ctx, effective) {
+			return &registry.ResolveResult{
+				Image:    effective,
+				Variant:  registry.VariantGeneric,
+				Reliable: true,
+			}, nil
+		}
 		return nil, fmt.Errorf("failed to resolve image '%s': %w", effective, err)
 	}
 	return &res, nil
