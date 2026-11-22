@@ -815,31 +815,6 @@
       "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest"
     },
     {
-      "name": "ubuntu",
-      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:stable",
-      "family": "ubuntu",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T18:26:58Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 552524794,
-          "disk_size": 1564059129
-        },
-        "arm64": {
-          "compressed_size": 531464968,
-          "disk_size": 1584916493
-        }
-      },
-      "build_number": 575,
-      "fallback_vendor_image": "docker.io/library/ubuntu:latest"
-    },
-    {
       "name": "rocky",
       "official_image": "ghcr.io/ferret-linux/rocky-otr:stable",
       "family": "rocky",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 6,
       "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest"
+    },
+    {
+      "name": "ubuntu",
+      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:stable",
+      "family": "ubuntu",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T21:26:40Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 552525186,
+          "disk_size": 1564059127
+        },
+        "arm64": {
+          "compressed_size": 531465981,
+          "disk_size": 1584916490
+        }
+      },
+      "build_number": 576,
+      "fallback_vendor_image": "docker.io/library/ubuntu:latest"
     }
   ]
 }
