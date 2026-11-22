@@ -386,31 +386,6 @@
       "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest"
     },
     {
-      "name": "alpine",
-      "official_image": "ghcr.io/ferret-linux/alpine-otr:latest",
-      "family": "alpine",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T13:53:25Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 340520353,
-          "disk_size": 963549563
-        },
-        "arm64": {
-          "compressed_size": 336225557,
-          "disk_size": 995620241
-        }
-      },
-      "build_number": 573,
-      "fallback_vendor_image": "docker.io/library/alpine:latest"
-    },
-    {
       "name": "fedora-rawhide",
       "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide",
       "family": "fedora",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 574,
       "fallback_vendor_image": "docker.io/library/almalinux:latest"
+    },
+    {
+      "name": "alpine",
+      "official_image": "ghcr.io/ferret-linux/alpine-otr:latest",
+      "family": "alpine",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T17:42:40Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 340516365,
+          "disk_size": 963545465
+        },
+        "arm64": {
+          "compressed_size": 336227190,
+          "disk_size": 995554704
+        }
+      },
+      "build_number": 574,
+      "fallback_vendor_image": "docker.io/library/alpine:latest"
     }
   ]
 }
