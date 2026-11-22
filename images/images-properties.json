@@ -26,31 +26,6 @@
       "fallback_vendor_image": "docker.io/gentoo/stage3:latest"
     },
     {
-      "name": "rocky-negativo17",
-      "official_image": "ghcr.io/ferret-linux/rocky-otr:negativo17",
-      "family": "rocky",
-      "image_variant": "negativo17",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T05:10:05Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 580461250,
-          "disk_size": 1802829387
-        },
-        "arm64": {
-          "compressed_size": 542981450,
-          "disk_size": 1729103449
-        }
-      },
-      "build_number": 2,
-      "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
-    },
-    {
       "name": "kali",
       "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
       "family": "kali",
@@ -1386,6 +1361,31 @@
         }
       },
       "build_number": 2,
+      "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
+    },
+    {
+      "name": "rocky-negativo17",
+      "official_image": "ghcr.io/ferret-linux/rocky-otr:negativo17",
+      "family": "rocky",
+      "image_variant": "negativo17",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T06:30:01Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 580462635,
+          "disk_size": 1802829391
+        },
+        "arm64": {
+          "compressed_size": 542980835,
+          "disk_size": 1729103452
+        }
+      },
+      "build_number": 3,
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
     }
   ]
