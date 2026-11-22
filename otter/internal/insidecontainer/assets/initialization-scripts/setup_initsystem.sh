@@ -288,7 +288,7 @@ EOF
 	sh -c "timeout=120 && sleep 1 && while [ \"\${timeout}\" -gt 0 ]; do \
 	    systemctl is-system-running | grep -E 'running|degraded' && break; \
 		echo 'waiting for systemd to come up...\n' && sleep 1 && timeout=\$(( timeout -1 )); \
-	done && \
+	done && [ \"\${timeout}\" -gt 0 ] && \
 	systemctl start user@${container_user_uid}.service && \
 	systemctl start user-integration@${container_user_uid}.service && \
 	systemctl start user-integration@${container_user_uid}.timer && \
@@ -350,7 +350,7 @@ wait_for_sysvinit_runlevel()
 	    current_runlevel=\$(runlevel | awk '{print \$2}'); \
 	    [ \"\${current_runlevel}\" != \"unknown\" ] && [ -n \"\${current_runlevel}\" ] && break; \
 		echo 'waiting for sysvinit to come up...\n' && sleep 1 && timeout=\$(( timeout -1 )); \
-	done && \
+	done && [ \"\${timeout}\" -gt 0 ] && \
 	touch /usr/lib/otter/container.ready && \
 	touch /usr/lib/otter/container.bootstrapped && \
 	echo container_setup_done" &
@@ -531,7 +531,7 @@ EOF
 	    current_softlevel=\$(cat /run/openrc/softlevel 2> /dev/null); \
 	    [ \"\${current_softlevel}\" = \"default\" ] && break; \
 		echo 'waiting for openrc to come up...\n' && sleep 1 && timeout=\$(( timeout -1 )); \
-	done && \
+	done && [ \"\${timeout}\" -gt 0 ] && \
 	touch /usr/lib/otter/container.ready && \
 	touch /usr/lib/otter/container.bootstrapped && \
 	echo container_setup_done" &
@@ -621,7 +621,7 @@ EOF
 	sh -c "timeout=120 && sleep 1 && while [ \"\${timeout}\" -gt 0 ]; do \
 	    [ -e /var/service ] && ! sv status /var/service/* 2> /dev/null | grep -qv '^run:' && break; \
 		echo 'waiting for runit services to come up...\n' && sleep 1 && timeout=\$(( timeout -1 )); \
-	done && \
+	done && [ \"\${timeout}\" -gt 0 ] && \
 	touch /usr/lib/otter/container.ready && \
 	touch /usr/lib/otter/container.bootstrapped && \
 	echo container_setup_done" &
@@ -721,7 +721,7 @@ EOF
 	sh -c "timeout=120 && sleep 1 && while [ \"\${timeout}\" -gt 0 ]; do \
 	    dinitctl status boot 2> /dev/null | grep -q 'State: STARTED' && break; \
 		echo 'waiting for dinit to come up...\n' && sleep 1 && timeout=\$(( timeout -1 )); \
-	done && \
+	done && [ \"\${timeout}\" -gt 0 ] && \
 	touch /usr/lib/otter/container.ready && \
 	touch /usr/lib/otter/container.bootstrapped && \
 	echo container_setup_done" &
