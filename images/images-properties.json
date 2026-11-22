@@ -793,31 +793,6 @@
       "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest"
     },
     {
-      "name": "wolfi",
-      "official_image": "ghcr.io/ferret-linux/wolfi-otr:latest",
-      "family": "wolfi",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-21T20:52:52Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 270230075,
-          "disk_size": 795410017
-        },
-        "arm64": {
-          "compressed_size": 266507239,
-          "disk_size": 784356796
-        }
-      },
-      "build_number": 456,
-      "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest"
-    },
-    {
       "name": "amazonlinux",
       "official_image": "ghcr.io/ferret-linux/amazon-otr:latest",
       "family": "amazonlinux",
@@ -1306,6 +1281,31 @@
       },
       "build_number": 1,
       "fallback_vendor_image": "docker.io/library/debian:unstable"
+    },
+    {
+      "name": "wolfi",
+      "official_image": "ghcr.io/ferret-linux/wolfi-otr:latest",
+      "family": "wolfi",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T05:23:05Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 270515964,
+          "disk_size": 796716382
+        },
+        "arm64": {
+          "compressed_size": 258479283,
+          "disk_size": 788810076
+        }
+      },
+      "build_number": 457,
+      "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest"
     }
   ]
 }
