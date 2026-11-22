@@ -115,7 +115,7 @@ HELP_TEXT = """\
 {2}│{R} {4}--extra-flags{R}  {2}┆{R} {4}-ef{R}  {5}Extra flags to append to the command{R}      {2}│{R}
 {2}│{R}{3}▸ Management:{R}                                                    {2}│{R}
 {2}│{R} {4}--delete{R}        {2}┆{R} {4}-dl{R}  {5}Delete an exported application or binary{R} {2}│{R}
-{2}│{R} {4}--refresh{R}       {2}┆{R}       {5}Regenerate an existing export in place{R}    {2}│{R}
+{2}│{R} {4}--refresh{R}       {2}┆{R} {4}-R{R}   {5}Regenerate an existing export in place{R}    {2}│{R}
 {2}│{R} {4}--list-apps{R}     {2}┆{R} {4}-la{R}  {5}List apps exported from container{R}        {2}│{R}
 {2}│{R} {4}--list-binaries{R} {2}┆{R} {4}-lb{R}  {5}List binaries exported from container{R}    {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────┤{R}

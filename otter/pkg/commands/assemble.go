@@ -143,6 +143,10 @@ func (ac *AssembleCommand) Execute(ctx context.Context, opts AssembleOptions) er
 
 func (ac *AssembleCommand) deleteItem(ctx context.Context, item manifest.Item) error {
 	ac.progress.Next("deleting %s...", item.Name)
+	rootful := ac.cfg.DefaultRootful
+	if item.Settings.Rootful != nil {
+		rootful = *item.Settings.Rootful
+	}
 	opts := RmOptions{
 		Force:          true,
 		All:            false,
@@ -150,7 +154,7 @@ func (ac *AssembleCommand) deleteItem(ctx context.Context, item manifest.Item) e
 	}
 
 	rmCmd := ac.rmCmd
-	if *item.Settings.Rootful || ac.cfg.DefaultRootful {
+	if rootful {
 		rmCmd = ac.rmCmdRoot
 	}
 
@@ -289,21 +293,26 @@ func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) err
 		return err
 	}
 
+	rootful := ac.cfg.DefaultRootful
+	if item.Settings.Rootful != nil {
+		rootful = *item.Settings.Rootful
+	}
+	startNow := item.StartNow != nil && *item.StartNow
 	cm := ac.containerManager
 	enterCmd := ac.enterCmd
-	if *item.Settings.Rootful || ac.cfg.DefaultRootful {
+	if rootful {
 		cm = ac.containerManagerRoot
 		enterCmd = ac.enterCmdRoot
 	}
 
 	hasExports := len(item.Exported.Apps) > 0 || len(item.Exported.Bins) > 0
 
-	if *item.StartNow || hasExports {
+	if startNow || hasExports {
 		if err := cm.Start(ctx, item.Name); err != nil {
 			return fmt.Errorf("failed to start container '%s': %w", item.Name, err)
 		}
 	}
-	if *item.StartNow {
+	if startNow {
 		_, err := enterCmd.Execute(ctx, EnterOptions{
 			ContainerName: item.Name,
 			Background:    true,
@@ -322,7 +331,7 @@ func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) err
 		return err
 	}
 
-	if hasExports && !*item.StartNow {
+	if hasExports && !startNow {
 		if err := cm.Stop(ctx, []string{item.Name}, false); err != nil {
 			return fmt.Errorf("failed to stop container '%s' after exporting: %w", item.Name, err)
 		}
