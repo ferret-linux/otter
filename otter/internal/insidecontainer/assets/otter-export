@@ -732,7 +732,7 @@ def container_command_prefix():
     enter_part = f" {enter_flags}" if enter_flags else ""
     return (
         f"{shlex.quote(otter_path)} --container-manager {shlex.quote(manager)} "
-        f"enter{root_part} -n {shlex.quote(container_name)}{enter_part} --background -- "
+        f"enter{root_part} {shlex.quote(container_name)}{enter_part} --background -- "
     )
 
 
@@ -766,7 +766,7 @@ if [ -z "$_otter_manager" ]; then
 fi
 
 if [ -z "${{CONTAINER_ID:-}}" ]; then
-	exec {shlex.quote(otter_path)} --container-manager {shlex.quote(manager)} enter{root_flag} -n {shlex.quote(container_name)}{enter_part} -- {run}
+	exec {shlex.quote(otter_path)} --container-manager {shlex.quote(manager)} enter{root_flag} {shlex.quote(container_name)}{enter_part} -- {run}
 elif [ "${{CONTAINER_ID}}" = {shlex.quote(container_name)} ] && [ "$_otter_manager" = {shlex.quote(manager)} ] && {rootful_check}; then
 	exec {local_run}
 else
@@ -1533,10 +1533,10 @@ if enter_flags:
         if parts[j] in ("--root", "-r"):
             print(f"Warning: {parts[j]} argument will be set automatically and should be removed.", file=sys.stderr)
         elif parts[j] in ("--name", "-n"):
-            print(f"Warning: {parts[j]} argument will be set automatically and should be removed.", file=sys.stderr)
+            print(f"Warning: {parts[j]} is not accepted by otter enter; the container name is passed positionally.", file=sys.stderr)
             j += 1
         elif parts[j].startswith("--name=") or parts[j].startswith("-n="):
-            print(f"Warning: {parts[j]} argument will be set automatically and should be removed.", file=sys.stderr)
+            print(f"Warning: {parts[j]} is not accepted by otter enter; the container name is passed positionally.", file=sys.stderr)
         else:
             filtered.append(parts[j])
         j += 1
