@@ -441,31 +441,6 @@
       "fallback_vendor_image": "quay.io/centos/centos:stream10"
     },
     {
-      "name": "debian-nonfree",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:stable-nonfree",
-      "family": "debian",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T06:24:50Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 627660909,
-          "disk_size": 1652728729
-        },
-        "arm64": {
-          "compressed_size": 592289555,
-          "disk_size": 1608123305
-        }
-      },
-      "build_number": 3,
-      "fallback_vendor_image": "docker.io/library/debian:stable"
-    },
-    {
       "name": "devuan-unstable",
       "official_image": "ghcr.io/ferret-linux/devuan-otr:unstable",
       "family": "devuan",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 576,
       "fallback_vendor_image": "docker.io/devuan/devuan:stable"
+    },
+    {
+      "name": "debian-nonfree",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:stable-nonfree",
+      "family": "debian",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T13:51:02Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 627659467,
+          "disk_size": 1652728729
+        },
+        "arm64": {
+          "compressed_size": 592288799,
+          "disk_size": 1608123305
+        }
+      },
+      "build_number": 4,
+      "fallback_vendor_image": "docker.io/library/debian:stable"
     }
   ]
 }
