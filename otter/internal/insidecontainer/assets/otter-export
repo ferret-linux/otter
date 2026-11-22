@@ -1532,11 +1532,6 @@ if enter_flags:
     while j < len(parts):
         if parts[j] in ("--root", "-r"):
             print(f"Warning: {parts[j]} argument will be set automatically and should be removed.", file=sys.stderr)
-        elif parts[j] in ("--name", "-n"):
-            print(f"Warning: {parts[j]} is not accepted by otter enter; the container name is passed positionally.", file=sys.stderr)
-            j += 1
-        elif parts[j].startswith("--name=") or parts[j].startswith("-n="):
-            print(f"Warning: {parts[j]} is not accepted by otter enter; the container name is passed positionally.", file=sys.stderr)
         else:
             filtered.append(parts[j])
         j += 1
