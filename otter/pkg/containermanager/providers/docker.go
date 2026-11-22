@@ -718,7 +718,7 @@ func (d *Docker) Commit(ctx context.Context, containerID string, tag string) err
 }
 
 func (d *Docker) CopyFromContainer(ctx context.Context, containerName string, srcPath string, destPath string) error {
-	_, err := d.run(ctx, []string{"cp", containerName + ":" + srcPath, destPath}, runOptions{})
+	_, err := d.run(ctx, []string{"cp", "--", containerName + ":" + srcPath, destPath}, runOptions{})
 	return err
 }
 
@@ -731,12 +731,12 @@ func (d *Docker) WriteToContainer(ctx context.Context, containerName string, src
 	if _, err := d.run(ctx, []string{"exec", containerName, "mkdir", "-p", dir}, runOptions{}); err != nil {
 		return fmt.Errorf("failed to create directory %s: %w", dir, err)
 	}
-	_, err := d.run(ctx, []string{"cp", srcPath, containerName + ":" + destPath}, runOptions{})
+	_, err := d.run(ctx, []string{"cp", "--", srcPath, containerName + ":" + destPath}, runOptions{})
 	return err
 }
 
 func (d *Docker) DeleteFromContainer(ctx context.Context, containerName string, filePath string) error {
-	_, err := d.run(ctx, []string{"exec", containerName, "rm", "-rf", filePath}, runOptions{})
+	_, err := d.run(ctx, []string{"exec", containerName, "rm", "-rf", "--", filePath}, runOptions{})
 	return err
 }
 

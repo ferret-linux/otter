@@ -579,7 +579,7 @@ func (n *Nerdctl) Commit(ctx context.Context, containerID string, tag string) er
 }
 
 func (n *Nerdctl) CopyFromContainer(ctx context.Context, containerName string, srcPath string, destPath string) error {
-	_, err := n.run(ctx, []string{"cp", containerName + ":" + srcPath, destPath}, runOptions{})
+	_, err := n.run(ctx, []string{"cp", "--", containerName + ":" + srcPath, destPath}, runOptions{})
 	return err
 }
 
@@ -592,12 +592,12 @@ func (n *Nerdctl) WriteToContainer(ctx context.Context, containerName string, sr
 	if _, err := n.run(ctx, []string{"exec", containerName, "mkdir", "-p", dir}, runOptions{}); err != nil {
 		return fmt.Errorf("failed to create directory %s: %w", dir, err)
 	}
-	_, err := n.run(ctx, []string{"cp", srcPath, containerName + ":" + destPath}, runOptions{})
+	_, err := n.run(ctx, []string{"cp", "--", srcPath, containerName + ":" + destPath}, runOptions{})
 	return err
 }
 
 func (n *Nerdctl) DeleteFromContainer(ctx context.Context, containerName string, filePath string) error {
-	_, err := n.run(ctx, []string{"exec", containerName, "rm", "-rf", filePath}, runOptions{})
+	_, err := n.run(ctx, []string{"exec", containerName, "rm", "-rf", "--", filePath}, runOptions{})
 	return err
 }
 

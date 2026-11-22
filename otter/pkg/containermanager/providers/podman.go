@@ -917,7 +917,7 @@ func (p *Podman) Commit(ctx context.Context, containerID string, tag string) err
 }
 
 func (p *Podman) CopyFromContainer(ctx context.Context, containerName string, srcPath string, destPath string) error {
-	_, err := p.run(ctx, []string{"cp", containerName + ":" + srcPath, destPath}, runOptions{})
+	_, err := p.run(ctx, []string{"cp", "--", containerName + ":" + srcPath, destPath}, runOptions{})
 	return err
 }
 
@@ -930,12 +930,12 @@ func (p *Podman) WriteToContainer(ctx context.Context, containerName string, src
 	if _, err := p.run(ctx, []string{"exec", containerName, "mkdir", "-p", dir}, runOptions{}); err != nil {
 		return fmt.Errorf("failed to create directory %s: %w", dir, err)
 	}
-	_, err := p.run(ctx, []string{"cp", srcPath, containerName + ":" + destPath}, runOptions{})
+	_, err := p.run(ctx, []string{"cp", "--", srcPath, containerName + ":" + destPath}, runOptions{})
 	return err
 }
 
 func (p *Podman) DeleteFromContainer(ctx context.Context, containerName string, filePath string) error {
-	_, err := p.run(ctx, []string{"exec", containerName, "rm", "-rf", filePath}, runOptions{})
+	_, err := p.run(ctx, []string{"exec", containerName, "rm", "-rf", "--", filePath}, runOptions{})
 	return err
 }
 
