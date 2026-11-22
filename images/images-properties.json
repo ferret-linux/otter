@@ -391,30 +391,6 @@
       "fallback_vendor_image": "docker.io/library/almalinux:latest"
     },
     {
-      "name": "homebrew",
-      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
-      "family": "homebrew",
-      "image_variant": "free",
-      "is_reliable_fallback": false,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T17:43:11Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 834585593,
-          "disk_size": 2029804465
-        },
-        "arm64": {
-          "compressed_size": 794114819,
-          "disk_size": 1971444670
-        }
-      },
-      "build_number": 471
-    },
-    {
       "name": "alma-nonfree",
       "official_image": "ghcr.io/ferret-linux/alma-otr:nonfree",
       "family": "alma",
@@ -1387,6 +1363,30 @@
       },
       "build_number": 5,
       "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10"
+    },
+    {
+      "name": "homebrew",
+      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
+      "family": "homebrew",
+      "image_variant": "free",
+      "is_reliable_fallback": false,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T21:48:57Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 834630806,
+          "disk_size": 2029863857
+        },
+        "arm64": {
+          "compressed_size": 794350124,
+          "disk_size": 1971692474
+        }
+      },
+      "build_number": 472
     }
   ]
 }
