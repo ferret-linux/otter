@@ -68,7 +68,7 @@ jobs:
           VERSION=$(curl -fsSL -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             https://api.github.com/repos/containerd/nerdctl/releases/latest \
             | grep '"tag_name"' | cut -d '"' -f 4 | sed 's/^v//')
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Install nerdctl
         if: matrix.runtime == 'nerdctl'

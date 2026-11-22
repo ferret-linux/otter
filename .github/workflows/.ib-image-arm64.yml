@@ -58,7 +58,7 @@ jobs:
         id: old-digest
         run: |
           digest=$(skopeo inspect --format '{{.Digest}}' docker://ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64 2>/dev/null || true)
-          echo "digest=$digest" >> $GITHUB_OUTPUT
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
 
       - name: Pull Base Image
         uses: ./.github/actions/retry

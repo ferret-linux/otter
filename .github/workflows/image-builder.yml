@@ -65,7 +65,7 @@ jobs:
         id: filter
         run: |
           matrix=$(jq -c '[.[] | select(.enabled == true)]' images/images.json)
-          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
 
   image-pipeline:
     needs: load-matrix
