@@ -1,6 +1,10 @@
 package providers
 
-import "time"
+import (
+	"context"
+	"fmt"
+	"time"
+)
 
 // Sleep durations used while waiting for a container's setup to complete.
 const (
@@ -17,3 +21,17 @@ const (
 	// following poll instead of falling into a permanent gap.
 	logCursorOverlap = 2 * time.Second
 )
+
+// sleepContext waits for d, or returns ctx.Err() if the context is cancelled
+// first, so setup watchers stay responsive to cancellation.
+func sleepContext(ctx context.Context, d time.Duration) error {
+	timer := time.NewTimer(d)
+	defer timer.Stop()
+
+	select {
+	case <-ctx.Done():
+		return fmt.Errorf("wait interrupted: %w", ctx.Err())
+	case <-timer.C:
+		return nil
+	}
+}

@@ -971,7 +971,9 @@ func (n *Nerdctl) waitForSetup(
 		nextSince := time.Now().UTC().Add(-logCursorOverlap).Format(time.RFC3339Nano)
 		output, err := n.run(ctx, []string{"logs", "--since", since, containerName}, runOptions{})
 		if err != nil {
-			time.Sleep(logRetryDelay)
+			if err := sleepContext(ctx, logRetryDelay); err != nil {
+				return fmt.Errorf("nerdctl: %w", err)
+			}
 			logRetryDelay *= 2
 			if logRetryDelay > setupRetryBackoffMax {
 				logRetryDelay = setupRetryBackoffMax
@@ -1012,7 +1014,9 @@ func (n *Nerdctl) waitForSetup(
 			}
 		}
 
-		time.Sleep(setupPollInterval)
+		if err := sleepContext(ctx, setupPollInterval); err != nil {
+			return fmt.Errorf("nerdctl: %w", err)
+		}
 	}
 }
 
