@@ -69,11 +69,9 @@ a variant through the short name (for example `fedora-nonfree` or
 
 When an Otter build is disabled upstream, entries with a reliable fallback use
 the plain vendor image instead. Only `homebrew` and `guix` are marked
-unreliable; if their Otter build is unavailable, Otter reports:
-
-```text
-image is currently unavailable and has no reliable fallback; please wait for the distro to return.
-```
+unreliable; if their Otter build is unavailable, Otter refuses to fall
+back and reports `ErrUnreliableUnavailable` (the exact message is shown in
+the [image documentation](../otter/pkg/commands/assets/docs/04.Concepts/01.Images.md)).
 
 For the runtime meaning of image short names, fallback images, and custom
 image references, see Otter's [image documentation](../otter/pkg/commands/assets/docs/04.Concepts/01.Images.md).
