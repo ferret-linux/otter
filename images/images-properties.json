@@ -965,31 +965,6 @@
       "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest"
     },
     {
-      "name": "centos-nonfree",
-      "official_image": "ghcr.io/ferret-linux/centos-otr:nonfree",
-      "family": "centos",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T18:34:24Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 612775912,
-          "disk_size": 1904253180
-        },
-        "arm64": {
-          "compressed_size": 557906277,
-          "disk_size": 1732750073
-        }
-      },
-      "build_number": 5,
-      "fallback_vendor_image": "quay.io/centos/centos:stream10"
-    },
-    {
       "name": "amazonlinux",
       "official_image": "ghcr.io/ferret-linux/amazon-otr:latest",
       "family": "amazonlinux",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 534,
       "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest"
+    },
+    {
+      "name": "centos-nonfree",
+      "official_image": "ghcr.io/ferret-linux/centos-otr:nonfree",
+      "family": "centos",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T21:41:36Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 612774429,
+          "disk_size": 1904253178
+        },
+        "arm64": {
+          "compressed_size": 557907226,
+          "disk_size": 1732751614
+        }
+      },
+      "build_number": 6,
+      "fallback_vendor_image": "quay.io/centos/centos:stream10"
     }
   ]
 }
