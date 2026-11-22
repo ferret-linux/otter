@@ -803,6 +803,31 @@
       },
       "build_number": 1,
       "fallback_vendor_image": "docker.io/devuan/devuan:stable"
+    },
+    {
+      "name": "debian-testing-nonfree",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:testing-nonfree",
+      "family": "debian",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T01:56:36Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 669177973,
+          "disk_size": 1815026090
+        },
+        "arm64": {
+          "compressed_size": 630845921,
+          "disk_size": 1781936054
+        }
+      },
+      "build_number": 1,
+      "fallback_vendor_image": "docker.io/library/debian:testing"
     }
   ]
 }
