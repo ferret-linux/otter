@@ -203,8 +203,16 @@ func (c *RegistryRemoveCommand) Execute(ctx context.Context, opts RegistryRemove
 	removable := make([]string, 0, len(targets))
 	blocked := make(map[string][]string)
 	for _, ref := range targets {
+		if !c.containerManager.ImageExists(ctx, ref) {
+			ui.DefaultLogger.Warn("image not found locally, skipping", "image", ref)
+			continue
+		}
 		names, err := blockingContainers(ctx, c.containerManager, containers, ref)
 		if err != nil {
+			if !c.containerManager.ImageExists(ctx, ref) {
+				ui.DefaultLogger.Warn("image not found locally, skipping", "image", ref)
+				continue
+			}
 			return fmt.Errorf("failed to check image usage for '%s': %w", ref, err)
 		}
 		if len(names) > 0 {

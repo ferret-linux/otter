@@ -80,15 +80,6 @@ func (ac *AssembleCommand) Execute(ctx context.Context, opts AssembleOptions) er
 		return fmt.Errorf("failed to parse manifest file: %w", err)
 	}
 
-	for _, item := range items {
-		if *item.Settings.Rootful || ac.cfg.DefaultRootful {
-			if _, err := rootcheck.Validate(ctx, opts.SudoCommand); err != nil {
-				return fmt.Errorf("cannot run in root mode: %w", err)
-			}
-			break
-		}
-	}
-
 	itemsByName := make(map[string]manifest.Item, len(items))
 	for _, item := range items {
 		itemsByName[item.Name] = item
@@ -105,6 +96,16 @@ func (ac *AssembleCommand) Execute(ctx context.Context, opts AssembleOptions) er
 			if _, ok := itemsByName[name]; !ok {
 				return fmt.Errorf("box '%s' not found in manifest", name)
 			}
+		}
+	}
+
+	for _, name := range boxNames {
+		item := itemsByName[name]
+		if item.Settings.Rootful != nil && *item.Settings.Rootful || item.Settings.Rootful == nil && ac.cfg.DefaultRootful {
+			if _, err := rootcheck.Validate(ctx, opts.SudoCommand); err != nil {
+				return fmt.Errorf("cannot run in root mode: %w", err)
+			}
+			break
 		}
 	}
 
@@ -174,8 +175,14 @@ func (ac *AssembleCommand) replaceItem(ctx context.Context, item manifest.Item) 
 //nolint:gocognit // manifest item assembly: explicit per-field branches are clearer than helpers
 func (ac *AssembleCommand) createItem(ctx context.Context, item manifest.Item) error {
 	ac.progress.Next("creating %s...", item.Name)
-	rootful := *item.Settings.Rootful || ac.cfg.DefaultRootful
-	initSystem := *item.Settings.InitSystem || ac.cfg.DefaultInitSystem
+	rootful := ac.cfg.DefaultRootful
+	if item.Settings.Rootful != nil {
+		rootful = *item.Settings.Rootful
+	}
+	initSystem := ac.cfg.DefaultInitSystem
+	if item.Settings.InitSystem != nil {
+		initSystem = *item.Settings.InitSystem
+	}
 
 	opts := CreateOptions{
 		ContainerClone:          item.Clone,
