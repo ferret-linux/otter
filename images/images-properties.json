@@ -126,31 +126,6 @@
       "fallback_vendor_image": "docker.io/library/ubuntu:26.04"
     },
     {
-      "name": "kali",
-      "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
-      "family": "kali",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T06:43:35Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 631608963,
-          "disk_size": 1707266824
-        },
-        "arm64": {
-          "compressed_size": 607643732,
-          "disk_size": 1718304522
-        }
-      },
-      "build_number": 561,
-      "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest"
-    },
-    {
       "name": "slackware",
       "official_image": "ghcr.io/ferret-linux/slackware-otr:stable",
       "family": "slackware",
@@ -1386,6 +1361,31 @@
         }
       },
       "build_number": 5,
+      "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest"
+    },
+    {
+      "name": "kali",
+      "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
+      "family": "kali",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T14:24:33Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 631612208,
+          "disk_size": 1707266824
+        },
+        "arm64": {
+          "compressed_size": 607643191,
+          "disk_size": 1718304521
+        }
+      },
+      "build_number": 562,
       "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest"
     }
   ]
