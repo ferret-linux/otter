@@ -57,7 +57,7 @@ fi
 
 # Let's add our user to the container. if the user already exists, enforce properties.
 #
-# In case of AD or LDAP usernames, it is possible we will have a backslach in the name.
+# In case of AD or LDAP usernames, it is possible we will have a backslash in the name.
 # In that case grep would fail, so we replace the backslash with a point to make the regex work.
 # shellcheck disable=SC1003,SC2154 # SC2154: container_user_uid assigned by parse_args.sh (sourced+called by otter-init) before sourcing this file
 if ! grep -q "^$(printf '%s' "${container_user_name}" | tr '\\' '.'):" /etc/passwd &&

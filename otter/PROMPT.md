@@ -549,7 +549,7 @@ separated what had actually been reproduced in the sandbox from what
 remained documented behaviour it couldn't run there (rules 17, 30).
 
 > **Human:** [pastes real output from running the container] is this all
-> thats needed?
+> that is needed?
 
 The assistant re-checked its own earlier claim against that new evidence,
 found a real gap it had previously stated was already handled, and corrected

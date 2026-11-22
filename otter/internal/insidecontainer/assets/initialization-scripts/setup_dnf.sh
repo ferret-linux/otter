@@ -77,7 +77,7 @@ setup_dnf()
 				"
 				;;
 			rhel)
-			# RHEL doesnt support adding non-free packages unless you have active subscription
+			# RHEL does not support adding non-free packages unless you have active subscription
 			# the UBI images have small repos by default so we are not gonna add all the packages
 				base_deps="
 					lame

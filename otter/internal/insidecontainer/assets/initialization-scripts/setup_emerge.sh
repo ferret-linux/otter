@@ -11,7 +11,7 @@
 setup_emerge()
 {
 	# Check if the container we are using has a ::gentoo repo defined,
-	# if it is defined and it is empty, then synchroznize it.
+	# if it is defined and it is empty, then synchronize it.
 	gentoo_repo="$(portageq get_repo_path / gentoo)"
 	if [ -n "${gentoo_repo}" ] && [ ! -e "${gentoo_repo}" ]; then
 		emerge-webrsync
