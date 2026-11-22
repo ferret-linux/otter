@@ -145,28 +145,6 @@
       "build_number": 456
     },
     {
-      "name": "alma",
-      "official_image": "ghcr.io/ferret-linux/alma-otr:stable",
-      "fallback_vendor_image": "docker.io/library/almalinux:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-21T20:55:28Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 575897879,
-          "disk_size": 1771266198
-        },
-        "arm64": {
-          "compressed_size": 559229888,
-          "disk_size": 1617216095
-        }
-      },
-      "build_number": 569
-    },
-    {
       "name": "guix",
       "official_image": "ghcr.io/ferret-linux/guix-otr:latest",
       "fallback_vendor_image": "docker.io/library/debian:stable-slim",
@@ -1050,6 +1028,31 @@
       },
       "build_number": 556,
       "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest"
+    },
+    {
+      "name": "alma",
+      "official_image": "ghcr.io/ferret-linux/alma-otr:stable",
+      "family": "alma",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T04:47:20Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 467544304,
+          "disk_size": 1423534658
+        },
+        "arm64": {
+          "compressed_size": 456239374,
+          "disk_size": 1448285786
+        }
+      },
+      "build_number": 570,
+      "fallback_vendor_image": "docker.io/library/almalinux:latest"
     }
   ]
 }
