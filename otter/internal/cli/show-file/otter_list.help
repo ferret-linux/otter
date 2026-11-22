@@ -26,6 +26,7 @@
 {2}│{R} {4}NO_COLOR=1{R}  {5}Disable color output.{R}         {2}│{R}
 {2}├───────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                {2}│{R}
-{2}│{R} {5}Rootful containers are hidden by default,{R} {2}│{R}
-{2}│{R} {5}Pass '--root' to include them in the list.{R}{2}│{R}
+{2}│{R} {5}Default follows 'settings.rootful'        {2}│{R}
+{2}│{R} {5}in otter.conf; rootless unless set.       {2}│{R}
+{2}│{R} {5}Use --root / --root=false to override.    {2}│{R}
 {2}╰───────────────────────────────────────────╯{R}
