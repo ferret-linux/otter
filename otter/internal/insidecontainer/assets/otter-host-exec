@@ -156,8 +156,13 @@ sudo_command = ["sh", "-c"]
 if os.getresuid()[0] != 0:
     if shutil.which("sudo"):
         sudo_command = ["sudo", "sh", "-c"]
+    elif shutil.which("doas"):
+        sudo_command = ["doas", "sh", "-c"]
+    elif shutil.which("su"):
+        sudo_command = ["su", "root", "-c"]
     else:
-        sudo_command = ["su", "-l", "-c"]
+        print("Error: no privilege escalation command found (sudo/doas/su).", file=sys.stderr)
+        sys.exit(1)
 
 # Normalize architecture name to comply to golang/release naming
 architecture = platform.machine()
