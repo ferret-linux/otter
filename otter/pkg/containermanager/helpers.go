@@ -172,14 +172,6 @@ func GetWorkDir(hostHome, containerHome string, noWorkDir bool) (string, error) 
 		return containerHome, nil
 	}
 
-	if workDir == "" && hostHome == "" {
-		return "/", nil
-	}
-
-	if workDir == "" {
-		return containerHome, nil
-	}
-
 	if workDir == hostHome {
 		return containerHome, nil
 	}
