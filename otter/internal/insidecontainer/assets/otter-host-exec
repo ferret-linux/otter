@@ -152,17 +152,18 @@ if not host_command:
     host_command = os.environ.get("SHELL", "/bin/sh")
 
 # sudo command detection
-sudo_command = ["sh", "-c"]
-if os.getresuid()[0] != 0:
+def run_privileged(argv):
+    if os.getresuid()[0] == 0:
+        return subprocess.run(argv, check=True)
     if shutil.which("sudo"):
-        sudo_command = ["sudo", "sh", "-c"]
-    elif shutil.which("doas"):
-        sudo_command = ["doas", "sh", "-c"]
-    elif shutil.which("su"):
-        sudo_command = ["su", "root", "-c"]
-    else:
-        print("Error: no privilege escalation command found (sudo/doas/su).", file=sys.stderr)
-        sys.exit(1)
+        return subprocess.run(["sudo", *argv], check=True)
+    if shutil.which("doas"):
+        return subprocess.run(["doas", *argv], check=True)
+    if shutil.which("su"):
+        cmd = " ".join(shlex.quote(arg) for arg in argv)
+        return subprocess.run(["su", "root", "-c", cmd], check=True)
+    print("Error: no privilege escalation command found (sudo/doas/su).", file=sys.stderr)
+    sys.exit(1)
 
 # Normalize architecture name to comply to golang/release naming
 architecture = platform.machine()
@@ -208,10 +209,7 @@ if not host_spawn_ok:
                 tmp_path = Path(tmp.name)
             urllib.request.urlretrieve(url, tmp_path)
             os.chmod(tmp_path, 0o755)
-            subprocess.run(
-                sudo_command + ["install", "-m", "0755", str(tmp_path), "/usr/bin/host-spawn"],
-                check=True,
-            )
+            run_privileged(["install", "-m", "0755", str(tmp_path), "/usr/bin/host-spawn"])
         except Exception as exc:
             print(f"Error: Cannot install host-spawn: {exc}", file=sys.stderr)
             sys.exit(1)
