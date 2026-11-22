@@ -3,14 +3,17 @@ GO_BUILD_ENV := CGO_ENABLED=0 GOOS=$(GOOS)
 
 COMMIT ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo unknown)
 BUILD_TIME ?= $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
-LDFLAGS := -X github.com/ferret-linux/otter/internal/cli.commit=$(COMMIT) -X github.com/ferret-linux/otter/internal/cli.buildTime=$(BUILD_TIME)
+VERSION ?= 0.0.9
+LDFLAGS := -X github.com/ferret-linux/otter/internal/cli.commit=$(COMMIT) -X github.com/ferret-linux/otter/internal/cli.buildTime=$(BUILD_TIME) -X github.com/ferret-linux/otter/internal/cli.version=$(VERSION)
 
 .PHONY: version
 version:
-	sed -i 's/Version: "[^"]*"/Version: "$(word 2, $(MAKECMDGOALS))"/' internal/cli/root.go
+	@test -n "$(word 2, $(MAKECMDGOALS))" || { echo "usage: make version X.Y.Z" >&2; exit 1; }
 	for f in internal/insidecontainer/assets/*; do \
+		[ -f "$$f" ] || continue; \
 		sed -i 's/^\(VERSION[[:space:]]*=[[:space:]]*\)"[^"]*"/\1"$(word 2, $(MAKECMDGOALS))"/; s/^\(version=\)"[^"]*"/\1"$(word 2, $(MAKECMDGOALS))"/' "$$f"; \
 	done
+	@echo "Go version is injected at build time; build with: make build VERSION=$(word 2, $(MAKECMDGOALS))"
 
 %:
 	@:

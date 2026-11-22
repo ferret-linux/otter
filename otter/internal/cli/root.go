@@ -40,13 +40,15 @@ func escalatorFromContext(ctx context.Context) string {
 	return program
 }
 
-// commit and buildTime are injected at build time via -ldflags (see Makefile).
-// They stay at these defaults for builds that don't go through `make build`.
+// commit, buildTime and version are injected at build time via -ldflags
+// (see Makefile). They stay at these defaults for builds that don't go
+// through `make build`.
 //
 //nolint:gochecknoglobals // required so `-ldflags -X` can inject values at build time
 var (
 	commit    = "unknown"
 	buildTime = "unknown"
+	version   = "0.0.9"
 )
 
 func NewRootCommand(cfg *config.Values) *cli.Command {
@@ -62,7 +64,7 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 	}
 	return &cli.Command{
 		Name:                  "otter",
-		Version:               "0.0.9",
+		Version:               version,
 		EnableShellCompletion: true,
 		Flags: []cli.Flag{
 			&cli.StringFlag{
