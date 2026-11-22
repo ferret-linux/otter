@@ -27,16 +27,6 @@
 #	USER
 #	SHELL
 
-# Network check: verify connectivity before doing anything else.
-# Runs before the borked trap so a failed check does not mark the container as borked.
-# shellcheck disable=SC1091
-. /usr/lib/otter/scripts/initialization-scripts/helpers/network_check.sh
-network_check
-
-# Early exit trap , errors on first faliure & creates a broked state file
-# useful to distinguish a semi-broken container from a working one
-trap '[ "$?" -ne 0 ] && printf "Error: An error occurred\n" && touch /usr/lib/otter/container.borked' EXIT
-
 # Redirect stderr to stdout as podman by default logs stderr as priority 3 journald errors.
 # Github issue: https://github.com/containers/podman/issues/20728
 exec 2>&1
@@ -153,6 +143,17 @@ if [ "${upgrade}" -eq 0 ]; then
 	[ -z "${container_user_name}" ] && printf "Error: Invalid arguments, missing username\n" && exit 2
 	[ -z "${container_user_uid}" ] && printf "Error: Invalid arguments, missing user uid\n" && exit 2
 fi
+
+# Check the network only after local arguments and environment are known good.
+# This still runs before the borked trap, so a failed check does not mark the
+# container as borked.
+# shellcheck disable=SC1091
+. /usr/lib/otter/scripts/initialization-scripts/helpers/network_check.sh
+network_check
+
+# Early exit trap , errors on first faliure & creates a broked state file
+# useful to distinguish a semi-broken container from a working one
+trap '[ "$?" -ne 0 ] && printf "Error: An error occurred\n" && touch /usr/lib/otter/container.borked' EXIT
 
 # Remove any container.ready file to prevent enter before container is ready to use
 # this helps avoid enter before container is in a fully usable state or is being
