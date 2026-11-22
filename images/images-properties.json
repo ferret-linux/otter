@@ -843,6 +843,26 @@
       },
       "build_number": 574,
       "fallback_vendor_image": "docker.io/library/alpine:edge"
+    },
+    {
+      "name": "devuan-unstable-nonfree",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:unstable-nonfree",
+      "family": "devuan",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64"
+      ],
+      "built_at": "2026-11-22T02:50:52Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 646864341,
+          "disk_size": 1767858672
+        }
+      },
+      "build_number": 1,
+      "fallback_vendor_image": "docker.io/devuan/devuan:unstable"
     }
   ]
 }
