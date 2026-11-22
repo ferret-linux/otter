@@ -342,20 +342,38 @@ func validateCPUThreads(threads int) error {
 	if err != nil {
 		return fmt.Errorf("failed to read cpu info: %w", err)
 	}
-	parts := strings.SplitN(strings.TrimSpace(string(data)), "-", 2)
-	if len(parts) != 2 {
-		return errors.New("failed to parse cpu info")
+	hostThreads, err := countPresentCPUs(string(data))
+	if err != nil {
+		return err
 	}
-	start, err1 := strconv.Atoi(parts[0])
-	end, err2 := strconv.Atoi(parts[1])
-	if err1 != nil || err2 != nil {
-		return errors.New("failed to parse cpu info")
-	}
-	hostThreads := end - start + 1
 	if threads > hostThreads {
 		return fmt.Errorf("not enough threads, host has max %d threads available", hostThreads)
 	}
 	return nil
+}
+
+// countPresentCPUs counts the CPUs listed in /sys/devices/system/cpu/present.
+// The file is a comma-separated list of single CPUs and inclusive ranges
+// (e.g. "0-1,4,8-11"), not necessarily one contiguous range.
+func countPresentCPUs(data string) (int, error) {
+	groups := strings.Split(strings.TrimSpace(data), ",")
+	total := 0
+	for _, group := range groups {
+		parts := strings.SplitN(group, "-", 2) //nolint:mnd // range separator has two sides
+		start, err := strconv.Atoi(strings.TrimSpace(parts[0]))
+		if err != nil || start < 0 {
+			return 0, errors.New("failed to parse cpu info")
+		}
+		end := start
+		if len(parts) == 2 { //nolint:mnd // range separator has two sides
+			end, err = strconv.Atoi(strings.TrimSpace(parts[1]))
+			if err != nil || end < start {
+				return 0, errors.New("failed to parse cpu info")
+			}
+		}
+		total += end - start + 1
+	}
+	return total, nil
 }
 
 func (c *CreateCommand) makeGpu(opts *CreateOptions) string {
