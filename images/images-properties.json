@@ -391,31 +391,6 @@
       "fallback_vendor_image": "docker.io/library/almalinux:latest"
     },
     {
-      "name": "alma-nonfree",
-      "official_image": "ghcr.io/ferret-linux/alma-otr:nonfree",
-      "family": "alma",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T17:43:50Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 575892068,
-          "disk_size": 1771267126
-        },
-        "arm64": {
-          "compressed_size": 523875894,
-          "disk_size": 1617236553
-        }
-      },
-      "build_number": 4,
-      "fallback_vendor_image": "docker.io/library/almalinux:latest"
-    },
-    {
       "name": "void-musl-nonfree",
       "official_image": "ghcr.io/ferret-linux/void-otr:musl-nonfree",
       "family": "void",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 461,
       "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest"
+    },
+    {
+      "name": "alma-nonfree",
+      "official_image": "ghcr.io/ferret-linux/alma-otr:nonfree",
+      "family": "alma",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T21:50:28Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 575891794,
+          "disk_size": 1771268661
+        },
+        "arm64": {
+          "compressed_size": 523875872,
+          "disk_size": 1617236552
+        }
+      },
+      "build_number": 5,
+      "fallback_vendor_image": "docker.io/library/almalinux:latest"
     }
   ]
 }
