@@ -26,31 +26,6 @@
       "fallback_vendor_image": "docker.io/library/ubuntu:latest"
     },
     {
-      "name": "ubuntu-nonfree",
-      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:latest-nonfree",
-      "family": "ubuntu",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T04:35:12Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 568443671,
-          "disk_size": 1603418716
-        },
-        "arm64": {
-          "compressed_size": 547297252,
-          "disk_size": 1625866858
-        }
-      },
-      "build_number": 1,
-      "fallback_vendor_image": "docker.io/library/ubuntu:latest"
-    },
-    {
       "name": "homebrew",
       "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
       "family": "homebrew",
@@ -1369,6 +1344,31 @@
       },
       "build_number": 563,
       "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10"
+    },
+    {
+      "name": "ubuntu-nonfree",
+      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:latest-nonfree",
+      "family": "ubuntu",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T05:33:37Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 568448249,
+          "disk_size": 1603418714
+        },
+        "arm64": {
+          "compressed_size": 547298559,
+          "disk_size": 1625866862
+        }
+      },
+      "build_number": 2,
+      "fallback_vendor_image": "docker.io/library/ubuntu:latest"
     }
   ]
 }
