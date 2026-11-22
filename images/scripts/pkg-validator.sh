@@ -12,29 +12,33 @@
 set -e
 
 pkgmgr=""
-packages=""
-parsing_packages=0
-next_is_pm=0
 
-for arg in "$@"; do
-    if [ "${arg}" = "--pkgmgr" ]; then
-        next_is_pm=1
-    elif [ "${next_is_pm}" = "1" ]; then
-        pkgmgr="${arg}"
-        next_is_pm=0
-    elif [ "${arg}" = "--" ]; then
-        parsing_packages=1
-    elif [ "${parsing_packages}" = "1" ]; then
-        packages="${packages} ${arg}"
-    fi
+# Parse options before --, then leave the package list in the positional
+# parameters so it stays an array of distinct arguments.
+while [ "$#" -gt 0 ] && [ "$1" != "--" ]; do
+    case "$1" in
+        --pkgmgr)
+            shift
+            if [ "$#" -eq 0 ]; then
+                echo "ERROR: --pkgmgr requires a value" >&2
+                exit 1
+            fi
+            pkgmgr="$1"
+            ;;
+    esac
+    shift
 done
+
+if [ "$#" -gt 0 ] && [ "$1" = "--" ]; then
+    shift
+fi
 
 if [ -z "${pkgmgr}" ]; then
     echo "ERROR: --pkgmgr is required" >&2
     exit 1
 fi
 
-if [ -z "${packages}" ]; then
+if [ "$#" -eq 0 ]; then
     echo "ERROR: no packages provided after --" >&2
     exit 1
 fi
@@ -46,9 +50,8 @@ RESET='\033[0m'
 
 case "${pkgmgr}" in
     apk)
-        # shellcheck disable=SC2086
-        found="$(apk search -qe ${packages} 2>/dev/null | tr '\n' ' ')"
-        for pkg in ${packages}; do
+        found="$(apk search -qe "$@" 2>/dev/null | tr '\n' ' ')"
+        for pkg in "$@"; do
             case " ${found} " in
                 *" ${pkg} "*) valid="${valid} ${pkg}" ;;
                 *) printf "${YELLOW}WARN: ${RED}%s${YELLOW} not found in repos${RESET}\n" "${pkg}" >&2 ;;
@@ -56,9 +59,8 @@ case "${pkgmgr}" in
         done
         ;;
     apt)
-        # shellcheck disable=SC2086
-        found="$(apt-cache show ${packages} 2>/dev/null | grep "^Package:" | sort -u | cut -d' ' -f2- | tr '\n' ' ')"
-        for pkg in ${packages}; do
+        found="$(apt-cache show "$@" 2>/dev/null | grep "^Package:" | sort -u | cut -d' ' -f2- | tr '\n' ' ')"
+        for pkg in "$@"; do
             case " ${found} " in
                 *" ${pkg} "*) valid="${valid} ${pkg}" ;;
                 *) printf "${YELLOW}WARN: ${RED}%s${YELLOW} not found in repos${RESET}\n" "${pkg}" >&2 ;;
@@ -66,9 +68,13 @@ case "${pkgmgr}" in
         done
         ;;
     brew)
-        # shellcheck disable=SC2046,SC2086
-        found="$(brew formulae 2>/dev/null | grep -E "^($(echo ${packages} | tr ' ' '|'))$" | tr '\n' ' ')"
-        for pkg in ${packages}; do
+        pattern=""
+        for pkg in "$@"; do
+            pattern="${pattern}|${pkg}"
+        done
+        pattern="${pattern#|}"
+        found="$(brew formulae 2>/dev/null | grep -E "^(${pattern})$" | tr '\n' ' ')"
+        for pkg in "$@"; do
             case " ${found} " in
                 *" ${pkg} "*) valid="${valid} ${pkg}" ;;
                 *) printf "${YELLOW}WARN: ${RED}%s${YELLOW} not found in repos${RESET}\n" "${pkg}" >&2 ;;
@@ -76,14 +82,13 @@ case "${pkgmgr}" in
         done
         ;;
     dnf)
-        # shellcheck disable=SC2086
-        found="$(dnf list -q ${packages} 2>/dev/null | \
+        found="$(dnf list -q "$@" 2>/dev/null | \
             grep -v "Packages" | \
             grep "$(uname -m)\|noarch" | \
             cut -d' ' -f1 | \
             sed 's/\.[^.]*$//' | \
             tr '\n' ' ')"
-        for pkg in ${packages}; do
+        for pkg in "$@"; do
             case " ${found} " in
                 *" ${pkg} "*) valid="${valid} ${pkg}" ;;
                 *) printf "${YELLOW}WARN: ${RED}%s${YELLOW} not found in repos${RESET}\n" "${pkg}" >&2 ;;
@@ -91,9 +96,13 @@ case "${pkgmgr}" in
         done
         ;;
     pacman)
-        # shellcheck disable=SC2046,SC2086
-        valid="$(pacman -Ssq 2>/dev/null | grep -E "^($(echo ${packages} | tr ' ' '|'))$" | tr '\n' ' ')"
-        for pkg in ${packages}; do
+        pattern=""
+        for pkg in "$@"; do
+            pattern="${pattern}|${pkg}"
+        done
+        pattern="${pattern#|}"
+        valid="$(pacman -Ssq 2>/dev/null | grep -E "^(${pattern})$" | tr '\n' ' ')"
+        for pkg in "$@"; do
             case " ${valid} " in
                 *" ${pkg} "*) ;;
                 *) printf "${YELLOW}WARN: ${RED}%s${YELLOW} not found in repos${RESET}\n" "${pkg}" >&2 ;;
@@ -101,9 +110,8 @@ case "${pkgmgr}" in
         done
         ;;
     zypper)
-        # shellcheck disable=SC2086
-        found="$(zypper -n -q se --match-exact ${packages} 2>/dev/null | grep -e 'package$' | cut -d'|' -f2 | tr '\n' ' ')"
-        for pkg in ${packages}; do
+        found="$(zypper -n -q se --match-exact "$@" 2>/dev/null | grep -e 'package$' | cut -d'|' -f2 | tr '\n' ' ')"
+        for pkg in "$@"; do
             case " ${found} " in
                 *" ${pkg} "*) valid="${valid} ${pkg}" ;;
                 *) printf "${YELLOW}WARN: ${RED}%s${YELLOW} not found in repos${RESET}\n" "${pkg}" >&2 ;;
@@ -112,7 +120,7 @@ case "${pkgmgr}" in
         ;;
     xbps)
         found="$(xbps-query -Rs '*' 2>/dev/null | awk '{print $2}' | sed 's/-[^-]*$//' | tr '\n' ' ')"
-        for pkg in ${packages}; do
+        for pkg in "$@"; do
             case " ${found} " in
                 *" ${pkg} "*) valid="${valid} ${pkg}" ;;
                 *) printf "${YELLOW}WARN: ${RED}%s${YELLOW} not found in repos${RESET}\n" "${pkg}" >&2 ;;
@@ -120,7 +128,7 @@ case "${pkgmgr}" in
         done
         ;;
     emerge)
-        for pkg in ${packages}; do
+        for pkg in "$@"; do
             if emerge --ask=n --search "${pkg}" 2>/dev/null | grep "Applications found" | grep -qE "[1-9][0-9]*"; then
                 valid="${valid} ${pkg}"
             else
@@ -148,7 +156,9 @@ case "${pkgmgr}" in
         #     for install."), so this step was never required for
         #     safety in the first place.
         # The package list is passed straight through unchanged.
-        valid="${packages}"
+        for pkg in "$@"; do
+            valid="${valid} ${pkg}"
+        done
         ;;
     *)
         echo "ERROR: unknown package manager: ${pkgmgr}" >&2
