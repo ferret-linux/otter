@@ -151,31 +151,6 @@
       "fallback_vendor_image": "docker.io/cachyos/cachyos-v3:latest"
     },
     {
-      "name": "rocky-nonfree",
-      "official_image": "ghcr.io/ferret-linux/rocky-otr:nonfree",
-      "family": "rocky",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T13:56:06Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 578920148,
-          "disk_size": 1789137953
-        },
-        "arm64": {
-          "compressed_size": 524921381,
-          "disk_size": 1629151787
-        }
-      },
-      "build_number": 3,
-      "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
-    },
-    {
       "name": "slackware-current",
       "official_image": "ghcr.io/ferret-linux/slackware-otr:current",
       "family": "slackware",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 4,
       "fallback_vendor_image": "docker.io/library/ubuntu:26.04"
+    },
+    {
+      "name": "rocky-nonfree",
+      "official_image": "ghcr.io/ferret-linux/rocky-otr:nonfree",
+      "family": "rocky",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T18:33:57Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 578921120,
+          "disk_size": 1789140000
+        },
+        "arm64": {
+          "compressed_size": 524920796,
+          "disk_size": 1629151790
+        }
+      },
+      "build_number": 4,
+      "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
     }
   ]
 }
