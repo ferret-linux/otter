@@ -440,13 +440,15 @@ func removeFileIfExists(path string) bool {
 }
 
 func (p *exportPaths) deleteRecordArtifacts(record ExportRecord) {
-	removeFileIfExists(record.Path)
+	if p.underHome(record.Path) {
+		removeFileIfExists(record.Path)
+		cleanupOtterArtifacts(record.Path)
+	} else if record.Path != "" {
+		ui.DefaultLogger.Warn("skipping export cleanup outside home", "path", record.Path)
+	}
 	if record.Kind == exportKindApp && p.underHome(record.Icon) &&
 		strings.HasPrefix(filepath.Clean(record.Icon), filepath.Clean(p.iconsDir)+string(os.PathSeparator)) {
 		removeFileIfExists(record.Icon)
-	}
-	cleanupOtterArtifacts(record.Path)
-	if record.Kind == exportKindApp && record.Icon != "" {
 		cleanupOtterArtifacts(record.Icon)
 	}
 }
