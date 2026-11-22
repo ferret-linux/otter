@@ -227,7 +227,7 @@ setup_pacman()
 	fi
 
 	# shellcheck disable=SC2154 # HOST_LOCALE_LANG assigned by otter-init before sourcing this file
-	if [ ! -e "/usr/share/i18n/locales/${HOST_LOCALE_LANG}" ]; then
+	if [ -n "${HOST_LOCALE_LANG:-}" ] && [ ! -e "/usr/share/i18n/locales/${HOST_LOCALE_LANG}" ]; then
 		pacman -S --noconfirm glibc glibc-locales
 	fi
 
