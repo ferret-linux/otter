@@ -91,7 +91,7 @@ type EnterOptions struct {
 	// InspectResult is the container inspection already performed by the
 	// caller. Providers reuse it instead of inspecting the container again.
 	InspectResult   *InspectResult
-	AdditionalFlags string
+	AdditionalFlags []string
 	CustomCommand   []string
 	AddEnv          []string
 	Background      bool

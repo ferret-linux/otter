@@ -766,12 +766,11 @@ func (n *Nerdctl) containerStatus(ctx context.Context, containerName string) (st
 	}, containerName)
 }
 
-//nolint:gocognit // provider enter command construction: explicit option branches
 func (n *Nerdctl) generateEnterCommand(
 	ctx context.Context,
 	containerName string,
 	containerConfig *containermanager.InspectResult,
-	additionalFlags string,
+	additionalFlags []string,
 	background bool,
 	noWorkDir bool,
 	cleanPath bool,
@@ -867,9 +866,7 @@ func (n *Nerdctl) generateEnterCommand(
 		}
 	}
 
-	if len(additionalFlags) > 0 {
-		cmd = append(cmd, strings.Fields(additionalFlags)...)
-	}
+	cmd = append(cmd, additionalFlags...)
 
 	cmd = append(cmd, containerName)
 

@@ -14,7 +14,7 @@ type EnterResult struct{}
 
 type EnterOptions struct {
 	ContainerName   string
-	AdditionalFlags string
+	AdditionalFlags []string
 	CustomCommand   []string
 	AddEnv          []string
 	Background      bool

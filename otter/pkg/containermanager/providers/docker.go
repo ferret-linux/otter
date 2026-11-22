@@ -951,12 +951,11 @@ func (d *Docker) containerStatus(ctx context.Context, containerName string) (str
 	}, containerName)
 }
 
-//nolint:gocognit // provider enter command construction: explicit option branches
 func (d *Docker) generateEnterCommand(
 	ctx context.Context,
 	containerName string,
 	containerConfig *containermanager.InspectResult,
-	additionalFlags string,
+	additionalFlags []string,
 	background bool,
 	noWorkDir bool,
 	cleanPath bool,
@@ -1060,9 +1059,7 @@ func (d *Docker) generateEnterCommand(
 	}
 
 	// Additional flags
-	if len(additionalFlags) > 0 {
-		cmd = append(cmd, strings.Fields(additionalFlags)...)
-	}
+	cmd = append(cmd, additionalFlags...)
 
 	// Container name
 	cmd = append(cmd, containerName)

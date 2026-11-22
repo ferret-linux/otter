@@ -14,15 +14,16 @@ import (
 
 func newEnterCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
-		Name:    "enter",
-		Aliases: []string{"sh"},
+		Name:                      "enter",
+		Aliases:                   []string{"sh"},
+		DisableSliceFlagSeparator: true,
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "clean-path",
 				Aliases: []string{"c"},
 				Usage:   "Reset PATH inside container to FHS standard",
 			},
-			&cli.StringFlag{
+			&cli.StringSliceFlag{
 				Name:    "additional-flags",
 				Aliases: []string{"a"},
 				Usage:   "Additional flags to pass to container manager",
@@ -60,7 +61,7 @@ func enterAction(ctx context.Context, cmd *cli.Command) error {
 
 	options := commands.EnterOptions{
 		ContainerName:   firstName(cmd.Args().Slice()),
-		AdditionalFlags: cmd.String("additional-flags"),
+		AdditionalFlags: cmd.StringSlice("additional-flags"),
 		CustomCommand:   cmd.Args().Tail(),
 		AddEnv:          cmd.StringSlice("add-env"),
 		Background:      cmd.Bool("background"),

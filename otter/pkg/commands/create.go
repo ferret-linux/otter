@@ -223,7 +223,7 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 			UnshareIPC:                opts.UnshareIpc,
 			UnshareNetNS:              opts.UnshareNetNs,
 			UnshareProcess:            opts.UnshareProcess,
-			AdditionalFlags:           splitFields(opts.AdditionalFlags),
+			AdditionalFlags:           opts.AdditionalFlags,
 			AdditionalVolumes:         opts.AdditionalVolumes,
 			AdditionalPackages:        opts.AdditionalPackages,
 			ContainerPreInitHook:      opts.ContainerPreInitHook,
@@ -570,16 +570,4 @@ func (c *CreateCommand) prepareClone(ctx context.Context, containerName string) 
 	commitTag := fmt.Sprintf("%s:%s", strings.ToLower(containerName), time.Now().UTC().Format("20060102T150405.000000000"))
 
 	return commitTag, i.ContainerID, nil
-}
-
-// splitFields word-splits each entry of in on whitespace. A single CLI
-// invocation like --additional-flags "--label=a=1 --label=b=2" arrives here as
-// one slice element with embedded spaces; podman would parse that as a single
-// flag value. Splitting matches the manifest parser's behavior.
-func splitFields(in []string) []string {
-	out := make([]string, 0, len(in))
-	for _, v := range in {
-		out = append(out, strings.Fields(v)...)
-	}
-	return out
 }
