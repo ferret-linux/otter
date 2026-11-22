@@ -361,26 +361,6 @@
       "fallback_vendor_image": "docker.io/devuan/devuan:testing"
     },
     {
-      "name": "devuan-unstable-nonfree",
-      "official_image": "ghcr.io/ferret-linux/devuan-otr:unstable-nonfree",
-      "family": "devuan",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64"
-      ],
-      "built_at": "2026-11-22T02:50:52Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 646864341,
-          "disk_size": 1767858672
-        }
-      },
-      "build_number": 1,
-      "fallback_vendor_image": "docker.io/devuan/devuan:unstable"
-    },
-    {
       "name": "fedora-rawhide",
       "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide",
       "family": "fedora",
@@ -1288,6 +1268,26 @@
       },
       "build_number": 578,
       "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest"
+    },
+    {
+      "name": "devuan-unstable-nonfree",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:unstable-nonfree",
+      "family": "devuan",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64"
+      ],
+      "built_at": "2026-11-22T05:19:02Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 646863639,
+          "disk_size": 1767858668
+        }
+      },
+      "build_number": 2,
+      "fallback_vendor_image": "docker.io/devuan/devuan:unstable"
     }
   ]
 }
