@@ -55,24 +55,35 @@ jobs:
 
       - name: Create and Push Manifest
         run: |
+          set -euo pipefail
+          manifest="ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}"
+          arches='${{ inputs.arches }}'
+          count=$(echo "$arches" | jq 'length')
+          if [ "$count" -eq 0 ]; then
+            echo "at least one architecture is required"
+            exit 1
+          fi
+
+          images=()
+          while IFS= read -r arch; do
+            images+=("${manifest}-${arch}")
+          done < <(echo "$arches" | jq -r '.[]')
+          if [ "${#images[@]}" -ne "$count" ]; then
+            echo "failed to resolve every requested architecture"
+            exit 1
+          fi
+
           success=0
           for i in 1 2 3; do
-            ARCHES='${{ inputs.arches }}'
-            if echo "$ARCHES" | jq -e 'contains(["arm64"])' > /dev/null; then
-              podman manifest create \
-                ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} \
-                ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64 \
-                ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64 || { echo "Attempt $i/3 failed, retrying in 15s..."; podman manifest rm ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} 2>/dev/null || true; sleep 15; continue; }
-            else
-              podman manifest create \
-                ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} \
-                ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-amd64 || { echo "Attempt $i/3 failed, retrying in 15s..."; podman manifest rm ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} 2>/dev/null || true; sleep 15; continue; }
-            fi
-            podman manifest push \
-              ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} \
-              docker://ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} && success=1 && break
+            podman manifest create "$manifest" "${images[@]}" || {
+              echo "Attempt $i/3 failed, retrying in 15s..."
+              podman manifest rm "$manifest" 2>/dev/null || true
+              sleep 15
+              continue
+            }
+            podman manifest push "$manifest" "docker://${manifest}" && success=1 && break
             echo "Attempt $i/3 failed, retrying in 15s..."
-            podman manifest rm ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} 2>/dev/null || true
+            podman manifest rm "$manifest" 2>/dev/null || true
             sleep 15
           done
           [ "$success" -eq 1 ] || exit 1

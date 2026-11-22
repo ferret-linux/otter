@@ -94,10 +94,13 @@ jobs:
 
   merge:
     needs: [image-amd64, image-arm64]
+    # Only publish a manifest when every requested architecture built
+    # successfully. A skipped or failed requested arch must not leave a
+    # manifest pointing at a stale or missing per-arch tag.
     if: |
       always() &&
-      (needs.image-amd64.result == 'success' || needs.image-amd64.result == 'skipped') &&
-      (needs.image-arm64.result == 'success' || needs.image-arm64.result == 'skipped')
+      (!contains(fromJson(inputs.arches), 'amd64') || needs.image-amd64.result == 'success') &&
+      (!contains(fromJson(inputs.arches), 'arm64') || needs.image-arm64.result == 'success')
     uses: ./.github/workflows/.ib-merge.yml
     with:
       name: ${{ inputs.name }}
