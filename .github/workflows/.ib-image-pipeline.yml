@@ -112,22 +112,9 @@ jobs:
       id-token: write
     secrets: inherit
 
-  verify-amd64:
-    if: contains(fromJson(inputs.arches), 'amd64')
+  verify:
     needs: merge
-    uses: ./.github/workflows/.ib-verify-amd64.yml
-    with:
-      name: ${{ inputs.name }}
-      tag: ${{ inputs.tag }}
-    permissions:
-      contents: read
-      packages: read
-    secrets: inherit
-
-  verify-arm64:
-    if: contains(fromJson(inputs.arches), 'arm64')
-    needs: merge
-    uses: ./.github/workflows/.ib-verify-arm64.yml
+    uses: ./.github/workflows/.ib-verify.yml
     with:
       name: ${{ inputs.name }}
       tag: ${{ inputs.tag }}
@@ -137,11 +124,11 @@ jobs:
     secrets: inherit
 
   rollback:
-    needs: [image-amd64, image-arm64, merge, verify-amd64, verify-arm64]
+    needs: [image-amd64, image-arm64, merge, verify]
     if: |
       always() &&
       needs.merge.result == 'success' &&
-      (needs.verify-amd64.result == 'failure' || needs.verify-arm64.result == 'failure')
+      needs.verify.result == 'failure'
     uses: ./.github/workflows/.ib-rollback.yml
     with:
       name: ${{ inputs.name }}
@@ -155,12 +142,11 @@ jobs:
     secrets: inherit
 
   update-props:
-    needs: [prepare, merge, verify-amd64, verify-arm64]
+    needs: [prepare, merge, verify]
     if: |
       always() &&
       needs.merge.result == 'success' &&
-      (needs.verify-amd64.result == 'success' || needs.verify-amd64.result == 'skipped') &&
-      (needs.verify-arm64.result == 'success' || needs.verify-arm64.result == 'skipped')
+      needs.verify.result == 'success'
     uses: ./.github/workflows/.ib-update-props.yml
     with:
       name: ${{ inputs.name }}

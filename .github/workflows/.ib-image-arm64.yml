@@ -117,3 +117,19 @@ jobs:
             sleep 45
           done
           [ "$success" -eq 1 ] || exit 1
+
+      - name: Verify arch-specific signature
+        run: |
+          success=0
+          for i in 1 2 3; do
+            cosign verify \
+              --certificate-identity-regexp="https://github.com/ferret-linux/otter/.*" \
+              --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
+              ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64 && success=1 && break
+            echo "Attempt $i/3 failed, retrying in 15s..."
+            sleep 15
+          done
+          [ "$success" -eq 1 ] || exit 1
+
+      - name: Run arch-specific image
+        run: podman run --rm ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }}-arm64 echo ok
