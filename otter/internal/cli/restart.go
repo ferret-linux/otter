@@ -1,4 +1,4 @@
-//nolint:goconst,dupl // CLI flag strings and mirrored restart/stop commands are intentionally kept separate
+//nolint:goconst,dupl // CLI flag/command names are declarative; restart/stop intentionally mirror each other
 package cli
 
 import (

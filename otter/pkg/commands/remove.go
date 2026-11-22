@@ -225,7 +225,7 @@ func (c *RmCommand) cleanup(ctx context.Context, containerName string, root, pru
 		root,
 		prune,
 	); err != nil {
-		ui.DefaultLogger.Warn("failed to clean exports", keyContainer, containerName, "err", err)
+		ui.DefaultLogger.Warn("failed to clean exports", containerValue, containerName, "err", err)
 	}
 
 	err := c.generateEntryCmd.Execute(
@@ -237,7 +237,7 @@ func (c *RmCommand) cleanup(ctx context.Context, containerName string, root, pru
 		},
 	)
 	if err != nil {
-		ui.DefaultLogger.Warn("failed to remove desktop entry", keyContainer, containerName, "err", err)
+		ui.DefaultLogger.Warn("failed to remove desktop entry", containerValue, containerName, "err", err)
 	}
 }
 

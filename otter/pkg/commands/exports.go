@@ -93,9 +93,9 @@ func newExportPaths(ctx context.Context) (*exportPaths, error) {
 }
 
 func (p *exportPaths) ownerDir(owner ExportOwner) string {
-	mode := valueRootless
+	mode := rootlessValue
 	if owner.Rootful {
-		mode = keyRootful
+		mode = rootfulValue
 	}
 	return filepath.Join(p.indexRoot, owner.Manager, mode, owner.Container)
 }
@@ -123,9 +123,9 @@ func sameExportOwner(a, b ExportOwner) bool {
 }
 
 func (o ExportOwner) label() string {
-	mode := valueRootless
+	mode := rootlessValue
 	if o.Rootful {
-		mode = keyRootful
+		mode = rootfulValue
 	}
 	return fmt.Sprintf("%s (%s, %s)", o.Container, o.Manager, mode)
 }
@@ -277,8 +277,8 @@ func (p *exportPaths) loadAllRecords() []ExportRecord {
 					// ignoring it prevents cross-owner deletes.
 					if record.Owner.Manager != manager.Name() ||
 						record.Owner.Container != container.Name() ||
-						(record.Owner.Rootful && mode.Name() != keyRootful) ||
-						(!record.Owner.Rootful && mode.Name() != valueRootless) {
+						(record.Owner.Rootful && mode.Name() != rootfulValue) ||
+						(!record.Owner.Rootful && mode.Name() != rootlessValue) {
 						continue
 					}
 					existing, ok := byPath[record.Path]
@@ -317,20 +317,20 @@ func readExportMetadata(path string) (*exportMetadata, error) {
 
 	if strings.Contains(text, exportBinaryMarker) {
 		values := parseMarkerLines(text, map[string]string{
-			keyContainer: "# otter-container:",
-			keyManager:   "# otter-manager:",
-			keyRootful:   "# otter-rootful:",
-			keySource:    "# otter-source:",
+			containerValue: "# otter-container:",
+			managerValue:   "# otter-manager:",
+			rootfulValue:   "# otter-rootful:",
+			sourceValue:    "# otter-source:",
 		})
 		return metadataFromValues(values)
 	}
 
 	if strings.Contains(text, exportDesktopMarker) {
 		values := parseKeyValueLines(text, map[string]string{
-			keyContainer:    "X-Otter-Container=",
-			keyManager:      "X-Otter-Manager=",
-			keyRootful:      "X-Otter-Rootful=",
-			keySource:       "X-Otter-Source=",
+			containerValue:  "X-Otter-Container=",
+			managerValue:    "X-Otter-Manager=",
+			rootfulValue:    "X-Otter-Rootful=",
+			sourceValue:     "X-Otter-Source=",
 			"requested":     "X-Otter-Requested=",
 			"original_name": "X-Otter-Original-Name=",
 			"icon":          "X-Otter-Icon=",
@@ -375,18 +375,18 @@ func parseKeyValueLines(text string, keys map[string]string) map[string]string {
 }
 
 func metadataFromValues(values map[string]string) (*exportMetadata, error) {
-	for _, key := range []string{keyContainer, keyManager, keyRootful, keySource} {
+	for _, key := range []string{containerValue, managerValue, rootfulValue, sourceValue} {
 		if values[key] == "" {
 			return nil, errExportNotManaged
 		}
 	}
-	rootful := strings.EqualFold(values[keyRootful], "true")
-	if !rootful && !strings.EqualFold(values[keyRootful], "false") {
+	rootful := strings.EqualFold(values[rootfulValue], "true")
+	if !rootful && !strings.EqualFold(values[rootfulValue], "false") {
 		return nil, errExportNotManaged
 	}
 	owner := ExportOwner{
-		Container: values[keyContainer],
-		Manager:   values[keyManager],
+		Container: values[containerValue],
+		Manager:   values[managerValue],
 		Rootful:   rootful,
 	}
 	if !owner.valid() {
@@ -400,7 +400,7 @@ func metadataFromValues(values map[string]string) (*exportMetadata, error) {
 		Kind:         kind,
 		Owner:        owner,
 		Icon:         values["icon"],
-		Source:       values[keySource],
+		Source:       values[sourceValue],
 		Requested:    values["requested"],
 		OriginalName: values["original_name"],
 	}, nil
@@ -548,9 +548,9 @@ func (c *ExportsListCommand) Execute(ctx context.Context, _ ExportsListOptions) 
 		if name == "" {
 			name = strings.TrimSuffix(filepath.Base(record.Path), filepath.Ext(record.Path))
 		}
-		mode := valueRootless
+		mode := rootlessValue
 		if record.Owner.Rootful {
-			mode = keyRootful
+			mode = rootfulValue
 		}
 		table.AddRow(
 			[]string{name, record.Kind, record.Owner.Container, record.Owner.Manager, mode, record.Path},

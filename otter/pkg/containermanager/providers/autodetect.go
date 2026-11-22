@@ -18,7 +18,7 @@ var ErrNoContainerManager = errors.New("no container manager found")
 // true.
 func NewByType(managerType string, root bool, sudoCommand string) (containermanager.ContainerManager, error) {
 	switch managerType {
-	case "podman":
+	case podmanBinary:
 		return NewPodman(root, sudoCommand), nil
 	case dockerBinary:
 		return NewDocker(root, sudoCommand), nil
@@ -32,7 +32,7 @@ func NewByType(managerType string, root bool, sudoCommand string) (containermana
 // NewAutoDetect returns a ContainerManager for the first available container runtime.
 // Priority order: podman > nerdctl > docker.
 func NewAutoDetect(root bool, sudoCommand string) (containermanager.ContainerManager, error) {
-	if _, err := exec.LookPath("podman"); err == nil {
+	if _, err := exec.LookPath(podmanBinary); err == nil {
 		return NewPodman(root, sudoCommand), nil
 	}
 	if _, err := exec.LookPath(nerdctlBinary); err == nil {

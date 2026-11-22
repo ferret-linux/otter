@@ -1,4 +1,4 @@
-//nolint:goconst // CLI flag strings are intentionally repeated per-command; they may diverge independently
+//nolint:goconst // CLI flag/command names are declarative and intentionally repeated with their aliases/usage
 package cli
 
 import (

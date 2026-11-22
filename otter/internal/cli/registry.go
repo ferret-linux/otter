@@ -1,4 +1,4 @@
-//nolint:goconst // CLI flag strings are intentionally repeated per-command; they may diverge independently
+//nolint:goconst // CLI flag/command names are declarative and intentionally repeated with their aliases/usage
 package cli
 
 import (
@@ -46,7 +46,7 @@ func newRegistryCommand(cfg *config.Values) *cli.Command {
 
 func newRegistryListCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
-		Name:    commandNameList,
+		Name:    "list",
 		Aliases: []string{"ls"},
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
@@ -55,7 +55,7 @@ func newRegistryListCommand(_ *config.Values) *cli.Command {
 				Usage:   "Include disabled images in the table",
 			},
 			&cli.BoolFlag{
-				Name:    flagNameJSON,
+				Name:    "json",
 				Aliases: []string{"j"},
 				Usage:   "Present registry output in json format",
 			},
@@ -72,7 +72,7 @@ func registryListAction(ctx context.Context, cmd *cli.Command) error {
 
 	if err := commands.NewRegistryListCommand(containerManager).Execute(ctx, commands.RegistryListOptions{
 		All:  cmd.Bool("all"),
-		JSON: cmd.Bool(flagNameJSON),
+		JSON: cmd.Bool("json"),
 	}); err != nil {
 		return fmt.Errorf("failed to list registry: %w", err)
 	}

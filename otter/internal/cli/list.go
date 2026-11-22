@@ -1,3 +1,4 @@
+//nolint:goconst // CLI flag/command names are declarative and intentionally repeated with their aliases/usage
 package cli
 
 import (
@@ -14,11 +15,11 @@ import (
 
 func newListCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
-		Name:    commandNameList,
+		Name:    "list",
 		Aliases: []string{"ls"},
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
-				Name:    flagNameJSON,
+				Name:    "json",
 				Aliases: []string{"j"},
 				Usage:   "Show list as json struct",
 			},
@@ -38,7 +39,7 @@ func listAction(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("failed to execute list command: %w", err)
 	}
 
-	if cmd.Bool(flagNameJSON) {
+	if cmd.Bool("json") {
 		if err := commands.PrintListJSON(result); err != nil {
 			return fmt.Errorf("failed to print list as JSON: %w", err)
 		}

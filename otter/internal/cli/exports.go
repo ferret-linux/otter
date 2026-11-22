@@ -1,3 +1,4 @@
+//nolint:goconst // CLI flag/command names are declarative and intentionally repeated with their aliases/usage
 package cli
 
 import (
@@ -29,7 +30,7 @@ func newExportsCommand(cfg *config.Values) *cli.Command {
 
 func newExportsListCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
-		Name:    commandNameList,
+		Name:    "list",
 		Aliases: []string{"ls"},
 		Usage:   "List every recorded export",
 		Action: func(ctx context.Context, _ *cli.Command) error {

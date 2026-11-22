@@ -1,3 +1,4 @@
+//nolint:goconst // CLI flag/command names are declarative and intentionally repeated with their aliases/usage
 package cli
 
 import (
@@ -140,7 +141,7 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 				Usage:   "Do not generate a container entry on host system",
 			},
 			&cli.BoolFlag{
-				Name:  flagNameJSON,
+				Name:  "json",
 				Usage: "Output progress as JSON",
 			},
 			&cli.BoolFlag{
@@ -190,7 +191,7 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 	}
 
 	var progress *ui.Progress
-	if cmd.Bool(flagNameJSON) {
+	if cmd.Bool("json") {
 		progress = ui.NewJSONProgress()
 	}
 	createCmd := commands.NewCreateCommand(cfg, containerManager, progress)

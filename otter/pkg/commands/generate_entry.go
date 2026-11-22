@@ -137,12 +137,12 @@ func (c *GenerateEntryCommand) Execute(
 				opts.Root,
 			)
 			if _, err := os.Stat(entryPath); os.IsNotExist(err) {
-				ui.DefaultLogger.Info("no desktop entry found", keyContainer, containerName)
+				ui.DefaultLogger.Info("no desktop entry found", containerValue, containerName)
 			}
 			if err := c.deleteEntry(containerName, desktopEntryBaseDir, opts.Root); err != nil {
 				return fmt.Errorf("failed to delete desktop entry for container %s: %w", containerName, err)
 			}
-			ui.DefaultLogger.Info("desktop entry removed", keyContainer, containerName)
+			ui.DefaultLogger.Info("desktop entry removed", containerValue, containerName)
 		}
 
 		return nil
@@ -163,7 +163,7 @@ func (c *GenerateEntryCommand) Execute(
 		if err := c.createEntry(ctx, containerName, icon, desktopEntryBaseDir, otterPath, opts.Root); err != nil {
 			return fmt.Errorf("failed to create desktop entry for container %s: %w", containerName, err)
 		}
-		ui.DefaultLogger.Info("desktop entry created", keyContainer, containerName)
+		ui.DefaultLogger.Info("desktop entry created", containerValue, containerName)
 	}
 
 	return nil

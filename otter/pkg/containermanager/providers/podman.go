@@ -32,7 +32,7 @@ type Podman struct {
 type podmanCommand string
 
 const (
-	podmanCommandPodman podmanCommand = "podman"
+	podmanCommandPodman podmanCommand = podmanBinary
 )
 
 var _ containermanager.ContainerManager = &Podman{}
