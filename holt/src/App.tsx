@@ -22,7 +22,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
-import { NavLink, Navigate, useLocation } from 'react-router-dom';
+import { NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { NotificationProvider, NotificationToggle } from './notifications';
 
 const Home = lazy(() => import('./pages/Home'));
@@ -53,14 +53,7 @@ export default function App() {
   const [query, setQuery] = useState('');
   const showTools = location.pathname === '/' || location.pathname === '/registry';
 
-  const pages = [
-    { path: '/', key: 'home', element: <Home search={query} /> },
-    { path: '/create', key: 'create', element: <Create /> },
-    { path: '/registry', key: 'registry', element: <Registry search={query} /> },
-    { path: '/settings', key: 'settings', element: <Settings /> },
-    { path: '/verbose', key: 'verbose', element: <Verbose /> },
-  ];
-  const known = pages.some((p) => p.path === location.pathname);
+  // known route check handled by Routes fallback
 
   const nav = (
     <List>
@@ -207,13 +200,14 @@ export default function App() {
             </Box>
           }
         >
-          {known
-            ? pages.map((p) => (
-                <Box key={p.key} sx={{ display: location.pathname === p.path ? 'block' : 'none' }}>
-                  {p.element}
-                </Box>
-              ))
-            : <Navigate to="/" replace />}
+          <Routes>
+            <Route path="/" element={<Home search={query} />} />
+            <Route path="/create" element={<Create />} />
+            <Route path="/registry" element={<Registry search={query} />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/verbose" element={<Verbose />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
         </Suspense>
       </Box>
     </Box>
