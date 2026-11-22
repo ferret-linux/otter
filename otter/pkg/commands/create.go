@@ -567,7 +567,7 @@ func (c *CreateCommand) prepareClone(ctx context.Context, containerName string) 
 		return "", "", errors.New("cannot clone running container, name: " + containerName)
 	}
 
-	commitTag := fmt.Sprintf("%s:%s", strings.ToLower(containerName), time.Now().Format("2006-01-02"))
+	commitTag := fmt.Sprintf("%s:%s", strings.ToLower(containerName), time.Now().UTC().Format("20060102T150405.000000000"))
 
 	return commitTag, i.ContainerID, nil
 }
