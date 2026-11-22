@@ -1,30 +1,6 @@
 {
   "images": [
     {
-      "name": "homebrew",
-      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
-      "family": "homebrew",
-      "image_variant": "free",
-      "is_reliable_fallback": false,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-21T20:33:25Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 834625608,
-          "disk_size": 2029832110
-        },
-        "arm64": {
-          "compressed_size": 813722330,
-          "disk_size": 1970973188
-        }
-      },
-      "build_number": 467
-    },
-    {
       "name": "guix",
       "official_image": "ghcr.io/ferret-linux/guix-otr:latest",
       "family": "guix",
@@ -1369,6 +1345,30 @@
       },
       "build_number": 572,
       "fallback_vendor_image": "docker.io/library/ubuntu:latest"
+    },
+    {
+      "name": "homebrew",
+      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
+      "family": "homebrew",
+      "image_variant": "free",
+      "is_reliable_fallback": false,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T05:34:45Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 833924871,
+          "disk_size": 2029095856
+        },
+        "arm64": {
+          "compressed_size": 793650588,
+          "disk_size": 1970968513
+        }
+      },
+      "build_number": 468
     }
   ]
 }
