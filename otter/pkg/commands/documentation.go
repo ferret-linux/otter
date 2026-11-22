@@ -7,7 +7,7 @@ import (
 	"io/fs"
 	"path"
 	"regexp"
-	"sort"
+	"slices"
 	"strings"
 
 	"charm.land/bubbles/v2/help"
@@ -190,8 +190,8 @@ func docChildrenOf(dir string) ([]fs.DirEntry, error) {
 	if err != nil {
 		return nil, fmt.Errorf("read documentation directory %s: %w", dir, err)
 	}
-	sort.Slice(children, func(i, j int) bool {
-		return children[i].Name() < children[j].Name()
+	slices.SortFunc(children, func(a, b fs.DirEntry) int {
+		return strings.Compare(a.Name(), b.Name())
 	})
 	return children, nil
 }
