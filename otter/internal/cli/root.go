@@ -239,7 +239,9 @@ func withRoot(cfg *config.Values, cmd *cli.Command) *cli.Command {
 				return nil, err
 			}
 		}
-		if !c.Bool("root") && cfg.DefaultRootful {
+		// IsSet distinguishes an explicit --root=false from an omitted flag,
+		// so a user can opt out of settings.rootful per invocation.
+		if !c.IsSet("root") && cfg.DefaultRootful {
 			if err := c.Set("root", "true"); err != nil {
 				return nil, fmt.Errorf("failed to apply rootful default: %w", err)
 			}
