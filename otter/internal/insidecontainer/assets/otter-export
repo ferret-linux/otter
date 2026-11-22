@@ -1002,7 +1002,7 @@ def insert_extra_flags(value):
     return value + f" {extra_flags}"
 
 
-def rewrite_desktop(content, source, icon_host, requested):
+def rewrite_desktop(content, source, icon_host, requested, dest_host_path):
     prefix = container_command_prefix()
     sections = parse_desktop_sections(content)
     if not any(name == "Desktop Entry" for name, _ in sections):
@@ -1105,7 +1105,7 @@ def rewrite_desktop(content, source, icon_host, requested):
         result.append("")
     result.append(f"[Desktop Action {action_id}]")
     result.append(f"Name=Remove {requested}")
-    result.append(f"Exec={desktop_quote(otter_path)} exports delete {desktop_quote(host_desktop_path)}")
+    result.append(f"Exec={desktop_quote(otter_path)} exports delete {desktop_quote(dest_host_path)}")
     result.append("")
 
     return "\n".join(result), original_name, action_id
@@ -1309,7 +1309,7 @@ def export_application(source):
         return 1
 
     try:
-        content, original_name, _ = rewrite_desktop(text, source, host_icon_path, requested)
+        content, original_name, _ = rewrite_desktop(text, source, host_icon_path, requested, host_desktop_path)
     except ValueError as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 1
@@ -1540,10 +1540,25 @@ if enter_flags:
         part = parts[j]
         if part in ("--root", "-r", "--root=true", "--root=false"):
             print(f"Warning: {part} argument will be set automatically and should be removed.", file=sys.stderr)
-        elif part.startswith("--root="):
+            j += 1
+            continue
+        if part.startswith("--root="):
             print(f"Warning: {part} argument will be set automatically and should be removed.", file=sys.stderr)
-        else:
-            filtered.append(part)
+            j += 1
+            continue
+        if part in ("--name", "-n", "--container-name", "-cn"):
+            if j + 1 < len(parts):
+                print(f"Warning: {part} argument will be set automatically and should be removed.", file=sys.stderr)
+                j += 2
+                continue
+            print(f"Warning: {part} argument will be set automatically and should be removed.", file=sys.stderr)
+            j += 1
+            continue
+        if part.startswith("--name=") or part.startswith("--container-name="):
+            print(f"Warning: {part} argument will be set automatically and should be removed.", file=sys.stderr)
+            j += 1
+            continue
+        filtered.append(part)
         j += 1
     enter_flags = " ".join(shlex.quote(p) for p in filtered)
 
