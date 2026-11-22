@@ -213,7 +213,7 @@ if not host_spawn_ok:
         sys.exit(1)
 
 # Point dbus/xdg to host's runtime dir for initful containers
-real_uid = int(os.environ["OTTER_HOST_UID"])
+real_uid = int(os.environ.get("OTTER_HOST_UID", os.getuid()))
 xdg = os.environ.get("XDG_RUNTIME_DIR") or f"/run/user/{real_uid}"
 dbus = os.environ.get("DBUS_SESSION_BUS_ADDRESS") or f"unix:path=/run/user/{real_uid}/bus"
 
