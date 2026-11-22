@@ -73,6 +73,16 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 		return errors.New("please specify a container name or use --all")
 	}
 
+	// Scripts are bind-mounted from one host directory for every container,
+	// so provision them once for the whole batch instead of once per box.
+	if _, updated, err := insidecontainer.ProvisionScripts(c.cfg.ScriptsDir); err != nil {
+		ui.DefaultLogger.Warn("failed to provision scripts", "err", err)
+	} else if updated {
+		ui.DefaultLogger.Info("otter scripts updated")
+	} else {
+		ui.DefaultLogger.Info("otter scripts already up to date")
+	}
+
 	outcome := runBatch(ctx, containerNames, func(ctx context.Context, name string) (bool, error) {
 		if isLocked(ctx, c.containerManager, name) {
 			ui.DefaultLogger.Warn("locked, skipping", "name", name)
@@ -94,14 +104,6 @@ func (c *UpgradeCommand) Execute(ctx context.Context, opts *UpgradeOptions) erro
 }
 
 func (c *UpgradeCommand) upgradeContainer(ctx context.Context, name string) error {
-	if _, updated, err := insidecontainer.ProvisionScripts(c.cfg.ScriptsDir); err != nil {
-		ui.DefaultLogger.Warn("failed to provision scripts", "err", err)
-	} else if updated {
-		ui.DefaultLogger.Info("otter scripts updated")
-	} else {
-		ui.DefaultLogger.Info("otter scripts already up to date")
-	}
-
 	if err := c.containerManager.Start(ctx, name); err != nil {
 		return fmt.Errorf("failed to start container '%s' for upgrade: %w", name, err)
 	}
