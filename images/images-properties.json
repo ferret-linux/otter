@@ -266,31 +266,6 @@
       "fallback_vendor_image": "docker.io/aclemons/slackware:latest"
     },
     {
-      "name": "debian-unstable-nonfree",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:unstable-nonfree",
-      "family": "debian",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T17:32:17Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 665874037,
-          "disk_size": 1813200825
-        },
-        "arm64": {
-          "compressed_size": 627610940,
-          "disk_size": 1779125707
-        }
-      },
-      "build_number": 4,
-      "fallback_vendor_image": "docker.io/library/debian:unstable"
-    },
-    {
       "name": "ubuntu-lts",
       "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts",
       "family": "ubuntu",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 5,
       "fallback_vendor_image": "quay.io/fedora/fedora:latest"
+    },
+    {
+      "name": "debian-unstable-nonfree",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:unstable-nonfree",
+      "family": "debian",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T21:58:43Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 665982563,
+          "disk_size": 1813465531
+        },
+        "arm64": {
+          "compressed_size": 627707994,
+          "disk_size": 1779432391
+        }
+      },
+      "build_number": 5,
+      "fallback_vendor_image": "docker.io/library/debian:unstable"
     }
   ]
 }
