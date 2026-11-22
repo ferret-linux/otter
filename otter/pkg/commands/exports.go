@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"slices"
@@ -201,7 +202,7 @@ func (p *exportPaths) writeRecord(record ExportRecord) error {
 
 func (p *exportPaths) removeRecord(owner ExportOwner, exportPath string) error {
 	err := os.Remove(p.recordFile(owner, exportPath))
-	if err != nil && !os.IsNotExist(err) {
+	if err != nil && !errors.Is(err, fs.ErrNotExist) {
 		return fmt.Errorf("remove export record: %w", err)
 	}
 	return nil
@@ -431,7 +432,7 @@ func removeFileIfExists(path string) bool {
 	if err == nil {
 		return true
 	}
-	if os.IsNotExist(err) {
+	if errors.Is(err, fs.ErrNotExist) {
 		return false
 	}
 	ui.DefaultLogger.Warn("failed to remove file", "path", path, "err", err)
@@ -496,7 +497,7 @@ func cleanupTempArtifacts(root string, includeRootful bool) int {
 		}
 		return nil
 	})
-	if err != nil && !os.IsNotExist(err) {
+	if err != nil && !errors.Is(err, fs.ErrNotExist) {
 		ui.DefaultLogger.Warn("failed to scan for export artifacts", "path", root, "err", err)
 	}
 	return removed
@@ -654,7 +655,7 @@ func collectExportCandidates(roots []string) ([]string, error) {
 		root = filepath.Clean(root)
 		info, err := os.Lstat(root)
 		if err != nil {
-			if os.IsNotExist(err) {
+			if errors.Is(err, fs.ErrNotExist) {
 				continue
 			}
 			return nil, fmt.Errorf("failed to scan export path %s: %w", root, err)
@@ -823,7 +824,7 @@ func removeOrphanIcons(iconsDir string, referenced map[string]struct{}, includeR
 		}
 		return nil
 	})
-	if err != nil && !os.IsNotExist(err) {
+	if err != nil && !errors.Is(err, fs.ErrNotExist) {
 		ui.DefaultLogger.Warn("failed to scan export icons", "path", iconsDir, "err", err)
 	}
 	return removed
@@ -892,7 +893,7 @@ func (c *ExportsDeleteCommand) Execute(ctx context.Context, opts ExportsDeleteOp
 
 		info, err := os.Lstat(exportPath)
 		if err != nil {
-			if os.IsNotExist(err) {
+			if errors.Is(err, fs.ErrNotExist) {
 				if record != nil {
 					paths.deleteRecordArtifacts(*record)
 					return paths.removeRecord(record.Owner, record.Path)

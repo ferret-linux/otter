@@ -7,6 +7,7 @@ import (
 	"embed"
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -136,7 +137,7 @@ func (c *GenerateEntryCommand) Execute(
 				containerName,
 				opts.Root,
 			)
-			if _, err := os.Stat(entryPath); os.IsNotExist(err) {
+			if _, err := os.Stat(entryPath); errors.Is(err, fs.ErrNotExist) {
 				ui.DefaultLogger.Info("no desktop entry found", containerValue, containerName)
 			}
 			if err := c.deleteEntry(containerName, desktopEntryBaseDir, opts.Root); err != nil {
@@ -172,14 +173,14 @@ func (c *GenerateEntryCommand) Execute(
 func (c *GenerateEntryCommand) deleteEntry(containerName string, desktopEntryBaseDir string, root bool) error {
 	desktopEntryAppsDir := filepath.Join(desktopEntryBaseDir, "applications")
 	entryFilePath := c.getEntryFilePath(desktopEntryAppsDir, c.managerName(), containerName, root)
-	if err := os.Remove(entryFilePath); err != nil && !os.IsNotExist(err) {
+	if err := os.Remove(entryFilePath); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		return fmt.Errorf("failed to delete desktop entry for container %s: %w", containerName, err)
 	}
 	// Remove the pre-ownership filename as well. Old exports are unmanaged
 	// from the export index's point of view, but their pinned entry is still
 	// ours to clean up.
 	legacyPath := c.getLegacyEntryFilePath(desktopEntryAppsDir, containerName, root)
-	if err := os.Remove(legacyPath); err != nil && !os.IsNotExist(err) {
+	if err := os.Remove(legacyPath); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		return fmt.Errorf("failed to delete legacy desktop entry for container %s: %w", containerName, err)
 	}
 	return nil
@@ -205,7 +206,7 @@ func (c *GenerateEntryCommand) createEntry(
 	}
 
 	legacyPath := c.getLegacyEntryFilePath(desktopEntryAppsDir, containerName, root)
-	if err := os.Remove(legacyPath); err != nil && !os.IsNotExist(err) {
+	if err := os.Remove(legacyPath); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		ui.DefaultLogger.Warn("failed to remove legacy desktop entry", "path", legacyPath, "err", err)
 	}
 
@@ -338,7 +339,7 @@ func (c *GenerateEntryCommand) getIconPath(ctx context.Context, containerName st
 	}
 
 	destPath := filepath.Join(iconsDir, destFileName)
-	if _, err := os.Stat(destPath); os.IsNotExist(err) {
+	if _, err := os.Stat(destPath); errors.Is(err, fs.ErrNotExist) {
 		//nolint:gosec // 644 is standard for icon files
 		if err := os.WriteFile(destPath, iconData, 0644); err != nil {
 			ui.DefaultLogger.Warn("failed to write icon file", "err", err)
