@@ -8,7 +8,10 @@ if (is-terminal --stdin) {
 	# passwd's 7th field is the user's login shell. This mirrors the
 	# `cut -f 7` used by posix_integration.sh / fish_integration.fish, but
 	# nushell's `split column` names columns 0-based, so the shell is column6.
-	$env.SHELL = (^getent passwd $env.USER | split column ':' | get column6.0)
+	if (not ($env.USER? | is-empty)) and (which getent | is-not-empty) {
+		let resolved_shell = (try { ^getent passwd $env.USER | split column ':' | get column6.0 } catch { "" })
+		if not ($resolved_shell | is-empty) { $env.SHELL = $resolved_shell }
+	}
 
 	# Append the host's PATH (passed in as HOST_PATH, since PATH itself is
 	# left untouched on entry so the container's own package manager stays

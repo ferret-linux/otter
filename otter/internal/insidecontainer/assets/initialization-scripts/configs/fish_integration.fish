@@ -5,7 +5,12 @@ if status --is-interactive
 	test -z "$USER" && set -gx USER (id -un 2> /dev/null)
 	test -z "$UID"  && set -gx UID (id -ur 2> /dev/null)
 	test -z "$EUID" && set -gx EUID (id -u  2> /dev/null)
-	set -gx SHELL (getent passwd "$USER" | cut -f 7 -d :)
+	if command -q getent; and test -n "$USER"
+		set -l resolved_shell (getent passwd "$USER" | cut -f 7 -d :)
+		if test -n "$resolved_shell"
+			set -gx SHELL $resolved_shell
+		end
+	end
 
 	# Append the host's PATH (passed in as HOST_PATH, since PATH itself is
 	# left untouched on entry so the container's own package manager stays

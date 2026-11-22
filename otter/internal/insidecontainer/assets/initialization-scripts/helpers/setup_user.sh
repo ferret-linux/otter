@@ -226,10 +226,10 @@ if [ ! -e /etc/passwd.done ]; then
 		if passwd --help 2>&1 | grep -q -- --stdin; then
 			passwd_cmd="passwd --stdin"
 		fi
-		printf "%s\n%s\n" "${temporary_password}" "${temporary_password}" | ${passwd_cmd} root
+		printf "%s\n%s\n" "${temporary_password}" "${temporary_password}" | ${passwd_cmd} root || :
 		if ! passwd -d "root"; then
 			# Fallback to chpasswd for older systems without passwd -d
-			printf "%s:" "root" | chpasswd
+			printf "root:\n" | chpasswd || :
 		fi
 	else
 		# We're rootful, so we don't want passwordless accounts, so we lock them
@@ -247,10 +247,11 @@ fi
 #
 # else we fallback to the usual setup with passwordless sudo/su user. This is
 # likely because we're in a rootless setup, so privilege escalation is not a concern.
+container_user_name_grep="$(printf '%s' "${container_user_name}" | sed 's/[][\.^$*+?(){}|\\]/\\&/g')"
+shadow_field="$(grep "^${container_user_name_grep}:" /etc/shadow 2> /dev/null | head -n 1 | cut -d':' -f2 || :)"
 if [ "${rootful}" -eq 1 ] &&
 	{
-		[ "$(grep -F "${container_user_name}" /etc/shadow | cut -d':' -f2)" = '!!' ] ||
-			[ "$(grep -F "${container_user_name}" /etc/shadow | cut -d':' -f2)" = "" ]
+		[ "${shadow_field}" = '!!' ] || [ "${shadow_field}" = "" ]
 	}; then
 
 	# force setup of user's password on first shell

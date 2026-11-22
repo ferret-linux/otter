@@ -46,7 +46,7 @@ EOF
 		# With recommended packages, something might try to pull in
 		# parallel-printer-support which can't be installed in rootless containers.
 		# Since we very much likely never need it, just lock it
-		zypper al parallel-printer-support
+		zypper al parallel-printer-support || :
 		# Check if shell_pkg is available in distro's repo. If not we
 		# fall back to bash, and we set the SHELL variable to bash so
 		# that it is set up correctly for the user.

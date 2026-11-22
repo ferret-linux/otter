@@ -13,11 +13,11 @@ show_help()
 	cat << EOF
 ╭────────────────────────────────────────────────────────────────╮
 │▸ Options:                                                      │
-│ --                    ┆ -e   Command to execute during init    │
+│ --                    ┆      Command to execute during init    │
 │ --name                ┆ -n   User name                         │
 │ --user                ┆ -u   UID of the user                   │
 │ --home                ┆ -d   Path to the user's home directory │
-│ --init                ┆ -I   Whether to use init or not        │
+│ --init                ┆ -i   Whether to use init or not        │
 │ --group               ┆ -g   GID of the user                   │
 │ --nvidia                     Integrate host's Nvidia drivers   │
 │ --upgrade             ┆ -U   Run init in upgrade mode          │

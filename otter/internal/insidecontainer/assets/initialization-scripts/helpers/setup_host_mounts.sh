@@ -73,8 +73,9 @@ for host_mount_ro in ${HOST_MOUNTS_RO}; do
 		printf "Warning: %s integration with the host failed, runtime sync for %s disabled.\n" "${host_mount_ro}" "${host_mount_ro}"
 		# Fallback options for files, we do a hard copy of it
 		if [ -f /run/host"${host_mount_ro}" ]; then
-			if ! (rm -f "${host_mount_ro}" && cp -f /run/host"${host_mount_ro}" "${host_mount_ro}"); then
-				printf "Warning: Hard copy failed. Error: %s\n" "$(cp -f /run/host"${host_mount_ro}" "${host_mount_ro}" 2>&1)"
+			cp_err=""
+			if ! cp_err="$(rm -f "${host_mount_ro}" && cp -f /run/host"${host_mount_ro}" "${host_mount_ro}" 2>&1)"; then
+				printf "Warning: Hard copy failed. Error: %s\n" "${cp_err}"
 			fi
 		fi
 	fi

@@ -45,13 +45,40 @@ setup_initsystem()
 	# the container user's shell (e.g. fish) as root, which otherwise creates
 	# stray root-owned ~/.cache, ~/.config, ~/.local state for no reason.
 	SHELL=/bin/sh script -c "cat /var/console" /dev/null &
+	console_script_pid="$!"
 
-	# Ensure the pty is created
-	sleep 0.5
+	# Ensure the pty is created and discover the actual slave pty allocated by
+	# script(1). We avoid hardcoding /dev/pts/0, which may be occupied.
+	console_pts=""
+	for _ in 1 2 3 4 5 6 7 8 9 10; do
+		for fd in /proc/"${console_script_pid}"/fd/*; do
+			target="$(readlink -f "${fd}" 2> /dev/null || :)"
+			case "${target}" in
+				/dev/pts/[0-9]*)
+					console_pts="${target}"
+					break 2
+					;;
+			esac
+		done
+		for child in /proc/"${console_script_pid}"/task/*/children; do
+			for child_pid in $(cat "${child}" 2> /dev/null || :); do
+				for fd in /proc/"${child_pid}"/fd/*; do
+					target="$(readlink -f "${fd}" 2> /dev/null || :)"
+					case "${target}" in
+						/dev/pts/[0-9]*)
+							console_pts="${target}"
+							break 3
+							;;
+					esac
+				done
+			done
+		done
+		sleep 0.1
+	done
 
 	# Mount the created pty over /dev/console in order to have systemd logs
 	# right into container logs
-	if ! mount --bind /dev/pts/0 /dev/console; then
+	if [ -z "${console_pts}" ] || ! mount --bind "${console_pts}" /dev/console; then
 		# Fallback to older behaviour or fake plaintext file in case it fails
 		# this ensures rootful + initful boxes do not interfere with host's /dev/console
 		rm -f /var/console
@@ -61,7 +88,7 @@ setup_initsystem()
 
 	if [ -e /etc/inittab ]; then
 		# Cleanup openrc to not interfere with the host
-		sed -i 's/^\(tty\d\:\:\)/#\1/g' /etc/inittab
+		sed -i 's/^\(tty[0-9][0-9]*::\)/#\1/g' /etc/inittab
 	fi
 
 	if [ -e /etc/rc.conf ]; then
@@ -226,7 +253,7 @@ setup_init_systemd()
 		# be able to bind to localhost:53
 		mount_source="$(findmnt -no SOURCE /etc/resolv.conf)" || :
 		# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
-		if [ -n "${mount_source}" ] && ! echo "${mount_source}" | grep -q "${id}"; then
+		if [ -n "${mount_source}" ] && { [ -z "${id}" ] || ! printf '%s\n' "${mount_source}" | grep -Fq "${id}"; }; then
 			UNIT_TARGETS="${UNIT_TARGETS}
 				/usr/lib/systemd/system/systemd-resolved.service
 			"
@@ -292,10 +319,10 @@ EOF
 	systemctl start user@${container_user_uid}.service && \
 	systemctl start user-integration@${container_user_uid}.service && \
 	systemctl start user-integration@${container_user_uid}.timer && \
-	loginctl enable-linger ${container_user_uid} || : && \
+	loginctl enable-linger ${container_user_uid} && \
 	touch /usr/lib/otter/container.ready && \
 	touch /usr/lib/otter/container.bootstrapped && \
-	echo container_setup_done" &
+	echo container_setup_done || :" &
 
 	[ -e /usr/lib/systemd/systemd ] && exec /usr/lib/systemd/systemd --system --log-target=console --unit=multi-user.target
 	[ -e /lib/systemd/systemd ] && exec /lib/systemd/systemd --system --log-target=console --unit=multi-user.target
@@ -353,7 +380,7 @@ wait_for_sysvinit_runlevel()
 	done && [ \"\${timeout}\" -gt 0 ] && \
 	touch /usr/lib/otter/container.ready && \
 	touch /usr/lib/otter/container.bootstrapped && \
-	echo container_setup_done" &
+	echo container_setup_done || :" &
 }
 
 # setup_init_sysvinit_lsb handles the LSB-style layout (Devuan).
@@ -534,7 +561,7 @@ EOF
 	done && [ \"\${timeout}\" -gt 0 ] && \
 	touch /usr/lib/otter/container.ready && \
 	touch /usr/lib/otter/container.bootstrapped && \
-	echo container_setup_done" &
+	echo container_setup_done || :" &
 
 	if [ -e /usr/sbin/openrc-init ]; then
 		exec /usr/sbin/openrc-init
@@ -624,7 +651,7 @@ EOF
 	done && [ \"\${timeout}\" -gt 0 ] && \
 	touch /usr/lib/otter/container.ready && \
 	touch /usr/lib/otter/container.bootstrapped && \
-	echo container_setup_done" &
+	echo container_setup_done || :" &
 
 	if [ -e /usr/bin/runit ]; then
 		exec /usr/bin/runit
@@ -724,7 +751,7 @@ EOF
 	done && [ \"\${timeout}\" -gt 0 ] && \
 	touch /usr/lib/otter/container.ready && \
 	touch /usr/lib/otter/container.bootstrapped && \
-	echo container_setup_done" &
+	echo container_setup_done || :" &
 
 	if [ -e /usr/bin/dinit ]; then
 		exec /usr/bin/dinit --container

@@ -151,17 +151,13 @@ fi
 . /usr/lib/otter/scripts/initialization-scripts/helpers/network_check.sh
 network_check
 
-# Early exit trap , errors on first faliure & creates a broked state file
-# useful to distinguish a semi-broken container from a working one
-trap '[ "$?" -ne 0 ] && printf "Error: An error occurred\n" && touch /usr/lib/otter/container.borked' EXIT
-
 # Remove any container.ready file to prevent enter before container is ready to use
 # this helps avoid enter before container is in a fully usable state or is being
 # upgraded by using 'otter upgrade'
 rm -f /usr/lib/otter/container.ready
-if [ "${upgrade}" -ne 0 ]; then
-	trap 'if [ $? -eq 0 ]; then touch /usr/lib/otter/container.ready; fi' EXIT
-fi
+# Single exit trap: record failure as borked, and on upgrade success mark ready.
+# This avoids overwriting the borked trap during upgrade.
+trap '[ "$?" -ne 0 ] && printf "Error: An error occurred\n" && touch /usr/lib/otter/container.borked || { [ "${upgrade:-0}" -ne 0 ] && touch /usr/lib/otter/container.ready; }' EXIT
 # Persist the container manager identity. Providers set the standard
 # `container` env when creating the container, so otter-init only has to write
 # it down once; in-container export then reads the persistent marker rather
@@ -952,7 +948,7 @@ if [ "${init}" -eq 0 ]; then
 			# The mount point might not exist, either because it's umounted or it doesn't exist on
 			# host in some cases like /etc/localtime, so ignore findmnt errors
 			mount_source="$(findmnt -no SOURCE "${file_watch}")" || :
-			if [ -n "${mount_source}" ] && ! echo "${mount_source}" | grep -q "${id}"; then
+			if [ -n "${mount_source}" ] && { [ -z "${id}" ] || ! printf '%s\n' "${mount_source}" | grep -Fq "${id}"; }; then
 				file_watch_src="/run/host${file_watch}"
 				# check if the target file exists
 				if ls -l "${file_watch_src}" 2> /dev/null > /dev/null; then

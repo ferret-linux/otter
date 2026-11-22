@@ -30,7 +30,7 @@ if [ -f /usr/lib/otter/container.official ] \
 elif [ -f /run/.toolboxenv ]; then
 	# shellcheck disable=SC2154 # CONTAINER_ID is injected into the container's environment externally, not assigned in this script
 	if [ "${BASH_VERSION:-}" != "" ]; then
-		PS1="\[\e[0;90m\]╭⟮\[\e[0;92m\]⬢\[\e[0;90m\]⟯─⟮\[\e[0;96m\]\u\[\e[0;90m\]@\[\e[0;95m\]${CONTAINER_ID}\[\e[0;90m\]⟯─⟮\[\e[0;92m\]\W\[\e[0;90m\]⟯─⟮\[\e[0;94m\]$(date +%H:%M)\[\e[0;90m\]⟯\[\e[0m\]\n\[\e[0;90m\]╰─\[\e[0;92m\]▶ \[\e[0m\]"
+		PS1="\[\e[0;90m\]╭⟮\[\e[0;92m\]⬢\[\e[0;90m\]⟯─⟮\[\e[0;96m\]\u\[\e[0;90m\]@\[\e[0;95m\]${CONTAINER_ID}\[\e[0;90m\]⟯─⟮\[\e[0;92m\]\W\[\e[0;90m\]⟯─⟮\[\e[0;94m\]\A\[\e[0;90m\]⟯\[\e[0m\]\n\[\e[0;90m\]╰─\[\e[0;92m\]▶ \[\e[0m\]"
 		export PS1
 	fi
 	# shellcheck disable=SC2154 # CONTAINER_ID is injected into the container's environment externally, not assigned in this script

@@ -12,7 +12,7 @@ setup_emerge()
 {
 	# Check if the container we are using has a ::gentoo repo defined,
 	# if it is defined and it is empty, then synchronize it.
-	gentoo_repo="$(portageq get_repo_path / gentoo)"
+	gentoo_repo="$(portageq get_repo_path / gentoo 2> /dev/null || :)"
 	if [ -n "${gentoo_repo}" ] &&
 		{ [ ! -d "${gentoo_repo}" ] ||
 			[ -z "$(find "${gentoo_repo}" -mindepth 1 -maxdepth 1 -print 2>/dev/null)" ]; }; then

@@ -1,20 +1,25 @@
 # always TERM to xterm-256color
 export TERM=xterm-256color
 ###############################
-if [ -z "${USER}" ]; then
-	USER="$(id -un 2> /dev/null)"
+if [ -z "${USER:-}" ]; then
+	USER="$(id -un 2> /dev/null || :)"
 	export USER
 fi
-if [ -z "${UID}" ]; then
-	UID="$(id -ur 2> /dev/null)"
+if [ -z "${UID:-}" ]; then
+	UID="$(id -ur 2> /dev/null || :)"
 	readonly UID
 fi
-if [ -z "${EUID}" ]; then
-	EUID="$(id -u  2> /dev/null)"
+if [ -z "${EUID:-}" ]; then
+	EUID="$(id -u  2> /dev/null || :)"
 	readonly EUID
 fi
-SHELL="$(getent passwd "${USER}" | cut -f 7 -d :)"
-export SHELL
+if command -v getent > /dev/null 2>&1 && [ -n "${USER:-}" ]; then
+	resolved_shell="$(getent passwd "${USER}" | cut -f 7 -d :)"
+	if [ -n "${resolved_shell}" ]; then
+		SHELL="${resolved_shell}"
+		export SHELL
+	fi
+fi
 
 # Append the host's PATH (passed in as HOST_PATH, since PATH itself is left
 # untouched on entry so the container's own package manager stays reachable
