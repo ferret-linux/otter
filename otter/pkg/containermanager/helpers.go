@@ -135,13 +135,8 @@ func FilterEnvVars() []string {
 			continue
 		}
 
-		// Split into key and value
-		parts := strings.SplitN(env, "=", 2)
-		if len(parts) != 2 {
-			continue
-		}
-
-		key := parts[0]
+		// Split into key and value; the Contains check above guarantees two parts.
+		key := strings.SplitN(env, "=", 2)[0]
 
 		// Check excluded prefixes
 		excluded := false
