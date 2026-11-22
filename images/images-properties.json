@@ -75,26 +75,6 @@
       "fallback_vendor_image": "docker.io/library/debian:stable"
     },
     {
-      "name": "arch",
-      "official_image": "ghcr.io/ferret-linux/arch-otr:latest",
-      "family": "arch",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64"
-      ],
-      "built_at": "2026-11-21T20:29:17Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 843874323,
-          "disk_size": 2461127774
-        }
-      },
-      "build_number": 575,
-      "fallback_vendor_image": "docker.io/library/archlinux:latest"
-    },
-    {
       "name": "steamos",
       "official_image": "ghcr.io/ferret-linux/steamos-otr:latest",
       "family": "steamos",
@@ -1378,6 +1358,26 @@
       },
       "build_number": 553,
       "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest"
+    },
+    {
+      "name": "arch",
+      "official_image": "ghcr.io/ferret-linux/arch-otr:latest",
+      "family": "arch",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64"
+      ],
+      "built_at": "2026-11-22T05:36:48Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 843875587,
+          "disk_size": 2461128800
+        }
+      },
+      "build_number": 576,
+      "fallback_vendor_image": "docker.io/library/archlinux:latest"
     }
   ]
 }
