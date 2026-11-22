@@ -1022,6 +1022,31 @@
       },
       "build_number": 573,
       "fallback_vendor_image": "docker.io/devuan/devuan:unstable"
+    },
+    {
+      "name": "void-musl-nonfree",
+      "official_image": "ghcr.io/ferret-linux/void-otr:musl-nonfree",
+      "family": "void",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T04:47:42Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 394384067,
+          "disk_size": 1128591554
+        },
+        "arm64": {
+          "compressed_size": 377813581,
+          "disk_size": 1101216454
+        }
+      },
+      "build_number": 1,
+      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest"
     }
   ]
 }
