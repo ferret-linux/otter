@@ -491,31 +491,6 @@
       "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest"
     },
     {
-      "name": "debian-unstable",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:unstable",
-      "family": "debian",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T18:31:33Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 652255681,
-          "disk_size": 1765442923
-        },
-        "arm64": {
-          "compressed_size": 627406449,
-          "disk_size": 1778699642
-        }
-      },
-      "build_number": 574,
-      "fallback_vendor_image": "docker.io/library/debian:unstable"
-    },
-    {
       "name": "fedora-negativo17",
       "official_image": "ghcr.io/ferret-linux/fedora-otr:negativo17",
       "family": "fedora",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 6,
       "fallback_vendor_image": "docker.io/library/debian:testing"
+    },
+    {
+      "name": "debian-unstable",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:unstable",
+      "family": "debian",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T21:56:22Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 652367205,
+          "disk_size": 1765707623
+        },
+        "arm64": {
+          "compressed_size": 627502384,
+          "disk_size": 1779006326
+        }
+      },
+      "build_number": 575,
+      "fallback_vendor_image": "docker.io/library/debian:unstable"
     }
   ]
 }
