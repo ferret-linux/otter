@@ -4,36 +4,41 @@ package rootcheck
 import (
 	"context"
 	"errors"
-	"fmt"
 	"path/filepath"
 	"sync"
 
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
+type validationResult struct {
+	resolved string
+	err      error
+}
+
 //nolint:gochecknoglobals // singleton: process-wide memoization is the intent
 var (
-	validateOnce      sync.Once
-	errValidate       error
-	cachedSudoCommand string
-	resolvedCommand   string
+	validateMu      sync.Mutex
+	validationCache = make(map[string]validationResult)
 )
 
 // Validate ensures that the given privilege escalation program is available
 // and, for known programs, that the user can elevate privileges.
 // Known programs (sudo, sudo-rs, doas, run0, pkexec) are checked specifically.
 // Unknown programs trigger a warning and proceed without validation.
-// The check runs at most once per process; subsequent calls return the cached result.
-// Returns the resolved program name (useful when sudoCommand is "autodetect").
+// Each distinct sudoCommand is checked at most once per process; later calls
+// with a different escalator get its own cached result instead of a mismatch
+// error. Returns the resolved program name (useful for "autodetect").
 func Validate(ctx context.Context, sudoCommand string) (string, error) {
-	if cachedSudoCommand != "" && cachedSudoCommand != sudoCommand {
-		return "", fmt.Errorf("sudoCommand mismatch: already validated with %q, got %q", cachedSudoCommand, sudoCommand)
+	validateMu.Lock()
+	defer validateMu.Unlock()
+
+	if result, ok := validationCache[sudoCommand]; ok {
+		return result.resolved, result.err
 	}
-	validateOnce.Do(func() {
-		cachedSudoCommand = sudoCommand
-		resolvedCommand, errValidate = check(ctx, sudoCommand)
-	})
-	return resolvedCommand, errValidate
+
+	resolved, err := check(ctx, sudoCommand)
+	validationCache[sudoCommand] = validationResult{resolved: resolved, err: err}
+	return resolved, err
 }
 
 func check(ctx context.Context, sudoCommand string) (string, error) {
