@@ -180,6 +180,14 @@ func (c *RmCommand) removeContainer(
 		return fmt.Errorf("error inspecting the container: %w", err)
 	}
 
+	// The rootful label is only readable while the container exists. Capture
+	// the complete owner tuple now so later cleanup targets the right index.
+	owner := ExportOwner{
+		Container: container.Name,
+		Manager:   c.containerManager.Name(),
+		Rootful:   inspectOutput.Rootful,
+	}
+
 	// For custom-home containers, ContainerHome is now the canonical in-container
 	// path (e.g. /home/ferret), not a real host path, so the actual host directory
 	// to remove is ContainerCustomHomeSource instead, when present.
@@ -209,36 +217,40 @@ func (c *RmCommand) removeContainer(
 
 	err = c.containerManager.Remove(ctx, container.Name, cmOptions)
 	if err != nil {
+		// Providers can remove the container before a later home-removal
+		// failure, so still try to clean its records before reporting.
+		if cleanupErr := c.cleanup(ctx, owner, options.Prune); cleanupErr != nil {
+			ui.DefaultLogger.Warn("failed to clean up after failed removal", "name", container.Name, "err", cleanupErr)
+		}
 		return fmt.Errorf("failed to remove container: %w", err)
 	}
 
-	c.cleanup(ctx, container.Name, options.Root, options.Prune)
+	if err := c.cleanup(ctx, owner, options.Prune); err != nil {
+		return fmt.Errorf("failed to clean up removed container '%s': %w", container.Name, err)
+	}
 
 	return nil
 }
 
-func (c *RmCommand) cleanup(ctx context.Context, containerName string, root, prune bool) {
-	if err := CleanupContainerExports(
-		ctx,
-		c.containerManager.Name(),
-		containerName,
-		root,
-		prune,
-	); err != nil {
-		ui.DefaultLogger.Warn("failed to clean exports", containerValue, containerName, "err", err)
+func (c *RmCommand) cleanup(ctx context.Context, owner ExportOwner, prune bool) error {
+	err := CleanupContainerExports(ctx, owner.Manager, owner.Container, owner.Rootful, prune)
+	if err != nil {
+		err = fmt.Errorf("failed to clean exports: %w", err)
 	}
 
-	err := c.generateEntryCmd.Execute(
+	entryErr := c.generateEntryCmd.Execute(
 		ctx,
 		&GenerateEntryOptions{
-			ContainerNames: []string{containerName},
+			ContainerNames: []string{owner.Container},
 			Delete:         true,
-			Root:           root,
+			Root:           owner.Rootful,
 		},
 	)
-	if err != nil {
-		ui.DefaultLogger.Warn("failed to remove desktop entry", containerValue, containerName, "err", err)
+	if entryErr != nil {
+		entryErr = fmt.Errorf("failed to remove desktop entry: %w", entryErr)
 	}
+
+	return errors.Join(err, entryErr)
 }
 
 func getContainersToRemove(
