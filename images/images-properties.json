@@ -316,31 +316,6 @@
       "fallback_vendor_image": "quay.io/centos/centos:stream10"
     },
     {
-      "name": "void-musl-nonfree",
-      "official_image": "ghcr.io/ferret-linux/void-otr:musl-nonfree",
-      "family": "void",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T17:45:07Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 394393215,
-          "disk_size": 1128606404
-        },
-        "arm64": {
-          "compressed_size": 377830458,
-          "disk_size": 1101219013
-        }
-      },
-      "build_number": 5,
-      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest"
-    },
-    {
       "name": "ubuntu-lts",
       "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts",
       "family": "ubuntu",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 5,
       "fallback_vendor_image": "quay.io/fedora/fedora:latest"
+    },
+    {
+      "name": "void-musl-nonfree",
+      "official_image": "ghcr.io/ferret-linux/void-otr:musl-nonfree",
+      "family": "void",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T21:57:56Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 394422900,
+          "disk_size": 1128682695
+        },
+        "arm64": {
+          "compressed_size": 377862020,
+          "disk_size": 1101352133
+        }
+      },
+      "build_number": 6,
+      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest"
     }
   ]
 }
