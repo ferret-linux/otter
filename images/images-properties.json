@@ -1,31 +1,6 @@
 {
   "images": [
     {
-      "name": "gentoo",
-      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
-      "family": "gentoo",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-21T17:49:15Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1682741280,
-          "disk_size": 4339025103
-        },
-        "arm64": {
-          "compressed_size": 1317280898,
-          "disk_size": 3744540413
-        }
-      },
-      "build_number": 502,
-      "fallback_vendor_image": "docker.io/gentoo/stage3:latest"
-    },
-    {
       "name": "devuan-testing-nonfree",
       "official_image": "ghcr.io/ferret-linux/devuan-otr:testing-nonfree",
       "family": "devuan",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 575,
       "fallback_vendor_image": "docker.io/library/ubuntu:26.04"
+    },
+    {
+      "name": "gentoo",
+      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
+      "family": "gentoo",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T22:57:16Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 2031202108,
+          "disk_size": 5130254034
+        },
+        "arm64": {
+          "compressed_size": 1565053162,
+          "disk_size": 4154394323
+        }
+      },
+      "build_number": 503,
+      "fallback_vendor_image": "docker.io/gentoo/stage3:latest"
     }
   ]
 }
