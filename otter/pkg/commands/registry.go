@@ -271,7 +271,7 @@ var familyDisplayNames = map[string]string{
 	"guix":        "GNU Guix",
 	"homebrew":    "Homebrew",
 	"kali":        "Kali Linux",
-	"opensuse":    "openSUSE",
+	"opensuse":    "OpenSUSE",
 	"oracle":      "Oracle Linux",
 	"rhel":        "RHEL UBI",
 	"rocky":       "Rocky Linux",
