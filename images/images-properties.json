@@ -221,31 +221,6 @@
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
     },
     {
-      "name": "opensuse-leap",
-      "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
-      "family": "opensuse",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T02:28:46Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 396687255,
-          "disk_size": 1214857365
-        },
-        "arm64": {
-          "compressed_size": 374972113,
-          "disk_size": 1191569048
-        }
-      },
-      "build_number": 529,
-      "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest"
-    },
-    {
       "name": "kali-edge-nonfree",
       "official_image": "ghcr.io/ferret-linux/kali-otr:edge-nonfree",
       "family": "kali",
@@ -1369,6 +1344,31 @@
       },
       "build_number": 2,
       "fallback_vendor_image": "docker.io/library/debian:testing"
+    },
+    {
+      "name": "opensuse-leap",
+      "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
+      "family": "opensuse",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T05:36:00Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 396688567,
+          "disk_size": 1214857363
+        },
+        "arm64": {
+          "compressed_size": 374971424,
+          "disk_size": 1191569042
+        }
+      },
+      "build_number": 530,
+      "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest"
     }
   ]
 }
