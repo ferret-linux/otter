@@ -770,7 +770,7 @@ if [ -z "${{CONTAINER_ID:-}}" ]; then
 elif [ "${{CONTAINER_ID}}" = {shlex.quote(container_name)} ] && [ "$_otter_manager" = {shlex.quote(manager)} ] && {rootful_check}; then
 	exec {local_run}
 else
-	exec otter-host-exec {cross} "$@"
+	exec /usr/lib/otter/scripts/otter-host-exec {cross} "$@"
 fi
 """
 

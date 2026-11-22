@@ -106,7 +106,7 @@ def generate_wrapper(args_list, host_cmd_raw):
     return f"""#!/bin/sh
 {MARKER_LINE}
 # host-cmd: {host_cmd_raw}
-exec otter-host-exec {quoted} "$@"
+exec /usr/lib/otter/scripts/otter-host-exec {quoted} "$@"
 """
 
 
