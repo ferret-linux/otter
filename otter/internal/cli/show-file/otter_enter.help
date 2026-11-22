@@ -25,7 +25,7 @@
 {2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}                                  {2}│{R}
 {2}├───────────┴─────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Notes:{R}                                                                 {2}│{R}
-{2}│{R} {4}--root{R}  {5}Preferred over 'sudo otter' when root is needed. To use a{R}       {2}│{R}
-{2}│{R}         {5}program other than sudo, set OTR_SUDO_PROGRAM or the{R}            {2}│{R}
-{2}│{R}         {5}'otter_sudo_program' config variable.{R}                           {2}│{R}
+{2}│{R} {4}--root{R}  {5}Preferred over 'sudo otter' when root is needed. To use a       {2}│{R}
+{2}│{R}         {5}program other than sudo, set 'preferences.sudo-program' or      {2}│{R}
+{2}│{R}         {5}pass --sudo-command <program>.                                  {2}│{R}
 {2}╰─────────────────────────────────────────────────────────────────────────╯{R}
