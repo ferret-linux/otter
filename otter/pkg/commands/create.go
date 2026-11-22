@@ -139,6 +139,12 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 	containerImage := imageResolution.Image
 	containerName := c.makeContainerName(&opts, containerImage)
 	opts.ContainerName = containerName
+
+	if c.containerManager.Exists(ctx, containerName) {
+		printContainerAlreadyExists(c.progress, containerName, opts.Rootful)
+		return &CreateResult{ContainerName: containerName, AlreadyExisted: true}, nil
+	}
+
 	containerHostname, err := c.makeContainerHostname(&opts)
 	if err != nil {
 		return nil, fmt.Errorf("failed to resolve container hostname: %w", err)
@@ -151,16 +157,15 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 
 	containerUserCustomHome := c.makeContainerUserCustomHome(&opts, containerName)
 
-	if c.containerManager.Exists(ctx, containerName) {
-		printContainerAlreadyExists(c.progress, containerName, opts.Rootful)
-		return &CreateResult{ContainerName: containerName, AlreadyExisted: true}, nil
-	}
-
+	// Prepare the clone early so validation failures cannot leave a commit
+	// tag behind, but do not commit until every other check has passed.
+	var cloneSourceID string
 	if opts.ContainerClone != "" {
-		cloneImage, err := c.clone(ctx, opts.ContainerClone)
+		cloneImage, sourceID, err := c.prepareClone(ctx, opts.ContainerClone)
 		if err != nil {
 			return nil, fmt.Errorf("failed to clone container %s: %w", opts.ContainerClone, err)
 		}
+		cloneSourceID = sourceID
 		containerImage = cloneImage
 		// A clone deliberately overrides any inherited variant identity.
 		imageResolution.Variant = registry.VariantGeneric
@@ -169,19 +174,23 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 		imageResolution.Props = nil
 	}
 
-	switch {
-	case !c.containerManager.ImageExists(ctx, containerImage):
-		// Missing image always auto-pulls unconditionally.
-		if err := registry.Pull(ctx, c.containerManager, containerImage, opts.ContainerPlatform, c.progress); err != nil {
-			return nil, fmt.Errorf("failed to pull image '%s': %w", containerImage, err)
-		}
-	case opts.ContainerAlwaysPull:
-		if err := registry.Pull(ctx, c.containerManager, containerImage, opts.ContainerPlatform, c.progress); err != nil {
-			return nil, fmt.Errorf("failed to pull image '%s': %w", containerImage, err)
-		}
-	case imageResolution.Props != nil:
-		if err := c.checkImageStaleness(ctx, imageResolution.Props, containerImage, opts); err != nil {
-			return nil, err
+	// A clone's image is produced locally by the deferred commit below, so
+	// registry pulls and staleness checks do not apply to it.
+	if opts.ContainerClone == "" {
+		switch {
+		case !c.containerManager.ImageExists(ctx, containerImage):
+			// Missing image always auto-pulls unconditionally.
+			if err := registry.Pull(ctx, c.containerManager, containerImage, opts.ContainerPlatform, c.progress); err != nil {
+				return nil, fmt.Errorf("failed to pull image '%s': %w", containerImage, err)
+			}
+		case opts.ContainerAlwaysPull:
+			if err := registry.Pull(ctx, c.containerManager, containerImage, opts.ContainerPlatform, c.progress); err != nil {
+				return nil, fmt.Errorf("failed to pull image '%s': %w", containerImage, err)
+			}
+		case imageResolution.Props != nil:
+			if err := c.checkImageStaleness(ctx, imageResolution.Props, containerImage, opts); err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -190,6 +199,12 @@ func (c *CreateCommand) Execute(ctx context.Context, opts CreateOptions) (*Creat
 		displayImage = c.cfg.DefaultContainerImage
 	}
 	c.progress.Next("creating '%s' using image '%s'", containerName, displayImage)
+
+	if opts.ContainerClone != "" {
+		if err := c.containerManager.Commit(ctx, cloneSourceID, containerImage); err != nil {
+			return nil, fmt.Errorf("failed to commit container '%s:%s': %w", cloneSourceID, containerImage, err)
+		}
+	}
 
 	err = c.containerManager.Create(
 		ctx,
@@ -539,24 +554,22 @@ func (c *CreateCommand) makeContainerUserCustomHome(
 	return containerUserCustomHome
 }
 
-func (c *CreateCommand) clone(ctx context.Context, containerName string) (string, error) {
+// prepareClone validates the clone source and returns its ID together with
+// the tag that will hold the committed image. The commit is deliberately
+// deferred by Execute until every other creation check has passed.
+func (c *CreateCommand) prepareClone(ctx context.Context, containerName string) (string, string, error) {
 	i, err := c.containerManager.InspectContainer(ctx, containerName)
 	if err != nil {
-		return "", fmt.Errorf("failed to inspect container status: %w", err)
+		return "", "", fmt.Errorf("failed to inspect container status: %w", err)
 	}
 
 	if i.ContainerStatus == containermanager.RunningStatus {
-		return "", errors.New("cannot clone running container, name: " + containerName)
+		return "", "", errors.New("cannot clone running container, name: " + containerName)
 	}
 
 	commitTag := fmt.Sprintf("%s:%s", strings.ToLower(containerName), time.Now().Format("2006-01-02"))
 
-	err = c.containerManager.Commit(ctx, i.ContainerID, commitTag)
-	if err != nil {
-		return "", fmt.Errorf("failed to commit container '%s:%s': %w", i.ContainerID, commitTag, err)
-	}
-
-	return commitTag, nil
+	return commitTag, i.ContainerID, nil
 }
 
 // splitFields word-splits each entry of in on whitespace. A single CLI
