@@ -1080,26 +1080,6 @@
       "fallback_vendor_image": "docker.io/library/amazonlinux:latest"
     },
     {
-      "name": "artix",
-      "official_image": "ghcr.io/ferret-linux/artix-otr:openrc",
-      "family": "artix",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64"
-      ],
-      "built_at": "2026-11-22T04:30:15Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 768915325,
-          "disk_size": 2266701559
-        }
-      },
-      "build_number": 447,
-      "fallback_vendor_image": "docker.io/artixlinux/artixlinux:base-openrc"
-    },
-    {
       "name": "slackware-current",
       "official_image": "ghcr.io/ferret-linux/slackware-otr:current",
       "family": "slackware",
@@ -1288,6 +1268,26 @@
       },
       "build_number": 2,
       "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest"
+    },
+    {
+      "name": "artix",
+      "official_image": "ghcr.io/ferret-linux/artix-otr:openrc",
+      "family": "artix",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64"
+      ],
+      "built_at": "2026-11-22T05:12:22Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 768911195,
+          "disk_size": 2266701559
+        }
+      },
+      "build_number": 448,
+      "fallback_vendor_image": "docker.io/artixlinux/artixlinux:base-openrc"
     }
   ]
 }
