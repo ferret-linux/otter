@@ -156,6 +156,8 @@ def dispatch(initsystem, action, name):
             _exec(["sv", action, service_link])
     elif initsystem == "dinit":
         _exec(["dinitctl", action, name])
+    else:
+        _error(f"unknown init system '{initsystem}'")
 
 
 if len(sys.argv) < 2 or sys.argv[1] in ("--help", "-h"):
