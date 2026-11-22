@@ -183,7 +183,7 @@ func GetWorkDir(hostHome, containerHome string, noWorkDir bool) (string, error) 
 	return "/run/host" + workDir, nil
 }
 
-func BuildCommandArgs(customCommand []string, user string, noTTY bool, unshareGroups bool) []string {
+func BuildCommandArgs(customCommand []string, user string, background bool, unshareGroups bool) []string {
 	args := customCommand
 	if len(args) == 0 {
 		// Default: execute user's shell with login
@@ -203,7 +203,7 @@ func BuildCommandArgs(customCommand []string, user string, noTTY bool, unshareGr
 	// instead of falling through to the container's real PID 1.
 	if unshareGroups {
 		unshareArgs := []string{"python3", "/usr/lib/otter/scripts/otter-subreaper", "su"}
-		if !noTTY {
+		if !background {
 			unshareArgs = append(unshareArgs, "--pty")
 		}
 		unshareArgs = append(unshareArgs, "-s", "/bin/sh", "-c", `"$0" "$@"`, "--", user)

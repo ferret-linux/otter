@@ -676,7 +676,7 @@ func (n *Nerdctl) Enter(
 		ctx,
 		options.ContainerName,
 		options.AdditionalFlags,
-		options.NoTTY,
+		options.Background,
 		options.NoWorkDir,
 		options.CleanPath,
 		options.EmptyEnv,
@@ -686,7 +686,7 @@ func (n *Nerdctl) Enter(
 		return err
 	}
 
-	commandArgs := containermanager.BuildCommandArgs(options.CustomCommand, user, options.NoTTY, config.UnshareGroups)
+	commandArgs := containermanager.BuildCommandArgs(options.CustomCommand, user, options.Background, config.UnshareGroups)
 
 	inspectResult, err := n.InspectContainer(ctx, options.ContainerName)
 	if err != nil || inspectResult.ContainerStatus != containermanager.RunningStatus {
@@ -694,7 +694,7 @@ func (n *Nerdctl) Enter(
 	}
 
 	runOpt := runOptions{Interactive: true}
-	if options.NoTTY {
+	if options.Background {
 		runOpt = runOptions{}
 	}
 	if _, err := n.run(ctx, append(command, commandArgs...), runOpt); err != nil {
@@ -745,7 +745,7 @@ func (n *Nerdctl) generateEnterCommand(
 	ctx context.Context,
 	containerName string,
 	additionalFlags string,
-	noTTY bool,
+	background bool,
 	noWorkDir bool,
 	cleanPath bool,
 	emptyEnv bool,
@@ -754,7 +754,7 @@ func (n *Nerdctl) generateEnterCommand(
 	cmd := []string{}
 
 	cmd = append(cmd, "exec")
-	if noTTY {
+	if background {
 		cmd = append(cmd, "--detach")
 	} else {
 		cmd = append(cmd, "--interactive")
@@ -774,7 +774,7 @@ func (n *Nerdctl) generateEnterCommand(
 		cmd = append(cmd, fmt.Sprintf("--user=%s", userEnv.User))
 	}
 
-	if !noTTY && ttyutil.IsTTY() {
+	if !background && ttyutil.IsTTY() {
 		cmd = append(cmd, "--tty")
 	}
 

@@ -75,7 +75,7 @@ type EnterOptions struct {
 	AdditionalFlags string
 	CustomCommand   []string
 	AddEnv          []string
-	NoTTY           bool
+	Background      bool
 	NoWorkDir       bool
 	CleanPath       bool
 	EmptyEnv        bool

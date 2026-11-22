@@ -613,7 +613,7 @@ func (d *Docker) Enter(
 		ctx,
 		options.ContainerName,
 		options.AdditionalFlags,
-		options.NoTTY,
+		options.Background,
 		options.NoWorkDir,
 		options.CleanPath,
 		options.EmptyEnv,
@@ -623,7 +623,7 @@ func (d *Docker) Enter(
 		return err
 	}
 
-	commandArgs := containermanager.BuildCommandArgs(options.CustomCommand, user, options.NoTTY, config.UnshareGroups)
+	commandArgs := containermanager.BuildCommandArgs(options.CustomCommand, user, options.Background, config.UnshareGroups)
 
 	inspectResult, err := d.InspectContainer(ctx, options.ContainerName)
 	if err != nil || inspectResult.ContainerStatus != containermanager.RunningStatus {
@@ -631,7 +631,7 @@ func (d *Docker) Enter(
 	}
 
 	runOpt := runOptions{Interactive: true}
-	if options.NoTTY {
+	if options.Background {
 		runOpt = runOptions{}
 	}
 	if _, err := d.run(ctx, append(command, commandArgs...), runOpt); err != nil {
@@ -930,7 +930,7 @@ func (d *Docker) generateEnterCommand(
 	ctx context.Context,
 	containerName string,
 	additionalFlags string,
-	noTTY bool,
+	background bool,
 	noWorkDir bool,
 	cleanPath bool,
 	emptyEnv bool,
@@ -939,7 +939,7 @@ func (d *Docker) generateEnterCommand(
 	cmd := []string{}
 
 	cmd = append(cmd, "exec")
-	if noTTY {
+	if background {
 		cmd = append(cmd, "--detach")
 	} else {
 		cmd = append(cmd, "--interactive")
@@ -961,7 +961,7 @@ func (d *Docker) generateEnterCommand(
 
 	// TTY allocation — auto-detect headless mode like the shell version:
 	// if stdin or stdout is not a terminal, skip --tty.
-	if !noTTY && ttyutil.IsTTY() {
+	if !background && ttyutil.IsTTY() {
 		cmd = append(cmd, "--tty")
 	}
 

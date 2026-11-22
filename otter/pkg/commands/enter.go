@@ -17,7 +17,7 @@ type EnterOptions struct {
 	AdditionalFlags string
 	CustomCommand   []string
 	AddEnv          []string
-	NoTTY           bool
+	Background      bool
 	CleanPath       bool
 	EmptyEnv        bool
 	NoWorkDir       bool
@@ -59,13 +59,13 @@ func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterRe
 		AdditionalFlags: opts.AdditionalFlags,
 		CustomCommand:   opts.CustomCommand,
 		AddEnv:          opts.AddEnv,
-		NoTTY:           opts.NoTTY,
+		Background:      opts.Background,
 		CleanPath:       opts.CleanPath,
 		EmptyEnv:        opts.EmptyEnv,
 		NoWorkDir:       opts.NoWorkDir,
 	}
 
-	if !opts.NoTTY {
+	if !opts.Background {
 		ui.DefaultLogger.Info("entering...", containerValue, opts.ContainerName)
 	}
 
@@ -74,7 +74,7 @@ func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterRe
 		return nil, fmt.Errorf("failed to enter the container: %w", err)
 	}
 
-	if !opts.NoTTY {
+	if !opts.Background {
 		fmt.Println() //nolint:forbidigo // blank line separator after interactive session output
 		ui.DefaultLogger.Info("container still running — use 'otter stop' to stop it", containerValue, opts.ContainerName)
 	}

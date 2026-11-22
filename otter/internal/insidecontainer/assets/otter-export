@@ -732,7 +732,7 @@ def container_command_prefix():
     enter_part = f" {enter_flags}" if enter_flags else ""
     return (
         f"{shlex.quote(otter_path)} --container-manager {shlex.quote(manager)} "
-        f"enter{root_part} -n {shlex.quote(container_name)}{enter_part} --no-tty -- "
+        f"enter{root_part} -n {shlex.quote(container_name)}{enter_part} --background -- "
     )
 
 

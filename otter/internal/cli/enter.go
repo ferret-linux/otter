@@ -28,9 +28,9 @@ func newEnterCommand(_ *config.Values) *cli.Command {
 				Usage:   "Additional flags to pass to container manager",
 			},
 			&cli.BoolFlag{
-				Name:    "no-tty",
-				Aliases: []string{"T"},
-				Usage:   "Do not instantiate a tty",
+				Name:    "background",
+				Aliases: []string{"b"},
+				Usage:   "Run the command in the background without a tty",
 			},
 			&cli.BoolFlag{
 				Name:    "no-workdir",
@@ -63,7 +63,7 @@ func enterAction(ctx context.Context, cmd *cli.Command) error {
 		AdditionalFlags: cmd.String("additional-flags"),
 		CustomCommand:   cmd.Args().Tail(),
 		AddEnv:          cmd.StringSlice("add-env"),
-		NoTTY:           cmd.Bool("no-tty"),
+		Background:      cmd.Bool("background"),
 		CleanPath:       cmd.Bool("clean-path"),
 		EmptyEnv:        cmd.Bool("empty-env"),
 		NoWorkDir:       cmd.Bool("no-workdir"),

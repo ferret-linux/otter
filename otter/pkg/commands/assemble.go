@@ -295,7 +295,7 @@ func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) err
 	if *item.StartNow {
 		_, err := enterCmd.Execute(ctx, EnterOptions{
 			ContainerName: item.Name,
-			NoTTY:         true,
+			Background:    true,
 			CustomCommand: []string{"true"}, // we just want to run the init hooks, so we can skip the shell
 		})
 		if err != nil {
@@ -332,7 +332,7 @@ func (ac *AssembleCommand) exportApps(ctx context.Context, enterCmd *EnterComman
 	for _, app := range item.Exported.Apps {
 		_, err := enterCmd.Execute(ctx, EnterOptions{
 			ContainerName: item.Name,
-			NoTTY:         true,
+			Background:    true,
 			CustomCommand: []string{"otter-export", "--app", app, "--skip-ask"},
 		})
 		if err != nil {
@@ -357,7 +357,7 @@ func (ac *AssembleCommand) exportBins(ctx context.Context, enterCmd *EnterComman
 	for _, bin := range item.Exported.Bins {
 		_, err := enterCmd.Execute(ctx, EnterOptions{
 			ContainerName: item.Name,
-			NoTTY:         true,
+			Background:    true,
 			CustomCommand: []string{"otter-export", "--bin", bin, "--export-path", item.Exported.Path},
 		})
 		if err != nil {
