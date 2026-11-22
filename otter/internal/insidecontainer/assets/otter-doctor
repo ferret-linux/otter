@@ -299,29 +299,42 @@ container_user_uid = os.environ.get("OTTER_HOST_UID")
 if not container_user_uid:
     fail("user-settings", "OTTER_HOST_UID not set, cannot verify user")
 else:
-    passwd_entry = subprocess.run(
-        ["getent", "passwd", container_user_uid], capture_output=True, text=True
-    ).stdout.strip()
-    if not passwd_entry:
-        fail("user-settings", f"no passwd entry resolves for uid {container_user_uid}")
-    else:
-        user_name = passwd_entry.split(":")[0]
-        groups_out = subprocess.run(
-            ["id", "-nG", user_name], capture_output=True, text=True
+    try:
+        passwd_entry = subprocess.run(
+            ["getent", "passwd", container_user_uid], capture_output=True, text=True
         ).stdout.strip()
-        user_groups = set(groups_out.split())
-        fallback_group = None
-        for candidate in ("sudo", "wheel", "root"):
-            group_check = subprocess.run(
-                ["getent", "group", candidate], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
-            ).returncode
-            if group_check == 0:
-                fallback_group = candidate
-                break
-        if fallback_group and fallback_group not in user_groups:
-            fail("user-settings", f"{user_name} is not in expected group '{fallback_group}'")
-        else:
-            report("user-settings", "ok", f"{user_name} resolves correctly (uid {container_user_uid})")
+    except OSError as exc:
+        passwd_entry = ""
+        fail("user-settings", f"cannot query passwd entry: {exc}")
+    if not passwd_entry and not any(c == "user-settings" and s == "fail" for c, s, _ in results):
+        fail("user-settings", f"no passwd entry resolves for uid {container_user_uid}")
+    elif passwd_entry:
+        user_name = passwd_entry.split(":")[0]
+        try:
+            groups_out = subprocess.run(
+                ["id", "-nG", user_name], capture_output=True, text=True
+            ).stdout.strip()
+        except OSError as exc:
+            groups_out = ""
+            fail("user-settings", f"cannot query user groups: {exc}")
+            user_name = ""
+        if user_name:
+            user_groups = set(groups_out.split())
+            fallback_group = None
+            for candidate in ("sudo", "wheel", "root"):
+                try:
+                    group_check = subprocess.run(
+                        ["getent", "group", candidate], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+                    ).returncode
+                except OSError:
+                    group_check = 1
+                if group_check == 0:
+                    fallback_group = candidate
+                    break
+            if fallback_group and fallback_group not in user_groups:
+                fail("user-settings", f"{user_name} is not in expected group '{fallback_group}'")
+            else:
+                report("user-settings", "ok", f"{user_name} resolves correctly (uid {container_user_uid})")
 
 # 14. Locked status (informational only, never affects exit code)
 if Path(f"{MARKERS_DIR}/container.lock").is_file():

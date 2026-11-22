@@ -65,6 +65,10 @@ def main():
         os._exit(127)  # only reached if execvp itself failed
 
     def forward(signum, _frame):
+        if child_status is not None:
+            signal.signal(signum, signal.SIG_DFL)
+            os.kill(os.getpid(), signum)
+            return
         try:
             os.kill(child_pid, signum)
         except ProcessLookupError:
@@ -75,6 +79,16 @@ def main():
 
     child_status = None
     while True:
+        if child_status is not None:
+            try:
+                drained_pid, _ = os.waitpid(-1, os.WNOHANG)
+                if drained_pid == 0:
+                    break
+                continue
+            except ChildProcessError:
+                break
+            except InterruptedError:
+                continue
         try:
             reaped_pid, status = os.waitpid(-1, 0)
         except InterruptedError:
@@ -83,10 +97,8 @@ def main():
             break  # no children left to wait on
         if reaped_pid == child_pid:
             child_status = status
-        # Record the direct child's status but keep reaping: as a subreaper
-        # we may still have adopted orphans that have not exited yet.
-        # waitpid() above already consumed each zombie; exit the loop only
-        # on ChildProcessError (no children left).
+            for sig in FORWARDED_SIGNALS:
+                signal.signal(sig, signal.SIG_DFL)
 
     if child_status is None:
         sys.exit("otter-subreaper: lost track of child before it exited")

@@ -179,10 +179,8 @@ if action not in ACTIONS:
 
 initsystem_marker = Path(f"{MARKERS_DIR}/container.initsystem")
 if not initsystem_marker.is_file():
-    print(
-        "bro your container is maidenless ( initless ) like you , this command aint gonna work on it"
-    )
-    sys.exit(0)
+    print("Error: service management requires an initful container.", file=sys.stderr)
+    sys.exit(1)
 
 initsystem = initsystem_marker.read_text().strip()
 

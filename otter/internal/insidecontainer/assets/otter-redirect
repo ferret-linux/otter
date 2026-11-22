@@ -103,9 +103,10 @@ def redirect_path(name):
 
 def generate_wrapper(args_list, host_cmd_raw):
     quoted = " ".join(shlex.quote(a) for a in args_list)
+    host_cmd_comment = " ".join(shlex.quote(a) for a in args_list)
     return f"""#!/bin/sh
 {MARKER_LINE}
-# host-cmd: {host_cmd_raw}
+# host-cmd: {host_cmd_comment}
 exec /usr/lib/otter/scripts/otter-host-exec {quoted} "$@"
 """
 

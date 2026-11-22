@@ -737,12 +737,15 @@ def container_command_prefix():
 
 
 def build_run_command(sudo):
-    source = shlex.quote(exported_bin)
-    extra = f" {extra_flags}" if extra_flags else ""
+    quoted_source = shlex.quote(exported_bin)
+    extra_args = shlex.split(extra_flags) if extra_flags else []
+    quoted_extra = " ".join(shlex.quote(a) for a in extra_args)
+    extra = f" {quoted_extra}" if quoted_extra else ""
     if sudo == "doas" or sudo == "su-exec root":
-        return f"{sudo} sh -l -c \"{source}{extra} $@\""
+        inner = f"{quoted_source}{extra}"
+        return f"{sudo} sh -c {shlex.quote(inner + ' \"$@\"')} otter-wrapper \"$@\""
     prefix = f"{sudo} " if sudo else ""
-    return f"{prefix}{source}{extra} \"$@\""
+    return f"{prefix}{quoted_source}{extra} \"$@\""
 
 
 def generate_script(dest_host, source, sudo):

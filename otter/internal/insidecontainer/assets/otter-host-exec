@@ -23,12 +23,14 @@
 # along with otter; if not, see <http://www.gnu.org/licenses/>.
 
 import argparse
+import contextlib
 import os
 import platform
 import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import urllib.request
 from pathlib import Path
 from pwd import getpwnam
@@ -195,15 +197,23 @@ if not host_spawn_ok:
 
     if response in ("y", "Y", "Yes", "yes", "YES"):
         url = f"https://github.com/1player/host-spawn/releases/download/{HOST_SPAWN_VERSION}/host-spawn-{architecture}"
-        tmp_path = Path("/tmp/host-spawn")
+        tmp_path = None
         try:
+            with tempfile.NamedTemporaryFile(prefix="host-spawn-", dir="/tmp", delete=False) as tmp:
+                tmp_path = Path(tmp.name)
             urllib.request.urlretrieve(url, tmp_path)
-        except Exception:
-            print("Error: Cannot download host-spawn", file=sys.stderr)
+            os.chmod(tmp_path, 0o755)
+            subprocess.run(
+                sudo_command + ["install", "-m", "0755", str(tmp_path), "/usr/bin/host-spawn"],
+                check=True,
+            )
+        except Exception as exc:
+            print(f"Error: Cannot install host-spawn: {exc}", file=sys.stderr)
             sys.exit(1)
-        if tmp_path.exists():
-            subprocess.run(sudo_command + ["mv /tmp/host-spawn /usr/bin/"], check=True)
-            subprocess.run(sudo_command + ["chmod +x /usr/bin/host-spawn"], check=True)
+        finally:
+            if tmp_path is not None:
+                with contextlib.suppress(FileNotFoundError):
+                    tmp_path.unlink()
     elif response in ("n", "N", "No", "no", "NO"):
         print("Installation aborted, please install host-spawn.")
         sys.exit(0)
@@ -213,7 +223,11 @@ if not host_spawn_ok:
         sys.exit(1)
 
 # Point dbus/xdg to host's runtime dir for initful containers
-real_uid = int(os.environ.get("OTTER_HOST_UID", os.getuid()))
+real_uid_raw = os.environ.get("OTTER_HOST_UID", "")
+try:
+    real_uid = int(real_uid_raw) if real_uid_raw else os.getuid()
+except (TypeError, ValueError):
+    real_uid = os.getuid()
 xdg = os.environ.get("XDG_RUNTIME_DIR") or f"/run/user/{real_uid}"
 dbus = os.environ.get("DBUS_SESSION_BUS_ADDRESS") or f"unix:path=/run/user/{real_uid}/bus"
 
