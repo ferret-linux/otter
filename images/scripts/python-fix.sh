@@ -14,7 +14,7 @@ if command -v python3 >/dev/null 2>&1; then
     exit 0
 fi
 
-real_python="$(find /usr/bin -maxdepth 1 -name 'python3.[0-9]*' 2>/dev/null | head -n1)"
+real_python="$(find /usr/bin -maxdepth 1 -name 'python3.[0-9]*' -print -quit 2>/dev/null)"
 
 if [ -z "${real_python}" ]; then
     echo "ERROR: no python3.X binary found in /usr/bin" >&2
@@ -23,7 +23,7 @@ fi
 
 cat > /usr/bin/python3 <<'EOF'
 #!/bin/sh
-real="$(find /usr/bin -maxdepth 1 -name 'python3.[0-9]*' 2>/dev/null | head -n1)"
+real="$(find /usr/bin -maxdepth 1 -name 'python3.[0-9]*' -print -quit 2>/dev/null)"
 if [ -z "${real}" ]; then
     echo "ERROR: no python3.X binary found in /usr/bin" >&2
     exit 1
