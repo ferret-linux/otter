@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"syscall"
 
 	"github.com/BurntSushi/toml"
 )
@@ -38,20 +37,42 @@ func SaveFileConfig(cfg *FileConfig) error {
 		return fmt.Errorf("failed to marshal config: %w", err)
 	}
 
-	// O_NOFOLLOW keeps a pre-existing symlink at the config path from
-	// redirecting the write to an arbitrary file.
-	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC|syscall.O_NOFOLLOW, 0o600)
+	return writeConfigFileAtomic(path, data)
+}
+
+// writeConfigFileAtomic writes data to a temp file in the same directory and
+// renames it into place, so an interrupted write cannot truncate the existing
+// config. A symlink at the destination is refused rather than overwritten.
+func writeConfigFileAtomic(path string, data []byte) error {
+	tmp, err := os.CreateTemp(filepath.Dir(path), ".otter.conf-*.tmp")
 	if err != nil {
-		return fmt.Errorf("failed to open config file: %w", err)
+		return fmt.Errorf("failed to create temp config file: %w", err)
 	}
-	_, writeErr := file.Write(data)
-	closeErr := file.Close()
-	if writeErr != nil {
-		return fmt.Errorf("failed to write config file: %w", writeErr)
+	tmpName := tmp.Name()
+	committed := false
+	defer func() {
+		if !committed {
+			_ = os.Remove(tmpName)
+		}
+	}()
+
+	_, writeErr := tmp.Write(data)
+	chmodErr := tmp.Chmod(0o600)
+	syncErr := tmp.Sync()
+	closeErr := tmp.Close()
+	for _, stepErr := range []error{writeErr, chmodErr, syncErr, closeErr} {
+		if stepErr != nil {
+			return fmt.Errorf("failed to write temp config file: %w", stepErr)
+		}
 	}
-	if closeErr != nil {
-		return fmt.Errorf("failed to close config file: %w", closeErr)
+
+	if info, err := os.Lstat(path); err == nil && info.Mode()&os.ModeSymlink != 0 {
+		return fmt.Errorf("refusing to overwrite symlinked config file %s", path)
 	}
+	if err := os.Rename(tmpName, path); err != nil {
+		return fmt.Errorf("failed to replace config file: %w", err)
+	}
+	committed = true
 
 	return nil
 }
