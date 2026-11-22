@@ -935,6 +935,14 @@ func (d *Docker) PullImage(ctx context.Context, imageName string, platform strin
 	return exec.CommandContext(ctx, command, args...), nil
 }
 
+// containerStatus inspects only the container's state, avoiding the extra
+// image inspect performed by InspectContainer during setup polling.
+func (d *Docker) containerStatus(ctx context.Context, containerName string) (string, error) {
+	return inspectStatus(ctx, d.run, []string{
+		"inspect", "--type", "container", "--format", "{{.State.Status}}", containerName,
+	}, containerName)
+}
+
 //nolint:gocognit // provider enter command construction: explicit option branches
 func (d *Docker) generateEnterCommand(
 	ctx context.Context,
@@ -1121,21 +1129,20 @@ func (d *Docker) waitForSetup(
 	progress *ui.Progress,
 ) error {
 	seen := make(map[string]struct{})
+	logRetryDelay := logsRetryInterval
 	for {
 		if err := ctx.Err(); err != nil {
 			return fmt.Errorf("docker: %w", err)
 		}
 
-		// Check container is still running
-		inspectResult, err := d.InspectContainer(ctx, containerName)
+		// Status-only inspect: one runtime call instead of InspectContainer's
+		// container-inspect + image-inspect pair.
+		status, err := d.containerStatus(ctx, containerName)
 		if err != nil {
 			return fmt.Errorf("container stopped during setup: %w", err)
 		}
-		if inspectResult.ContainerStatus != containermanager.RunningStatus {
-			return fmt.Errorf(
-				"container stopped during setup: status=%s",
-				inspectResult.ContainerStatus,
-			)
+		if status != containermanager.RunningStatus {
+			return fmt.Errorf("container stopped during setup: status=%s", status)
 		}
 
 		// A fresh container.ready marker written by this boot is the
@@ -1153,9 +1160,14 @@ func (d *Docker) waitForSetup(
 		nextSince := time.Now().UTC().Add(-logCursorOverlap).Format(time.RFC3339Nano)
 		output, err := d.run(ctx, []string{"logs", "--since", since, containerName}, runOptions{})
 		if err != nil {
-			time.Sleep(logsRetryInterval)
+			time.Sleep(logRetryDelay)
+			logRetryDelay *= 2
+			if logRetryDelay > setupRetryBackoffMax {
+				logRetryDelay = setupRetryBackoffMax
+			}
 			continue
 		}
+		logRetryDelay = logsRetryInterval
 		since = nextSince
 
 		lines := strings.Split(output, "\n")

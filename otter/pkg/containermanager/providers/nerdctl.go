@@ -750,6 +750,14 @@ func (n *Nerdctl) run(ctx context.Context, args []string, opts runOptions) (stri
 	return stdout.String(), nil
 }
 
+// containerStatus inspects only the container's state, avoiding the extra
+// image inspect performed by InspectContainer during setup polling.
+func (n *Nerdctl) containerStatus(ctx context.Context, containerName string) (string, error) {
+	return inspectStatus(ctx, n.run, []string{
+		"container", "inspect", "--format", "{{.State.Status}}", containerName,
+	}, containerName)
+}
+
 //nolint:gocognit // provider enter command construction: explicit option branches
 func (n *Nerdctl) generateEnterCommand(
 	ctx context.Context,
@@ -927,20 +935,20 @@ func (n *Nerdctl) waitForSetup(
 	progress *ui.Progress,
 ) error {
 	seen := make(map[string]struct{})
+	logRetryDelay := logsRetryInterval
 	for {
 		if err := ctx.Err(); err != nil {
 			return fmt.Errorf("nerdctl: %w", err)
 		}
 
-		inspectResult, err := n.InspectContainer(ctx, containerName)
+		// Status-only inspect: one runtime call instead of InspectContainer's
+		// container-inspect + image-inspect pair.
+		status, err := n.containerStatus(ctx, containerName)
 		if err != nil {
 			return fmt.Errorf("container stopped during setup: %w", err)
 		}
-		if inspectResult.ContainerStatus != containermanager.RunningStatus {
-			return fmt.Errorf(
-				"container stopped during setup: status=%s",
-				inspectResult.ContainerStatus,
-			)
+		if status != containermanager.RunningStatus {
+			return fmt.Errorf("container stopped during setup: status=%s", status)
 		}
 
 		// A fresh container.ready marker written by this boot is the
@@ -958,9 +966,14 @@ func (n *Nerdctl) waitForSetup(
 		nextSince := time.Now().UTC().Add(-logCursorOverlap).Format(time.RFC3339Nano)
 		output, err := n.run(ctx, []string{"logs", "--since", since, containerName}, runOptions{})
 		if err != nil {
-			time.Sleep(logsRetryInterval)
+			time.Sleep(logRetryDelay)
+			logRetryDelay *= 2
+			if logRetryDelay > setupRetryBackoffMax {
+				logRetryDelay = setupRetryBackoffMax
+			}
 			continue
 		}
+		logRetryDelay = logsRetryInterval
 		since = nextSince
 
 		lines := strings.Split(output, "\n")
