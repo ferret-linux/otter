@@ -22,7 +22,23 @@ import (
 
 type contextKey string
 
-const containerManagerKey contextKey = "containerManager"
+const autodetectEscalator = "autodetect"
+
+const (
+	containerManagerKey contextKey = "containerManager"
+	escalatorKey        contextKey = "escalator"
+)
+
+// withEscalator records the privilege escalator resolved for this command
+// invocation so later layers never re-detect or re-interpret the flag.
+func withEscalator(ctx context.Context, program string) context.Context {
+	return context.WithValue(ctx, escalatorKey, program)
+}
+
+func escalatorFromContext(ctx context.Context) string {
+	program, _ := ctx.Value(escalatorKey).(string)
+	return program
+}
 
 // commit and buildTime are injected at build time via -ldflags (see Makefile).
 // They stay at these defaults for builds that don't go through `make build`.
@@ -97,9 +113,11 @@ func subcommands(cfg *config.Values) []*cli.Command {
 		withContainerManager,
 		withContainerNameCompletion,
 	}
+	// Assemble builds its own manager after resolving the escalator, because
+	// its rootful boxes need a concrete escalate program even though the
+	// command itself has no --root flag.
 	noRootOpts := []func(*config.Values, *cli.Command) *cli.Command{
 		withUsageErrorHandler,
-		withContainerManager,
 	}
 	documentationOpts := []func(*config.Values, *cli.Command) *cli.Command{
 		withUsageErrorHandler,
@@ -236,9 +254,14 @@ func withRoot(cfg *config.Values, cmd *cli.Command) *cli.Command {
 			}
 		}
 		if c.Bool("root") {
-			if _, err := rootcheck.Validate(ctx, c.String("sudo-command")); err != nil {
+			resolved, err := rootcheck.Validate(ctx, c.String("sudo-command"))
+			if err != nil {
 				return nil, fmt.Errorf("cannot run in root mode: %w", err)
 			}
+			if err := c.Root().Set("sudo-command", resolved); err != nil {
+				return nil, fmt.Errorf("failed to apply resolved escalator: %w", err)
+			}
+			ctx = withEscalator(ctx, resolved)
 		}
 		return ctx, nil
 	}
@@ -259,10 +282,14 @@ func withContainerManager(_ *config.Values, cmd *cli.Command) *cli.Command {
 				return nil, err
 			}
 		}
+		sudoCommand := c.Root().String("sudo-command")
+		if resolved := escalatorFromContext(ctx); resolved != "" {
+			sudoCommand = resolved
+		}
 		cm, err := buildContainerManager(
 			ctx,
 			c.Root().String("container-manager"),
-			c.Root().String("sudo-command"),
+			sudoCommand,
 			c.Bool("root"),
 		)
 		if err != nil {
@@ -319,7 +346,7 @@ func buildContainerManager(
 	sudoCommand string,
 	root bool,
 ) (containermanager.ContainerManager, error) {
-	if root && sudoCommand == "autodetect" {
+	if root && sudoCommand == autodetectEscalator {
 		resolved, err := rootcheck.Validate(ctx, sudoCommand)
 		if err != nil {
 			return nil, fmt.Errorf("failed to auto-detect sudo program: %w", err)
@@ -334,7 +361,7 @@ func buildContainerManager(
 		return providers.NewPodman(root, sudoCommand), nil
 	case "nerdctl":
 		return providers.NewNerdctl(root, sudoCommand), nil
-	case "autodetect", "":
+	case autodetectEscalator, "":
 		cm, err := providers.NewAutoDetect(root, sudoCommand)
 		if err != nil {
 			if errors.Is(err, providers.ErrNoContainerManager) {

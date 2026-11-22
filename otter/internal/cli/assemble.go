@@ -3,14 +3,13 @@ package cli
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/urfave/cli/v3"
 
 	"github.com/ferret-linux/otter/pkg/commands"
 	"github.com/ferret-linux/otter/pkg/config"
-	"github.com/ferret-linux/otter/pkg/containermanager"
+	"github.com/ferret-linux/otter/pkg/rootcheck"
 )
 
 func newAssembleCommand(cfg *config.Values) *cli.Command {
@@ -53,25 +52,49 @@ func newAssembleCommand(cfg *config.Values) *cli.Command {
 }
 
 func assembleAction(ctx context.Context, cmd *cli.Command, cfg *config.Values, deleteFlag bool) error {
-	containerManager, ok := ctx.Value(containerManagerKey).(containermanager.ContainerManager)
-	if !ok {
-		return errors.New("container manager not found in context")
-	}
-
 	names, err := splitNames(cmd.Args().Slice())
 	if err != nil {
 		return err
 	}
 
+	sudoCommand := escalatorFromContext(ctx)
+	if sudoCommand == "" {
+		sudoCommand = cmd.Root().String("sudo-command")
+	}
+	if sudoCommand == autodetectEscalator {
+		// Assemble creates rootful boxes without setting --root on the
+		// command, so resolve the escalator here once for both the manager
+		// clones and the command options.
+		resolved, err := rootcheck.Validate(ctx, sudoCommand)
+		if err != nil {
+			return fmt.Errorf("failed to resolve privilege escalator: %w", err)
+		}
+		sudoCommand = resolved
+		if err := cmd.Root().Set("sudo-command", resolved); err != nil {
+			return fmt.Errorf("failed to apply resolved escalator: %w", err)
+		}
+		ctx = withEscalator(ctx, resolved)
+	}
+
 	opts := commands.AssembleOptions{
 		ManifestPath: cmd.String("file"),
-		SudoCommand:  cmd.String("sudo-command"),
+		SudoCommand:  sudoCommand,
 		BoxNames:     names,
 	}
 	if deleteFlag {
 		opts.Delete = true
 	} else {
 		opts.Replace = cmd.Bool("replace")
+	}
+
+	containerManager, err := buildContainerManager(
+		ctx,
+		cmd.Root().String("container-manager"),
+		sudoCommand,
+		false,
+	)
+	if err != nil {
+		return err
 	}
 
 	assembleCmd := commands.NewAssembleCommand(cfg, containerManager)
