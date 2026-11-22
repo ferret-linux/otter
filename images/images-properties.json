@@ -1084,31 +1084,6 @@
       "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest"
     },
     {
-      "name": "rhel",
-      "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
-      "family": "rhel",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T06:44:42Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 382633191,
-          "disk_size": 1277484140
-        },
-        "arm64": {
-          "compressed_size": 341798448,
-          "disk_size": 1128939139
-        }
-      },
-      "build_number": 579,
-      "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest"
-    },
-    {
       "name": "slackware",
       "official_image": "ghcr.io/ferret-linux/slackware-otr:stable",
       "family": "slackware",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 511,
       "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest"
+    },
+    {
+      "name": "rhel",
+      "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
+      "family": "rhel",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T13:51:14Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 382633861,
+          "disk_size": 1277484146
+        },
+        "arm64": {
+          "compressed_size": 341798259,
+          "disk_size": 1128939140
+        }
+      },
+      "build_number": 580,
+      "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest"
     }
   ]
 }
