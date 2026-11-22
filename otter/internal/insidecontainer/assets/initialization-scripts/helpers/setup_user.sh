@@ -89,7 +89,7 @@ if ! grep -q "^$(_otter_grep_escape "${container_user_name}" | sed 's/\\\\/./g')
 		# Also add user to any additional groups when useradd failed
 		for group in ${additional_groups}; do
 			escaped_user_name="$(_otter_grep_escape "${container_user_name}")"
-			if ! grep -q "^${group}:.*\b${escaped_user_name}\b" /etc/group && ! grep -q "^${group}:.*${escaped_user_name}\(,\|$\)" /etc/group; then
+			if ! grep -Eq "^${group}:.*(,|^)${escaped_user_name}(,|$)" /etc/group; then
 				group_line="$(grep "^${group}:" /etc/group | head -n 1)"
 				[ -n "${group_line}" ] || continue
 				case "${group_line}" in
