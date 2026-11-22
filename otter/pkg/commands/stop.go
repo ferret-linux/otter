@@ -36,11 +36,8 @@ func (c *StopCommand) Execute(ctx context.Context, opts *StopOptions) error {
 	}
 
 	outcome := runBatch(ctx, containerNames, func(ctx context.Context, name string) (bool, error) {
-		if _, err := c.containerManager.InspectContainer(ctx, name); err != nil {
-			err = fmt.Errorf("container '%s' not found", name)
-			ui.DefaultLogger.Error(err)
-			return false, err
-		}
+		// The provider already inspects each container in Stop to detect
+		// paused containers, so a separate existence check is redundant.
 		if err := c.containerManager.Stop(ctx, []string{name}, opts.Force); err != nil {
 			err = fmt.Errorf("failed to stop '%s': %w", name, err)
 			ui.DefaultLogger.Error(err)
