@@ -88,8 +88,9 @@ if ! grep -q "^$(_otter_grep_escape "${container_user_name}" | sed 's/\\\\/./g')
 
 		# Also add user to any additional groups when useradd failed
 		for group in ${additional_groups}; do
-			if ! grep -q "^${group}.*$(_otter_grep_escape "${container_user_name}")" /etc/group; then
-				group_line="$(grep "^${group}.*" /etc/group)"
+			escaped_user_name="$(_otter_grep_escape "${container_user_name}")"
+			if ! grep -q "^${group}.*${escaped_user_name}" /etc/group; then
+				group_line="$(grep "^${group}:" /etc/group | head -n 1)"
 				if grep -q "^${group}.*:$" /etc/group; then
 					sed -i "s|${group_line}|${group_line}${container_user_name}|g" /etc/group
 				else
@@ -118,7 +119,8 @@ elif [ ! -e /etc/passwd.done ]; then
 		printf "otter: Setting up existing user - username...\n"
 		if ! usermod --login "${container_user_name}" "${current_user_name}"; then
 			printf "Warning: usermod --login failed, trying manual modification\n"
-			sed -i "s|^${current_user_name}:|${container_user_name}:|g" /etc/passwd
+			escaped_current_name="$(_otter_grep_escape "${current_user_name}")"
+			sed -i "s|^${escaped_current_name}:|${container_user_name}:|g" /etc/passwd
 			if ! getent passwd "${container_user_name}" > /dev/null 2>&1; then
 				printf "Error: Failed to modify user login name\n" >&2
 				exit 1
@@ -134,7 +136,8 @@ elif [ ! -e /etc/passwd.done ]; then
 		if ! usermod --shell "${SHELL:-"/bin/bash"}" "${current_user_name}"; then
 			printf "Warning: usermod --shell failed, trying manual modification\n"
 			# sed to update shell field (7th field) in /etc/passwd
-			sed -i "s|^\(${current_user_name}:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:\).*|\1${SHELL:-"/bin/bash"}|g" /etc/passwd
+			escaped_current_name="$(_otter_grep_escape "${current_user_name}")"
+			sed -i "s|^\(${escaped_current_name}:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:\).*|\1${SHELL:-"/bin/bash"}|g" /etc/passwd
 		fi
 	fi
 
@@ -144,7 +147,8 @@ elif [ ! -e /etc/passwd.done ]; then
 		if ! usermod --gid "${container_user_gid}" "${current_user_name}"; then
 			printf "Warning: usermod --gid failed, trying manual modification\n"
 			# sed to update gid field (4th field) in /etc/passwd
-			sed -i "s|^\(${current_user_name}:[^:]*:[^:]*:\)[^:]*|\1${container_user_gid}|g" /etc/passwd
+			escaped_current_name="$(_otter_grep_escape "${current_user_name}")"
+			sed -i "s|^\(${escaped_current_name}:[^:]*:[^:]*:\)[^:]*|\1${container_user_gid}|g" /etc/passwd
 		fi
 	fi
 
@@ -163,9 +167,11 @@ elif [ ! -e /etc/passwd.done ]; then
 		printf '\n' >> /etc/group
 		if ! usermod --append --groups "${additional_groups}" "${current_user_name}"; then
 			printf "Warning: usermod --groups failed, trying manual modification\n"
+			escaped_current_name="$(_otter_grep_escape "${current_user_name}")"
 			for group in ${additional_groups}; do
-				if grep -q "^${group}:" /etc/group && ! grep -q "^${group}.*$(_otter_grep_escape "${current_user_name}").*" /etc/group; then
-					group_line="$(grep "^${group}:" /etc/group)"
+				if grep -q "^${group}:" /etc/group && ! grep -q "^${group}.*${escaped_current_name}" /etc/group; then
+					group_line="$(grep "^${group}:" /etc/group | head -n 1)"
+					[ -n "${group_line}" ] || continue
 					if grep -q "^${group}:.*:$" /etc/group; then
 						sed -i "s|${group_line}|${group_line}${current_user_name}|g" /etc/group
 					else
@@ -182,7 +188,8 @@ elif [ ! -e /etc/passwd.done ]; then
 		printf "otter: UID...\n"
 		if ! usermod --uid "${container_user_uid}" "${current_user_name}"; then
 			printf "Warning: usermod --uid failed, trying manual modification\n"
-			sed -i "s|^\(${current_user_name}:[^:]*:\)[^:]*|\1${container_user_uid}|g" /etc/passwd
+			escaped_current_name="$(_otter_grep_escape "${current_user_name}")"
+			sed -i "s|^\(${escaped_current_name}:[^:]*:\)[^:]*|\1${container_user_uid}|g" /etc/passwd
 		fi
 	fi
 fi
@@ -192,7 +199,8 @@ if [ "$(getent passwd "${container_user_name}" | cut -d: -f6)" != "${container_u
 	printf "otter: Setting up user home...\n"
 
 	if ! usermod -d "${container_user_home}" "${container_user_name}"; then
-		sed -i "s|^${container_user_name}.*|${container_user_name}:x:${container_user_uid}:${container_user_gid}::${container_user_home}:${SHELL:-"/bin/bash"}|g" /etc/passwd
+		escaped_user_name="$(_otter_grep_escape "${container_user_name}")"
+		sed -i "s|^${escaped_user_name}.*|${container_user_name}:x:${container_user_uid}:${container_user_gid}::${container_user_home}:${SHELL:-"/bin/bash"}|g" /etc/passwd
 	fi
 fi
 
@@ -212,8 +220,9 @@ if [ ! -e /etc/passwd.done ]; then
 
 	if [ "${chpasswd_failed}" -eq 1 ]; then
 		printf "Warning: There was a problem setting up the user, trying manual addition\n"
-		if grep -q "${container_user_name}" /etc/shadow; then
-			sed -i "s|^${container_user_name}.*|${container_user_name}::::::::|g" /etc/shadow
+		escaped_user_name="$(_otter_grep_escape "${container_user_name}")"
+		if grep -q "^${escaped_user_name}:" /etc/shadow; then
+			sed -i "s|^${escaped_user_name}.*|${container_user_name}::::::::|g" /etc/shadow
 		else
 			echo "${container_user_name}::::::::" >> /etc/shadow
 		fi
