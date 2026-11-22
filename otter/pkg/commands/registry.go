@@ -254,10 +254,39 @@ func (c *RegistryRemoveCommand) removeTargets(ctx context.Context, targets []str
 	return nil
 }
 
+//nolint:gochecknoglobals // package-level family display lookup table is effectively a constant
+var familyDisplayNames = map[string]string{
+	"alma":        "AlmaLinux",
+	"alpine":      "Alpine",
+	"amazonlinux": "Amazon Linux",
+	"arch":        "Archlinux",
+	"artix":       "Artix",
+	"blackarch":   "BlackArch",
+	"centos":      "CentOS",
+	"chimera":     "Chimera",
+	"debian":      "Debian",
+	"devuan":      "Devuan",
+	"fedora":      "Fedora",
+	"gentoo":      "Gentoo",
+	"guix":        "GNU Guix",
+	"homebrew":    "Homebrew",
+	"kali":        "Kali Linux",
+	"opensuse":    "openSUSE",
+	"oracle":      "Oracle Linux",
+	"rhel":        "RHEL UBI",
+	"rocky":       "Rocky Linux",
+	"slackware":   "Slackware",
+	"steamos":     "SteamOS",
+	"ubuntu":      "Ubuntu",
+	"void":        "Void Linux",
+	"wolfi":       "Wolfi",
+}
+
 // sortedEntries returns the properties' image entries, optionally filtered
-// to enabled-only (when all is false), ordered by name length (shortest
-// first). Ties sort alphabetically. This keeps the registry list stable
-// across runs regardless of the order properties were fetched in.
+// to enabled-only (when all is false), grouped by raw family key and ordered
+// by name length (shortest first). Ties sort alphabetically. This keeps the
+// registry list stable across runs regardless of the order properties were
+// fetched in.
 func sortedEntries(images []registry.ImageEntry, all bool) []registry.ImageEntry {
 	entries := make([]registry.ImageEntry, 0, len(images))
 	for _, entry := range images {
@@ -268,7 +297,7 @@ func sortedEntries(images []registry.ImageEntry, all bool) []registry.ImageEntry
 	}
 
 	slices.SortFunc(entries, func(a, b registry.ImageEntry) int {
-		if byFamily := strings.Compare(familyLabel(a), familyLabel(b)); byFamily != 0 {
+		if byFamily := strings.Compare(familyKey(a), familyKey(b)); byFamily != 0 {
 			return byFamily
 		}
 		byLen := len(a.Name) - len(b.Name)
@@ -280,18 +309,30 @@ func sortedEntries(images []registry.ImageEntry, all bool) []registry.ImageEntry
 	return entries
 }
 
-func familyLabel(entry registry.ImageEntry) string {
+func familyKey(entry registry.ImageEntry) string {
 	if entry.Family == "" {
 		return "-"
 	}
 	return entry.Family
 }
 
+// familyDisplayName returns the human-facing label for an image family. The
+// raw family key remains the source of truth for sorting and JSON output.
+func familyDisplayName(entry registry.ImageEntry) string {
+	key := familyKey(entry)
+	if name, ok := familyDisplayNames[key]; ok {
+		return name
+	}
+	return key
+}
+
 // registryList renders a table of available images from props.
 // ARCH and IMAGE are only shown in the --all view; the default view drops
 // them and keeps NAME, LOCAL, plus the new SIZE column.
-// Images are sorted by name length (shortest first) so output is stable
-// regardless of the order the properties file lists them in.
+// Images are grouped by raw family key and sorted by name length (shortest
+// first) so output is stable regardless of the order properties list them in.
+// Only the first row of each family shows its display label; continuation
+// rows leave the FAMILY cell blank while keeping the group separator.
 // SIZE reflects whether the image is pulled: the compressed (download) size
 // when not pulled yet, otherwise the on-disk size. A LOCAL column is shown
 // for enabled entries, reflecting whether the image is pulled and, if so,
@@ -305,14 +346,18 @@ func registryList(ctx context.Context, cm containermanager.ContainerManager, pro
 	}
 
 	entries := sortedEntries(props.Images, all)
-	lastFamily := ""
+	lastFamilyKey := ""
 
 	for _, entry := range entries {
-		family := familyLabel(entry)
-		if lastFamily != "" && family != lastFamily {
+		key := familyKey(entry)
+		if lastFamilyKey != "" && key != lastFamilyKey {
 			t.AddSeparator()
 		}
-		lastFamily = family
+		familyCell := ""
+		if key != lastFamilyKey {
+			familyCell = familyDisplayName(entry)
+		}
+		lastFamilyKey = key
 
 		status := "enabled"
 		statusColor := ui.Green
@@ -340,12 +385,12 @@ func registryList(ctx context.Context, cm containermanager.ContainerManager, pro
 
 		if all {
 			t.AddRow(
-				[]string{family, entry.Name, arch, status, relativeTime(entry.BuiltAt), local, size, imageRef},
+				[]string{familyCell, entry.Name, arch, status, relativeTime(entry.BuiltAt), local, size, imageRef},
 				[]func(string) string{ui.Dim, ui.Teal, ui.Dim, statusColor, ui.Dim, localColor, ui.Dim, ui.Dim},
 			)
 		} else {
 			t.AddRow(
-				[]string{family, entry.Name, local, size},
+				[]string{familyCell, entry.Name, local, size},
 				[]func(string) string{ui.Dim, ui.Teal, localColor, ui.Dim},
 			)
 		}
@@ -388,7 +433,7 @@ func registryListJSON(
 
 		row := registryEntryJSON{
 			Name:               entry.Name,
-			Family:             familyLabel(entry),
+			Family:             familyKey(entry),
 			ImageVariant:       entry.ImageVariant,
 			IsReliableFallback: entry.IsReliableFallback,
 			Architecture:       entry.Architecture,
