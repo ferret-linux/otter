@@ -162,9 +162,13 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 		return errors.New("container manager not found in context")
 	}
 
+	args := cmd.Args().Slice()
+	if len(args) > 1 {
+		return fmt.Errorf("too many arguments; expected one container name")
+	}
 	opts := commands.CreateOptions{
 		ContainerImage:          cmd.String("image"),
-		ContainerName:           firstName(cmd.Args().Slice()),
+		ContainerName:           firstName(args),
 		ContainerHostname:       cmd.String("hostname"),
 		ContainerClone:          cmd.String("clone"),
 		UnshareNetNs:            cmd.Bool("unshare-netns") || cmd.Bool("unshare-all"),

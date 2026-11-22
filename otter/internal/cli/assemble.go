@@ -57,6 +57,10 @@ func assembleAction(ctx context.Context, cmd *cli.Command, cfg *config.Values, d
 		return err
 	}
 
+	if cmd.String("file") == "" {
+		return fmt.Errorf("manifest path is required, use --file to specify it")
+	}
+
 	sudoCommand := escalatorFromContext(ctx)
 	if sudoCommand == "" {
 		sudoCommand = cmd.Root().String("sudo-command")

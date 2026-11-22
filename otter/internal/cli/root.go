@@ -66,6 +66,9 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 		Name:                  "otter",
 		Version:               version,
 		EnableShellCompletion: true,
+		CommandNotFound: func(_ context.Context, _ *cli.Command, name string) {
+			ui.DefaultLogger.Error("unknown command", "command", name)
+		},
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "sudo-command",
@@ -166,21 +169,23 @@ func firstName(args []string) string {
 	return args[0]
 }
 
-// splitNames splits the first positional argument on commas and returns the resulting slice.
-// e.g. "foo,bar" -> ["foo", "bar"]
+// splitNames accepts variadic positional args and splits each by commas.
+// e.g. ["foo,bar", "baz"] -> ["foo", "bar", "baz"]
 func splitNames(args []string) ([]string, error) {
 	if len(args) == 0 {
 		return nil, nil
 	}
-	if len(args) > 1 {
-		return nil, fmt.Errorf("multiple arguments are not supported, use comma-separated names instead (e.g. %s)", strings.Join(args, ","))
-	}
 	var names []string
-	for _, n := range strings.Split(args[0], ",") {
-		n = strings.TrimSpace(n)
-		if n != "" {
-			names = append(names, n)
+	for _, arg := range args {
+		for _, n := range strings.Split(arg, ",") {
+			n = strings.TrimSpace(n)
+			if n != "" {
+				names = append(names, n)
+			}
 		}
+	}
+	if len(names) == 0 {
+		return nil, fmt.Errorf("no valid names provided")
 	}
 	return names, nil
 }

@@ -54,9 +54,13 @@ func journalAction(ctx context.Context, cmd *cli.Command) error {
 		return errors.New("container manager not found in context")
 	}
 
+	args := cmd.Args().Slice()
+	if len(args) > 1 {
+		return fmt.Errorf("too many arguments; expected one container name")
+	}
 	journalCmd := commands.NewJournalCommand(cm)
 	if err := journalCmd.Execute(ctx, commands.JournalOptions{
-		ContainerName: firstName(cmd.Args().Slice()),
+		ContainerName: firstName(args),
 		Follow:        cmd.Bool("follow"),
 		Since:         cmd.String("since"),
 		Until:         cmd.String("until"),

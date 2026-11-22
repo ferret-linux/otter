@@ -13,6 +13,8 @@ import (
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
+var defaultHelpPrinter = ucli.HelpPrinter
+
 //go:embed show-file
 var printFS embed.FS
 
@@ -29,12 +31,16 @@ var colorSlots = []string{
 //nolint:gochecknoinits // required to hook urfave/cli help printer before command execution
 func init() {
 	//nolint:reassign // intentional: hooks urfave/cli HelpPrinter for custom help rendering
-	ucli.HelpPrinter = func(_ io.Writer, _ string, data any) {
+	ucli.HelpPrinter = func(w io.Writer, templ string, data any) {
 		cmd, ok := data.(*ucli.Command)
 		if !ok {
 			return
 		}
-		printFile(strings.ReplaceAll(cmd.FullName(), " ", "_"))
+		if !printFile(strings.ReplaceAll(cmd.FullName(), " ", "_")) {
+			if defaultHelpPrinter != nil {
+				defaultHelpPrinter(w, templ, data)
+			}
+		}
 	}
 }
 
@@ -66,21 +72,20 @@ func contentWidth(raw string) int {
 	return width
 }
 
-func printFile(name string) {
+func printFile(name string) bool {
 	b, err := printFS.ReadFile("show-file/" + name + ".help")
 	if err != nil {
-		ui.DefaultLogger.Warn("file not found", "name", name)
-		return
+		return false
 	}
 
 	termW, _, err := term.GetSize(int(os.Stdout.Fd()))
 	if err == nil {
 		needW := contentWidth(string(b))
 		if termW < needW {
-			ui.DefaultLogger.Warn("terminal window is too small to display help")
-			return
+			ui.DefaultLogger.Warn("terminal window is too small to display help", "width", termW, "required", needW)
 		}
 	}
 
 	fmt.Fprint(os.Stdout, renderColors(string(b)))
+	return true
 }

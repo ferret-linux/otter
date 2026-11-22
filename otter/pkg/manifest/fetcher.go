@@ -1,14 +1,16 @@
 package manifest
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
+	"time"
 )
+
+const maxManifestBytes = 2 << 20
 
 // readData reads data from a local file or a URL.
 func readData(ctx context.Context, path string) ([]byte, error) {
@@ -31,7 +33,8 @@ func fetchURL(ctx context.Context, u string) ([]byte, error) {
 		return nil, fmt.Errorf("failed to create HTTP request: %w", err)
 	}
 
-	resp, err := http.DefaultClient.Do(req)
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch URL: %w", err)
 	}
@@ -41,8 +44,13 @@ func fetchURL(ctx context.Context, u string) ([]byte, error) {
 		return nil, fmt.Errorf("HTTP %d", resp.StatusCode)
 	}
 
-	var buf bytes.Buffer
-	_, err = io.Copy(&buf, resp.Body)
+	body, err := io.ReadAll(io.LimitReader(resp.Body, maxManifestBytes+1))
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response: %w", err)
+	}
+	if len(body) > maxManifestBytes {
+		return nil, fmt.Errorf("manifest exceeds %d bytes limit", maxManifestBytes)
+	}
 
-	return buf.Bytes(), err
+	return body, nil
 }

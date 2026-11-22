@@ -19,7 +19,7 @@ func main() {
 
 func run() error {
 	if os.Getuid() == 0 {
-		ui.DefaultLogger.Error("running as root is highly unsupported, use '--root'")
+		ui.DefaultLogger.Error("running as root is highly unsupported; use the per-command --root flag on supported commands")
 	}
 
 	cfg, err := config.LoadValues()

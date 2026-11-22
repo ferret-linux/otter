@@ -112,6 +112,8 @@ func FilterEnvVars() []string {
 		"container",
 		"OTTER_HOST_HOME",
 		"OTTER_HOST_PATH",
+		"OTTER_HOST_UID",
+		"OTTER_PATH",
 		"OTTER_CUSTOM_HOME",
 		"OTTER_IMAGE_VARIANT",
 		// Host loader/runtime vars would reinterpret binaries inside the
@@ -182,7 +184,8 @@ func BuildCommandArgs(customCommand []string, user string, background bool, unsh
 	args := customCommand
 	if len(args) == 0 {
 		// Default: execute user's shell with login
-		args = []string{"/bin/sh", "-c", fmt.Sprintf("$(getent passwd '%s' | cut -f 7 -d :) -l", user)}
+		safeUser := strings.ReplaceAll(user, "'", "'\\''")
+		args = []string{"/bin/sh", "-c", fmt.Sprintf("shell=$(getent passwd '%s' | cut -f 7 -d :); [ -n \"$shell\" ] || shell=/bin/sh; exec \"$shell\" -l", safeUser)}
 	}
 
 	// Handle unshare_groups mode - use su to trigger proper login.

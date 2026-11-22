@@ -57,7 +57,7 @@
 {2}│{R}           {5}nvidia's own nvidia-container-toolkit CDI injection.{R}                      {2}│{R}
 {2}│{R}                                                                                     {2}│{R}
 {2}│{R} {4}--root{R}    {5}Preferred over 'sudo otter' when root is needed. To use a program         {2}│{R}
-{2}│{R}           {5}other than sudo, set 'preferences.sudo-program' or --sudo-command.        {2}│{R}
+{2}│{R}           {5}other than sudo, set 'preferences.sudo-program'.                          {2}│{R}
 {2}│{R}                                                                                     {2}│{R}
 {2}│{R} {4}--init{R}    {5}Makes host processes not visible from within the container, assumes{R}       {2}│{R}
 {2}│{R}           {5}--unshare-process and --unshare-groups. May require additional packages{R}   {2}│{R}

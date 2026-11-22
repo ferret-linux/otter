@@ -34,9 +34,13 @@ func inspectAction(ctx context.Context, cmd *cli.Command) error {
 		return errors.New("container manager not found in context")
 	}
 
+	args := cmd.Args().Slice()
+	if len(args) > 1 {
+		return fmt.Errorf("too many arguments; expected one container name")
+	}
 	inspectCmd := commands.NewInspectCommand(cm)
 	if err := inspectCmd.Execute(ctx, commands.InspectOptions{
-		ContainerName: firstName(cmd.Args().Slice()),
+		ContainerName: firstName(args),
 		Manager:       cm.Name(),
 		JSON:          cmd.Bool("json"),
 	}); err != nil {

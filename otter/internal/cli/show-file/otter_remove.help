@@ -25,7 +25,7 @@
 {2}├───────────┴──────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Notes:{R}                                                      {2}│{R}
 {2}│{R} {4}--root{R}  {5}Prefer this to 'sudo otter'.                         {2}│{R}
-{2}│{R}         {5}Set 'preferences.sudo-program' / --sudo-command.     {2}│{R}
+{2}│{R}         {5}Set 'preferences.sudo-program'.                      {2}│{R}
 {2}├──────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                                   {2}│{R}
 {2}│{R} {5}Rootful containers need '--root' to work with 'remove'.{R}      {2}│{R}

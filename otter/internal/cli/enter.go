@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/urfave/cli/v3"
 
@@ -59,8 +60,12 @@ func enterAction(ctx context.Context, cmd *cli.Command) error {
 		return errors.New("container manager not found in context")
 	}
 
+	args := cmd.Args().Slice()
+	if len(args) == 0 || strings.TrimSpace(args[0]) == "" {
+		return fmt.Errorf("container name is required")
+	}
 	options := commands.EnterOptions{
-		ContainerName:   firstName(cmd.Args().Slice()),
+		ContainerName:   args[0],
 		AdditionalFlags: cmd.StringSlice("additional-flags"),
 		CustomCommand:   cmd.Args().Tail(),
 		AddEnv:          cmd.StringSlice("add-env"),

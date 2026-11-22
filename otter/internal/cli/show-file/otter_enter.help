@@ -27,5 +27,5 @@
 {2}│{R}{3}▸ Notes:{R}                                                                 {2}│{R}
 {2}│{R} {4}--root{R}  {5}Preferred over 'sudo otter' when root is needed. To use a       {2}│{R}
 {2}│{R}         {5}program other than sudo, set 'preferences.sudo-program' or      {2}│{R}
-{2}│{R}         {5}pass --sudo-command <program>.                                  {2}│{R}
+{2}│{R}         {5}set 'preferences.sudo-program'.                                 {2}│{R}
 {2}╰─────────────────────────────────────────────────────────────────────────╯{R}
