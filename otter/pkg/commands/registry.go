@@ -332,7 +332,8 @@ func familyDisplayName(entry registry.ImageEntry) string {
 // Images are grouped by raw family key and sorted by name length (shortest
 // first) so output is stable regardless of the order properties list them in.
 // Only the first row of each family shows its display label; continuation
-// rows leave the FAMILY cell blank while keeping the group separator.
+// rows leave the FAMILY cell blank and use a light row divider, while a full
+// divider marks the start of each family group.
 // SIZE reflects whether the image is pulled: the compressed (download) size
 // when not pulled yet, otherwise the on-disk size. A LOCAL column is shown
 // for enabled entries, reflecting whether the image is pulled and, if so,
@@ -350,8 +351,12 @@ func registryList(ctx context.Context, cm containermanager.ContainerManager, pro
 
 	for _, entry := range entries {
 		key := familyKey(entry)
-		if lastFamilyKey != "" && key != lastFamilyKey {
-			t.AddSeparator()
+		if lastFamilyKey != "" {
+			if key != lastFamilyKey {
+				t.AddSeparator()
+			} else {
+				t.AddRowSeparator()
+			}
 		}
 		familyCell := ""
 		if key != lastFamilyKey {
