@@ -24,6 +24,9 @@ func run() error {
 
 	cfg, err := config.LoadValues()
 	if err != nil {
+		// The CLI's exit handler is not installed yet at this point, so
+		// report the failure here or it would be completely silent.
+		ui.DefaultLogger.Error("failed to load configuration", "error", err)
 		//nolint:wrapcheck // main reports errors as-is
 		return err
 	}
