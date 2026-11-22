@@ -10,4 +10,8 @@ const (
 	// setupPollInterval is the cadence at which container setup logs are
 	// polled while waiting for the setup-done marker.
 	setupPollInterval = 500 * time.Millisecond
+	// logCursorOverlap is subtracted from the next --since cursor so that a
+	// log line emitted while a fetch is in flight is still picked up by the
+	// following poll instead of falling into a permanent gap.
+	logCursorOverlap = 2 * time.Second
 )

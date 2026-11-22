@@ -1184,12 +1184,14 @@ func (p *Podman) Start(ctx context.Context, containerName string) error {
 	return nil
 }
 
+//nolint:gocognit // setup watcher: explicit per-line branches with marker fast path
 func (p *Podman) waitForSetup(
 	ctx context.Context,
 	containerName string,
 	since string,
 	progress *ui.Progress,
 ) error {
+	seen := make(map[string]struct{})
 	for {
 		if err := ctx.Err(); err != nil {
 			return fmt.Errorf("podman: %w", err)
@@ -1207,17 +1209,33 @@ func (p *Podman) waitForSetup(
 			)
 		}
 
-		// Get logs
+		// A fresh container.ready marker written by this boot is the
+		// authoritative setup-complete signal. -nt /proc/1 rules out a
+		// marker left behind by a previous boot (removed only after the
+		// network check in otter-init). The log-line check below remains
+		// as a fallback for images that do not write the marker.
+		if _, err := p.run(ctx, []string{"exec", containerName, "test", "/usr/lib/otter/container.ready", "-nt", "/proc/1"}, runOptions{}); err == nil {
+			return nil
+		}
+
+		// Advance the cursor with a small overlap: compute the next cursor
+		// before fetching so a line emitted mid-fetch is still picked up by
+		// the following poll. The seen set prevents processing it twice.
+		nextSince := time.Now().UTC().Add(-logCursorOverlap).Format(time.RFC3339Nano)
 		output, err := p.run(ctx, []string{"logs", "--since", since, containerName}, runOptions{})
 		if err != nil {
 			time.Sleep(logsRetryInterval)
 			continue
 		}
-		since = containermanager.TimestampNow()
+		since = nextSince
 
 		lines := strings.Split(output, "\n")
 		for _, line := range lines {
 			line = strings.TrimSpace(line)
+			if _, ok := seen[line]; ok {
+				continue
+			}
+			seen[line] = struct{}{}
 
 			switch {
 			case strings.HasPrefix(line, "+"):
