@@ -41,6 +41,20 @@ type Staleness struct {
 	Diff        int // RemoteBuild - LocalBuild
 }
 
+// IndexByOfficialImage maps an official image ref to the first matching
+// registry entry. This mirrors CheckStaleness's first-match scan so callers
+// iterating many images do not rescan the whole registry each time.
+func IndexByOfficialImage(props *ImagesProperties) map[string]*ImageEntry {
+	index := make(map[string]*ImageEntry, len(props.Images))
+	for i := range props.Images {
+		ref := props.Images[i].OfficialImage
+		if _, exists := index[ref]; !exists {
+			index[ref] = &props.Images[i]
+		}
+	}
+	return index
+}
+
 // CheckStaleness compares imageRef's locally installed otter.image_build
 // label against the remote build_number recorded in props for the matching
 // official_image entry.
@@ -62,6 +76,21 @@ func CheckStaleness(
 	}
 
 	localValue, ok := cm.ImageLabel(ctx, imageRef, buildLabelKey)
+	return stalenessForEntry(entry, localValue, ok)
+}
+
+// StalenessFromInfo computes staleness from labels already returned by
+// ContainerManager.InspectImage, without another engine call. A nil entry
+// means the ref does not belong to any registry image.
+func StalenessFromInfo(entry *ImageEntry, info containermanager.ImageInfo) Staleness {
+	value, ok := info.Labels[buildLabelKey]
+	return stalenessForEntry(entry, value, ok)
+}
+
+func stalenessForEntry(entry *ImageEntry, localValue string, ok bool) Staleness {
+	if entry == nil {
+		return Staleness{State: StalenessNotOtterImage}
+	}
 	if !ok {
 		return Staleness{State: StalenessUnknown, RemoteBuild: entry.BuildNumber}
 	}
