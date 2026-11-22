@@ -79,16 +79,6 @@ def main():
 
     child_status = None
     while True:
-        if child_status is not None:
-            try:
-                drained_pid, _ = os.waitpid(-1, os.WNOHANG)
-                if drained_pid == 0:
-                    break
-                continue
-            except ChildProcessError:
-                break
-            except InterruptedError:
-                continue
         try:
             reaped_pid, status = os.waitpid(-1, 0)
         except InterruptedError:
