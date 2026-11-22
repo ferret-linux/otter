@@ -226,8 +226,8 @@ setup_pacman()
 		pacman -S --needed --noconfirm $(pacman -Ssq | grep -E "^($(echo ${deps} | tr ' ' '|'))$")
 	fi
 
-	# shellcheck disable=SC2154 # assigned by otter-init before sourcing this file
-	if [ ! -e "/usr/share/i18n/locales${HOST_LOCALE}" ]; then
+	# shellcheck disable=SC2154 # HOST_LOCALE_LANG assigned by otter-init before sourcing this file
+	if [ ! -e "/usr/share/i18n/locales/${HOST_LOCALE_LANG}" ]; then
 		pacman -S --noconfirm glibc glibc-locales
 	fi
 
