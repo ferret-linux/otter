@@ -889,31 +889,6 @@
       "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest"
     },
     {
-      "name": "opensuse-tumbleweed",
-      "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
-      "family": "opensuse",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-21T20:33:28Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 425564575,
-          "disk_size": 1294220489
-        },
-        "arm64": {
-          "compressed_size": 418856600,
-          "disk_size": 1245899021
-        }
-      },
-      "build_number": 508,
-      "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest"
-    },
-    {
       "name": "alpine",
       "official_image": "ghcr.io/ferret-linux/alpine-otr:latest",
       "family": "alpine",
@@ -1288,6 +1263,31 @@
       },
       "build_number": 574,
       "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest"
+    },
+    {
+      "name": "opensuse-tumbleweed",
+      "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
+      "family": "opensuse",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T05:08:47Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 425616654,
+          "disk_size": 1294264012
+        },
+        "arm64": {
+          "compressed_size": 393247355,
+          "disk_size": 1245912283
+        }
+      },
+      "build_number": 509,
+      "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest"
     }
   ]
 }
