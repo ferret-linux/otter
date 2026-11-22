@@ -750,31 +750,6 @@
       "fallback_vendor_image": "quay.io/fedora/fedora:rawhide"
     },
     {
-      "name": "kali-edge-nonfree",
-      "official_image": "ghcr.io/ferret-linux/kali-otr:edge-nonfree",
-      "family": "kali",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T14:21:02Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 645221323,
-          "disk_size": 1755027912
-        },
-        "arm64": {
-          "compressed_size": 607847177,
-          "disk_size": 1718733256
-        }
-      },
-      "build_number": 3,
-      "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest"
-    },
-    {
       "name": "wolfi",
       "official_image": "ghcr.io/ferret-linux/wolfi-otr:latest",
       "family": "wolfi",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 575,
       "fallback_vendor_image": "docker.io/library/debian:testing"
+    },
+    {
+      "name": "kali-edge-nonfree",
+      "official_image": "ghcr.io/ferret-linux/kali-otr:edge-nonfree",
+      "family": "kali",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T17:45:53Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 645221561,
+          "disk_size": 1755027913
+        },
+        "arm64": {
+          "compressed_size": 607847730,
+          "disk_size": 1718733255
+        }
+      },
+      "build_number": 4,
+      "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest"
     }
   ]
 }
