@@ -51,26 +51,6 @@
       "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest"
     },
     {
-      "name": "slackware-current",
-      "official_image": "ghcr.io/ferret-linux/slackware-otr:current",
-      "family": "slackware",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64"
-      ],
-      "built_at": "2026-11-22T06:03:44Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1521394919,
-          "disk_size": 5726196333
-        }
-      },
-      "build_number": 461,
-      "fallback_vendor_image": "docker.io/aclemons/slackware:current"
-    },
-    {
       "name": "amazonlinux",
       "official_image": "ghcr.io/ferret-linux/amazon-otr:latest",
       "family": "amazonlinux",
@@ -1387,6 +1367,26 @@
       },
       "build_number": 464,
       "fallback_vendor_image": "docker.io/aclemons/slackware:latest"
+    },
+    {
+      "name": "slackware-current",
+      "official_image": "ghcr.io/ferret-linux/slackware-otr:current",
+      "family": "slackware",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64"
+      ],
+      "built_at": "2026-11-22T06:56:29Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1521388973,
+          "disk_size": 5726196330
+        }
+      },
+      "build_number": 461,
+      "fallback_vendor_image": "docker.io/aclemons/slackware:current"
     }
   ]
 }
