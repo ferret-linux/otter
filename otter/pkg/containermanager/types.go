@@ -18,6 +18,14 @@ type Container struct {
 	Labels map[string]string
 }
 
+// ImageInfo is the image-inspect data otter commands need. Labels is the
+// image's label map (never mutated by callers); an empty ID means the engine
+// did not report one.
+type ImageInfo struct {
+	ID     string
+	Labels map[string]string
+}
+
 type InspectResult struct {
 	ContainerID               string
 	ContainerStatus           string

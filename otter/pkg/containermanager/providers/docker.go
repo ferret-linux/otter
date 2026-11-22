@@ -896,6 +896,14 @@ func (d *Docker) ImageID(ctx context.Context, imageName string) (string, bool) {
 	return info.ID, true
 }
 
+func (d *Docker) InspectImage(ctx context.Context, imageName string) (containermanager.ImageInfo, bool) {
+	image, err := d.inspectImage(ctx, imageName)
+	if err != nil {
+		return containermanager.ImageInfo{}, false
+	}
+	return containermanager.ImageInfo{ID: image.ID, Labels: image.Config.Labels}, true
+}
+
 func (d *Docker) ContainerImageID(ctx context.Context, containerName string) (string, bool) {
 	args := []string{"inspect", "--type", "container", containerName}
 	output, err := d.run(ctx, args, runOptions{})

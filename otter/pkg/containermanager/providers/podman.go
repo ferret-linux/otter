@@ -692,6 +692,14 @@ func (p *Podman) ImageID(ctx context.Context, imageName string) (string, bool) {
 	return info.ID, true
 }
 
+func (p *Podman) InspectImage(ctx context.Context, imageName string) (containermanager.ImageInfo, bool) {
+	image, err := p.inspectImage(ctx, imageName)
+	if err != nil {
+		return containermanager.ImageInfo{}, false
+	}
+	return containermanager.ImageInfo{ID: image.ID, Labels: image.Config.Labels}, true
+}
+
 func (p *Podman) ContainerImageID(ctx context.Context, containerName string) (string, bool) {
 	args := []string{"inspect", "--type", "container", "--format", "json", containerName}
 	output, err := p.run(ctx, args, runOptions{})

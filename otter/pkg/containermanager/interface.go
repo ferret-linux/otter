@@ -33,6 +33,9 @@ type ContainerManager interface {
 	// returns ("", false) if the image doesn't exist locally or the engine
 	// call fails — no error, matching the ImageExists/ImageLabel precedent.
 	ImageID(ctx context.Context, imageName string) (string, bool)
+	// InspectImage returns existence, ID and labels from one engine inspect.
+	// ok is false if the image is missing locally or the inspect fails.
+	InspectImage(ctx context.Context, imageName string) (ImageInfo, bool)
 	// ContainerImageID returns the image ID a container was actually created
 	// from — its frozen binding, not the (possibly since-moved) tag it was
 	// created with. Unlike resolving a tag through ImageID, this value does

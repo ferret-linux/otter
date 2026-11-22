@@ -471,6 +471,14 @@ func (n *Nerdctl) ImageID(ctx context.Context, imageName string) (string, bool) 
 	return info.ID, true
 }
 
+func (n *Nerdctl) InspectImage(ctx context.Context, imageName string) (containermanager.ImageInfo, bool) {
+	image, err := n.inspectImage(ctx, imageName)
+	if err != nil {
+		return containermanager.ImageInfo{}, false
+	}
+	return containermanager.ImageInfo{ID: image.ID, Labels: image.Config.Labels}, true
+}
+
 func (n *Nerdctl) ContainerImageID(ctx context.Context, containerName string) (string, bool) {
 	args := []string{"container", "inspect", "--format", "json", containerName}
 	output, err := n.run(ctx, args, runOptions{})
