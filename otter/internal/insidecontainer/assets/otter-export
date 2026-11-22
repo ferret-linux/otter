@@ -1529,16 +1529,23 @@ if not host_home:
 
 # Filter enter_flags and remove redundant options
 if enter_flags:
+    try:
+        parts = shlex.split(enter_flags)
+    except ValueError as exc:
+        print(f"Error: invalid --enter-flags: {exc}", file=sys.stderr)
+        sys.exit(2)
     filtered = []
-    parts = enter_flags.split()
     j = 0
     while j < len(parts):
-        if parts[j] in ("--root", "-r"):
-            print(f"Warning: {parts[j]} argument will be set automatically and should be removed.", file=sys.stderr)
+        part = parts[j]
+        if part in ("--root", "-r", "--root=true", "--root=false"):
+            print(f"Warning: {part} argument will be set automatically and should be removed.", file=sys.stderr)
+        elif part.startswith("--root="):
+            print(f"Warning: {part} argument will be set automatically and should be removed.", file=sys.stderr)
         else:
-            filtered.append(parts[j])
+            filtered.append(part)
         j += 1
-    enter_flags = " ".join(filtered)
+    enter_flags = " ".join(shlex.quote(p) for p in filtered)
 
 # Check if exported application/binary should be run with sudo privileges
 if is_sudo:
