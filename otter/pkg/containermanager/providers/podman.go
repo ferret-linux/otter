@@ -834,14 +834,15 @@ func (p *Podman) supportsKeepIDSize(ctx context.Context, image string) bool {
 }
 
 // usesRunc detects whether podman is configured to use runc as the OCI runtime.
-// Equivalent to shell: podman info 2>/dev/null | grep -q runc.
+// Read the configured runtime name directly; grepping free-form `podman info`
+// also matches unrelated fields such as runc checkpoint support on crun hosts.
 func (p *Podman) usesRunc(ctx context.Context) bool {
-	out, err := p.run(ctx, []string{"info"}, runOptions{})
+	out, err := p.run(ctx, []string{"info", "--format", "{{.Host.OCIRuntime.Name}}"}, runOptions{})
 	if err != nil {
 		return false
 	}
 
-	return strings.Contains(out, "runc")
+	return strings.TrimSpace(out) == "runc"
 }
 
 // hostRootMountsForRunc returns per-directory volume mounts for /run/host,
