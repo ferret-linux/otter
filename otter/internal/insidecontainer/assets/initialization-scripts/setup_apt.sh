@@ -42,7 +42,7 @@ setup_deb_exceptions()
 #   upgrade: if we need to upgrade or not
 #   container_additional_packages: additional packages to install during this phase
 # Expected env variables:
-#   None
+#   OTTER_IMAGE_VARIANT: internal variant identity (generic/free/nonfree)
 # Outputs:
 #   None
 setup_apt()
@@ -76,35 +76,45 @@ setup_apt()
 		distro_id="$(get_distro_id)"
 		case "${distro_id}" in
 			ubuntu)
-				echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections
-				distro_deps="
+				base_deps="
 					libva2
 					systemd
 					libva-drm2
 					libva-x11-2
 					va-driver-all
 					libva-wayland2
+				"
+				nonfree_deps="
 					ubuntu-restricted-addons
 					ubuntu-restricted-extras
 				"
 				;;
 			debian)
-				distro_deps="
+				base_deps="
 					systemd
 					libwayland-client0
 				"
+				nonfree_deps="
+					firmware-linux-nonfree
+				"
 				;;
 			devuan)
-				distro_deps="
+				base_deps="
 					sysvinit
+				"
+				nonfree_deps="
+					firmware-linux-nonfree
 				"
 				;;
 			kali)
-				distro_deps="
+				base_deps="
 					systemd
 					kali-linux-core
 					kali-tools-top10
 					kali-linux-headless
+				"
+				nonfree_deps="
+					firmware-linux-nonfree
 				"
 				;;
 			*)
@@ -113,6 +123,20 @@ setup_apt()
 				exit 127
 				;;
 		esac
+
+		# Additive only: nonfree adds packages on top of the vendor's own
+		# components. generic/free never remove or replace anything.
+		# shellcheck disable=SC2154 # exported by otter-init
+		if [ "${OTTER_IMAGE_VARIANT:-generic}" = "nonfree" ]; then
+			if [ "${distro_id}" = "ubuntu" ]; then
+				echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections
+			fi
+			distro_deps="${base_deps}
+				${nonfree_deps}
+				intel-media-va-driver-non-free"
+		else
+			distro_deps="${base_deps}"
+		fi
 		deps="${distro_deps}
 			bc
 			mtr
@@ -220,7 +244,6 @@ setup_apt()
 			gstreamer1.0-plugins-base
 			gstreamer1.0-plugins-good
 			gstreamer1.0-plugins-ugly
-			intel-media-va-driver-non-free
 		"
 		# shellcheck disable=SC2086,2046
 		apt-get install -y $(apt-cache show ${deps} 2> /dev/null | grep "Package:" | sort -u | cut -d' ' -f2-)

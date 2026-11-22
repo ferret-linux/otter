@@ -22,4 +22,7 @@
 {2}│{R}{3}▸ Notes:{R}                                                  {2}│{R}
 {2}│{R} {5}LOCAL shows whether an image is pulled and how it{R}        {2}│{R}
 {2}│{R} {5}compares to the latest known build upstream.{R}             {2}│{R}
+{2}│{R} {5}Entries are grouped by family; no VARIANT column.{R}        {2}│{R}
+{2}│{R} {5}--json adds family, image_variant, and{R}                   {2}│{R}
+{2}│{R} {5}is_reliable_fallback; unreliable fallbacks error out.{R}    {2}│{R}
 {2}╰──────────────────────────────────────────────────────────╯{R}

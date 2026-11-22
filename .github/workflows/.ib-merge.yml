@@ -26,6 +26,7 @@ on:
 jobs:
   merge:
     runs-on: ubuntu-26.04
+    timeout-minutes: 30
     permissions:
       contents: read
       packages: write
@@ -37,10 +38,13 @@ jobs:
       - name: Login to GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
 
+      - name: Install skopeo
+        run: sudo apt-get update && sudo apt-get install -y skopeo
+
       - name: Capture Old Digest
         id: old-digest
         run: |
-          digest=$(podman manifest inspect docker://ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} 2>/dev/null | jq -r '.manifests[0].digest // empty')
+          digest=$(skopeo inspect --format '{{.Digest}}' docker://ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} 2>/dev/null || true)
           echo "digest=$digest" >> $GITHUB_OUTPUT
 
       - name: Install Cosign
@@ -72,6 +76,17 @@ jobs:
             sleep 15
           done
           [ "$success" -eq 1 ] || exit 1
+
+      - name: Verify manifest architectures
+        run: |
+          expected=$(echo '${{ inputs.arches }}' | jq -r 'unique | sort | join(",")')
+          actual=$(podman manifest inspect ghcr.io/ferret-linux/${{ inputs.name }}:${{ inputs.tag }} \
+            | jq -r '[.manifests[].platform.architecture] | unique | sort | join(",")')
+          echo "expected=$expected actual=$actual"
+          [ "$expected" = "$actual" ] || {
+            echo "manifest architectures do not match requested arches"
+            exit 1
+          }
 
       - name: Sign
         run: |

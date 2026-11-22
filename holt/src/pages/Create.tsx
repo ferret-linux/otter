@@ -22,6 +22,7 @@ import AddCircleOutlinedIcon from '@mui/icons-material/AddCircleOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { normalizeRegistryEntries } from '../types';
 import type { RegistryEntry } from '../types';
 import { imageBase, prettyName } from '../distros';
 import { useNotifications } from '../notifications';
@@ -82,7 +83,7 @@ export default function Create() {
     try {
       const { stdout, stderr } = await window.otter.run('otter', ['reg', 'list', '--json']);
       if (stderr) notify('warning', 'otter reported', stderr.trim());
-      setImages(JSON.parse(stdout) as RegistryEntry[]);
+      setImages(normalizeRegistryEntries(JSON.parse(stdout)));
     } catch (err) {
       const e = err as { message?: string; stderr?: string };
       notify('error', 'Failed to load images', e.stderr || e.message || 'Unknown error');
@@ -252,7 +253,7 @@ export default function Create() {
                   );
                 }}
                 renderInput={(params) => (
-                  <TextField {...params} label="Image" required placeholder="alpine, ubuntu, fedora…" />
+                  <TextField {...params} label="Image" required placeholder="alpine, ubuntu-nonfree, fedora-negativo17…" />
                 )}
                 value={image}
                 onChange={(_e, value) => setImage(value ?? '')}

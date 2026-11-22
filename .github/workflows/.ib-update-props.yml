@@ -24,6 +24,18 @@ on:
       display_name:
         required: true
         type: string
+      family:
+        required: true
+        type: string
+      image_variant:
+        required: true
+        type: string
+      is_reliable_fallback:
+        required: true
+        type: boolean
+      enabled:
+        required: true
+        type: boolean
       build_number:
         required: true
         type: string
@@ -31,10 +43,10 @@ on:
 jobs:
   update-props:
     runs-on: ubuntu-26.04
+    timeout-minutes: 30
     permissions:
       contents: write
       packages: read
-
     steps:
       - name: Checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
@@ -53,6 +65,10 @@ jobs:
           otr_name="${{ inputs.name }}"
           otr_tag="${{ inputs.tag }}"
           fallback_vendor_image="${{ inputs.image }}"
+          family="${{ inputs.family }}"
+          image_variant="${{ inputs.image_variant }}"
+          is_reliable_fallback='${{ inputs.is_reliable_fallback }}'
+          enabled='${{ inputs.enabled }}'
           architecture='${{ inputs.arches }}'
 
           official_image="ghcr.io/ferret-linux/${otr_name}:${otr_tag}"
@@ -87,21 +103,26 @@ jobs:
             --arg name "$display_name" \
             --arg official_image "$official_image" \
             --arg fallback_vendor_image "$fallback_vendor_image" \
+            --arg family "$family" \
+            --arg image_variant "$image_variant" \
+            --argjson is_reliable_fallback "$is_reliable_fallback" \
             --argjson architecture "$architecture" \
-            --argjson enabled true \
+            --argjson enabled "$enabled" \
             --arg built_at "$built_at" \
             --argjson sizes "$sizes" \
             --argjson build_number "$build_number" \
             '{
               name: $name,
               official_image: $official_image,
-              fallback_vendor_image: $fallback_vendor_image,
-              architecture: $architecture,
+              family: $family,
+              image_variant: $image_variant,
+              is_reliable_fallback: $is_reliable_fallback,
               enabled: $enabled,
+              architecture: $architecture,
               built_at: $built_at,
               sizes: $sizes,
               build_number: $build_number
-            }' > /tmp/entry.json
+            } + (if $is_reliable_fallback then {fallback_vendor_image: $fallback_vendor_image} else {} end)' > /tmp/entry.json
 
       - name: Upsert entry and push
         run: |
@@ -116,8 +137,15 @@ jobs:
             git checkout -B ${{ github.ref_name }} origin/${{ github.ref_name }}
 
             jq --slurpfile entry /tmp/entry.json \
+              --slurpfile catalog images/images.json \
               --arg official_image "$official_image" \
-              '.images = ((.images // []) | map(select(.official_image != $official_image)) + $entry)' \
+              '($catalog[0] | map("ghcr.io/ferret-linux/" + .name + ":" + .tag)) as $valid
+               | .images = (
+                   [(.images // [])[]
+                    | select(.official_image != $official_image)
+                    | select(.official_image as $oi | $valid | index($oi))]
+                   + $entry
+                 )' \
               images/images-properties.json > /tmp/images-properties.json.tmp
             mv /tmp/images-properties.json.tmp images/images-properties.json
 

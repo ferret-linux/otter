@@ -72,4 +72,6 @@
 {2}│{R}{3}▸ Images:{R}                                                                            {2}│{R}
 {2}│{R}  {5}To browse available images run:{R}                                                    {2}│{R}
 {2}│{R}  {5}otter registry list{R}                                                                {2}│{R}
+{2}│{R}  {5}Short names include variant-specific names, e.g. fedora-nonfree.{R}                   {2}│{R}
+{2}│{R}  {5}Unreliable fallbacks report the image as unavailable.{R}                              {2}│{R}
 {2}╰─────────────────────────────────────────────────────────────────────────────────────╯{R}

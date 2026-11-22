@@ -113,6 +113,7 @@ func FilterEnvVars() []string {
 		"OTTER_HOST_HOME",
 		"OTTER_HOST_PATH",
 		"OTTER_CUSTOM_HOME",
+		"OTTER_IMAGE_VARIANT",
 	}
 
 	for _, env := range os.Environ() {

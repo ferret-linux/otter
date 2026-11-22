@@ -81,6 +81,10 @@ jobs:
       containerfile: ${{ matrix.containerfile }}
       arches: ${{ toJson(matrix.arches) }}
       display_name: ${{ matrix.display_name }}
+      family: ${{ matrix.family }}
+      image_variant: ${{ matrix.image_variant }}
+      is_reliable_fallback: ${{ matrix.is_reliable_fallback }}
+      enabled: ${{ matrix.enabled }}
     permissions:
       contents: write
       packages: write

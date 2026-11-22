@@ -95,6 +95,16 @@ version="0.0.9"
 . /usr/lib/otter/scripts/initialization-scripts/helpers/parse_args.sh
 parse_args "$@"
 
+# Internal image variant identity. otter sets this once at create time from
+# registry metadata; users never set it. Unknown or empty values are treated
+# as generic so old containers and third-party images keep working.
+image_variant="${OTTER_IMAGE_VARIANT:-generic}"
+case "${image_variant}" in
+	generic | free | nonfree | negativo17) ;;
+	*) image_variant="generic" ;;
+esac
+export OTTER_IMAGE_VARIANT="${image_variant}"
+
 # Check if the container is borked or not, Fail if otter-init previously
 # failed, If so then fail with a error asking user to recreate
 if [ -f /usr/lib/otter/container.borked ]; then
@@ -611,10 +621,6 @@ if [ "${upgrade}" -ne 0 ] || [ ! -e /.containersetupdone ]; then
 		# shellcheck disable=SC1091
 		. /usr/lib/otter/scripts/initialization-scripts/setup_slackpkg.sh
 		setup_slackpkg
-	elif command -v nix; then
-		# shellcheck disable=SC1091
-		. /usr/lib/otter/scripts/initialization-scripts/setup_nix.sh
-		setup_nix
 	else
 		printf "Error: could not find a supported package manager.\n"
 		printf "Error: could not set up base dependencies.\n"

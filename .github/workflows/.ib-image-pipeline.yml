@@ -27,6 +27,18 @@ on:
       display_name:
         required: true
         type: string
+      family:
+        required: true
+        type: string
+      image_variant:
+        required: true
+        type: string
+      is_reliable_fallback:
+        required: true
+        type: boolean
+      enabled:
+        required: true
+        type: boolean
 
 jobs:
   prepare:
@@ -153,6 +165,10 @@ jobs:
       image: ${{ inputs.image }}
       arches: ${{ inputs.arches }}
       display_name: ${{ inputs.display_name }}
+      family: ${{ inputs.family }}
+      image_variant: ${{ inputs.image_variant }}
+      is_reliable_fallback: ${{ inputs.is_reliable_fallback }}
+      enabled: ${{ inputs.enabled }}
       build_number: ${{ needs.prepare.outputs.build_number }}
     permissions:
       contents: write

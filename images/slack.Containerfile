@@ -109,7 +109,7 @@ RUN set -eux; \
 #   the matching repositories.
 #
 # Ponce provides x86_64 repositories for both Slackware 15.0 and
-# Slackware-current. :contentReference[oaicite:1]{index=1}
+# Slackware-current.
 #
 # PKGS_PRIORITY controls which third-party repository wins when the
 # same package is available from multiple repositories. The official

@@ -1,70 +1,129 @@
 {
   "images": [
     {
-      "name": "gentoo",
-      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
-      "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
+      "name": "alma-negativo17",
+      "official_image": "ghcr.io/ferret-linux/alma-otr:negativo17",
+      "family": "alma",
+      "image_variant": "negativo17",
+      "is_reliable_fallback": true,
+      "enabled": true,
       "architecture": [
         "amd64",
         "arm64"
       ],
-      "enabled": true,
-      "built_at": "2026-11-22T00:33:57Z",
+      "built_at": "2026-11-22T04:38:21Z",
       "sizes": {
         "amd64": {
-          "compressed_size": 1682800658,
-          "disk_size": 4339253970
+          "compressed_size": 577414307,
+          "disk_size": 1784975459
         },
         "arm64": {
-          "compressed_size": 1420155714,
-          "disk_size": 4047750399
+          "compressed_size": 542138845,
+          "disk_size": 1717963379
         }
       },
-      "build_number": 503
+      "build_number": 1,
+      "fallback_vendor_image": "docker.io/library/almalinux:latest"
     },
     {
-      "name": "fedora-rawhide",
-      "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide",
-      "fallback_vendor_image": "quay.io/fedora/fedora:rawhide",
+      "name": "alma",
+      "official_image": "ghcr.io/ferret-linux/alma-otr:stable",
+      "family": "alma",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
       "architecture": [
         "amd64",
         "arm64"
       ],
-      "enabled": true,
-      "built_at": "2026-11-22T03:33:54Z",
+      "built_at": "2026-11-22T04:47:20Z",
       "sizes": {
         "amd64": {
-          "compressed_size": 727017889,
-          "disk_size": 2171004456
+          "compressed_size": 467544304,
+          "disk_size": 1423534658
         },
         "arm64": {
-          "compressed_size": 710501891,
-          "disk_size": 2063225900
+          "compressed_size": 456239374,
+          "disk_size": 1448285786
         }
       },
-      "build_number": 455
+      "build_number": 570,
+      "fallback_vendor_image": "docker.io/library/almalinux:latest"
     },
     {
-      "name": "void-glibc",
-      "official_image": "ghcr.io/ferret-linux/void-otr:glibc",
-      "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest",
+      "name": "alpine-edge",
+      "official_image": "ghcr.io/ferret-linux/alpine-otr:edge",
+      "family": "alpine",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
       "architecture": [
         "amd64",
         "arm64"
       ],
-      "enabled": true,
-      "built_at": "2026-11-22T03:37:22Z",
+      "built_at": "2026-11-22T02:44:15Z",
       "sizes": {
         "amd64": {
-          "compressed_size": 414270729,
-          "disk_size": 1186746046
+          "compressed_size": 342106706,
+          "disk_size": 962879866
         },
         "arm64": {
-          "compressed_size": 404800062,
-          "disk_size": 1165777095
+          "compressed_size": 347724337,
+          "disk_size": 997798424
         }
       },
-      "build_number": 552
+      "build_number": 574,
+      "fallback_vendor_image": "docker.io/library/alpine:edge"
+    },
+    {
+      "name": "alpine",
+      "official_image": "ghcr.io/ferret-linux/alpine-otr:latest",
+      "family": "alpine",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T03:22:13Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 340520423,
+          "disk_size": 963549564
+        },
+        "arm64": {
+          "compressed_size": 344022025,
+          "disk_size": 995608087
+        }
+      },
+      "build_number": 570,
+      "fallback_vendor_image": "docker.io/library/alpine:latest"
+    },
+    {
+      "name": "amazonlinux",
+      "official_image": "ghcr.io/ferret-linux/amazon-otr:latest",
+      "family": "amazonlinux",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T04:26:03Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 612875311,
+          "disk_size": 1865666365
+        },
+        "arm64": {
+          "compressed_size": 609505927,
+          "disk_size": 2054466457
+        }
+      },
+      "build_number": 459,
+      "fallback_vendor_image": "docker.io/library/amazonlinux:latest"
     },
     {
       "name": "arch",
@@ -74,307 +133,54 @@
         "amd64"
       ],
       "enabled": true,
-      "built_at": "2026-11-22T03:39:22Z",
+      "built_at": "2026-11-21T20:29:17Z",
       "sizes": {
         "amd64": {
-          "compressed_size": 843878019,
-          "disk_size": 2461128799
+          "compressed_size": 843874323,
+          "disk_size": 2461127774
         }
       },
-      "build_number": 577
+      "build_number": 575
     },
     {
-      "name": "opensuse-tumbleweed",
-      "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
-      "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
+      "name": "artix",
+      "official_image": "ghcr.io/ferret-linux/artix-otr:openrc",
+      "family": "artix",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
       "enabled": true,
-      "built_at": "2026-11-22T03:48:01Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 425570887,
-          "disk_size": 1294264014
-        },
-        "arm64": {
-          "compressed_size": 418855773,
-          "disk_size": 1245899019
-        }
-      },
-      "build_number": 509
-    },
-    {
-      "name": "ubuntu-lts",
-      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts",
-      "fallback_vendor_image": "docker.io/library/ubuntu:26.04",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-22T03:48:49Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 568442647,
-          "disk_size": 1603418165
-        },
-        "arm64": {
-          "compressed_size": 562545125,
-          "disk_size": 1625852439
-        }
-      },
-      "build_number": 571
-    },
-    {
-      "name": "wolfi",
-      "official_image": "ghcr.io/ferret-linux/wolfi-otr:latest",
-      "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-22T03:50:05Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 270233525,
-          "disk_size": 795414113
-        },
-        "arm64": {
-          "compressed_size": 266507837,
-          "disk_size": 784356793
-        }
-      },
-      "build_number": 458
-    },
-    {
-      "name": "opensuse-leap",
-      "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
-      "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-22T03:50:45Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 396688402,
-          "disk_size": 1214857369
-        },
-        "arm64": {
-          "compressed_size": 399004193,
-          "disk_size": 1191555778
-        }
-      },
-      "build_number": 529
-    },
-    {
-      "name": "guix",
-      "official_image": "ghcr.io/ferret-linux/guix-otr:latest",
-      "fallback_vendor_image": "docker.io/library/debian:stable-slim",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-22T03:59:59Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1084992539,
-          "disk_size": 3417632913
-        },
-        "arm64": {
-          "compressed_size": 1083141207,
-          "disk_size": 3582710308
-        }
-      },
-      "build_number": 386
-    },
-    {
-      "name": "void-musl",
-      "official_image": "ghcr.io/ferret-linux/void-otr:musl",
-      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-22T04:13:07Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 394384251,
-          "disk_size": 1128591006
-        },
-        "arm64": {
-          "compressed_size": 386342081,
-          "disk_size": 1101202623
-        }
-      },
-      "build_number": 555
-    },
-    {
-      "name": "alpine",
-      "official_image": "ghcr.io/ferret-linux/alpine-otr:latest",
-      "fallback_vendor_image": "docker.io/library/alpine:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-22T04:13:56Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 340521569,
-          "disk_size": 963549563
-        },
-        "arm64": {
-          "compressed_size": 344021718,
-          "disk_size": 995608088
-        }
-      },
-      "build_number": 571
-    },
-    {
-      "name": "devuan-testing",
-      "official_image": "ghcr.io/ferret-linux/devuan-otr:testing",
-      "fallback_vendor_image": "docker.io/devuan/devuan:testing",
       "architecture": [
         "amd64"
       ],
-      "enabled": true,
-      "built_at": "2026-11-22T04:23:26Z",
+      "built_at": "2026-11-22T04:30:15Z",
       "sizes": {
         "amd64": {
-          "compressed_size": 627792249,
-          "disk_size": 1699020486
+          "compressed_size": 768915325,
+          "disk_size": 2266701559
         }
       },
-      "build_number": 579
+      "build_number": 447,
+      "fallback_vendor_image": "docker.io/artixlinux/artixlinux:base-openrc"
     },
     {
-      "name": "steamos",
-      "official_image": "ghcr.io/ferret-linux/steamos-otr:latest",
-      "fallback_vendor_image": "docker.io/cachyos/cachyos-v3:latest",
+      "name": "blackarch",
+      "official_image": "ghcr.io/ferret-linux/blackarch-otr:latest",
+      "family": "blackarch",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
       "architecture": [
         "amd64"
       ],
-      "enabled": true,
-      "built_at": "2026-11-22T04:22:52Z",
+      "built_at": "2026-11-22T00:48:49Z",
       "sizes": {
         "amd64": {
-          "compressed_size": 3587974465,
-          "disk_size": 9074277246
+          "compressed_size": 1372392750,
+          "disk_size": 4014312439
         }
       },
-      "build_number": 469
-    },
-    {
-      "name": "rocky",
-      "official_image": "ghcr.io/ferret-linux/rocky-otr:stable",
-      "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-22T04:23:21Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 578921694,
-          "disk_size": 1789138007
-        },
-        "arm64": {
-          "compressed_size": 461244959,
-          "disk_size": 1481249341
-        }
-      },
-      "build_number": 571
-    },
-    {
-      "name": "centos",
-      "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
-      "fallback_vendor_image": "quay.io/centos/centos:stream10",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-22T04:26:34Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 503484424,
-          "disk_size": 1555282696
-        },
-        "arm64": {
-          "compressed_size": 489750278,
-          "disk_size": 1564412171
-        }
-      },
-      "build_number": 569
-    },
-    {
-      "name": "debian-unstable",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:unstable",
-      "fallback_vendor_image": "docker.io/library/debian:unstable",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-22T04:27:10Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 666956174,
-          "disk_size": 1816308087
-        },
-        "arm64": {
-          "compressed_size": 628407396,
-          "disk_size": 1781798778
-        }
-      },
-      "build_number": 569
-    },
-    {
-      "name": "devuan",
-      "official_image": "ghcr.io/ferret-linux/devuan-otr:stable",
-      "fallback_vendor_image": "docker.io/devuan/devuan:stable",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-22T04:27:58Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 600690567,
-          "disk_size": 1574439621
-        }
-      },
-      "build_number": 573
-    },
-    {
-      "name": "debian-testing",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:testing",
-      "fallback_vendor_image": "docker.io/library/debian:testing",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-22T04:28:32Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 669182804,
-          "disk_size": 1815025523
-        },
-        "arm64": {
-          "compressed_size": 648866092,
-          "disk_size": 1781922214
-        }
-      },
-      "build_number": 572
+      "build_number": 578,
+      "fallback_vendor_image": "docker.io/blackarchlinux/blackarch:latest"
     },
     {
       "name": "homebrew",
@@ -385,29 +191,81 @@
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-11-22T04:31:42Z",
+      "built_at": "2026-11-21T20:33:25Z",
       "sizes": {
         "amd64": {
-          "compressed_size": 834631374,
-          "disk_size": 2029850036
+          "compressed_size": 834625608,
+          "disk_size": 2029832110
         },
         "arm64": {
-          "compressed_size": 814487109,
-          "disk_size": 1971704322
+          "compressed_size": 813722330,
+          "disk_size": 1970973188
         }
       },
-      "build_number": 468
+      "build_number": 467
     },
     {
-      "name": "chimera",
-      "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
-      "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest",
+      "name": "centos-nonfree",
+      "official_image": "ghcr.io/ferret-linux/centos-otr:nonfree",
+      "family": "centos",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
       "architecture": [
         "amd64",
         "arm64"
       ],
+      "built_at": "2026-11-22T04:47:34Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 612774009,
+          "disk_size": 1904253179
+        },
+        "arm64": {
+          "compressed_size": 557905316,
+          "disk_size": 1732750078
+        }
+      },
+      "build_number": 1,
+      "fallback_vendor_image": "quay.io/centos/centos:stream10"
+    },
+    {
+      "name": "centos",
+      "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
+      "family": "centos",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
       "enabled": true,
-      "built_at": "2026-11-22T04:32:00Z",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T04:28:41Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 503484424,
+          "disk_size": 1555282696
+        },
+        "arm64": {
+          "compressed_size": 489750278,
+          "disk_size": 1564412171
+        }
+      },
+      "build_number": 569,
+      "fallback_vendor_image": "quay.io/centos/centos:stream10"
+    },
+    {
+      "name": "chimera",
+      "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
+      "family": "chimera",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T04:33:06Z",
       "sizes": {
         "amd64": {
           "compressed_size": 348453779,
@@ -418,79 +276,21 @@
           "disk_size": 968103855
         }
       },
-      "build_number": 574
-    },
-    {
-      "name": "rhel",
-      "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
-      "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-22T04:32:19Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 382633045,
-          "disk_size": 1277484141
-        },
-        "arm64": {
-          "compressed_size": 341798435,
-          "disk_size": 1128939139
-        }
-      },
-      "build_number": 577
-    },
-    {
-      "name": "alma",
-      "official_image": "ghcr.io/ferret-linux/alma-otr:stable",
-      "fallback_vendor_image": "docker.io/library/almalinux:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-22T04:32:46Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 575893331,
-          "disk_size": 1771264664
-        },
-        "arm64": {
-          "compressed_size": 456239374,
-          "disk_size": 1448285786
-        }
-      },
-      "build_number": 570
-    },
-    {
-      "name": "devuan-unstable",
-      "official_image": "ghcr.io/ferret-linux/devuan-otr:unstable",
-      "fallback_vendor_image": "docker.io/devuan/devuan:unstable",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-22T04:36:23Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 633248871,
-          "disk_size": 1720098503
-        }
-      },
-      "build_number": 573
+      "build_number": 573,
+      "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest"
     },
     {
       "name": "debian",
       "official_image": "ghcr.io/ferret-linux/debian-otr:stable",
-      "fallback_vendor_image": "docker.io/library/debian:stable",
+      "family": "debian",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
       "architecture": [
         "amd64",
         "arm64"
       ],
-      "enabled": true,
-      "built_at": "2026-11-22T04:36:27Z",
+      "built_at": "2026-11-22T04:32:49Z",
       "sizes": {
         "amd64": {
           "compressed_size": 615930125,
@@ -501,18 +301,263 @@
           "disk_size": 1607695698
         }
       },
-      "build_number": 580
+      "build_number": 580,
+      "fallback_vendor_image": "docker.io/library/debian:stable"
     },
     {
-      "name": "fedora",
-      "official_image": "ghcr.io/ferret-linux/fedora-otr:stable",
-      "fallback_vendor_image": "quay.io/fedora/fedora:44",
+      "name": "debian-nonfree",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:stable-nonfree",
+      "family": "debian",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
       "architecture": [
         "amd64",
         "arm64"
       ],
+      "built_at": "2026-11-22T04:23:35Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 627655729,
+          "disk_size": 1652728730
+        },
+        "arm64": {
+          "compressed_size": 592287262,
+          "disk_size": 1608123304
+        }
+      },
+      "build_number": 1,
+      "fallback_vendor_image": "docker.io/library/debian:stable"
+    },
+    {
+      "name": "debian-testing",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:testing",
+      "family": "debian",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
       "enabled": true,
-      "built_at": "2026-11-22T04:40:24Z",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T03:32:11Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 655564158,
+          "disk_size": 1767264086
+        },
+        "arm64": {
+          "compressed_size": 630639608,
+          "disk_size": 1781505893
+        }
+      },
+      "build_number": 571,
+      "fallback_vendor_image": "docker.io/library/debian:testing"
+    },
+    {
+      "name": "debian-testing-nonfree",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:testing-nonfree",
+      "family": "debian",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T01:56:36Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 669177973,
+          "disk_size": 1815026090
+        },
+        "arm64": {
+          "compressed_size": 630845921,
+          "disk_size": 1781936054
+        }
+      },
+      "build_number": 1,
+      "fallback_vendor_image": "docker.io/library/debian:testing"
+    },
+    {
+      "name": "debian-unstable",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:unstable",
+      "family": "debian",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T04:47:00Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 653345265,
+          "disk_size": 1768551273
+        },
+        "arm64": {
+          "compressed_size": 628407396,
+          "disk_size": 1781798778
+        }
+      },
+      "build_number": 570,
+      "fallback_vendor_image": "docker.io/library/debian:unstable"
+    },
+    {
+      "name": "devuan",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:stable",
+      "family": "devuan",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64"
+      ],
+      "built_at": "2026-11-22T04:47:21Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 600691427,
+          "disk_size": 1574442374
+        }
+      },
+      "build_number": 573,
+      "fallback_vendor_image": "docker.io/devuan/devuan:stable"
+    },
+    {
+      "name": "devuan-nonfree",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:stable-nonfree",
+      "family": "devuan",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64"
+      ],
+      "built_at": "2026-11-22T04:45:44Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 612427982,
+          "disk_size": 1617172941
+        }
+      },
+      "build_number": 2,
+      "fallback_vendor_image": "docker.io/devuan/devuan:stable"
+    },
+    {
+      "name": "devuan-testing",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:testing",
+      "fallback_vendor_image": "docker.io/devuan/devuan:testing",
+      "architecture": [
+        "amd64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-21T21:07:14Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 627787457,
+          "disk_size": 1699020483
+        }
+      },
+      "build_number": 577
+    },
+    {
+      "name": "devuan-testing-nonfree",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:testing-nonfree",
+      "family": "devuan",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64"
+      ],
+      "built_at": "2026-11-22T04:44:25Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 641405443,
+          "disk_size": 1746780122
+        }
+      },
+      "build_number": 2,
+      "fallback_vendor_image": "docker.io/devuan/devuan:testing"
+    },
+    {
+      "name": "devuan-unstable",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:unstable",
+      "family": "devuan",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64"
+      ],
+      "built_at": "2026-11-22T04:47:27Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 633249053,
+          "disk_size": 1720101279
+        }
+      },
+      "build_number": 573,
+      "fallback_vendor_image": "docker.io/devuan/devuan:unstable"
+    },
+    {
+      "name": "devuan-unstable-nonfree",
+      "official_image": "ghcr.io/ferret-linux/devuan-otr:unstable-nonfree",
+      "family": "devuan",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64"
+      ],
+      "built_at": "2026-11-22T02:50:52Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 646864341,
+          "disk_size": 1767858672
+        }
+      },
+      "build_number": 1,
+      "fallback_vendor_image": "docker.io/devuan/devuan:unstable"
+    },
+    {
+      "name": "fedora-rawhide",
+      "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide",
+      "family": "fedora",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T04:26:18Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 590893536,
+          "disk_size": 1753246377
+        },
+        "arm64": {
+          "compressed_size": 548136436,
+          "disk_size": 1691987128
+        }
+      },
+      "build_number": 456,
+      "fallback_vendor_image": "quay.io/fedora/fedora:rawhide"
+    },
+    {
+      "name": "fedora",
+      "official_image": "ghcr.io/ferret-linux/fedora-otr:stable",
+      "family": "fedora",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T04:36:32Z",
       "sizes": {
         "amd64": {
           "compressed_size": 587369777,
@@ -523,124 +568,149 @@
           "disk_size": 1681468579
         }
       },
-      "build_number": 568
+      "build_number": 567,
+      "fallback_vendor_image": "quay.io/fedora/fedora:latest"
     },
     {
-      "name": "alpine-edge",
-      "official_image": "ghcr.io/ferret-linux/alpine-otr:edge",
-      "fallback_vendor_image": "docker.io/library/alpine:edge",
+      "name": "gentoo",
+      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
+      "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
       "architecture": [
         "amd64",
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-11-22T04:41:39Z",
+      "built_at": "2026-11-21T17:49:15Z",
       "sizes": {
         "amd64": {
-          "compressed_size": 342105576,
-          "disk_size": 962879865
+          "compressed_size": 1682741280,
+          "disk_size": 4339025103
         },
         "arm64": {
-          "compressed_size": 347724634,
-          "disk_size": 997798424
+          "compressed_size": 1317280898,
+          "disk_size": 3744540413
         }
       },
-      "build_number": 575
+      "build_number": 502
     },
     {
-      "name": "oracle",
-      "official_image": "ghcr.io/ferret-linux/oracle-otr:stable",
-      "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10",
+      "name": "guix",
+      "official_image": "ghcr.io/ferret-linux/guix-otr:latest",
+      "fallback_vendor_image": "docker.io/library/debian:stable-slim",
       "architecture": [
         "amd64",
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-11-22T04:41:57Z",
+      "built_at": "2026-11-21T21:06:28Z",
       "sizes": {
         "amd64": {
-          "compressed_size": 621993041,
-          "disk_size": 1908274103
+          "compressed_size": 1084987261,
+          "disk_size": 3417632911
         },
         "arm64": {
-          "compressed_size": 604811134,
-          "disk_size": 1750968689
+          "compressed_size": 1083140577,
+          "disk_size": 3582710310
         }
       },
-      "build_number": 563
+      "build_number": 384
     },
     {
-      "name": "slackware-current",
-      "official_image": "ghcr.io/ferret-linux/slackware-otr:current",
-      "fallback_vendor_image": "docker.io/aclemons/slackware:current",
-      "architecture": [
-        "amd64"
-      ],
+      "name": "kali-edge",
+      "official_image": "ghcr.io/ferret-linux/kali-otr:edge",
+      "family": "kali",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
       "enabled": true,
-      "built_at": "2026-11-22T04:41:09Z",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T04:47:29Z",
       "sizes": {
         "amd64": {
-          "compressed_size": 1521389719,
-          "disk_size": 5726196332
+          "compressed_size": 631610181,
+          "disk_size": 1707271547
+        },
+        "arm64": {
+          "compressed_size": 607645574,
+          "disk_size": 1718309244
         }
       },
-      "build_number": 461
+      "build_number": 556,
+      "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest"
     },
     {
-      "name": "ubuntu",
-      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:stable",
-      "fallback_vendor_image": "docker.io/library/ubuntu:latest",
+      "name": "kali",
+      "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
+      "family": "kali",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T04:38:54Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 631609475,
+          "disk_size": 1707266824
+        },
+        "arm64": {
+          "compressed_size": 608096861,
+          "disk_size": 1719381769
+        }
+      },
+      "build_number": 559,
+      "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest"
+    },
+    {
+      "name": "kali-nonfree",
+      "official_image": "ghcr.io/ferret-linux/kali-otr:rolling-nonfree",
+      "family": "kali",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T04:36:37Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 645219064,
+          "disk_size": 1755023187
+        },
+        "arm64": {
+          "compressed_size": 608302993,
+          "disk_size": 1719805782
+        }
+      },
+      "build_number": 2,
+      "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest"
+    },
+    {
+      "name": "nixos",
+      "official_image": "ghcr.io/ferret-linux/nixos-otr:stable",
+      "fallback_vendor_image": "ghcr.io/nixos/nix:latest",
       "architecture": [
         "amd64",
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-11-22T04:41:34Z",
+      "built_at": "2026-11-22T04:46:30Z",
       "sizes": {
         "amd64": {
-          "compressed_size": 552521485,
-          "disk_size": 1564059132
+          "compressed_size": 1551096961,
+          "disk_size": 4510916085
         },
         "arm64": {
-          "compressed_size": 531465229,
-          "disk_size": 1584916489
+          "compressed_size": 1521294231,
+          "disk_size": 4617041186
         }
       },
-      "build_number": 573
-    },
-    {
-      "name": "artix",
-      "official_image": "ghcr.io/ferret-linux/artix-otr:openrc",
-      "fallback_vendor_image": "docker.io/artixlinux/artixlinux:base-openrc",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-22T04:43:33Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 768915325,
-          "disk_size": 2266701559
-        }
-      },
-      "build_number": 447
-    },
-    {
-      "name": "slackware",
-      "official_image": "ghcr.io/ferret-linux/slackware-otr:stable",
-      "fallback_vendor_image": "docker.io/aclemons/slackware:latest",
-      "architecture": [
-        "amd64"
-      ],
-      "enabled": true,
-      "built_at": "2026-11-22T04:43:02Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1345085339,
-          "disk_size": 4347180623
-        }
-      },
-      "build_number": 464
+      "build_number": 481
     },
     {
       "name": "nixos-unstable",
@@ -665,109 +735,393 @@
       "build_number": 481
     },
     {
-      "name": "kali-edge",
-      "official_image": "ghcr.io/ferret-linux/kali-otr:edge",
-      "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest",
+      "name": "opensuse-leap",
+      "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
+      "family": "opensuse",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T02:28:46Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 396687255,
+          "disk_size": 1214857365
+        },
+        "arm64": {
+          "compressed_size": 374972113,
+          "disk_size": 1191569048
+        }
+      },
+      "build_number": 529,
+      "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest"
+    },
+    {
+      "name": "opensuse-tumbleweed",
+      "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
+      "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
       "architecture": [
         "amd64",
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-11-22T04:44:03Z",
+      "built_at": "2026-11-21T20:33:28Z",
       "sizes": {
         "amd64": {
-          "compressed_size": 631610181,
-          "disk_size": 1707271547
+          "compressed_size": 425564575,
+          "disk_size": 1294220489
         },
         "arm64": {
-          "compressed_size": 607645574,
-          "disk_size": 1718309244
+          "compressed_size": 418856600,
+          "disk_size": 1245899021
         }
       },
-      "build_number": 556
+      "build_number": 508
     },
     {
-      "name": "kali",
-      "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
-      "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest",
+      "name": "oracle",
+      "official_image": "ghcr.io/ferret-linux/oracle-otr:stable",
+      "family": "oracle",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T04:17:53Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 621993041,
+          "disk_size": 1908274103
+        },
+        "arm64": {
+          "compressed_size": 604811134,
+          "disk_size": 1750968689
+        }
+      },
+      "build_number": 562,
+      "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10"
+    },
+    {
+      "name": "rhel",
+      "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
+      "family": "rhel",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T04:47:40Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 382634054,
+          "disk_size": 1277484145
+        },
+        "arm64": {
+          "compressed_size": 341798435,
+          "disk_size": 1128939139
+        }
+      },
+      "build_number": 577,
+      "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest"
+    },
+    {
+      "name": "rocky-negativo17",
+      "official_image": "ghcr.io/ferret-linux/rocky-otr:negativo17",
+      "family": "rocky",
+      "image_variant": "negativo17",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T04:21:46Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 580461177,
+          "disk_size": 1802827851
+        },
+        "arm64": {
+          "compressed_size": 542983350,
+          "disk_size": 1729103448
+        }
+      },
+      "build_number": 1,
+      "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
+    },
+    {
+      "name": "rocky",
+      "official_image": "ghcr.io/ferret-linux/rocky-otr:stable",
+      "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init",
       "architecture": [
         "amd64",
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-11-22T04:45:40Z",
+      "built_at": "2026-11-21T20:37:35Z",
       "sizes": {
         "amd64": {
-          "compressed_size": 631609475,
-          "disk_size": 1707266824
+          "compressed_size": 578919044,
+          "disk_size": 1789139545
         },
         "arm64": {
-          "compressed_size": 608096861,
-          "disk_size": 1719381769
+          "compressed_size": 560291450,
+          "disk_size": 1629133246
         }
       },
-      "build_number": 559
+      "build_number": 569
     },
     {
-      "name": "amazonlinux",
-      "official_image": "ghcr.io/ferret-linux/amazon-otr:latest",
-      "fallback_vendor_image": "docker.io/library/amazonlinux:latest",
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
+      "name": "slackware-current",
+      "official_image": "ghcr.io/ferret-linux/slackware-otr:current",
+      "family": "slackware",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
       "enabled": true,
-      "built_at": "2026-11-22T04:45:36Z",
+      "architecture": [
+        "amd64"
+      ],
+      "built_at": "2026-11-22T03:20:40Z",
       "sizes": {
         "amd64": {
-          "compressed_size": 612875311,
-          "disk_size": 1865666365
-        },
-        "arm64": {
-          "compressed_size": 609505927,
-          "disk_size": 2054466457
+          "compressed_size": 1521392051,
+          "disk_size": 5726196331
         }
       },
-      "build_number": 458
+      "build_number": 460,
+      "fallback_vendor_image": "docker.io/aclemons/slackware:current"
     },
     {
-      "name": "blackarch",
-      "official_image": "ghcr.io/ferret-linux/blackarch-otr:latest",
-      "fallback_vendor_image": "docker.io/blackarchlinux/blackarch:latest",
+      "name": "slackware",
+      "official_image": "ghcr.io/ferret-linux/slackware-otr:stable",
+      "fallback_vendor_image": "docker.io/aclemons/slackware:latest",
       "architecture": [
         "amd64"
       ],
       "enabled": true,
-      "built_at": "2026-11-22T04:46:24Z",
+      "built_at": "2026-11-21T17:05:35Z",
       "sizes": {
         "amd64": {
-          "compressed_size": 1372385641,
-          "disk_size": 4014320629
+          "compressed_size": 1345087411,
+          "disk_size": 4347180108
         }
       },
-      "build_number": 579
+      "build_number": 463
     },
     {
-      "name": "nixos",
-      "official_image": "ghcr.io/ferret-linux/nixos-otr:stable",
-      "fallback_vendor_image": "ghcr.io/nixos/nix:latest",
+      "name": "steamos",
+      "official_image": "ghcr.io/ferret-linux/steamos-otr:latest",
+      "family": "steamos",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64"
+      ],
+      "built_at": "2026-11-22T03:04:56Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 3587959802,
+          "disk_size": 9074274687
+        }
+      },
+      "build_number": 468,
+      "fallback_vendor_image": "docker.io/cachyos/cachyos-v3:latest"
+    },
+    {
+      "name": "ubuntu-nonfree",
+      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:latest-nonfree",
+      "family": "ubuntu",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T04:35:12Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 568443671,
+          "disk_size": 1603418716
+        },
+        "arm64": {
+          "compressed_size": 547297252,
+          "disk_size": 1625866858
+        }
+      },
+      "build_number": 1,
+      "fallback_vendor_image": "docker.io/library/ubuntu:latest"
+    },
+    {
+      "name": "ubuntu-lts",
+      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts",
+      "fallback_vendor_image": "docker.io/library/ubuntu:26.04",
       "architecture": [
         "amd64",
         "arm64"
       ],
       "enabled": true,
-      "built_at": "2026-11-22T04:46:30Z",
+      "built_at": "2026-11-21T21:14:47Z",
       "sizes": {
         "amd64": {
-          "compressed_size": 1551096961,
-          "disk_size": 4510916085
+          "compressed_size": 568448259,
+          "disk_size": 1603418171
         },
         "arm64": {
-          "compressed_size": 1521294231,
-          "disk_size": 4617041186
+          "compressed_size": 562544835,
+          "disk_size": 1625852446
         }
       },
-      "build_number": 481
+      "build_number": 570
+    },
+    {
+      "name": "ubuntu",
+      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:stable",
+      "fallback_vendor_image": "docker.io/library/ubuntu:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-21T21:08:20Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 568447240,
+          "disk_size": 1603418169
+        },
+        "arm64": {
+          "compressed_size": 562545181,
+          "disk_size": 1625852447
+        }
+      },
+      "build_number": 571
+    },
+    {
+      "name": "void-glibc",
+      "official_image": "ghcr.io/ferret-linux/void-otr:glibc",
+      "family": "void",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T01:04:00Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 414252804,
+          "disk_size": 1186722476
+        },
+        "arm64": {
+          "compressed_size": 396306238,
+          "disk_size": 1165774506
+        }
+      },
+      "build_number": 552,
+      "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest"
+    },
+    {
+      "name": "void-glibc-nonfree",
+      "official_image": "ghcr.io/ferret-linux/void-otr:glibc-nonfree",
+      "family": "void",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T01:45:51Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 414273568,
+          "disk_size": 1186745586
+        },
+        "arm64": {
+          "compressed_size": 396316319,
+          "disk_size": 1165790448
+        }
+      },
+      "build_number": 1,
+      "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest"
+    },
+    {
+      "name": "void-musl",
+      "official_image": "ghcr.io/ferret-linux/void-otr:musl",
+      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-21T21:13:33Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 394383483,
+          "disk_size": 1128575134
+        },
+        "arm64": {
+          "compressed_size": 386339665,
+          "disk_size": 1101201087
+        }
+      },
+      "build_number": 553
+    },
+    {
+      "name": "void-musl-nonfree",
+      "official_image": "ghcr.io/ferret-linux/void-otr:musl-nonfree",
+      "family": "void",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T04:47:42Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 394384067,
+          "disk_size": 1128591554
+        },
+        "arm64": {
+          "compressed_size": 377813581,
+          "disk_size": 1101216454
+        }
+      },
+      "build_number": 1,
+      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest"
+    },
+    {
+      "name": "wolfi",
+      "official_image": "ghcr.io/ferret-linux/wolfi-otr:latest",
+      "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest",
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "enabled": true,
+      "built_at": "2026-11-21T20:52:52Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 270230075,
+          "disk_size": 795410017
+        },
+        "arm64": {
+          "compressed_size": 266507239,
+          "disk_size": 784356796
+        }
+      },
+      "build_number": 456
     }
   ]
 }

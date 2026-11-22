@@ -9,6 +9,7 @@ FROM ${IMAGE}
 
 ARG OTTER_BUILD_NUMBER
 LABEL otter.image_build=${OTTER_BUILD_NUMBER}
+ARG TAG
 
 # Pre-create otter dirs
 COPY images/scripts/setup-common.sh /tmp/setup-common.sh
@@ -24,10 +25,25 @@ RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf 2>/dev/null || \
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 
-# Enable RPM Fusion Free/Nonfree repositories.
-RUN dnf install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm" && \
-    dnf install -y "https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm" \
-                   "https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm" && \
+# EPEL is enabled for every tag. RPM Fusion (including its nonfree repo)
+# is added only for nonfree builds; negativo17 builds add the upstream
+# EPEL negativo17 repo instead.
+RUN set -eux; \
+    rpm --import "https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-$(rpm -E %rhel)"; \
+    dnf install -y "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm"; \
+    case "${TAG:-}" in \
+        nonfree) \
+            dnf install -y \
+                "https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm" \
+                "https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm"; \
+            ;; \
+        negativo17) \
+            command -v curl >/dev/null 2>&1 || dnf install -y curl; \
+            curl -fsSLo /etc/yum.repos.d/negativo17.repo \
+                https://negativo17.org/repos/epel-negativo17.repo; \
+            rpm --import https://negativo17.org/repos/RPM-GPG-KEY-slaanesh; \
+            ;; \
+    esac; \
     dnf upgrade -y && \
     dnf autoremove -y && \
     dnf clean all && \
@@ -36,9 +52,15 @@ RUN dnf install -y --nogpgcheck "https://dl.fedoraproject.org/pub/epel/epel-rele
         /var/log/* \
         /var/tmp/*
 
-# Install EPEL, upgrade the system, install the requested packages,
-# and clean DNF metadata/cache in the same layer.
-RUN dnf upgrade -y && \
+# Upgrade the system, install the requested packages, and clean
+# DNF metadata/cache in the same layer.
+RUN set -eux; \
+    case "${TAG:-}" in \
+        nonfree) extra_packages="ffmpeg ffmpeg-libs mesa-freeworld libheif-freeworld libavcodec-freeworld xpra-codecs-freeworld gstreamer1-plugins-ugly mesa-va-drivers-freeworld mesa-vulkan-drivers-freeworld gstreamer1-plugins-bad-freeworld libaacs fdk-aac pipewire-codec-aptx" ;; \
+        negativo17) extra_packages="ffmpeg ffmpeg-libs libaacs fdk-aac gstreamer1-plugins-ugly pipewire-codec-aptx mesa-libva libvdpau-va-gl" ;; \
+        *) extra_packages="" ;; \
+    esac; \
+    dnf upgrade -y && \
     dnf install -y --allowerasing --skip-broken $(sh /tmp/pkg-validator.sh --pkgmgr dnf -- \
         bc \
         xz \
@@ -62,14 +84,11 @@ RUN dnf upgrade -y && \
         which \
         whois \
         words \
-        ffmpeg \
         gnupg2 \
         man-db \
         passwd \
         tzdata \
         vulkan \
-        libaacs \
-        fdk-aac \
         iproute \
         iputils \
         ncurses \
@@ -90,38 +109,29 @@ RUN dnf upgrade -y && \
         traceroute \
         util-linux \
         wget2-wget \
-        ffmpeg-libs \
         vte-profile \
         glibc-common \
         gnupg2-smime \
         shadow-utils \
         xdg-user-dirs \
         pipewire-alsa \
-        mesa-freeworld \
         cracklib-dicts \
         xorg-x11-xauth \
         bash-completion \
         openssh-clients \
         dnf-plugins-core \
         mesa-dri-drivers \
-        libheif-freeworld \
         util-linux-script \
         xdg-desktop-portal \
         pipewire-gstreamer \
         pipewire-pulseaudio \
-        pipewire-codec-aptx \
         glibc-all-langpacks \
         glibc-locale-source \
-        libavcodec-freeworld \
-        xpra-codecs-freeworld \
         gstreamer1-plugins-base \
         gstreamer1-plugins-good \
-        gstreamer1-plugins-ugly \
         xorg-x11-server-Xwayland \
-        mesa-va-drivers-freeworld \
-        mesa-vulkan-drivers-freeworld \
-        gstreamer1-plugins-bad-freeworld \
-        pipewire-jack-audio-connection-kit); \
+        pipewire-jack-audio-connection-kit \
+        ${extra_packages}); \
     dnf upgrade -y && \
     dnf autoremove -y && \
     dnf clean all && \

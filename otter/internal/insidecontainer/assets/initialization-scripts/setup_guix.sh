@@ -13,8 +13,7 @@ setup_guix()
 	# If we need to upgrade, do it and exit, no further action required.
 	# Upgrades installed packages against whatever channel is already
 	# pulled -- `guix pull` (which upgrades Guix itself, its package
-	# definitions and the daemon) is left to the user to run explicitly,
-	# same as the Nix image leaves `nix flake update` to the user.
+	# definitions and the daemon) is left to the user to run explicitly.
 	# --profile is pinned explicitly to the target user's own profile,
 	# matching Guix's own per-user convention (its installer's
 	# /etc/profile.d/guix.sh sources $HOME/.guix-profile at each user's own
@@ -33,12 +32,9 @@ setup_guix()
 		exit
 	fi
 
-	# No official Guix image exists to compare against here (there is no
-	# upstream ghcr.io/nixos/nix-style image for Guix), and a foreign,
-	# non-official image doesn't need any extra setup beyond what
-	# guix.Containerfile / guix-install.sh already did at build time --
-	# unlike Nix, which needs flakes enabled and a declarative package
-	# set applied by hand on a foreign base. Informational only.
+	# A non-official image doesn't need any extra setup beyond what
+	# guix.Containerfile / guix-install.sh already did at build time.
+	# Informational only.
 	if [ ! -f /usr/lib/otter/container.official ]; then
 		printf "Info: guix does not require additional setup on non-official images.\n"
 	fi

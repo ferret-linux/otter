@@ -66,6 +66,7 @@ type CreateOptions struct {
 	NoUsernsLimit             bool
 	Memory                    string
 	CPUThreads                int
+	ImageVariant              string
 	ScriptsDir                string
 }
 

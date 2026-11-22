@@ -5,7 +5,22 @@
 
 [[container]]
 name       = ""     # name of the container
-image      = ""     # ubuntu | ubuntu-lts | fedora | fedora-rawhide | arch | blackarch | debian | debian-testing | debian-unstable | alma | rocky | centos | oracle | rhel | opensuse-leap | opensuse-tumbleweed | alpine | alpine-edge | kali | kali-edge | void-glibc | void-musl | or full registry path
+# Short names from `otter registry list`, grouped by family:
+#   alma, alma-nonfree, alma-negativo17; alpine, alpine-edge; amazonlinux;
+#   arch; artix; blackarch; centos, centos-nonfree, centos-negativo17;
+#   chimera; debian, debian-nonfree, debian-testing, debian-testing-nonfree,
+#   debian-unstable, debian-unstable-nonfree; devuan, devuan-nonfree,
+#   devuan-testing, devuan-testing-nonfree, devuan-unstable,
+#   devuan-unstable-nonfree; fedora, fedora-nonfree, fedora-negativo17,
+#   fedora-rawhide, fedora-rawhide-nonfree; gentoo; guix; homebrew;
+#   kali, kali-nonfree, kali-edge, kali-edge-nonfree;
+#   opensuse-leap, opensuse-tumbleweed; oracle, oracle-nonfree,
+#   oracle-negativo17; rhel; rocky, rocky-nonfree, rocky-negativo17;
+#   slackware, slackware-current; steamos;
+#   ubuntu, ubuntu-nonfree, ubuntu-lts, ubuntu-lts-nonfree;
+#   void-glibc, void-glibc-nonfree, void-musl, void-musl-nonfree; wolfi.
+# A full image reference is also accepted.
+image      = ""     # image short name or full registry reference
 clone      = ""     # name of an existing stopped container to clone
 home       = ""     # custom host directory to use as the container home (same as otter create --home)
 start-now  = false  # true | false
