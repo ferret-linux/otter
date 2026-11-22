@@ -191,31 +191,6 @@
       "fallback_vendor_image": "docker.io/devuan/devuan:unstable"
     },
     {
-      "name": "void-glibc",
-      "official_image": "ghcr.io/ferret-linux/void-otr:glibc",
-      "family": "void",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T14:01:28Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 414254083,
-          "disk_size": 1186723503
-        },
-        "arm64": {
-          "compressed_size": 396306645,
-          "disk_size": 1165775018
-        }
-      },
-      "build_number": 555,
-      "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest"
-    },
-    {
       "name": "devuan-unstable",
       "official_image": "ghcr.io/ferret-linux/devuan-otr:unstable",
       "family": "devuan",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 4,
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
+    },
+    {
+      "name": "void-glibc",
+      "official_image": "ghcr.io/ferret-linux/void-otr:glibc",
+      "family": "void",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-22T18:34:18Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 414294940,
+          "disk_size": 1186818220
+        },
+        "arm64": {
+          "compressed_size": 396312817,
+          "disk_size": 1165777068
+        }
+      },
+      "build_number": 556,
+      "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest"
     }
   ]
 }
