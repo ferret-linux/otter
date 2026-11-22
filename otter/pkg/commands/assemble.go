@@ -278,6 +278,10 @@ func (ac *AssembleCommand) joinHooks(hooks []string) string {
 }
 
 func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) error {
+	if err := validateExports(item); err != nil {
+		return err
+	}
+
 	cm := ac.containerManager
 	enterCmd := ac.enterCmd
 	if *item.Settings.Rootful || ac.cfg.DefaultRootful {
@@ -320,15 +324,34 @@ func (ac *AssembleCommand) setupBox(ctx context.Context, item manifest.Item) err
 	return nil
 }
 
-// exportApps validates and exports every app declared in item.Exported.Apps.
-func (ac *AssembleCommand) exportApps(ctx context.Context, enterCmd *EnterCommand, item manifest.Item) error {
-	// validate app name to prevent command injection, since it's used in a custom command
-	var validAppName = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9._+\-]*$`)
+var (
+	// Export names and paths are inserted into custom commands, so they must
+	// stay within a strict alphanumeric/punctuation allowlist.
+	validAppName = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9._+\-]*$`)
+	validBinPath = regexp.MustCompile(`^/[a-zA-Z0-9._+\-/]+$`)
+)
+
+// validateExports checks every exported app and bin before the container is
+// started, so a bad manifest cannot leave a running container behind.
+func validateExports(item manifest.Item) error {
 	for _, app := range item.Exported.Apps {
 		if !validAppName.MatchString(app) {
 			return fmt.Errorf("invalid app name '%s' for item '%s': must be alphanumeric (with dots, underscores, hyphens)", app, item.Name)
 		}
 	}
+	if len(item.Exported.Bins) > 0 && !validBinPath.MatchString(item.Exported.Path) {
+		return fmt.Errorf("invalid exported bins path '%s' for item '%s': must be an absolute path with alphanumeric characters, dots, underscores, or hyphens", item.Exported.Path, item.Name)
+	}
+	for _, bin := range item.Exported.Bins {
+		if !validBinPath.MatchString(bin) {
+			return fmt.Errorf("invalid bin path '%s' for item '%s': must be an absolute path with alphanumeric characters, dots, underscores, or hyphens", bin, item.Name)
+		}
+	}
+	return nil
+}
+
+// exportApps exports every app declared in item.Exported.Apps.
+func (ac *AssembleCommand) exportApps(ctx context.Context, enterCmd *EnterCommand, item manifest.Item) error {
 	for _, app := range item.Exported.Apps {
 		_, err := enterCmd.Execute(ctx, EnterOptions{
 			ContainerName: item.Name,
@@ -342,18 +365,8 @@ func (ac *AssembleCommand) exportApps(ctx context.Context, enterCmd *EnterComman
 	return nil
 }
 
-// exportBins validates and exports every bin declared in item.Exported.Bins.
+// exportBins exports every bin declared in item.Exported.Bins.
 func (ac *AssembleCommand) exportBins(ctx context.Context, enterCmd *EnterCommand, item manifest.Item) error {
-	// validate bin path to prevent command injection, since it's used in a custom command
-	var validBinPath = regexp.MustCompile(`^/[a-zA-Z0-9._+\-/]+$`)
-	if len(item.Exported.Bins) > 0 && !validBinPath.MatchString(item.Exported.Path) {
-		return fmt.Errorf("invalid exported bins path '%s' for item '%s': must be an absolute path with alphanumeric characters, dots, underscores, or hyphens", item.Exported.Path, item.Name)
-	}
-	for _, bin := range item.Exported.Bins {
-		if !validBinPath.MatchString(bin) {
-			return fmt.Errorf("invalid bin path '%s' for item '%s': must be an absolute path with alphanumeric characters, dots, underscores, or hyphens", bin, item.Name)
-		}
-	}
 	for _, bin := range item.Exported.Bins {
 		_, err := enterCmd.Execute(ctx, EnterOptions{
 			ContainerName: item.Name,
