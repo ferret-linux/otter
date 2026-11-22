@@ -675,9 +675,17 @@ func (n *Nerdctl) Enter(
 	userEnv := userenv.LoadUserEnvironment(ctx)
 	user := userEnv.User
 
-	command, config, err := n.generateEnterCommand(
+	inspectResult, err := resolveInspectResult(
+		ctx, options.ContainerName, options.InspectResult, n.InspectContainer,
+	)
+	if err != nil {
+		return err
+	}
+
+	command, err := n.generateEnterCommand(
 		ctx,
 		options.ContainerName,
+		inspectResult,
 		options.AdditionalFlags,
 		options.Background,
 		options.NoWorkDir,
@@ -689,15 +697,8 @@ func (n *Nerdctl) Enter(
 		return err
 	}
 
-	commandArgs := containermanager.BuildCommandArgs(options.CustomCommand, user, options.Background, config.UnshareGroups)
+	commandArgs := containermanager.BuildCommandArgs(options.CustomCommand, user, options.Background, inspectResult.UnshareGroups)
 
-	inspectResult, err := n.InspectContainer(ctx, options.ContainerName)
-	if err != nil {
-		if errors.Is(err, containermanager.ErrContainerNotFound) {
-			return fmt.Errorf("container '%s' not found", options.ContainerName)
-		}
-		return fmt.Errorf("failed to inspect container '%s': %w", options.ContainerName, err)
-	}
 	if inspectResult.ContainerStatus != containermanager.RunningStatus {
 		return fmt.Errorf("container '%s' is not running, use 'otter start' first", options.ContainerName)
 	}
@@ -753,13 +754,14 @@ func (n *Nerdctl) run(ctx context.Context, args []string, opts runOptions) (stri
 func (n *Nerdctl) generateEnterCommand(
 	ctx context.Context,
 	containerName string,
+	containerConfig *containermanager.InspectResult,
 	additionalFlags string,
 	background bool,
 	noWorkDir bool,
 	cleanPath bool,
 	emptyEnv bool,
 	addEnv []string,
-) ([]string, *containermanager.InspectResult, error) {
+) ([]string, error) {
 	cmd := []string{}
 
 	cmd = append(cmd, "exec")
@@ -769,14 +771,6 @@ func (n *Nerdctl) generateEnterCommand(
 		cmd = append(cmd, "--interactive")
 		// nerdctl exec has no --detach-keys equivalent (unlike docker/podman);
 		// see nerdctl's own docs: "Unimplemented docker exec flags: --detach-keys".
-	}
-
-	containerConfig, err := n.InspectContainer(ctx, containerName)
-	if err != nil {
-		if errors.Is(err, containermanager.ErrContainerNotFound) {
-			return nil, nil, fmt.Errorf("container '%s' not found — are you sure it was created?", containerName)
-		}
-		return nil, nil, fmt.Errorf("failed to inspect container '%s': %w", containerName, err)
 	}
 
 	if containerConfig.UnshareGroups {
@@ -796,7 +790,7 @@ func (n *Nerdctl) generateEnterCommand(
 	}
 	workdir, err := containermanager.GetWorkDir(hostHome, containerConfig.ContainerHome, noWorkDir)
 	if err != nil {
-		return nil, nil, fmt.Errorf("error getting the workdir: %w", err)
+		return nil, fmt.Errorf("error getting the workdir: %w", err)
 	}
 
 	cmd = append(cmd, fmt.Sprintf("--workdir=%s", workdir))
@@ -804,7 +798,7 @@ func (n *Nerdctl) generateEnterCommand(
 
 	executablePath, err := os.Executable()
 	if err != nil {
-		return nil, nil, fmt.Errorf("error getting the executable path: %w", err)
+		return nil, fmt.Errorf("error getting the executable path: %w", err)
 	}
 
 	cmd = append(cmd, fmt.Sprintf("--env=CONTAINER_ID=%s", containerName))
@@ -863,7 +857,7 @@ func (n *Nerdctl) generateEnterCommand(
 
 	cmd = append(cmd, containerName)
 
-	return cmd, containerConfig, nil
+	return cmd, nil
 }
 
 func (n *Nerdctl) Pause(ctx context.Context, containerName string) error {

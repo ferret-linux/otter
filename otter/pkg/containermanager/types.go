@@ -79,7 +79,10 @@ type CreateOptions struct {
 }
 
 type EnterOptions struct {
-	ContainerName   string
+	ContainerName string
+	// InspectResult is the container inspection already performed by the
+	// caller. Providers reuse it instead of inspecting the container again.
+	InspectResult   *InspectResult
 	AdditionalFlags string
 	CustomCommand   []string
 	AddEnv          []string

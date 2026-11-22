@@ -602,9 +602,17 @@ func (p *Podman) Enter(
 	userEnv := userenv.LoadUserEnvironment(ctx)
 	user := userEnv.User
 
-	command, config, err := p.generateEnterCommand(
+	inspectResult, err := resolveInspectResult(
+		ctx, options.ContainerName, options.InspectResult, p.InspectContainer,
+	)
+	if err != nil {
+		return err
+	}
+
+	command, err := p.generateEnterCommand(
 		ctx,
 		options.ContainerName,
+		inspectResult,
 		options.AdditionalFlags,
 		options.Background,
 		options.NoWorkDir,
@@ -616,15 +624,8 @@ func (p *Podman) Enter(
 		return err
 	}
 
-	commandArgs := containermanager.BuildCommandArgs(options.CustomCommand, user, options.Background, config.UnshareGroups)
+	commandArgs := containermanager.BuildCommandArgs(options.CustomCommand, user, options.Background, inspectResult.UnshareGroups)
 
-	inspectResult, err := p.InspectContainer(ctx, options.ContainerName)
-	if err != nil {
-		if errors.Is(err, containermanager.ErrContainerNotFound) {
-			return fmt.Errorf("container '%s' not found", options.ContainerName)
-		}
-		return fmt.Errorf("failed to inspect container '%s': %w", options.ContainerName, err)
-	}
 	if inspectResult.ContainerStatus != containermanager.RunningStatus {
 		return fmt.Errorf("container '%s' is not running, use 'otter start' first", options.ContainerName)
 	}
@@ -1008,13 +1009,14 @@ func (p *Podman) InspectContainer(ctx context.Context, containerName string) (*c
 func (p *Podman) generateEnterCommand(
 	ctx context.Context,
 	containerName string,
+	containerConfig *containermanager.InspectResult,
 	additionalFlags string,
 	background bool,
 	noWorkDir bool,
 	cleanPath bool,
 	emptyEnv bool,
 	addEnv []string,
-) ([]string, *containermanager.InspectResult, error) {
+) ([]string, error) {
 	cmd := []string{}
 
 	cmd = append(cmd, "exec")
@@ -1025,13 +1027,6 @@ func (p *Podman) generateEnterCommand(
 		cmd = append(cmd, "--detach-keys=")
 	}
 
-	containerConfig, err := p.InspectContainer(ctx, containerName)
-	if err != nil {
-		if errors.Is(err, containermanager.ErrContainerNotFound) {
-			return nil, nil, fmt.Errorf("container '%s' not found — are you sure it was created?", containerName)
-		}
-		return nil, nil, fmt.Errorf("failed to inspect container '%s': %w", containerName, err)
-	}
 	// User selection
 	if containerConfig.UnshareGroups {
 		cmd = append(cmd, "--user=root")
@@ -1054,7 +1049,7 @@ func (p *Podman) generateEnterCommand(
 	}
 	workdir, err := containermanager.GetWorkDir(hostHome, containerConfig.ContainerHome, noWorkDir)
 	if err != nil {
-		return nil, nil, fmt.Errorf("error getting the workdir: %w", err)
+		return nil, fmt.Errorf("error getting the workdir: %w", err)
 	}
 
 	cmd = append(cmd, fmt.Sprintf("--workdir=%s", workdir))
@@ -1062,7 +1057,7 @@ func (p *Podman) generateEnterCommand(
 
 	executablePath, err := os.Executable()
 	if err != nil {
-		return nil, nil, fmt.Errorf("error getting the executable path: %w", err)
+		return nil, fmt.Errorf("error getting the executable path: %w", err)
 	}
 
 	// Environment variables
@@ -1126,7 +1121,7 @@ func (p *Podman) generateEnterCommand(
 	// Container name
 	cmd = append(cmd, containerName)
 
-	return cmd, containerConfig, nil
+	return cmd, nil
 }
 
 func (p *Podman) Pause(ctx context.Context, containerName string) error {

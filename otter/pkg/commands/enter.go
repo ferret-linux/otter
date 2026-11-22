@@ -49,6 +49,7 @@ func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterRe
 		if err := c.containerManager.Start(ctx, opts.ContainerName); err != nil {
 			return nil, fmt.Errorf("failed to start container '%s': %w", opts.ContainerName, err)
 		}
+		inspectResult.ContainerStatus = containermanager.RunningStatus
 	}
 	if !c.containerManager.IsSetupDone(ctx, opts.ContainerName) {
 		return nil, fmt.Errorf("container '%s' is initializing, please wait", opts.ContainerName)
@@ -56,6 +57,7 @@ func (c *EnterCommand) Execute(ctx context.Context, opts EnterOptions) (*EnterRe
 
 	cmdOpts := containermanager.EnterOptions{
 		ContainerName:   opts.ContainerName,
+		InspectResult:   inspectResult,
 		AdditionalFlags: opts.AdditionalFlags,
 		CustomCommand:   opts.CustomCommand,
 		AddEnv:          opts.AddEnv,

@@ -609,9 +609,17 @@ func (d *Docker) Enter(
 	userEnv := userenv.LoadUserEnvironment(ctx)
 	user := userEnv.User
 
-	command, config, err := d.generateEnterCommand(
+	inspectResult, err := resolveInspectResult(
+		ctx, options.ContainerName, options.InspectResult, d.InspectContainer,
+	)
+	if err != nil {
+		return err
+	}
+
+	command, err := d.generateEnterCommand(
 		ctx,
 		options.ContainerName,
+		inspectResult,
 		options.AdditionalFlags,
 		options.Background,
 		options.NoWorkDir,
@@ -623,15 +631,8 @@ func (d *Docker) Enter(
 		return err
 	}
 
-	commandArgs := containermanager.BuildCommandArgs(options.CustomCommand, user, options.Background, config.UnshareGroups)
+	commandArgs := containermanager.BuildCommandArgs(options.CustomCommand, user, options.Background, inspectResult.UnshareGroups)
 
-	inspectResult, err := d.InspectContainer(ctx, options.ContainerName)
-	if err != nil {
-		if errors.Is(err, containermanager.ErrContainerNotFound) {
-			return fmt.Errorf("container '%s' not found", options.ContainerName)
-		}
-		return fmt.Errorf("failed to inspect container '%s': %w", options.ContainerName, err)
-	}
 	if inspectResult.ContainerStatus != containermanager.RunningStatus {
 		return fmt.Errorf("container '%s' is not running, use 'otter start' first", options.ContainerName)
 	}
@@ -938,13 +939,14 @@ func (d *Docker) PullImage(ctx context.Context, imageName string, platform strin
 func (d *Docker) generateEnterCommand(
 	ctx context.Context,
 	containerName string,
+	containerConfig *containermanager.InspectResult,
 	additionalFlags string,
 	background bool,
 	noWorkDir bool,
 	cleanPath bool,
 	emptyEnv bool,
 	addEnv []string,
-) ([]string, *containermanager.InspectResult, error) {
+) ([]string, error) {
 	cmd := []string{}
 
 	cmd = append(cmd, "exec")
@@ -955,13 +957,6 @@ func (d *Docker) generateEnterCommand(
 		cmd = append(cmd, "--detach-keys=")
 	}
 
-	containerConfig, err := d.InspectContainer(ctx, containerName)
-	if err != nil {
-		if errors.Is(err, containermanager.ErrContainerNotFound) {
-			return nil, nil, fmt.Errorf("container '%s' not found — are you sure it was created?", containerName)
-		}
-		return nil, nil, fmt.Errorf("failed to inspect container '%s': %w", containerName, err)
-	}
 	// User selection
 	if containerConfig.UnshareGroups {
 		cmd = append(cmd, "--user=root")
@@ -984,7 +979,7 @@ func (d *Docker) generateEnterCommand(
 	}
 	workdir, err := containermanager.GetWorkDir(hostHome, containerConfig.ContainerHome, noWorkDir)
 	if err != nil {
-		return nil, nil, fmt.Errorf("error getting the workdir: %w", err)
+		return nil, fmt.Errorf("error getting the workdir: %w", err)
 	}
 
 	cmd = append(cmd, fmt.Sprintf("--workdir=%s", workdir))
@@ -992,7 +987,7 @@ func (d *Docker) generateEnterCommand(
 
 	executablePath, err := os.Executable()
 	if err != nil {
-		return nil, nil, fmt.Errorf("error getting the executable path: %w", err)
+		return nil, fmt.Errorf("error getting the executable path: %w", err)
 	}
 
 	// Environment variables
@@ -1056,7 +1051,7 @@ func (d *Docker) generateEnterCommand(
 	// Container name
 	cmd = append(cmd, containerName)
 
-	return cmd, containerConfig, nil
+	return cmd, nil
 }
 
 func (d *Docker) Pause(ctx context.Context, containerName string) error {
