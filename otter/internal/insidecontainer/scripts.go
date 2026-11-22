@@ -75,8 +75,7 @@ func ProvisionScripts(scriptsDir string) (string, bool, error) {
 				continue
 			}
 		}
-		//nolint:gosec // 0755 is required: scripts must be executable by the container runtime
-		if err := os.WriteFile(destFilePath, []byte(script.content), 0755); err != nil {
+		if err := writeScriptAtomic(destFilePath, []byte(script.content)); err != nil {
 			return "", false, fmt.Errorf("failed to write script %s: %w", script.name, err)
 		}
 		updated = true
@@ -115,8 +114,7 @@ func ProvisionScripts(scriptsDir string) (string, bool, error) {
 				return nil
 			}
 		}
-		//nolint:gosec // 0755 is required: scripts must be executable by the container runtime
-		if err := os.WriteFile(destPath, content, 0755); err != nil {
+		if err := writeScriptAtomic(destPath, content); err != nil {
 			return fmt.Errorf("failed to write script %s: %w", destPath, err)
 		}
 		updated = true
@@ -127,4 +125,38 @@ func ProvisionScripts(scriptsDir string) (string, bool, error) {
 	}
 
 	return dir, updated, nil
+}
+
+// writeScriptAtomic writes a script to a temp file in the same directory and
+// renames it into place, so an interrupted write cannot leave a truncated
+// executable behind.
+func writeScriptAtomic(path string, content []byte) error {
+	tmp, err := os.CreateTemp(filepath.Dir(path), ".otter-script-*.tmp")
+	if err != nil {
+		return fmt.Errorf("create temp script file: %w", err)
+	}
+	tmpName := tmp.Name()
+	committed := false
+	defer func() {
+		if !committed {
+			_ = os.Remove(tmpName)
+		}
+	}()
+
+	_, writeErr := tmp.Write(content)
+	chmodErr := tmp.Chmod(0o755)
+	syncErr := tmp.Sync()
+	closeErr := tmp.Close()
+	for _, stepErr := range []error{writeErr, chmodErr, syncErr, closeErr} {
+		if stepErr != nil {
+			return fmt.Errorf("write temp script file: %w", stepErr)
+		}
+	}
+
+	if err := os.Rename(tmpName, path); err != nil {
+		return fmt.Errorf("rename temp script file: %w", err)
+	}
+	committed = true
+
+	return nil
 }
