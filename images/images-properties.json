@@ -566,30 +566,6 @@
       "fallback_vendor_image": "quay.io/fedora/fedora:rawhide"
     },
     {
-      "name": "guix",
-      "official_image": "ghcr.io/ferret-linux/guix-otr:latest",
-      "family": "guix",
-      "image_variant": "free",
-      "is_reliable_fallback": false,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-23T00:56:31Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1084986700,
-          "disk_size": 3417632398
-        },
-        "arm64": {
-          "compressed_size": 1045669023,
-          "disk_size": 3582728864
-        }
-      },
-      "build_number": 390
-    },
-    {
       "name": "oracle-negativo17",
       "official_image": "ghcr.io/ferret-linux/oracle-otr:negativo17",
       "family": "oracle",
@@ -1387,6 +1363,30 @@
         }
       },
       "build_number": 474
+    },
+    {
+      "name": "guix",
+      "official_image": "ghcr.io/ferret-linux/guix-otr:latest",
+      "family": "guix",
+      "image_variant": "free",
+      "is_reliable_fallback": false,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-23T08:40:19Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1084992354,
+          "disk_size": 3417632395
+        },
+        "arm64": {
+          "compressed_size": 1045667833,
+          "disk_size": 3582728353
+        }
+      },
+      "build_number": 391
     }
   ]
 }
