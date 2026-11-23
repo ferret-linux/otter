@@ -1,11 +1,15 @@
 package config
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/BurntSushi/toml"
+
+	"github.com/ferret-linux/otter/internal/userenv"
 )
 
 // SaveFileConfig writes cfg to the user's own otter.conf
@@ -25,6 +29,10 @@ func SaveFileConfig(cfg *FileConfig) error {
 	path := userConfigPath()
 	configDir := filepath.Dir(path)
 
+	// Record directories we create so an escalated invocation can hand them
+	// back to the user it is acting on behalf of.
+	createdDirs := missingConfigDirs(configDir)
+
 	if err := os.MkdirAll(configDir, 0o750); err != nil {
 		return fmt.Errorf("failed to create config directory: %w", err)
 	}
@@ -37,7 +45,55 @@ func SaveFileConfig(cfg *FileConfig) error {
 		return fmt.Errorf("failed to marshal config: %w", err)
 	}
 
-	return writeConfigFileAtomic(path, data)
+	if err := writeConfigFileAtomic(path, data); err != nil {
+		return err
+	}
+
+	// When otter runs through an escalator the path points at the invoking
+	// user's home, but the directories and file were created as root. Without
+	// chowning them the user cannot read or edit their own config.
+	uid, gid, ok := escalatedTargetOwner()
+	if !ok {
+		return nil
+	}
+	for _, dir := range append(createdDirs, path) {
+		if err := os.Chown(dir, uid, gid); err != nil {
+			return fmt.Errorf("failed to hand config path %s to target user: %w", dir, err)
+		}
+	}
+	return nil
+}
+
+// escalatedTargetOwner returns the uid/gid of the user otter is acting on
+// behalf of, when running root with an escalator (sudo/doas/pkexec). It
+// returns ok=false for ordinary invocations and for real root.
+func escalatedTargetOwner() (int, int, bool) {
+	if os.Geteuid() != 0 {
+		return 0, 0, false
+	}
+	env := userenv.LoadTargetUserEnvironment(context.Background())
+	uid, uidErr := strconv.Atoi(env.UserID)
+	gid, gidErr := strconv.Atoi(env.GroupID)
+	if uidErr != nil || gidErr != nil {
+		return 0, 0, false
+	}
+	if uid == os.Geteuid() && gid == os.Getegid() {
+		return 0, 0, false
+	}
+	return uid, gid, true
+}
+
+// missingConfigDirs lists the path components of dir (deepest first) that do
+// not exist yet, stopping at the first existing ancestor.
+func missingConfigDirs(dir string) []string {
+	var missing []string
+	for current := dir; current != "" && current != string(os.PathSeparator); current = filepath.Dir(current) {
+		if _, err := os.Lstat(current); err == nil {
+			break
+		}
+		missing = append(missing, current)
+	}
+	return missing
 }
 
 // writeConfigFileAtomic writes data to a temp file in the same directory and
