@@ -291,31 +291,6 @@
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
     },
     {
-      "name": "ubuntu-lts-nonfree",
-      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts-nonfree",
-      "family": "ubuntu",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T21:09:28Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 568446298,
-          "disk_size": 1603418675
-        },
-        "arm64": {
-          "compressed_size": 547296523,
-          "disk_size": 1625866821
-        }
-      },
-      "build_number": 5,
-      "fallback_vendor_image": "docker.io/library/ubuntu:26.04"
-    },
-    {
       "name": "chimera",
       "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
       "family": "chimera",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 565,
       "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest"
+    },
+    {
+      "name": "ubuntu-lts-nonfree",
+      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts-nonfree",
+      "family": "ubuntu",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-23T00:59:06Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 568442584,
+          "disk_size": 1603418676
+        },
+        "arm64": {
+          "compressed_size": 547292186,
+          "disk_size": 1625866818
+        }
+      },
+      "build_number": 6,
+      "fallback_vendor_image": "docker.io/library/ubuntu:26.04"
     }
   ]
 }
