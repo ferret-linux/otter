@@ -266,31 +266,6 @@
       "fallback_vendor_image": "quay.io/fedora/fedora:rawhide"
     },
     {
-      "name": "rhel",
-      "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
-      "family": "rhel",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-23T08:49:24Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 382634134,
-          "disk_size": 1277483633
-        },
-        "arm64": {
-          "compressed_size": 341793927,
-          "disk_size": 1128933509
-        }
-      },
-      "build_number": 584,
-      "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest"
-    },
-    {
       "name": "centos-negativo17",
       "official_image": "ghcr.io/ferret-linux/centos-otr:negativo17",
       "family": "centos",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 578,
       "fallback_vendor_image": "docker.io/library/ubuntu:26.04"
+    },
+    {
+      "name": "rhel",
+      "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
+      "family": "rhel",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-23T17:17:21Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 382634324,
+          "disk_size": 1277483630
+        },
+        "arm64": {
+          "compressed_size": 341789012,
+          "disk_size": 1128928894
+        }
+      },
+      "build_number": 585,
+      "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest"
     }
   ]
 }
