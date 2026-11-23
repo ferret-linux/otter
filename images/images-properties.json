@@ -391,30 +391,6 @@
       "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10"
     },
     {
-      "name": "homebrew",
-      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
-      "family": "homebrew",
-      "image_variant": "free",
-      "is_reliable_fallback": false,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T21:48:57Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 834630806,
-          "disk_size": 2029863857
-        },
-        "arm64": {
-          "compressed_size": 794350124,
-          "disk_size": 1971692474
-        }
-      },
-      "build_number": 472
-    },
-    {
       "name": "debian-testing",
       "official_image": "ghcr.io/ferret-linux/debian-otr:testing",
       "family": "debian",
@@ -1387,6 +1363,30 @@
       },
       "build_number": 6,
       "fallback_vendor_image": "docker.io/library/ubuntu:26.04"
+    },
+    {
+      "name": "homebrew",
+      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
+      "family": "homebrew",
+      "image_variant": "free",
+      "is_reliable_fallback": false,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-23T00:59:46Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 834801741,
+          "disk_size": 2030042548
+        },
+        "arm64": {
+          "compressed_size": 794534931,
+          "disk_size": 1971915711
+        }
+      },
+      "build_number": 473
     }
   ]
 }
