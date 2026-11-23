@@ -391,31 +391,6 @@
       "fallback_vendor_image": "quay.io/centos/centos:stream10"
     },
     {
-      "name": "centos-nonfree",
-      "official_image": "ghcr.io/ferret-linux/centos-otr:nonfree",
-      "family": "centos",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T21:41:36Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 612774429,
-          "disk_size": 1904253178
-        },
-        "arm64": {
-          "compressed_size": 557907226,
-          "disk_size": 1732751614
-        }
-      },
-      "build_number": 6,
-      "fallback_vendor_image": "quay.io/centos/centos:stream10"
-    },
-    {
       "name": "kali",
       "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
       "family": "kali",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 535,
       "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest"
+    },
+    {
+      "name": "centos-nonfree",
+      "official_image": "ghcr.io/ferret-linux/centos-otr:nonfree",
+      "family": "centos",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-23T00:58:45Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 612772954,
+          "disk_size": 1904253181
+        },
+        "arm64": {
+          "compressed_size": 557901849,
+          "disk_size": 1732750076
+        }
+      },
+      "build_number": 7,
+      "fallback_vendor_image": "quay.io/centos/centos:stream10"
     }
   ]
 }
