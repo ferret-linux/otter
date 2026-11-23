@@ -164,7 +164,7 @@ func createAction(ctx context.Context, cmd *cli.Command, cfg *config.Values) err
 
 	args := cmd.Args().Slice()
 	if len(args) > 1 {
-		return fmt.Errorf("too many arguments; expected one container name")
+		return errors.New("too many arguments; expected one container name")
 	}
 	opts := commands.CreateOptions{
 		ContainerImage:          cmd.String("image"),

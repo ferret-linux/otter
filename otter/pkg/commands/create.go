@@ -341,22 +341,22 @@ func validateMemory(memory string) error {
 		return fmt.Errorf("invalid memory value %q: %w", memory, err)
 	}
 	const maxUint64 = ^uint64(0)
-	if memory[len(memory)-1] == 'g' {
-		if value > maxUint64/(1024*1024) {
-			return fmt.Errorf("memory value %q is too large", memory)
-		}
-		valueKB := value * 1024 * 1024
-		if valueKB > totalKB {
+	suffix := memory[len(memory)-1]
+	multiplier := uint64(1024)
+	unit := "m"
+	if suffix == 'g' {
+		multiplier = 1024 * 1024
+		unit = "g"
+	}
+	if value > maxUint64/multiplier {
+		return fmt.Errorf("memory value %q is too large", memory)
+	}
+	valueKB := value * multiplier
+	if valueKB > totalKB {
+		if unit == "g" {
 			return fmt.Errorf("not enough memory, host has %dg", totalKB/1024/1024)
 		}
-	} else {
-		if value > maxUint64/1024 {
-			return fmt.Errorf("memory value %q is too large", memory)
-		}
-		valueKB := value * 1024
-		if valueKB > totalKB {
-			return fmt.Errorf("not enough memory, host has %dm", totalKB/1024)
-		}
+		return fmt.Errorf("not enough memory, host has %dm", totalKB/1024)
 	}
 	return nil
 }

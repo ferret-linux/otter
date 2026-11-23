@@ -190,7 +190,6 @@ func (c *RegistryRemoveCommand) Execute(ctx context.Context, opts RegistryRemove
 	if err != nil {
 		return fmt.Errorf("failed to resolve remove targets: %w", err)
 	}
-
 	if opts.Force {
 		return c.removeTargets(ctx, targets, opts.Force)
 	}
@@ -200,6 +199,26 @@ func (c *RegistryRemoveCommand) Execute(ctx context.Context, opts RegistryRemove
 		return fmt.Errorf("failed to list containers: %w", err)
 	}
 
+	removable, blocked, err := c.partitionRemoveTargets(ctx, targets, containers)
+	if err != nil {
+		return err
+	}
+	if len(blocked) == len(targets) && len(targets) > 0 {
+		return allTargetsBlockedError(targets, blocked)
+	}
+	for _, ref := range targets {
+		if names, ok := blocked[ref]; ok {
+			ui.DefaultLogger.Warn("image in use, skipping", "image", ref, "containers", strings.Join(names, ", "))
+		}
+	}
+	return c.removeTargets(ctx, removable, opts.Force)
+}
+
+func (c *RegistryRemoveCommand) partitionRemoveTargets(
+	ctx context.Context,
+	targets []string,
+	containers []containermanager.Container,
+) ([]string, map[string][]string, error) {
 	removable := make([]string, 0, len(targets))
 	blocked := make(map[string][]string)
 	for _, ref := range targets {
@@ -213,7 +232,7 @@ func (c *RegistryRemoveCommand) Execute(ctx context.Context, opts RegistryRemove
 				ui.DefaultLogger.Warn("image not found locally, skipping", "image", ref)
 				continue
 			}
-			return fmt.Errorf("failed to check image usage for '%s': %w", ref, err)
+			return nil, nil, fmt.Errorf("failed to check image usage for '%s': %w", ref, err)
 		}
 		if len(names) > 0 {
 			blocked[ref] = names
@@ -221,23 +240,16 @@ func (c *RegistryRemoveCommand) Execute(ctx context.Context, opts RegistryRemove
 		}
 		removable = append(removable, ref)
 	}
+	return removable, blocked, nil
+}
 
-	if len(blocked) == len(targets) && len(targets) > 0 {
-		var b strings.Builder
-		b.WriteString("all target images are in use, nothing removed:")
-		for _, ref := range targets {
-			fmt.Fprintf(&b, "\n  %s (in use by: %s)", ref, strings.Join(blocked[ref], ", "))
-		}
-		return errors.New(b.String())
-	}
-
+func allTargetsBlockedError(targets []string, blocked map[string][]string) error {
+	var b strings.Builder
+	b.WriteString("all target images are in use, nothing removed:")
 	for _, ref := range targets {
-		if names, ok := blocked[ref]; ok {
-			ui.DefaultLogger.Warn("image in use, skipping", "image", ref, "containers", strings.Join(names, ", "))
-		}
+		fmt.Fprintf(&b, "\n  %s (in use by: %s)", ref, strings.Join(blocked[ref], ", "))
 	}
-
-	return c.removeTargets(ctx, removable, opts.Force)
+	return errors.New(b.String())
 }
 
 // removeTargets attempts to remove every ref in targets, continuing past

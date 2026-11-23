@@ -3,6 +3,7 @@ package cli
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/urfave/cli/v3"
@@ -58,7 +59,7 @@ func assembleAction(ctx context.Context, cmd *cli.Command, cfg *config.Values, d
 	}
 
 	if cmd.String("file") == "" {
-		return fmt.Errorf("manifest path is required, use --file to specify it")
+		return errors.New("manifest path is required, use --file to specify it")
 	}
 
 	sudoCommand := escalatorFromContext(ctx)

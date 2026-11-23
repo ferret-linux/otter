@@ -13,7 +13,7 @@ import (
 	"github.com/ferret-linux/otter/pkg/ui"
 )
 
-var defaultHelpPrinter = ucli.HelpPrinter
+var defaultHelpPrinter = ucli.HelpPrinter //nolint:gochecknoglobals // overridden by init to hook urfave/cli help rendering
 
 //go:embed show-file
 var printFS embed.FS

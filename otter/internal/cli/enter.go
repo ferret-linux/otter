@@ -62,7 +62,7 @@ func enterAction(ctx context.Context, cmd *cli.Command) error {
 
 	args := cmd.Args().Slice()
 	if len(args) == 0 || strings.TrimSpace(args[0]) == "" {
-		return fmt.Errorf("container name is required")
+		return errors.New("container name is required")
 	}
 	options := commands.EnterOptions{
 		ContainerName:   args[0],

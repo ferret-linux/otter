@@ -185,7 +185,7 @@ func splitNames(args []string) ([]string, error) {
 		}
 	}
 	if len(names) == 0 {
-		return nil, fmt.Errorf("no valid names provided")
+		return nil, errors.New("no valid names provided")
 	}
 	return names, nil
 }

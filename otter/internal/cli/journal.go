@@ -56,7 +56,7 @@ func journalAction(ctx context.Context, cmd *cli.Command) error {
 
 	args := cmd.Args().Slice()
 	if len(args) > 1 {
-		return fmt.Errorf("too many arguments; expected one container name")
+		return errors.New("too many arguments; expected one container name")
 	}
 	journalCmd := commands.NewJournalCommand(cm)
 	if err := journalCmd.Execute(ctx, commands.JournalOptions{
