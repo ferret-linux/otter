@@ -416,31 +416,6 @@
       "fallback_vendor_image": "docker.io/library/ubuntu:26.04"
     },
     {
-      "name": "rocky-negativo17",
-      "official_image": "ghcr.io/ferret-linux/rocky-otr:negativo17",
-      "family": "rocky",
-      "image_variant": "negativo17",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-23T00:59:55Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 580459500,
-          "disk_size": 1802824780
-        },
-        "arm64": {
-          "compressed_size": 542984008,
-          "disk_size": 1729104984
-        }
-      },
-      "build_number": 7,
-      "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
-    },
-    {
       "name": "alma-negativo17",
       "official_image": "ghcr.io/ferret-linux/alma-otr:negativo17",
       "family": "alma",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 563,
       "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest"
+    },
+    {
+      "name": "rocky-negativo17",
+      "official_image": "ghcr.io/ferret-linux/rocky-otr:negativo17",
+      "family": "rocky",
+      "image_variant": "negativo17",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-23T08:53:45Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 580461998,
+          "disk_size": 1802824781
+        },
+        "arm64": {
+          "compressed_size": 542984627,
+          "disk_size": 1729104981
+        }
+      },
+      "build_number": 8,
+      "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
     }
   ]
 }
