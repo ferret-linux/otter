@@ -315,31 +315,6 @@
       "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10"
     },
     {
-      "name": "fedora-negativo17",
-      "official_image": "ghcr.io/ferret-linux/fedora-otr:negativo17",
-      "family": "fedora",
-      "image_variant": "negativo17",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-23T16:33:56Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 709020922,
-          "disk_size": 2141761708
-        },
-        "arm64": {
-          "compressed_size": 658590493,
-          "disk_size": 2056792764
-        }
-      },
-      "build_number": 8,
-      "fallback_vendor_image": "quay.io/fedora/fedora:latest"
-    },
-    {
       "name": "chimera",
       "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
       "family": "chimera",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 561,
       "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest"
+    },
+    {
+      "name": "fedora-negativo17",
+      "official_image": "ghcr.io/ferret-linux/fedora-otr:negativo17",
+      "family": "fedora",
+      "image_variant": "negativo17",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-23T23:10:51Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 709020207,
+          "disk_size": 2141761709
+        },
+        "arm64": {
+          "compressed_size": 658590720,
+          "disk_size": 2056792763
+        }
+      },
+      "build_number": 9,
+      "fallback_vendor_image": "quay.io/fedora/fedora:latest"
     }
   ]
 }
