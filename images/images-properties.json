@@ -241,31 +241,6 @@
       "fallback_vendor_image": "docker.io/aclemons/slackware:latest"
     },
     {
-      "name": "gentoo",
-      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
-      "family": "gentoo",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-23T01:40:02Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 2031398468,
-          "disk_size": 5130677963
-        },
-        "arm64": {
-          "compressed_size": 1565249287,
-          "disk_size": 4154773715
-        }
-      },
-      "build_number": 504,
-      "fallback_vendor_image": "docker.io/gentoo/stage3:latest"
-    },
-    {
       "name": "alma-nonfree",
       "official_image": "ghcr.io/ferret-linux/alma-otr:nonfree",
       "family": "alma",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 7,
       "fallback_vendor_image": "docker.io/library/ubuntu:26.04"
+    },
+    {
+      "name": "gentoo",
+      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
+      "family": "gentoo",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-23T10:13:38Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 2023194731,
+          "disk_size": 5117027538
+        },
+        "arm64": {
+          "compressed_size": 1561128438,
+          "disk_size": 4144959699
+        }
+      },
+      "build_number": 505,
+      "fallback_vendor_image": "docker.io/gentoo/stage3:latest"
     }
   ]
 }
