@@ -1,4 +1,4 @@
-package insidecontainer //nolint:cyclop // package average reflects explicit provisioning helpers, not a single complex function
+package insidecontainer
 
 import (
 	"crypto/sha256"
