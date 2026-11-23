@@ -66,9 +66,6 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 		Name:                  "otter",
 		Version:               version,
 		EnableShellCompletion: true,
-		CommandNotFound: func(_ context.Context, _ *cli.Command, name string) {
-			ui.DefaultLogger.Error("unknown command", "command", name)
-		},
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "sudo-command",
