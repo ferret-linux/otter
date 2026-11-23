@@ -1374,18 +1374,18 @@
         "amd64",
         "arm64"
       ],
-      "built_at": "2026-11-23T17:19:09Z",
+      "built_at": "2026-11-23T22:27:40Z",
       "sizes": {
         "amd64": {
-          "compressed_size": 503482508,
-          "disk_size": 1555284236
+          "compressed_size": 503482693,
+          "disk_size": 1555282698
         },
         "arm64": {
-          "compressed_size": 489751121,
-          "disk_size": 1564407562
+          "compressed_size": 489751879,
+          "disk_size": 1564412167
         }
       },
-      "build_number": 577,
+      "build_number": 578,
       "fallback_vendor_image": "quay.io/centos/centos:stream10"
     }
   ]
