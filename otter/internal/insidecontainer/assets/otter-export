@@ -1554,7 +1554,7 @@ if enter_flags:
             print(f"Warning: {part} argument will be set automatically and should be removed.", file=sys.stderr)
             j += 1
             continue
-        if part.startswith("--name=") or part.startswith("--container-name="):
+        if part.startswith(("--name=", "-n=", "--container-name=", "-cn=")):
             print(f"Warning: {part} argument will be set automatically and should be removed.", file=sys.stderr)
             j += 1
             continue
