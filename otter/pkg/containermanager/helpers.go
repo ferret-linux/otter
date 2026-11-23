@@ -92,6 +92,10 @@ func FilterEnvVars() []string {
 	excludedPrefixes := []string{
 		"CONTAINER_ID",
 		"FPATH",
+		// All LD_* variables control the dynamic loader (LD_PRELOAD,
+		// LD_AUDIT, LD_LIBRARY_PATH, ...). Filtering the whole class is
+		// safer than enumerating them and avoids future gaps.
+		"LD_",
 		"HOST",
 		"HOSTNAME",
 		"HOME",
@@ -118,12 +122,27 @@ func FilterEnvVars() []string {
 		"OTTER_IMAGE_VARIANT",
 		// Host loader/runtime vars would reinterpret binaries inside the
 		// container or make non-interactive shells source host files.
-		"LD_PRELOAD",
-		"LD_LIBRARY_PATH",
+		// LD_* is covered by the prefix rule above.
 		"BASH_ENV",
 		"ENV",
+		"GLOBIGNORE",
+		"CDPATH",
+		"IFS",
+		"PS4",
+		"PROMPT_COMMAND",
 		"PYTHONPATH",
+		"PYTHONHOME",
+		"PYTHONINSPECT",
+		"PYTHONSTARTUP",
 		"NODE_OPTIONS",
+		"NODE_PATH",
+		"PERL5LIB",
+		"PERL5OPT",
+		"RUBYLIB",
+		"RUBYOPT",
+		"JAVA_TOOL_OPTIONS",
+		"_JAVA_OPTIONS",
+		"CLASSPATH",
 	}
 
 	for _, env := range os.Environ() {
