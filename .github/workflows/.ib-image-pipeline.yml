@@ -125,10 +125,16 @@ jobs:
 
   rollback:
     needs: [image-amd64, image-arm64, merge, verify]
+    # A requested arch can push its tag before another arch fails. In that
+    # case merge (and therefore verify) is skipped, so rollback must still run
+    # to remove the partial per-arch push.
     if: |
       always() &&
-      needs.merge.result == 'success' &&
-      needs.verify.result == 'failure'
+      (
+        (needs.merge.result == 'success' && needs.verify.result == 'failure') ||
+        (contains(fromJson(inputs.arches), 'amd64') && needs.image-amd64.result != 'success') ||
+        (contains(fromJson(inputs.arches), 'arm64') && needs.image-arm64.result != 'success')
+      )
     uses: ./.github/workflows/.ib-rollback.yml
     with:
       name: ${{ inputs.name }}
