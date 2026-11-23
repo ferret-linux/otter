@@ -266,31 +266,6 @@
       "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest"
     },
     {
-      "name": "debian",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:stable",
-      "family": "debian",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T21:04:00Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 615925029,
-          "disk_size": 1610004294
-        },
-        "arm64": {
-          "compressed_size": 592099140,
-          "disk_size": 1607698263
-        }
-      },
-      "build_number": 585,
-      "fallback_vendor_image": "docker.io/library/debian:stable"
-    },
-    {
       "name": "rocky-negativo17",
       "official_image": "ghcr.io/ferret-linux/rocky-otr:negativo17",
       "family": "rocky",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 6,
       "fallback_vendor_image": "quay.io/centos/centos:stream10"
+    },
+    {
+      "name": "debian",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:stable",
+      "family": "debian",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-23T00:34:13Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 615930784,
+          "disk_size": 1610004296
+        },
+        "arm64": {
+          "compressed_size": 592098721,
+          "disk_size": 1607698264
+        }
+      },
+      "build_number": 586,
+      "fallback_vendor_image": "docker.io/library/debian:stable"
     }
   ]
 }
