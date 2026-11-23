@@ -391,31 +391,6 @@
       "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10"
     },
     {
-      "name": "ubuntu",
-      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:stable",
-      "family": "ubuntu",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-23T08:52:28Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 552524316,
-          "disk_size": 1564059130
-        },
-        "arm64": {
-          "compressed_size": 531466819,
-          "disk_size": 1584916491
-        }
-      },
-      "build_number": 578,
-      "fallback_vendor_image": "docker.io/library/ubuntu:latest"
-    },
-    {
       "name": "centos",
       "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
       "family": "centos",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 8,
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
+    },
+    {
+      "name": "ubuntu",
+      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:stable",
+      "family": "ubuntu",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-23T17:16:28Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 552520100,
+          "disk_size": 1564059641
+        },
+        "arm64": {
+          "compressed_size": 531463711,
+          "disk_size": 1584917002
+        }
+      },
+      "build_number": 579,
+      "fallback_vendor_image": "docker.io/library/ubuntu:latest"
     }
   ]
 }
