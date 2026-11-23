@@ -1140,31 +1140,6 @@
       "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest"
     },
     {
-      "name": "wolfi",
-      "official_image": "ghcr.io/ferret-linux/wolfi-otr:latest",
-      "family": "wolfi",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-23T08:54:04Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 270515100,
-          "disk_size": 796716387
-        },
-        "arm64": {
-          "compressed_size": 258479817,
-          "disk_size": 788810074
-        }
-      },
-      "build_number": 463,
-      "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest"
-    },
-    {
       "name": "kali-edge-nonfree",
       "official_image": "ghcr.io/ferret-linux/kali-otr:edge-nonfree",
       "family": "kali",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 8,
       "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10"
+    },
+    {
+      "name": "wolfi",
+      "official_image": "ghcr.io/ferret-linux/wolfi-otr:latest",
+      "family": "wolfi",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-23T16:32:01Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 270926668,
+          "disk_size": 797423457
+        },
+        "arm64": {
+          "compressed_size": 258889640,
+          "disk_size": 789545302
+        }
+      },
+      "build_number": 464,
+      "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest"
     }
   ]
 }
