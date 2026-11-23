@@ -259,7 +259,10 @@ fi
 #
 # else we fallback to the usual setup with passwordless sudo/su user. This is
 # likely because we're in a rootless setup, so privilege escalation is not a concern.
-container_user_name_grep="$(printf '%s' "${container_user_name}" | sed 's/[][\.^$*+?(){}|\\]/\\&/g')"
+# Use the BRE escaper defined at the top of this function. The previous
+# expression also escaped + ? ( ) { } |, which are GNU BRE *operators* when
+# backslashed, so a username containing them never matched /etc/shadow.
+container_user_name_grep="$(_otter_grep_escape "${container_user_name}")"
 shadow_field="$(grep "^${container_user_name_grep}:" /etc/shadow 2> /dev/null | head -n 1 | cut -d':' -f2 || :)"
 if [ "${rootful}" -eq 1 ] &&
 	{

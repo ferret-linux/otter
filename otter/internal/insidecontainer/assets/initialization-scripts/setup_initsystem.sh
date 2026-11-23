@@ -319,7 +319,7 @@ EOF
 	systemctl start user@${container_user_uid}.service && \
 	systemctl start user-integration@${container_user_uid}.service && \
 	systemctl start user-integration@${container_user_uid}.timer && \
-	loginctl enable-linger ${container_user_uid} && \
+	loginctl enable-linger ${container_user_uid} || : && \
 	touch /usr/lib/otter/container.ready && \
 	touch /usr/lib/otter/container.bootstrapped && \
 	echo container_setup_done || :" &
