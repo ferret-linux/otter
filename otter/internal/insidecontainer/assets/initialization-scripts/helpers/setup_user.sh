@@ -88,8 +88,11 @@ if ! grep -q "^$(_otter_grep_escape "${container_user_name}" | sed 's/\\\\/./g')
 
 		# Also add user to any additional groups when useradd failed
 		for group in ${additional_groups}; do
-			escaped_user_name="$(_otter_grep_escape "${container_user_name}")"
-			if ! grep -Eq "^${group}:.*(,|^)${escaped_user_name}(,|$)" /etc/group; then
+			# Compare the member list field literally: a regex cannot safely
+			# represent arbitrary user names, and the old boundary expression
+			# missed the first member (preceded by ':', not ',').
+			if ! awk -F: -v g="${group}" -v u="${container_user_name}" \
+				'$1 == g { n = split($4, m, ","); for (i = 1; i <= n; i++) if (m[i] == u) found = 1 } END { exit !found }' /etc/group; then
 				group_line="$(grep "^${group}:" /etc/group | head -n 1)"
 				[ -n "${group_line}" ] || continue
 				case "${group_line}" in
