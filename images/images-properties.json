@@ -291,31 +291,6 @@
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
     },
     {
-      "name": "fedora-nonfree",
-      "official_image": "ghcr.io/ferret-linux/fedora-otr:nonfree",
-      "family": "fedora",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-23T08:26:33Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 721668863,
-          "disk_size": 2160059521
-        },
-        "arm64": {
-          "compressed_size": 665609604,
-          "disk_size": 2052700309
-        }
-      },
-      "build_number": 7,
-      "fallback_vendor_image": "quay.io/fedora/fedora:latest"
-    },
-    {
       "name": "void-glibc",
       "official_image": "ghcr.io/ferret-linux/void-otr:glibc",
       "family": "void",
@@ -1386,6 +1361,31 @@
         }
       },
       "build_number": 575,
+      "fallback_vendor_image": "quay.io/fedora/fedora:latest"
+    },
+    {
+      "name": "fedora-nonfree",
+      "official_image": "ghcr.io/ferret-linux/fedora-otr:nonfree",
+      "family": "fedora",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-23T16:50:40Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 721670087,
+          "disk_size": 2160061062
+        },
+        "arm64": {
+          "compressed_size": 665610312,
+          "disk_size": 2052700304
+        }
+      },
+      "build_number": 8,
       "fallback_vendor_image": "quay.io/fedora/fedora:latest"
     }
   ]
