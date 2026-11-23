@@ -241,31 +241,6 @@
       "fallback_vendor_image": "docker.io/aclemons/slackware:latest"
     },
     {
-      "name": "centos",
-      "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
-      "family": "centos",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-23T08:53:28Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 503486685,
-          "disk_size": 1555282700
-        },
-        "arm64": {
-          "compressed_size": 489750015,
-          "disk_size": 1564410629
-        }
-      },
-      "build_number": 576,
-      "fallback_vendor_image": "quay.io/centos/centos:stream10"
-    },
-    {
       "name": "gentoo",
       "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
       "family": "gentoo",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 464,
       "fallback_vendor_image": "quay.io/fedora/fedora:rawhide"
+    },
+    {
+      "name": "centos",
+      "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
+      "family": "centos",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-23T17:19:09Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 503482508,
+          "disk_size": 1555284236
+        },
+        "arm64": {
+          "compressed_size": 489751121,
+          "disk_size": 1564407562
+        }
+      },
+      "build_number": 577,
+      "fallback_vendor_image": "quay.io/centos/centos:stream10"
     }
   ]
 }
