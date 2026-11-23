@@ -515,31 +515,6 @@
       "fallback_vendor_image": "docker.io/library/debian:stable"
     },
     {
-      "name": "kali-edge-nonfree",
-      "official_image": "ghcr.io/ferret-linux/kali-otr:edge-nonfree",
-      "family": "kali",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-23T17:03:56Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 654397107,
-          "disk_size": 1777493958
-        },
-        "arm64": {
-          "compressed_size": 616819562,
-          "disk_size": 1743479750
-        }
-      },
-      "build_number": 8,
-      "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest"
-    },
-    {
       "name": "void-musl",
       "official_image": "ghcr.io/ferret-linux/void-otr:musl",
       "family": "void",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 538,
       "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest"
+    },
+    {
+      "name": "kali-edge-nonfree",
+      "official_image": "ghcr.io/ferret-linux/kali-otr:edge-nonfree",
+      "family": "kali",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-23T23:14:45Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 654398430,
+          "disk_size": 1777493959
+        },
+        "arm64": {
+          "compressed_size": 616821128,
+          "disk_size": 1743479751
+        }
+      },
+      "build_number": 9,
+      "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest"
     }
   ]
 }
