@@ -841,9 +841,14 @@ fi
 # Also if we're in a rootful container, we will setup user's password,
 # so let's skip passwordless sudo too
 if [ "${container_user_uid}" -ne 0 ] && [ "${rootful}" -eq 0 ]; then
-	# Ensure passwordless sudo is set up for user
+	# Ensure passwordless sudo is set up for user.
+	# Backslash is allowed for documented AD/LDAP names such as
+	# DOMAIN\user; setup_user.sh handles those. The value is escaped below
+	# before being written to sudoers/doas, so this only needs to reject
+	# characters that could break the quoted entry (whitespace, quotes,
+	# control characters, ...).
 	case "${container_user_name}" in
-		*[!A-Za-z0-9._-]*)
+		*[!A-Za-z0-9._\\-]*)
 			printf "Error: unsupported container username for sudoers/doas setup: %s\n" "${container_user_name}" >&2
 			exit 1
 			;;
