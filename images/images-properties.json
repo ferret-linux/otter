@@ -266,31 +266,6 @@
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
     },
     {
-      "name": "debian-unstable",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:unstable",
-      "family": "debian",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-23T08:32:52Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 652363555,
-          "disk_size": 1765707624
-        },
-        "arm64": {
-          "compressed_size": 627503004,
-          "disk_size": 1779006326
-        }
-      },
-      "build_number": 577,
-      "fallback_vendor_image": "docker.io/library/debian:unstable"
-    },
-    {
       "name": "fedora-rawhide",
       "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide",
       "family": "fedora",
@@ -1387,6 +1362,31 @@
         }
       },
       "build_number": 392
+    },
+    {
+      "name": "debian-unstable",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:unstable",
+      "family": "debian",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-23T17:11:05Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 654763276,
+          "disk_size": 1770712426
+        },
+        "arm64": {
+          "compressed_size": 629852689,
+          "disk_size": 1784458614
+        }
+      },
+      "build_number": 578,
+      "fallback_vendor_image": "docker.io/library/debian:unstable"
     }
   ]
 }
