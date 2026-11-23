@@ -464,31 +464,6 @@
       "fallback_vendor_image": "docker.io/library/debian:unstable"
     },
     {
-      "name": "amazonlinux",
-      "official_image": "ghcr.io/ferret-linux/amazon-otr:latest",
-      "family": "amazonlinux",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-23T17:15:19Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 612867394,
-          "disk_size": 1865666361
-        },
-        "arm64": {
-          "compressed_size": 575734043,
-          "disk_size": 2054479184
-        }
-      },
-      "build_number": 467,
-      "fallback_vendor_image": "docker.io/library/amazonlinux:latest"
-    },
-    {
       "name": "void-musl-nonfree",
       "official_image": "ghcr.io/ferret-linux/void-otr:musl-nonfree",
       "family": "void",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 580,
       "fallback_vendor_image": "docker.io/library/ubuntu:latest"
+    },
+    {
+      "name": "amazonlinux",
+      "official_image": "ghcr.io/ferret-linux/amazon-otr:latest",
+      "family": "amazonlinux",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-23T23:26:28Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 612838368,
+          "disk_size": 1865575741
+        },
+        "arm64": {
+          "compressed_size": 575719310,
+          "disk_size": 2054367567
+        }
+      },
+      "build_number": 468,
+      "fallback_vendor_image": "docker.io/library/amazonlinux:latest"
     }
   ]
 }
