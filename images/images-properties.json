@@ -466,31 +466,6 @@
       "fallback_vendor_image": "docker.io/library/ubuntu:latest"
     },
     {
-      "name": "alpine-edge",
-      "official_image": "ghcr.io/ferret-linux/alpine-otr:edge",
-      "family": "alpine",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-23T08:52:38Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 342095312,
-          "disk_size": 962867066
-        },
-        "arm64": {
-          "compressed_size": 339043589,
-          "disk_size": 997810575
-        }
-      },
-      "build_number": 581,
-      "fallback_vendor_image": "docker.io/library/alpine:edge"
-    },
-    {
       "name": "centos",
       "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
       "family": "centos",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 467,
       "fallback_vendor_image": "docker.io/library/amazonlinux:latest"
+    },
+    {
+      "name": "alpine-edge",
+      "official_image": "ghcr.io/ferret-linux/alpine-otr:edge",
+      "family": "alpine",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-23T17:15:46Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 342095080,
+          "disk_size": 962867066
+        },
+        "arm64": {
+          "compressed_size": 339042207,
+          "disk_size": 997810572
+        }
+      },
+      "build_number": 582,
+      "fallback_vendor_image": "docker.io/library/alpine:edge"
     }
   ]
 }
