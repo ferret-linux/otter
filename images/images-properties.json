@@ -440,31 +440,6 @@
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
     },
     {
-      "name": "alma",
-      "official_image": "ghcr.io/ferret-linux/alma-otr:stable",
-      "family": "alma",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-23T16:58:53Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 467562095,
-          "disk_size": 1423548484
-        },
-        "arm64": {
-          "compressed_size": 456259873,
-          "disk_size": 1448297559
-        }
-      },
-      "build_number": 578,
-      "fallback_vendor_image": "docker.io/library/almalinux:latest"
-    },
-    {
       "name": "opensuse-leap",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
       "family": "opensuse",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 11,
       "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest"
+    },
+    {
+      "name": "alma",
+      "official_image": "ghcr.io/ferret-linux/alma-otr:stable",
+      "family": "alma",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-23T23:12:01Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 467555377,
+          "disk_size": 1423551558
+        },
+        "arm64": {
+          "compressed_size": 456267508,
+          "disk_size": 1448362071
+        }
+      },
+      "build_number": 579,
+      "fallback_vendor_image": "docker.io/library/almalinux:latest"
     }
   ]
 }
