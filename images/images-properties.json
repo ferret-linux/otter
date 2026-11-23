@@ -440,31 +440,6 @@
       "fallback_vendor_image": "docker.io/library/alpine:edge"
     },
     {
-      "name": "fedora-rawhide-nonfree",
-      "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide-nonfree",
-      "family": "fedora",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T21:35:05Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 727018669,
-          "disk_size": 2171130612
-        },
-        "arm64": {
-          "compressed_size": 670185308,
-          "disk_size": 2063374596
-        }
-      },
-      "build_number": 5,
-      "fallback_vendor_image": "quay.io/fedora/fedora:rawhide"
-    },
-    {
       "name": "opensuse-leap",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
       "family": "opensuse",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 7,
       "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest"
+    },
+    {
+      "name": "fedora-rawhide-nonfree",
+      "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide-nonfree",
+      "family": "fedora",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-23T00:56:33Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 727020040,
+          "disk_size": 2171130612
+        },
+        "arm64": {
+          "compressed_size": 670183529,
+          "disk_size": 2063372549
+        }
+      },
+      "build_number": 6,
+      "fallback_vendor_image": "quay.io/fedora/fedora:rawhide"
     }
   ]
 }
