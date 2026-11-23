@@ -416,31 +416,6 @@
       "fallback_vendor_image": "docker.io/library/alpine:edge"
     },
     {
-      "name": "void-musl",
-      "official_image": "ghcr.io/ferret-linux/void-otr:musl",
-      "family": "void",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-23T00:57:23Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 394413520,
-          "disk_size": 1128669821
-        },
-        "arm64": {
-          "compressed_size": 377853325,
-          "disk_size": 1101339776
-        }
-      },
-      "build_number": 559,
-      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest"
-    },
-    {
       "name": "debian-nonfree",
       "official_image": "ghcr.io/ferret-linux/debian-otr:stable-nonfree",
       "family": "debian",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 8,
       "fallback_vendor_image": "docker.io/library/debian:testing"
+    },
+    {
+      "name": "void-musl",
+      "official_image": "ghcr.io/ferret-linux/void-otr:musl",
+      "family": "void",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-23T08:50:43Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 394414316,
+          "disk_size": 1128669824
+        },
+        "arm64": {
+          "compressed_size": 377855936,
+          "disk_size": 1101339775
+        }
+      },
+      "build_number": 560,
+      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest"
     }
   ]
 }
