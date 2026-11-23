@@ -316,31 +316,6 @@
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
     },
     {
-      "name": "alma-negativo17",
-      "official_image": "ghcr.io/ferret-linux/alma-otr:negativo17",
-      "family": "alma",
-      "image_variant": "negativo17",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-22T21:57:20Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 577412983,
-          "disk_size": 1784975457
-        },
-        "arm64": {
-          "compressed_size": 542132540,
-          "disk_size": 1717964915
-        }
-      },
-      "build_number": 6,
-      "fallback_vendor_image": "docker.io/library/almalinux:latest"
-    },
-    {
       "name": "gentoo",
       "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
       "family": "gentoo",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 577,
       "fallback_vendor_image": "docker.io/library/ubuntu:latest"
+    },
+    {
+      "name": "alma-negativo17",
+      "official_image": "ghcr.io/ferret-linux/alma-otr:negativo17",
+      "family": "alma",
+      "image_variant": "negativo17",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-23T01:00:54Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 577411172,
+          "disk_size": 1784976994
+        },
+        "arm64": {
+          "compressed_size": 542138796,
+          "disk_size": 1717964916
+        }
+      },
+      "build_number": 7,
+      "fallback_vendor_image": "docker.io/library/almalinux:latest"
     }
   ]
 }
