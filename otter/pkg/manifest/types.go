@@ -24,8 +24,9 @@ type Hooks struct {
 //
 // Lock, Entry, Rootful, and InitSystem are *bool rather than bool so that
 // mergeItems (resolve.go) can distinguish "not set in this entry's TOML" (nil)
-// from "explicitly set to false" (non-nil pointer to false). Parse guarantees
-// these are non-nil by the time Item values are returned to callers.
+// from "explicitly set to false" (non-nil pointer to false). Parse finalizes
+// Lock and Entry to non-nil, but keeps Rootful and InitSystem nil when unset
+// so callers can apply config defaults while still honouring explicit values.
 type Settings struct {
 	Lock       *bool  `toml:"lock"`
 	Entry      *bool  `toml:"entry"`

@@ -44,6 +44,11 @@ func Parse(ctx context.Context, filepath string) ([]Item, error) {
 // still nil at this point was never set by this item or any base it
 // includes, so it defaults to false (new(bool) conveniently yields a
 // pointer to false) or, for GPU, to "mesa".
+//
+// Settings.Rootful and Settings.InitSystem are deliberately left nil: for
+// those two, nil is a meaningful "not specified" sentinel that lets assemble
+// fall back to the user's config defaults (settings.rootful /
+// settings.init-system), while a non-nil pointer records an explicit choice.
 func finalizeBoolDefaults(item *Item) {
 	if item.StartNow == nil {
 		item.StartNow = new(bool)
@@ -57,12 +62,6 @@ func finalizeBoolDefaults(item *Item) {
 	if item.Settings.Entry == nil {
 		entryDefault := true
 		item.Settings.Entry = &entryDefault
-	}
-	if item.Settings.Rootful == nil {
-		item.Settings.Rootful = new(bool)
-	}
-	if item.Settings.InitSystem == nil {
-		item.Settings.InitSystem = new(bool)
 	}
 	if item.Hardware.GPU == nil {
 		gpuDefault := "mesa"
