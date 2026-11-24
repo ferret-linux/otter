@@ -416,31 +416,6 @@
       "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest"
     },
     {
-      "name": "debian-nonfree",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:stable-nonfree",
-      "family": "debian",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-24T11:24:04Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 616721385,
-          "disk_size": 1627574698
-        },
-        "arm64": {
-          "compressed_size": 581935524,
-          "disk_size": 1572146104
-        }
-      },
-      "build_number": 13,
-      "fallback_vendor_image": "docker.io/library/debian:stable"
-    },
-    {
       "name": "kali-nonfree",
       "official_image": "ghcr.io/ferret-linux/kali-otr:rolling-nonfree",
       "family": "kali",
@@ -1386,6 +1361,31 @@
         }
       },
       "fallback_vendor_image": "quay.io/centos/centos:stream10",
+      "build_number": 14
+    },
+    {
+      "name": "debian-nonfree",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:stable-nonfree",
+      "family": "debian",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-24T18:07:29Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 616717006,
+          "disk_size": 1627574695
+        },
+        "arm64": {
+          "compressed_size": 581935936,
+          "disk_size": 1572146103
+        }
+      },
+      "fallback_vendor_image": "docker.io/library/debian:stable",
       "build_number": 14
     }
   ]
