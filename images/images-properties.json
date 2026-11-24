@@ -241,31 +241,6 @@
       "fallback_vendor_image": "docker.io/aclemons/slackware:latest"
     },
     {
-      "name": "rocky-negativo17",
-      "official_image": "ghcr.io/ferret-linux/rocky-otr:negativo17",
-      "family": "rocky",
-      "image_variant": "negativo17",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-24T06:05:31Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 580462773,
-          "disk_size": 1802824794
-        },
-        "arm64": {
-          "compressed_size": 542985235,
-          "disk_size": 1729103464
-        }
-      },
-      "build_number": 12,
-      "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
-    },
-    {
       "name": "void-glibc",
       "official_image": "ghcr.io/ferret-linux/void-otr:glibc",
       "family": "void",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
       "build_number": 508
+    },
+    {
+      "name": "rocky-negativo17",
+      "official_image": "ghcr.io/ferret-linux/rocky-otr:negativo17",
+      "family": "rocky",
+      "image_variant": "negativo17",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-24T21:07:28Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 580449046,
+          "disk_size": 1802787929
+        },
+        "arm64": {
+          "compressed_size": 542974035,
+          "disk_size": 1729068137
+        }
+      },
+      "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init",
+      "build_number": 13
     }
   ]
 }
