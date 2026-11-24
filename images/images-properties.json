@@ -840,31 +840,6 @@
       "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest"
     },
     {
-      "name": "kali-edge",
-      "official_image": "ghcr.io/ferret-linux/kali-otr:edge",
-      "family": "kali",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-24T11:34:28Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 641863175,
-          "disk_size": 1732058492
-        },
-        "arm64": {
-          "compressed_size": 617599553,
-          "disk_size": 1745230715
-        }
-      },
-      "build_number": 568,
-      "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest"
-    },
-    {
       "name": "guix",
       "official_image": "ghcr.io/ferret-linux/guix-otr:latest",
       "family": "guix",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init",
       "build_number": 13
+    },
+    {
+      "name": "kali-edge",
+      "official_image": "ghcr.io/ferret-linux/kali-otr:edge",
+      "family": "kali",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-24T18:21:41Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 641863724,
+          "disk_size": 1732058493
+        },
+        "arm64": {
+          "compressed_size": 617596026,
+          "disk_size": 1745230715
+        }
+      },
+      "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest",
+      "build_number": 569
     }
   ]
 }
