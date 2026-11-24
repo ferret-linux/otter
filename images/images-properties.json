@@ -1015,31 +1015,6 @@
       "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest"
     },
     {
-      "name": "centos-negativo17",
-      "official_image": "ghcr.io/ferret-linux/centos-otr:negativo17",
-      "family": "centos",
-      "image_variant": "negativo17",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-24T06:05:50Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 614210498,
-          "disk_size": 1917485877
-        },
-        "arm64": {
-          "compressed_size": 575899599,
-          "disk_size": 1832685878
-        }
-      },
-      "build_number": 11,
-      "fallback_vendor_image": "quay.io/centos/centos:stream10"
-    },
-    {
       "name": "kali-edge",
       "official_image": "ghcr.io/ferret-linux/kali-otr:edge",
       "family": "kali",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 13,
       "fallback_vendor_image": "docker.io/library/almalinux:latest"
+    },
+    {
+      "name": "centos-negativo17",
+      "official_image": "ghcr.io/ferret-linux/centos-otr:negativo17",
+      "family": "centos",
+      "image_variant": "negativo17",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-24T11:20:16Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 614208751,
+          "disk_size": 1917487412
+        },
+        "arm64": {
+          "compressed_size": 575894351,
+          "disk_size": 1832684341
+        }
+      },
+      "build_number": 12,
+      "fallback_vendor_image": "quay.io/centos/centos:stream10"
     }
   ]
 }
