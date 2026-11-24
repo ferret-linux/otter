@@ -516,31 +516,6 @@
       "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest"
     },
     {
-      "name": "void-glibc-nonfree",
-      "official_image": "ghcr.io/ferret-linux/void-otr:glibc-nonfree",
-      "family": "void",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-24T03:07:45Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 414330523,
-          "disk_size": 1186859265
-        },
-        "arm64": {
-          "compressed_size": 396377395,
-          "disk_size": 1165937403
-        }
-      },
-      "build_number": 11,
-      "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest"
-    },
-    {
       "name": "homebrew",
       "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
       "family": "homebrew",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 573,
       "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10"
+    },
+    {
+      "name": "void-glibc-nonfree",
+      "official_image": "ghcr.io/ferret-linux/void-otr:glibc-nonfree",
+      "family": "void",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-24T06:03:24Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 414331438,
+          "disk_size": 1186859264
+        },
+        "arm64": {
+          "compressed_size": 396382902,
+          "disk_size": 1165944569
+        }
+      },
+      "build_number": 12,
+      "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest"
     }
   ]
 }
