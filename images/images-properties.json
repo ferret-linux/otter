@@ -391,31 +391,6 @@
       "fallback_vendor_image": "quay.io/fedora/fedora:rawhide"
     },
     {
-      "name": "debian",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:stable",
-      "family": "debian",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-24T11:29:21Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 604994682,
-          "disk_size": 1584847689
-        },
-        "arm64": {
-          "compressed_size": 581739503,
-          "disk_size": 1571718487
-        }
-      },
-      "build_number": 592,
-      "fallback_vendor_image": "docker.io/library/debian:stable"
-    },
-    {
       "name": "opensuse-leap",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
       "family": "opensuse",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "docker.io/library/alpine:edge",
       "build_number": 588
+    },
+    {
+      "name": "debian",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:stable",
+      "family": "debian",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-24T22:17:40Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 605377815,
+          "disk_size": 1585709897
+        },
+        "arm64": {
+          "compressed_size": 581736447,
+          "disk_size": 1571718486
+        }
+      },
+      "fallback_vendor_image": "docker.io/library/debian:stable",
+      "build_number": 593
     }
   ]
 }
