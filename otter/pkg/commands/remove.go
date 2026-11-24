@@ -218,9 +218,14 @@ func (c *RmCommand) removeContainer(
 	err = c.containerManager.Remove(ctx, container.Name, cmOptions)
 	if err != nil {
 		// Providers can remove the container before a later home-removal
-		// failure, so still try to clean its records before reporting.
-		if cleanupErr := c.cleanup(ctx, owner, options.Prune); cleanupErr != nil {
-			ui.DefaultLogger.Warn("failed to clean up after failed removal", "name", container.Name, "err", cleanupErr)
+		// failure, in which case its export records should still be cleaned
+		// up. But a failed rm often leaves the container in place (e.g. a
+		// running container without --force); in that case keep the exports
+		// so a retry can still use them.
+		if _, inspectErr := c.containerManager.InspectContainer(ctx, container.Name); errors.Is(inspectErr, containermanager.ErrContainerNotFound) {
+			if cleanupErr := c.cleanup(ctx, owner, options.Prune); cleanupErr != nil {
+				ui.DefaultLogger.Warn("failed to clean up after failed removal", "name", container.Name, "err", cleanupErr)
+			}
 		}
 		return fmt.Errorf("failed to remove container: %w", err)
 	}

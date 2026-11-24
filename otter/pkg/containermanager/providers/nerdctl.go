@@ -224,6 +224,13 @@ func (n *Nerdctl) makeCreateCommand(
 	options = append(options, "--env", fmt.Sprintf("CONTAINER_ID=%s", containerName))
 	options = append(options, "--env", fmt.Sprintf("OTTER_HOST_UID=%s", containerUserUID))
 	options = append(options, "--env", fmt.Sprintf("OTTER_IMAGE_VARIANT=%s", imageVariant))
+	// Only an explicitly requested hostname must survive the host-file
+	// watcher. nerdctl does not expose its generated /etc/hostname as a
+	// container-owned bind mount, so the watcher would otherwise replace it
+	// with the host's hostname.
+	if hostnameExplicit {
+		options = append(options, "--env", "OTTER_HOSTNAME_EXPLICIT=1")
+	}
 	options = append(options, "--volume", "/tmp:/tmp"+containermanager.BindPropagation())
 	options = append(options, "--volume", fmt.Sprintf("%s:%s", otterExportPath, "/usr/lib/otter/scripts/otter-export:ro"))
 	options = append(
@@ -842,10 +849,10 @@ func (n *Nerdctl) generateEnterCommand(
 		cmd = append(cmd, fmt.Sprintf("--env=HOST_PATH=%s", os.Getenv("PATH")))
 	}
 
-	xdgDataDirs := containermanager.BuildXDGPaths("XDG_DATA_DIRS", []string{"/usr/local/share", "/usr/share"})
+	xdgDataDirs := containermanager.BuildXDGPaths([]string{"/usr/local/share", "/usr/share"})
 	cmd = append(cmd, fmt.Sprintf("--env=XDG_DATA_DIRS=%s", xdgDataDirs))
 
-	xdgConfigDirs := containermanager.BuildXDGPaths("XDG_CONFIG_DIRS", []string{"/etc/xdg"})
+	xdgConfigDirs := containermanager.BuildXDGPaths([]string{"/etc/xdg"})
 	cmd = append(cmd, fmt.Sprintf("--env=XDG_CONFIG_DIRS=%s", xdgConfigDirs))
 
 	cmd = append(cmd, fmt.Sprintf("--env=XDG_CACHE_HOME=%s/.cache", containerConfig.ContainerHome))
@@ -940,6 +947,14 @@ func (n *Nerdctl) waitForSetup(
 ) error {
 	seen := make(map[string]struct{})
 	logRetryDelay := logsRetryInterval
+
+	// Otter-managed containers always write container.ready before their
+	// setup is complete. The log cursor deliberately overlaps by a couple of
+	// seconds, so a restart can re-read the previous boot's
+	// "container_setup_done" line. Only use that line as a completion signal
+	// for images that do not carry the otter marker directory.
+	otterManaged := hasOtterManagedMarker(ctx, n.run, containerName)
+
 	for {
 		if err := ctx.Err(); err != nil {
 			return fmt.Errorf("nerdctl: %w", err)
@@ -994,9 +1009,12 @@ func (n *Nerdctl) waitForSetup(
 			case strings.HasPrefix(line, "+"):
 				continue
 
-			case strings.HasPrefix(line, "Error:"):
+			case isFatalSetupError(line):
 				progress.Fail()
 				return fmt.Errorf("container setup error: %s", line)
+
+			case strings.HasPrefix(line, "Error:"):
+				ui.DefaultLogger.Warn("ignoring non-fatal setup log line", "line", line)
 
 			case strings.HasPrefix(line, "Warning:"):
 				ui.DefaultLogger.Warn(line)
@@ -1009,7 +1027,9 @@ func (n *Nerdctl) waitForSetup(
 				}
 
 			case strings.HasPrefix(line, "container_setup_done"):
-				return nil
+				if !otterManaged {
+					return nil
+				}
 			}
 		}
 
@@ -1020,7 +1040,10 @@ func (n *Nerdctl) waitForSetup(
 }
 
 func (n *Nerdctl) IsSetupDone(ctx context.Context, containerName string) bool {
-	_, err := n.run(ctx, []string{"exec", containerName, "test", "-f", "/usr/lib/otter/container.ready"}, runOptions{})
+	// A borked container must never be reported as ready, even if a stale
+	// ready marker survived a failed marker removal during init.
+	_, err := n.run(ctx, []string{"exec", containerName, "sh", "-c",
+		"test -f /usr/lib/otter/container.ready && [ ! -f /usr/lib/otter/container.borked ]"}, runOptions{})
 	return err == nil
 }
 

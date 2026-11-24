@@ -21,7 +21,7 @@
 {2}│{R}{3}▸ Notes:{R}                                   {2}│{R}
 {2}│{R} {4}--root{R}  {5}Preferred over 'sudo otter'.      {2}│{R}
 {2}│{R}         {5}Use 'preferences.sudo-program' or {2}│{R}
-{2}│{R}         {5}Set 'preferences.sudo-program'    {2}│{R}
+{2}│{R}         {5}--sudo-command for a different    {2}│{R}
 {2}│{R}         {5}escalator than sudo.              {2}│{R}
 {2}│{R} {4}NO_COLOR=1{R}  {5}Disable color output.{R}         {2}│{R}
 {2}├───────────────────────────────────────────┤{R}

@@ -2,7 +2,9 @@ package providers
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"os"
 	"time"
 )
 
@@ -20,7 +22,38 @@ const (
 	// log line emitted while a fetch is in flight is still picked up by the
 	// following poll instead of falling into a permanent gap.
 	logCursorOverlap = 2 * time.Second
+	// defaultDockerSetupTimeout bounds the Docker setup watcher so a stalled
+	// in-container helper fails with a clear message instead of waiting until
+	// an outer CLI timeout cancels the context.
+	defaultDockerSetupTimeout = 5 * time.Minute
 )
+
+// dockerSetupTimeout returns the bounded setup deadline. The environment
+// override is useful for diagnosing slow images; invalid values are ignored.
+func dockerSetupTimeout() time.Duration {
+	if raw := os.Getenv("OTTER_DOCKER_SETUP_TIMEOUT"); raw != "" {
+		if parsed, err := time.ParseDuration(raw); err == nil && parsed > 0 {
+			return parsed
+		}
+	}
+	return defaultDockerSetupTimeout
+}
+
+// setupWaitError turns cancellation into a readable setup failure. The
+// dedicated setup-timeout message is only correct when the independent setup
+// deadline expired; an outer caller cancellation must keep its own wording.
+func setupWaitError(parent context.Context, setup context.Context, err error, timeout time.Duration) error {
+	if errors.Is(setup.Err(), context.DeadlineExceeded) || errors.Is(err, context.DeadlineExceeded) {
+		if parentErr := parent.Err(); parentErr != nil {
+			return fmt.Errorf("docker: wait interrupted: %w", parentErr)
+		}
+		return fmt.Errorf("container setup did not finish within %s", timeout)
+	}
+	if err == nil {
+		err = setup.Err()
+	}
+	return fmt.Errorf("docker: %w", err)
+}
 
 // sleepContext waits for d, or returns ctx.Err() if the context is cancelled
 // first, so setup watchers stay responsive to cancellation.

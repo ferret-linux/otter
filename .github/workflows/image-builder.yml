@@ -73,6 +73,11 @@ jobs:
       fail-fast: false
       matrix:
         include: ${{ fromJson(needs.load-matrix.outputs.matrix) }}
+    # Two overlapping runs for the same image+tag must not both compute N+1
+    # before the props writer acquires its lock; serialize the whole pipeline.
+    concurrency:
+      group: otter-image-pipeline-${{ matrix.name }}-${{ matrix.tag }}
+      cancel-in-progress: false
     uses: ./.github/workflows/.ib-image-pipeline.yml
     with:
       name: ${{ matrix.name }}

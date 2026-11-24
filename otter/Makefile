@@ -25,6 +25,7 @@ build:
 .PHONY: completions
 completions: build
 	./bin/otter completion bash > completions/otter.bash
+	python3 scripts/harden-bash-completion.py completions/otter.bash
 	./bin/otter completion fish > completions/otter.fish
 	./bin/otter completion zsh > completions/otter.zsh
 

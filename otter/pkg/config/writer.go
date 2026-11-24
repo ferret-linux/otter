@@ -1,11 +1,16 @@
 package config
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
+	"syscall"
 
 	"github.com/BurntSushi/toml"
+
+	"github.com/ferret-linux/otter/internal/userenv"
 )
 
 // SaveFileConfig writes cfg to the user's own otter.conf
@@ -25,6 +30,10 @@ func SaveFileConfig(cfg *FileConfig) error {
 	path := userConfigPath()
 	configDir := filepath.Dir(path)
 
+	// Record directories we create so an escalated invocation can hand them
+	// back to the user it is acting on behalf of.
+	createdDirs := missingConfigDirs(configDir)
+
 	if err := os.MkdirAll(configDir, 0o750); err != nil {
 		return fmt.Errorf("failed to create config directory: %w", err)
 	}
@@ -37,7 +46,84 @@ func SaveFileConfig(cfg *FileConfig) error {
 		return fmt.Errorf("failed to marshal config: %w", err)
 	}
 
-	return writeConfigFileAtomic(path, data)
+	if err := writeConfigFileAtomic(path, data); err != nil {
+		return err
+	}
+
+	// When otter runs through an escalator the path points at the invoking
+	// user's home, but the directories and file were created as root. Without
+	// chowning them the user cannot read or edit their own config.
+	uid, gid, ok := escalatedTargetOwner()
+	if !ok {
+		return nil
+	}
+	for _, dir := range append(createdDirs, path) {
+		if err := os.Chown(dir, uid, gid); err != nil {
+			return fmt.Errorf("failed to hand config path %s to target user: %w", dir, err)
+		}
+	}
+	// An older escalated version may already have created ~/.config as root.
+	// Directory components that already existed were not in createdDirs, so
+	// repair the ones inside the config path as well; otherwise the target
+	// user still cannot traverse to (or edit) the config we just chowned.
+	return repairAncestorOwnership(configDir, uid, gid)
+}
+
+// repairAncestorOwnership hands root-owned directories between configDir and
+// its parent (XDG_CONFIG_HOME, or ~/.config) back to the target user. It
+// deliberately stops at the config root: unrelated parents, symlinks and the
+// filesystem root are never touched.
+func repairAncestorOwnership(configDir string, uid, gid int) error {
+	stop := filepath.Dir(configDir)
+	for current := configDir; current != "" && current != string(os.PathSeparator); current = filepath.Dir(current) {
+		info, err := os.Lstat(current)
+		if err == nil && info.Mode()&os.ModeSymlink == 0 && !ownedBy(info, uid, gid) {
+			if err := os.Lchown(current, uid, gid); err != nil {
+				return fmt.Errorf("failed to hand config ancestor %s to target user: %w", current, err)
+			}
+		}
+		if current == stop {
+			break
+		}
+	}
+	return nil
+}
+
+func ownedBy(info os.FileInfo, uid, gid int) bool {
+	stat, ok := info.Sys().(*syscall.Stat_t)
+	return ok && int(stat.Uid) == uid && int(stat.Gid) == gid
+}
+
+// escalatedTargetOwner returns the uid/gid of the user otter is acting on
+// behalf of, when running root with an escalator (sudo/doas/pkexec). It
+// returns ok=false for ordinary invocations and for real root.
+func escalatedTargetOwner() (int, int, bool) {
+	if os.Geteuid() != 0 {
+		return 0, 0, false
+	}
+	env := userenv.LoadTargetUserEnvironment(context.Background())
+	uid, uidErr := strconv.Atoi(env.UserID)
+	gid, gidErr := strconv.Atoi(env.GroupID)
+	if uidErr != nil || gidErr != nil {
+		return 0, 0, false
+	}
+	if uid == os.Geteuid() && gid == os.Getegid() {
+		return 0, 0, false
+	}
+	return uid, gid, true
+}
+
+// missingConfigDirs lists the path components of dir (deepest first) that do
+// not exist yet, stopping at the first existing ancestor.
+func missingConfigDirs(dir string) []string {
+	var missing []string
+	for current := dir; current != "" && current != string(os.PathSeparator); current = filepath.Dir(current) {
+		if _, err := os.Lstat(current); err == nil {
+			break
+		}
+		missing = append(missing, current)
+	}
+	return missing
 }
 
 // writeConfigFileAtomic writes data to a temp file in the same directory and

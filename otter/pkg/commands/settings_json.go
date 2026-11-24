@@ -79,51 +79,60 @@ func SettingsApplyJSON(r io.Reader) error {
 		return fmt.Errorf("failed to decode settings: %w", err)
 	}
 
-	cfg, err := config.LoadFileConfig()
-	if err != nil {
-		return fmt.Errorf("failed to load settings: %w", err)
-	}
-
-	byField := make(map[string]settingsEntry)
-	for _, e := range buildSettingsEntries() {
-		if !e.isSection {
-			byField[e.field] = e
-		}
-	}
-
-	for field, raw := range updates {
-		e, ok := byField[field]
-		if !ok {
-			return fmt.Errorf("unknown settings field %q", field)
+	// The load, mutate and save steps must be one critical section: another
+	// settings editor may be running at the same time, and a stale whole-file
+	// replacement would silently discard its disjoint update.
+	err := config.WithConfigLock(func() error {
+		cfg, err := config.LoadFileConfig()
+		if err != nil {
+			return fmt.Errorf("failed to load settings: %w", err)
 		}
 
-		switch e.kind {
-		case settingsKindToggle:
-			b, ok := raw.(bool)
-			if !ok {
-				return fmt.Errorf("settings field %q expects a boolean", field)
+		byField := make(map[string]settingsEntry)
+		for _, e := range buildSettingsEntries() {
+			if !e.isSection {
+				byField[e.field] = e
 			}
-			e.setBool(cfg, b)
+		}
 
-		case settingsKindText:
-			val, ok := raw.(string)
+		for field, raw := range updates {
+			e, ok := byField[field]
 			if !ok {
-				return fmt.Errorf("settings field %q expects a string", field)
+				return fmt.Errorf("unknown settings field %q", field)
 			}
-			if e.numeric {
-				if _, err := strconv.Atoi(val); err != nil {
-					return fmt.Errorf("settings field %q must be a whole number", field)
+
+			switch e.kind {
+			case settingsKindToggle:
+				b, ok := raw.(bool)
+				if !ok {
+					return fmt.Errorf("settings field %q expects a boolean", field)
 				}
-			}
-			if len(e.options) > 0 && !slices.Contains(e.options, val) {
-				return fmt.Errorf("settings field %q must be one of: %s", field, strings.Join(e.options, ", "))
-			}
-			e.setText(cfg, val)
-		}
-	}
+				e.setBool(cfg, b)
 
-	if err := config.SaveFileConfig(cfg); err != nil {
-		return fmt.Errorf("failed to save settings: %w", err)
+			case settingsKindText:
+				val, ok := raw.(string)
+				if !ok {
+					return fmt.Errorf("settings field %q expects a string", field)
+				}
+				if e.numeric {
+					if _, err := strconv.Atoi(val); err != nil {
+						return fmt.Errorf("settings field %q must be a whole number", field)
+					}
+				}
+				if len(e.options) > 0 && !slices.Contains(e.options, val) {
+					return fmt.Errorf("settings field %q must be one of: %s", field, strings.Join(e.options, ", "))
+				}
+				e.setText(cfg, val)
+			}
+		}
+
+		if err := config.SaveFileConfig(cfg); err != nil {
+			return fmt.Errorf("failed to save settings: %w", err)
+		}
+		return nil
+	})
+	if err != nil {
+		return fmt.Errorf("failed to apply settings: %w", err)
 	}
 	fmt.Fprintln(os.Stdout, "ok")
 	return nil

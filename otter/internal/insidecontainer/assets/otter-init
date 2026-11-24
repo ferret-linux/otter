@@ -156,8 +156,10 @@ network_check
 # upgraded by using 'otter upgrade'
 rm -f /usr/lib/otter/container.ready
 # Single exit trap: record failure as borked, and on upgrade success mark ready.
-# This avoids overwriting the borked trap during upgrade.
-trap '[ "$?" -ne 0 ] && printf "Error: An error occurred\n" && touch /usr/lib/otter/container.borked || { [ "${upgrade:-0}" -ne 0 ] && touch /usr/lib/otter/container.ready; }' EXIT
+# Use an explicit if/else: && and || are left-associative, so a failure inside
+# the error branch must never fall through into the success marker branch.
+# Also drop any ready marker left behind if the startup rm failed.
+trap 'if [ "$?" -ne 0 ]; then printf "Error: An error occurred\n" && touch /usr/lib/otter/container.borked; command rm -f /usr/lib/otter/container.ready || :; else [ "${upgrade:-0}" -ne 0 ] && touch /usr/lib/otter/container.ready; fi' EXIT
 # Persist the container manager identity. Providers set the standard
 # `container` env when creating the container, so otter-init only has to write
 # it down once; in-container export then reads the persistent marker rather
@@ -841,9 +843,14 @@ fi
 # Also if we're in a rootful container, we will setup user's password,
 # so let's skip passwordless sudo too
 if [ "${container_user_uid}" -ne 0 ] && [ "${rootful}" -eq 0 ]; then
-	# Ensure passwordless sudo is set up for user
+	# Ensure passwordless sudo is set up for user.
+	# Backslash is allowed for documented AD/LDAP names such as
+	# DOMAIN\user; setup_user.sh handles those. The value is escaped below
+	# before being written to sudoers/doas, so this only needs to reject
+	# characters that could break the quoted entry (whitespace, quotes,
+	# control characters, ...).
 	case "${container_user_name}" in
-		*[!A-Za-z0-9._-]*)
+		*[!A-Za-z0-9._\\-]*)
 			printf "Error: unsupported container username for sudoers/doas setup: %s\n" "${container_user_name}" >&2
 			exit 1
 			;;
@@ -921,6 +928,12 @@ HOST_WATCH="
 	/etc/localtime
 	/etc/resolv.conf
 "
+# An explicit --hostname (or otter.conf default hostname) is a fixed user
+# choice. nerdctl does not expose its generated /etc/hostname as a
+# container-owned bind mount, so the generic host sync below would otherwise
+# replace it with the host's hostname.
+hostname_explicit="${OTTER_HOSTNAME_EXPLICIT:-0}"
+
 id="${CONTAINER_ID:-}"
 if [ -e /run/.containerenv ]; then
 	# shellcheck disable=SC1091,SC2034
@@ -949,6 +962,9 @@ if [ "${init}" -eq 0 ]; then
 		#	- symlink will fail with "Device or Resource busy"
 		#	- bindmount will need a container restart on changes
 		for file_watch in ${HOST_WATCH}; do
+			if [ "${file_watch}" = /etc/hostname ] && [ "${hostname_explicit}" = 1 ]; then
+				continue
+			fi
 			# do stuff, only if the file is a mountpoint, and if the mountpoint is NOT containing the
 			# container id, because if it does, it is because it's part of the podman/docker setup
 			# The mount point might not exist, either because it's umounted or it doesn't exist on

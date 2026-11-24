@@ -36,9 +36,9 @@ on:
       enabled:
         required: true
         type: boolean
-      build_number:
-        required: true
-        type: string
+      # build_number is deliberately not an input: it must be recomputed
+      # inside the props-write concurrency group, after the latest catalog has
+      # been fetched, or two overlapping pipelines can persist the same N+1.
 
 jobs:
   update-props:
@@ -47,6 +47,11 @@ jobs:
     permissions:
       contents: write
       packages: read
+    # Serialize with .ib-regenerate-props.yml: both writers push to the same
+    # ref, and the push retry loops cannot undo a lost build_number update.
+    concurrency:
+      group: otter-props-write-${{ github.ref }}
+      cancel-in-progress: false
     steps:
       - name: Checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
@@ -97,8 +102,6 @@ jobs:
               '. + {($arch): {"compressed_size": $compressed, "disk_size": $disk}}')
           done
 
-          build_number="${{ inputs.build_number }}"
-
           jq -n \
             --arg name "$display_name" \
             --arg official_image "$official_image" \
@@ -110,7 +113,6 @@ jobs:
             --argjson enabled "$enabled" \
             --arg built_at "$built_at" \
             --argjson sizes "$sizes" \
-            --argjson build_number "$build_number" \
             '{
               name: $name,
               official_image: $official_image,
@@ -120,8 +122,7 @@ jobs:
               enabled: $enabled,
               architecture: $architecture,
               built_at: $built_at,
-              sizes: $sizes,
-              build_number: $build_number
+              sizes: $sizes
             } + (if $is_reliable_fallback then {fallback_vendor_image: $fallback_vendor_image} else {} end)' > /tmp/entry.json
 
       - name: Upsert entry and push
@@ -136,7 +137,17 @@ jobs:
             git fetch origin ${{ github.ref_name }}
             git checkout -B ${{ github.ref_name }} origin/${{ github.ref_name }}
 
-            jq --slurpfile entry /tmp/entry.json \
+            # Recompute inside the lock from the freshly fetched catalog. The
+            # value from prepare is intentionally not used: it may have been
+            # computed before a competing writer pushed its increment.
+            current=$(jq -r --arg official_image "$official_image" \
+              '((.images // []) | map(select(.official_image == $official_image)) | .[0].build_number) // 0' \
+              images/images-properties.json)
+            build_number=$((current + 1))
+            jq --argjson build_number "$build_number" \
+              '. + {build_number: $build_number}' /tmp/entry.json > /tmp/entry-numbered.json
+
+            jq --slurpfile entry /tmp/entry-numbered.json \
               --slurpfile catalog images/images.json \
               --arg official_image "$official_image" \
               '($catalog[0] | map("ghcr.io/ferret-linux/" + .name + ":" + .tag)) as $valid

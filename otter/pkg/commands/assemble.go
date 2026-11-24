@@ -21,6 +21,10 @@ const assembleCleanupTimeout = 30 * time.Second
 type AssembleOptions struct {
 	// ManifestPath is the path to the manifest file (from --file flag). Required.
 	ManifestPath string
+	// Items is the already parsed manifest, when the caller needed to inspect
+	// it first (for example to decide whether an escalator is required).
+	// When nil, Execute parses ManifestPath itself.
+	Items []manifest.Item
 	// SudoCommand is the sudo program to use for root validation.
 	SudoCommand string
 	// BoxNames are the names of the boxes to assemble.
@@ -69,15 +73,18 @@ func NewAssembleCommand(
 	}
 }
 
-//nolint:gocognit // ignore cognitive complexity here, the function orchestrates multi-step manifest assembly
 func (ac *AssembleCommand) Execute(ctx context.Context, opts AssembleOptions) error {
 	if opts.ManifestPath == "" {
 		return errors.New("manifest path is required, use --file to specify it")
 	}
 
-	items, err := manifest.Parse(ctx, opts.ManifestPath)
-	if err != nil {
-		return fmt.Errorf("failed to parse manifest file: %w", err)
+	items := opts.Items
+	if items == nil {
+		var err error
+		items, err = manifest.Parse(ctx, opts.ManifestPath)
+		if err != nil {
+			return fmt.Errorf("failed to parse manifest file: %w", err)
+		}
 	}
 
 	itemsByName := make(map[string]manifest.Item, len(items))
@@ -91,21 +98,15 @@ func (ac *AssembleCommand) Execute(ctx context.Context, opts AssembleOptions) er
 		for i, item := range items {
 			boxNames[i] = item.Name
 		}
-	} else {
-		for _, name := range boxNames {
-			if _, ok := itemsByName[name]; !ok {
-				return fmt.Errorf("box '%s' not found in manifest", name)
-			}
-		}
 	}
 
-	for _, name := range boxNames {
-		item := itemsByName[name]
-		if item.Settings.Rootful != nil && *item.Settings.Rootful || item.Settings.Rootful == nil && ac.cfg.DefaultRootful {
-			if _, err := rootcheck.Validate(ctx, opts.SudoCommand); err != nil {
-				return fmt.Errorf("cannot run in root mode: %w", err)
-			}
-			break
+	needsRoot, err := manifest.RequiresRoot(items, boxNames, ac.cfg.DefaultRootful)
+	if err != nil {
+		return fmt.Errorf("invalid box selection: %w", err)
+	}
+	if needsRoot {
+		if _, err := rootcheck.Validate(ctx, opts.SudoCommand); err != nil {
+			return fmt.Errorf("cannot run in root mode: %w", err)
 		}
 	}
 

@@ -1,4 +1,4 @@
-package insidecontainer //nolint:cyclop // package average reflects explicit provisioning helpers, not a single complex function
+package insidecontainer
 
 import (
 	"crypto/sha256"
@@ -70,10 +70,8 @@ func ProvisionScripts(scriptsDir string) (string, bool, error) {
 	for _, script := range scripts {
 		destFilePath := filepath.Join(dir, script.name)
 		newHash := sha256.Sum256([]byte(script.content))
-		if existing, err := os.ReadFile(destFilePath); err == nil {
-			if sha256.Sum256(existing) == newHash {
-				continue
-			}
+		if scriptUpToDate(destFilePath, newHash) {
+			continue
 		}
 		if err := writeScriptAtomic(destFilePath, []byte(script.content)); err != nil {
 			return "", false, fmt.Errorf("failed to write script %s: %w", script.name, err)
@@ -109,10 +107,8 @@ func ProvisionScripts(scriptsDir string) (string, bool, error) {
 		}
 
 		newHash := sha256.Sum256(content)
-		if existing, err := os.ReadFile(destPath); err == nil {
-			if sha256.Sum256(existing) == newHash {
-				return nil
-			}
+		if scriptUpToDate(destPath, newHash) {
+			return nil
 		}
 		if err := writeScriptAtomic(destPath, content); err != nil {
 			return fmt.Errorf("failed to write script %s: %w", destPath, err)
@@ -125,6 +121,19 @@ func ProvisionScripts(scriptsDir string) (string, bool, error) {
 	}
 
 	return dir, updated, nil
+}
+
+// scriptUpToDate reports whether path already has the expected content and
+// executable mode. A correct hash with a wrong mode (e.g. 0644) must still be
+// rewritten: writeScriptAtomic is what applies 0755, and these files are
+// executed as container entrypoints / init helpers.
+func scriptUpToDate(path string, wantHash [32]byte) bool {
+	info, err := os.Stat(path)
+	if err != nil || info.Mode().Perm() != 0o755 {
+		return false
+	}
+	existing, err := os.ReadFile(path)
+	return err == nil && sha256.Sum256(existing) == wantHash
 }
 
 // writeScriptAtomic writes a script to a temp file in the same directory and

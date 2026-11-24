@@ -110,7 +110,11 @@ def dispatch(initsystem, action, name):
     elif initsystem == "openrc":
         if action in ("enable", "disable"):
             tool = "add" if action == "enable" else "del"
-            _exec(["rc-update", tool, name])
+            # rc-update's omitted runlevel is version-dependent: OpenRC
+            # 0.63.2 (Alpine) defaults to sysinit, while 0.64.1 (Wolfi)
+            # defaults to default. Always name the normal boot runlevel so
+            # enable/disable behave identically across images.
+            _exec(["rc-update", tool, name, "default"])
         else:
             _exec(["rc-service", name, action])
     elif initsystem == "sysvinit-lsb":
@@ -190,8 +194,5 @@ if initsystem == "generic":
         file=sys.stderr,
     )
     sys.exit(1)
-
-if initsystem not in COMMANDS:
-    _error(f"unknown init system '{initsystem}'")
 
 dispatch(initsystem, action, name)

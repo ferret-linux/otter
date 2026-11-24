@@ -27,5 +27,9 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           echo "$(date -u +"%Y-%m-%d")" > .keepalive
           git add .keepalive
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
           git commit -m "chore: keepalive $(date -u +"%Y-%m-%d")"
           git push

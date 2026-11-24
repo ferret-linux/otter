@@ -46,6 +46,10 @@ if not os.environ.get("SHELL"):
 
 # Defaults
 HOST_SPAWN_VERSION = "v1.6.2"
+# A TCP connect during the optional host-spawn auto-install used to have no
+# timeout, which could stall container setup indefinitely. Keep it bounded;
+# the download is best-effort and init continues when it fails.
+HOST_SPAWN_DOWNLOAD_TIMEOUT = 15
 VERSION = "0.0.9"
 
 try:
@@ -208,7 +212,12 @@ if not host_spawn_ok:
         try:
             with tempfile.NamedTemporaryFile(prefix="host-spawn-", dir="/tmp", delete=False) as tmp:
                 tmp_path = Path(tmp.name)
-            urllib.request.urlretrieve(url, tmp_path)
+            try:
+                download_timeout = float(os.environ.get("OTTER_HOST_SPAWN_DOWNLOAD_TIMEOUT", HOST_SPAWN_DOWNLOAD_TIMEOUT))
+            except ValueError:
+                download_timeout = HOST_SPAWN_DOWNLOAD_TIMEOUT
+            with urllib.request.urlopen(url, timeout=download_timeout) as response, open(tmp_path, "wb") as downloaded:
+                shutil.copyfileobj(response, downloaded)
             os.chmod(tmp_path, 0o755)
             run_privileged(["install", "-m", "0755", str(tmp_path), "/usr/bin/host-spawn"])
         except Exception as exc:

@@ -68,18 +68,12 @@ func Btoi(b bool) int {
 	return 0
 }
 
-func BuildXDGPaths(envVar string, standardPaths []string) string {
-	containerPaths := os.Getenv(envVar)
-
-	for _, sp := range standardPaths {
-		if containerPaths == "" {
-			containerPaths = sp
-		} else if !slices.Contains(strings.Split(containerPaths, ":"), sp) {
-			containerPaths = containerPaths + ":" + sp
-		}
-	}
-
-	return containerPaths
+// BuildXDGPaths returns the container's standard XDG search paths. Host
+// XDG_*_DIRS values are intentionally ignored: FilterEnvVars removes them
+// from the bulk copy, and re-reading them here would put host configuration
+// back into the container after the filter.
+func BuildXDGPaths(standardPaths []string) string {
+	return strings.Join(standardPaths, ":")
 }
 
 func FilterEnvVars() []string {
@@ -92,6 +86,16 @@ func FilterEnvVars() []string {
 	excludedPrefixes := []string{
 		"CONTAINER_ID",
 		"FPATH",
+		// All LD_* variables control the dynamic loader (LD_PRELOAD,
+		// LD_AUDIT, LD_LIBRARY_PATH, ...). Filtering the whole class is
+		// safer than enumerating them and avoids future gaps.
+		"LD_",
+		// macOS loader variables are the same class as LD_*: they can
+		// reinterpret binaries inside the container.
+		"DYLD_",
+		// Bash function imports (BASH_FUNC_name%%) can shadow commands in
+		// an interactive shell without any BASH_ENV/ENV variable.
+		"BASH_FUNC_",
 		"HOST",
 		"HOSTNAME",
 		"HOME",
@@ -116,14 +120,30 @@ func FilterEnvVars() []string {
 		"OTTER_PATH",
 		"OTTER_CUSTOM_HOME",
 		"OTTER_IMAGE_VARIANT",
+		"OTTER_HOSTNAME_EXPLICIT",
 		// Host loader/runtime vars would reinterpret binaries inside the
 		// container or make non-interactive shells source host files.
-		"LD_PRELOAD",
-		"LD_LIBRARY_PATH",
+		// LD_* is covered by the prefix rule above.
 		"BASH_ENV",
 		"ENV",
+		"GLOBIGNORE",
+		"CDPATH",
+		"IFS",
+		"PS4",
+		"PROMPT_COMMAND",
 		"PYTHONPATH",
+		"PYTHONHOME",
+		"PYTHONINSPECT",
+		"PYTHONSTARTUP",
 		"NODE_OPTIONS",
+		"NODE_PATH",
+		"PERL5LIB",
+		"PERL5OPT",
+		"RUBYLIB",
+		"RUBYOPT",
+		"JAVA_TOOL_OPTIONS",
+		"_JAVA_OPTIONS",
+		"CLASSPATH",
 	}
 
 	for _, env := range os.Environ() {
