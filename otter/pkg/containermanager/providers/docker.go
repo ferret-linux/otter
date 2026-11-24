@@ -1132,11 +1132,19 @@ func (d *Docker) waitForSetup(
 	since string,
 	progress *ui.Progress,
 ) error {
+	// An independently bounded setup wait prevents a hung in-container
+	// helper (for example a network connect during host-spawn installation)
+	// from holding `otter start` until an outer timeout kills the CLI.
+	setupTimeout := dockerSetupTimeout()
+	setupCtx, cancel := context.WithTimeout(ctx, setupTimeout)
+	defer cancel()
+	ctx = setupCtx
+
 	seen := make(map[string]struct{})
 	logRetryDelay := logsRetryInterval
 	for {
 		if err := ctx.Err(); err != nil {
-			return fmt.Errorf("docker: %w", err)
+			return setupWaitError(ctx, err, setupTimeout)
 		}
 
 		// Status-only inspect: one runtime call instead of InspectContainer's
@@ -1165,7 +1173,7 @@ func (d *Docker) waitForSetup(
 		output, err := d.run(ctx, []string{"logs", "--since", since, containerName}, runOptions{})
 		if err != nil {
 			if err := sleepContext(ctx, logRetryDelay); err != nil {
-				return fmt.Errorf("docker: %w", err)
+				return setupWaitError(ctx, err, setupTimeout)
 			}
 			logRetryDelay *= 2
 			if logRetryDelay > setupRetryBackoffMax {
@@ -1209,7 +1217,7 @@ func (d *Docker) waitForSetup(
 		}
 
 		if err := sleepContext(ctx, setupPollInterval); err != nil {
-			return fmt.Errorf("docker: %w", err)
+			return setupWaitError(ctx, err, setupTimeout)
 		}
 	}
 }
