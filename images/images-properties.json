@@ -615,31 +615,6 @@
       "fallback_vendor_image": "docker.io/library/debian:testing"
     },
     {
-      "name": "opensuse-tumbleweed",
-      "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
-      "family": "opensuse",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-24T02:57:51Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 425689716,
-          "disk_size": 1294484171
-        },
-        "arm64": {
-          "compressed_size": 393864371,
-          "disk_size": 1248078041
-        }
-      },
-      "build_number": 518,
-      "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest"
-    },
-    {
       "name": "void-glibc",
       "official_image": "ghcr.io/ferret-linux/void-otr:glibc",
       "family": "void",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 12,
       "fallback_vendor_image": "docker.io/library/debian:stable"
+    },
+    {
+      "name": "opensuse-tumbleweed",
+      "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
+      "family": "opensuse",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-24T05:06:44Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 425688908,
+          "disk_size": 1294484172
+        },
+        "arm64": {
+          "compressed_size": 393843135,
+          "disk_size": 1248078039
+        }
+      },
+      "build_number": 519,
+      "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest"
     }
   ]
 }
