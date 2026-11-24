@@ -916,30 +916,6 @@
       "fallback_vendor_image": "docker.io/library/amazonlinux:latest"
     },
     {
-      "name": "guix",
-      "official_image": "ghcr.io/ferret-linux/guix-otr:latest",
-      "family": "guix",
-      "image_variant": "free",
-      "is_reliable_fallback": false,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-23T23:27:45Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1084992268,
-          "disk_size": 3417632401
-        },
-        "arm64": {
-          "compressed_size": 1045666853,
-          "disk_size": 3582728348
-        }
-      },
-      "build_number": 393
-    },
-    {
       "name": "ubuntu-lts",
       "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts",
       "family": "ubuntu",
@@ -1387,6 +1363,30 @@
       },
       "build_number": 10,
       "fallback_vendor_image": "docker.io/library/ubuntu:26.04"
+    },
+    {
+      "name": "guix",
+      "official_image": "ghcr.io/ferret-linux/guix-otr:latest",
+      "family": "guix",
+      "image_variant": "free",
+      "is_reliable_fallback": false,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-24T02:32:50Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1084987492,
+          "disk_size": 3417632396
+        },
+        "arm64": {
+          "compressed_size": 1045666360,
+          "disk_size": 3582728863
+        }
+      },
+      "build_number": 394
     }
   ]
 }
