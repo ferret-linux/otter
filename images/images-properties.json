@@ -341,30 +341,6 @@
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
     },
     {
-      "name": "guix",
-      "official_image": "ghcr.io/ferret-linux/guix-otr:latest",
-      "family": "guix",
-      "image_variant": "free",
-      "is_reliable_fallback": false,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-24T02:32:50Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1084987492,
-          "disk_size": 3417632396
-        },
-        "arm64": {
-          "compressed_size": 1045666360,
-          "disk_size": 3582728863
-        }
-      },
-      "build_number": 394
-    },
-    {
       "name": "alma-negativo17",
       "official_image": "ghcr.io/ferret-linux/alma-otr:negativo17",
       "family": "alma",
@@ -1387,6 +1363,30 @@
       },
       "build_number": 519,
       "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest"
+    },
+    {
+      "name": "guix",
+      "official_image": "ghcr.io/ferret-linux/guix-otr:latest",
+      "family": "guix",
+      "image_variant": "free",
+      "is_reliable_fallback": false,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-24T05:06:25Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1084989488,
+          "disk_size": 3417632913
+        },
+        "arm64": {
+          "compressed_size": 1045667316,
+          "disk_size": 3582728351
+        }
+      },
+      "build_number": 395
     }
   ]
 }
