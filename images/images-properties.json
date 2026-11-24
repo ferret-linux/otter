@@ -516,31 +516,6 @@
       "fallback_vendor_image": "quay.io/fedora/fedora:rawhide"
     },
     {
-      "name": "void-glibc-nonfree",
-      "official_image": "ghcr.io/ferret-linux/void-otr:glibc-nonfree",
-      "family": "void",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-23T23:20:38Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 414315922,
-          "disk_size": 1186845440
-        },
-        "arm64": {
-          "compressed_size": 396367248,
-          "disk_size": 1165927163
-        }
-      },
-      "build_number": 10,
-      "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest"
-    },
-    {
       "name": "chimera",
       "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
       "family": "chimera",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 539,
       "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest"
+    },
+    {
+      "name": "void-glibc-nonfree",
+      "official_image": "ghcr.io/ferret-linux/void-otr:glibc-nonfree",
+      "family": "void",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-24T03:07:45Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 414330523,
+          "disk_size": 1186859265
+        },
+        "arm64": {
+          "compressed_size": 396377395,
+          "disk_size": 1165937403
+        }
+      },
+      "build_number": 11,
+      "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest"
     }
   ]
 }
