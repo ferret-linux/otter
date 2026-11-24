@@ -315,31 +315,6 @@
       "build_number": 395
     },
     {
-      "name": "ubuntu",
-      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:stable",
-      "family": "ubuntu",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-24T05:18:08Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 552522201,
-          "disk_size": 1564059646
-        },
-        "arm64": {
-          "compressed_size": 531465302,
-          "disk_size": 1584917004
-        }
-      },
-      "build_number": 582,
-      "fallback_vendor_image": "docker.io/library/ubuntu:latest"
-    },
-    {
       "name": "chimera",
       "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
       "family": "chimera",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 565,
       "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest"
+    },
+    {
+      "name": "ubuntu",
+      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:stable",
+      "family": "ubuntu",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-24T11:33:44Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 552524773,
+          "disk_size": 1564059642
+        },
+        "arm64": {
+          "compressed_size": 531466882,
+          "disk_size": 1584917003
+        }
+      },
+      "build_number": 583,
+      "fallback_vendor_image": "docker.io/library/ubuntu:latest"
     }
   ]
 }
