@@ -40,6 +40,14 @@ NEW_EVAL = '''    # Build the completion request as an argv array. Flattening in
     # string and eval-ing it re-parses quoted words as shell syntax, so a
     # container name like "x; touch /tmp/pwned" would execute on TAB.
     local -a request=("${words[@]:0:${cword}}")
+    # The typed first word can be an alias (`alias o=otter`) or a wrapper
+    # (`sudo otter ...`). Normalize it to the real command before executing
+    # the request; never treat arbitrary typed words as an executable.
+    if [[ ${#request[@]} -gt 1 && ( "${request[1]}" == "otter" || "${request[1]}" == *"/otter" ) ]]; then
+      request=("${request[@]:1}")
+    elif [[ ${#request[@]} -eq 0 || ( "${request[0]}" != "otter" && "${request[0]}" != *"/otter" ) ]]; then
+      request=("otter" "${request[@]:1}")
+    fi
     [[ "${cur}" == -* ]] && request+=("${cur}")
     request+=("--generate-shell-completion")
     opts=$("${request[@]}" 2>/dev/null)
