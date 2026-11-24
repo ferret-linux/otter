@@ -765,30 +765,6 @@
       "fallback_vendor_image": "quay.io/centos/centos:stream10"
     },
     {
-      "name": "homebrew",
-      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
-      "family": "homebrew",
-      "image_variant": "free",
-      "is_reliable_fallback": false,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-24T06:06:40Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 824369450,
-          "disk_size": 2005624240
-        },
-        "arm64": {
-          "compressed_size": 784811347,
-          "disk_size": 1936848319
-        }
-      },
-      "build_number": 478
-    },
-    {
       "name": "debian-testing",
       "official_image": "ghcr.io/ferret-linux/debian-otr:testing",
       "family": "debian",
@@ -1387,6 +1363,30 @@
       },
       "build_number": 589,
       "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest"
+    },
+    {
+      "name": "homebrew",
+      "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
+      "family": "homebrew",
+      "image_variant": "free",
+      "is_reliable_fallback": false,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-24T11:31:51Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 824411095,
+          "disk_size": 2005672883
+        },
+        "arm64": {
+          "compressed_size": 784848124,
+          "disk_size": 1936895423
+        }
+      },
+      "build_number": 479
     }
   ]
 }
