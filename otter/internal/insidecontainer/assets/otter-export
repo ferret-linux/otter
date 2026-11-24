@@ -1538,11 +1538,11 @@ if enter_flags:
     j = 0
     while j < len(parts):
         part = parts[j]
-        if part in ("--root", "-r", "--root=true", "--root=false"):
+        if part in ("--root", "-r", "--root=true", "--root=false", "-r=true", "-r=false"):
             print(f"Warning: {part} argument will be set automatically and should be removed.", file=sys.stderr)
             j += 1
             continue
-        if part.startswith("--root="):
+        if part.startswith(("--root=", "-r=")):
             print(f"Warning: {part} argument will be set automatically and should be removed.", file=sys.stderr)
             j += 1
             continue
