@@ -928,6 +928,12 @@ HOST_WATCH="
 	/etc/localtime
 	/etc/resolv.conf
 "
+# An explicit --hostname (or otter.conf default hostname) is a fixed user
+# choice. nerdctl does not expose its generated /etc/hostname as a
+# container-owned bind mount, so the generic host sync below would otherwise
+# replace it with the host's hostname.
+hostname_explicit="${OTTER_HOSTNAME_EXPLICIT:-0}"
+
 id="${CONTAINER_ID:-}"
 if [ -e /run/.containerenv ]; then
 	# shellcheck disable=SC1091,SC2034
@@ -956,6 +962,9 @@ if [ "${init}" -eq 0 ]; then
 		#	- symlink will fail with "Device or Resource busy"
 		#	- bindmount will need a container restart on changes
 		for file_watch in ${HOST_WATCH}; do
+			if [ "${file_watch}" = /etc/hostname ] && [ "${hostname_explicit}" = 1 ]; then
+				continue
+			fi
 			# do stuff, only if the file is a mountpoint, and if the mountpoint is NOT containing the
 			# container id, because if it does, it is because it's part of the podman/docker setup
 			# The mount point might not exist, either because it's umounted or it doesn't exist on

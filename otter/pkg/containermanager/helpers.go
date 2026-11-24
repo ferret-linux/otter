@@ -120,6 +120,7 @@ func FilterEnvVars() []string {
 		"OTTER_PATH",
 		"OTTER_CUSTOM_HOME",
 		"OTTER_IMAGE_VARIANT",
+		"OTTER_HOSTNAME_EXPLICIT",
 		// Host loader/runtime vars would reinterpret binaries inside the
 		// container or make non-interactive shells source host files.
 		// LD_* is covered by the prefix rule above.

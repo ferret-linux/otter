@@ -24,10 +24,16 @@
 # actually exists; if none do, TCP is left unverifiable and the outcome
 # rests on DNS alone.
 #
-# Passing tier 2 still allows startup, but with a warning, since the well
-# known sites themselves were unreachable (common on filtered CI/enterprise
-# networks that allow real traffic but block or don't recognize ICMP/the
-# specific sites tried).
+# Tier 3 (fallback, only reached when tiers 1 and 2 are inconclusive): ask
+# the image's package manager to refresh its index. Minimal images such as
+# Wolfi and Alpine often ship only ping for generic connectivity checks;
+# ICMP is frequently blocked even though HTTPS package repositories work.
+# A successful metadata refresh proves otter-init can install packages.
+#
+# Passing tier 2 or 3 still allows startup, but with a warning, since the
+# well known sites themselves were unreachable (common on filtered
+# CI/enterprise networks that allow real traffic but block or don't
+# recognize ICMP/the specific sites tried).
 #
 # Arguments:
 #   None
@@ -156,6 +162,15 @@ network_check()
 
 	if [ "${network_check_dns_ok}" -eq 0 ] && { [ "${network_check_tcp_verifiable}" -eq 0 ] || [ "${network_check_tcp_ok}" -eq 0 ]; }; then
 		printf "Warning: could not reach any well known site, but the network looks otherwise usable, continuing\n"
+		return 0
+	fi
+
+	# Tier 3: apk-backed images can still install packages even when ICMP and
+	# the well known sites are unavailable. apk update is read-only with
+	# respect to installed packages and is the same operation otter-init
+	# performs immediately after this check.
+	if command -v apk > /dev/null 2>&1 && apk update > /dev/null 2>&1; then
+		printf "Warning: no generic connectivity tool succeeded, but apk repositories are reachable, continuing\n"
 		return 0
 	fi
 
