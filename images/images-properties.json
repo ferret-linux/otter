@@ -666,31 +666,6 @@
       "fallback_vendor_image": "docker.io/library/debian:unstable"
     },
     {
-      "name": "fedora-negativo17",
-      "official_image": "ghcr.io/ferret-linux/fedora-otr:negativo17",
-      "family": "fedora",
-      "image_variant": "negativo17",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-24T11:30:27Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 708992224,
-          "disk_size": 2141756088
-        },
-        "arm64": {
-          "compressed_size": 658613819,
-          "disk_size": 2056832202
-        }
-      },
-      "build_number": 12,
-      "fallback_vendor_image": "quay.io/fedora/fedora:latest"
-    },
-    {
       "name": "opensuse-leap",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
       "family": "opensuse",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "docker.io/library/debian:testing",
       "build_number": 584
+    },
+    {
+      "name": "fedora-negativo17",
+      "official_image": "ghcr.io/ferret-linux/fedora-otr:negativo17",
+      "family": "fedora",
+      "image_variant": "negativo17",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-24T17:51:48Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 708995137,
+          "disk_size": 2141757624
+        },
+        "arm64": {
+          "compressed_size": 658612127,
+          "disk_size": 2056833738
+        }
+      },
+      "fallback_vendor_image": "quay.io/fedora/fedora:latest",
+      "build_number": 13
     }
   ]
 }
