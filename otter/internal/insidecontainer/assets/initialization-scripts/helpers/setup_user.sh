@@ -110,8 +110,10 @@ if ! grep -q "^$(_otter_grep_escape "${container_user_name}" | sed 's/\\\\/./g')
 			# Compare the member list field literally: a regex cannot safely
 			# represent arbitrary user names, and the old boundary expression
 			# missed the first member (preceded by ':', not ',').
-			if ! awk -F: -v g="${group}" -v u="${container_user_name}" \
-				'$1 == g { n = split($4, m, ","); for (i = 1; i <= n; i++) if (m[i] == u) found = 1 } END { exit !found }' /etc/group; then
+			# Pass the name through the environment: awk -v processes escape
+			# sequences, so a documented DOMAIN\user becomes DOMAINuser there.
+			if ! OTTER_AWK_USER="${container_user_name}" awk -F: -v g="${group}" \
+				'$1 == g { n = split($4, m, ","); for (i = 1; i <= n; i++) if (m[i] == ENVIRON["OTTER_AWK_USER"]) found = 1 } END { exit !found }' /etc/group; then
 				group_line="$(grep "^${group}:" /etc/group | head -n 1)"
 				[ -n "${group_line}" ] || continue
 				escaped_group_line="$(_otter_grep_escape "${group_line}")"
