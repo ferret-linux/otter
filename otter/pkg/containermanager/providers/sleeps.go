@@ -39,14 +39,18 @@ func dockerSetupTimeout() time.Duration {
 	return defaultDockerSetupTimeout
 }
 
-// setupWaitError turns cancellation into a readable setup failure, with a
-// dedicated message for the setup deadline.
-func setupWaitError(ctx context.Context, err error, timeout time.Duration) error {
-	if errors.Is(ctx.Err(), context.DeadlineExceeded) || errors.Is(err, context.DeadlineExceeded) {
+// setupWaitError turns cancellation into a readable setup failure. The
+// dedicated setup-timeout message is only correct when the independent setup
+// deadline expired; an outer caller cancellation must keep its own wording.
+func setupWaitError(parent context.Context, setup context.Context, err error, timeout time.Duration) error {
+	if errors.Is(setup.Err(), context.DeadlineExceeded) || errors.Is(err, context.DeadlineExceeded) {
+		if parentErr := parent.Err(); parentErr != nil {
+			return fmt.Errorf("docker: wait interrupted: %w", parentErr)
+		}
 		return fmt.Errorf("container setup did not finish within %s", timeout)
 	}
 	if err == nil {
-		err = ctx.Err()
+		err = setup.Err()
 	}
 	return fmt.Errorf("docker: %w", err)
 }

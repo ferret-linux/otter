@@ -1125,7 +1125,7 @@ func (d *Docker) Start(ctx context.Context, containerName string) error {
 	return nil
 }
 
-//nolint:gocognit // setup watcher: explicit per-line branches with marker fast path
+//nolint:funlen,gocognit // setup watcher: explicit per-line branches with marker fast path
 func (d *Docker) waitForSetup(
 	ctx context.Context,
 	containerName string,
@@ -1136,6 +1136,7 @@ func (d *Docker) waitForSetup(
 	// helper (for example a network connect during host-spawn installation)
 	// from holding `otter start` until an outer timeout kills the CLI.
 	setupTimeout := dockerSetupTimeout()
+	parentCtx := ctx
 	setupCtx, cancel := context.WithTimeout(ctx, setupTimeout)
 	defer cancel()
 	ctx = setupCtx
@@ -1144,7 +1145,7 @@ func (d *Docker) waitForSetup(
 	logRetryDelay := logsRetryInterval
 	for {
 		if err := ctx.Err(); err != nil {
-			return setupWaitError(ctx, err, setupTimeout)
+			return setupWaitError(parentCtx, ctx, err, setupTimeout)
 		}
 
 		// Status-only inspect: one runtime call instead of InspectContainer's
@@ -1173,7 +1174,7 @@ func (d *Docker) waitForSetup(
 		output, err := d.run(ctx, []string{"logs", "--since", since, containerName}, runOptions{})
 		if err != nil {
 			if err := sleepContext(ctx, logRetryDelay); err != nil {
-				return setupWaitError(ctx, err, setupTimeout)
+				return setupWaitError(parentCtx, ctx, err, setupTimeout)
 			}
 			logRetryDelay *= 2
 			if logRetryDelay > setupRetryBackoffMax {
@@ -1217,7 +1218,7 @@ func (d *Docker) waitForSetup(
 		}
 
 		if err := sleepContext(ctx, setupPollInterval); err != nil {
-			return setupWaitError(ctx, err, setupTimeout)
+			return setupWaitError(parentCtx, ctx, err, setupTimeout)
 		}
 	}
 }
