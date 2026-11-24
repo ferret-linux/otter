@@ -1102,11 +1102,11 @@ func (p *Podman) generateEnterCommand(
 	}
 
 	// XDG_DATA_DIRS
-	xdgDataDirs := containermanager.BuildXDGPaths("XDG_DATA_DIRS", []string{"/usr/local/share", "/usr/share"})
+	xdgDataDirs := containermanager.BuildXDGPaths([]string{"/usr/local/share", "/usr/share"})
 	cmd = append(cmd, fmt.Sprintf("--env=XDG_DATA_DIRS=%s", xdgDataDirs))
 
 	// XDG_CONFIG_DIRS
-	xdgConfigDirs := containermanager.BuildXDGPaths("XDG_CONFIG_DIRS", []string{"/etc/xdg"})
+	xdgConfigDirs := containermanager.BuildXDGPaths([]string{"/etc/xdg"})
 	cmd = append(cmd, fmt.Sprintf("--env=XDG_CONFIG_DIRS=%s", xdgConfigDirs))
 
 	// XDG home directories

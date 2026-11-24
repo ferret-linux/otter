@@ -842,10 +842,10 @@ func (n *Nerdctl) generateEnterCommand(
 		cmd = append(cmd, fmt.Sprintf("--env=HOST_PATH=%s", os.Getenv("PATH")))
 	}
 
-	xdgDataDirs := containermanager.BuildXDGPaths("XDG_DATA_DIRS", []string{"/usr/local/share", "/usr/share"})
+	xdgDataDirs := containermanager.BuildXDGPaths([]string{"/usr/local/share", "/usr/share"})
 	cmd = append(cmd, fmt.Sprintf("--env=XDG_DATA_DIRS=%s", xdgDataDirs))
 
-	xdgConfigDirs := containermanager.BuildXDGPaths("XDG_CONFIG_DIRS", []string{"/etc/xdg"})
+	xdgConfigDirs := containermanager.BuildXDGPaths([]string{"/etc/xdg"})
 	cmd = append(cmd, fmt.Sprintf("--env=XDG_CONFIG_DIRS=%s", xdgConfigDirs))
 
 	cmd = append(cmd, fmt.Sprintf("--env=XDG_CACHE_HOME=%s/.cache", containerConfig.ContainerHome))

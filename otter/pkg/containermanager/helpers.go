@@ -68,18 +68,12 @@ func Btoi(b bool) int {
 	return 0
 }
 
-func BuildXDGPaths(envVar string, standardPaths []string) string {
-	containerPaths := os.Getenv(envVar)
-
-	for _, sp := range standardPaths {
-		if containerPaths == "" {
-			containerPaths = sp
-		} else if !slices.Contains(strings.Split(containerPaths, ":"), sp) {
-			containerPaths = containerPaths + ":" + sp
-		}
-	}
-
-	return containerPaths
+// BuildXDGPaths returns the container's standard XDG search paths. Host
+// XDG_*_DIRS values are intentionally ignored: FilterEnvVars removes them
+// from the bulk copy, and re-reading them here would put host configuration
+// back into the container after the filter.
+func BuildXDGPaths(standardPaths []string) string {
+	return strings.Join(standardPaths, ":")
 }
 
 func FilterEnvVars() []string {
@@ -96,6 +90,12 @@ func FilterEnvVars() []string {
 		// LD_AUDIT, LD_LIBRARY_PATH, ...). Filtering the whole class is
 		// safer than enumerating them and avoids future gaps.
 		"LD_",
+		// macOS loader variables are the same class as LD_*: they can
+		// reinterpret binaries inside the container.
+		"DYLD_",
+		// Bash function imports (BASH_FUNC_name%%) can shadow commands in
+		// an interactive shell without any BASH_ENV/ENV variable.
+		"BASH_FUNC_",
 		"HOST",
 		"HOSTNAME",
 		"HOME",
