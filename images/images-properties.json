@@ -490,31 +490,6 @@
       "fallback_vendor_image": "docker.io/library/almalinux:latest"
     },
     {
-      "name": "wolfi",
-      "official_image": "ghcr.io/ferret-linux/wolfi-otr:latest",
-      "family": "wolfi",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-24T03:34:31Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 270293828,
-          "disk_size": 796254561
-        },
-        "arm64": {
-          "compressed_size": 258277821,
-          "disk_size": 788457816
-        }
-      },
-      "build_number": 466,
-      "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest"
-    },
-    {
       "name": "centos",
       "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
       "family": "centos",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 588,
       "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest"
+    },
+    {
+      "name": "wolfi",
+      "official_image": "ghcr.io/ferret-linux/wolfi-otr:latest",
+      "family": "wolfi",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-24T06:05:42Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 270304584,
+          "disk_size": 796267363
+        },
+        "arm64": {
+          "compressed_size": 258282353,
+          "disk_size": 788458332
+        }
+      },
+      "build_number": 467,
+      "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest"
     }
   ]
 }
