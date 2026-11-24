@@ -10,6 +10,7 @@ import (
 
 	"github.com/ferret-linux/otter/pkg/commands"
 	"github.com/ferret-linux/otter/pkg/config"
+	"github.com/ferret-linux/otter/pkg/manifest"
 	"github.com/ferret-linux/otter/pkg/rootcheck"
 )
 
@@ -62,14 +63,25 @@ func assembleAction(ctx context.Context, cmd *cli.Command, cfg *config.Values, d
 		return errors.New("manifest path is required, use --file to specify it")
 	}
 
+	// Peek at the manifest before resolving an escalator: assemble has no
+	// --root flag, but an all-rootless manifest must still work on hosts with
+	// no privilege escalation program installed.
+	items, err := manifest.Parse(ctx, cmd.String("file"))
+	if err != nil {
+		return fmt.Errorf("failed to parse manifest file: %w", err)
+	}
+	needsRoot, err := manifest.RequiresRoot(items, names, cfg.DefaultRootful)
+	if err != nil {
+		return fmt.Errorf("invalid box selection: %w", err)
+	}
+
 	sudoCommand := escalatorFromContext(ctx)
 	if sudoCommand == "" {
 		sudoCommand = cmd.Root().String("sudo-command")
 	}
-	if sudoCommand == autodetectEscalator {
-		// Assemble creates rootful boxes without setting --root on the
-		// command, so resolve the escalator here once for both the manager
-		// clones and the command options.
+	if needsRoot && sudoCommand == autodetectEscalator {
+		// Rootful boxes need a concrete escalate program for the manager
+		// clones; resolve it once for both those clones and the options.
 		resolved, err := rootcheck.Validate(ctx, sudoCommand)
 		if err != nil {
 			return fmt.Errorf("failed to resolve privilege escalator: %w", err)
@@ -83,6 +95,7 @@ func assembleAction(ctx context.Context, cmd *cli.Command, cfg *config.Values, d
 
 	opts := commands.AssembleOptions{
 		ManifestPath: cmd.String("file"),
+		Items:        items,
 		SudoCommand:  sudoCommand,
 		BoxNames:     names,
 	}
