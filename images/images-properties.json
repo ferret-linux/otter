@@ -591,31 +591,6 @@
       "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest"
     },
     {
-      "name": "debian-unstable",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:unstable",
-      "family": "debian",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-23T23:33:25Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 654702485,
-          "disk_size": 1770687335
-        },
-        "arm64": {
-          "compressed_size": 629881957,
-          "disk_size": 1784384885
-        }
-      },
-      "build_number": 579,
-      "fallback_vendor_image": "docker.io/library/debian:unstable"
-    },
-    {
       "name": "centos-negativo17",
       "official_image": "ghcr.io/ferret-linux/centos-otr:negativo17",
       "family": "centos",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 583,
       "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest"
+    },
+    {
+      "name": "debian-unstable",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:unstable",
+      "family": "debian",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-24T03:33:43Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 654723371,
+          "disk_size": 1770732387
+        },
+        "arm64": {
+          "compressed_size": 629899866,
+          "disk_size": 1784388982
+        }
+      },
+      "build_number": 580,
+      "fallback_vendor_image": "docker.io/library/debian:unstable"
     }
   ]
 }
