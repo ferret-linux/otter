@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"syscall"
 
 	"github.com/BurntSushi/toml"
 
@@ -61,7 +62,36 @@ func SaveFileConfig(cfg *FileConfig) error {
 			return fmt.Errorf("failed to hand config path %s to target user: %w", dir, err)
 		}
 	}
+	// An older escalated version may already have created ~/.config as root.
+	// Directory components that already existed were not in createdDirs, so
+	// repair the ones inside the config path as well; otherwise the target
+	// user still cannot traverse to (or edit) the config we just chowned.
+	return repairAncestorOwnership(configDir, uid, gid)
+}
+
+// repairAncestorOwnership hands root-owned directories between configDir and
+// its parent (XDG_CONFIG_HOME, or ~/.config) back to the target user. It
+// deliberately stops at the config root: unrelated parents, symlinks and the
+// filesystem root are never touched.
+func repairAncestorOwnership(configDir string, uid, gid int) error {
+	stop := filepath.Dir(configDir)
+	for current := configDir; current != "" && current != string(os.PathSeparator); current = filepath.Dir(current) {
+		info, err := os.Lstat(current)
+		if err == nil && info.Mode()&os.ModeSymlink == 0 && !ownedBy(info, uid, gid) {
+			if err := os.Lchown(current, uid, gid); err != nil {
+				return fmt.Errorf("failed to hand config ancestor %s to target user: %w", current, err)
+			}
+		}
+		if current == stop {
+			break
+		}
+	}
 	return nil
+}
+
+func ownedBy(info os.FileInfo, uid, gid int) bool {
+	stat, ok := info.Sys().(*syscall.Stat_t)
+	return ok && int(stat.Uid) == uid && int(stat.Gid) == gid
 }
 
 // escalatedTargetOwner returns the uid/gid of the user otter is acting on

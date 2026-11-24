@@ -434,7 +434,16 @@ func (m SettingsModel) handleKey(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 		return m, tea.Quit
 
 	case key.Matches(msg, settingsKeys.Save):
-		if err := config.SaveFileConfig(m.cfg); err != nil {
+		// Reload and merge under the same lock the JSON bridge uses, so a
+		// long-open editor cannot revert fields saved by another process.
+		err := config.WithConfigLock(func() error {
+			current, err := config.LoadFileConfig()
+			if err != nil {
+				return fmt.Errorf("failed to reload settings: %w", err)
+			}
+			return config.SaveFileConfig(config.MergeChanged(m.original, m.cfg, current))
+		})
+		if err != nil {
 			m.saveErr = err.Error()
 			return m, nil
 		}
