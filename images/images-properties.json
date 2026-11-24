@@ -341,31 +341,6 @@
       "fallback_vendor_image": "docker.io/library/alpine:latest"
     },
     {
-      "name": "ubuntu-lts-nonfree",
-      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts-nonfree",
-      "family": "ubuntu",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-24T04:48:39Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 568446090,
-          "disk_size": 1603419199
-        },
-        "arm64": {
-          "compressed_size": 547296345,
-          "disk_size": 1625867342
-        }
-      },
-      "build_number": 11,
-      "fallback_vendor_image": "docker.io/library/ubuntu:26.04"
-    },
-    {
       "name": "kali",
       "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
       "family": "kali",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 471,
       "fallback_vendor_image": "docker.io/library/amazonlinux:latest"
+    },
+    {
+      "name": "ubuntu-lts-nonfree",
+      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts-nonfree",
+      "family": "ubuntu",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-24T11:29:07Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 568446585,
+          "disk_size": 1603419203
+        },
+        "arm64": {
+          "compressed_size": 547299894,
+          "disk_size": 1625867346
+        }
+      },
+      "build_number": 12,
+      "fallback_vendor_image": "docker.io/library/ubuntu:26.04"
     }
   ]
 }
