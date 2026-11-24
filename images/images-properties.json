@@ -964,31 +964,6 @@
       "build_number": 566
     },
     {
-      "name": "oracle-nonfree",
-      "official_image": "ghcr.io/ferret-linux/oracle-otr:nonfree",
-      "family": "oracle",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-24T18:04:01Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 623269806,
-          "disk_size": 1911845737
-        },
-        "arm64": {
-          "compressed_size": 569469572,
-          "disk_size": 1756134763
-        }
-      },
-      "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10",
-      "build_number": 13
-    },
-    {
       "name": "centos-nonfree",
       "official_image": "ghcr.io/ferret-linux/centos-otr:nonfree",
       "family": "centos",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "quay.io/centos/centos:stream10",
       "build_number": 582
+    },
+    {
+      "name": "oracle-nonfree",
+      "official_image": "ghcr.io/ferret-linux/oracle-otr:nonfree",
+      "family": "oracle",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-24T21:52:45Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 662312928,
+          "disk_size": 2016722811
+        },
+        "arm64": {
+          "compressed_size": 607804586,
+          "disk_size": 1867887990
+        }
+      },
+      "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10",
+      "build_number": 14
     }
   ]
 }
