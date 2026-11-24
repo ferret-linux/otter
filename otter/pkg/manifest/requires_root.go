@@ -19,11 +19,18 @@ func RequiresRoot(items []Item, boxNames []string, defaultRootful bool) (bool, e
 		byName[item.Name] = item
 	}
 
+	// Validate the whole selection first. Callers use this helper before
+	// creating or removing containers, so an early return on the first
+	// rootful box would let later unknown names reach createItem as zero
+	// values and crash it.
 	for _, name := range selected {
-		item, ok := byName[name]
-		if !ok {
+		if _, ok := byName[name]; !ok {
 			return false, fmt.Errorf("box '%s' not found in manifest", name)
 		}
+	}
+
+	for _, name := range selected {
+		item := byName[name]
 		if item.Settings.Rootful != nil && *item.Settings.Rootful ||
 			item.Settings.Rootful == nil && defaultRootful {
 			return true, nil
