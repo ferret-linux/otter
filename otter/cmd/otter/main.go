@@ -37,6 +37,16 @@ func run() error {
 
 	cmd := cli.NewRootCommand(cfg)
 
+	// Some urfave/cli paths (for example an unknown command with --help)
+	// return an error without calling the root ExitErrHandler. Report those
+	// errors here so they are never completely silent.
+	reported := false
+	ctx = cli.WithErrorReportFlag(ctx, &reported)
+	err = cmd.Run(ctx, os.Args)
+	if err != nil && !reported {
+		ui.DefaultLogger.Error(err)
+	}
+
 	//nolint:wrapcheck // main reports errors as-is
-	return cmd.Run(ctx, os.Args)
+	return err
 }

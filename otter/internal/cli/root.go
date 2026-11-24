@@ -22,6 +22,16 @@ import (
 
 type contextKey string
 
+type errorReportedKey struct{}
+
+// WithErrorReportFlag attaches a flag that the root ExitErrHandler sets when
+// it has already reported an error. urfave/cli bypasses that handler on some
+// paths (notably an unknown command followed by --help), so main uses the flag
+// to report those errors once without duplicating the normal diagnostics.
+func WithErrorReportFlag(ctx context.Context, reported *bool) context.Context {
+	return context.WithValue(ctx, errorReportedKey{}, reported)
+}
+
 const autodetectEscalator = "autodetect"
 
 const (
@@ -88,9 +98,12 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 			return ctx, nil
 		},
 		Commands: subcommands(cfg),
-		ExitErrHandler: func(_ context.Context, _ *cli.Command, err error) {
+		ExitErrHandler: func(ctx context.Context, _ *cli.Command, err error) {
 			if err == nil {
 				return
+			}
+			if reported, ok := ctx.Value(errorReportedKey{}).(*bool); ok && reported != nil {
+				*reported = true
 			}
 			if errors.Is(err, registry.ErrUnreliableUnavailable) {
 				ui.DefaultLogger.Error(registry.ErrUnreliableUnavailable.Error())
