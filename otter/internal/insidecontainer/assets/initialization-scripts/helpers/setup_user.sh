@@ -37,6 +37,8 @@ setup_user()
 			printf "Error: unsupported container username: %s\n" "${container_user_name}" >&2
 			exit 1
 			;;
+		*)	# allowed username
+			;;
 	esac
 ###############################################################################
 # If not existing, ensure we have a group for our user.
