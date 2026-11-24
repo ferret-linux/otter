@@ -366,31 +366,6 @@
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
     },
     {
-      "name": "ubuntu-lts-nonfree",
-      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts-nonfree",
-      "family": "ubuntu",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-24T02:32:28Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 568446592,
-          "disk_size": 1603419195
-        },
-        "arm64": {
-          "compressed_size": 547299041,
-          "disk_size": 1625867343
-        }
-      },
-      "build_number": 10,
-      "fallback_vendor_image": "docker.io/library/ubuntu:26.04"
-    },
-    {
       "name": "guix",
       "official_image": "ghcr.io/ferret-linux/guix-otr:latest",
       "family": "guix",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 581,
       "fallback_vendor_image": "docker.io/library/alpine:latest"
+    },
+    {
+      "name": "ubuntu-lts-nonfree",
+      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts-nonfree",
+      "family": "ubuntu",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-24T04:48:39Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 568446090,
+          "disk_size": 1603419199
+        },
+        "arm64": {
+          "compressed_size": 547296345,
+          "disk_size": 1625867342
+        }
+      },
+      "build_number": 11,
+      "fallback_vendor_image": "docker.io/library/ubuntu:26.04"
     }
   ]
 }
