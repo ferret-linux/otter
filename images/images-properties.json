@@ -540,31 +540,6 @@
       "fallback_vendor_image": "docker.io/library/debian:stable"
     },
     {
-      "name": "void-musl-nonfree",
-      "official_image": "ghcr.io/ferret-linux/void-otr:musl-nonfree",
-      "family": "void",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-24T05:27:54Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 394437460,
-          "disk_size": 1128696532
-        },
-        "arm64": {
-          "compressed_size": 377876098,
-          "disk_size": 1101363922
-        }
-      },
-      "build_number": 12,
-      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest"
-    },
-    {
       "name": "chimera",
       "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
       "family": "chimera",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 12,
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init"
+    },
+    {
+      "name": "void-musl-nonfree",
+      "official_image": "ghcr.io/ferret-linux/void-otr:musl-nonfree",
+      "family": "void",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-24T11:21:19Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 394442963,
+          "disk_size": 1128701648
+        },
+        "arm64": {
+          "compressed_size": 377882034,
+          "disk_size": 1101371087
+        }
+      },
+      "build_number": 13,
+      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest"
     }
   ]
 }
