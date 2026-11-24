@@ -540,31 +540,6 @@
       "fallback_vendor_image": "docker.io/library/almalinux:latest"
     },
     {
-      "name": "void-musl",
-      "official_image": "ghcr.io/ferret-linux/void-otr:musl",
-      "family": "void",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-24T03:33:10Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 394423982,
-          "disk_size": 1128678524
-        },
-        "arm64": {
-          "compressed_size": 377858237,
-          "disk_size": 1101344384
-        }
-      },
-      "build_number": 563,
-      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest"
-    },
-    {
       "name": "wolfi",
       "official_image": "ghcr.io/ferret-linux/wolfi-otr:latest",
       "family": "wolfi",
@@ -1387,6 +1362,31 @@
       },
       "build_number": 581,
       "fallback_vendor_image": "docker.io/library/ubuntu:26.04"
+    },
+    {
+      "name": "void-musl",
+      "official_image": "ghcr.io/ferret-linux/void-otr:musl",
+      "family": "void",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-24T06:04:38Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 394433332,
+          "disk_size": 1128687231
+        },
+        "arm64": {
+          "compressed_size": 377867074,
+          "disk_size": 1101352577
+        }
+      },
+      "build_number": 564,
+      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest"
     }
   ]
 }
