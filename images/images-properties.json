@@ -1040,31 +1040,6 @@
       "build_number": 568
     },
     {
-      "name": "centos",
-      "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
-      "family": "centos",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-25T01:04:05Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 503504749,
-          "disk_size": 1555307785
-        },
-        "arm64": {
-          "compressed_size": 489773512,
-          "disk_size": 1564402955
-        }
-      },
-      "fallback_vendor_image": "quay.io/centos/centos:stream10",
-      "build_number": 583
-    },
-    {
       "name": "centos-nonfree",
       "official_image": "ghcr.io/ferret-linux/centos-otr:nonfree",
       "family": "centos",
@@ -1386,6 +1361,31 @@
         }
       },
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init",
+      "build_number": 584
+    },
+    {
+      "name": "centos",
+      "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
+      "family": "centos",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-25T03:51:59Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 503500191,
+          "disk_size": 1555307791
+        },
+        "arm64": {
+          "compressed_size": 489776294,
+          "disk_size": 1564404490
+        }
+      },
+      "fallback_vendor_image": "quay.io/centos/centos:stream10",
       "build_number": 584
     }
   ]
