@@ -241,31 +241,6 @@
       "fallback_vendor_image": "docker.io/aclemons/slackware:latest"
     },
     {
-      "name": "void-musl-nonfree",
-      "official_image": "ghcr.io/ferret-linux/void-otr:musl-nonfree",
-      "family": "void",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-24T11:21:19Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 394442963,
-          "disk_size": 1128701648
-        },
-        "arm64": {
-          "compressed_size": 377882034,
-          "disk_size": 1101371087
-        }
-      },
-      "build_number": 13,
-      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest"
-    },
-    {
       "name": "kali-edge-nonfree",
       "official_image": "ghcr.io/ferret-linux/kali-otr:edge-nonfree",
       "family": "kali",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init",
       "build_number": 16
+    },
+    {
+      "name": "void-musl-nonfree",
+      "official_image": "ghcr.io/ferret-linux/void-otr:musl-nonfree",
+      "family": "void",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-25T20:40:44Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 394734032,
+          "disk_size": 1129397459
+        },
+        "arm64": {
+          "compressed_size": 378142081,
+          "disk_size": 1101965522
+        }
+      },
+      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest",
+      "build_number": 14
     }
   ]
 }
