@@ -341,31 +341,6 @@
       "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest"
     },
     {
-      "name": "opensuse-leap",
-      "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
-      "family": "opensuse",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-24T11:31:12Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 396692652,
-          "disk_size": 1214857366
-        },
-        "arm64": {
-          "compressed_size": 374982419,
-          "disk_size": 1191569047
-        }
-      },
-      "build_number": 541,
-      "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest"
-    },
-    {
       "name": "homebrew",
       "official_image": "ghcr.io/ferret-linux/brew-otr:latest",
       "family": "homebrew",
@@ -1387,6 +1362,31 @@
         }
       },
       "build_number": 397
+    },
+    {
+      "name": "opensuse-leap",
+      "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
+      "family": "opensuse",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-25T01:33:24Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 396690709,
+          "disk_size": 1214857364
+        },
+        "arm64": {
+          "compressed_size": 374984837,
+          "disk_size": 1191569040
+        }
+      },
+      "fallback_vendor_image": "registry.opensuse.org/opensuse/leap:latest",
+      "build_number": 542
     }
   ]
 }
