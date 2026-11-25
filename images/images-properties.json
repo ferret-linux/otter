@@ -839,31 +839,6 @@
       "build_number": 13
     },
     {
-      "name": "rocky-negativo17",
-      "official_image": "ghcr.io/ferret-linux/rocky-otr:negativo17",
-      "family": "rocky",
-      "image_variant": "negativo17",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-24T21:07:28Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 580449046,
-          "disk_size": 1802787929
-        },
-        "arm64": {
-          "compressed_size": 542974035,
-          "disk_size": 1729068137
-        }
-      },
-      "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init",
-      "build_number": 13
-    },
-    {
       "name": "rhel",
       "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
       "family": "rhel",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "quay.io/fedora/fedora:latest",
       "build_number": 582
+    },
+    {
+      "name": "rocky-negativo17",
+      "official_image": "ghcr.io/ferret-linux/rocky-otr:negativo17",
+      "family": "rocky",
+      "image_variant": "negativo17",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-25T00:36:07Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 580448539,
+          "disk_size": 1802787930
+        },
+        "arm64": {
+          "compressed_size": 542975659,
+          "disk_size": 1729068136
+        }
+      },
+      "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init",
+      "build_number": 14
     }
   ]
 }
