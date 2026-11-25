@@ -840,31 +840,6 @@
       "build_number": 15
     },
     {
-      "name": "gentoo",
-      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
-      "family": "gentoo",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-25T01:51:26Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 2028007939,
-          "disk_size": 5120868562
-        },
-        "arm64": {
-          "compressed_size": 1561678826,
-          "disk_size": 4144816850
-        }
-      },
-      "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
-      "build_number": 510
-    },
-    {
       "name": "rocky",
       "official_image": "ghcr.io/ferret-linux/rocky-otr:stable",
       "family": "rocky",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10",
       "build_number": 577
+    },
+    {
+      "name": "gentoo",
+      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
+      "family": "gentoo",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-25T05:56:33Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 2028013677,
+          "disk_size": 5120935117
+        },
+        "arm64": {
+          "compressed_size": 1561706202,
+          "disk_size": 4144883921
+        }
+      },
+      "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
+      "build_number": 511
     }
   ]
 }
