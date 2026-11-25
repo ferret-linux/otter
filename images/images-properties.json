@@ -565,31 +565,6 @@
       "build_number": 16
     },
     {
-      "name": "kali",
-      "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
-      "family": "kali",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-25T11:04:01Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 643769991,
-          "disk_size": 1736896772
-        },
-        "arm64": {
-          "compressed_size": 619652481,
-          "disk_size": 1750877961
-        }
-      },
-      "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest",
-      "build_number": 574
-    },
-    {
       "name": "opensuse-leap",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:leap",
       "family": "opensuse",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "quay.io/fedora/fedora:latest",
       "build_number": 13
+    },
+    {
+      "name": "kali",
+      "official_image": "ghcr.io/ferret-linux/kali-otr:rolling",
+      "family": "kali",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-25T21:43:18Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 643767429,
+          "disk_size": 1736896776
+        },
+        "arm64": {
+          "compressed_size": 619650720,
+          "disk_size": 1750877959
+        }
+      },
+      "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest",
+      "build_number": 575
     }
   ]
 }
