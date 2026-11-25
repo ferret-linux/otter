@@ -990,31 +990,6 @@
       "build_number": 571
     },
     {
-      "name": "void-glibc",
-      "official_image": "ghcr.io/ferret-linux/void-otr:glibc",
-      "family": "void",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-25T21:19:19Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 414603997,
-          "disk_size": 1187550378
-        },
-        "arm64": {
-          "compressed_size": 396643002,
-          "disk_size": 1166526635
-        }
-      },
-      "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest",
-      "build_number": 568
-    },
-    {
       "name": "void-musl",
       "official_image": "ghcr.io/ferret-linux/void-otr:musl",
       "family": "void",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "docker.io/library/alpine:edge",
       "build_number": 592
+    },
+    {
+      "name": "void-glibc",
+      "official_image": "ghcr.io/ferret-linux/void-otr:glibc",
+      "family": "void",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-25T22:03:30Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 414603322,
+          "disk_size": 1187550383
+        },
+        "arm64": {
+          "compressed_size": 396641091,
+          "disk_size": 1166526634
+        }
+      },
+      "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest",
+      "build_number": 569
     }
   ]
 }
