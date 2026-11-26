@@ -42,6 +42,8 @@ var (
 	//nolint:gochecknoglobals // immutable lookup table
 	cleanupSupportedManagers = []string{cleanupManagerPodman, cleanupManagerNerdctl, cleanupManagerDocker}
 	cleanupCanonicalPinRe    = regexp.MustCompile(`^(?:(rootful)-)?([a-z0-9]+)-(.+)\.desktop$`)
+	// Sentinel shared by apply actions and the counter.
+	errCleanupAlreadyAbsent = errors.New("cleanup candidate already absent")
 )
 
 // CleanupOptions controls the cleanup sweep. Apply is true for a normal run
@@ -126,15 +128,20 @@ type cleanupAction struct {
 }
 
 type cleanupPlanner struct {
-	ctx          context.Context
-	opts         CleanupOptions
-	paths        *exportPaths
-	scopes       []*cleanupScope
-	primary      string
-	actions      map[string]cleanupAction
-	problems     []CleanupProblem
-	unknown      bool
-	manualReview map[string]struct{}
+	ctx                context.Context
+	opts               CleanupOptions
+	paths              *exportPaths
+	scopes             []*cleanupScope
+	primary            string
+	actions            map[string]cleanupAction
+	problems           []CleanupProblem
+	problemSeen        map[string]struct{}
+	unknown            bool
+	manualReview       map[string]struct{}
+	rawRecords         []rawExportRecord
+	unverifiableOwners map[string]struct{}
+	protectedPaths     map[string]struct{}
+	indexUnreadable    bool
 }
 
 type rawExportRecord struct {
@@ -149,13 +156,18 @@ func (c *CleanupCommand) Execute(ctx context.Context, opts CleanupOptions) (*Cle
 	}
 
 	planner := &cleanupPlanner{
-		ctx:          ctx,
-		opts:         opts,
-		paths:        paths,
-		actions:      make(map[string]cleanupAction),
-		manualReview: make(map[string]struct{}),
+		ctx:                ctx,
+		opts:               opts,
+		paths:              paths,
+		actions:            make(map[string]cleanupAction),
+		problemSeen:        make(map[string]struct{}),
+		manualReview:       make(map[string]struct{}),
+		unverifiableOwners: make(map[string]struct{}),
+		protectedPaths:     make(map[string]struct{}),
 	}
 	planner.buildScopes()
+	planner.rawRecords, _ = planner.loadRawRecords(true)
+	planner.protectReferencedIcons()
 	planner.planExports()
 	planner.planPins()
 	planner.planIcons()
@@ -163,7 +175,9 @@ func (c *CleanupCommand) Execute(ctx context.Context, opts CleanupOptions) (*Cle
 
 	result := &CleanupResult{
 		Mode:     "plan",
-		Problems: planner.problems,
+		Items:    []CleanupItem{},
+		Problems: append([]CleanupProblem{}, planner.problems...),
+		Scopes:   []CleanupScopeState{},
 	}
 	if opts.Apply {
 		result.Mode = "apply"
@@ -190,6 +204,9 @@ func (c *CleanupCommand) Execute(ctx context.Context, opts CleanupOptions) (*Cle
 			for _, key := range keys {
 				action := planner.actions[key]
 				if err := action.apply(); err != nil {
+					if errors.Is(err, errCleanupAlreadyAbsent) {
+						continue
+					}
 					result.Problems = append(result.Problems, CleanupProblem{
 						Severity: "error",
 						Category: action.Category,
@@ -221,6 +238,11 @@ func (c *CleanupCommand) Execute(ctx context.Context, opts CleanupOptions) (*Cle
 }
 
 func (p *cleanupPlanner) problem(severity, category, scope, path, message string, hard bool) {
+	key := strings.Join([]string{severity, category, scope, path, message, strconv.FormatBool(hard)}, "\x00")
+	if _, ok := p.problemSeen[key]; ok {
+		return
+	}
+	p.problemSeen[key] = struct{}{}
 	p.problems = append(p.problems, CleanupProblem{
 		Severity: severity,
 		Category: category,
@@ -246,10 +268,10 @@ func (p *cleanupPlanner) addAction(
 	imageID string,
 	guard func() error,
 ) {
-	if _, exists := p.actions[item.Category+"|"+item.Path]; exists {
+	if _, exists := p.actions[item.Path]; exists {
 		return
 	}
-	action := cleanupAction{CleanupItem: item, key: item.Category + "|" + item.Path}
+	action := cleanupAction{CleanupItem: item, key: item.Path}
 	switch item.Category {
 	case "image":
 		action.apply = func() error {
@@ -264,14 +286,24 @@ func (p *cleanupPlanner) addAction(
 			return cm.RemoveImage(p.ctx, imageID, false)
 		}
 	default:
-		action.apply = func() error { return safeRemove(item.Path, info) }
+		action.apply = func() error {
+			if guard != nil {
+				if err := guard(); err != nil {
+					return err
+				}
+			}
+			return safeRemove(item.Path, info)
+		}
 	}
 	p.actions[action.key] = action
 }
 
 func safeRemove(path string, expected os.FileInfo) error {
 	if expected == nil {
-		if err := os.Remove(path); err != nil && !errors.Is(err, fs.ErrNotExist) {
+		if err := os.Remove(path); err != nil {
+			if errors.Is(err, fs.ErrNotExist) {
+				return errCleanupAlreadyAbsent
+			}
 			return fmt.Errorf("remove candidate: %w", err)
 		}
 		return nil
@@ -279,7 +311,7 @@ func safeRemove(path string, expected os.FileInfo) error {
 	file, err := os.OpenFile(path, os.O_RDONLY|syscall.O_NOFOLLOW|syscall.O_CLOEXEC, 0)
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
-			return nil
+			return errCleanupAlreadyAbsent
 		}
 		return fmt.Errorf("open for removal: %w", err)
 	}
@@ -291,7 +323,10 @@ func safeRemove(path string, expected os.FileInfo) error {
 	if !os.SameFile(expected, current) {
 		return errors.New("candidate changed since scan")
 	}
-	if err := os.Remove(path); err != nil && !errors.Is(err, fs.ErrNotExist) {
+	if err := os.Remove(path); err != nil {
+		if errors.Is(err, fs.ErrNotExist) {
+			return errCleanupAlreadyAbsent
+		}
 		return fmt.Errorf("remove candidate: %w", err)
 	}
 	return nil
@@ -299,26 +334,39 @@ func safeRemove(path string, expected os.FileInfo) error {
 
 // withCleanupLock serialises the apply phase with other export operations.
 // Plan mode intentionally never takes this lock and never creates its parent
-// directories. When otter runs through an escalator the lock is handed back to
-// the target user so a later rootless run can still open it.
+// directories. When otter runs through an escalator only directories created
+// by this call and the opened lock inode are handed back to the target user.
 func (p *exportPaths) withCleanupLock(ctx context.Context, fn func() error) error {
-	if err := os.MkdirAll(filepath.Dir(p.lockPath), 0o750); err != nil {
+	lockDir := filepath.Dir(p.lockPath)
+	if !managedDirInHome(p.home, lockDir) {
+		return errors.New("export lock path resolves outside target home")
+	}
+	missing, err := missingDirsUntil(lockDir, p.home)
+	if err != nil {
+		return fmt.Errorf("failed to inspect export index directory: %w", err)
+	}
+	if err := os.MkdirAll(lockDir, 0o750); err != nil {
 		return fmt.Errorf("failed to create export index directory: %w", err)
 	}
-	file, err := os.OpenFile(p.lockPath, os.O_CREATE|os.O_RDWR, 0o600)
+
+	uid, gid, haveIDs := targetUserIDs(ctx)
+	if os.Geteuid() == 0 && haveIDs {
+		for i := len(missing) - 1; i >= 0; i-- {
+			if err := chownDirNoFollow(missing[i], uid, gid); err != nil {
+				return fmt.Errorf("failed to hand export directory to target user: %w", err)
+			}
+		}
+	}
+
+	file, err := os.OpenFile(p.lockPath, os.O_CREATE|os.O_RDWR|syscall.O_NOFOLLOW|syscall.O_CLOEXEC, 0o600)
 	if err != nil {
 		return fmt.Errorf("failed to open export lock: %w", err)
 	}
 	defer file.Close()
 
-	if os.Geteuid() == 0 {
-		env := userenv.LoadTargetUserEnvironment(ctx)
-		uid, uidErr := strconv.Atoi(env.UserID)
-		gid, gidErr := strconv.Atoi(env.GroupID)
-		if uidErr == nil && gidErr == nil {
-			if err := os.Chown(p.lockPath, uid, gid); err != nil {
-				return fmt.Errorf("failed to hand export lock to target user: %w", err)
-			}
+	if os.Geteuid() == 0 && haveIDs {
+		if err := syscall.Fchown(int(file.Fd()), uid, gid); err != nil {
+			return fmt.Errorf("failed to hand export lock to target user: %w", err)
 		}
 	}
 
@@ -332,17 +380,149 @@ func (p *exportPaths) withCleanupLock(ctx context.Context, fn func() error) erro
 	return fn()
 }
 
+func targetUserIDs(ctx context.Context) (int, int, bool) {
+	env := userenv.LoadTargetUserEnvironment(ctx)
+	if env == nil {
+		return 0, 0, false
+	}
+	uid, uidErr := strconv.Atoi(env.UserID)
+	gid, gidErr := strconv.Atoi(env.GroupID)
+	return uid, gid, uidErr == nil && gidErr == nil
+}
+
+func missingDirsUntil(path, home string) ([]string, error) {
+	stop := filepath.Clean(home)
+	if _, err := os.Lstat(stop); err != nil {
+		return nil, fmt.Errorf("inspect home %s: %w", stop, err)
+	}
+	var missing []string
+	for dir := filepath.Clean(path); dir != stop; dir = filepath.Dir(dir) {
+		_, err := os.Lstat(dir)
+		if err == nil {
+			break
+		}
+		if !errors.Is(err, fs.ErrNotExist) {
+			return nil, fmt.Errorf("inspect directory %s: %w", dir, err)
+		}
+		missing = append(missing, dir)
+		if filepath.Dir(dir) == dir {
+			return nil, fmt.Errorf("export path %q is outside home %q", path, home)
+		}
+	}
+	return missing, nil
+}
+
+func chownDirNoFollow(path string, uid, gid int) error {
+	file, err := os.OpenFile(path, os.O_RDONLY|syscall.O_DIRECTORY|syscall.O_NOFOLLOW|syscall.O_CLOEXEC, 0)
+	if err != nil {
+		return fmt.Errorf("open directory %s: %w", path, err)
+	}
+	defer file.Close()
+	if err := syscall.Fchown(int(file.Fd()), uid, gid); err != nil {
+		return fmt.Errorf("chown directory %s: %w", path, err)
+	}
+	return nil
+}
+
+func pathWithin(base, target string) bool {
+	rel, err := filepath.Rel(filepath.Clean(base), filepath.Clean(target))
+	if err != nil {
+		return false
+	}
+	return rel != ".." && !strings.HasPrefix(rel, ".."+string(os.PathSeparator)) && !filepath.IsAbs(rel)
+}
+
+func canonicalImageID(id string) string {
+	id = strings.TrimSpace(strings.TrimPrefix(strings.TrimSpace(id), "sha256:"))
+	return strings.ToLower(id)
+}
+
+// imageIDMatches accepts both full IDs and engine-abbreviated IDs. Prefixes
+// shorter than 12 hex characters are too ambiguous to be used as guards.
+func imageIDMatches(a, b string) bool {
+	left, right := canonicalImageID(a), canonicalImageID(b)
+	if left == "" || right == "" {
+		return false
+	}
+	if left == right {
+		return true
+	}
+	if len(left) < 12 || len(right) < 12 {
+		return false
+	}
+	return strings.HasPrefix(left, right) || strings.HasPrefix(right, left)
+}
+
+func imageIDIn(ids map[string]struct{}, id string) bool {
+	for known := range ids {
+		if imageIDMatches(id, known) {
+			return true
+		}
+	}
+	return false
+}
+
+// managedDirInHome accepts a directory only when its nearest existing
+// ancestor resolves inside the target home and no path component below home
+// is a symlink.
+func managedDirInHome(home, dir string) bool {
+	realHome, err := filepath.EvalSymlinks(home)
+	if err != nil {
+		return false
+	}
+	stop := filepath.Clean(home)
+	for cur := filepath.Clean(dir); ; cur = filepath.Dir(cur) {
+		if cur == stop || filepath.Dir(cur) == cur {
+			resolved, err := filepath.EvalSymlinks(cur)
+			return err == nil && pathWithin(realHome, resolved)
+		}
+		info, err := os.Lstat(cur)
+		if err == nil {
+			if info.Mode()&os.ModeSymlink != 0 {
+				return false
+			}
+			resolved, err := filepath.EvalSymlinks(cur)
+			return err == nil && pathWithin(realHome, resolved)
+		}
+		if !errors.Is(err, fs.ErrNotExist) {
+			return false
+		}
+	}
+}
+
+// resolvedPathInHome follows every existing ancestor before comparing with
+// the real target home. queueRemove uses it so symlinked app/index/pin
+// directories cannot redirect a deletion outside the home.
+func resolvedPathInHome(home, path string) bool {
+	if !pathWithin(home, path) {
+		return false
+	}
+	realHome, err := filepath.EvalSymlinks(home)
+	if err != nil {
+		return false
+	}
+	clean := filepath.Clean(path)
+	realParent, err := filepath.EvalSymlinks(filepath.Dir(clean))
+	if err != nil {
+		return false
+	}
+	return pathWithin(realHome, filepath.Join(realParent, filepath.Base(clean)))
+}
+
 func (p *cleanupPlanner) buildScopes() {
 	sudoCommand := p.opts.SudoCommand
 
+	managerType := p.opts.ManagerType
+	if managerType != "" && managerType != cleanupAutodetect &&
+		!slices.Contains(cleanupSupportedManagers, managerType) {
+		p.fail("manager", "host", "", fmt.Sprintf("invalid container manager %q", managerType))
+		return
+	}
+
 	managerTypes := cleanupSupportedManagers
 	if !p.opts.AllManagers {
-		managerType := p.opts.ManagerType
 		if managerType == "" || managerType == cleanupAutodetect {
 			managerType = firstInstalledManager()
-		} else if !slices.Contains(cleanupSupportedManagers, managerType) {
-			p.fail("manager", "host", "", fmt.Sprintf("invalid container manager %q", managerType))
-			return
 		}
 		if managerType == "" {
 			p.scopes = append(p.scopes, &cleanupScope{manager: cleanupStateUnknown, root: p.opts.Root, state: "empty"})
@@ -413,8 +593,9 @@ func (p *cleanupPlanner) buildScope(managerType string, root bool, sudoCommand s
 			p.fail("manager", scopeLabel(managerType, root), container.Name, "failed to resolve frozen container image ID")
 			continue
 		}
-		scope.usedIDs[id] = struct{}{}
-		scope.allIDs[id] = struct{}{}
+		canonical := canonicalImageID(id)
+		scope.usedIDs[canonical] = struct{}{}
+		scope.allIDs[canonical] = struct{}{}
 	}
 
 	if p.opts.Images && scope.state == "ok" {
@@ -466,44 +647,74 @@ func (p *cleanupPlanner) liveIdentity(name, id string) bool {
 			}
 		}
 		if id != "" {
-			if _, ok := scope.allIDs[id]; ok {
-				return true
+			for known := range scope.allIDs {
+				if imageIDMatches(id, known) {
+					return true
+				}
 			}
 		}
 	}
 	return false
 }
 
-//nolint:gocognit // nested index traversal keeps ownership checks explicit
-func (p *cleanupPlanner) loadRawRecords() []rawExportRecord {
+//nolint:gocognit,funlen // nested index traversal keeps ownership checks explicit
+func (p *cleanupPlanner) loadRawRecords(report bool) ([]rawExportRecord, bool) {
+	unreadableNow := false
+	unreadable := func(path, reason string) {
+		unreadableNow = true
+		if !report {
+			return
+		}
+		p.indexUnreadable = true
+		p.fail("record", "host", path, reason)
+	}
+	badRecord := func(dir, path, reason string) {
+		// A bad record is never proof of absence, including during apply-time
+		// rechecks: guarded removals must fail closed if one appears.
+		unreadableNow = true
+		if !report {
+			return
+		}
+		p.unverifiableOwners[dir] = struct{}{}
+		p.fail("record", "host", path, "unverifiable export record; "+reason)
+	}
+
 	managerEntries, err := os.ReadDir(p.paths.indexRoot)
 	if err != nil {
-		return nil
+		if !errors.Is(err, fs.ErrNotExist) {
+			unreadable(p.paths.indexRoot, err.Error())
+		}
+		return nil, unreadableNow
 	}
 	var out []rawExportRecord
 	for _, managerEntry := range managerEntries {
 		if !managerEntry.IsDir() {
 			continue
 		}
-		modeEntries, err := os.ReadDir(filepath.Join(p.paths.indexRoot, managerEntry.Name()))
+		managerDir := filepath.Join(p.paths.indexRoot, managerEntry.Name())
+		modeEntries, err := os.ReadDir(managerDir)
 		if err != nil {
+			unreadable(managerDir, err.Error())
 			continue
 		}
 		for _, modeEntry := range modeEntries {
 			if !modeEntry.IsDir() {
 				continue
 			}
-			containerEntries, err := os.ReadDir(filepath.Join(p.paths.indexRoot, managerEntry.Name(), modeEntry.Name()))
+			modeDir := filepath.Join(managerDir, modeEntry.Name())
+			containerEntries, err := os.ReadDir(modeDir)
 			if err != nil {
+				unreadable(modeDir, err.Error())
 				continue
 			}
 			for _, containerEntry := range containerEntries {
 				if !containerEntry.IsDir() {
 					continue
 				}
-				dir := filepath.Join(p.paths.indexRoot, managerEntry.Name(), modeEntry.Name(), containerEntry.Name())
+				dir := filepath.Join(modeDir, containerEntry.Name())
 				files, err := os.ReadDir(dir)
 				if err != nil {
+					unreadable(dir, err.Error())
 					continue
 				}
 				for _, file := range files {
@@ -513,22 +724,27 @@ func (p *cleanupPlanner) loadRawRecords() []rawExportRecord {
 					recordFile := filepath.Join(dir, file.Name())
 					data, err := os.ReadFile(recordFile)
 					if err != nil {
+						badRecord(dir, recordFile, err.Error())
 						continue
 					}
 					var record ExportRecord
 					if err := json.Unmarshal(data, &record); err != nil {
+						badRecord(dir, recordFile, err.Error())
 						continue
 					}
 					if record.Path == "" || !record.Owner.valid() {
+						badRecord(dir, recordFile, "invalid owner or path")
 						continue
 					}
 					if record.Owner.Manager != managerEntry.Name() ||
 						record.Owner.Container != containerEntry.Name() ||
 						(record.Owner.Rootful && modeEntry.Name() != rootfulValue) ||
 						(!record.Owner.Rootful && modeEntry.Name() != rootlessValue) {
+						badRecord(dir, recordFile, "owner does not match index location")
 						continue
 					}
 					if p.paths.recordFile(record.Owner, record.Path) != recordFile {
+						badRecord(dir, recordFile, "non-canonical record filename")
 						continue
 					}
 					out = append(out, rawExportRecord{Record: record, RecordFile: recordFile})
@@ -536,19 +752,84 @@ func (p *cleanupPlanner) loadRawRecords() []rawExportRecord {
 			}
 		}
 	}
-	return out
+	return out, unreadableNow
+}
+
+func (p *cleanupPlanner) ownerIndexDir(owner ExportOwner) string {
+	mode := rootlessValue
+	if owner.Rootful {
+		mode = rootfulValue
+	}
+	return filepath.Join(p.paths.indexRoot, owner.Manager, mode, owner.Container)
+}
+
+func (p *cleanupPlanner) ownerVetoed(owner ExportOwner) bool {
+	if p.indexUnreadable {
+		return true
+	}
+	_, ok := p.unverifiableOwners[p.ownerIndexDir(owner)]
+	return ok
+}
+
+func (p *cleanupPlanner) realPathInHome(path string) bool {
+	return resolvedPathInHome(p.paths.home, path)
+}
+
+func (p *cleanupPlanner) scanRoots() []string {
+	roots := make([]string, 0, len(p.opts.ScanPaths))
+	for _, root := range p.opts.ScanPaths {
+		if abs, err := filepath.Abs(root); err == nil {
+			roots = append(roots, abs)
+		} else {
+			roots = append(roots, root)
+		}
+	}
+	return roots
+}
+
+// protectReferencedIcons keeps live icon references out of the artifact sweep
+// even when their filenames contain temp/backup substrings.
+func (p *cleanupPlanner) protectReferencedIcons() {
+	refs, bareNames := p.collectIconReferences(p.rawRecords)
+	for path := range refs {
+		p.protectedPaths[filepath.Clean(path)] = struct{}{}
+	}
+	if len(bareNames) == 0 {
+		return
+	}
+	env := userenv.LoadTargetUserEnvironment(p.ctx)
+	if env == nil {
+		return
+	}
+	for _, dir := range []string{
+		filepath.Join(env.DesktopEntryBaseDir, "otter", "icons", "distros"),
+		filepath.Join(env.DesktopEntryBaseDir, "otter", "icons", "apps"),
+	} {
+		_ = filepath.WalkDir(dir, func(path string, entry os.DirEntry, err error) error {
+			if err != nil || entry.IsDir() {
+				return nil //nolint:nilerr // best-effort protection scan
+			}
+			if _, ok := bareNames[entry.Name()]; ok {
+				p.protectedPaths[filepath.Clean(path)] = struct{}{}
+			}
+			return nil
+		})
+	}
 }
 
 //nolint:gocognit,gocyclo,cyclop,funlen // planning keeps each ownership decision visible instead of hidden in helpers
 func (p *cleanupPlanner) planExports() {
-	rawRecords := p.loadRawRecords()
 	byPath := make(map[string][]rawExportRecord)
-	for _, raw := range rawRecords {
-		byPath[filepath.Clean(raw.Record.Path)] = append(byPath[filepath.Clean(raw.Record.Path)], raw)
+	for _, raw := range p.rawRecords {
+		clean := filepath.Clean(raw.Record.Path)
+		byPath[clean] = append(byPath[clean], raw)
 	}
 
 	referenced := make(map[string]struct{})
 	for path, records := range byPath {
+		// Any path with an index record must survive the temp/artifact sweep,
+		// even if that record is stale, vetoed or under manual review.
+		p.protectedPaths[path] = struct{}{}
 		if len(records) > 1 {
 			owners := make(map[string]struct{})
 			for _, raw := range records {
@@ -562,9 +843,13 @@ func (p *cleanupPlanner) planExports() {
 			}
 		}
 
-		metadata, err := readExportMetadata(path)
+		metadata, metaErr := readExportMetadata(path)
 		for _, raw := range records {
 			owner := raw.Record.Owner
+			if p.ownerVetoed(owner) {
+				p.note("export", owner.label(), path, "unverifiable index record; deletion vetoed")
+				continue
+			}
 			if owner.Rootful && !p.opts.Root {
 				p.note("export", owner.label(), path, "rootful record outside scope")
 				continue
@@ -577,74 +862,164 @@ func (p *cleanupPlanner) planExports() {
 				p.note("export", owner.label(), path, "owner manager unavailable; deletion vetoed")
 				continue
 			}
-			if err != nil || !metadataMatchesRecord(metadata, raw.Record) {
+			if metaErr != nil {
 				p.manualReview[path] = struct{}{}
-				if err == nil {
+				if errors.Is(metaErr, fs.ErrNotExist) || errors.Is(metaErr, errExportNotManaged) {
 					p.note("export", owner.label(), path, "marker/record mismatch; manual review required")
+					p.queueRemove("record", owner.label(), raw.RecordFile, "stale export record", raw.RecordFile)
+				} else {
+					p.fail("export", owner.label(), path, metaErr.Error())
 				}
-				if err != nil && !errors.Is(err, fs.ErrNotExist) && !errors.Is(err, errExportNotManaged) {
-					p.fail("export", owner.label(), path, err.Error())
-				}
+				continue
+			}
+			if !metadataMatchesRecord(metadata, raw.Record) {
+				p.manualReview[path] = struct{}{}
+				p.note("export", owner.label(), path, "marker/record mismatch; manual review required")
 				p.queueRemove("record", owner.label(), raw.RecordFile, "stale export record", raw.RecordFile)
 				continue
 			}
-			if !p.paths.underHome(path) {
+			if !p.paths.underHome(path) || !p.realPathInHome(path) {
 				p.note("export", owner.label(), path, "export outside target home")
 				continue
 			}
 			referenced[path] = struct{}{}
+			p.protectedPaths[filepath.Clean(path)] = struct{}{}
 		}
 	}
 
-	roots := append([]string{p.paths.binDir, p.paths.appsDir}, p.opts.ScanPaths...)
+	roots := append([]string{p.paths.binDir, p.paths.appsDir}, p.scanRoots()...)
 	candidates, err := collectExportCandidates(roots)
 	if err != nil {
 		p.fail("export", "host", "", err.Error())
 		return
 	}
 	for _, candidate := range candidates {
-		if _, ok := p.manualReview[filepath.Clean(candidate)]; ok {
+		clean := filepath.Clean(candidate)
+		// Protect only report-only dispositions. Unmarked temp/backup files
+		// must stay eligible for the artifact sweep below.
+		if _, ok := p.manualReview[clean]; ok {
+			p.protectedPaths[clean] = struct{}{}
 			continue
 		}
-		if !p.paths.underHome(candidate) {
+		if _, ok := referenced[clean]; ok {
+			p.protectedPaths[clean] = struct{}{}
+			continue
+		}
+		if !p.paths.underHome(candidate) || !p.realPathInHome(candidate) {
 			p.note("export", "host", candidate, "candidate outside target home")
-			continue
-		}
-		if _, ok := referenced[filepath.Clean(candidate)]; ok {
+			p.protectedPaths[clean] = struct{}{}
 			continue
 		}
 		metadata, err := readExportMetadata(candidate)
 		if err != nil {
 			continue
 		}
-		if metadata.Owner.Rootful && !p.opts.Root {
-			p.note("export", metadata.Owner.label(), candidate, "rootful export outside scope")
+		owner := metadata.Owner
+		source := metadata.Source
+		if p.ownerVetoed(owner) {
+			p.note("export", owner.label(), candidate, "unverifiable index record; deletion vetoed")
+			p.protectedPaths[clean] = struct{}{}
 			continue
 		}
-		if !p.scopeAllows(metadata.Owner.Manager, metadata.Owner.Rootful) {
-			p.note("export", metadata.Owner.label(), candidate, "owner manager outside scope")
+		if owner.Rootful && !p.opts.Root {
+			p.note("export", owner.label(), candidate, "rootful export outside scope")
+			p.protectedPaths[clean] = struct{}{}
 			continue
 		}
-		if !p.hasQueryableScope(metadata.Owner.Manager, metadata.Owner.Rootful) {
-			p.note("export", metadata.Owner.label(), candidate, "owner manager unavailable; deletion vetoed")
+		if !p.scopeAllows(owner.Manager, owner.Rootful) {
+			p.note("export", owner.label(), candidate, "owner manager outside scope")
+			p.protectedPaths[clean] = struct{}{}
+			continue
+		}
+		if !p.hasQueryableScope(owner.Manager, owner.Rootful) {
+			p.note("export", owner.label(), candidate, "owner manager unavailable; deletion vetoed")
+			p.protectedPaths[clean] = struct{}{}
 			continue
 		}
 		info, err := os.Lstat(candidate)
 		if err != nil || !info.Mode().IsRegular() {
 			continue
 		}
-		p.queueRemove("export", metadata.Owner.label(), candidate, "orphaned otter export", candidate)
+		p.queueRemove("export", owner.label(), candidate, "orphaned otter export", candidate,
+			func() error { return p.recheckExportRemoval(candidate, owner, source) })
 	}
 
-	for _, root := range []string{p.paths.binDir, p.paths.appsDir, p.paths.iconsDir, p.paths.indexRoot} {
-		p.queueTemps(root)
+	defaultRoots := []string{p.paths.binDir, p.paths.appsDir, p.paths.iconsDir, p.paths.indexRoot}
+	for _, root := range defaultRoots {
+		p.queueTemps(root, referenced)
+	}
+	for _, root := range p.scanRoots() {
+		p.queueTemps(root, referenced)
 	}
 }
 
-func (p *cleanupPlanner) queueTemps(root string) {
+func (p *cleanupPlanner) recheckExportRemoval(path string, owner ExportOwner, source string) error {
+	if !p.realPathInHome(path) {
+		return errors.New("export resolves outside target home before removal")
+	}
+	metadata, err := readExportMetadata(path)
+	if err != nil {
+		if errors.Is(err, fs.ErrNotExist) {
+			return nil
+		}
+		return fmt.Errorf("export metadata changed before removal: %w", err)
+	}
+	if !sameExportOwner(metadata.Owner, owner) || metadata.Source != source {
+		return errors.New("export ownership changed before removal")
+	}
+	records, unreadable := p.loadRawRecords(false)
+	if unreadable {
+		return errors.New("export index became unreadable before removal")
+	}
+	for _, raw := range records {
+		if filepath.Clean(raw.Record.Path) != filepath.Clean(path) {
+			continue
+		}
+		if sameExportOwner(raw.Record.Owner, owner) {
+			return errors.New("export became referenced by a valid record")
+		}
+	}
+	return nil
+}
+
+func (p *cleanupPlanner) ownedByTarget(info os.FileInfo) bool {
+	stat, ok := info.Sys().(*syscall.Stat_t)
+	if !ok {
+		return true
+	}
+	env := userenv.LoadTargetUserEnvironment(p.ctx)
+	if env == nil || env.UserID == "" {
+		return int(stat.Uid) == os.Geteuid()
+	}
+	uid, err := strconv.Atoi(env.UserID)
+	if err != nil {
+		return int(stat.Uid) == os.Geteuid()
+	}
+	return int(stat.Uid) == uid
+}
+
+//nolint:gocognit,gocyclo,cyclop // ownership and containment checks stay explicit in the walk callback
+func (p *cleanupPlanner) queueTemps(root string, referenced map[string]struct{}) {
+	if !managedDirInHome(p.paths.home, root) {
+		p.note("artifact", "host", root, "artifact root outside target home; report only")
+		return
+	}
 	err := filepath.WalkDir(root, func(path string, entry os.DirEntry, err error) error {
-		if err != nil || entry.IsDir() || entry.Type()&os.ModeSymlink != 0 {
-			return nil //nolint:nilerr // best-effort scan: skip unreadable entries
+		if err != nil {
+			return err
+		}
+		if entry.IsDir() || entry.Type()&os.ModeSymlink != 0 {
+			return nil
+		}
+		clean := filepath.Clean(path)
+		if _, ok := referenced[clean]; ok {
+			return nil
+		}
+		if _, ok := p.protectedPaths[clean]; ok {
+			return nil
+		}
+		if _, ok := p.manualReview[clean]; ok {
+			return nil
 		}
 		if !p.opts.Root && strings.HasPrefix(entry.Name(), exportRootfulPrefix) {
 			return nil
@@ -653,10 +1028,50 @@ func (p *cleanupPlanner) queueTemps(root string) {
 			return nil
 		}
 		info, err := entry.Info()
-		if err != nil || !info.Mode().IsRegular() {
-			return nil //nolint:nilerr // best-effort scan: skip unreadable entries
+		if err != nil {
+			return fmt.Errorf("inspect artifact %s: %w", path, err)
 		}
-		p.queueRemove("artifact", "host", path, "leftover otter temp/backup artifact", path)
+		if !info.Mode().IsRegular() {
+			return nil
+		}
+		if !p.paths.underHome(path) || !p.realPathInHome(path) {
+			p.note("artifact", "host", path, "candidate outside target home")
+			return nil
+		}
+		if !p.opts.Root && !p.ownedByTarget(info) {
+			p.note("artifact", "host", path, "artifact owned by another user; manual review required")
+			return nil
+		}
+		// Snapshot plan-time markers so an already-marked leftover in an
+		// index/icon root stays sweepable, while a file that becomes or
+		// changes into an export between plan and apply fails closed.
+		var planned *exportMetadata
+		if metadata, err := readExportMetadata(path); err == nil && metadata.Kind != "" {
+			snapshot := *metadata
+			planned = &snapshot
+		}
+		p.queueRemove("artifact", "host", path, "leftover otter temp/backup artifact", path, func() error {
+			current, err := readExportMetadata(path)
+			if errors.Is(err, fs.ErrNotExist) || errors.Is(err, errExportNotManaged) {
+				return nil
+			}
+			if err != nil {
+				return fmt.Errorf("artifact metadata changed before removal: %w", err)
+			}
+			if current.Kind == "" {
+				return nil
+			}
+			if planned == nil {
+				return errors.New("artifact became an otter export before removal")
+			}
+			if current.Kind != planned.Kind ||
+				!sameExportOwner(current.Owner, planned.Owner) ||
+				current.Source != planned.Source ||
+				current.Icon != planned.Icon {
+				return errors.New("artifact metadata changed before removal")
+			}
+			return nil
+		})
 		return nil
 	})
 	if err != nil && !errors.Is(err, fs.ErrNotExist) {
@@ -664,7 +1079,7 @@ func (p *cleanupPlanner) queueTemps(root string) {
 	}
 }
 
-func (p *cleanupPlanner) queueRemove(category, scope, path, reason, target string) {
+func (p *cleanupPlanner) queueRemove(category, scope, path, reason, target string, guards ...func() error) {
 	info, err := os.Lstat(target)
 	if err != nil {
 		if !errors.Is(err, fs.ErrNotExist) {
@@ -676,13 +1091,21 @@ func (p *cleanupPlanner) queueRemove(category, scope, path, reason, target strin
 		p.note(category, scope, path, "skipped non-regular path")
 		return
 	}
+	if !p.realPathInHome(target) {
+		p.note(category, scope, path, "candidate outside target home after symlink resolution")
+		return
+	}
+	var guard func() error
+	if len(guards) > 0 {
+		guard = guards[0]
+	}
 	p.addAction(CleanupItem{
 		Category: category,
 		Scope:    scope,
 		Path:     path,
 		Reason:   reason,
 		Action:   cleanupActionRemove,
-	}, info, nil, "", nil)
+	}, info, nil, "", guard)
 }
 
 //nolint:gocognit // launcher checks are deliberately explicit and fail closed
@@ -722,7 +1145,7 @@ func (p *cleanupPlanner) planPins() {
 			p.note("pin", "host", path, "legacy unmarked launcher reported only")
 			continue
 		}
-		marker, hasMarker := values["X-Otter-Pin"]
+		marker, hasMarker := values[cleanupPinMarkerKey]
 		if !hasMarker {
 			p.note("pin", "host", path, "unmarked launcher reported only")
 			continue
@@ -752,8 +1175,59 @@ func (p *cleanupPlanner) planPins() {
 		if err != nil || !info.Mode().IsRegular() {
 			continue
 		}
-		p.queueRemove("pin", scopeLabel(manager, root), path, "orphaned generated desktop launcher", path)
+		expected := *payload
+		p.queueRemove("pin", scopeLabel(manager, root), path, "orphaned generated desktop launcher", path,
+			func() error { return p.recheckPinRemoval(path, manager, container, root, expected) })
 	}
+}
+
+func (p *cleanupPlanner) recheckPinRemoval(path, manager, container string, root bool, expected cleanupPinPayload) error {
+	if !p.realPathInHome(path) {
+		return errors.New("pin resolves outside target home before removal")
+	}
+	values, err := readDesktopEntrySection(path, "Desktop Entry")
+	if err != nil {
+		return fmt.Errorf("pin metadata changed before removal: %w", err)
+	}
+	marker, ok := values[cleanupPinMarkerKey]
+	if !ok {
+		return errors.New("pin marker vanished before removal")
+	}
+	current, err := parsePinMarker(marker)
+	if err != nil {
+		return fmt.Errorf("pin marker changed before removal: %w", err)
+	}
+	if current.Container != expected.Container || current.Manager != expected.Manager ||
+		current.Rootful != expected.Rootful || current.ID != expected.ID {
+		return errors.New("pin identity changed before removal")
+	}
+	if p.liveIdentityNow(manager, root, container, current.ID) {
+		return errors.New("pin identity became live before removal")
+	}
+	return nil
+}
+
+func (p *cleanupPlanner) liveIdentityNow(manager string, root bool, name, id string) bool {
+	for _, scope := range p.scopes {
+		if scope.manager != manager || scope.root != root || scope.state != "ok" || scope.cm == nil {
+			continue
+		}
+		containers, err := scope.cm.ListContainers(p.ctx)
+		if err != nil {
+			return true
+		}
+		for _, container := range containers {
+			if container.Name == name {
+				return true
+			}
+			currentID, ok := scope.cm.ContainerImageID(p.ctx, container.Name)
+			if !ok || imageIDMatches(currentID, id) {
+				return true
+			}
+		}
+		return false
+	}
+	return true
 }
 
 func parseCanonicalPinName(name string) (string, string, bool, bool) {
@@ -849,20 +1323,91 @@ func (p *cleanupPlanner) planIcons() {
 	if env == nil || env.Home == "" {
 		return
 	}
+	if p.indexUnreadable || len(p.unverifiableOwners) > 0 {
+		p.note("icon", "host", "", "unverifiable index records; icon cleanup vetoed")
+		return
+	}
+	referenced, bareNames := p.collectIconReferences(p.rawRecords)
+
+	managedIcons := []string{
+		filepath.Join(env.DesktopEntryBaseDir, "otter", "icons", "distros"),
+		filepath.Join(env.DesktopEntryBaseDir, "otter", "icons", "apps"),
+	}
+	for _, dir := range managedIcons {
+		if !managedDirInHome(p.paths.home, dir) {
+			p.note("icon", "host", dir, "managed icon root resolves outside target home")
+			continue
+		}
+		err := filepath.WalkDir(dir, func(path string, entry os.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+			if entry.IsDir() || entry.Type()&os.ModeSymlink != 0 {
+				return nil
+			}
+			if !p.opts.Root && strings.HasPrefix(entry.Name(), exportRootfulPrefix) {
+				return nil
+			}
+			if _, ok := referenced[filepath.Clean(path)]; ok {
+				return nil
+			}
+			base := filepath.Base(path)
+			if _, ok := bareNames[base]; ok {
+				return nil
+			}
+			info, err := entry.Info()
+			if err != nil {
+				return fmt.Errorf("inspect icon %s: %w", path, err)
+			}
+			if !info.Mode().IsRegular() {
+				return nil
+			}
+			if !p.opts.Root && !p.ownedByTarget(info) {
+				p.note("icon", "host", path, "icon owned by another user; manual review required")
+				return nil
+			}
+			p.queueRemove("icon", "host", path, "unreferenced managed icon", path, func() error {
+				return p.recheckIconRemoval(path, base)
+			})
+			return nil
+		})
+		if err != nil && !errors.Is(err, fs.ErrNotExist) {
+			p.fail("icon", "host", dir, err.Error())
+		}
+	}
+}
+
+//nolint:gocognit // icon reference gathering stays explicit across desktop roots
+func (p *cleanupPlanner) collectIconReferences(records []rawExportRecord) (map[string]struct{}, map[string]struct{}) {
 	referenced := make(map[string]struct{})
-	for _, raw := range p.loadRawRecords() {
+	bareNames := make(map[string]struct{})
+	for _, raw := range records {
 		if raw.Record.Icon != "" {
 			referenced[filepath.Clean(raw.Record.Icon)] = struct{}{}
 		}
 	}
+	roots := append([]string{p.paths.binDir, p.paths.appsDir}, p.scanRoots()...)
+	candidates, err := collectExportCandidates(roots)
+	if err == nil {
+		for _, candidate := range candidates {
+			metadata, err := readExportMetadata(candidate)
+			if err != nil || metadata.Icon == "" {
+				continue
+			}
+			referenced[filepath.Clean(metadata.Icon)] = struct{}{}
+		}
+	}
 
+	env := userenv.LoadTargetUserEnvironment(p.ctx)
+	if env == nil {
+		return referenced, bareNames
+	}
 	iconDirs := []string{
 		filepath.Join(env.DesktopEntryBaseDir, "applications"),
 		filepath.Join(env.Home, ".local", "share", "applications"),
 		"/usr/local/share/applications",
 		"/usr/share/applications",
 	}
-	bareNames := make(map[string]struct{})
 	for _, dir := range iconDirs {
 		entries, err := os.ReadDir(dir)
 		if err != nil {
@@ -883,36 +1428,25 @@ func (p *cleanupPlanner) planIcons() {
 			}
 		}
 	}
+	return referenced, bareNames
+}
 
-	managedIcons := []string{
-		filepath.Join(env.DesktopEntryBaseDir, "otter", "icons", "distros"),
-		filepath.Join(env.DesktopEntryBaseDir, "otter", "icons", "apps"),
+func (p *cleanupPlanner) recheckIconRemoval(path, base string) error {
+	if !p.realPathInHome(path) {
+		return errors.New("icon resolves outside target home before removal")
 	}
-	for _, dir := range managedIcons {
-		err := filepath.WalkDir(dir, func(path string, entry os.DirEntry, err error) error {
-			if err != nil || entry.IsDir() || entry.Type()&os.ModeSymlink != 0 {
-				return nil //nolint:nilerr // best-effort scan: skip unreadable entries
-			}
-			if !p.opts.Root && strings.HasPrefix(entry.Name(), exportRootfulPrefix) {
-				return nil
-			}
-			if _, ok := referenced[filepath.Clean(path)]; ok {
-				return nil
-			}
-			if _, ok := bareNames[filepath.Base(path)]; ok {
-				return nil
-			}
-			info, err := entry.Info()
-			if err != nil || !info.Mode().IsRegular() {
-				return nil //nolint:nilerr // best-effort scan: skip unreadable entries
-			}
-			p.queueRemove("icon", "host", path, "unreferenced managed icon", path)
-			return nil
-		})
-		if err != nil && !errors.Is(err, fs.ErrNotExist) {
-			p.fail("icon", "host", dir, err.Error())
-		}
+	records, unreadable := p.loadRawRecords(false)
+	if unreadable {
+		return errors.New("export index became unreadable before icon removal")
 	}
+	referenced, bareNames := p.collectIconReferences(records)
+	if _, ok := referenced[filepath.Clean(path)]; ok {
+		return errors.New("icon became referenced before removal")
+	}
+	if _, ok := bareNames[base]; ok {
+		return errors.New("icon became referenced by name before removal")
+	}
+	return nil
 }
 
 func (p *cleanupPlanner) planImages() {
@@ -926,6 +1460,10 @@ func (p *cleanupPlanner) planImages() {
 	}
 
 	catalogRefs := cleanupCatalogRefs(props)
+	if len(catalogRefs) == 0 {
+		p.fail("image", "registry", "", "catalog contains no usable image references")
+		return
+	}
 	for _, scope := range p.scopes {
 		if scope.state != "ok" || scope.cm == nil {
 			continue
@@ -933,7 +1471,7 @@ func (p *cleanupPlanner) planImages() {
 		protectedIDs := make(map[string]struct{})
 		for ref := range catalogRefs {
 			if id, ok := scope.cm.ImageID(p.ctx, ref); ok && id != "" {
-				protectedIDs[id] = struct{}{}
+				protectedIDs[canonicalImageID(id)] = struct{}{}
 			}
 		}
 		for _, image := range scope.images {
@@ -956,17 +1494,38 @@ func (p *cleanupPlanner) hasScopedImages() bool {
 
 func cleanupCatalogRefs(props *registry.ImagesProperties) map[string]struct{} {
 	refs := make(map[string]struct{})
-	for _, entry := range props.Images {
-		if entry.OfficialImage != "" {
-			refs[entry.OfficialImage] = struct{}{}
-		} else if entry.Enabled {
-			refs[cleanupOfficialRoot+entry.Name+":latest"] = struct{}{}
-		}
-		if entry.FallbackVendorImage != "" {
-			refs[entry.FallbackVendorImage] = struct{}{}
+	if props == nil {
+		return refs
+	}
+	add := func(ref string) {
+		if ref != "" {
+			refs[cleanupNormalizeImageRef(ref)] = struct{}{}
 		}
 	}
+	for _, entry := range props.Images {
+		add(entry.OfficialImage)
+		if entry.OfficialImage == "" && entry.Enabled {
+			add(cleanupOfficialRoot + entry.Name + ":latest")
+		}
+		add(entry.FallbackVendorImage)
+	}
 	return refs
+}
+
+// cleanupNormalizeImageRef makes an untagged catalog ref equivalent to its
+// implicit :latest form so exact-tag protection cannot be bypassed.
+func cleanupNormalizeImageRef(ref string) string {
+	if ref == "" || strings.Contains(ref, "@") || strings.HasPrefix(ref, "<none>") {
+		return ref
+	}
+	name := ref
+	if slash := strings.LastIndex(name, "/"); slash >= 0 {
+		name = name[slash+1:]
+	}
+	if !strings.Contains(name, ":") {
+		return ref + ":latest"
+	}
+	return ref
 }
 
 func (p *cleanupPlanner) planImageCandidate(
@@ -978,10 +1537,10 @@ func (p *cleanupPlanner) planImageCandidate(
 		return
 	}
 	label := scopeLabel(scope.manager, scope.root)
-	if _, ok := protectedIDs[image.ID]; ok {
+	if imageIDIn(protectedIDs, image.ID) {
 		return
 	}
-	if _, ok := scope.usedIDs[image.ID]; ok {
+	if imageIDIn(scope.usedIDs, image.ID) {
 		return
 	}
 	info, ok := scope.cm.InspectImage(p.ctx, image.ID)
@@ -994,16 +1553,14 @@ func (p *cleanupPlanner) planImageCandidate(
 	}
 
 	catalogTagged, unverifiedTag, multiTag := cleanupTagDisposition(image.RepoTags, catalogRefs)
-	// An exact catalog tag protects an image independently of ID resolution.
-	if catalogTagged {
-		return
-	}
 	if multiTag {
 		p.note("image", label, image.ID, "image has multiple tags; manual review required")
-		return
 	}
 	if unverifiedTag {
 		p.note("image", label, image.ID, "otter-derived image has unverified tags")
+	}
+	// An exact catalog tag protects an image independently of ID resolution.
+	if catalogTagged || multiTag || unverifiedTag {
 		return
 	}
 	p.addAction(CleanupItem{
@@ -1026,10 +1583,11 @@ func cleanupTagDisposition(tags []string, catalogRefs map[string]struct{}) (bool
 			continue
 		}
 		meaningful++
-		if _, ok := catalogRefs[tag]; ok {
+		normalized := cleanupNormalizeImageRef(tag)
+		if _, ok := catalogRefs[normalized]; ok {
 			catalog = true
 		}
-		if !strings.HasPrefix(tag, cleanupOfficialRoot) {
+		if !strings.HasPrefix(normalized, cleanupOfficialRoot) {
 			unverified = true
 		}
 	}
@@ -1039,6 +1597,8 @@ func cleanupTagDisposition(tags []string, catalogRefs map[string]struct{}) (bool
 // recheckImageRemoval revalidates provenance, live usage and exact catalog
 // protection inside the apply lock. Planning can be slow enough for container
 // state to change between the plan and the deletion.
+//
+//nolint:gocognit // all apply-time image vetoes remain visible in one guard
 func (p *cleanupPlanner) recheckImageRemoval(scope *cleanupScope, catalogRefs map[string]struct{}, imageID string) error {
 	if scope.cm == nil {
 		return errors.New("image owner manager unavailable")
@@ -1060,13 +1620,13 @@ func (p *cleanupPlanner) recheckImageRemoval(scope *cleanupScope, catalogRefs ma
 		if !ok {
 			return fmt.Errorf("failed to recheck container image for %s", container.Name)
 		}
-		if id == imageID {
+		if imageIDMatches(id, imageID) {
 			return errors.New("image became used by a container")
 		}
 	}
 
 	for ref := range catalogRefs {
-		if id, ok := scope.cm.ImageID(p.ctx, ref); ok && id == imageID {
+		if id, ok := scope.cm.ImageID(p.ctx, ref); ok && imageIDMatches(id, imageID) {
 			return errors.New("image became an exact catalog ref")
 		}
 	}
@@ -1075,12 +1635,18 @@ func (p *cleanupPlanner) recheckImageRemoval(scope *cleanupScope, catalogRefs ma
 		return fmt.Errorf("recheck image list: %w", err)
 	}
 	for _, image := range images {
-		if image.ID != imageID {
+		if !imageIDMatches(image.ID, imageID) {
 			continue
 		}
-		catalog, _, _ := cleanupTagDisposition(image.RepoTags, catalogRefs)
+		catalog, unverified, multiTag := cleanupTagDisposition(image.RepoTags, catalogRefs)
 		if catalog {
 			return errors.New("image became tagged as an exact catalog ref")
+		}
+		if multiTag {
+			return errors.New("image gained multiple tags before removal")
+		}
+		if unverified {
+			return errors.New("image gained unverified tags before removal")
 		}
 	}
 	return nil

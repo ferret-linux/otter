@@ -162,7 +162,7 @@ func writeFileAtomic(path string, data []byte, mode os.FileMode) error {
 	if err := os.MkdirAll(filepath.Dir(path), 0o750); err != nil {
 		return fmt.Errorf("create export directory: %w", err)
 	}
-	tmp, err := os.CreateTemp(filepath.Dir(path), ".otter.tmp.*")
+	tmp, err := os.CreateTemp(filepath.Dir(path), ".otter.write.*")
 	if err != nil {
 		return fmt.Errorf("create temporary export file: %w", err)
 	}

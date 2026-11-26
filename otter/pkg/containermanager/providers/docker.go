@@ -102,7 +102,7 @@ func (d *Docker) ListContainers(ctx context.Context) ([]containermanager.Contain
 }
 
 func (d *Docker) ListImages(ctx context.Context) ([]containermanager.ImageSummary, error) {
-	out, err := d.run(ctx, []string{"image", "ls", "--format", "json"}, runOptions{})
+	out, err := d.run(ctx, []string{"image", "ls", "--no-trunc", "--format", "json"}, runOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -797,12 +797,13 @@ func parseLabels(labels string) map[string]string {
 
 // engineImage is the common subset of `image ls --format json` output across
 // podman, docker and nerdctl. Engines differ in how they spell the ID, expose
-// tags (RepoTags vs Repository/Tag) and attach labels (top-level Labels vs
-// Config.Labels), so all variants are accepted here.
+// tags (RepoTags, Names or Repository/Tag) and attach labels (top-level Labels
+// vs Config.Labels), so all variants are accepted here.
 type engineImage struct {
 	ID         string          `json:"ID"`
 	IDAlt      string          `json:"Id"`
 	RepoTags   []string        `json:"RepoTags"`
+	Names      json.RawMessage `json:"Names"`
 	Repository string          `json:"Repository"`
 	Tag        string          `json:"Tag"`
 	Labels     json.RawMessage `json:"Labels"`
@@ -812,8 +813,10 @@ type engineImage struct {
 }
 
 // parseImageList accepts both a JSON array of objects and newline-delimited
-// JSON objects. Malformed entries are skipped; an entirely unusable output is
-// an error so callers never mistake a failed engine query for an empty list.
+// JSON objects. Any malformed or unusable row is a hard error: a partial image
+// list must never be treated as complete for cleanup's tag protections. Rows
+// that describe the same image are merged so one-row-per-tag engines cannot
+// bypass the multiple-tag guard.
 func parseImageList(output string) ([]containermanager.ImageSummary, error) {
 	output = strings.TrimSpace(output)
 	if output == "" {
@@ -821,39 +824,95 @@ func parseImageList(output string) ([]containermanager.ImageSummary, error) {
 	}
 
 	var entries []engineImage
-	rawCount := 0
 	if strings.HasPrefix(output, "[") {
 		if err := json.Unmarshal([]byte(output), &entries); err != nil {
 			return nil, fmt.Errorf("failed to parse image list JSON: %w", err)
 		}
-		rawCount = len(entries)
 	} else {
 		for line := range strings.SplitSeq(output, "\n") {
 			line = strings.TrimSpace(line)
 			if line == "" {
 				continue
 			}
-			rawCount++
 			var entry engineImage
 			if err := json.Unmarshal([]byte(line), &entry); err != nil {
-				continue
+				return nil, fmt.Errorf("failed to parse image list JSON line: %w", err)
 			}
 			entries = append(entries, entry)
 		}
 	}
 
+	byID := make(map[string]int)
 	var images []containermanager.ImageSummary
 	for _, entry := range entries {
 		image, ok := normalizeEngineImage(entry)
 		if !ok {
+			return nil, errors.New("failed to parse image list JSON: no usable image entries")
+		}
+		key := imageListID(image.ID)
+		if index, exists := byID[key]; exists {
+			images[index].RepoTags = mergeImageTags(images[index].RepoTags, image.RepoTags)
+			images[index].Labels = mergeImageLabels(images[index].Labels, image.Labels)
 			continue
 		}
+		byID[key] = len(images)
 		images = append(images, image)
 	}
-	if rawCount > 0 && len(images) == 0 {
-		return nil, errors.New("failed to parse image list JSON: no usable image entries")
-	}
 	return images, nil
+}
+
+func imageListID(id string) string {
+	id = strings.TrimSpace(id)
+	id = strings.TrimPrefix(id, "sha256:")
+	return strings.ToLower(id)
+}
+
+func decodeImageNames(raw json.RawMessage) []string {
+	if len(raw) == 0 || string(raw) == "null" {
+		return nil
+	}
+	var names []string
+	if err := json.Unmarshal(raw, &names); err == nil {
+		return names
+	}
+	var name string
+	if err := json.Unmarshal(raw, &name); err == nil && name != "" {
+		return []string{name}
+	}
+	return nil
+}
+
+func mergeImageTags(existing, incoming []string) []string {
+	seen := make(map[string]struct{}, len(existing))
+	for _, tag := range existing {
+		if tag != "" {
+			seen[tag] = struct{}{}
+		}
+	}
+	for _, tag := range incoming {
+		if tag == "" {
+			continue
+		}
+		if _, ok := seen[tag]; ok {
+			continue
+		}
+		seen[tag] = struct{}{}
+		existing = append(existing, tag)
+	}
+	return existing
+}
+
+func mergeImageLabels(existing, incoming map[string]string) map[string]string {
+	if len(incoming) == 0 {
+		return existing
+	}
+	if existing == nil {
+		existing = make(map[string]string, len(incoming))
+	}
+	for key, value := range incoming {
+		existing[key] = value
+	}
+	return existing
 }
 
 func normalizeEngineImage(entry engineImage) (containermanager.ImageSummary, bool) {
@@ -865,17 +924,17 @@ func normalizeEngineImage(entry engineImage) (containermanager.ImageSummary, boo
 		return containermanager.ImageSummary{}, false
 	}
 
-	tags := entry.RepoTags
-	if len(tags) == 0 && entry.Repository == "" && strings.ContainsAny(entry.Tag, "/:") {
+	tags := mergeImageTags(nil, entry.RepoTags)
+	tags = mergeImageTags(tags, decodeImageNames(entry.Names))
+	if entry.Repository != "" {
+		if entry.Tag == "" || entry.Tag == "<none>" {
+			tags = mergeImageTags(tags, []string{entry.Repository})
+		} else {
+			tags = mergeImageTags(tags, []string{entry.Repository + ":" + entry.Tag})
+		}
+	} else if len(tags) == 0 && strings.ContainsAny(entry.Tag, "/:") {
 		// Some engines emit a complete ref in Tag with no Repository field.
 		tags = []string{entry.Tag}
-	}
-	if len(tags) == 0 && entry.Repository != "" {
-		if entry.Tag == "" || entry.Tag == "<none>" {
-			tags = []string{entry.Repository}
-		} else {
-			tags = []string{entry.Repository + ":" + entry.Tag}
-		}
 	}
 
 	return containermanager.ImageSummary{
@@ -886,18 +945,27 @@ func normalizeEngineImage(entry engineImage) (containermanager.ImageSummary, boo
 }
 
 func engineImageLabels(entry engineImage) map[string]string {
+	var labels map[string]string
 	for _, raw := range []json.RawMessage{entry.Labels, entry.Config.Labels} {
-		if len(raw) == 0 || string(raw) == "null" {
-			continue
-		}
-		var labels map[string]string
-		if err := json.Unmarshal(raw, &labels); err == nil {
-			return labels
-		}
-		var joined string
-		if err := json.Unmarshal(raw, &joined); err == nil {
-			return parseLabels(joined)
-		}
+		labels = mergeImageLabels(labels, decodeImageLabelSet(raw))
+	}
+	if len(labels) == 0 {
+		return nil
+	}
+	return labels
+}
+
+func decodeImageLabelSet(raw json.RawMessage) map[string]string {
+	if len(raw) == 0 || string(raw) == "null" {
+		return nil
+	}
+	var labels map[string]string
+	if err := json.Unmarshal(raw, &labels); err == nil {
+		return labels
+	}
+	var joined string
+	if err := json.Unmarshal(raw, &joined); err == nil {
+		return parseLabels(joined)
 	}
 	return nil
 }

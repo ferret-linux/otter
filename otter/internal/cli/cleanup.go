@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"os/exec"
 
 	"github.com/urfave/cli/v3"
 
@@ -50,6 +49,10 @@ func newCleanupCommand(_ *config.Values) *cli.Command {
 }
 
 func cleanupAction(ctx context.Context, cmd *cli.Command) error {
+	if cmd.Args().Len() > 0 {
+		return fmt.Errorf("unexpected argument %q", cmd.Args().First())
+	}
+
 	opts := commands.CleanupOptions{
 		Apply:       !cmd.Bool("no-apply"),
 		JSON:        cmd.Bool(cleanupFlagJSON),
@@ -74,7 +77,7 @@ func cleanupAction(ctx context.Context, cmd *cli.Command) error {
 			ctx = withEscalator(ctx, resolved)
 			opts.SudoCommand = resolved
 		} else {
-			resolved, err := resolveEscalatorForPlan(opts.SudoCommand)
+			resolved, err := rootcheck.Resolve(opts.SudoCommand)
 			if err != nil {
 				return fmt.Errorf("cannot plan rootful cleanup: %w", err)
 			}
@@ -93,18 +96,4 @@ func cleanupAction(ctx context.Context, cmd *cli.Command) error {
 		return errors.New("cleanup finished with problems")
 	}
 	return nil
-}
-
-// resolveEscalatorForPlan finds an escalator for read-only rootful engine
-// queries without running rootcheck.Validate (which probes privileges).
-func resolveEscalatorForPlan(sudoCommand string) (string, error) {
-	if sudoCommand != "" && sudoCommand != autodetectEscalator {
-		return sudoCommand, nil
-	}
-	for _, name := range []string{"sudo", "sudo-rs", "doas", "run0", "pkexec"} {
-		if path, err := exec.LookPath(name); err == nil {
-			return path, nil
-		}
-	}
-	return "", errors.New("no privilege escalation program found in PATH")
 }

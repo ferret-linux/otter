@@ -106,7 +106,10 @@ const ROOTLESS_REG_SUBCOMMANDS = new Set(['list', 'ls', 'pull', 'remove', 'rm'])
 
 const enforceRootlessArgs = (command: string, args: string[]): string[] => {
   if (command !== 'otter' || args.length === 0) return args;
-  if (args.includes('--root') || args.some((arg) => arg.startsWith('--root='))) return args;
+  const hasRootFlag = args.some(
+    (arg) => arg === '--root' || arg.startsWith('--root=') || arg === '-r' || arg.startsWith('-r='),
+  );
+  if (hasRootFlag) return args;
   const [sub, maybeRegSub] = args;
   const needsRootless =
     ROOTLESS_COMMANDS.has(sub) ||

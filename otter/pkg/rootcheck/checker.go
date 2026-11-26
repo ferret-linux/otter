@@ -4,11 +4,31 @@ package rootcheck
 import (
 	"context"
 	"errors"
+	"os/exec"
 	"path/filepath"
+	"strings"
 	"sync"
 
 	"github.com/ferret-linux/otter/pkg/ui"
 )
+
+// escalatorPreference is the single source of truth for autodetect order.
+var escalatorPreference = []string{"sudo", "sudo-rs", "doas", "run0", "pkexec"} //nolint:gochecknoglobals // immutable policy table
+
+// Resolve expands "autodetect" with the shared preference order and checks
+// only that the chosen program exists. It deliberately performs no privilege
+// probe, so read-only plan mode can use it without prompting or validating.
+func Resolve(sudoCommand string) (string, error) {
+	if sudoCommand != "" && sudoCommand != "autodetect" {
+		return sudoCommand, nil
+	}
+	for _, name := range escalatorPreference {
+		if path, err := exec.LookPath(name); err == nil {
+			return path, nil
+		}
+	}
+	return "", errors.New("no privilege escalation program found; install " + strings.Join(escalatorPreference, ", "))
+}
 
 type validationResult struct {
 	resolved string
@@ -44,12 +64,12 @@ func Validate(ctx context.Context, sudoCommand string) (string, error) {
 func check(ctx context.Context, sudoCommand string) (string, error) {
 	switch filepath.Base(sudoCommand) {
 	case "autodetect":
-		for _, name := range []string{"sudo", "sudo-rs", "doas", "run0", "pkexec"} {
+		for _, name := range escalatorPreference {
 			if resolved, err := check(ctx, name); err == nil {
 				return resolved, nil
 			}
 		}
-		return "", errors.New("no privilege escalation program found; install one of: sudo, sudo-rs, doas, run0, pkexec")
+		return "", errors.New("no privilege escalation program found; install one of: " + strings.Join(escalatorPreference, ", "))
 	case "run0":
 		return sudoCommand, checkRun0(ctx, sudoCommand)
 	case "pkexec":

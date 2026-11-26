@@ -60,7 +60,7 @@ func (n *Nerdctl) ListContainers(ctx context.Context) ([]containermanager.Contai
 }
 
 func (n *Nerdctl) ListImages(ctx context.Context) ([]containermanager.ImageSummary, error) {
-	out, err := n.run(ctx, []string{"image", "ls", "--format", "json"}, runOptions{})
+	out, err := n.run(ctx, []string{"image", "ls", "--no-trunc", "--format", "json"}, runOptions{})
 	if err != nil {
 		return nil, err
 	}

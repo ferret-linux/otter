@@ -83,7 +83,7 @@ func (p *Podman) ListContainers(ctx context.Context) ([]containermanager.Contain
 }
 
 func (p *Podman) ListImages(ctx context.Context) ([]containermanager.ImageSummary, error) {
-	out, err := p.run(ctx, []string{"image", "ls", "--format", "json"}, runOptions{})
+	out, err := p.run(ctx, []string{"image", "ls", "--no-trunc", "--format", "json"}, runOptions{})
 	if err != nil {
 		return nil, err
 	}
