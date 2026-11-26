@@ -914,31 +914,6 @@
       "build_number": 473
     },
     {
-      "name": "opensuse-tumbleweed",
-      "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
-      "family": "opensuse",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-26T12:01:51Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 426030754,
-          "disk_size": 1295192267
-        },
-        "arm64": {
-          "compressed_size": 393617011,
-          "disk_size": 1246571225
-        }
-      },
-      "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
-      "build_number": 523
-    },
-    {
       "name": "void-glibc",
       "official_image": "ghcr.io/ferret-linux/void-otr:glibc",
       "family": "void",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init",
       "build_number": 587
+    },
+    {
+      "name": "opensuse-tumbleweed",
+      "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
+      "family": "opensuse",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-26T22:11:18Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 426034060,
+          "disk_size": 1295213771
+        },
+        "arm64": {
+          "compressed_size": 393622643,
+          "disk_size": 1246571223
+        }
+      },
+      "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
+      "build_number": 524
     }
   ]
 }
