@@ -965,31 +965,6 @@
       "build_number": 597
     },
     {
-      "name": "ubuntu-lts-nonfree",
-      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts-nonfree",
-      "family": "ubuntu",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-26T00:56:55Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 568459159,
-          "disk_size": 1603429443
-        },
-        "arm64": {
-          "compressed_size": 547304486,
-          "disk_size": 1625869906
-        }
-      },
-      "fallback_vendor_image": "docker.io/library/ubuntu:26.04",
-      "build_number": 18
-    },
-    {
       "name": "alma",
       "official_image": "ghcr.io/ferret-linux/alma-otr:stable",
       "family": "alma",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest",
       "build_number": 470
+    },
+    {
+      "name": "ubuntu-lts-nonfree",
+      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts-nonfree",
+      "family": "ubuntu",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-26T04:05:30Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 568459575,
+          "disk_size": 1603432005
+        },
+        "arm64": {
+          "compressed_size": 547310572,
+          "disk_size": 1625872458
+        }
+      },
+      "fallback_vendor_image": "docker.io/library/ubuntu:26.04",
+      "build_number": 19
     }
   ]
 }
