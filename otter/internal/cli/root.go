@@ -251,7 +251,7 @@ func withUsageErrorHandler(_ *config.Values, cmd *cli.Command) *cli.Command {
 // withRootSelection declares the --root flag and resolves its effective
 // value against cfg.DefaultRootful. It deliberately does not validate an
 // escalator: commands such as cleanup --no-apply must be able to plan without
-// triggering sudo -v or any other privilege prompt. Mutation-capable commands
+// running the rootcheck probe or any privilege prompt. Mutation-capable commands
 // compose this with withRootValidation (or validate in their Action).
 func withRootSelection(cfg *config.Values, cmd *cli.Command) *cli.Command {
 	cmd.Flags = append(cmd.Flags, &cli.BoolFlag{
