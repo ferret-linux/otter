@@ -36,6 +36,9 @@ type ContainerManager interface {
 	// InspectImage returns existence, ID and labels from one engine inspect.
 	// ok is false if the image is missing locally or the inspect fails.
 	InspectImage(ctx context.Context, imageName string) (ImageInfo, bool)
+	// ListImages returns locally present images with their IDs, tags and labels.
+	// A non-empty error means the engine query failed and callers must fail closed.
+	ListImages(ctx context.Context) ([]ImageSummary, error)
 	// ContainerImageID returns the image ID a container was actually created
 	// from — its frozen binding, not the (possibly since-moved) tag it was
 	// created with. Unlike resolving a tag through ImageID, this value does

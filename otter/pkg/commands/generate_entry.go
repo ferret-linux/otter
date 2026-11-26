@@ -125,23 +125,19 @@ func (c *GenerateEntryCommand) Execute(
 	// Determine the desktop entry base dir
 	desktopEntryBaseDir := opts.DesktopEntryBaseDir
 	if desktopEntryBaseDir == "" {
-		userEnv := userenv.LoadUserEnvironment(ctx)
+		userEnv := userenv.LoadTargetUserEnvironment(ctx)
 		desktopEntryBaseDir = userEnv.DesktopEntryBaseDir
 	}
 
 	if opts.Delete {
 		for _, containerName := range containerNames {
-			entryPath := c.getEntryFilePath(
-				filepath.Join(desktopEntryBaseDir, "applications"),
-				c.managerName(),
-				containerName,
-				opts.Root,
-			)
-			if _, err := os.Stat(entryPath); errors.Is(err, fs.ErrNotExist) {
-				ui.DefaultLogger.Info("no desktop entry found", containerValue, containerName)
-			}
-			if err := c.deleteEntry(containerName, desktopEntryBaseDir, opts.Root); err != nil {
+			removed, err := c.deleteEntry(containerName, desktopEntryBaseDir, opts.Root)
+			if err != nil {
 				return fmt.Errorf("failed to delete desktop entry for container %s: %w", containerName, err)
+			}
+			if !removed {
+				ui.DefaultLogger.Info("no desktop entry found", containerValue, containerName)
+				continue
 			}
 			ui.DefaultLogger.Info("desktop entry removed", containerValue, containerName)
 		}
@@ -170,20 +166,29 @@ func (c *GenerateEntryCommand) Execute(
 	return nil
 }
 
-func (c *GenerateEntryCommand) deleteEntry(containerName string, desktopEntryBaseDir string, root bool) error {
+func (c *GenerateEntryCommand) deleteEntry(containerName string, desktopEntryBaseDir string, root bool) (bool, error) {
 	desktopEntryAppsDir := filepath.Join(desktopEntryBaseDir, "applications")
+	removed := false
 	entryFilePath := c.getEntryFilePath(desktopEntryAppsDir, c.managerName(), containerName, root)
-	if err := os.Remove(entryFilePath); err != nil && !errors.Is(err, fs.ErrNotExist) {
-		return fmt.Errorf("failed to delete desktop entry for container %s: %w", containerName, err)
+	if err := os.Remove(entryFilePath); err != nil {
+		if !errors.Is(err, fs.ErrNotExist) {
+			return false, fmt.Errorf("failed to delete desktop entry for container %s: %w", containerName, err)
+		}
+	} else {
+		removed = true
 	}
 	// Remove the pre-ownership filename as well. Old exports are unmanaged
 	// from the export index's point of view, but their pinned entry is still
 	// ours to clean up.
 	legacyPath := c.getLegacyEntryFilePath(desktopEntryAppsDir, containerName, root)
-	if err := os.Remove(legacyPath); err != nil && !errors.Is(err, fs.ErrNotExist) {
-		return fmt.Errorf("failed to delete legacy desktop entry for container %s: %w", containerName, err)
+	if err := os.Remove(legacyPath); err != nil {
+		if !errors.Is(err, fs.ErrNotExist) {
+			return false, fmt.Errorf("failed to delete legacy desktop entry for container %s: %w", containerName, err)
+		}
+	} else {
+		removed = true
 	}
-	return nil
+	return removed, nil
 }
 
 func (c *GenerateEntryCommand) createEntry(
@@ -200,7 +205,14 @@ func (c *GenerateEntryCommand) createEntry(
 	}
 
 	entryFilePath := c.getEntryFilePath(desktopEntryAppsDir, c.managerName(), containerName, root)
-	data := c.composeDesktopEntryData(containerName, c.getIconPath(ctx, containerName, icon, desktopEntryIconsDir), otterPath, root)
+	imageID, _ := c.containerManager.ContainerImageID(ctx, containerName)
+	data := c.composeDesktopEntryData(
+		containerName,
+		c.getIconPath(ctx, containerName, icon, desktopEntryIconsDir),
+		otterPath,
+		root,
+		imageID,
+	)
 	if err := c.writeDesktopEntryFile(entryFilePath, data); err != nil {
 		return fmt.Errorf("failed to write desktop entry file for container %s: %w", containerName, err)
 	}
@@ -231,11 +243,18 @@ func (c *GenerateEntryCommand) composeDesktopEntryData(
 	icon string,
 	otterPath string,
 	root bool,
+	imageID string,
 ) map[string]string {
 	extraFlags := ""
 	if root {
 		extraFlags += "--root"
 	}
+	marker := encodePinMarker(cleanupPinPayload{
+		Container: containerName,
+		Manager:   c.managerName(),
+		Rootful:   root,
+		ID:        imageID,
+	})
 
 	return map[string]string{
 		"entry_name":        getEntryName(containerName, root),
@@ -244,6 +263,7 @@ func (c *GenerateEntryCommand) composeDesktopEntryData(
 		"otter_path":        otterPath,
 		"icon":              icon,
 		"extra_flags":       extraFlags,
+		"pin_marker":        marker,
 	}
 }
 
@@ -270,22 +290,17 @@ func (c *GenerateEntryCommand) writeDesktopEntryFile(
 	entryFilePath string,
 	data map[string]string,
 ) error {
-	//nolint:gosec // 644 is common permission for desktop entry files
-	destFileWriter, err := os.OpenFile(entryFilePath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
-	if err != nil {
-		return fmt.Errorf("failed to create desktop entry file: %w", err)
-	}
-	defer destFileWriter.Close()
-
 	t, err := template.New("desktopEntry").Parse(desktopEntryTmpl)
 	if err != nil {
 		return fmt.Errorf("failed to parse desktop entry template: %w", err)
 	}
-	err = t.Execute(destFileWriter, data)
-	if err != nil {
+	var rendered strings.Builder
+	if err := t.Execute(&rendered, data); err != nil {
 		return fmt.Errorf("failed to execute desktop entry template: %w", err)
 	}
-
+	if err := writeFileAtomic(entryFilePath, []byte(rendered.String()), 0644); err != nil {
+		return fmt.Errorf("failed to write desktop entry file: %w", err)
+	}
 	return nil
 }
 
@@ -295,6 +310,23 @@ func (c *GenerateEntryCommand) getEntryFilePath(desktopEntryDir, manager, contai
 		filename = "rootful-" + filename
 	}
 	return filepath.Join(desktopEntryDir, filename)
+}
+
+func sanitizeTempPrefix(value string) string {
+	var b strings.Builder
+	for _, r := range value {
+		switch {
+		case r >= 'a' && r <= 'z', r >= 'A' && r <= 'Z', r >= '0' && r <= '9', r == '-', r == '_':
+			b.WriteRune(r)
+		default:
+			b.WriteRune('_')
+		}
+	}
+	prefix := b.String()
+	if len(prefix) > 32 {
+		prefix = prefix[:32]
+	}
+	return prefix
 }
 
 func (c *GenerateEntryCommand) getLegacyEntryFilePath(desktopEntryDir, containerName string, root bool) string {
@@ -353,14 +385,23 @@ func (c *GenerateEntryCommand) getIconPath(ctx context.Context, containerName st
 // readDistroID copies /etc/os-release from the container and returns the ID= value.
 // Returns empty string if detection fails.
 func (c *GenerateEntryCommand) readDistroID(ctx context.Context, containerName string) string {
-	tmpFile := filepath.Join(os.TempDir(), containerName+".os-release")
-	defer os.Remove(tmpFile)
+	prefix := "otter-os-release-" + sanitizeTempPrefix(containerName) + "-"
+	tmp, err := os.CreateTemp("", prefix)
+	if err != nil {
+		return ""
+	}
+	tmpPath := tmp.Name()
+	if err := tmp.Close(); err != nil {
+		_ = os.Remove(tmpPath)
+		return ""
+	}
+	defer os.Remove(tmpPath)
 
-	if err := c.containerManager.CopyFromContainer(ctx, containerName, "/etc/os-release", tmpFile); err != nil {
+	if err := c.containerManager.CopyFromContainer(ctx, containerName, "/etc/os-release", tmpPath); err != nil {
 		return ""
 	}
 
-	f, err := os.Open(tmpFile)
+	f, err := os.Open(tmpPath)
 	if err != nil {
 		return ""
 	}

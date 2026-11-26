@@ -101,6 +101,14 @@ func (d *Docker) ListContainers(ctx context.Context) ([]containermanager.Contain
 	return parseContainerList(out)
 }
 
+func (d *Docker) ListImages(ctx context.Context) ([]containermanager.ImageSummary, error) {
+	out, err := d.run(ctx, []string{"image", "ls", "--format", "json"}, runOptions{})
+	if err != nil {
+		return nil, err
+	}
+	return parseImageList(out)
+}
+
 func (d *Docker) Create(
 	ctx context.Context,
 	opts containermanager.CreateOptions,
@@ -785,6 +793,109 @@ func parseLabels(labels string) map[string]string {
 		}
 	}
 	return result
+}
+
+// engineImage is the common subset of `image ls --format json` output across
+// podman, docker and nerdctl. Engines differ in how they spell the ID, expose
+// tags (RepoTags vs Repository/Tag) and attach labels (top-level Labels vs
+// Config.Labels), so all variants are accepted here.
+type engineImage struct {
+	ID         string          `json:"ID"`
+	IDAlt      string          `json:"Id"`
+	RepoTags   []string        `json:"RepoTags"`
+	Repository string          `json:"Repository"`
+	Tag        string          `json:"Tag"`
+	Labels     json.RawMessage `json:"Labels"`
+	Config     struct {
+		Labels json.RawMessage `json:"Labels"`
+	} `json:"Config"`
+}
+
+// parseImageList accepts both a JSON array of objects and newline-delimited
+// JSON objects. Malformed entries are skipped; an entirely unusable output is
+// an error so callers never mistake a failed engine query for an empty list.
+func parseImageList(output string) ([]containermanager.ImageSummary, error) {
+	output = strings.TrimSpace(output)
+	if output == "" {
+		return nil, nil
+	}
+
+	var entries []engineImage
+	rawCount := 0
+	if strings.HasPrefix(output, "[") {
+		if err := json.Unmarshal([]byte(output), &entries); err != nil {
+			return nil, fmt.Errorf("failed to parse image list JSON: %w", err)
+		}
+		rawCount = len(entries)
+	} else {
+		for line := range strings.SplitSeq(output, "\n") {
+			line = strings.TrimSpace(line)
+			if line == "" {
+				continue
+			}
+			rawCount++
+			var entry engineImage
+			if err := json.Unmarshal([]byte(line), &entry); err != nil {
+				continue
+			}
+			entries = append(entries, entry)
+		}
+	}
+
+	var images []containermanager.ImageSummary
+	for _, entry := range entries {
+		image, ok := normalizeEngineImage(entry)
+		if !ok {
+			continue
+		}
+		images = append(images, image)
+	}
+	if rawCount > 0 && len(images) == 0 {
+		return nil, errors.New("failed to parse image list JSON: no usable image entries")
+	}
+	return images, nil
+}
+
+func normalizeEngineImage(entry engineImage) (containermanager.ImageSummary, bool) {
+	id := entry.ID
+	if id == "" {
+		id = entry.IDAlt
+	}
+	if id == "" {
+		return containermanager.ImageSummary{}, false
+	}
+
+	tags := entry.RepoTags
+	if len(tags) == 0 && entry.Repository != "" {
+		if entry.Tag == "" || entry.Tag == "<none>" {
+			tags = []string{entry.Repository}
+		} else {
+			tags = []string{entry.Repository + ":" + entry.Tag}
+		}
+	}
+
+	return containermanager.ImageSummary{
+		ID:       id,
+		RepoTags: tags,
+		Labels:   engineImageLabels(entry),
+	}, true
+}
+
+func engineImageLabels(entry engineImage) map[string]string {
+	for _, raw := range []json.RawMessage{entry.Labels, entry.Config.Labels} {
+		if len(raw) == 0 || string(raw) == "null" {
+			continue
+		}
+		var labels map[string]string
+		if err := json.Unmarshal(raw, &labels); err == nil {
+			return labels
+		}
+		var joined string
+		if err := json.Unmarshal(raw, &joined); err == nil {
+			return parseLabels(joined)
+		}
+	}
+	return nil
 }
 
 func (d *Docker) InspectContainer(ctx context.Context, containerName string) (*containermanager.InspectResult, error) {

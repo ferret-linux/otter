@@ -100,6 +100,7 @@ interface RunOptions {
 const ROOTLESS_COMMANDS = new Set([
   'create', 'enter', 'sh', 'list', 'ls', 'start', 'stop', 'restart', 'pause',
   'remove', 'rm', 'upgrade', 'lock', 'unlock', 'inspect', 'journal', 'generate-entry',
+  'cleanup', 'purge',
 ]);
 const ROOTLESS_REG_SUBCOMMANDS = new Set(['list', 'ls', 'pull', 'remove', 'rm']);
 

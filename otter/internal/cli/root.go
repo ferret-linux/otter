@@ -139,11 +139,17 @@ func subcommands(cfg *config.Values) []*cli.Command {
 	}
 
 	// Order matches the alphabetical listing urfave/cli renders in --help.
+	cleanupOpts := []func(*config.Values, *cli.Command) *cli.Command{
+		withUsageErrorHandler,
+		withRootSelection,
+	}
+
 	specs := []struct {
 		factory func(*config.Values) *cli.Command
 		opts    []func(*config.Values, *cli.Command) *cli.Command
 	}{
 		{newAssembleCommand, noRootOpts},
+		{newCleanupCommand, cleanupOpts},
 		{newCreateCommand, stdOpts},
 		{newDocumentationCommand, documentationOpts},
 		{newEnterCommand, containerNameOpts},
@@ -242,12 +248,12 @@ func withUsageErrorHandler(_ *config.Values, cmd *cli.Command) *cli.Command {
 	return cmd
 }
 
-// withRoot declares the --root flag on a command, resolves its effective
-// value against cfg.DefaultRootful, and persists the resolved value back
-// onto the flag so every downstream reader of --root (this command's own
-// action, and withContainerManager) sees a single consistent answer.
-// When it resolves to true, it also validates that sudo is usable.
-func withRoot(cfg *config.Values, cmd *cli.Command) *cli.Command {
+// withRootSelection declares the --root flag and resolves its effective
+// value against cfg.DefaultRootful. It deliberately does not validate an
+// escalator: commands such as cleanup --no-apply must be able to plan without
+// triggering sudo -v or any other privilege prompt. Mutation-capable commands
+// compose this with withRootValidation (or validate in their Action).
+func withRootSelection(cfg *config.Values, cmd *cli.Command) *cli.Command {
 	cmd.Flags = append(cmd.Flags, &cli.BoolFlag{
 		Name:    "root",
 		Aliases: []string{"r"},
@@ -270,19 +276,41 @@ func withRoot(cfg *config.Values, cmd *cli.Command) *cli.Command {
 				return nil, fmt.Errorf("failed to apply rootful default: %w", err)
 			}
 		}
-		if c.Bool("root") {
-			resolved, err := rootcheck.Validate(ctx, c.String("sudo-command"))
-			if err != nil {
-				return nil, fmt.Errorf("cannot run in root mode: %w", err)
-			}
-			if err := c.Root().Set("sudo-command", resolved); err != nil {
-				return nil, fmt.Errorf("failed to apply resolved escalator: %w", err)
-			}
-			ctx = withEscalator(ctx, resolved)
-		}
 		return ctx, nil
 	}
 	return cmd
+}
+
+// withRootValidation validates the configured escalator when --root is in
+// effect and stores the resolved program for downstream layers.
+func withRootValidation(_ *config.Values, cmd *cli.Command) *cli.Command {
+	prev := cmd.Before
+	cmd.Before = func(ctx context.Context, c *cli.Command) (context.Context, error) {
+		if prev != nil {
+			var err error
+			ctx, err = prev(ctx, c)
+			if err != nil {
+				return nil, err
+			}
+		}
+		if !c.Bool("root") {
+			return ctx, nil
+		}
+		resolved, err := rootcheck.Validate(ctx, c.String("sudo-command"))
+		if err != nil {
+			return nil, fmt.Errorf("cannot run in root mode: %w", err)
+		}
+		if err := c.Root().Set("sudo-command", resolved); err != nil {
+			return nil, fmt.Errorf("failed to apply resolved escalator: %w", err)
+		}
+		return withEscalator(ctx, resolved), nil
+	}
+	return cmd
+}
+
+// withRoot is the full root flag behaviour used by ordinary commands.
+func withRoot(cfg *config.Values, cmd *cli.Command) *cli.Command {
+	return withRootValidation(cfg, withRootSelection(cfg, cmd))
 }
 
 // withContainerManager builds the container manager for a command and stores

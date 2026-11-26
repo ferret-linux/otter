@@ -59,6 +59,14 @@ func (n *Nerdctl) ListContainers(ctx context.Context) ([]containermanager.Contai
 	return parseContainerList(out)
 }
 
+func (n *Nerdctl) ListImages(ctx context.Context) ([]containermanager.ImageSummary, error) {
+	out, err := n.run(ctx, []string{"image", "ls", "--format", "json"}, runOptions{})
+	if err != nil {
+		return nil, err
+	}
+	return parseImageList(out)
+}
+
 func (n *Nerdctl) Create(
 	ctx context.Context,
 	opts containermanager.CreateOptions,

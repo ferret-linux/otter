@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-const CHANGE_ACTIONS = new Set(['create', 'start', 'stop', 'restart', 'pause', 'remove', 'rm']);
+const CHANGE_ACTIONS = new Set(['create', 'start', 'stop', 'restart', 'pause', 'remove', 'rm', 'cleanup', 'purge']);
 
 export default function useOtterEvents(onChange: () => void): void {
   useEffect(() => {

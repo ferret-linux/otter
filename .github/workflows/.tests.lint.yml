@@ -29,6 +29,14 @@ jobs:
         working-directory: otter
         run: golangci-lint run --verbose
 
+      - name: Run go vet
+        working-directory: otter
+        run: make vet
+
+      - name: Run Go tests
+        working-directory: otter
+        run: make test
+
   shellcheck:
     name: Shell Lint
     runs-on: ubuntu-latest

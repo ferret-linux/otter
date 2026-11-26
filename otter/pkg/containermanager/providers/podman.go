@@ -82,6 +82,14 @@ func (p *Podman) ListContainers(ctx context.Context) ([]containermanager.Contain
 	return parsePodmanContainerList(out)
 }
 
+func (p *Podman) ListImages(ctx context.Context) ([]containermanager.ImageSummary, error) {
+	out, err := p.run(ctx, []string{"image", "ls", "--format", "json"}, runOptions{})
+	if err != nil {
+		return nil, err
+	}
+	return parseImageList(out)
+}
+
 func (p *Podman) Create(
 	ctx context.Context,
 	opts containermanager.CreateOptions,
