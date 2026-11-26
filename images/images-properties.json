@@ -1014,31 +1014,6 @@
       "build_number": 16
     },
     {
-      "name": "gentoo",
-      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
-      "family": "gentoo",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-26T05:39:36Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 2029237019,
-          "disk_size": 5123588308
-        },
-        "arm64": {
-          "compressed_size": 1562537445,
-          "disk_size": 4146719952
-        }
-      },
-      "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
-      "build_number": 515
-    },
-    {
       "name": "rhel",
       "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
       "family": "rhel",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
       "build_number": 523
+    },
+    {
+      "name": "gentoo",
+      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
+      "family": "gentoo",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-26T12:46:22Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 2029229794,
+          "disk_size": 5123588303
+        },
+        "arm64": {
+          "compressed_size": 1562957671,
+          "disk_size": 4147141841
+        }
+      },
+      "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
+      "build_number": 516
     }
   ]
 }
