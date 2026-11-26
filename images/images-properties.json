@@ -465,31 +465,6 @@
       "build_number": 522
     },
     {
-      "name": "debian-testing-nonfree",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:testing-nonfree",
-      "family": "debian",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-25T11:40:02Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 648523547,
-          "disk_size": 1761566135
-        },
-        "arm64": {
-          "compressed_size": 610994021,
-          "disk_size": 1726190022
-        }
-      },
-      "fallback_vendor_image": "docker.io/library/debian:testing",
-      "build_number": 15
-    },
-    {
       "name": "debian-nonfree",
       "official_image": "ghcr.io/ferret-linux/debian-otr:stable-nonfree",
       "family": "debian",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "docker.io/library/amazonlinux:latest",
       "build_number": 476
+    },
+    {
+      "name": "debian-testing-nonfree",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:testing-nonfree",
+      "family": "debian",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-26T03:56:15Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 648523243,
+          "disk_size": 1761566138
+        },
+        "arm64": {
+          "compressed_size": 611000919,
+          "disk_size": 1726190022
+        }
+      },
+      "fallback_vendor_image": "docker.io/library/debian:testing",
+      "build_number": 16
     }
   ]
 }
