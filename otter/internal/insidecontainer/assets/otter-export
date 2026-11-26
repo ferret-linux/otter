@@ -45,7 +45,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from pwd import getpwnam
 
-VERSION = "0.0.9"
+VERSION = "0.1.0"
 
 # Ensure env variables are correctly set
 if not os.environ.get("USER"):

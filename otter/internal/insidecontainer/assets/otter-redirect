@@ -27,7 +27,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-VERSION = "0.0.9"
+VERSION = "0.1.0"
 REDIRECT_DIR = "/usr/local/bin"
 MARKER_LINE = "# otter_redirect"
 # A redirect name is a command name, never a path: no separators, no

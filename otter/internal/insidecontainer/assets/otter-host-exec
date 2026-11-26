@@ -50,7 +50,7 @@ HOST_SPAWN_VERSION = "v1.6.2"
 # timeout, which could stall container setup indefinitely. Keep it bounded;
 # the download is best-effort and init continues when it fails.
 HOST_SPAWN_DOWNLOAD_TIMEOUT = 15
-VERSION = "0.0.9"
+VERSION = "0.1.0"
 
 try:
     os.ttyname(sys.stdout.fileno())

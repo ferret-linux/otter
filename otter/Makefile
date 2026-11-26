@@ -3,7 +3,7 @@ GO_BUILD_ENV := CGO_ENABLED=0 GOOS=$(GOOS)
 
 COMMIT ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo unknown)
 BUILD_TIME ?= $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
-VERSION ?= 0.0.9
+VERSION ?= 0.1.0
 LDFLAGS := -X github.com/ferret-linux/otter/internal/cli.commit=$(COMMIT) -X github.com/ferret-linux/otter/internal/cli.buildTime=$(BUILD_TIME) -X github.com/ferret-linux/otter/internal/cli.version=$(VERSION)
 
 .PHONY: version
