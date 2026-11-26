@@ -666,31 +666,6 @@
       "build_number": 16
     },
     {
-      "name": "wolfi",
-      "official_image": "ghcr.io/ferret-linux/wolfi-otr:latest",
-      "family": "wolfi",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-26T04:04:49Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 271492590,
-          "disk_size": 798677345
-        },
-        "arm64": {
-          "compressed_size": 259493169,
-          "disk_size": 793124701
-        }
-      },
-      "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest",
-      "build_number": 470
-    },
-    {
       "name": "ubuntu-lts-nonfree",
       "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts-nonfree",
       "family": "ubuntu",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "docker.io/library/debian:unstable",
       "build_number": 19
+    },
+    {
+      "name": "wolfi",
+      "official_image": "ghcr.io/ferret-linux/wolfi-otr:latest",
+      "family": "wolfi",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-26T18:17:47Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 271497911,
+          "disk_size": 798681955
+        },
+        "arm64": {
+          "compressed_size": 259498931,
+          "disk_size": 793125725
+        }
+      },
+      "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest",
+      "build_number": 471
     }
   ]
 }
