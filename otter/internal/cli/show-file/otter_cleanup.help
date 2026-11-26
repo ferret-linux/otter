@@ -9,10 +9,10 @@
 {2}│{R}  {5}otter cleanup{R}                                                   {2}│{R}
 {2}│{R}  {5}otter cleanup --no-apply --json{R}                                 {2}│{R}
 {2}│{R}  {5}otter purge --root --all-managers{R}                               {2}│{R}
-{2}│{R}  {5}otter cleanup --images --scan-path /srv/exports{R}                 {2}│{R}
+{2}│{R}  {5}otter cleanup --images --scan-path $HOME/exports{R}                {2}│{R}
 {2}├──────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                                        {2}│{R}
-{2}│{R}{4}--no-apply{R}        {2}┆{R}     {5}Plan only; no writes, locks, escalation{R}   {2}│{R}
+{2}│{R}{4}--no-apply{R}        {2}┆{R}     {5}Plan only; no writes, locks, sudo probe{R}   {2}│{R}
 {2}│{R}{4}--json{R}            {2}┆{R}     {5}Machine-readable plan/report{R}              {2}│{R}
 {2}│{R}{4}--root{R}            {2}┆{R} {4}-r{R} {5}From settings.rootful (config default){R}     {2}│{R}
 {2}│{R}{4}--all-managers{R}    {2}┆{R}     {5}Include installed podman/docker/nerdctl{R}   {2}│{R}
@@ -24,7 +24,9 @@
 {2}├───────────┴──────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Notes:{R}                                                          {2}│{R}
 {2}│{R}{5}By default cleanup acts: eligible leftovers are deleted.{R}          {2}│{R}
-{2}│{R}{5}--no-apply plans only; no writes, no locks, no escalation.{R}        {2}│{R}
+{2}│{R}{5}--no-apply plans only; no writes, no locks, no sudo probe.{R}        {2}│{R}
+{2}│{R}{5}rootful read-only engine queries may still use configured sudo.{R}   {2}│{R}
+{2}│{R}{5}Outside-home scan paths are report-only, never deleted.{R}           {2}│{R}
 {2}│{R}                                                                  {2}│{R}
 {2}│{R}{5}Scope: configured managers and root mode from settings.{R}           {2}│{R}
 {2}│{R}{5}--root=false opts out of the configured root mode.{R}                {2}│{R}

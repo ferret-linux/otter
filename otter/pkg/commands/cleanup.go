@@ -26,7 +26,8 @@ import (
 )
 
 const (
-	cleanupPinMarker      = "X-Otter-Pin="
+	cleanupPinMarkerKey   = "X-Otter-Pin"
+	cleanupPinMarkerValue = "v1:"
 	cleanupImageBuildKey  = "otter.image_build"
 	cleanupAutodetect     = "autodetect"
 	cleanupOfficialRoot   = "ghcr.io/ferret-linux/"
@@ -238,7 +239,13 @@ func (p *cleanupPlanner) fail(category, scope, path, message string) {
 	p.problem("error", category, scope, path, message, true)
 }
 
-func (p *cleanupPlanner) addAction(item CleanupItem, info os.FileInfo, cm containermanager.ContainerManager, imageID string) {
+func (p *cleanupPlanner) addAction(
+	item CleanupItem,
+	info os.FileInfo,
+	cm containermanager.ContainerManager,
+	imageID string,
+	guard func() error,
+) {
 	if _, exists := p.actions[item.Category+"|"+item.Path]; exists {
 		return
 	}
@@ -246,6 +253,11 @@ func (p *cleanupPlanner) addAction(item CleanupItem, info os.FileInfo, cm contai
 	switch item.Category {
 	case "image":
 		action.apply = func() error {
+			if guard != nil {
+				if err := guard(); err != nil {
+					return err
+				}
+			}
 			if info, ok := cm.InspectImage(p.ctx, imageID); !ok || info.ID == "" {
 				return errors.New("image vanished before removal")
 			}
@@ -670,7 +682,7 @@ func (p *cleanupPlanner) queueRemove(category, scope, path, reason, target strin
 		Path:     path,
 		Reason:   reason,
 		Action:   cleanupActionRemove,
-	}, info, nil, "")
+	}, info, nil, "", nil)
 }
 
 //nolint:gocognit // launcher checks are deliberately explicit and fail closed
@@ -810,14 +822,14 @@ func encodePinMarker(payload cleanupPinPayload) string {
 	if err != nil {
 		return ""
 	}
-	return cleanupPinMarker + "v1:" + base64.RawURLEncoding.EncodeToString(data)
+	return cleanupPinMarkerValue + base64.RawURLEncoding.EncodeToString(data)
 }
 
 func parsePinMarker(value string) (*cleanupPinPayload, error) {
-	if !strings.HasPrefix(value, "v1:") {
+	if !strings.HasPrefix(value, cleanupPinMarkerValue) {
 		return nil, errors.New("unsupported pin marker version")
 	}
-	data, err := base64.RawURLEncoding.DecodeString(strings.TrimPrefix(value, "v1:"))
+	data, err := base64.RawURLEncoding.DecodeString(strings.TrimPrefix(value, cleanupPinMarkerValue))
 	if err != nil {
 		return nil, fmt.Errorf("decode pin marker: %w", err)
 	}
@@ -903,9 +915,8 @@ func (p *cleanupPlanner) planIcons() {
 	}
 }
 
-//nolint:gocognit,funlen // image safety checks are explicit so provenance cannot be inferred loosely
 func (p *cleanupPlanner) planImages() {
-	if !p.opts.Images {
+	if !p.opts.Images || !p.hasScopedImages() {
 		return
 	}
 	props, err := registry.Fetch(p.ctx)
@@ -914,22 +925,7 @@ func (p *cleanupPlanner) planImages() {
 		return
 	}
 
-	catalogRefs := make(map[string]struct{})
-	for _, entry := range props.Images {
-		refs := []string{}
-		if entry.OfficialImage != "" {
-			refs = append(refs, entry.OfficialImage)
-		} else if entry.Enabled {
-			refs = append(refs, cleanupOfficialRoot+entry.Name+":latest")
-		}
-		if entry.FallbackVendorImage != "" {
-			refs = append(refs, entry.FallbackVendorImage)
-		}
-		for _, ref := range refs {
-			catalogRefs[ref] = struct{}{}
-		}
-	}
-
+	catalogRefs := cleanupCatalogRefs(props)
 	for _, scope := range p.scopes {
 		if scope.state != "ok" || scope.cm == nil {
 			continue
@@ -941,55 +937,153 @@ func (p *cleanupPlanner) planImages() {
 			}
 		}
 		for _, image := range scope.images {
-			if image.ID == "" {
-				continue
-			}
-			if _, ok := protectedIDs[image.ID]; ok {
-				continue
-			}
-			if _, ok := scope.usedIDs[image.ID]; ok {
-				continue
-			}
-			info, ok := scope.cm.InspectImage(p.ctx, image.ID)
-			if !ok || info.ID == "" {
-				p.fail("image", scopeLabel(scope.manager, scope.root), image.ID, "failed to re-inspect image")
-				continue
-			}
-			if _, ok := info.Labels[cleanupImageBuildKey]; !ok {
-				continue
-			}
-			unverifiedTag := false
-			catalogTagged := false
-			for _, tag := range image.RepoTags {
-				if tag == "" || strings.HasPrefix(tag, "<none>") {
-					continue
-				}
-				if _, ok := catalogRefs[tag]; ok {
-					catalogTagged = true
-					continue
-				}
-				if !strings.HasPrefix(tag, cleanupOfficialRoot) {
-					unverifiedTag = true
-				}
-			}
-			// A catalog ref is an independent protection: even if resolving it
-			// to an ID failed above, a tagged catalog image is never a candidate.
-			if catalogTagged {
-				continue
-			}
-			if unverifiedTag {
-				p.note("image", scopeLabel(scope.manager, scope.root), image.ID, "otter-derived image has unverified tags")
-				continue
-			}
-			p.addAction(CleanupItem{
-				Category: "image",
-				Scope:    scopeLabel(scope.manager, scope.root),
-				Path:     image.ID,
-				Reason:   "unreferenced otter-derived image",
-				Action:   cleanupActionRemove,
-			}, nil, scope.cm, image.ID)
+			p.planImageCandidate(scope, image, protectedIDs, catalogRefs)
 		}
 	}
+}
+
+// hasScopedImages avoids a network catalog fetch when no queryable engine has
+// images to consider. With no candidates there can be no deletion to justify
+// a hard catalog failure.
+func (p *cleanupPlanner) hasScopedImages() bool {
+	for _, scope := range p.scopes {
+		if scope.state == "ok" && len(scope.images) > 0 {
+			return true
+		}
+	}
+	return false
+}
+
+func cleanupCatalogRefs(props *registry.ImagesProperties) map[string]struct{} {
+	refs := make(map[string]struct{})
+	for _, entry := range props.Images {
+		if entry.OfficialImage != "" {
+			refs[entry.OfficialImage] = struct{}{}
+		} else if entry.Enabled {
+			refs[cleanupOfficialRoot+entry.Name+":latest"] = struct{}{}
+		}
+		if entry.FallbackVendorImage != "" {
+			refs[entry.FallbackVendorImage] = struct{}{}
+		}
+	}
+	return refs
+}
+
+func (p *cleanupPlanner) planImageCandidate(
+	scope *cleanupScope,
+	image containermanager.ImageSummary,
+	protectedIDs, catalogRefs map[string]struct{},
+) {
+	if image.ID == "" {
+		return
+	}
+	label := scopeLabel(scope.manager, scope.root)
+	if _, ok := protectedIDs[image.ID]; ok {
+		return
+	}
+	if _, ok := scope.usedIDs[image.ID]; ok {
+		return
+	}
+	info, ok := scope.cm.InspectImage(p.ctx, image.ID)
+	if !ok || info.ID == "" {
+		p.fail("image", label, image.ID, "failed to re-inspect image")
+		return
+	}
+	if _, ok := info.Labels[cleanupImageBuildKey]; !ok {
+		return
+	}
+
+	catalogTagged, unverifiedTag, multiTag := cleanupTagDisposition(image.RepoTags, catalogRefs)
+	// An exact catalog tag protects an image independently of ID resolution.
+	if catalogTagged {
+		return
+	}
+	if multiTag {
+		p.note("image", label, image.ID, "image has multiple tags; manual review required")
+		return
+	}
+	if unverifiedTag {
+		p.note("image", label, image.ID, "otter-derived image has unverified tags")
+		return
+	}
+	p.addAction(CleanupItem{
+		Category: "image",
+		Scope:    label,
+		Path:     image.ID,
+		Reason:   "unreferenced otter-derived image",
+		Action:   cleanupActionRemove,
+	}, nil, scope.cm, image.ID, func() error {
+		return p.recheckImageRemoval(scope, catalogRefs, image.ID)
+	})
+}
+
+func cleanupTagDisposition(tags []string, catalogRefs map[string]struct{}) (bool, bool, bool) {
+	catalog := false
+	unverified := false
+	meaningful := 0
+	for _, tag := range tags {
+		if tag == "" || strings.HasPrefix(tag, "<none>") {
+			continue
+		}
+		meaningful++
+		if _, ok := catalogRefs[tag]; ok {
+			catalog = true
+		}
+		if !strings.HasPrefix(tag, cleanupOfficialRoot) {
+			unverified = true
+		}
+	}
+	return catalog, unverified, meaningful > 1
+}
+
+// recheckImageRemoval revalidates provenance, live usage and exact catalog
+// protection inside the apply lock. Planning can be slow enough for container
+// state to change between the plan and the deletion.
+func (p *cleanupPlanner) recheckImageRemoval(scope *cleanupScope, catalogRefs map[string]struct{}, imageID string) error {
+	if scope.cm == nil {
+		return errors.New("image owner manager unavailable")
+	}
+	info, ok := scope.cm.InspectImage(p.ctx, imageID)
+	if !ok || info.ID == "" {
+		return errors.New("image vanished before removal")
+	}
+	if _, ok := info.Labels[cleanupImageBuildKey]; !ok {
+		return errors.New("image provenance changed since planning")
+	}
+
+	containers, err := scope.cm.ListContainers(p.ctx)
+	if err != nil {
+		return fmt.Errorf("recheck container usage: %w", err)
+	}
+	for _, container := range containers {
+		id, ok := scope.cm.ContainerImageID(p.ctx, container.Name)
+		if !ok {
+			return fmt.Errorf("failed to recheck container image for %s", container.Name)
+		}
+		if id == imageID {
+			return errors.New("image became used by a container")
+		}
+	}
+
+	for ref := range catalogRefs {
+		if id, ok := scope.cm.ImageID(p.ctx, ref); ok && id == imageID {
+			return errors.New("image became an exact catalog ref")
+		}
+	}
+	images, err := scope.cm.ListImages(p.ctx)
+	if err != nil {
+		return fmt.Errorf("recheck image list: %w", err)
+	}
+	for _, image := range images {
+		if image.ID != imageID {
+			continue
+		}
+		catalog, _, _ := cleanupTagDisposition(image.RepoTags, catalogRefs)
+		if catalog {
+			return errors.New("image became tagged as an exact catalog ref")
+		}
+	}
+	return nil
 }
 
 // PrintCleanupResult prints the plan or final report as a table or JSON.

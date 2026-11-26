@@ -26,7 +26,9 @@ type ImageInfo struct {
 	Labels map[string]string
 }
 
-// ImageSummary is the read-only image data returned by ListImages.
+// ImageSummary is the read-only image data returned by ListImages. Labels are
+// informational only: destructive commands always confirm provenance with a
+// fresh InspectImage call before acting.
 type ImageSummary struct {
 	ID       string
 	RepoTags []string

@@ -866,6 +866,10 @@ func normalizeEngineImage(entry engineImage) (containermanager.ImageSummary, boo
 	}
 
 	tags := entry.RepoTags
+	if len(tags) == 0 && entry.Repository == "" && strings.ContainsAny(entry.Tag, "/:") {
+		// Some engines emit a complete ref in Tag with no Repository field.
+		tags = []string{entry.Tag}
+	}
 	if len(tags) == 0 && entry.Repository != "" {
 		if entry.Tag == "" || entry.Tag == "<none>" {
 			tags = []string{entry.Repository}
