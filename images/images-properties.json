@@ -341,30 +341,6 @@
       "build_number": 476
     },
     {
-      "name": "guix",
-      "official_image": "ghcr.io/ferret-linux/guix-otr:latest",
-      "family": "guix",
-      "image_variant": "free",
-      "is_reliable_fallback": false,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-26T04:29:05Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 1075986648,
-          "disk_size": 3396166795
-        },
-        "arm64": {
-          "compressed_size": 1037226517,
-          "disk_size": 3550907553
-        }
-      },
-      "build_number": 401
-    },
-    {
       "name": "centos-negativo17",
       "official_image": "ghcr.io/ferret-linux/centos-otr:negativo17",
       "family": "centos",
@@ -1387,6 +1363,30 @@
       },
       "fallback_vendor_image": "docker.io/library/debian:unstable",
       "build_number": 588
+    },
+    {
+      "name": "guix",
+      "official_image": "ghcr.io/ferret-linux/guix-otr:latest",
+      "family": "guix",
+      "image_variant": "free",
+      "is_reliable_fallback": false,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-27T02:03:19Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 1075984634,
+          "disk_size": 3396166799
+        },
+        "arm64": {
+          "compressed_size": 1037228480,
+          "disk_size": 3550908054
+        }
+      },
+      "build_number": 402
     }
   ]
 }
