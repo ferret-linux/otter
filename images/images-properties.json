@@ -1039,31 +1039,6 @@
       "build_number": 402
     },
     {
-      "name": "debian",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:stable",
-      "family": "debian",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-27T02:05:05Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 607637308,
-          "disk_size": 1590716233
-        },
-        "arm64": {
-          "compressed_size": 584374501,
-          "disk_size": 1578058583
-        }
-      },
-      "fallback_vendor_image": "docker.io/library/debian:stable",
-      "build_number": 600
-    },
-    {
       "name": "kali-nonfree",
       "official_image": "ghcr.io/ferret-linux/kali-otr:rolling-nonfree",
       "family": "kali",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest",
       "build_number": 589
+    },
+    {
+      "name": "debian",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:stable",
+      "family": "debian",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-27T04:25:07Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 607638298,
+          "disk_size": 1590716232
+        },
+        "arm64": {
+          "compressed_size": 584372173,
+          "disk_size": 1578058584
+        }
+      },
+      "fallback_vendor_image": "docker.io/library/debian:stable",
+      "build_number": 601
     }
   ]
 }
