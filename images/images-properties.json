@@ -616,31 +616,6 @@
       "build_number": 572
     },
     {
-      "name": "chimera",
-      "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
-      "family": "chimera",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-26T22:17:08Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 353696518,
-          "disk_size": 1005425570
-        },
-        "arm64": {
-          "compressed_size": 348672350,
-          "disk_size": 975709616
-        }
-      },
-      "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest",
-      "build_number": 588
-    },
-    {
       "name": "fedora",
       "official_image": "ghcr.io/ferret-linux/fedora-otr:stable",
       "family": "fedora",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest",
       "build_number": 596
+    },
+    {
+      "name": "chimera",
+      "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
+      "family": "chimera",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-27T04:20:48Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 353697738,
+          "disk_size": 1005425570
+        },
+        "arm64": {
+          "compressed_size": 348668060,
+          "disk_size": 975709619
+        }
+      },
+      "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest",
+      "build_number": 589
     }
   ]
 }
