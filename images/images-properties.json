@@ -341,31 +341,6 @@
       "build_number": 17
     },
     {
-      "name": "ubuntu",
-      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:stable",
-      "family": "ubuntu",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-25T21:49:06Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 552534168,
-          "disk_size": 1564069373
-        },
-        "arm64": {
-          "compressed_size": 531476362,
-          "disk_size": 1584918540
-        }
-      },
-      "fallback_vendor_image": "docker.io/library/ubuntu:latest",
-      "build_number": 588
-    },
-    {
       "name": "void-musl",
       "official_image": "ghcr.io/ferret-linux/void-otr:musl",
       "family": "void",
@@ -1387,6 +1362,31 @@
         }
       },
       "build_number": 481
+    },
+    {
+      "name": "ubuntu",
+      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:stable",
+      "family": "ubuntu",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-27T01:17:21Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 552538337,
+          "disk_size": 1564072957
+        },
+        "arm64": {
+          "compressed_size": 531481292,
+          "disk_size": 1584988172
+        }
+      },
+      "fallback_vendor_image": "docker.io/library/ubuntu:latest",
+      "build_number": 589
     }
   ]
 }
