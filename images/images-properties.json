@@ -865,31 +865,6 @@
       "build_number": 574
     },
     {
-      "name": "fedora-negativo17",
-      "official_image": "ghcr.io/ferret-linux/fedora-otr:negativo17",
-      "family": "fedora",
-      "image_variant": "negativo17",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-27T01:47:15Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 709074820,
-          "disk_size": 2141850297
-        },
-        "arm64": {
-          "compressed_size": 658666609,
-          "disk_size": 2056901322
-        }
-      },
-      "fallback_vendor_image": "quay.io/fedora/fedora:latest",
-      "build_number": 20
-    },
-    {
       "name": "rocky-nonfree",
       "official_image": "ghcr.io/ferret-linux/rocky-otr:nonfree",
       "family": "rocky",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest",
       "build_number": 15
+    },
+    {
+      "name": "fedora-negativo17",
+      "official_image": "ghcr.io/ferret-linux/fedora-otr:negativo17",
+      "family": "fedora",
+      "image_variant": "negativo17",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-27T04:32:04Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 709870984,
+          "disk_size": 2143705788
+        },
+        "arm64": {
+          "compressed_size": 659223757,
+          "disk_size": 2058744008
+        }
+      },
+      "fallback_vendor_image": "quay.io/fedora/fedora:latest",
+      "build_number": 21
     }
   ]
 }
