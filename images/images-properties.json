@@ -465,31 +465,6 @@
       "build_number": 14
     },
     {
-      "name": "fedora-negativo17",
-      "official_image": "ghcr.io/ferret-linux/fedora-otr:negativo17",
-      "family": "fedora",
-      "image_variant": "negativo17",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-26T11:40:00Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 709072119,
-          "disk_size": 2141850298
-        },
-        "arm64": {
-          "compressed_size": 658664991,
-          "disk_size": 2056901316
-        }
-      },
-      "fallback_vendor_image": "quay.io/fedora/fedora:latest",
-      "build_number": 19
-    },
-    {
       "name": "oracle",
       "official_image": "ghcr.io/ferret-linux/oracle-otr:stable",
       "family": "oracle",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest",
       "build_number": 574
+    },
+    {
+      "name": "fedora-negativo17",
+      "official_image": "ghcr.io/ferret-linux/fedora-otr:negativo17",
+      "family": "fedora",
+      "image_variant": "negativo17",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-27T01:47:15Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 709074820,
+          "disk_size": 2141850297
+        },
+        "arm64": {
+          "compressed_size": 658666609,
+          "disk_size": 2056901322
+        }
+      },
+      "fallback_vendor_image": "quay.io/fedora/fedora:latest",
+      "build_number": 20
     }
   ]
 }
