@@ -591,31 +591,6 @@
       "build_number": 17
     },
     {
-      "name": "void-glibc-nonfree",
-      "official_image": "ghcr.io/ferret-linux/void-otr:glibc-nonfree",
-      "family": "void",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-26T18:22:30Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 414660038,
-          "disk_size": 1187653373
-        },
-        "arm64": {
-          "compressed_size": 396658345,
-          "disk_size": 1166544639
-        }
-      },
-      "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest",
-      "build_number": 20
-    },
-    {
       "name": "ubuntu-lts-nonfree",
       "official_image": "ghcr.io/ferret-linux/ubuntu-otr:lts-nonfree",
       "family": "ubuntu",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
       "build_number": 519
+    },
+    {
+      "name": "void-glibc-nonfree",
+      "official_image": "ghcr.io/ferret-linux/void-otr:glibc-nonfree",
+      "family": "void",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-27T03:57:19Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 414688089,
+          "disk_size": 1187713281
+        },
+        "arm64": {
+          "compressed_size": 396682790,
+          "disk_size": 1166625020
+        }
+      },
+      "fallback_vendor_image": "ghcr.io/void-linux/void-glibc-full:latest",
+      "build_number": 21
     }
   ]
 }
