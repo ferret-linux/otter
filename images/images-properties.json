@@ -1014,31 +1014,6 @@
       "build_number": 18
     },
     {
-      "name": "gentoo",
-      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
-      "family": "gentoo",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-27T03:04:10Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 2027987661,
-          "disk_size": 5122164432
-        },
-        "arm64": {
-          "compressed_size": 1563029277,
-          "disk_size": 4151293651
-        }
-      },
-      "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
-      "build_number": 519
-    },
-    {
       "name": "void-glibc-nonfree",
       "official_image": "ghcr.io/ferret-linux/void-otr:glibc-nonfree",
       "family": "void",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "quay.io/fedora/fedora:latest",
       "build_number": 21
+    },
+    {
+      "name": "gentoo",
+      "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
+      "family": "gentoo",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-27T05:15:39Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 2027980429,
+          "disk_size": 5122163922
+        },
+        "arm64": {
+          "compressed_size": 1563026211,
+          "disk_size": 4151293138
+        }
+      },
+      "fallback_vendor_image": "docker.io/gentoo/stage3:latest",
+      "build_number": 520
     }
   ]
 }
