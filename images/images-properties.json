@@ -715,31 +715,6 @@
       "build_number": 545
     },
     {
-      "name": "centos",
-      "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
-      "family": "centos",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-27T01:34:47Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 503502234,
-          "disk_size": 1555307790
-        },
-        "arm64": {
-          "compressed_size": 489772737,
-          "disk_size": 1564401417
-        }
-      },
-      "fallback_vendor_image": "quay.io/centos/centos:stream10",
-      "build_number": 586
-    },
-    {
       "name": "debian-nonfree",
       "official_image": "ghcr.io/ferret-linux/debian-otr:stable-nonfree",
       "family": "debian",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "docker.io/library/alpine:edge",
       "build_number": 595
+    },
+    {
+      "name": "centos",
+      "official_image": "ghcr.io/ferret-linux/centos-otr:stable",
+      "family": "centos",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-27T13:07:14Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 503501371,
+          "disk_size": 1555306255
+        },
+        "arm64": {
+          "compressed_size": 489775456,
+          "disk_size": 1564402956
+        }
+      },
+      "fallback_vendor_image": "quay.io/centos/centos:stream10",
+      "build_number": 587
     }
   ]
 }
