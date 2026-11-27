@@ -1090,31 +1090,6 @@
       "build_number": 475
     },
     {
-      "name": "opensuse-tumbleweed",
-      "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
-      "family": "opensuse",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-27T18:51:47Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 426035005,
-          "disk_size": 1295213771
-        },
-        "arm64": {
-          "compressed_size": 393240591,
-          "disk_size": 1245154523
-        }
-      },
-      "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
-      "build_number": 525
-    },
-    {
       "name": "wolfi",
       "official_image": "ghcr.io/ferret-linux/wolfi-otr:latest",
       "family": "wolfi",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest",
       "build_number": 20
+    },
+    {
+      "name": "opensuse-tumbleweed",
+      "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
+      "family": "opensuse",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-27T22:29:07Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 426040065,
+          "disk_size": 1295215308
+        },
+        "arm64": {
+          "compressed_size": 393242715,
+          "disk_size": 1245154518
+        }
+      },
+      "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
+      "build_number": 526
     }
   ]
 }
