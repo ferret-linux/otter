@@ -640,31 +640,6 @@
       "build_number": 586
     },
     {
-      "name": "chimera",
-      "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
-      "family": "chimera",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-27T04:20:48Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 353697738,
-          "disk_size": 1005425570
-        },
-        "arm64": {
-          "compressed_size": 348668060,
-          "disk_size": 975709619
-        }
-      },
-      "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest",
-      "build_number": 589
-    },
-    {
       "name": "debian",
       "official_image": "ghcr.io/ferret-linux/debian-otr:stable",
       "family": "debian",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "docker.io/library/almalinux:latest",
       "build_number": 588
+    },
+    {
+      "name": "chimera",
+      "official_image": "ghcr.io/ferret-linux/chimera-otr:latest",
+      "family": "chimera",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-27T22:42:37Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 353697934,
+          "disk_size": 1005440417
+        },
+        "arm64": {
+          "compressed_size": 348671164,
+          "disk_size": 975721904
+        }
+      },
+      "fallback_vendor_image": "docker.io/chimeralinux/chimera:latest",
+      "build_number": 590
     }
   ]
 }
