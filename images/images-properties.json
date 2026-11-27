@@ -465,31 +465,6 @@
       "build_number": 16
     },
     {
-      "name": "rhel",
-      "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
-      "family": "rhel",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-26T11:36:38Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 382636612,
-          "disk_size": 1277478511
-        },
-        "arm64": {
-          "compressed_size": 341793075,
-          "disk_size": 1128932481
-        }
-      },
-      "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest",
-      "build_number": 594
-    },
-    {
       "name": "alma-nonfree",
       "official_image": "ghcr.io/ferret-linux/alma-otr:nonfree",
       "family": "alma",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "quay.io/fedora/fedora:rawhide",
       "build_number": 17
+    },
+    {
+      "name": "rhel",
+      "official_image": "ghcr.io/ferret-linux/rhel-otr:stable",
+      "family": "rhel",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-27T01:42:35Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 382636124,
+          "disk_size": 1277478512
+        },
+        "arm64": {
+          "compressed_size": 341790674,
+          "disk_size": 1128932476
+        }
+      },
+      "fallback_vendor_image": "registry.access.redhat.com/ubi10/ubi-init:latest",
+      "build_number": 595
     }
   ]
 }
