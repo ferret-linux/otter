@@ -16,6 +16,7 @@ func newSettingsCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "settings",
 		Aliases: []string{"conf"},
+		Usage:   "View/edit otter settings",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:   "list-json",

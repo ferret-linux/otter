@@ -16,6 +16,7 @@ func newJournalCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "journal",
 		Aliases: []string{"logs"},
+		Usage:   "Show logs of a container",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "follow",

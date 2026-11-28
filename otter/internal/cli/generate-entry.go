@@ -18,22 +18,23 @@ func newGenerateEntryCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "generate-entry",
 		Aliases: []string{"pin"},
+		Usage:   "Create desktop launchers",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "delete",
 				Aliases: []string{"d"},
-				Usage:   "Delete the entry",
+				Usage:   "Delete the desktop entry",
 			},
 			&cli.StringFlag{
 				Name:    "icon",
 				Aliases: []string{"i"},
 				Value:   "auto",
-				Usage:   "Specify a custom icon path",
+				Usage:   "Custom icon path",
 			},
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
-				Usage:   "Perform for all otters",
+				Usage:   "Use all containers",
 			},
 		},
 		Action: generateEntryAction,

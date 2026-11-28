@@ -15,16 +15,17 @@ func newRestartCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "restart",
 		Aliases: []string{"rbt"},
+		Usage:   "Restart containers",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
-				Usage:   "Restart all otter containers",
+				Usage:   "Use all containers",
 			},
 			&cli.BoolFlag{
 				Name:    "force",
 				Aliases: []string{"f"},
-				Usage:   "Force restart containers",
+				Usage:   "Force the operation",
 			},
 		},
 		Action: restartAction,

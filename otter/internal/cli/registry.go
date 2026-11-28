@@ -19,27 +19,28 @@ func newRegistryCommand(cfg *config.Values) *cli.Command {
 	pull := cc.apply(
 		newRegistryPullCommand,
 		withUsageErrorHandler,
-		withRoot,
+		withRootRootful,
 		withContainerManager,
 	)
 
 	remove := cc.apply(
 		newRegistryRemoveCommand,
 		withUsageErrorHandler,
-		withRoot,
+		withRootRootful,
 		withContainerManager,
 	)
 
 	list := cc.apply(
 		newRegistryListCommand,
 		withUsageErrorHandler,
-		withRoot,
+		withRootRootful,
 		withContainerManager,
 	)
 
 	return &cli.Command{
 		Name:     "registry",
 		Aliases:  []string{"reg"},
+		Usage:    "Browse and manage otter images",
 		Commands: []*cli.Command{list, pull, remove},
 	}
 }
@@ -48,16 +49,17 @@ func newRegistryListCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "list",
 		Aliases: []string{"ls"},
+		Usage:   "List otter images available in the registry",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
-				Usage:   "Include disabled images in the table",
+				Usage:   "Include disabled images",
 			},
 			&cli.BoolFlag{
 				Name:    "json",
 				Aliases: []string{"j"},
-				Usage:   "Present registry output in json format",
+				Usage:   "Output as JSON",
 			},
 		},
 		Action: registryListAction,
@@ -83,16 +85,17 @@ func newRegistryPullCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "pull",
 		Aliases: []string{"pl"},
+		Usage:   "Pull otter images from the registry",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
-				Usage:   "Pull all enabled images not yet present",
+				Usage:   "Pull all missing enabled images",
 			},
 			&cli.BoolFlag{
 				Name:    "force",
 				Aliases: []string{"f"},
-				Usage:   "Pull even if already present and current",
+				Usage:   "Force the operation",
 			},
 		},
 		Action: registryPullAction,
@@ -124,16 +127,17 @@ func newRegistryRemoveCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "remove",
 		Aliases: []string{"rm"},
+		Usage:   "Remove otter images from the local registry cache",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
-				Usage:   "Remove all locally present otter images",
+				Usage:   "Remove all cached images",
 			},
 			&cli.BoolFlag{
 				Name:    "force",
 				Aliases: []string{"f"},
-				Usage:   "Remove even if image is in use",
+				Usage:   "Force the operation",
 			},
 		},
 		Action: registryRemoveAction,

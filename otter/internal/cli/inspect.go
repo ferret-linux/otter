@@ -17,11 +17,12 @@ func newInspectCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "inspect",
 		Aliases: []string{"info"},
+		Usage:   "Show container information",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "json",
 				Aliases: []string{"j"},
-				Usage:   "Show inspect as json struct",
+				Usage:   "Output as JSON",
 			},
 		},
 		Action: inspectAction,

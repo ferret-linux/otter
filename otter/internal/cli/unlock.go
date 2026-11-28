@@ -15,11 +15,12 @@ func newUnlockCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "unlock",
 		Aliases: []string{"ulk"},
+		Usage:   "Unlock a locked container",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
-				Usage:   "Unlock all otter containers",
+				Usage:   "Use all containers",
 			},
 		},
 		Action: unlockAction,

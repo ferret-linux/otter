@@ -15,11 +15,12 @@ func newStartCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "start",
 		Aliases: []string{"up"},
+		Usage:   "Start containers",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
-				Usage:   "Start all otter containers",
+				Usage:   "Use all containers",
 			},
 		},
 		Action: startAction,

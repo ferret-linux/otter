@@ -19,6 +19,7 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:                      "create",
 		Aliases:                   []string{"mk"},
+		Usage:                     "Create new containers",
 		DisableSliceFlagSeparator: true,
 		Flags: []cli.Flag{
 			&cli.StringFlag{
@@ -44,7 +45,7 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 			&cli.StringFlag{
 				Name:    "clone",
 				Aliases: []string{"C"},
-				Usage:   "Name of container to use as base for new container",
+				Usage:   "Use an existing container as base",
 			},
 			&cli.StringFlag{
 				Name:    "home",
@@ -59,7 +60,7 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 			&cli.StringSliceFlag{
 				Name:    "additional-flags",
 				Aliases: []string{"a"},
-				Usage:   "Additional flags to pass to the container manager",
+				Usage:   "Extra flags for manager",
 			},
 			&cli.StringSliceFlag{
 				Name:    "additional-packages",
@@ -79,7 +80,7 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 			&cli.BoolFlag{
 				Name:    "init",
 				Aliases: []string{"I"},
-				Usage:   "Use init system (e.g. systemd) inside the container",
+				Usage:   "Use an init system",
 			},
 			&cli.StringFlag{
 				Name:    "memory",
@@ -139,15 +140,15 @@ func newCreateCommand(cfg *config.Values) *cli.Command {
 			&cli.BoolFlag{
 				Name:    "no-entry",
 				Aliases: []string{"E"},
-				Usage:   "Do not generate a container entry on host system",
+				Usage:   "Skip host container entry",
 			},
 			&cli.BoolFlag{
 				Name:  "json",
-				Usage: "Output progress as JSON",
+				Usage: "Output as JSON",
 			},
 			&cli.BoolFlag{
 				Name:  "disable-root-password-i-fully-understand-the-risks-and-accept-the-responsibilities",
-				Usage: "Disable the root password inside the container",
+				Usage: "Disable root password; throwaway boxes only.",
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {

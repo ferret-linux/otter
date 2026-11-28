@@ -23,7 +23,7 @@ func newExportsCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:     "exports",
 		Aliases:  []string{"exp"},
-		Usage:    "Manage the host export index",
+		Usage:    "Manage host export index",
 		Commands: []*cli.Command{list, rebuild, prune, deleteCmd},
 	}
 }
@@ -32,7 +32,7 @@ func newExportsListCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "list",
 		Aliases: []string{"ls"},
-		Usage:   "List every recorded export",
+		Usage:   "List all recorded exports",
 		Action: func(ctx context.Context, _ *cli.Command) error {
 			if _, err := commands.NewExportsListCommand().Execute(ctx, commands.ExportsListOptions{}); err != nil {
 				return fmt.Errorf("failed to list exports: %w", err)
@@ -45,11 +45,11 @@ func newExportsListCommand(_ *config.Values) *cli.Command {
 func newExportsRebuildCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:  "rebuild",
-		Usage: "Rebuild the export index from export files on disk",
+		Usage: "Rebuild index from markers",
 		Flags: []cli.Flag{
 			&cli.StringSliceFlag{
 				Name:  "scan-path",
-				Usage: "Additional file or directory to scan (repeatable)",
+				Usage: "Extra export path to scan",
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
@@ -66,11 +66,11 @@ func newExportsRebuildCommand(_ *config.Values) *cli.Command {
 func newExportsPruneCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:  "prune",
-		Usage: "Remove stale records and orphaned export files",
+		Usage: "Drop stale records and orphans",
 		Flags: []cli.Flag{
 			&cli.StringSliceFlag{
 				Name:  "scan-path",
-				Usage: "Additional file or directory to scan (repeatable)",
+				Usage: "Extra export path to scan",
 			},
 			&cli.BoolFlag{
 				Name:    "root",
@@ -94,7 +94,7 @@ func newExportsDeleteCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:      "delete",
 		Aliases:   []string{"rm"},
-		Usage:     "Delete one export by its host path",
+		Usage:     "Delete one export by path",
 		ArgsUsage: "<path>",
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			if cmd.Args().Len() != 1 {

@@ -18,21 +18,23 @@ func newAssembleCommand(cfg *config.Values) *cli.Command {
 	fileFlag := &cli.StringFlag{
 		Name:    "file",
 		Aliases: []string{"f"},
-		Usage:   "Path to the manifest file (required)",
+		Usage:   "Manifest path (required)",
 	}
 	return &cli.Command{
 		Name:    "assemble",
 		Aliases: []string{"dmf"},
+		Usage:   "Manage containers by manifest",
 		Commands: []*cli.Command{
 			{
 				Name:    "create",
 				Aliases: []string{"mk"},
+				Usage:   "Create boxes from manifest",
 				Flags: []cli.Flag{
 					fileFlag,
 					&cli.BoolFlag{
 						Name:    "replace",
 						Aliases: []string{"R"},
-						Usage:   "Delete and recreate boxes that already exist",
+						Usage:   "Replace matching boxes",
 					},
 				},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
@@ -42,6 +44,7 @@ func newAssembleCommand(cfg *config.Values) *cli.Command {
 			{
 				Name:    "remove",
 				Aliases: []string{"rm"},
+				Usage:   "Remove boxes from manifest",
 				Flags: []cli.Flag{
 					fileFlag,
 				},

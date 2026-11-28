@@ -15,16 +15,17 @@ func newStopCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "stop",
 		Aliases: []string{"dn"},
+		Usage:   "Stop running containers",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
-				Usage:   "Stop all otter containers",
+				Usage:   "Use all containers",
 			},
 			&cli.BoolFlag{
 				Name:    "force",
 				Aliases: []string{"f"},
-				Usage:   "Force stop containers",
+				Usage:   "Force the operation",
 			},
 		},
 		Action: stopAction,

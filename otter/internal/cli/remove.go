@@ -17,30 +17,31 @@ func newRmCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "remove",
 		Aliases: []string{"rm"},
+		Usage:   "Remove containers",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
-				Usage:   "Delete all otter containers",
+				Usage:   "Use all containers",
 			},
 			&cli.BoolFlag{
 				Name:    "force",
 				Aliases: []string{"f"},
-				Usage:   "Force deletion of problematic containers",
+				Usage:   "Force the operation",
 			},
 			&cli.BoolFlag{
 				Name:    "rm-home",
 				Aliases: []string{"H"},
-				Usage:   "Remove container's custom home directory",
+				Usage:   "Remove custom home directory",
 			},
 			&cli.BoolFlag{
 				Name:    "bypass-lock",
 				Aliases: []string{"B"},
-				Usage:   "Remove container even if it is locked",
+				Usage:   "Remove even when locked",
 			},
 			&cli.BoolFlag{
 				Name:  "prune",
-				Usage: "Also remove exports, backups, and temp files for the selected containers",
+				Usage: "Remove exports and leftovers",
 			},
 		},
 

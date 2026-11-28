@@ -15,6 +15,7 @@ func newDocumentationCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "documentation",
 		Aliases: []string{"docs"},
+		Usage:   "Browse otter's documentation",
 		Action:  documentationAction,
 	}
 }

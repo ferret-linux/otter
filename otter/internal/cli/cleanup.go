@@ -1,3 +1,4 @@
+//nolint:goconst // CLI flag usages are declarative and intentionally repeated with their help entries
 package cli
 
 import (
@@ -21,27 +22,27 @@ func newCleanupCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "cleanup",
 		Aliases: []string{"purge"},
-		Usage:   "Remove orphaned otter state from exports, launchers, icons and images",
+		Usage:   "Clean up host leftovers",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:  "no-apply",
-				Usage: "Print the cleanup plan without writing or taking locks",
+				Usage: "Plan only; make no changes",
 			},
 			&cli.BoolFlag{
 				Name:  cleanupFlagJSON,
-				Usage: "Show the plan or report as JSON",
+				Usage: "Output as JSON",
 			},
 			&cli.BoolFlag{
 				Name:  "all-managers",
-				Usage: "Include every installed podman, docker and nerdctl manager",
+				Usage: "Include all installed managers",
 			},
 			&cli.BoolFlag{
 				Name:  "images",
-				Usage: "Allow deletion of safe unreferenced otter-derived engine images",
+				Usage: "Allow image deletion",
 			},
 			&cli.StringSliceFlag{
 				Name:  cleanupFlagScanPath,
-				Usage: "Additional file or directory to scan for export markers (repeatable)",
+				Usage: "Extra export path to scan",
 			},
 		},
 		Action: cleanupAction,

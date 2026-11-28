@@ -17,11 +17,12 @@ func newListCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "list",
 		Aliases: []string{"ls"},
+		Usage:   "List all containers",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "json",
 				Aliases: []string{"j"},
-				Usage:   "Show list as json struct",
+				Usage:   "Output as JSON",
 			},
 		},
 		Action: listAction,

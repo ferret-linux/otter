@@ -24,6 +24,12 @@ type contextKey string
 
 type errorReportedKey struct{}
 
+const (
+	rootUsageCleanup    = "Use settings.rootful by default"
+	rootUsagePrivileges = "Use root privileges"
+	rootUsageRootful    = "Use rootful containers"
+)
+
 // WithErrorReportFlag attaches a flag that the root ExitErrHandler sets when
 // it has already reported an error. urfave/cli bypasses that handler on some
 // paths (notably an unknown command followed by --help), so main uses the flag
@@ -74,6 +80,7 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 	}
 	return &cli.Command{
 		Name:                  "otter",
+		Usage:                 "Use any Linux distribution inside your terminal",
 		Version:               version,
 		EnableShellCompletion: true,
 		Flags: []cli.Flag{
@@ -117,14 +124,25 @@ func NewRootCommand(cfg *config.Values) *cli.Command {
 func subcommands(cfg *config.Values) []*cli.Command {
 	cc := &CommandComposer[config.Values]{cfg: cfg}
 
-	stdOpts := []func(*config.Values, *cli.Command) *cli.Command{
+	rootPrivilegesOpts := []func(*config.Values, *cli.Command) *cli.Command{
 		withUsageErrorHandler,
 		withRoot,
 		withContainerManager,
 	}
-	containerNameOpts := []func(*config.Values, *cli.Command) *cli.Command{
+	rootPrivilegesContainerNameOpts := []func(*config.Values, *cli.Command) *cli.Command{
 		withUsageErrorHandler,
 		withRoot,
+		withContainerManager,
+		withContainerNameCompletion,
+	}
+	rootfulOpts := []func(*config.Values, *cli.Command) *cli.Command{
+		withUsageErrorHandler,
+		withRootRootful,
+		withContainerManager,
+	}
+	rootfulContainerNameOpts := []func(*config.Values, *cli.Command) *cli.Command{
+		withUsageErrorHandler,
+		withRootRootful,
 		withContainerManager,
 		withContainerNameCompletion,
 	}
@@ -141,7 +159,9 @@ func subcommands(cfg *config.Values) []*cli.Command {
 	// Order matches the alphabetical listing urfave/cli renders in --help.
 	cleanupOpts := []func(*config.Values, *cli.Command) *cli.Command{
 		withUsageErrorHandler,
-		withRootSelection,
+		func(cfg *config.Values, cmd *cli.Command) *cli.Command {
+			return withRootSelection(cfg, cmd, rootUsageCleanup)
+		},
 	}
 
 	specs := []struct {
@@ -150,24 +170,24 @@ func subcommands(cfg *config.Values) []*cli.Command {
 	}{
 		{newAssembleCommand, noRootOpts},
 		{newCleanupCommand, cleanupOpts},
-		{newCreateCommand, stdOpts},
+		{newCreateCommand, rootPrivilegesOpts},
 		{newDocumentationCommand, documentationOpts},
-		{newEnterCommand, containerNameOpts},
+		{newEnterCommand, rootPrivilegesContainerNameOpts},
 		{newExportsCommand, nil},
-		{newGenerateEntryCommand, containerNameOpts},
-		{newInspectCommand, containerNameOpts},
-		{newJournalCommand, containerNameOpts},
-		{newListCommand, stdOpts},
-		{newLockCommand, containerNameOpts},
-		{newPauseCommand, containerNameOpts},
+		{newGenerateEntryCommand, rootfulContainerNameOpts},
+		{newInspectCommand, rootfulContainerNameOpts},
+		{newJournalCommand, rootfulContainerNameOpts},
+		{newListCommand, rootfulOpts},
+		{newLockCommand, rootfulContainerNameOpts},
+		{newPauseCommand, rootfulContainerNameOpts},
 		{newRegistryCommand, nil},
-		{newRmCommand, containerNameOpts},
-		{newRestartCommand, containerNameOpts},
+		{newRmCommand, rootfulContainerNameOpts},
+		{newRestartCommand, rootfulContainerNameOpts},
 		{newSettingsCommand, documentationOpts},
-		{newStartCommand, containerNameOpts},
-		{newStopCommand, containerNameOpts},
-		{newUnlockCommand, containerNameOpts},
-		{newUpgradeCommand, containerNameOpts},
+		{newStartCommand, rootfulContainerNameOpts},
+		{newStopCommand, rootfulContainerNameOpts},
+		{newUnlockCommand, rootfulContainerNameOpts},
+		{newUpgradeCommand, rootfulContainerNameOpts},
 	}
 
 	commands := make([]*cli.Command, len(specs))
@@ -248,16 +268,17 @@ func withUsageErrorHandler(_ *config.Values, cmd *cli.Command) *cli.Command {
 	return cmd
 }
 
-// withRootSelection declares the --root flag and resolves its effective
-// value against cfg.DefaultRootful. It deliberately does not validate an
-// escalator: commands such as cleanup --no-apply must be able to plan without
-// running the rootcheck probe or any privilege prompt. Mutation-capable commands
-// compose this with withRootValidation (or validate in their Action).
-func withRootSelection(cfg *config.Values, cmd *cli.Command) *cli.Command {
+// withRootSelection declares the --root flag with the help text used by the
+// command's .help file and resolves its effective value against cfg.DefaultRootful.
+// It deliberately does not validate an escalator: commands such as cleanup
+// --no-apply must be able to plan without running the rootcheck probe or any
+// privilege prompt. Mutation-capable commands compose this with withRootValidation
+// (or validate in their Action).
+func withRootSelection(cfg *config.Values, cmd *cli.Command, usage string) *cli.Command {
 	cmd.Flags = append(cmd.Flags, &cli.BoolFlag{
 		Name:    "root",
 		Aliases: []string{"r"},
-		Usage:   "Launch container manager with root privileges",
+		Usage:   usage,
 	})
 
 	prev := cmd.Before
@@ -308,9 +329,24 @@ func withRootValidation(_ *config.Values, cmd *cli.Command) *cli.Command {
 	return cmd
 }
 
-// withRoot is the full root flag behaviour used by ordinary commands.
+// withRootUsage returns the full root flag behaviour with the help text used
+// by the command's .help file.
+func withRootUsage(usage string) func(*config.Values, *cli.Command) *cli.Command {
+	return func(cfg *config.Values, cmd *cli.Command) *cli.Command {
+		return withRootValidation(cfg, withRootSelection(cfg, cmd, usage))
+	}
+}
+
+// withRoot is the full root flag behaviour for commands whose help says
+// "Use root privileges".
 func withRoot(cfg *config.Values, cmd *cli.Command) *cli.Command {
-	return withRootValidation(cfg, withRootSelection(cfg, cmd))
+	return withRootUsage(rootUsagePrivileges)(cfg, cmd)
+}
+
+// withRootRootful is the full root flag behaviour for commands whose help says
+// "Use rootful containers".
+func withRootRootful(cfg *config.Values, cmd *cli.Command) *cli.Command {
+	return withRootUsage(rootUsageRootful)(cfg, cmd)
 }
 
 // withContainerManager builds the container manager for a command and stores

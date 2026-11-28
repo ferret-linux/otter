@@ -17,37 +17,38 @@ func newEnterCommand(_ *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:                      "enter",
 		Aliases:                   []string{"sh"},
+		Usage:                     "Enter running containers",
 		DisableSliceFlagSeparator: true,
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "clean-path",
 				Aliases: []string{"c"},
-				Usage:   "Reset PATH inside container to FHS standard",
+				Usage:   "Reset PATH to FHS standard",
 			},
 			&cli.StringSliceFlag{
 				Name:    "additional-flags",
 				Aliases: []string{"a"},
-				Usage:   "Additional flags to pass to container manager",
+				Usage:   "Extra flags for manager",
 			},
 			&cli.BoolFlag{
 				Name:    "background",
 				Aliases: []string{"b"},
-				Usage:   "Run the command in the background without a tty",
+				Usage:   "Run in background without tty",
 			},
 			&cli.BoolFlag{
 				Name:    "no-workdir",
 				Aliases: []string{"nw"},
-				Usage:   "Always start from container's home directory",
+				Usage:   "Start from container home",
 			},
 			&cli.StringSliceFlag{
 				Name:    "add-env",
 				Aliases: []string{"e"},
-				Usage:   "Copy host env var NAME or override NAME=value",
+				Usage:   "Copy NAME or set NAME=value",
 			},
 			&cli.BoolFlag{
 				Name:    "empty-env",
 				Aliases: []string{"E"},
-				Usage:   "Don't auto copy host environment variables",
+				Usage:   "Do not copy host environment",
 			},
 		},
 		Action: enterAction,

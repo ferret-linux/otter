@@ -15,16 +15,17 @@ func newUpgradeCommand(cfg *config.Values) *cli.Command {
 	return &cli.Command{
 		Name:    "upgrade",
 		Aliases: []string{"syu"},
+		Usage:   "Upgrade packages in containers",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
-				Usage:   "Perform for all otters",
+				Usage:   "Use all containers",
 			},
 			&cli.BoolFlag{
 				Name:    "running",
 				Aliases: []string{"R"},
-				Usage:   "Only upgrade running containers",
+				Usage:   "Only running containers",
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
