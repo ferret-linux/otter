@@ -82,8 +82,6 @@ RUN set -eux; \
         *-nonfree) extra_packages="ubuntu-restricted-extras ubuntu-restricted-addons gstreamer1.0-plugins-ugly" ;; \
         *) extra_packages="" ;; \
     esac; \
-    apt-get update && \
-    apt-get upgrade -y && \
     apt-get install -y --no-install-suggests $(sh /tmp/pkg-validator.sh --pkgmgr apt -- \
         bc \
         mtr \
@@ -162,8 +160,6 @@ RUN set -eux; \
         gstreamer1.0-plugins-base \
         gstreamer1.0-plugins-good \
         ${extra_packages}) && \
-    apt-get update && \
-    apt-get upgrade -y && \
     apt-get autoremove -y && \
     apt-get autoclean && \
     apt-get clean && \
