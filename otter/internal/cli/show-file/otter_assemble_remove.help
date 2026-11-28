@@ -2,7 +2,7 @@
 {2}│{R}{1}⦿ Remove otters defined in a manifest file                 {R}{2}│{R}
 {2}├───────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                                   {2}│{R}
-{2}│{R}  {5}otter dmf rm     --file manifest.toml [box]{R}              {2}│{R}
+{2}│{R}  {5}otter dmf rm          --file manifest.toml [box]{R}         {2}│{R}
 {2}│{R}  {5}otter assemble remove --file manifest.toml [box]{R}         {2}│{R}
 {2}├───────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                                {2}│{R}

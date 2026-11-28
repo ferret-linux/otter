@@ -7,7 +7,7 @@
 {2}├─────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                          {2}│{R}
 {2}│{R}  {5}otter dn my-box{R}                                    {2}│{R}
-{2}│{R}  {5}otter dn --all{R}                                     {2}│{R}
+{2}│{R}  {5}otter dn --all --root{R}                              {2}│{R}
 {2}│{R}  {5}otter stop --all --root{R}                            {2}│{R}
 {2}│{R}  {5}otter stop my-box --force{R}                          {2}│{R}
 {2}├─────────────────────────────────────────────────────┤{R}
@@ -22,7 +22,7 @@
 {2}│{R}{3}▸ Notes:{R}                                             {2}│{R}
 {2}│{R} {4}--root{R}  {5}Prefer this to 'sudo otter'. To use a       {2}│{R}
 {2}│{R}         {5}different escalator, set                    {2}│{R}
-{2}│{R}         {5}'preferences.sudo-program'.                        {2}│{R}
+{2}│{R}         {5}'preferences.sudo-program'.                 {2}│{R}
 {2}├─────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                          {2}│{R}
 {2}│{R} {5}Rootful containers need '--root' for 'stop' to work.{R}{2}│{R}

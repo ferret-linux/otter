@@ -1,32 +1,32 @@
-{2}╭───────────────────────────────────────────────────╮{R}
-{2}│{R}{1}⦿ Upgrade packages inside otter managed containers {R}{2}│{R}
-{2}├───────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Usage:{R}                                           {2}│{R}
-{2}│{R}  {5}otter syu     [options] [container...]{R}           {2}│{R}
-{2}│{R}  {5}otter upgrade [options] [container...]{R}           {2}│{R}
-{2}├───────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Examples:{R}                                        {2}│{R}
-{2}│{R}  {5}otter syu my-box{R}                                 {2}│{R}
-{2}│{R}  {5}otter syu --all --root{R}                           {2}│{R}
-{2}│{R}  {5}otter upgrade --all{R}                              {2}│{R}
-{2}│{R}  {5}otter upgrade --running{R}                          {2}│{R}
-{2}├───────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Options:{R}                                         {2}│{R}
-{2}│{R} {4}--all{R}     {2}┆{R} {4}-a{R}  {5}Perform for all otters{R}            {2}│{R}
-{2}│{R} {4}--root{R}    {2}┆{R} {4}-r{R}  {5}Upgrade rootful containers{R}        {2}│{R}
-{2}│{R} {4}--running{R} {2}┆{R} {4}-R{R}  {5}Only upgrade running containers{R}   {2}│{R}
-{2}├───────────┴───────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Extras:{R}                                          {2}│{R}
-{2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}            {2}│{R}
-{2}├───────────┴───────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Notes:{R}                                           {2}│{R}
-{2}│{R} {4}--root{R}  {5}Prefer this to 'sudo otter'.              {2}│{R}
-{2}│{R}         {5}Use preferences.sudo-program config key.  {2}│{R}
-{2}├───────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ See also:{R}                                        {2}│{R}
-{2}│{R}  {5}Rootful containers need '--root' for 'upgrade'.{R}  {2}│{R}
-{2}│{R}  {5}Locked containers are always skipped, with{R}       {2}│{R}
-{2}│{R}  {5}a warning. If every requested container is{R}       {2}│{R}
-{2}│{R}  {5}locked (nothing gets upgraded), the command{R}      {2}│{R}
-{2}│{R}  {5}errors. Use 'unlock' first.{R}                      {2}│{R}
-{2}╰───────────────────────────────────────────────────╯{R}
+{2}╭──────────────────────────────────────────────────╮{R}
+{2}│{R}{1}⦿ Upgrade packages inside otter managed containers{R}{2}│{R}
+{2}├──────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Usage:{R}                                          {2}│{R}
+{2}│{R}  {5}otter syu     [options] [container...]{R}          {2}│{R}
+{2}│{R}  {5}otter upgrade [options] [container...]{R}          {2}│{R}
+{2}├──────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                       {2}│{R}
+{2}│{R}  {5}otter syu my-box{R}                                {2}│{R}
+{2}│{R}  {5}otter syu --all -r{R}                              {2}│{R}
+{2}│{R}  {5}otter upgrade --all{R}                             {2}│{R}
+{2}│{R}  {5}otter upgrade --running{R}                         {2}│{R}
+{2}├──────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Options:{R}                                        {2}│{R}
+{2}│{R} {4}--all{R}     {2}┆{R} {4}-a{R}  {5}Perform for all otters{R}           {2}│{R}
+{2}│{R} {4}--root{R}    {2}┆{R} {4}-r{R}  {5}Upgrade rootful containers{R}       {2}│{R}
+{2}│{R} {4}--running{R} {2}┆{R} {4}-R{R}  {5}Only upgrade running containers{R}  {2}│{R}
+{2}├───────────┴──────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                         {2}│{R}
+{2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}           {2}│{R}
+{2}├───────────┴──────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Notes:{R}                                          {2}│{R}
+{2}│{R} {4}--root{R}  {5}Prefer this to 'sudo otter'.             {2}│{R}
+{2}│{R}         {5}Use preferences.sudo-program config key. {2}│{R}
+{2}├──────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ See also:{R}                                       {2}│{R}
+{2}│{R}  {5}Rootful containers need '--root' for 'upgrade'.{R} {2}│{R}
+{2}│{R}  {5}Locked containers are always skipped, with{R}      {2}│{R}
+{2}│{R}  {5}a warning. If every requested container is{R}      {2}│{R}
+{2}│{R}  {5}locked (nothing gets upgraded), the command{R}     {2}│{R}
+{2}│{R}  {5}errors. Use 'unlock' first.{R}                     {2}│{R}
+{2}╰──────────────────────────────────────────────────╯{R}

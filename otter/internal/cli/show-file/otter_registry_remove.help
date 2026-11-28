@@ -2,7 +2,7 @@
 {2}│{R}{1}⦿ Remove otter images from the local registry cache     {R}{2}│{R}
 {2}├────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                                {2}│{R}
-{2}│{R}  {5}otter reg rm        [options] [image...]{R}              {2}│{R}
+{2}│{R}  {5}otter reg rm          [options] [image...]{R}            {2}│{R}
 {2}│{R}  {5}otter registry remove [options] [image...]{R}            {2}│{R}
 {2}├────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                             {2}│{R}

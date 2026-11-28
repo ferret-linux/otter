@@ -2,24 +2,24 @@
 {2}│{R}{1}⦿ Clean up otter-managed host leftovers{R}                           {2}│{R}
 {2}├──────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                                          {2}│{R}
-{2}│{R}  {5}otter cleanup [options]{R}                                         {2}│{R}
 {2}│{R}  {5}otter purge   [options]{R}                                         {2}│{R}
+{2}│{R}  {5}otter cleanup [options]{R}                                         {2}│{R}
 {2}├──────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                                       {2}│{R}
-{2}│{R}  {5}otter cleanup{R}                                                   {2}│{R}
-{2}│{R}  {5}otter cleanup --no-apply --json{R}                                 {2}│{R}
+{2}│{R}  {5}otter purge{R}                                                     {2}│{R}
 {2}│{R}  {5}otter purge --root --all-managers{R}                               {2}│{R}
+{2}│{R}  {5}otter cleanup --no-apply --root --json{R}                          {2}│{R}
 {2}│{R}  {5}otter cleanup --images --scan-path $HOME/exports{R}                {2}│{R}
 {2}├──────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                                        {2}│{R}
-{2}│{R}{4}--no-apply{R}        {2}┆{R}     {5}Plan only; no writes, locks, rootcheck{R}    {2}│{R}
 {2}│{R}{4}--json{R}            {2}┆{R}     {5}Machine-readable plan/report{R}              {2}│{R}
-{2}│{R}{4}--root{R}            {2}┆{R} {4}-r{R} {5}From settings.rootful (config default){R}     {2}│{R}
-{2}│{R}{4}--all-managers{R}    {2}┆{R}     {5}Include installed podman/docker/nerdctl{R}   {2}│{R}
 {2}│{R}{4}--images{R}          {2}┆{R}     {5}Allow final image deletion{R}                {2}│{R}
+{2}│{R}{4}--no-apply{R}        {2}┆{R}     {5}Plan only; no writes, locks, rootcheck{R}    {2}│{R}
 {2}│{R}{4}--scan-path{R}       {2}┆{R}     {5}Extra export candidate root; repeatable{R}   {2}│{R}
+{2}│{R}{4}--all-managers{R}    {2}┆{R}     {5}Include installed podman/docker/nerdctl{R}   {2}│{R}
 {2}├──────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                                         {2}│{R}
+{2}│{R}{4}--root{R}            {2}┆{R} {4}-r{R}  {5}From settings.rootful (config default){R}    {2}│{R}
 {2}│{R}{4}--help{R}            {2}┆{R} {4}-h{R} {5}Show this help message{R}                     {2}│{R}
 {2}├───────────┴──────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Notes:{R}                                                          {2}│{R}
