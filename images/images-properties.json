@@ -1044,31 +1044,6 @@
       "build_number": 18
     },
     {
-      "name": "oracle-nonfree",
-      "official_image": "ghcr.io/ferret-linux/oracle-otr:nonfree",
-      "family": "oracle",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-28T04:34:50Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 623142491,
-          "disk_size": 1910682470
-        },
-        "arm64": {
-          "compressed_size": 569203054,
-          "disk_size": 1753574759
-        }
-      },
-      "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10",
-      "build_number": 24
-    },
-    {
       "name": "debian-unstable",
       "official_image": "ghcr.io/ferret-linux/debian-otr:unstable",
       "family": "debian",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "docker.io/rockylinux/rockylinux:10-ubi-init",
       "build_number": 17
+    },
+    {
+      "name": "oracle-nonfree",
+      "official_image": "ghcr.io/ferret-linux/oracle-otr:nonfree",
+      "family": "oracle",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-28T16:17:15Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 623144618,
+          "disk_size": 1910680425
+        },
+        "arm64": {
+          "compressed_size": 569206116,
+          "disk_size": 1753574761
+        }
+      },
+      "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10",
+      "build_number": 25
     }
   ]
 }
