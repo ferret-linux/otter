@@ -9,6 +9,7 @@ FROM ${IMAGE}
 
 ARG OTTER_BUILD_NUMBER
 LABEL otter.image_build=${OTTER_BUILD_NUMBER}
+ARG TAG
 
 # Pre-create otter dirs
 COPY images/scripts/setup-common.sh /tmp/setup-common.sh
