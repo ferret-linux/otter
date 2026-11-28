@@ -92,6 +92,7 @@ RUN set -eu; \
     fish \
     bash \
     curl \
+    zypper \
     less \
     lsof \
     pigz \
