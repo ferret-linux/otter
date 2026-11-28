@@ -60,8 +60,7 @@ RUN set -eu; \
                 fi; \
                 echo "ttf-mscorefonts-installer attempt ${attempt} failed" >&2; \
                 apt-get purge -y ttf-mscorefonts-installer >/dev/null 2>&1 || true; \
-                dpkg --configure -a >/dev/null 2>&1 || true; \
-                apt-get -f install -y >/dev/null 2>&1 || true; \
+                dpkg --purge --force-remove-reinstreq ttf-mscorefonts-installer >/dev/null 2>&1 || true; \
                 rm -f /var/lib/update-notifier/package-data-downloads/ttf-mscorefonts-installer*; \
                 rm -rf /var/lib/update-notifier/package-data-downloads/partial/*; \
             done; \
