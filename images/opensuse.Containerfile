@@ -29,6 +29,14 @@ RUN zypper al parallel-printer-support
 # cache cannot hide renamed or missing packages on dynamic base tags.
 RUN zypper --non-interactive refresh
 
+# Leap 16.1 images can ship patterns-base-fips, which conditionally pulls in
+# crypto-policies-scripts and forces a downgrade of the vendor-provided
+# crypto-policies package when openssh-clients is installed. Locking the
+# pattern is not enough; it must be removed before validating packages.
+RUN if rpm -q patterns-base-fips >/dev/null 2>&1; then \
+        zypper --non-interactive remove -y patterns-base-fips; \
+    fi
+
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 
