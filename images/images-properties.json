@@ -270,31 +270,6 @@
       "build_number": 545
     },
     {
-      "name": "debian-nonfree",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:stable-nonfree",
-      "family": "debian",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-27T01:36:38Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 619365683,
-          "disk_size": 1633443238
-        },
-        "arm64": {
-          "compressed_size": 584570783,
-          "disk_size": 1578486195
-        }
-      },
-      "fallback_vendor_image": "docker.io/library/debian:stable",
-      "build_number": 19
-    },
-    {
       "name": "alma-negativo17",
       "official_image": "ghcr.io/ferret-linux/alma-otr:negativo17",
       "family": "alma",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "registry.opensuse.org/opensuse/tumbleweed:latest",
       "build_number": 527
+    },
+    {
+      "name": "debian-nonfree",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:stable-nonfree",
+      "family": "debian",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-28T16:24:51Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 619368915,
+          "disk_size": 1633443240
+        },
+        "arm64": {
+          "compressed_size": 584571636,
+          "disk_size": 1578486201
+        }
+      },
+      "fallback_vendor_image": "docker.io/library/debian:stable",
+      "build_number": 20
     }
   ]
 }
