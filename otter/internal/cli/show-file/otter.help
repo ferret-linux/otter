@@ -8,8 +8,8 @@
 {2}│{R}{3}▸ Management:{R}                                         {2}│{R}
 {2}│{R} {0}create{R}         {2}┆{R} {0}mk{R}    {5}Create new containers{R}         {2}│{R}
 {2}│{R} {0}remove{R}         {2}┆{R} {0}rm{R}    {5}Remove containers{R}             {2}│{R}
-{2}│{R} {0}upgrade{R}        {2}┆{R} {0}syu{R}   {5}Update packages in containers{R} {2}│{R}
-{2}│{R} {0}assemble{R}       {2}┆{R} {0}dmf{R}   {5}Manage containers from a spec{R} {2}│{R}
+{2}│{R} {0}upgrade{R}        {2}┆{R} {0}syu{R}   {5}Upgrade packages in containers{R}{2}│{R}
+{2}│{R} {0}assemble{R}       {2}┆{R} {0}dmf{R}   {5}Manage containers by manifest{R} {2}│{R}
 {2}│{R}{3}▸ Lifecycle:{R}                                          {2}│{R}
 {2}│{R} {0}stop{R}           {2}┆{R} {0}dn{R}    {5}Stop running containers{R}       {2}│{R}
 {2}│{R} {0}start{R}          {2}┆{R} {0}up{R}    {5}Start containers{R}              {2}│{R}
@@ -18,21 +18,25 @@
 {2}│{R} {0}restart{R}        {2}┆{R} {0}rbt{R}   {5}Restart containers{R}            {2}│{R}
 {2}│{R}{3}▸ Overview:{R}                                           {2}│{R}
 {2}│{R} {0}list{R}           {2}┆{R} {0}ls{R}    {5}List all containers{R}           {2}│{R}
-{2}│{R} {0}inspect{R}        {2}┆{R} {0}info{R}  {5}Show info of a container{R}      {2}│{R}
+{2}│{R} {0}inspect{R}        {2}┆{R} {0}info{R}  {5}Show container information{R}    {2}│{R}
 {2}│{R} {0}journal{R}        {2}┆{R} {0}logs{R}  {5}Show logs of a container{R}      {2}│{R}
 {2}│{R}{3}▸ Locking:{R}                                            {2}│{R}
 {2}│{R} {0}lock{R}           {2}┆{R} {0}lk{R}    {5}Lock an unlocked container{R}    {2}│{R}
 {2}│{R} {0}unlock{R}         {2}┆{R} {0}ulk{R}   {5}Unlock a locked container{R}     {2}│{R}
 {2}│{R}{3}▸ Miscellaneous:{R}                                      {2}│{R}
 {2}│{R} {0}exports{R}        {2}┆{R} {0}exp{R}   {5}Manage host export index{R}      {2}│{R}
-{2}│{R} {0}cleanup{R}        {2}┆{R} {0}purge{R} {5}Remove otter host leftovers{R}   {2}│{R}
+{2}│{R} {0}cleanup{R}        {2}┆{R} {0}purge{R} {5}Clean up host leftovers{R}       {2}│{R}
 {2}│{R} {0}registry{R}       {2}┆{R} {0}reg{R}   {5}Browse and manage otter images{R}{2}│{R}
-{2}│{R} {0}settings{R}       {2}┆{R} {0}conf{R}  {5}Set otter's config settings{R}   {2}│{R}
-{2}│{R} {0}completion{R}     {2}┆{R}       {5}Generate shell completion file{R}{2}│{R}
+{2}│{R} {0}settings{R}       {2}┆{R} {0}conf{R}  {5}View/edit otter settings{R}      {2}│{R}
+{2}│{R} {0}completion{R}     {2}┆{R}       {5}Generate shell completions{R}    {2}│{R}
 {2}│{R} {0}documentation{R}  {2}┆{R} {0}docs{R}  {5}Browse otter's documentation{R}  {2}│{R}
-{2}│{R} {0}generate-entry{R} {2}┆{R} {0}pin{R}   {5}Create clickable desktop entry{R}{2}│{R}
+{2}│{R} {0}generate-entry{R} {2}┆{R} {0}pin{R}   {5}Create desktop launchers{R}      {2}│{R}
 {2}├────────────────┴─────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                             {2}│{R}
 {2}│{R}  {4}--help{R}    {2}┆{R} {4}-h{R} {5}Show this help message{R}               {2}│{R}
 {2}│{R}  {4}--version{R} {2}┆{R} {4}-v{R} {5}Print version information{R}            {2}│{R}
-{2}╰────────────┴─────────────────────────────────────────╯{R}
+{2}├────────────┴─────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ See also:{R}                                           {2}│{R}
+{2}│{R}{5}Run 'otter help <command>' for full details.{R}          {2}│{R}
+{2}│{R}{5}See Commands in otter documentation.{R}                  {2}│{R}
+{2}╰──────────────────────────────────────────────────────╯{R}

@@ -15,11 +15,11 @@
 {2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}      {2}│{R}
 {2}├─────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Notes:                                     {R}{2}│{R}
-{2}│{R} {5}Prints the script to stdout; redirect it{R}    {2}│{R}
-{2}│{R} {5}to your shell's completion directory.{R}       {2}│{R}
-{2}│{R} {5}Restart the shell, or source the script.{R}    {2}│{R}
-{2}│{R} {5}Regenerate after upgrading otter.{R}           {2}│{R}
+{2}│{R}{5}Prints the script to stdout.{R}                 {2}│{R}
+{2}│{R}{5}Redirect to your shell's completion dir.{R}     {2}│{R}
+{2}│{R}{5}Restart the shell, or source the script.{R}     {2}│{R}
+{2}│{R}{5}Regenerate after upgrading otter.{R}            {2}│{R}
 {2}├─────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:                                  {R}{2}│{R}
-{2}│{R} {5}See 'otter documentation' for install paths.{R}{2}│{R}
+{2}│{R}{5}See Installation in otter documentation.{R}     {2}│{R}
 {2}╰─────────────────────────────────────────────╯{R}

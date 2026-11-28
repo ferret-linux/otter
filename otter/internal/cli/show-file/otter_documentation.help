@@ -18,5 +18,5 @@
 {2}│{R} {5}Select an entry in the tree to preview it on the right.{R}{2}│{R}
 {2}├────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                             {2}│{R}
-{2}│{R} {5}See 'otter.md' for the full command reference.{R}         {2}│{R}
+{2}│{R}{5}See otter under Commands in otter documentation.{R}        {2}│{R}
 {2}╰────────────────────────────────────────────────────────╯{R}

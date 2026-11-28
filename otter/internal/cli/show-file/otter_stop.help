@@ -12,18 +12,18 @@
 {2}│{R}  {5}otter stop my-box --force{R}                          {2}│{R}
 {2}├─────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                           {2}│{R}
-{2}│{R} {4}--all{R}     {2}┆{R} {4}-a{R}  {5}Stop all otter containers{R}           {2}│{R}
-{2}│{R} {4}--root{R}    {2}┆{R} {4}-r{R}  {5}Stop rootful containers{R}             {2}│{R}
-{2}│{R} {4}--force{R}   {2}┆{R} {4}-f{R}  {5}Force stop containers{R}               {2}│{R}
+{2}│{R} {4}--all{R}     {2}┆{R} {4}-a{R}  {5}Use all containers{R}                  {2}│{R}
+{2}│{R} {4}--root{R}    {2}┆{R} {4}-r{R}  {5}Use rootful containers{R}              {2}│{R}
+{2}│{R} {4}--force{R}   {2}┆{R} {4}-f{R}  {5}Force the operation{R}                 {2}│{R}
 {2}├───────────┴─────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                            {2}│{R}
 {2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}              {2}│{R}
 {2}├───────────┴─────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Notes:{R}                                             {2}│{R}
-{2}│{R} {4}--root{R}  {5}Prefer this to 'sudo otter'. To use a       {2}│{R}
-{2}│{R}         {5}different escalator, set                    {2}│{R}
-{2}│{R}         {5}'preferences.sudo-program'.                 {2}│{R}
+{2}│{R}{4}--root{R}{5}  Prefer '--root' over 'sudo otter'.{R}           {2}│{R}
+{2}│{R}{5}        Use 'preferences.sudo-program' for a{R}         {2}│{R}
+{2}│{R}{5}        different escalator.{R}                         {2}│{R}
 {2}├─────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                          {2}│{R}
-{2}│{R} {5}Rootful containers need '--root' for 'stop' to work.{R}{2}│{R}
+{2}│{R}{5}See restart in otter documentation.{R}                  {2}│{R}
 {2}╰─────────────────────────────────────────────────────╯{R}

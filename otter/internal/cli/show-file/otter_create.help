@@ -14,9 +14,9 @@
 {2}│{R}{1}● Options ➜{R}                                                                          {2}│{R}
 {2}│{R}{3}▸ General:{R}                                                                           {2}│{R}
 {2}│{R} {4}--home{R}                {2}┆{R} {4}-H{R}   {5}Custom HOME directory for the container{R}                {2}│{R}
-{2}│{R} {4}--init{R}                {2}┆{R} {4}-I{R}   {5}Use init system (e.g. systemd) inside the container{R}    {2}│{R}
+{2}│{R} {4}--init{R}                {2}┆{R} {4}-I{R}   {5}Use an init system{R}                                     {2}│{R}
 {2}│{R} {4}--image{R}               {2}┆{R} {4}-i{R}   {5}Image to use for the container{R}                         {2}│{R}
-{2}│{R} {4}--clone{R}               {2}┆{R} {4}-C{R}   {5}Name of container to use as base for new container{R}     {2}│{R}
+{2}│{R} {4}--clone{R}               {2}┆{R} {4}-C{R}   {5}Use an existing container as base{R}                      {2}│{R}
 {2}│{R} {4}--shell{R}               {2}┆{R} {4}-s{R}   {5}Shell to use inside the container{R}                      {2}│{R}
 {2}│{R} {4}--hostname{R}            {2}┆{R} {4}-n{R}   {5}Hostname for the container{R}                             {2}│{R}
 {2}│{R}{3}▸ Resources:{R}                                                                         {2}│{R}
@@ -25,7 +25,7 @@
 {2}│{R} {4}--cpu-threads{R}         {2}┆{R} {4}-t{R}   {5}Number of CPU threads the container can use{R}            {2}│{R}
 {2}│{R}{3}▸ Integration:{R}                                                                       {2}│{R}
 {2}│{R} {4}--volume{R}              {2}┆{R} {4}-v{R}   {5}Additional volumes to add to the container{R}             {2}│{R}
-{2}│{R} {4}--no-entry{R}            {2}┆{R} {4}-E{R}   {5}Do not generate a container entry on host system{R}       {2}│{R}
+{2}│{R} {4}--no-entry{R}            {2}┆{R} {4}-E{R}   {5}Skip host container entry{R}                              {2}│{R}
 {2}│{R}{3}▸ Initialization:{R}                                                                    {2}│{R}
 {2}│{R} {4}--init-hooks{R}          {2}┆{R} {4}-ih{R}  {5}Commands to run at end of container initialization{R}     {2}│{R}
 {2}│{R} {4}--pre-init-hooks{R}      {2}┆{R} {4}-ph{R}  {5}Commands to run at start of container initialization{R}   {2}│{R}
@@ -41,39 +41,43 @@
 {2}│{R} {4}--platform{R}            {2}┆{R} {4}-P{R}   {5}Specify the target platform, e.g. linux/arm64{R}          {2}│{R}
 {2}│{R} {4}--always-pull{R}         {2}┆{R} {4}-p{R}   {5}Pull image even if it exists locally{R}                   {2}│{R}
 {2}│{R}{3}▸ Advanced:{R}                                                                          {2}│{R}
-{2}│{R} {4}--root{R}                {2}┆{R} {4}-r{R}   {5}Launch container manager with root privileges{R}          {2}│{R}
+{2}│{R} {4}--root{R}                {2}┆{R} {4}-r{R}   {5}Use root privileges{R}                                    {2}│{R}
 {2}│{R} {4}--no-userns-limit{R}     {2}┆{R} {4}-ul{R}  {5}Skip the size-capped userns range for podman{R}           {2}│{R}
-{2}│{R} {4}--additional-flags{R}    {2}┆{R} {4}-a{R}   {5}Additional flags to pass to the container manager{R}      {2}│{R}
+{2}│{R} {4}--additional-flags{R}    {2}┆{R} {4}-a{R}   {5}Extra flags for manager{R}                                {2}│{R}
 {2}├───────────────────────┴─────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                                                            {2}│{R}
 {2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}                                              {2}│{R}
-{2}│{R} {4}--json{R}    {2}┆{R}     {5}Output progress as JSON{R}                                             {2}│{R}
+{2}│{R} {4}--json{R}    {2}┆{R}     {5}Output as JSON{R}                                                      {2}│{R}
 {2}│{R} {4}--disable-root-password-i-fully-understand-the-risks-and-accept-the-responsibilities{R}{2}│{R}
-{2}│{R}     {2}┆{R}     {5}Disable the root password in the container; safe only for throwaway boxes.{R}{2}│{R}
+{2}│{R}     {2}┆{R}     {5}Disable root password; throwaway boxes only.{R}                              {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Notes:{R}                                                                             {2}│{R}
-{2}│{R} {4}--gpu{R}     {5}Selects GPU integration mode. 'mesa' (default) needs no extra setup.{R}      {2}│{R}
-{2}│{R}           {5}'nvidia' is otter's best-effort mirror of the host's drivers. For a{R}       {2}│{R}
-{2}│{R}           {5}more robust setup, prefer 'nvidia-toolkit', which delegates to{R}            {2}│{R}
-{2}│{R}           {5}nvidia's own nvidia-container-toolkit CDI injection.{R}                      {2}│{R}
-{2}│{R}                                                                                     {2}│{R}
-{2}│{R} {4}--root{R}    {5}Preferred over 'sudo otter' when root is needed. To use a program         {2}│{R}
-{2}│{R}           {5}other than sudo, set 'preferences.sudo-program'.                          {2}│{R}
-{2}│{R}                                                                                     {2}│{R}
-{2}│{R} {4}--init{R}    {5}Makes host processes not visible from within the container, assumes{R}       {2}│{R}
-{2}│{R}           {5}--unshare-process and --unshare-groups. May require additional packages{R}   {2}│{R}
-{2}│{R}           {5}depending on the image, like systemd, runit or openrc.{R}                    {2}│{R}
-{2}│{R}                                                                                     {2}│{R}
-{2}│{R} {4}--clone{R}   {5}Useful to rename an existing container or create multiple copies of the{R}   {2}│{R}
-{2}│{R}           {5}same container environment.{R}                                               {2}│{R}
-{2}│{R}                                                                                     {2}│{R}
-{2}│{R} {4}Pulling{R}   {5}A missing image is always pulled automatically. An existing{R}               {2}│{R}
-{2}│{R}           {5}image is warned about, or auto-pulled, once it falls behind{R}               {2}│{R}
-{2}│{R}           {5}upstream by the configured thresholds (see: otter registry).{R}              {2}│{R}
+{2}│{R}{4}--gpu{R}{5}  GPU mode: 'mesa' needs no setup.{R}                                              {2}│{R}
+{2}│{R}{5}        'nvidia' mirrors host drivers.{R}                                               {2}│{R}
+{2}│{R}{5}        Prefer 'nvidia-toolkit' for CDI injection.{R}                                   {2}│{R}
+{2}│{R}{5}{R}                                                                                     {2}│{R}
+{2}│{R}{4}--root{R}{5}  Prefer '--root' over 'sudo otter'.{R}                                           {2}│{R}
+{2}│{R}{5}        Use 'preferences.sudo-program' for a{R}                                         {2}│{R}
+{2}│{R}{5}        different escalator.{R}                                                         {2}│{R}
+{2}│{R}{5}{R}                                                                                     {2}│{R}
+{2}│{R}{4}--init{R}{5}  Hides host processes; assumes{R}                                                {2}│{R}
+{2}│{R}{5}        --unshare-process and --unshare-groups.{R}                                      {2}│{R}
+{2}│{R}{5}        May need extra packages, like systemd.{R}                                       {2}│{R}
+{2}│{R}{5}{R}                                                                                     {2}│{R}
+{2}│{R}{4}--clone{R}{5}  Creates a renameable copy of an existing{R}                                    {2}│{R}
+{2}│{R}{5}        container environment.{R}                                                       {2}│{R}
+{2}│{R}{5}{R}                                                                                     {2}│{R}
+{2}│{R}{4}Pulling{R}{5}  Missing images are pulled automatically.{R}                                    {2}│{R}
+{2}│{R}{5}        Existing images are re-pulled when they{R}                                      {2}│{R}
+{2}│{R}{5}        fall behind upstream thresholds.{R}                                             {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Images:{R}                                                                            {2}│{R}
-{2}│{R}  {5}To browse available images run:{R}                                                    {2}│{R}
-{2}│{R}  {5}otter registry list{R}                                                                {2}│{R}
-{2}│{R}  {5}Short names include variant-specific names, e.g. fedora-nonfree.{R}                   {2}│{R}
-{2}│{R}  {5}Unreliable fallbacks report the image as unavailable.{R}                              {2}│{R}
+{2}│{R}{5}To browse available images run:{R}                                                      {2}│{R}
+{2}│{R}{5}otter registry list{R}                                                                  {2}│{R}
+{2}│{R}{5}Short names include variants, e.g. fedora-nonfree.{R}                                   {2}│{R}
+{2}│{R}{5}Unreliable fallbacks report the image as unavailable.{R}                                {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ See also:{R}                                                                          {2}│{R}
+{2}│{R}{5}See create in otter documentation.{R}                                                   {2}│{R}
+{2}│{R}{5}See Images in otter documentation.{R}                                                   {2}│{R}
 {2}╰─────────────────────────────────────────────────────────────────────────────────────╯{R}

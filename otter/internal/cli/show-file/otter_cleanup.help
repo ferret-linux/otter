@@ -12,27 +12,31 @@
 {2}│{R}  {5}otter cleanup --images --scan-path $HOME/exports{R}                {2}│{R}
 {2}├──────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                                        {2}│{R}
-{2}│{R}{4}--json{R}            {2}┆{R}     {5}Machine-readable plan/report{R}              {2}│{R}
-{2}│{R}{4}--images{R}          {2}┆{R}     {5}Allow final image deletion{R}                {2}│{R}
-{2}│{R}{4}--no-apply{R}        {2}┆{R}     {5}Plan only; no writes, locks, rootcheck{R}    {2}│{R}
-{2}│{R}{4}--scan-path{R}       {2}┆{R}     {5}Extra export candidate root; repeatable{R}   {2}│{R}
-{2}│{R}{4}--all-managers{R}    {2}┆{R}     {5}Include installed podman/docker/nerdctl{R}   {2}│{R}
+{2}│{R}{4}--json{R}            {2}┆{R}     {5}Output as JSON{R}                            {2}│{R}
+{2}│{R}{4}--images{R}          {2}┆{R}     {5}Allow image deletion{R}                      {2}│{R}
+{2}│{R}{4}--no-apply{R}        {2}┆{R}     {5}Plan only; make no changes{R}                {2}│{R}
+{2}│{R}{4}--scan-path{R}       {2}┆{R}     {5}Extra export path to scan{R}                 {2}│{R}
+{2}│{R}{4}--all-managers{R}    {2}┆{R}     {5}Include all installed managers{R}            {2}│{R}
 {2}├──────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                                         {2}│{R}
-{2}│{R}{4}--root{R}            {2}┆{R} {4}-r{R}  {5}From settings.rootful (config default){R}    {2}│{R}
+{2}│{R}{4}--root{R}            {2}┆{R} {4}-r{R}  {5}Use settings.rootful by default{R}           {2}│{R}
 {2}│{R}{4}--help{R}            {2}┆{R} {4}-h{R} {5}Show this help message{R}                     {2}│{R}
 {2}├───────────┴──────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Notes:{R}                                                          {2}│{R}
-{2}│{R}{5}By default cleanup acts: eligible leftovers are deleted.{R}          {2}│{R}
-{2}│{R}{5}--no-apply plans only; no writes, no locks, no rootcheck.{R}         {2}│{R}
-{2}│{R}{5}rootful read-only engine queries may use the configured escalator.{R}{2}│{R}
+{2}│{R}{5}By default, eligible leftovers are deleted.{R}                       {2}│{R}
+{2}│{R}{5}--no-apply plans only; no writes, locks, or rootcheck.{R}            {2}│{R}
+{2}│{R}{5}Read-only rootful queries may use the configured escalator.{R}       {2}│{R}
 {2}│{R}{5}Outside-home scan paths are report-only, never deleted.{R}           {2}│{R}
-{2}│{R}                                                                  {2}│{R}
+{2}│{R}{5}{R}                                                                  {2}│{R}
 {2}│{R}{5}Scope: configured managers and root mode from settings.{R}           {2}│{R}
-{2}│{R}{5}--root=false opts out of the configured root mode.{R}                {2}│{R}
-{2}│{R}{5}--all-managers adds installed podman/docker/nerdctl managers.{R}     {2}│{R}
-{2}│{R}                                                                  {2}│{R}
-{2}│{R}{5}Engine images are not scanned unless --images is passed.{R}          {2}│{R}
-{2}│{R}{5}Unmarked pins reported; unreferenced otter icon files are deleted.{R}{2}│{R}
+{2}│{R}{5}--root=false opts out of configured root mode.{R}                    {2}│{R}
+{2}│{R}{5}--all-managers adds installed podman/docker/nerdctl.{R}              {2}│{R}
+{2}│{R}{5}{R}                                                                  {2}│{R}
+{2}│{R}{5}Engine images are scanned only with --images.{R}                     {2}│{R}
+{2}│{R}{5}Unmarked pins are reported; orphan icon files are deleted.{R}        {2}│{R}
 {2}│{R}{5}Deletion is final: no quarantine and no restore.{R}                  {2}│{R}
+{2}├──────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ See also:{R}                                                       {2}│{R}
+{2}│{R}{5}See cleanup in otter documentation.{R}                               {2}│{R}
+{2}│{R}{5}See exports in otter documentation.{R}                               {2}│{R}
 {2}╰──────────────────────────────────────────────────────────────────╯{R}
