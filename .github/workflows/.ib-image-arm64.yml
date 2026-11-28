@@ -54,6 +54,24 @@ jobs:
       - name: Install skopeo
         run: sudo apt-get update && sudo apt-get install -y skopeo
 
+      - name: Preflight base image architecture
+        uses: ./.github/actions/retry
+        with:
+          attempts: '3'
+          delay-seconds: '20'
+          command: |
+            set -euo pipefail
+            manifest="$(skopeo inspect --raw docker://${{ inputs.image }})"
+            if printf '%s' "$manifest" | jq -e 'has("manifests")' >/dev/null; then
+              present="$(printf '%s' "$manifest" | jq -r --arg arch 'arm64' '[.manifests[] | select(.platform.architecture == $arch and .platform.os == "linux")] | length > 0')"
+            else
+              present="$(printf '%s' "$manifest" | jq -r --arg arch 'arm64' '.architecture == $arch and .os == "linux"')"
+            fi
+            if [ "$present" != "true" ]; then
+              echo "ERROR: base image ${{ inputs.image }} has no linux/arm64 manifest" >&2
+              exit 1
+            fi
+
       - name: Capture Old Digest
         id: old-digest
         run: |
