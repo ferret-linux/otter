@@ -515,31 +515,6 @@
       "build_number": 23
     },
     {
-      "name": "ubuntu",
-      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:stable",
-      "family": "ubuntu",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-27T13:20:25Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 552538039,
-          "disk_size": 1564072957
-        },
-        "arm64": {
-          "compressed_size": 531480605,
-          "disk_size": 1584988172
-        }
-      },
-      "fallback_vendor_image": "docker.io/library/ubuntu:latest",
-      "build_number": 590
-    },
-    {
       "name": "fedora-rawhide",
       "official_image": "ghcr.io/ferret-linux/fedora-otr:rawhide",
       "family": "fedora",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "cgr.dev/chainguard/wolfi-base:latest",
       "build_number": 473
+    },
+    {
+      "name": "ubuntu",
+      "official_image": "ghcr.io/ferret-linux/ubuntu-otr:stable",
+      "family": "ubuntu",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-28T04:26:42Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 552542900,
+          "disk_size": 1564072955
+        },
+        "arm64": {
+          "compressed_size": 531481703,
+          "disk_size": 1584988168
+        }
+      },
+      "fallback_vendor_image": "docker.io/library/ubuntu:latest",
+      "build_number": 591
     }
   ]
 }
