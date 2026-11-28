@@ -504,6 +504,30 @@
     "enabled": true
   },
   {
+    "image": "registry.opensuse.org/opensuse/leap:latest",
+    "containerfile": "opensuse.Containerfile",
+    "name": "opensuse-otr",
+    "tag": "leap-nonfree",
+    "display_name": "opensuse-leap-nonfree",
+    "arches": ["amd64", "arm64"],
+    "family": "opensuse",
+    "image_variant": "nonfree",
+    "is_reliable_fallback": true,
+    "enabled": true
+  },
+  {
+    "image": "registry.opensuse.org/opensuse/tumbleweed:latest",
+    "containerfile": "opensuse.Containerfile",
+    "name": "opensuse-otr",
+    "tag": "tumbleweed-nonfree",
+    "display_name": "opensuse-tumbleweed-nonfree",
+    "arches": ["amd64", "arm64"],
+    "family": "opensuse",
+    "image_variant": "nonfree",
+    "is_reliable_fallback": true,
+    "enabled": true
+  },
+  {
     "image": "docker.io/library/alpine:latest",
     "containerfile": "alpine.Containerfile",
     "name": "alpine-otr",
