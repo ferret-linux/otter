@@ -73,8 +73,14 @@ RUN if rpm -q patterns-base-fips >/dev/null 2>&1; then \
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 
 # Install the requested packages, update the system, remove orphaned
-# packages, and clean Zypper metadata in the same layer.
-RUN zypper -n install --auto-agree-with-licenses -y \
+# packages, and clean Zypper metadata in the same layer. Nonfree builds
+# add the Packman codec/media stack and VideoLAN's DVD CSS library.
+RUN set -eu; \
+    case "${TAG:-}" in \
+        *-nonfree) extra_packages="gstreamer-plugins-bad-codecs gstreamer-plugins-ugly-codecs libx264-165 libfdk-aac2 libaacs0 libdvdcss2 vlc vlc-codecs" ;; \
+        *) extra_packages="" ;; \
+    esac; \
+    zypper -n install --auto-agree-with-licenses -y \
     --allow-downgrade --allow-vendor-change \
     $(sh /tmp/pkg-validator.sh --pkgmgr zypper -- \
     bc \
@@ -159,7 +165,8 @@ RUN zypper -n install --auto-agree-with-licenses -y \
     gstreamer-plugins-base \
     gstreamer-plugins-good \
     gstreamer-plugins-ugly \
-    gstreamer-plugins-libav) || { rc=${?}; [ "${rc}" -ge 100 ] && [ "${rc}" -lt 200 ] && [ "${rc}" -ne 105 ]; } && \
+    gstreamer-plugins-libav \
+    ${extra_packages}) || { rc=${?}; [ "${rc}" -ge 100 ] && [ "${rc}" -lt 200 ] && [ "${rc}" -ne 105 ]; } && \
     zypper --non-interactive update -y --auto-agree-with-licenses && \
     orphans="$(zypper --non-interactive packages --orphaned -i | awk -F'|' '/^i/{print $3}')" && \
     if [ -n "$orphans" ]; then \
