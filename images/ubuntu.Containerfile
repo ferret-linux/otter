@@ -37,6 +37,41 @@ RUN set -eu; \
             ;; \
     esac
 
+# Upgrade the base system before optional font downloads so a later upgrade
+# cannot re-trigger the mscorefonts downloader after it has succeeded.
+RUN set -eux; \
+    apt-get update && \
+    apt-get upgrade -y
+
+# Install Microsoft core fonts in an isolated, retried step for nonfree builds.
+# Keeping this separate from the main package transaction contains flaky
+# SourceForge mirror failures and prevents a half-configured dpkg state from
+# breaking the rest of the image build.
+RUN set -eu; \
+    case "${TAG:-}" in \
+        *-nonfree) \
+            installed=0; \
+            for attempt in 1 2 3; do \
+                echo "Installing ttf-mscorefonts-installer (attempt ${attempt}/3)"; \
+                if apt-get install -y --no-install-recommends ttf-mscorefonts-installer && \
+                   dpkg-query -W -f='${Status}' ttf-mscorefonts-installer 2>/dev/null | grep -q 'install ok installed'; then \
+                    installed=1; \
+                    break; \
+                fi; \
+                echo "ttf-mscorefonts-installer attempt ${attempt} failed" >&2; \
+                apt-get purge -y ttf-mscorefonts-installer >/dev/null 2>&1 || true; \
+                dpkg --configure -a >/dev/null 2>&1 || true; \
+                apt-get -f install -y >/dev/null 2>&1 || true; \
+                rm -f /var/lib/update-notifier/package-data-downloads/ttf-mscorefonts-installer*; \
+                rm -rf /var/lib/update-notifier/package-data-downloads/partial/*; \
+            done; \
+            if [ "${installed}" -ne 1 ]; then \
+                echo "ERROR: failed to install ttf-mscorefonts-installer after 3 attempts" >&2; \
+                exit 1; \
+            fi; \
+            ;; \
+    esac
+
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 
