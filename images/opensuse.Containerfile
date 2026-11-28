@@ -25,6 +25,10 @@ RUN mkdir -p /etc/zypp/zypp.conf.d \
 # Lock parallel-printer-support as it can't be installed in rootless containers
 RUN zypper al parallel-printer-support
 
+# Refresh metadata before the validator queries the repositories, so stale
+# cache cannot hide renamed or missing packages on dynamic base tags.
+RUN zypper --non-interactive refresh
+
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 
