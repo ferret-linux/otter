@@ -1,25 +1,26 @@
-{2}╭────────────────────────────────────────╮{R}
-{2}│{R}{1}⦿ Generate shell completion scripts{R}     {2}│{R}
-{2}├────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Usage:{R}                                {2}│{R}
-{2}│{R}  {5}otter completion <shell>{R}              {2}│{R}
-{2}├────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Examples:{R}                             {2}│{R}
-{2}│{R}  {5}otter completion bash{R}                 {2}│{R}
-{2}│{R}  {5}otter completion fish > otter.fish{R}    {2}│{R}
-{2}├────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Shells:{R}                               {2}│{R}
-{2}│{R}  {5}bash, zsh, fish, pwsh{R}                 {2}│{R}
-{2}├────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Extras:{R}                               {2}│{R}
-{2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R} {2}│{R}
-{2}├────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Notes:{R}                                {2}│{R}
-{2}│{R}{5}Prints the script to stdout.{R}            {2}│{R}
-{2}│{R}{5}Redirect to your shell's completion dir.{R}{2}│{R}
-{2}│{R}{5}Restart the shell, or source the script.{R}{2}│{R}
-{2}│{R}{5}Regenerate after upgrading otter.{R}       {2}│{R}
-{2}├────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ See also:{R}                             {2}│{R}
-{2}│{R}{5}See Installation in otter documentation.{R}{2}│{R}
-{2}╰────────────────────────────────────────╯{R}
+{2}╭────────────────────────────────────────────╮{R}
+{2}│{R}{1}⦿ Generate shell completion scripts{R}         {2}│{R}
+{2}├────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Usage:{R}                                    {2}│{R}
+{2}│{R}  {5}otter completion <shell>{R}                  {2}│{R}
+{2}├────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                 {2}│{R}
+{2}│{R}  {5}otter completion bash{R}                     {2}│{R}
+{2}│{R}  {5}otter completion fish > otter.fish{R}        {2}│{R}
+{2}├────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Shells:{R}                                   {2}│{R}
+{2}│{R}  {5}bash, zsh, fish, pwsh{R}                     {2}│{R}
+{2}├────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                   {2}│{R}
+{2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}     {2}│{R}
+{2}├────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Notes:{R}                                    {2}│{R}
+{2}│{R}{5}Prints the script to stdout.{R}                {2}│{R}
+{2}│{R}{5}Redirect to your shell's completion dir.{R}    {2}│{R}
+{2}│{R}{5}Restart the shell, or source the script.{R}    {2}│{R}
+{2}│{R}{5}Regenerate after upgrading otter.{R}           {2}│{R}
+{2}├────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ See also:{R}                                 {2}│{R}
+{2}│{R}{5}See "Installation" in documentation.{R}        {2}│{R}
+{2}│{R}{5}Run 'otter docs' to browse the docs offline.{R}{2}│{R}
+{2}╰────────────────────────────────────────────╯{R}

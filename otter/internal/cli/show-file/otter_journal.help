@@ -28,5 +28,6 @@
 {2}│{R}{5}or timestamps like 2026-05-01T00:00:00.{R}         {2}│{R}
 {2}├────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                     {2}│{R}
-{2}│{R}{5}See journal in otter documentation.{R}             {2}│{R}
+{2}│{R}{5}See "journal" in documentation.{R}                 {2}│{R}
+{2}│{R}{5}Run 'otter docs' to browse the docs offline.{R}    {2}│{R}
 {2}╰────────────────────────────────────────────────╯{R}

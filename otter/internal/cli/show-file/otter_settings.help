@@ -18,5 +18,7 @@
 {2}│{R}{5}system-wide or root-owned file.{R}                      {2}│{R}
 {2}├─────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                          {2}│{R}
-{2}│{R}{5}See Configuration in otter documentation.{R}            {2}│{R}
+{2}│{R}{5}See "settings" in documentation.{R}                     {2}│{R}
+{2}│{R}{5}See "Configuration" in documentation.{R}                {2}│{R}
+{2}│{R}{5}Run 'otter docs' to browse the docs offline.{R}         {2}│{R}
 {2}╰─────────────────────────────────────────────────────╯{R}

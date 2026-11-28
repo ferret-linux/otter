@@ -32,5 +32,8 @@
 {2}│{R}{5}--prune also removes exports, backups, and temp files.{R}{2}│{R}
 {2}├──────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                           {2}│{R}
-{2}│{R}{5}See unlock and cleanup in otter documentation.{R}        {2}│{R}
+{2}│{R}{5}See "remove" in documentation.{R}                        {2}│{R}
+{2}│{R}{5}See "unlock" in documentation.{R}                        {2}│{R}
+{2}│{R}{5}See "cleanup" in documentation.{R}                       {2}│{R}
+{2}│{R}{5}Run 'otter docs' to browse the docs offline.{R}          {2}│{R}
 {2}╰──────────────────────────────────────────────────────╯{R}

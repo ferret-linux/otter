@@ -36,7 +36,10 @@
 {2}│{R}  {4}--help{R}    {2}┆{R} {4}-h{R} {5}Show this help message{R}               {2}│{R}
 {2}│{R}  {4}--version{R} {2}┆{R} {4}-v{R} {5}Print version information{R}            {2}│{R}
 {2}├────────────┴─────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ See also:{R}                                           {2}│{R}
+{2}│{R}{3}▸ Notes:{R}                                              {2}│{R}
 {2}│{R}{5}Run 'otter help <command>' for full details.{R}          {2}│{R}
-{2}│{R}{5}See Commands in otter documentation.{R}                  {2}│{R}
+{2}├──────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ See also:{R}                                           {2}│{R}
+{2}│{R}{5}See "otter" in documentation.{R}                         {2}│{R}
+{2}│{R}{5}Run 'otter docs' to browse the docs offline.{R}          {2}│{R}
 {2}╰──────────────────────────────────────────────────────╯{R}

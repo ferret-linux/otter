@@ -21,5 +21,6 @@
 {2}│{R}{5}Without [box], every box in the manifest is removed.{R}{2}│{R}
 {2}├────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                         {2}│{R}
-{2}│{R}{5}See assemble in otter documentation.{R}                {2}│{R}
+{2}│{R}{5}See "assemble" in documentation.{R}                    {2}│{R}
+{2}│{R}{5}Run 'otter docs' to browse the docs offline.{R}        {2}│{R}
 {2}╰────────────────────────────────────────────────────╯{R}

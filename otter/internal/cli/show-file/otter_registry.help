@@ -36,6 +36,7 @@
 {2}│{R}{5}Disabled images are hidden unless --all is used.{R}           {2}│{R}
 {2}├───────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                                {2}│{R}
-{2}│{R}{5}See Registry in otter documentation.{R}                       {2}│{R}
-{2}│{R}{5}See Images in otter documentation.{R}                         {2}│{R}
+{2}│{R}{5}See "registry" in documentation.{R}                           {2}│{R}
+{2}│{R}{5}See "Images" in documentation.{R}                             {2}│{R}
+{2}│{R}{5}Run 'otter docs' to browse the docs offline.{R}               {2}│{R}
 {2}╰───────────────────────────────────────────────────────────╯{R}

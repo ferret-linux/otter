@@ -1,29 +1,30 @@
-{2}╭───────────────────────────────────────────╮{R}
-{2}│{R}{1}⦿ Show info of an otter managed container{R}  {2}│{R}
-{2}├───────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Usage:{R}                                   {2}│{R}
-{2}│{R}  {5}otter info    [options] [container]{R}      {2}│{R}
-{2}│{R}  {5}otter inspect [options] [container]{R}      {2}│{R}
-{2}├───────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Examples:{R}                                {2}│{R}
-{2}│{R}  {5}otter info my-box{R}                        {2}│{R}
-{2}│{R}  {5}otter info my-box --root{R}                 {2}│{R}
-{2}│{R}  {5}otter inspect my-box --root{R}              {2}│{R}
-{2}│{R}  {5}otter inspect my-box --root --json{R}       {2}│{R}
-{2}├───────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Options:{R}                                 {2}│{R}
-{2}│{R} {4}--root{R}    {2}┆{R} {4}-r{R}  {5}Use rootful containers{R}    {2}│{R}
-{2}│{R} {4}--json{R}    {2}┆{R} {4}-j{R}  {5}Output as JSON{R}            {2}│{R}
-{2}├───────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Extras:{R}                                  {2}│{R}
-{2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}    {2}│{R}
-{2}├─────────┴─────────────────────────────────┤{R}
-{2}│{R}{3}▸ Notes:{R}                                   {2}│{R}
-{2}│{R}{5}Alias: 'otter info' behaves identically.{R}   {2}│{R}
-{2}│{R}{5}Shows a table of details from create time:{R} {2}│{R}
-{2}│{R}{5}status, image, memory, CPU threads, unshare{R}{2}│{R}
-{2}│{R}{5}flags, init, GPU, and other options.{R}       {2}│{R}
-{2}├───────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ See also:{R}                                {2}│{R}
-{2}│{R}{5}See inspect in otter documentation.{R}        {2}│{R}
-{2}╰───────────────────────────────────────────╯{R}
+{2}╭────────────────────────────────────────────╮{R}
+{2}│{R}{1}⦿ Show info of an otter managed container{R}   {2}│{R}
+{2}├────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Usage:{R}                                    {2}│{R}
+{2}│{R}  {5}otter info    [options] [container]{R}       {2}│{R}
+{2}│{R}  {5}otter inspect [options] [container]{R}       {2}│{R}
+{2}├────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                 {2}│{R}
+{2}│{R}  {5}otter info my-box{R}                         {2}│{R}
+{2}│{R}  {5}otter info my-box --root{R}                  {2}│{R}
+{2}│{R}  {5}otter inspect my-box --root{R}               {2}│{R}
+{2}│{R}  {5}otter inspect my-box --root --json{R}        {2}│{R}
+{2}├────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Options:{R}                                  {2}│{R}
+{2}│{R} {4}--root{R}    {2}┆{R} {4}-r{R}  {5}Use rootful containers{R}     {2}│{R}
+{2}│{R} {4}--json{R}    {2}┆{R} {4}-j{R}  {5}Output as JSON{R}             {2}│{R}
+{2}├────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                   {2}│{R}
+{2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}     {2}│{R}
+{2}├─────────┴──────────────────────────────────┤{R}
+{2}│{R}{3}▸ Notes:{R}                                    {2}│{R}
+{2}│{R}{5}Alias: 'otter info' behaves identically.{R}    {2}│{R}
+{2}│{R}{5}Shows a table of details from create time:{R}  {2}│{R}
+{2}│{R}{5}status, image, memory, CPU threads, unshare{R} {2}│{R}
+{2}│{R}{5}flags, init, GPU, and other options.{R}        {2}│{R}
+{2}├────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ See also:{R}                                 {2}│{R}
+{2}│{R}{5}See "inspect" in documentation.{R}             {2}│{R}
+{2}│{R}{5}Run 'otter docs' to browse the docs offline.{R}{2}│{R}
+{2}╰────────────────────────────────────────────╯{R}

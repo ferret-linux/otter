@@ -27,6 +27,7 @@
 {2}│{R}{5}        name to target, not the manifest path.{R}          {2}│{R}
 {2}├────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                             {2}│{R}
-{2}│{R}{5}See Manifests in otter documentation.{R}                   {2}│{R}
-{2}│{R}{5}See assemble in otter documentation.{R}                    {2}│{R}
+{2}│{R}{5}See "assemble" in documentation.{R}                        {2}│{R}
+{2}│{R}{5}See "Manifests" in documentation.{R}                       {2}│{R}
+{2}│{R}{5}Run 'otter docs' to browse the docs offline.{R}            {2}│{R}
 {2}╰────────────────────────────────────────────────────────╯{R}

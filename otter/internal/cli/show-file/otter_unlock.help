@@ -24,5 +24,7 @@
 {2}│{R}{5}Already unlocked containers are skipped.{R}          {2}│{R}
 {2}├──────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                       {2}│{R}
-{2}│{R}{5}See lock in otter documentation.{R}                  {2}│{R}
+{2}│{R}{5}See "unlock" in documentation.{R}                    {2}│{R}
+{2}│{R}{5}See "lock" in documentation.{R}                      {2}│{R}
+{2}│{R}{5}Run 'otter docs' to browse the docs offline.{R}      {2}│{R}
 {2}╰──────────────────────────────────────────────────╯{R}

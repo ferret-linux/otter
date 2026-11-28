@@ -30,5 +30,6 @@
 {2}│{R}{5}        different escalator.{R}                                     {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                                      {2}│{R}
-{2}│{R}{5}See enter in otter documentation.{R}                                {2}│{R}
+{2}│{R}{5}See "enter" in documentation.{R}                                    {2}│{R}
+{2}│{R}{5}Run 'otter docs' to browse the docs offline.{R}                     {2}│{R}
 {2}╰─────────────────────────────────────────────────────────────────╯{R}
