@@ -994,31 +994,6 @@
       "build_number": 16
     },
     {
-      "name": "debian-testing",
-      "official_image": "ghcr.io/ferret-linux/debian-otr:testing",
-      "family": "debian",
-      "image_variant": "free",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-28T04:32:06Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 639514920,
-          "disk_size": 1724435798
-        },
-        "arm64": {
-          "compressed_size": 615196594,
-          "disk_size": 1736810854
-        }
-      },
-      "fallback_vendor_image": "docker.io/library/debian:testing",
-      "build_number": 595
-    },
-    {
       "name": "fedora-nonfree",
       "official_image": "ghcr.io/ferret-linux/fedora-otr:nonfree",
       "family": "fedora",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "container-registry.oracle.com/os/oraclelinux:10",
       "build_number": 25
+    },
+    {
+      "name": "debian-testing",
+      "official_image": "ghcr.io/ferret-linux/debian-otr:testing",
+      "family": "debian",
+      "image_variant": "free",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-28T16:19:56Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 639528634,
+          "disk_size": 1724464984
+        },
+        "arm64": {
+          "compressed_size": 615201883,
+          "disk_size": 1736815465
+        }
+      },
+      "fallback_vendor_image": "docker.io/library/debian:testing",
+      "build_number": 596
     }
   ]
 }
