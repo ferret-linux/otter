@@ -10,6 +10,7 @@ FROM ${IMAGE}
 ARG OTTER_BUILD_NUMBER
 LABEL otter.image_build=${OTTER_BUILD_NUMBER}
 ARG TAG
+ARG DEBIAN_FRONTEND=noninteractive
 
 # Pre-create otter dirs
 COPY images/scripts/setup-common.sh /tmp/setup-common.sh
@@ -21,10 +22,18 @@ RUN touch /usr/lib/otter/container.ubuntu
 # Re-enable locale and docs
 RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
 
-# Accept the Microsoft fonts EULA for nonfree builds only.
-RUN case "${TAG:-}" in \
+# Accept the Microsoft fonts EULA and prepare the update-notifier download
+# directory for nonfree builds only. Acceptance must happen before the font
+# package is installed; otherwise a download timeout leaves dpkg in a broken
+# half-configured state.
+RUN set -eu; \
+    case "${TAG:-}" in \
         *-nonfree) \
             echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections; \
+            id _apt >/dev/null 2>&1 || { echo "ERROR: _apt user is required for mscorefonts downloads" >&2; exit 1; }; \
+            mkdir -p /var/lib/update-notifier/package-data-downloads/partial; \
+            chown _apt:root /var/lib/update-notifier/package-data-downloads/partial; \
+            chmod 0700 /var/lib/update-notifier/package-data-downloads/partial; \
             ;; \
     esac
 
