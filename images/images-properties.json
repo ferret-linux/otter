@@ -639,31 +639,6 @@
       "build_number": 590
     },
     {
-      "name": "void-musl-nonfree",
-      "official_image": "ghcr.io/ferret-linux/void-otr:musl-nonfree",
-      "family": "void",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-28T00:55:06Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 394834687,
-          "disk_size": 1129630419
-        },
-        "arm64": {
-          "compressed_size": 378195080,
-          "disk_size": 1102108884
-        }
-      },
-      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest",
-      "build_number": 19
-    },
-    {
       "name": "centos-negativo17",
       "official_image": "ghcr.io/ferret-linux/centos-otr:negativo17",
       "family": "centos",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "docker.io/kalilinux/kali-bleeding-edge:latest",
       "build_number": 17
+    },
+    {
+      "name": "void-musl-nonfree",
+      "official_image": "ghcr.io/ferret-linux/void-otr:musl-nonfree",
+      "family": "void",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-28T16:03:58Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 395388063,
+          "disk_size": 1131248340
+        },
+        "arm64": {
+          "compressed_size": 378779013,
+          "disk_size": 1103676112
+        }
+      },
+      "fallback_vendor_image": "ghcr.io/void-linux/void-musl-full:latest",
+      "build_number": 20
     }
   ]
 }
