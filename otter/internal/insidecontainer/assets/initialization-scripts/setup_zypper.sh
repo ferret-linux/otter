@@ -5,9 +5,39 @@
 #   upgrade: if we need to upgrade or not
 #   container_additional_packages: additional packages to install during this phase
 # Expected env variables:
-#   None
+#   OTTER_IMAGE_VARIANT: internal variant identity (generic/free/nonfree)
 # Outputs:
 #   None
+
+# Enable the full Packman repo and VideoLAN for nonfree fallback containers.
+# Packman carries the patent-encumbered codecs and media tools that the vendor
+# repos omit; VideoLAN is the only source of libdvdcss2. VideoLAN gets a lower
+# priority so Packman wins for packages both repos provide.
+setup_zypper_nonfree_repos()
+{
+	# shellcheck disable=SC1091 # provided by the base image
+	. /etc/os-release || return 1
+	case "${ID}" in
+		opensuse-leap)
+			packman_url="https://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Leap_${VERSION_ID}"
+			videolan_url="https://download.videolan.org/SuSE/${VERSION_ID}"
+			;;
+		opensuse-tumbleweed)
+			packman_url="https://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed"
+			videolan_url="https://download.videolan.org/SuSE/Tumbleweed"
+			;;
+		*)
+			printf "Error: unsupported openSUSE ID '%s'.\n" "${ID}" >&2
+			return 1
+			;;
+	esac
+	rpm --import "${packman_url}/repodata/repomd.xml.key" || return 1
+	zypper -n ar -f -c -p 90 "${packman_url}" packman || return 1
+	rpm --import "${videolan_url}/repodata/repomd.xml.key" || return 1
+	zypper -n ar -f -c -p 95 "${videolan_url}" videolan || return 1
+	zypper -n refresh || return 1
+}
+
 setup_zypper()
 {
 	# If we need to upgrade, do it and exit, no further action required.
@@ -47,6 +77,46 @@ EOF
 		# parallel-printer-support which can't be installed in rootless containers.
 		# Since we very much likely never need it, just lock it
 		zypper al parallel-printer-support || :
+
+		# Additive only: nonfree enables the full Packman and VideoLAN repos
+		# on top of the vendor's own components. generic/free never add
+		# third-party repos or replace vendor packages.
+		# shellcheck disable=SC2154 # exported by otter-init
+		if [ "${OTTER_IMAGE_VARIANT:-generic}" = "nonfree" ]; then
+			setup_zypper_nonfree_repos || {
+				printf "Error: could not enable openSUSE nonfree repositories.\n" >&2
+				exit 127
+			}
+			nonfree_deps="
+				gstreamer-plugins-bad-codecs
+				gstreamer-plugins-ugly-codecs
+				libx264-165
+				libfdk-aac2
+				libaacs0
+				libdvdcss2
+				vlc
+				vlc-codecs
+			"
+		else
+			nonfree_deps=""
+		fi
+
+		# Tumbleweed no longer ships an unversioned python3 package; select
+		# the newest versioned package so python-fix.sh can create the
+		# /usr/bin/python3 wrapper in fallback containers too.
+		# shellcheck disable=SC1091 # provided by the base image
+		. /etc/os-release || exit 127
+		case "${ID}" in
+			opensuse-tumbleweed)
+				python_pkg="$(zypper -n -q se -t package -s python3 | sed -n 's/^[^|]*|[[:space:]]*\(python3[0-9][0-9]\)[[:space:]]*|.*/\1/p' | sort -u | sort -V | tail -1)"
+				;;
+			*) python_pkg="python3" ;;
+		esac
+		if [ -z "${python_pkg}" ]; then
+			printf "Error: no python3 package found in repos.\n" >&2
+			exit 127
+		fi
+
 		# Check if shell_pkg is available in distro's repo. If not we
 		# fall back to bash, and we set the SHELL variable to bash so
 		# that it is set up correctly for the user.
@@ -59,6 +129,7 @@ EOF
 			zsh
 			Mesa
 			curl
+			zypper
 			fish
 			less
 			lsof
@@ -82,7 +153,7 @@ EOF
 			libdrm2
 			libvpx2
 			ncurses
-			python3
+			${python_pkg}
 			systemd
 			wayland
 			Mesa-dri
@@ -135,6 +206,7 @@ EOF
 			gstreamer-plugins-good
 			gstreamer-plugins-ugly
 			gstreamer-plugins-libav
+			${nonfree_deps}
 		"
 		# zypper reserves exit codes >= 100 as informational: the transaction
 		# committed, but something is worth noting - e.g. 106 (a repo was skipped) or
