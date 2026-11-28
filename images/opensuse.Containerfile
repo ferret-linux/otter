@@ -128,7 +128,6 @@ RUN zypper -n install --auto-agree-with-licenses -y \
     gstreamer-plugins-good \
     gstreamer-plugins-ugly \
     gstreamer-plugins-libav) || { rc=${?}; [ "${rc}" -ge 100 ] && [ "${rc}" -lt 200 ] && [ "${rc}" -ne 105 ]; } && \
-    zypper --non-interactive refresh && \
     zypper --non-interactive update -y --auto-agree-with-licenses && \
     orphans="$(zypper --non-interactive packages --orphaned -i | awk -F'|' '/^i/{print $3}')" && \
     if [ -n "$orphans" ]; then \
