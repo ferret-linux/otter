@@ -1194,31 +1194,6 @@
       "build_number": 576
     },
     {
-      "name": "kali-nonfree",
-      "official_image": "ghcr.io/ferret-linux/kali-otr:rolling-nonfree",
-      "family": "kali",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-28T04:40:00Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 662246776,
-          "disk_size": 1800078692
-        },
-        "arm64": {
-          "compressed_size": 624517152,
-          "disk_size": 1766715745
-        }
-      },
-      "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest",
-      "build_number": 22
-    },
-    {
       "name": "gentoo",
       "official_image": "ghcr.io/ferret-linux/gentoo-otr:stage3",
       "family": "gentoo",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "docker.io/cachyos/cachyos-v3:latest",
       "build_number": 472
+    },
+    {
+      "name": "kali-nonfree",
+      "official_image": "ghcr.io/ferret-linux/kali-otr:rolling-nonfree",
+      "family": "kali",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-28T16:14:43Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 662246951,
+          "disk_size": 1800078691
+        },
+        "arm64": {
+          "compressed_size": 624519798,
+          "disk_size": 1766715745
+        }
+      },
+      "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest",
+      "build_number": 23
     }
   ]
 }
