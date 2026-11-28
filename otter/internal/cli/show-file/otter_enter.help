@@ -1,5 +1,5 @@
 {2}╭────────────────────────────────────────────────────────────────────────╮{R}
-{2}│{R}{1}⦿ Enter into an otter managed container environment{R}                     {2}│{R}
+{2}│{R}{1}⦿ Enter into an otter managed container environment                     {R}{2}│{R}
 {2}├────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                                                {2}│{R}
 {2}│{R}  {5}otter sh    [options] [container] [-- command]{R}                        {2}│{R}
@@ -12,6 +12,7 @@
 {2}│{R}  {5}otter enter --additional-flags "--preserve-fds" test -- bash -l{R}       {2}│{R}
 {2}├────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Options:{R}                                                              {2}│{R}
+{2}│{R} {4}--{R}          {5}              Command to execute into the container{R}        {2}│{R}
 {2}│{R} {4}--root{R}             {2}┆{R} {4}-r{R}   {5}Launch container manager with root privileges{R}{2}│{R}
 {2}│{R} {4}--add-env{R}          {2}┆{R} {4}-e{R}   {5}Copy host env var NAME or override NAME=value{R}{2}│{R}
 {2}│{R} {4}--empty-env{R}        {2}┆{R} {4}-E{R}   {5}Don't auto copy host environment variables{R}   {2}│{R}
@@ -27,5 +28,4 @@
 {2}│{R} {4}--root{R}  {5}Preferred over 'sudo otter' when root is needed. To use a      {2}│{R}
 {2}│{R}         {5}program other than sudo, set 'preferences.sudo-program' or     {2}│{R}
 {2}│{R}         {5}pass --sudo-command <program>.                                 {2}│{R}
-{2}│{R} {5}Use '--' to stop option parsing and pass a command.{R}                    {2}│{R}
 {2}╰────────────────────────────────────────────────────────────────────────╯{R}

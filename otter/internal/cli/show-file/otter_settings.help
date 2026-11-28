@@ -14,9 +14,9 @@
 {2}├───────────┴────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Notes:{R}                                                {2}│{R}
 {2}│{R} {5}Changes are written only to your own{R}                   {2}│{R}
-{2}│{R} {5}$XDG_CONFIG_HOME/otter/otter.conf, never{R}               {2}│{R}
-{2}│{R} {5}a system-wide config file.{R}                             {2}│{R}
+{2}│{R} {5}$XDG_CONFIG_HOME/otter/otter.conf — never a{R}            {2}│{R}
+{2}│{R} {5}system-wide config file; never a rootful file.{R}         {2}│{R}
 {2}├────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                             {2}│{R}
-{2}│{R} {5}See the otter page in 'otter documentation'.{R}           {2}│{R}
+{2}│{R} {5}See 'configuration.md' for the full settings reference.{R}{2}│{R}
 {2}╰────────────────────────────────────────────────────────╯{R}

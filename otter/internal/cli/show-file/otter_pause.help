@@ -21,5 +21,7 @@
 {2}│{R}{3}▸ Notes:{R}                                    {2}│{R}
 {2}│{R} {5}Paused containers are frozen in memory. Use{R}{2}│{R}
 {2}│{R} {5}'otter start' to resume a paused container.{R}{2}│{R}
-{2}│{R} {5}Rootful containers need '--root'.{R}          {2}│{R}
+{2}├────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ See also:{R}                                 {2}│{R}
+{2}│{R} {5}Rootful containers need '--root' to work.{R}{2}  │{R}
 {2}╰────────────────────────────────────────────╯{R}
