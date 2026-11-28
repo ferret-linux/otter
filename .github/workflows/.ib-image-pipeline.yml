@@ -114,6 +114,10 @@ jobs:
 
   verify:
     needs: merge
+    # Verify only a successfully merged manifest. Without this explicit
+    # condition, an intentionally skipped arch job makes implicit success()
+    # false and verify is skipped, which in turn skips update-props.
+    if: ${{ !cancelled() && needs.merge.result == 'success' }}
     uses: ./.github/workflows/.ib-verify.yml
     with:
       name: ${{ inputs.name }}
@@ -150,10 +154,7 @@ jobs:
 
   update-props:
     needs: [prepare, merge, verify]
-    if: |
-      always() &&
-      needs.merge.result == 'success' &&
-      needs.verify.result == 'success'
+    if: ${{ !cancelled() && needs.merge.result == 'success' && needs.verify.result == 'success' }}
     uses: ./.github/workflows/.ib-update-props.yml
     with:
       name: ${{ inputs.name }}
