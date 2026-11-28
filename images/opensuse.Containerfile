@@ -26,6 +26,37 @@ RUN mkdir -p /etc/zypp/zypp.conf.d \
 # Lock parallel-printer-support as it can't be installed in rootless containers
 RUN zypper al parallel-printer-support
 
+# Enable the full Packman repo and VideoLAN for nonfree builds. Packman
+# supplies the patent-encumbered codecs, libraries and media tools that the
+# default repos omit; VideoLAN is the only source of libdvdcss2. URLs are
+# derived from /etc/os-release so the dynamic base tags keep working without
+# pinning Leap or Tumbleweed. VideoLAN gets a lower priority so Packman wins
+# for packages both repos provide.
+RUN set -eu; \
+    case "${TAG:-}" in \
+        *-nonfree) \
+            . /etc/os-release; \
+            case "${ID}" in \
+                opensuse-leap) \
+                    packman_url="https://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Leap_${VERSION_ID}"; \
+                    videolan_url="https://download.videolan.org/SuSE/${VERSION_ID}"; \
+                    ;; \
+                opensuse-tumbleweed) \
+                    packman_url="https://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed"; \
+                    videolan_url="https://download.videolan.org/SuSE/Tumbleweed"; \
+                    ;; \
+                *) \
+                    echo "ERROR: unsupported openSUSE ID: ${ID}" >&2; \
+                    exit 1; \
+                    ;; \
+            esac; \
+            rpm --import "${packman_url}/repodata/repomd.xml.key"; \
+            zypper -n ar -f -c -p 90 "${packman_url}" packman; \
+            rpm --import "${videolan_url}/repodata/repomd.xml.key"; \
+            zypper -n ar -f -c -p 95 "${videolan_url}" videolan; \
+            ;; \
+    esac
+
 # Refresh metadata before the validator queries the repositories, so stale
 # cache cannot hide renamed or missing packages on dynamic base tags.
 RUN zypper --non-interactive refresh
