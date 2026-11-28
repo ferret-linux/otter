@@ -21,6 +21,6 @@
 {2}│{R}{5}Regenerate after upgrading otter.{R}           {2}│{R}
 {2}├────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                 {2}│{R}
-{2}│{R}{5}See "Installation" in documentation.{R}        {2}│{R}
+{2}│{R}{5}See "{R}{3}Installation{R}{5}" in documentation.{R}        {2}│{R}
 {2}│{R}{5}Run 'otter docs' to browse the docs offline.{R}{2}│{R}
 {2}╰────────────────────────────────────────────╯{R}

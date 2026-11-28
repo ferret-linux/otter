@@ -26,7 +26,7 @@
 {2}│{R}{5}        for another escalator.{R}              {2}│{R}
 {2}├────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                 {2}│{R}
-{2}│{R}{5}See "pause" in documentation.{R}               {2}│{R}
-{2}│{R}{5}See "start" in documentation.{R}               {2}│{R}
+{2}│{R}{5}See "Commands › {R}{3}pause{R}{5}" in documentation.{R}    {2}│{R}
+{2}│{R}{5}See "Commands › {R}{3}start{R}{5}" in documentation.{R}    {2}│{R}
 {2}│{R}{5}Run 'otter docs' to browse the docs offline.{R}{2}│{R}
 {2}╰────────────────────────────────────────────╯{R}

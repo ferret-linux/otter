@@ -24,6 +24,6 @@
 {2}│{R}{5}Unreliable ones are reported as unavailable.{R}    {2}│{R}
 {2}├────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                     {2}│{R}
-{2}│{R}{5}See "registry" in documentation.{R}                {2}│{R}
+{2}│{R}{5}See "Commands › {R}{3}registry{R}{5}" in documentation.{R}     {2}│{R}
 {2}│{R}{5}Run 'otter docs' to browse the docs offline.{R}    {2}│{R}
 {2}╰────────────────────────────────────────────────╯{R}

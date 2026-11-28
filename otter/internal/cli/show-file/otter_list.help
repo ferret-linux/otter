@@ -27,6 +27,6 @@
 {2}│{R}{4}NO_COLOR=1{R}{5}  Disable color output.{R}           {2}│{R}
 {2}├────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                 {2}│{R}
-{2}│{R}{5}See "list" in documentation.{R}                {2}│{R}
+{2}│{R}{5}See "Commands › {R}{3}list{R}{5}" in documentation.{R}     {2}│{R}
 {2}│{R}{5}Run 'otter docs' to browse the docs offline.{R}{2}│{R}
 {2}╰────────────────────────────────────────────╯{R}

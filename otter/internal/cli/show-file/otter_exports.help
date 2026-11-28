@@ -1,35 +1,35 @@
-{2}╭────────────────────────────────────────────────────────╮{R}
-{2}│{R}{1}⦿ Manage the host-side otter export index{R}               {2}│{R}
-{2}├────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Usage:{R}                                                {2}│{R}
-{2}│{R}  {5}otter exp     <list|rebuild|prune|delete> [options]{R}   {2}│{R}
-{2}│{R}  {5}otter exports <list|rebuild|prune|delete> [options]{R}   {2}│{R}
-{2}├────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Examples:{R}                                             {2}│{R}
-{2}│{R}  {5}otter exp ls{R}                                          {2}│{R}
-{2}│{R}  {5}otter exp rebuild{R}                                     {2}│{R}
-{2}│{R}  {5}otter exports prune --root{R}                            {2}│{R}
-{2}│{R}  {5}otter exports delete ~/.local/bin/htop-box{R}            {2}│{R}
-{2}├────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Commands:{R}                                             {2}│{R}
-{2}│{R} {0}list{R}        {2}┆{R} {0}ls{R}  {5}List all recorded exports{R}            {2}│{R}
-{2}│{R} {0}prune{R}       {2}┆{R}     {5}Drop stale records and orphans{R}       {2}│{R}
-{2}│{R} {0}delete{R}      {2}┆{R} {0}rm{R}  {5}Delete one export by path{R}            {2}│{R}
-{2}│{R} {0}rebuild{R}     {2}┆{R}     {5}Rebuild index from markers{R}           {2}│{R}
-{2}├────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Subcommand options:{R}                                   {2}│{R}
-{2}│{R} {4}--root{R}      {2}┆{R} {4}-r{R}  {5}Include rootful owners (prune only){R}  {2}│{R}
-{2}│{R} {4}--scan-path{R} {2}┆{R}     {5}Extra export path to scan{R}            {2}│{R}
-{2}├────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Extras:{R}                                               {2}│{R}
-{2}│{R} {4}--help{R}      {2}┆{R} {4}-h{R}  {5}Show this help message{R}               {2}│{R}
-{2}├────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Notes:{R}                                                {2}│{R}
-{2}│{R}{5}Index lives under ~/.local/share/otter/exports/index/{R}   {2}│{R}
-{2}│{R}{5}Ownership is absolute: only the owning tuple is touched.{R}{2}│{R}
-{2}├────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ See also:{R}                                             {2}│{R}
-{2}│{R}{5}See "exports" in documentation.{R}                         {2}│{R}
-{2}│{R}{5}See "Exporting Apps & Binaries" in documentation.{R}       {2}│{R}
-{2}│{R}{5}Run 'otter docs' to browse the docs offline.{R}            {2}│{R}
-{2}╰────────────────────────────────────────────────────────╯{R}
+{2}╭─────────────────────────────────────────────────────────────╮{R}
+{2}│{R}{1}⦿ Manage the host-side otter export index{R}                    {2}│{R}
+{2}├─────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Usage:{R}                                                     {2}│{R}
+{2}│{R}  {5}otter exp     <list|rebuild|prune|delete> [options]{R}        {2}│{R}
+{2}│{R}  {5}otter exports <list|rebuild|prune|delete> [options]{R}        {2}│{R}
+{2}├─────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                                  {2}│{R}
+{2}│{R}  {5}otter exp ls{R}                                               {2}│{R}
+{2}│{R}  {5}otter exp rebuild{R}                                          {2}│{R}
+{2}│{R}  {5}otter exports prune --root{R}                                 {2}│{R}
+{2}│{R}  {5}otter exports delete ~/.local/bin/htop-box{R}                 {2}│{R}
+{2}├─────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Commands:{R}                                                  {2}│{R}
+{2}│{R} {0}list{R}        {2}┆{R} {0}ls{R}  {5}List all recorded exports{R}                 {2}│{R}
+{2}│{R} {0}prune{R}       {2}┆{R}     {5}Drop stale records and orphans{R}            {2}│{R}
+{2}│{R} {0}delete{R}      {2}┆{R} {0}rm{R}  {5}Delete one export by path{R}                 {2}│{R}
+{2}│{R} {0}rebuild{R}     {2}┆{R}     {5}Rebuild index from markers{R}                {2}│{R}
+{2}├─────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Subcommand options:{R}                                        {2}│{R}
+{2}│{R} {4}--root{R}      {2}┆{R} {4}-r{R}  {5}Include rootful owners (prune only){R}       {2}│{R}
+{2}│{R} {4}--scan-path{R} {2}┆{R}     {5}Extra export path to scan{R}                 {2}│{R}
+{2}├─────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                                    {2}│{R}
+{2}│{R} {4}--help{R}      {2}┆{R} {4}-h{R}  {5}Show this help message{R}                    {2}│{R}
+{2}├─────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Notes:{R}                                                     {2}│{R}
+{2}│{R}{5}Index lives under ~/.local/share/otter/exports/index/{R}        {2}│{R}
+{2}│{R}{5}Ownership is absolute: only the owning tuple is touched.{R}     {2}│{R}
+{2}├─────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ See also:{R}                                                  {2}│{R}
+{2}│{R}{5}See "Commands › {R}{3}exports{R}{5}" in documentation.{R}                   {2}│{R}
+{2}│{R}{5}See "Tutorials › {R}{3}Exporting Apps & Binaries{R}{5}" in documentation.{R}{2}│{R}
+{2}│{R}{5}Run 'otter docs' to browse the docs offline.{R}                 {2}│{R}
+{2}╰─────────────────────────────────────────────────────────────╯{R}

@@ -25,8 +25,8 @@
 {2}│{R}{5}On a stopped container, it simply starts it.{R}    {2}│{R}
 {2}├────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                     {2}│{R}
-{2}│{R}{5}See "restart" in documentation.{R}                 {2}│{R}
-{2}│{R}{5}See "stop" in documentation.{R}                    {2}│{R}
-{2}│{R}{5}See "start" in documentation.{R}                   {2}│{R}
+{2}│{R}{5}See "Commands › {R}{3}restart{R}{5}" in documentation.{R}      {2}│{R}
+{2}│{R}{5}See "Commands › {R}{3}stop{R}{5}" in documentation.{R}         {2}│{R}
+{2}│{R}{5}See "Commands › {R}{3}start{R}{5}" in documentation.{R}        {2}│{R}
 {2}│{R}{5}Run 'otter docs' to browse the docs offline.{R}    {2}│{R}
 {2}╰────────────────────────────────────────────────╯{R}

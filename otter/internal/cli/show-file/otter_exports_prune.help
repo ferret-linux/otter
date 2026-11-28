@@ -19,6 +19,6 @@
 {2}│{R}{5}Legacy markers and non-otter files are safe.{R}    {2}│{R}
 {2}├────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                     {2}│{R}
-{2}│{R}{5}See "exports" in documentation.{R}                 {2}│{R}
+{2}│{R}{5}See "Commands › {R}{3}exports{R}{5}" in documentation.{R}      {2}│{R}
 {2}│{R}{5}Run 'otter docs' to browse the docs offline.{R}    {2}│{R}
 {2}╰────────────────────────────────────────────────╯{R}

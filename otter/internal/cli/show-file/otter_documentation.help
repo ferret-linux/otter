@@ -18,6 +18,6 @@
 {2}│{R} {5}Select an entry in the tree to preview it on the right.{R}{2}│{R}
 {2}├────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ See also:{R}                                             {2}│{R}
-{2}│{R}{5}See "otter" in documentation.{R}                           {2}│{R}
+{2}│{R}{5}See "Commands › {R}{3}otter{R}{5}" in documentation.{R}                {2}│{R}
 {2}│{R}{5}Run 'otter docs' to browse the docs offline.{R}            {2}│{R}
 {2}╰────────────────────────────────────────────────────────╯{R}
