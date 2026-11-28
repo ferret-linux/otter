@@ -1,34 +1,34 @@
-{2}╭────────────────────────────────────────────────────────────────────────╮{R}
-{2}│{R}{1}⦿ Enter into an otter managed container environment                     {R}{2}│{R}
-{2}├────────────────────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Usage:{R}                                                                {2}│{R}
-{2}│{R}  {5}otter sh    [options] [container] [-- command]{R}                        {2}│{R}
-{2}│{R}  {5}otter enter [options] [container] [-- command]{R}                        {2}│{R}
-{2}├────────────────────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Examples:{R}                                                             {2}│{R}
-{2}│{R}  {5}otter sh my-box --root{R}                                                {2}│{R}
-{2}│{R}  {5}otter sh my-alpine -- sh -l{R}                                           {2}│{R}
-{2}│{R}  {5}otter enter fedora-44 -- bash -l{R}                                      {2}│{R}
-{2}│{R}  {5}otter enter --additional-flags "--preserve-fds" test -- bash -l{R}       {2}│{R}
-{2}├────────────────────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Options:{R}                                                              {2}│{R}
-{2}│{R}{4} --                 {R}{2}┆{R}{4}      {R}{5}Command to run inside container{R}              {2}│{R}
-{2}│{R} {4}--root{R}             {2}┆{R} {4}-r{R}   {5}Use root privileges{R}                          {2}│{R}
-{2}│{R} {4}--add-env{R}          {2}┆{R} {4}-e{R}   {5}Copy NAME or set NAME=value{R}                  {2}│{R}
-{2}│{R} {4}--empty-env{R}        {2}┆{R} {4}-E{R}   {5}Do not copy host environment{R}                 {2}│{R}
-{2}│{R} {4}--clean-path{R}       {2}┆{R} {4}-c{R}   {5}Reset PATH to FHS standard{R}                   {2}│{R}
-{2}│{R} {4}--no-workdir{R}       {2}┆{R} {4}-nw{R}  {5}Start from container home{R}                    {2}│{R}
-{2}│{R} {4}--background{R}       {2}┆{R} {4}-b{R}   {5}Run in background without tty{R}                {2}│{R}
-{2}│{R} {4}--additional-flags{R} {2}┆{R} {4}-a{R}   {5}Extra flags for manager{R}                      {2}│{R}
-{2}├────────────────────┴───────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Extras:{R}                                                               {2}│{R}
-{2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}                                 {2}│{R}
-{2}├───────────┴────────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ Notes:{R}                                                                {2}│{R}
-{2}│{R}{4}--root{R}{5}  Prefer '--root' over 'sudo otter'.{R}                              {2}│{R}
-{2}│{R}{5}        Use 'preferences.sudo-program' for a{R}                            {2}│{R}
-{2}│{R}{5}        different escalator.{R}                                            {2}│{R}
-{2}├────────────────────────────────────────────────────────────────────────┤{R}
-{2}│{R}{3}▸ See also:{R}                                                             {2}│{R}
-{2}│{R}{5}See enter in otter documentation.{R}                                       {2}│{R}
-{2}╰────────────────────────────────────────────────────────────────────────╯{R}
+{2}╭─────────────────────────────────────────────────────────────────╮{R}
+{2}│{R}{1}⦿ Enter into an otter managed container environment{R}              {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Usage:{R}                                                         {2}│{R}
+{2}│{R}  {5}otter sh    [options] [container] [-- command]{R}                 {2}│{R}
+{2}│{R}  {5}otter enter [options] [container] [-- command]{R}                 {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Examples:{R}                                                      {2}│{R}
+{2}│{R}  {5}otter sh my-box --root{R}                                         {2}│{R}
+{2}│{R}  {5}otter sh my-alpine -- sh -l{R}                                    {2}│{R}
+{2}│{R}  {5}otter enter fedora-44 -- bash -l{R}                               {2}│{R}
+{2}│{R}  {5}otter enter --additional-flags "--preserve-fds" test -- bash -l{R}{2}│{R}
+{2}├─────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Options:{R}                                                       {2}│{R}
+{2}│{R}{4} --                 {R}{2}┆{R}{4}      {R}{5}Command to run inside container{R}       {2}│{R}
+{2}│{R} {4}--root{R}             {2}┆{R} {4}-r{R}   {5}Use root privileges{R}                   {2}│{R}
+{2}│{R} {4}--add-env{R}          {2}┆{R} {4}-e{R}   {5}Copy NAME or set NAME=value{R}           {2}│{R}
+{2}│{R} {4}--empty-env{R}        {2}┆{R} {4}-E{R}   {5}Do not copy host environment{R}          {2}│{R}
+{2}│{R} {4}--clean-path{R}       {2}┆{R} {4}-c{R}   {5}Reset PATH to FHS standard{R}            {2}│{R}
+{2}│{R} {4}--no-workdir{R}       {2}┆{R} {4}-nw{R}  {5}Start from container home{R}             {2}│{R}
+{2}│{R} {4}--background{R}       {2}┆{R} {4}-b{R}   {5}Run in background without tty{R}         {2}│{R}
+{2}│{R} {4}--additional-flags{R} {2}┆{R} {4}-a{R}   {5}Extra flags for manager{R}               {2}│{R}
+{2}├────────────────────┴────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Extras:{R}                                                        {2}│{R}
+{2}│{R} {4}--help{R}    {2}┆{R} {4}-h{R}  {5}Show this help message{R}                          {2}│{R}
+{2}├───────────┴─────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ Notes:{R}                                                         {2}│{R}
+{2}│{R}{4}--root{R}{5}  Prefer '--root' over 'sudo otter'.{R}                       {2}│{R}
+{2}│{R}{5}        Use 'preferences.sudo-program' for a{R}                     {2}│{R}
+{2}│{R}{5}        different escalator.{R}                                     {2}│{R}
+{2}├─────────────────────────────────────────────────────────────────┤{R}
+{2}│{R}{3}▸ See also:{R}                                                      {2}│{R}
+{2}│{R}{5}See enter in otter documentation.{R}                                {2}│{R}
+{2}╰─────────────────────────────────────────────────────────────────╯{R}

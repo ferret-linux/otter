@@ -1,5 +1,5 @@
 {2}╭─────────────────────────────────────────────────────────────────────────────────────╮{R}
-{2}│{R}{1}⦿ Create native distro like container environments using otter                       {R}{2}│{R}
+{2}│{R}{1}⦿ Create native distro like container environments using otter{R}                       {2}│{R}
 {2}├─────────────────────────────────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                                                             {2}│{R}
 {2}│{R}  {5}otter mk     [container] [options] [--image image]{R}                                 {2}│{R}

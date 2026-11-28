@@ -1,5 +1,5 @@
 {2}╭────────────────────────────────────────────────╮{R}
-{2}│{R}{1}⦿ Show logs of an otter managed container       {R}{2}│{R}
+{2}│{R}{1}⦿ Show logs of an otter managed container{R}       {2}│{R}
 {2}├────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                        {2}│{R}
 {2}│{R}  {5}otter logs    [options] [container]{R}           {2}│{R}

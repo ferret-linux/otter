@@ -1,5 +1,5 @@
 {2}╭───────────────────────────────────────────────────────────╮{R}
-{2}│{R}{1}⦿ Browse and manage otter images from the registry         {R}{2}│{R}
+{2}│{R}{1}⦿ Browse and manage otter images from the registry{R}         {2}│{R}
 {2}├───────────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                                   {2}│{R}
 {2}│{R}  {5}otter reg        <list|pull|remove> [options]{R}            {2}│{R}
