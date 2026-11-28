@@ -4,7 +4,7 @@
 {2}│{R}{3}▸ Usage:{R}                                              {2}│{R}
 {2}│{R}  {5}otter <command> [args]{R}                              {2}│{R}
 {2}├──────────────────────────────────────────────────────┤{R}
-{2}│{R}{1}● Commands ➜{R}                                          {2}│{R}
+{2}│{R}{3}▸ Commands:{R}                                           {2}│{R}
 {2}│{R}{3}▸ Management:{R}                                         {2}│{R}
 {2}│{R} {0}create{R}         {2}┆{R} {0}mk{R}    {5}Create new containers{R}         {2}│{R}
 {2}│{R} {0}remove{R}         {2}┆{R} {0}rm{R}    {5}Remove containers{R}             {2}│{R}
@@ -28,9 +28,10 @@
 {2}│{R} {0}cleanup{R}        {2}┆{R} {0}purge{R} {5}Remove otter host leftovers{R}   {2}│{R}
 {2}│{R} {0}registry{R}       {2}┆{R} {0}reg{R}   {5}Browse and manage otter images{R}{2}│{R}
 {2}│{R} {0}settings{R}       {2}┆{R} {0}conf{R}  {5}Set otter's config settings{R}   {2}│{R}
+{2}│{R} {0}completion{R}     {2}┆{R}       {5}Generate shell completions{R}    {2}│{R}
 {2}│{R} {0}documentation{R}  {2}┆{R} {0}docs{R}  {5}Browse otter's documentation{R}  {2}│{R}
 {2}│{R} {0}generate-entry{R} {2}┆{R} {0}pin{R}   {5}Create clickable desktop entry{R}{2}│{R}
-{2}├────────────────┴─────────────────────────────────────┤{R}
+{2}├────────────┴─────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                             {2}│{R}
 {2}│{R}  {4}--help{R}    {2}┆{R} {4}-h{R} {5}Show this help message{R}               {2}│{R}
 {2}│{R}  {4}--version{R} {2}┆{R} {4}-v{R} {5}Print version information{R}            {2}│{R}

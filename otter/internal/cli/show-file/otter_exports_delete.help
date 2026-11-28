@@ -1,10 +1,12 @@
 {2}╭───────────────────────────────────────────────────────╮{R}
-{2}│{R}{1}⦿ Delete one export by its absolute host path          {R}{2}│{R}
+{2}│{R}{1}⦿ Delete one export by its absolute host path{R}          {2}│{R}
 {2}├───────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Usage:{R}                                               {2}│{R}
+{2}│{R}  {5}otter exp rm <path>{R}                                  {2}│{R}
 {2}│{R}  {5}otter exports delete <path>{R}                          {2}│{R}
 {2}├───────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Examples:{R}                                            {2}│{R}
+{2}│{R}  {5}otter exp rm ~/.local/bin/htop-box{R}                   {2}│{R}
 {2}│{R}  {5}otter exports delete ~/.local/bin/htop-box{R}           {2}│{R}
 {2}├───────────────────────────────────────────────────────┤{R}
 {2}│{R}{3}▸ Extras:{R}                                              {2}│{R}
