@@ -80,6 +80,14 @@ RUN set -eu; \
         *-nonfree) extra_packages="gstreamer-plugins-bad-codecs gstreamer-plugins-ugly-codecs libx264-165 libfdk-aac2 libaacs0 libdvdcss2 vlc vlc-codecs" ;; \
         *) extra_packages="" ;; \
     esac; \
+    . /etc/os-release; \
+    case "${ID}" in \
+        opensuse-tumbleweed) \
+            python_pkg="$(zypper -n -q se -t package -s python3 | sed -n 's/^[^|]*|[[:space:]]*\(python3[0-9][0-9]\)[[:space:]]*|.*/\1/p' | sort -u | sort -V | tail -1)"; \
+            ;; \
+        *) python_pkg="python3" ;; \
+    esac; \
+    [ -n "${python_pkg}" ] || { echo "ERROR: no python3 package found in repos" >&2; exit 1; }; \
     zypper -n install --auto-agree-with-licenses -y \
     --allow-downgrade --allow-vendor-change \
     $(sh /tmp/pkg-validator.sh --pkgmgr zypper -- \
@@ -115,7 +123,7 @@ RUN set -eu; \
     iputils \
     ncurses \
     systemd \
-    python3 \
+    ${python_pkg} \
     libvpx2 \
     wayland \
     libdrm2 \
