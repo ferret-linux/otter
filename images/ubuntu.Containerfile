@@ -75,8 +75,8 @@ RUN set -eu; \
 # Run package install script
 COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 
-# Upgrade the system, install the requested packages, and clean
-# APT metadata/cache in the same layer.
+# Install the requested packages and clean APT metadata/cache in the same
+# layer. The base system was upgraded before the optional font install above.
 RUN set -eux; \
     case "${TAG:-}" in \
         *-nonfree) extra_packages="ubuntu-restricted-extras ubuntu-restricted-addons gstreamer1.0-plugins-ugly" ;; \
