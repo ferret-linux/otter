@@ -43,6 +43,7 @@ COPY images/scripts/pkg-validator.sh /tmp/pkg-validator.sh
 # Install the requested packages, update the system, remove orphaned
 # packages, and clean Zypper metadata in the same layer.
 RUN zypper -n install --auto-agree-with-licenses -y \
+    --allow-downgrade --allow-vendor-change \
     $(sh /tmp/pkg-validator.sh --pkgmgr zypper -- \
     bc \
     zsh \
