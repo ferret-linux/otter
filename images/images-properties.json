@@ -764,31 +764,6 @@
       "build_number": 24
     },
     {
-      "name": "kali-nonfree",
-      "official_image": "ghcr.io/ferret-linux/kali-otr:rolling-nonfree",
-      "family": "kali",
-      "image_variant": "nonfree",
-      "is_reliable_fallback": true,
-      "enabled": true,
-      "architecture": [
-        "amd64",
-        "arm64"
-      ],
-      "built_at": "2026-11-27T22:23:53Z",
-      "sizes": {
-        "amd64": {
-          "compressed_size": 662247744,
-          "disk_size": 1800078689
-        },
-        "arm64": {
-          "compressed_size": 624518609,
-          "disk_size": 1766715746
-        }
-      },
-      "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest",
-      "build_number": 20
-    },
-    {
       "name": "opensuse-tumbleweed",
       "official_image": "ghcr.io/ferret-linux/opensuse-otr:tumbleweed",
       "family": "opensuse",
@@ -1387,6 +1362,31 @@
       },
       "fallback_vendor_image": "docker.io/library/amazonlinux:latest",
       "build_number": 479
+    },
+    {
+      "name": "kali-nonfree",
+      "official_image": "ghcr.io/ferret-linux/kali-otr:rolling-nonfree",
+      "family": "kali",
+      "image_variant": "nonfree",
+      "is_reliable_fallback": true,
+      "enabled": true,
+      "architecture": [
+        "amd64",
+        "arm64"
+      ],
+      "built_at": "2026-11-28T01:43:24Z",
+      "sizes": {
+        "amd64": {
+          "compressed_size": 662249492,
+          "disk_size": 1800078691
+        },
+        "arm64": {
+          "compressed_size": 624518450,
+          "disk_size": 1766715745
+        }
+      },
+      "fallback_vendor_image": "docker.io/kalilinux/kali-rolling:latest",
+      "build_number": 21
     }
   ]
 }
